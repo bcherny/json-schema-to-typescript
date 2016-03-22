@@ -2,9 +2,10 @@
   "name": "json-schema-to-typescript",
   "version": "1.0.0",
   "description": "compile json schema to typescript typings",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "test": "ava ./test/test.js",
     "watch": "watch \"npm run build\" ./src/"
   },
   "repository": {
@@ -29,11 +30,12 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "fs-promise": "^0.5.0",
     "lodash": "^4.6.1",
     "typescript": "^1.8.9"
   },
   "devDependencies": {
+    "ava": "^0.13.0",
+    "nodeunit": "^0.9.1",
     "typings": "^0.7.9",
     "watch": "^0.17.1"
   }

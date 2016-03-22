@@ -6,7 +6,7 @@
     "preserveConstEnums": true,
     "outDir": "dist",
     "sourceMap": true,
-    "target": "es5"
+    "target": "es6"
   },
   "files": [
     "./typings/main.d.ts",

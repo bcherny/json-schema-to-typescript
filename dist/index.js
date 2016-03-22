@@ -1,7 +1,7 @@
 "use strict";
-var lodash_1 = require('lodash');
-var fs_1 = require('fs');
-var JSONSchemaToTsTypeMap = {
+const lodash_1 = require('lodash');
+const fs_1 = require('fs');
+const JSONSchemaToTsTypeMap = {
     array: 'array',
     boolean: 'boolean',
     integer: 'number',
@@ -14,17 +14,22 @@ function isRequired(propertyName, schema) {
     return schema.required.indexOf(propertyName) > -1;
 }
 function compile(schema) {
-    return "\n    interface " + schema.name + " {\n      " + lodash_1.map(schema.properties, function (v, k) {
-        return ("" + k + (isRequired(k, schema) ? '' : '?') + ": " + JSONSchemaToTsTypeMap[v.type]);
-    }).join('\n') + "\n    }\n  ";
+    return `
+    interface ${schema.title} {
+      ${lodash_1.map(schema.properties, (v, k) => `${k}${isRequired(k, schema) ? '' : '?'}: ${JSONSchemaToTsTypeMap[v.type]}`).join('\n')}
+    }
+  `;
 }
 exports.compile = compile;
 function compileFromFile(inputFilename) {
-    return fs_1.readFile(inputFilename, function (err, data) {
-        var a = compile(JSON.parse(data));
-        console.log(a);
-        return a;
-    });
+    return new Promise((resolve, reject) => fs_1.readFile(inputFilename, (err, data) => {
+        if (err) {
+            reject(err);
+        }
+        else {
+            resolve(compile(JSON.parse(data.toString())));
+        }
+    }));
 }
 exports.compileFromFile = compileFromFile;
 //# sourceMappingURL=index.js.map

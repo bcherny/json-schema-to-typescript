@@ -1,38 +1,24 @@
 import {map} from 'lodash'
 import {readFile} from 'fs'
 
-interface Interface {
-  name: string
-  rules: Rule[]
-}
-
-type Type = "boolean"|"number"|"string"
-
 interface Rule {
-  comment?: string
-  name: string
-  required: boolean
+  description?: string
+  minimum?: number
   type: Type
 }
 
-interface JSONSchemaRule {
-  description?: string
-  minimum?: number
-  type: JSONSchemaRuleType
-}
-
-type JSONSchemaRuleType = "integer"|"string"
+type Type = "array"|"boolean"|"integer"|"null"|"number"|"object"|"string"
 
 interface JSONSchema {
-  name?: string
   properties: {
-    [a: string]: JSONSchemaRule
+    [a: string]: Rule
   }
   required?: string[]
+  title?: string
   type: "array"|"object"
 }
 
-const JSONSchemaToTsTypeMap = {
+const JSONSchemaToTsTypeMap: {[a: string]: string} = {
   array: 'array',
   boolean: 'boolean',
   integer: 'number',
@@ -48,7 +34,7 @@ function isRequired(propertyName: string, schema: JSONSchema): boolean {
 
 export function compile(schema: JSONSchema): string {
   return `
-    interface ${schema.name} {
+    interface ${schema.title} {
       ${
         map(schema.properties, (v, k) =>
           `${k}${isRequired(k, schema) ? '' : '?'}: ${JSONSchemaToTsTypeMap[v.type]}`
@@ -58,10 +44,14 @@ export function compile(schema: JSONSchema): string {
   `
 }
 
-export function compileFromFile(inputFilename: string): Promise<string> {
-  return readFile(inputFilename, (err, data) => {
-    const a = compile(JSON.parse(data))
-    console.log(a)
-    return a
-  })
+export function compileFromFile(inputFilename: string): Promise<string|Error> {
+  return new Promise((resolve, reject) =>
+    readFile(inputFilename, (err, data) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(compile(JSON.parse(data.toString())))
+      }
+    })
+  )
 }
