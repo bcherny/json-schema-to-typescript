@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "es5"
+  },
+  "files": [
+    "./typings/main.d.ts",
+    "./src/index.ts"
+  ]
+}

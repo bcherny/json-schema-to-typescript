@@ -1,0 +1,2 @@
+const {readFileSync} = require('fs')
+
