@@ -3,7 +3,7 @@ import {compileFromFile} from '../'
 import {equal} from 'assert'
 import {readFileSync} from 'fs'
 
-test('basics', async t =>
-  const a = compileFromFile('./basics/basics.json')
-  t.is(await a, readFileSync('./basics/basics.d.ts'))
-)
+test('basics', async t => t.is(
+  await compileFromFile('./basics/basics.json'),
+  readFileSync('./basics/basics.d.ts').toString()
+))
