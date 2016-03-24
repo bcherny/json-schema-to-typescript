@@ -51,3 +51,26 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 ## Tests
 
 `npm test`
+
+## Todo
+
+- [x] `title` => `interface`
+- [ ] Types:
+  - [x] array
+  - [ ] array of type
+  - [x] boolean
+  - [x] integer
+  - [x] number
+  - [x] null
+  - [x] object
+  - [x] string
+  - [ ] enum
+- [ ] Custom JSON-schema extensions
+- [ ] Nested properties
+- [ ] Schema definitions
+- [ ] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
+
+## Further Reading
+
+- JSON-schema spec: http://json-schema.org/latest/json-schema-core.html
+- TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md
