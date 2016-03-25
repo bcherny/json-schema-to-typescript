@@ -14,6 +14,9 @@ exports.in = `
       "type": "integer",
       "minimum": 0
     },
+    "height": {
+      "type": "number"
+    },
     "favoriteFoods": {
       "type": "array"
     },
@@ -30,6 +33,7 @@ interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
+  height?: number;
   favoriteFoods?: array;
   likesDogs?: boolean;
   [a: string]: any;
