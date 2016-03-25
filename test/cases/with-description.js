@@ -21,12 +21,11 @@ exports.in = `
 `
 
 exports.out = `/*
-  My cool schema
-*/
-
+    My cool schema
+  */
 interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
-  [a: string]: any;
+  [k: string]: any;
 }`

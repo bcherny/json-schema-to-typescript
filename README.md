@@ -67,13 +67,12 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
   - [x] enum
 - [x] Non/extensible interfaces
 - [ ] Custom JSON-schema extensions
-- [ ] Nested properties
-- [ ] Schema definitions
-- [ ] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
+- [x] Nested properties
+- [x] Schema definitions
+- [x] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
 - [ ] External (network) schema references
 - [ ] Add support for running in browser
 - [ ] default interface name
-- [ ] support for `format`
 
 ## Further Reading
 

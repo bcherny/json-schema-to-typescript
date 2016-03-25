@@ -20,8 +20,7 @@ exports.in = `
 }
 `
 
-exports.out = `
-interface ExampleSchema {
+exports.out = `interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years

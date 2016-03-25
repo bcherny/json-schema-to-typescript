@@ -13,8 +13,7 @@ exports.in = `
 }
 `
 
-exports.out = `
-interface ArrayOfType {
+exports.out = `interface ArrayOfType {
   foo?: string[];
-  [a: string]: any;
+  [k: string]: any;
 }`

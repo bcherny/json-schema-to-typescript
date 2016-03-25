@@ -12,7 +12,6 @@ exports.in = `
 }
 `
 
-exports.out = `
-interface Enum {
+exports.out = `interface Enum {
   foo: "a" | "b" | "c";
 }`
