@@ -61,6 +61,9 @@ function getType (prop: Rule) {
   if (prop.type === 'array' && prop.items && prop.items.type) {
     return `${JSONSchemaToTsTypeMap[prop.items.type]}[]`
   }
+  if (prop.enum) {
+    return prop.enum.map(_ => `"${_}"`).join('|')
+  }
   return JSONSchemaToTsTypeMap[prop.type]
 }
 

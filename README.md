@@ -55,7 +55,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 ## Todo
 
 - [x] `title` => `interface`
-- [ ] Types:
+- [x] Primitive types:
   - [x] array
   - [x] array of type
   - [x] boolean
@@ -64,7 +64,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
   - [x] null
   - [x] object
   - [x] string
-  - [ ] enum
+  - [x] enum
 - [x] Non/extensible interfaces
 - [ ] Custom JSON-schema extensions
 - [ ] Nested properties
