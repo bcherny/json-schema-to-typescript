@@ -9,7 +9,7 @@ glob('cases/*.js').then(cases =>
   cases.forEach(caseName =>
     test(caseName, async t => {
       const c = require(`./${caseName}`)
-      const a = await compile(JSON.parse(c.in))
+      const a = compile(JSON.parse(c.in))
       const b = c.out
       if (a !== b) diff(a, b)
       t.is(a, b)

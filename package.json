@@ -31,11 +31,11 @@
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
     "lodash": "^4.6.1",
-    "typescript": "^1.8.9",
-    "typescript-formatter": "^2.1.0"
+    "typescript": "^1.8.9"
   },
   "devDependencies": {
     "ava": "^0.13.0",
+    "colors": "^1.1.2",
     "glob-promise": "^1.0.6",
     "typings": "^0.7.9",
     "watch": "^0.17.1"

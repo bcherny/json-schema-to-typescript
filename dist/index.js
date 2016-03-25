@@ -1,8 +1,8 @@
 "use strict";
 const lodash_1 = require('lodash');
 const fs_1 = require('fs');
-const tsfmt = require('typescript-formatter');
 const stream_1 = require('stream');
+const pretty_printer_1 = require('./pretty-printer');
 const JSONSchemaToTsTypeMap = {
     array: 'array',
     boolean: 'boolean',
@@ -32,21 +32,17 @@ function compile(schema) {
     if (supportsAdditionalProperties(schema)) {
         props.push('[a: string]: any;');
     }
-    const s = streamFromString(`
-		interface ${toInterfaceName(schema.title)} {
-			${props.join('\n')}
-		}
-	`);
-    return tsfmt.processStream('./tmp.ts', s, {
-        dryRun: true,
-        replace: false,
-        verify: false,
-        tsconfig: false,
-        tslint: false,
-        editorconfig: false,
-        tsfmt: true
-    })
-        .then(_ => _.dest);
+    const parts = [];
+    if (schema.description) {
+        parts.push(`/*
+  ${schema.description}
+*/`);
+    }
+    parts.push(`
+    interface ${toInterfaceName(schema.title)} {
+      ${props.join('\n')}
+    }`);
+    return pretty_printer_1.format(parts.join('\n'));
 }
 exports.compile = compile;
 function compileFromFile(inputFilename) {

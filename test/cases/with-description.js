@@ -1,6 +1,7 @@
 exports.in = `
 {
   "title": "Example Schema",
+  "description": "My cool schema",
   "type": "object",
   "properties": {
     "firstName": {
@@ -19,7 +20,10 @@ exports.in = `
 }
 `
 
-exports.out = `
+exports.out = `/*
+  My cool schema
+*/
+
 interface ExampleSchema {
   firstName: string;
   lastName: string;
