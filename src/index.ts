@@ -45,6 +45,12 @@ const JSONSchemaToTsTypeMap: {[a: string]: string} = {
   string: 'string'
 }
 
+const DEFAULT_SCHEMA: JSONSchema = {
+  properties: {},
+  required: [],
+  type: 'object'
+}
+
 function isRequired(propertyName: string, schema: JSONSchema): boolean {
   return schema.required.indexOf(propertyName) > -1
 }
@@ -57,20 +63,24 @@ function toInterfaceName (a: string): string {
   return upperFirst(camelCase(a))
 }
 
-function getType (prop: Rule) {
-  if (prop.type === 'array' && prop.items && prop.items.type) {
-    return `${JSONSchemaToTsTypeMap[prop.items.type]}[]`
+enum RuleType {"TypedArray","Enum","Default"}
+
+function getRuleType (rule: Rule): RuleType {
+  if (rule.type === 'array' && rule.items && rule.items.type) {
+    return RuleType.TypedArray
+  } else if (rule.enum) {
+    return RuleType.Enum
+  } else {
+    return RuleType.Default
   }
-  if (prop.enum) {
-    return prop.enum.map(_ => `"${_}"`).join('|')
-  }
-  return JSONSchemaToTsTypeMap[prop.type]
 }
 
-const DEFAULT_SCHEMA: JSONSchema = {
-  properties: {},
-  required: [],
-  type: 'object'
+function generateTypeString (rule: Rule): string {
+  switch (getRuleType(rule)) {
+    case RuleType.Default: return JSONSchemaToTsTypeMap[rule.type]
+    case RuleType.Enum: return rule.enum.map(_ => `"${_}"`).join('|')
+    case RuleType.TypedArray: return `${JSONSchemaToTsTypeMap[rule.items.type]}[]`
+  }
 }
 
 export function compile(schema: JSONSchema): string {
@@ -78,7 +88,7 @@ export function compile(schema: JSONSchema): string {
   schema = merge({}, DEFAULT_SCHEMA, schema)
 
   const props = map(schema.properties, (v: Rule, k: string) =>
-    `${k}${isRequired(k, schema) ? '' : '?'}: ${getType(v)};`
+    `${k}${isRequired(k, schema) ? '' : '?'}: ${generateTypeString(v)};`
     + (v.description ? ` // ${v.description}` : '')
   )
   if (supportsAdditionalProperties(schema)) {

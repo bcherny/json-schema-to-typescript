@@ -12,6 +12,11 @@ const JSONSchemaToTsTypeMap = {
     object: 'Object',
     string: 'string'
 };
+const DEFAULT_SCHEMA = {
+    properties: {},
+    required: [],
+    type: 'object'
+};
 function isRequired(propertyName, schema) {
     return schema.required.indexOf(propertyName) > -1;
 }
@@ -21,23 +26,33 @@ function supportsAdditionalProperties(schema) {
 function toInterfaceName(a) {
     return lodash_1.upperFirst(lodash_1.camelCase(a));
 }
-function getType(prop) {
-    if (prop.type === 'array' && prop.items && prop.items.type) {
-        return `${JSONSchemaToTsTypeMap[prop.items.type]}[]`;
+var RuleType;
+(function (RuleType) {
+    RuleType[RuleType["TypedArray"] = 0] = "TypedArray";
+    RuleType[RuleType["Enum"] = 1] = "Enum";
+    RuleType[RuleType["Default"] = 2] = "Default";
+})(RuleType || (RuleType = {}));
+function getRuleType(rule) {
+    if (rule.type === 'array' && rule.items && rule.items.type) {
+        return RuleType.TypedArray;
     }
-    if (prop.enum) {
-        return prop.enum.map(_ => `"${_}"`).join('|');
+    else if (rule.enum) {
+        return RuleType.Enum;
     }
-    return JSONSchemaToTsTypeMap[prop.type];
+    else {
+        return RuleType.Default;
+    }
 }
-const DEFAULT_SCHEMA = {
-    properties: {},
-    required: [],
-    type: 'object'
-};
+function generateTypeString(rule) {
+    switch (getRuleType(rule)) {
+        case RuleType.Default: return JSONSchemaToTsTypeMap[rule.type];
+        case RuleType.Enum: return rule.enum.map(_ => `"${_}"`).join('|');
+        case RuleType.TypedArray: return `${JSONSchemaToTsTypeMap[rule.items.type]}[]`;
+    }
+}
 function compile(schema) {
     schema = lodash_1.merge({}, DEFAULT_SCHEMA, schema);
-    const props = lodash_1.map(schema.properties, (v, k) => `${k}${isRequired(k, schema) ? '' : '?'}: ${getType(v)};`
+    const props = lodash_1.map(schema.properties, (v, k) => `${k}${isRequired(k, schema) ? '' : '?'}: ${generateTypeString(v)};`
         + (v.description ? ` // ${v.description}` : ''));
     if (supportsAdditionalProperties(schema)) {
         props.push('[a: string]: any;');

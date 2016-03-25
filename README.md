@@ -70,6 +70,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - [ ] Nested properties
 - [ ] Schema definitions
 - [ ] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
+- [ ] External (network) schema references
 - [ ] Add support for running in browser
 - [ ] default interface name
 - [ ] support for `format`
