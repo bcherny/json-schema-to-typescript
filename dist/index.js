@@ -15,6 +15,9 @@ const JSONSchemaToTsTypeMap = {
 function isRequired(propertyName, schema) {
     return schema.required.indexOf(propertyName) > -1;
 }
+function supportsAdditionalProperties(schema) {
+    return !(schema.additionalProperties === false);
+}
 function toInterfaceName(a) {
     return lodash_1.upperFirst(lodash_1.camelCase(a));
 }
@@ -24,10 +27,14 @@ const ESFORMATTER_OPTIONS = {
     }
 };
 function compile(schema) {
+    const props = lodash_1.map(schema.properties, (v, k) => `${k}${isRequired(k, schema) ? '' : '?'}: ${JSONSchemaToTsTypeMap[v.type]};`
+        + (v.description ? ` // ${v.description}` : ''));
+    if (supportsAdditionalProperties(schema)) {
+        props.push('[a: string]: any;');
+    }
     const s = streamFromString(`
 		interface ${toInterfaceName(schema.title)} {
-			${lodash_1.map(schema.properties, (v, k) => `${k}${isRequired(k, schema) ? '' : '?'}: ${JSONSchemaToTsTypeMap[v.type]};`
-        + (v.description ? ` // ${v.description}` : '')).join('\n')}
+			${props.join('\n')}
 		}
 	`);
     return tsfmt.processStream('./tmp.ts', s, {

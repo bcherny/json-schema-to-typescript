@@ -65,6 +65,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
   - [x] object
   - [x] string
   - [ ] enum
+- [x] Non/extensible interfaces
 - [ ] Custom JSON-schema extensions
 - [ ] Nested properties
 - [ ] Schema definitions

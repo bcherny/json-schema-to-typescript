@@ -12,6 +12,7 @@ interface Rule {
 type Type = "array"|"boolean"|"integer"|"null"|"number"|"object"|"string"
 
 interface JSONSchema {
+	additionalProperties?: boolean
 	properties: {
 		[a: string]: Rule
 	}
@@ -34,6 +35,10 @@ function isRequired(propertyName: string, schema: JSONSchema): boolean {
 	return schema.required.indexOf(propertyName) > -1
 }
 
+function supportsAdditionalProperties(schema: JSONSchema): boolean {
+	return !(schema.additionalProperties === false)
+}
+
 function toInterfaceName (a: string): string {
 	return upperFirst(camelCase(a))
 }
@@ -45,14 +50,18 @@ const ESFORMATTER_OPTIONS = {
 }
 
 export function compile(schema: JSONSchema): Promise<string> {
+
+	const props = map(schema.properties, (v, k) =>
+		`${k}${isRequired(k, schema) ? '' : '?'}: ${JSONSchemaToTsTypeMap[v.type]};`
+		+ (v.description ? ` // ${v.description}` : '')
+	)
+	if (supportsAdditionalProperties(schema)) {
+		props.push('[a: string]: any;')
+	}
+
 	const s = streamFromString(`
 		interface ${toInterfaceName(schema.title)} {
-			${
-				map(schema.properties, (v, k) =>
-					`${k}${isRequired(k, schema) ? '' : '?'}: ${JSONSchemaToTsTypeMap[v.type]};`
-					+ (v.description ? ` // ${v.description}` : '')
-				).join('\n')
-			}
+			${props.join('\n')}
 		}
 	`)
 

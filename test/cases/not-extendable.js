@@ -1,3 +1,4 @@
+exports.in = `
 {
   "title": "Example Schema",
   "type": "object",
@@ -14,5 +15,15 @@
       "minimum": 0
     }
   },
-  "required": ["firstName", "lastName"]
+  "required": ["firstName", "lastName"],
+  "additionalProperties": false
 }
+`
+
+exports.out = `
+interface ExampleSchema {
+  firstName: string;
+  lastName: string;
+  age?: number; // Age in years
+}
+`

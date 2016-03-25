@@ -1,9 +1,18 @@
 import test from 'ava'
-import {compileFromFile} from '../'
+import {compile} from '../'
 import {equal} from 'assert'
 import {readFileSync} from 'fs'
+import {diff} from './helpers'
+import glob from 'glob-promise'
 
-test('basics', async t => t.is(
-  await compileFromFile('./basics/basics.json'),
-  readFileSync('./basics/basics.d.ts').toString()
-))
+glob('cases/*.js').then(cases =>
+  cases.forEach(caseName =>
+    test(caseName, async t => {
+      const c = require(`./${caseName}`)
+      const a = await compile(JSON.parse(c.in))
+      const b = c.out
+      if (a !== b) diff(a, b)
+      t.is(a, b)
+    })
+  )
+)
