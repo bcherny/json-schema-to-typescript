@@ -13,6 +13,12 @@ exports.in = `
       "description": "Age in years",
       "type": "integer",
       "minimum": 0
+    },
+    "favoriteFoods": {
+      "type": "array"
+    },
+    "likesDogs": {
+      "type": "boolean"
     }
   },
   "required": ["firstName", "lastName"]
@@ -24,5 +30,7 @@ interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
+  favoriteFoods?: array;
+  likesDogs?: boolean;
   [a: string]: any;
 }`

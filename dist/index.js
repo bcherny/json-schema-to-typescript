@@ -21,13 +21,20 @@ function supportsAdditionalProperties(schema) {
 function toInterfaceName(a) {
     return lodash_1.upperFirst(lodash_1.camelCase(a));
 }
-const ESFORMATTER_OPTIONS = {
-    indent: {
-        value: '  '
+function getType(prop) {
+    if (prop.type === 'array' && prop.items && prop.items.type) {
+        return `${JSONSchemaToTsTypeMap[prop.items.type]}[]`;
     }
+    return JSONSchemaToTsTypeMap[prop.type];
+}
+const DEFAULT_SCHEMA = {
+    properties: {},
+    required: [],
+    type: 'object'
 };
 function compile(schema) {
-    const props = lodash_1.map(schema.properties, (v, k) => `${k}${isRequired(k, schema) ? '' : '?'}: ${JSONSchemaToTsTypeMap[v.type]};`
+    schema = lodash_1.merge({}, DEFAULT_SCHEMA, schema);
+    const props = lodash_1.map(schema.properties, (v, k) => `${k}${isRequired(k, schema) ? '' : '?'}: ${getType(v)};`
         + (v.description ? ` // ${v.description}` : ''));
     if (supportsAdditionalProperties(schema)) {
         props.push('[a: string]: any;');

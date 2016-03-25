@@ -1,16 +1,28 @@
-import {camelCase, map, upperFirst} from 'lodash'
+import {camelCase, map, merge, upperFirst} from 'lodash'
 import {readFile} from 'fs'
 import * as tsfmt from 'typescript-formatter'
 import {Readable} from 'stream'
 import {format} from './pretty-printer'
 
+interface RefType {
+  $ref: string
+}
+
 interface Rule {
   description?: string
+  enum?: Type[]
+  items?: {
+    type: Type
+  }
   minimum?: number
+  minItems?: number
+  oneOf?: RefType[]
   type: Type
+  uniqueItems?: boolean
 }
 
 type Type = "array"|"boolean"|"integer"|"null"|"number"|"object"|"string"
+type JSONSchemaType = "array"|"object"
 
 interface JSONSchema {
   additionalProperties?: boolean
@@ -20,7 +32,7 @@ interface JSONSchema {
   }
   required?: string[]
   title?: string
-  type: "array"|"object"
+  type: JSONSchemaType
 }
 
 const JSONSchemaToTsTypeMap: {[a: string]: string} = {
@@ -45,16 +57,25 @@ function toInterfaceName (a: string): string {
   return upperFirst(camelCase(a))
 }
 
-const ESFORMATTER_OPTIONS = {
-  indent: {
-    value: '  '
+function getType (prop: Rule) {
+  if (prop.type === 'array' && prop.items && prop.items.type) {
+    return `${JSONSchemaToTsTypeMap[prop.items.type]}[]`
   }
+  return JSONSchemaToTsTypeMap[prop.type]
+}
+
+const DEFAULT_SCHEMA: JSONSchema = {
+  properties: {},
+  required: [],
+  type: 'object'
 }
 
 export function compile(schema: JSONSchema): string {
 
-  const props = map(schema.properties, (v, k) =>
-    `${k}${isRequired(k, schema) ? '' : '?'}: ${JSONSchemaToTsTypeMap[v.type]};`
+  schema = merge({}, DEFAULT_SCHEMA, schema)
+
+  const props = map(schema.properties, (v: Rule, k: string) =>
+    `${k}${isRequired(k, schema) ? '' : '?'}: ${getType(v)};`
     + (v.description ? ` // ${v.description}` : '')
   )
   if (supportsAdditionalProperties(schema)) {

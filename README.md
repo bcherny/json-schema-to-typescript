@@ -57,7 +57,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - [x] `title` => `interface`
 - [ ] Types:
   - [x] array
-  - [ ] array of type
+  - [x] array of type
   - [x] boolean
   - [x] integer
   - [x] number

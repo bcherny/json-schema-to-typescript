@@ -36,6 +36,7 @@
   "devDependencies": {
     "ava": "^0.13.0",
     "colors": "^1.1.2",
+    "diff": "^2.2.2",
     "glob-promise": "^1.0.6",
     "typings": "^0.7.9",
     "watch": "^0.17.1"
