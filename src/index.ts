@@ -4,7 +4,7 @@ import * as tsfmt from 'typescript-formatter'
 import {Readable} from 'stream'
 import {format} from './pretty-printer'
 
-enum RuleType {"TypedArray","Enum","OneOf","Reference","Schema","String","Number","Void","Object","Array","Boolean"}
+enum RuleType {"TypedArray","Enum","OneOf","Reference","Schema","String","Number","Void","Object","Array","Boolean","Literal"}
 
 interface TsType {
   toString(): string
@@ -19,7 +19,7 @@ namespace TsType {
   export class Array implements TsType {
     constructor(private type?: TsType) {}
     toString() {
-      return `${this.type.toString() || (new TsType.Any()).toString()}[]`
+      return `${this.type ? this.type.toString() : (new TsType.Any()).toString()}[]`
     }
   }
   export class Boolean implements TsType {
@@ -32,6 +32,12 @@ namespace TsType {
     constructor(private name: string) {}
     toString() {
       return this.name
+    }
+  }
+  export class Literal implements TsType {
+    constructor(private value: any) {}
+    toString() {
+      return `"${this.value}"` // TODO: support Number, Boolean, Array, and Object literals
     }
   }
   export class Number implements TsType {
@@ -55,7 +61,7 @@ namespace TsType {
   export class Union implements TsType {
     constructor(private data: TsType[]) {}
     toString() {
-      return this.data.map(_ => `"${_.toString()}"`).join('|')
+      return this.data.join('|')
     }
   }
   export class Void implements TsType {
@@ -120,6 +126,7 @@ class Compiler {
       case 'object': return RuleType.Object
       case 'string': return RuleType.String
     }
+    return RuleType.Literal // TODO: is it safe to do this as a catchall?
   }
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
@@ -151,7 +158,8 @@ class Compiler {
           this.state.interfaces.push(def)
           return new TsType.Class(def.name)
         }
-      case RuleType.Enum: return new TsType.Union(rule.enum)
+      case RuleType.Enum: return new TsType.Union(rule.enum.map(_ => this.toTsType(_, root)))
+      case RuleType.Literal: return new TsType.Literal(rule)
       case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root))
       case RuleType.Array: return new TsType.Array
       case RuleType.Boolean: return new TsType.Boolean
@@ -231,7 +239,7 @@ class Interface {
   private toBlockComment(a: string) {
     return `/*
     ${a}
-    */
+  */
     `
   }
   toString(): string {

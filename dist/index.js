@@ -16,6 +16,7 @@ var RuleType;
     RuleType[RuleType["Object"] = 8] = "Object";
     RuleType[RuleType["Array"] = 9] = "Array";
     RuleType[RuleType["Boolean"] = 10] = "Boolean";
+    RuleType[RuleType["Literal"] = 11] = "Literal";
 })(RuleType || (RuleType = {}));
 var TsType;
 (function (TsType) {
@@ -32,7 +33,7 @@ var TsType;
             this.type = type;
         }
         toString() {
-            return `${this.type.toString() || (new TsType.Any()).toString()}[]`;
+            return `${this.type ? this.type.toString() : (new TsType.Any()).toString()}[]`;
         }
     }
     TsType.Array = Array;
@@ -53,6 +54,15 @@ var TsType;
         }
     }
     TsType.Class = Class;
+    class Literal {
+        constructor(value) {
+            this.value = value;
+        }
+        toString() {
+            return `"${this.value}"`; // TODO: support Number, Boolean, Array, and Object literals
+        }
+    }
+    TsType.Literal = Literal;
     class Number {
         constructor() {
         }
@@ -82,7 +92,7 @@ var TsType;
             this.data = data;
         }
         toString() {
-            return this.data.map(_ => `"${_.toString()}"`).join('|');
+            return this.data.join('|');
         }
     }
     TsType.Union = Union;
@@ -136,6 +146,7 @@ class Compiler {
             case 'object': return RuleType.Object;
             case 'string': return RuleType.String;
         }
+        return RuleType.Literal; // TODO: is it safe to do this as a catchall?
     }
     // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
     parsePath(path) {
@@ -164,7 +175,8 @@ class Compiler {
                     this.state.interfaces.push(def);
                     return new TsType.Class(def.name);
                 }
-            case RuleType.Enum: return new TsType.Union(rule.enum);
+            case RuleType.Enum: return new TsType.Union(rule.enum.map(_ => this.toTsType(_, root)));
+            case RuleType.Literal: return new TsType.Literal(rule);
             case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root));
             case RuleType.Array: return new TsType.Array;
             case RuleType.Boolean: return new TsType.Boolean;
@@ -242,7 +254,7 @@ class Interface {
     toBlockComment(a) {
         return `/*
     ${a}
-    */
+  */
     `;
     }
     toString() {
