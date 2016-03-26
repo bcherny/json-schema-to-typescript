@@ -33,7 +33,7 @@ exports.out = `interface ExampleSchema {
   lastName: string;
   age?: number; // Age in years
   height?: number;
-  favoriteFoods?: array;
+  favoriteFoods?: any[];
   likesDogs?: boolean;
   [k: string]: any;
 }`

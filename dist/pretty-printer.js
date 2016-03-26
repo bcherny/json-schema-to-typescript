@@ -1,8 +1,6 @@
 // from https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#pretty-printer-using-the-ls-formatter
 "use strict";
 const ts = require("typescript");
-// Note: this uses ts.formatting which is part of the typescript 1.4 package but is not currently 
-//       exposed in the public typescript.d.ts. The typings should be exposed in the next release. 
 function format(text) {
     let options = getDefaultOptions();
     // Parse the source text

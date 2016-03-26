@@ -5,7 +5,9 @@ import {readFileSync} from 'fs'
 import {diff} from './helpers'
 import glob from 'glob-promise'
 
-glob('cases/*.js').then(cases =>
+const cases = ['cases/basics.js']
+
+// glob('cases/*.js').then(cases =>
   cases.forEach(caseName =>
     test(caseName, async t => {
       const c = require(`./${caseName}`)
@@ -15,4 +17,4 @@ glob('cases/*.js').then(cases =>
       t.is(a, b)
     })
   )
-)
+// )

@@ -2,9 +2,7 @@
 
 import * as ts from "typescript";
 
-// Note: this uses ts.formatting which is part of the typescript 1.4 package but is not currently 
-//       exposed in the public typescript.d.ts. The typings should be exposed in the next release. 
-export function format(text: string) {
+export function format(text: string): string {
   let options = getDefaultOptions();
 
   // Parse the source text

@@ -7,11 +7,94 @@ var RuleType;
 (function (RuleType) {
     RuleType[RuleType["TypedArray"] = 0] = "TypedArray";
     RuleType[RuleType["Enum"] = 1] = "Enum";
-    RuleType[RuleType["Default"] = 2] = "Default";
-    RuleType[RuleType["OneOf"] = 3] = "OneOf";
-    RuleType[RuleType["Reference"] = 4] = "Reference";
-    RuleType[RuleType["Schema"] = 5] = "Schema";
+    RuleType[RuleType["OneOf"] = 2] = "OneOf";
+    RuleType[RuleType["Reference"] = 3] = "Reference";
+    RuleType[RuleType["Schema"] = 4] = "Schema";
+    RuleType[RuleType["String"] = 5] = "String";
+    RuleType[RuleType["Number"] = 6] = "Number";
+    RuleType[RuleType["Void"] = 7] = "Void";
+    RuleType[RuleType["Object"] = 8] = "Object";
+    RuleType[RuleType["Array"] = 9] = "Array";
+    RuleType[RuleType["Boolean"] = 10] = "Boolean";
 })(RuleType || (RuleType = {}));
+var TsType;
+(function (TsType) {
+    class Any {
+        constructor() {
+        }
+        toString() {
+            return 'any';
+        }
+    }
+    TsType.Any = Any;
+    class Array {
+        constructor(type) {
+            this.type = type;
+        }
+        toString() {
+            return `${this.type.toString() || (new TsType.Any()).toString()}[]`;
+        }
+    }
+    TsType.Array = Array;
+    class Boolean {
+        constructor() {
+        }
+        toString() {
+            return 'boolean';
+        }
+    }
+    TsType.Boolean = Boolean;
+    class Class {
+        constructor(name) {
+            this.name = name;
+        }
+        toString() {
+            return this.name;
+        }
+    }
+    TsType.Class = Class;
+    class Number {
+        constructor() {
+        }
+        toString() {
+            return 'number';
+        }
+    }
+    TsType.Number = Number;
+    class Object {
+        constructor() {
+        }
+        toString() {
+            return 'Object';
+        }
+    }
+    TsType.Object = Object;
+    class String {
+        constructor() {
+        }
+        toString() {
+            return 'string';
+        }
+    }
+    TsType.String = String;
+    class Union {
+        constructor(data) {
+            this.data = data;
+        }
+        toString() {
+            return this.data.map(_ => `"${_.toString()}"`).join('|');
+        }
+    }
+    TsType.Union = Union;
+    class Void {
+        constructor() {
+        }
+        toString() {
+            return 'void';
+        }
+    }
+    TsType.Void = Void;
+})(TsType || (TsType = {}));
 class Compiler {
     constructor(schema) {
         this.schema = schema;
@@ -44,7 +127,15 @@ class Compiler {
         if (rule.$ref) {
             return RuleType.Reference;
         }
-        return RuleType.Default;
+        switch (rule.type) {
+            case 'array': return RuleType.Array;
+            case 'boolean': return RuleType.Boolean;
+            case 'integer':
+            case 'number': return RuleType.Number;
+            case 'null': return RuleType.Void;
+            case 'object': return RuleType.Object;
+            case 'string': return RuleType.String;
+        }
     }
     // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
     parsePath(path) {
@@ -60,26 +151,32 @@ class Compiler {
     getInterface(name) {
         return this.state.interfaces.find(_ => _.name === this.toInterfaceName(name));
     }
-    generateTypeString(rule, root, name) {
+    toTsType(rule, root, name) {
         let def, path;
         switch (this.getRuleType(rule)) {
             case RuleType.Schema:
                 def = this.getInterface(name);
                 if (def) {
-                    return name;
+                    return new TsType.Class(def.name);
                 }
                 else {
-                    this.state.interfaces.push(this.generateInterface(rule, name));
+                    def = this.generateInterface(rule, name);
+                    this.state.interfaces.push(def);
+                    return new TsType.Class(def.name);
                 }
-                return name;
-            case RuleType.Default: return Compiler.JSON_SCHEMA_TO_TYPE_MAP[rule.type];
-            case RuleType.Enum: return rule.enum.map(_ => `"${_}"`).join('|');
-            case RuleType.TypedArray: return `${Compiler.JSON_SCHEMA_TO_TYPE_MAP[rule.items.type]}[]`;
+            case RuleType.Enum: return new TsType.Union(rule.enum);
+            case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root));
+            case RuleType.Array: return new TsType.Array;
+            case RuleType.Boolean: return new TsType.Boolean;
+            case RuleType.Number: return new TsType.Number;
+            case RuleType.Object: return new TsType.Object;
+            case RuleType.String: return new TsType.String;
+            case RuleType.Void: return new TsType.Void;
             case RuleType.OneOf:
-                return rule.oneOf.map(_ => {
+                return new TsType.Union(rule.oneOf.map(_ => {
                     const path = this.parsePath(_.$ref);
-                    return this.toInterfaceName(this.generateTypeString(_, root, lodash_1.last(path)));
-                }).join('|');
+                    return this.toTsType(_, root, lodash_1.last(path));
+                }));
             case RuleType.Reference:
                 path = this.parsePath(rule.$ref);
                 def = this.getInterface(lodash_1.last(path));
@@ -87,37 +184,36 @@ class Compiler {
                     return def.name;
                 }
                 else {
-                    return this.generateTypeString(this.getReference(path, root), root, lodash_1.last(path));
+                    return this.toTsType(this.getReference(path, root), root, lodash_1.last(path));
                 }
         }
     }
     generateInterface(schema, title) {
         schema = lodash_1.merge({}, Compiler.DEFAULT_SCHEMA, schema);
-        const props = lodash_1.map(schema.properties, (v, k) => `${k}${this.isRequired(k, schema) ? '' : '?'}: ${this.generateTypeString(v, schema)};`
-            + (v.description ? ` // ${v.description}` : ''));
+        const props = lodash_1.map(schema.properties, (v, k) => new Property({
+            isRequired: this.isRequired(k, schema),
+            key: k,
+            value: this.toTsType(v, schema),
+            description: v.description
+        }));
         if (this.supportsAdditionalProperties(schema)) {
-            // TODO: dynamically generate key name to avoid collisions
-            props.push('[k: string]: any;');
+            props.push(new Property({
+                key: '[k: string]',
+                isRequired: true,
+                value: new TsType.Any
+            }));
         }
-        const parts = [];
-        if (schema.description) {
-            parts.push(`/*
-    ${schema.description}
-  */`);
-        }
-        const name = this.toInterfaceName(title || schema.title);
-        parts.push(`interface ${name} {
-      ${props.join('\n')}
-    }`);
-        return {
-            name: name,
-            code: parts.join('\n')
-        };
+        return new Interface({
+            name: this.toInterfaceName(title || schema.title),
+            description: schema.description,
+            props: props
+        });
     }
     toString() {
-        const a = this.generateInterface(this.schema);
-        this.state.interfaces.push(a);
-        return pretty_printer_1.format(this.state.interfaces.map(_ => _.code).join('\n'));
+        return pretty_printer_1.format(this.state.interfaces
+            .concat(this.generateInterface(this.schema))
+            .map(_ => _.toString())
+            .join('\n'));
     }
 }
 Compiler.DEFAULT_SCHEMA = {
@@ -125,15 +221,38 @@ Compiler.DEFAULT_SCHEMA = {
     required: [],
     type: 'object'
 };
-Compiler.JSON_SCHEMA_TO_TYPE_MAP = {
-    array: 'array',
-    boolean: 'boolean',
-    integer: 'number',
-    number: 'number',
-    null: 'void',
-    object: 'Object',
-    string: 'string'
-};
+class Property {
+    constructor(data) {
+        this.data = data;
+    }
+    toString() {
+        return [
+            this.data.key,
+            `${this.data.isRequired ? '' : '?'}: `,
+            `${this.data.value.toString()};`,
+            this.data.description ? ` // ${this.data.description}` : ''
+        ].join('');
+    }
+}
+class Interface {
+    constructor(data) {
+        this.data = data;
+    }
+    get name() { return this.data.name; }
+    toBlockComment(a) {
+        return `/*
+    ${a}
+    */
+    `;
+    }
+    toString() {
+        return `${this.data.description
+            ? this.toBlockComment(this.data.description)
+            : ''}interface ${this.data.name} {
+        ${this.data.props.join('\n')}
+      }`;
+    }
+}
 function compile(schema) {
     return new Compiler(schema).toString();
 }

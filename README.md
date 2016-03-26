@@ -73,8 +73,15 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - [ ] External (network) schema references
 - [ ] Add support for running in browser
 - [ ] default interface name
+- [x] `oneOf`
+- [ ] `anyOf`
+- [ ] `allOf`
+- [ ] `not`
+- [ ] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends)
+- [ ] [`format`](https://github.com/json-schema/json-schema/wiki/Format)
 
 ## Further Reading
 
 - JSON-schema spec: http://json-schema.org/latest/json-schema-core.html
+- JSON-schema wiki: https://github.com/json-schema/json-schema/wiki
 - TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md

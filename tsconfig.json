@@ -10,6 +10,7 @@
   },
   "files": [
     "./typings/main.d.ts",
+    "./src/JSONSchema.d.ts",
     "./src/index.ts"
   ]
 }
