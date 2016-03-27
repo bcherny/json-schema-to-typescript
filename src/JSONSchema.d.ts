@@ -9,6 +9,7 @@ declare module JSONSchema {
     minItems?: number
     maxLength?: number
     minLength?: number
+    allOf?: Rule[]
     anyOf?: Rule[]
     oneOf?: Rule[]
     type: Type

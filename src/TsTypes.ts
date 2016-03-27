@@ -23,6 +23,12 @@ export class Class extends TsType {
     return this.name
   }
 }
+export class Intersection extends TsType {
+  constructor(private data: TsType[]) { super() }
+  toString() {
+    return this.data.join('&')
+  }
+}
 export class Literal extends TsType {
   constructor(private value: any) { super() }
   toString() {

@@ -7,16 +7,17 @@ var RuleType;
 (function (RuleType) {
     RuleType[RuleType["TypedArray"] = 0] = "TypedArray";
     RuleType[RuleType["Enum"] = 1] = "Enum";
-    RuleType[RuleType["AnyOf"] = 2] = "AnyOf";
-    RuleType[RuleType["Reference"] = 3] = "Reference";
-    RuleType[RuleType["Schema"] = 4] = "Schema";
-    RuleType[RuleType["String"] = 5] = "String";
-    RuleType[RuleType["Number"] = 6] = "Number";
-    RuleType[RuleType["Void"] = 7] = "Void";
-    RuleType[RuleType["Object"] = 8] = "Object";
-    RuleType[RuleType["Array"] = 9] = "Array";
-    RuleType[RuleType["Boolean"] = 10] = "Boolean";
-    RuleType[RuleType["Literal"] = 11] = "Literal";
+    RuleType[RuleType["AllOf"] = 2] = "AllOf";
+    RuleType[RuleType["AnyOf"] = 3] = "AnyOf";
+    RuleType[RuleType["Reference"] = 4] = "Reference";
+    RuleType[RuleType["Schema"] = 5] = "Schema";
+    RuleType[RuleType["String"] = 6] = "String";
+    RuleType[RuleType["Number"] = 7] = "Number";
+    RuleType[RuleType["Void"] = 8] = "Void";
+    RuleType[RuleType["Object"] = 9] = "Object";
+    RuleType[RuleType["Array"] = 10] = "Array";
+    RuleType[RuleType["Boolean"] = 11] = "Boolean";
+    RuleType[RuleType["Literal"] = 12] = "Literal";
 })(RuleType || (RuleType = {}));
 class Compiler {
     constructor(schema) {
@@ -57,6 +58,9 @@ class Compiler {
         }
         if (rule.properties) {
             return RuleType.Schema;
+        }
+        if (rule.allOf) {
+            return RuleType.AllOf;
         }
         if (rule.anyOf) {
             return RuleType.AnyOf;
@@ -111,6 +115,11 @@ class Compiler {
             case RuleType.Object: return new TsType.Object;
             case RuleType.String: return new TsType.String;
             case RuleType.Void: return new TsType.Void;
+            case RuleType.AllOf:
+                return new TsType.Intersection(rule.allOf.map(_ => {
+                    const path = this.parsePath(_.$ref);
+                    return this.toTsType(_, root, lodash_1.last(path));
+                }));
             case RuleType.AnyOf:
                 return new TsType.Union(rule.anyOf.map(_ => {
                     const path = this.parsePath(_.$ref);

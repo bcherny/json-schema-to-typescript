@@ -34,6 +34,16 @@ class Class extends TsType {
     }
 }
 exports.Class = Class;
+class Intersection extends TsType {
+    constructor(data) {
+        super();
+        this.data = data;
+    }
+    toString() {
+        return this.data.join('&');
+    }
+}
+exports.Intersection = Intersection;
 class Literal extends TsType {
     constructor(value) {
         super();

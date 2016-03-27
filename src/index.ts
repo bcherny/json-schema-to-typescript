@@ -5,7 +5,7 @@ import {Readable} from 'stream'
 import {format} from './pretty-printer'
 import * as TsType from './TsTypes'
 
-enum RuleType {"TypedArray","Enum","AnyOf","Reference","Schema",
+enum RuleType {"TypedArray","Enum","AllOf","AnyOf","Reference","Schema",
   "String","Number","Void","Object","Array","Boolean","Literal"}
 
 interface CompilerState {
@@ -67,6 +67,9 @@ class Compiler {
     if (rule.properties) {
       return RuleType.Schema
     }
+    if (rule.allOf) {
+      return RuleType.AllOf
+    }
     if (rule.anyOf) {
       return RuleType.AnyOf
     }
@@ -122,6 +125,11 @@ class Compiler {
       case RuleType.Object: return new TsType.Object
       case RuleType.String: return new TsType.String
       case RuleType.Void: return new TsType.Void
+      case RuleType.AllOf:
+        return new TsType.Intersection(rule.allOf.map(_ => {
+          const path = this.parsePath(_.$ref)
+          return this.toTsType(_, root, last(path))
+        }))
       case RuleType.AnyOf:
         return new TsType.Union(rule.anyOf.map(_ => {
           const path = this.parsePath(_.$ref)
