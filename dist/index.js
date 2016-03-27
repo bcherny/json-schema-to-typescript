@@ -1,8 +1,8 @@
 "use strict";
 const lodash_1 = require('lodash');
 const fs_1 = require('fs');
-const stream_1 = require('stream');
 const pretty_printer_1 = require('./pretty-printer');
+const TsType = require('./TsTypes');
 var RuleType;
 (function (RuleType) {
     RuleType[RuleType["TypedArray"] = 0] = "TypedArray";
@@ -18,99 +18,18 @@ var RuleType;
     RuleType[RuleType["Boolean"] = 10] = "Boolean";
     RuleType[RuleType["Literal"] = 11] = "Literal";
 })(RuleType || (RuleType = {}));
-var TsType;
-(function (TsType) {
-    class Any {
-        constructor() {
-        }
-        toString() {
-            return 'any';
-        }
-    }
-    TsType.Any = Any;
-    class Array {
-        constructor(type) {
-            this.type = type;
-        }
-        toString() {
-            return `${this.type ? this.type.toString() : (new TsType.Any()).toString()}[]`;
-        }
-    }
-    TsType.Array = Array;
-    class Boolean {
-        constructor() {
-        }
-        toString() {
-            return 'boolean';
-        }
-    }
-    TsType.Boolean = Boolean;
-    class Class {
-        constructor(name) {
-            this.name = name;
-        }
-        toString() {
-            return this.name;
-        }
-    }
-    TsType.Class = Class;
-    class Literal {
-        constructor(value) {
-            this.value = value;
-        }
-        toString() {
-            return `"${this.value}"`; // TODO: support Number, Boolean, Array, and Object literals
-        }
-    }
-    TsType.Literal = Literal;
-    class Number {
-        constructor() {
-        }
-        toString() {
-            return 'number';
-        }
-    }
-    TsType.Number = Number;
-    class Object {
-        constructor() {
-        }
-        toString() {
-            return 'Object';
-        }
-    }
-    TsType.Object = Object;
-    class String {
-        constructor() {
-        }
-        toString() {
-            return 'string';
-        }
-    }
-    TsType.String = String;
-    class Union {
-        constructor(data) {
-            this.data = data;
-        }
-        toString() {
-            return this.data.join('|');
-        }
-    }
-    TsType.Union = Union;
-    class Void {
-        constructor() {
-        }
-        toString() {
-            return 'void';
-        }
-    }
-    TsType.Void = Void;
-})(TsType || (TsType = {}));
 class Compiler {
     constructor(schema) {
         this.schema = schema;
         this.state = {
             interfaces: []
         };
+    }
+    toString() {
+        return pretty_printer_1.format(this.state.interfaces
+            .concat(this.generateInterface(this.schema))
+            .map(_ => _.toString())
+            .join('\n'));
     }
     isRequired(propertyName, schema) {
         return schema.required.indexOf(propertyName) > -1;
@@ -202,30 +121,24 @@ class Compiler {
     }
     generateInterface(schema, title) {
         schema = lodash_1.merge({}, Compiler.DEFAULT_SCHEMA, schema);
-        const props = lodash_1.map(schema.properties, (v, k) => new Property({
+        const props = lodash_1.map(schema.properties, (v, k) => new TsType.InterfaceProperty({
             isRequired: this.isRequired(k, schema),
             key: k,
             value: this.toTsType(v, schema),
             description: v.description
         }));
         if (this.supportsAdditionalProperties(schema)) {
-            props.push(new Property({
+            props.push(new TsType.InterfaceProperty({
                 key: '[k: string]',
                 isRequired: true,
                 value: new TsType.Any
             }));
         }
-        return new Interface({
+        return new TsType.Interface({
             name: this.toInterfaceName(title || schema.title),
             description: schema.description,
             props: props
         });
-    }
-    toString() {
-        return pretty_printer_1.format(this.state.interfaces
-            .concat(this.generateInterface(this.schema))
-            .map(_ => _.toString())
-            .join('\n'));
     }
 }
 Compiler.DEFAULT_SCHEMA = {
@@ -233,38 +146,6 @@ Compiler.DEFAULT_SCHEMA = {
     required: [],
     type: 'object'
 };
-class Property {
-    constructor(data) {
-        this.data = data;
-    }
-    toString() {
-        return [
-            this.data.key,
-            `${this.data.isRequired ? '' : '?'}: `,
-            `${this.data.value.toString()};`,
-            this.data.description ? ` // ${this.data.description}` : ''
-        ].join('');
-    }
-}
-class Interface {
-    constructor(data) {
-        this.data = data;
-    }
-    get name() { return this.data.name; }
-    toBlockComment(a) {
-        return `/*
-    ${a}
-  */
-    `;
-    }
-    toString() {
-        return `${this.data.description
-            ? this.toBlockComment(this.data.description)
-            : ''}interface ${this.data.name} {
-        ${this.data.props.join('\n')}
-      }`;
-    }
-}
 function compile(schema) {
     return new Compiler(schema).toString();
 }
@@ -280,11 +161,4 @@ function compileFromFile(inputFilename) {
     }));
 }
 exports.compileFromFile = compileFromFile;
-function streamFromString(string) {
-    var s = new stream_1.Readable();
-    s._read = function noop() { };
-    s.push(string);
-    s.push(null);
-    return s;
-}
 //# sourceMappingURL=index.js.map

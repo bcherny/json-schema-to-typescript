@@ -3,77 +3,12 @@ import {readFile} from 'fs'
 import * as tsfmt from 'typescript-formatter'
 import {Readable} from 'stream'
 import {format} from './pretty-printer'
+import * as TsType from './TsTypes'
 
 enum RuleType {"TypedArray","Enum","OneOf","Reference","Schema","String","Number","Void","Object","Array","Boolean","Literal"}
 
-interface TsType {
-  toString(): string
-}
-namespace TsType {
-  export class Any implements TsType {
-    constructor() {}
-    toString() {
-      return 'any'
-    }
-  }
-  export class Array implements TsType {
-    constructor(private type?: TsType) {}
-    toString() {
-      return `${this.type ? this.type.toString() : (new TsType.Any()).toString()}[]`
-    }
-  }
-  export class Boolean implements TsType {
-    constructor() {}
-    toString() {
-      return 'boolean'
-    }
-  }
-  export class Class implements TsType {
-    constructor(private name: string) {}
-    toString() {
-      return this.name
-    }
-  }
-  export class Literal implements TsType {
-    constructor(private value: any) {}
-    toString() {
-      return `"${this.value}"` // TODO: support Number, Boolean, Array, and Object literals
-    }
-  }
-  export class Number implements TsType {
-    constructor() {}
-    toString() {
-      return 'number'
-    }
-  }
-  export class Object implements TsType {
-    constructor() {}
-    toString() {
-      return 'Object'
-    }
-  }
-  export class String implements TsType {
-    constructor() {}
-    toString() {
-      return 'string'
-    }
-  }
-  export class Union implements TsType {
-    constructor(private data: TsType[]) {}
-    toString() {
-      return this.data.join('|')
-    }
-  }
-  export class Void implements TsType {
-    constructor() {}
-    toString() {
-      return 'void'
-    }
-  }
-}
-
 interface CompilerState {
-  interfaces: Interface[]
+  interfaces: TsType.Interface[]
 }
 
 class Compiler {
@@ -85,6 +20,15 @@ class Compiler {
   }
 
   constructor(private schema: JSONSchema.Schema) {}
+
+  toString(): string {
+    return format(
+      this.state.interfaces
+        .concat(this.generateInterface(this.schema))
+        .map(_ => _.toString())
+        .join('\n')
+    )
+  }
 
   private state: CompilerState = {
     interfaces: []
@@ -146,7 +90,7 @@ class Compiler {
     return this.state.interfaces.find(_ => _.name === this.toInterfaceName(name))
   }
 
-  private toTsType (rule: JSONSchema.Rule, root: JSONSchema.Schema, name?: string): TsType {
+  private toTsType (rule: JSONSchema.Rule, root: JSONSchema.Schema, name?: string): TsType.TsType {
     let def, path
     switch (this.getRuleType(rule)) {
       case RuleType.Schema:
@@ -182,10 +126,10 @@ class Compiler {
         }
     }
   }
-  private generateInterface (schema: JSONSchema.Schema, title?: string): Interface {
+  private generateInterface (schema: JSONSchema.Schema, title?: string): TsType.Interface {
     schema = merge({}, Compiler.DEFAULT_SCHEMA, schema)
 
-    const props: Property[] = map(schema.properties, (v: JSONSchema.Rule, k: string) => new Property({
+    const props: TsType.InterfaceProperty[] = map(schema.properties, (v: JSONSchema.Rule, k: string) => new TsType.InterfaceProperty({
       isRequired: this.isRequired(k, schema),
       key: k,
       value: this.toTsType(v, schema),
@@ -193,63 +137,18 @@ class Compiler {
     }))
 
     if (this.supportsAdditionalProperties(schema)) {
-      props.push(new Property({
+      props.push(new TsType.InterfaceProperty({
         key: '[k: string]',
         isRequired: true,
         value: new TsType.Any
       }))
     }
 
-    return new Interface({
+    return new TsType.Interface({
       name: this.toInterfaceName(title || schema.title),
       description: schema.description,
       props
     })
-  }
-  toString(): string {
-    return format(
-      this.state.interfaces
-        .concat(this.generateInterface(this.schema))
-        .map(_ => _.toString())
-        .join('\n')
-    )
-  }
-}
-
-class Property {
-  constructor(private data: {
-    isRequired: boolean,
-    key: string,
-    value: TsType,
-    description?: string
-  }) {}
-  toString(): string {
-    return [
-      this.data.key,
-      `${this.data.isRequired ? '' : '?'}: `,
-      `${this.data.value.toString()};`,
-      this.data.description ? ` // ${this.data.description}` : ''
-    ].join('')
-  }
-}
-
-class Interface {
-  constructor(private data: {name: string, description?: string, props: Property[]}) {}
-  get name (){ return this.data.name }
-  private toBlockComment(a: string) {
-    return `/*
-    ${a}
-  */
-    `
-  }
-  toString(): string {
-    return `${
-        this.data.description
-        ? this.toBlockComment(this.data.description)
-        : ''
-      }interface ${this.data.name} {
-        ${this.data.props.join('\n')}
-      }`
   }
 }
 
@@ -267,12 +166,4 @@ export function compileFromFile(inputFilename: string): Promise<string|Error> {
       }
     })
   )
-}
-
-function streamFromString (string: string): Readable {
-  var s = new Readable()
-  s._read = function noop() {}
-  s.push(string)
-  s.push(null)
-  return s
 }
