@@ -72,7 +72,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - [x] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
 - [ ] External (network) schema references
 - [ ] Add support for running in browser
-- [ ] default interface name
+- [x] default interface name
 - [x] `oneOf`
 - [ ] `anyOf`
 - [ ] `allOf`

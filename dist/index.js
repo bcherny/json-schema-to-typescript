@@ -22,7 +22,8 @@ class Compiler {
     constructor(schema) {
         this.schema = schema;
         this.state = {
-            interfaces: []
+            interfaces: [],
+            anonymousSchemaNameGenerator: this.generateSchemaName()
         };
     }
     toString() {
@@ -31,6 +32,12 @@ class Compiler {
             .map(_ => _.toString())
             .join('\n'));
     }
+    *generateSchemaName() {
+        let counter = 0;
+        while (++counter) {
+            yield `Interface${counter}`;
+        }
+    }
     isRequired(propertyName, schema) {
         return schema.required.indexOf(propertyName) > -1;
     }
@@ -38,7 +45,8 @@ class Compiler {
         return !(schema.additionalProperties === false);
     }
     toInterfaceName(a) {
-        return lodash_1.upperFirst(lodash_1.camelCase(a));
+        return lodash_1.upperFirst(lodash_1.camelCase(a))
+            || this.state.anonymousSchemaNameGenerator.next().value;
     }
     getRuleType(rule) {
         if (rule.type === 'array' && rule.items && rule.items.type) {

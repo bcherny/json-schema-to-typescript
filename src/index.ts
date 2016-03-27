@@ -8,7 +8,8 @@ import * as TsType from './TsTypes'
 enum RuleType {"TypedArray","Enum","OneOf","Reference","Schema","String","Number","Void","Object","Array","Boolean","Literal"}
 
 interface CompilerState {
-  interfaces: TsType.Interface[]
+  interfaces: TsType.Interface[],
+  anonymousSchemaNameGenerator: IterableIterator<string>
 }
 
 class Compiler {
@@ -31,7 +32,15 @@ class Compiler {
   }
 
   private state: CompilerState = {
-    interfaces: []
+    interfaces: [],
+    anonymousSchemaNameGenerator: this.generateSchemaName()
+  }
+
+  private *generateSchemaName(): IterableIterator<string> {
+    let counter = 0
+    while (++counter) {
+      yield `Interface${counter}`
+    }
   }
 
   private isRequired(propertyName: string, schema: JSONSchema.Schema): boolean {
@@ -43,7 +52,8 @@ class Compiler {
   }
 
   private toInterfaceName (a: string): string {
-    return upperFirst(camelCase(a))
+    return upperFirst(camelCase(a))     
+        || this.state.anonymousSchemaNameGenerator.next().value
   }
 
   private getRuleType (rule: JSONSchema.Rule): RuleType {
