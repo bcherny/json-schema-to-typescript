@@ -74,8 +74,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - [ ] Add support for running in browser
 - [x] default interface name
 - [ ] infer unnamed interface name from filename
-- [x] `oneOf` ("xor")
-- [ ] `anyOf` ("union")
+- [x] `anyOf` ("union")
 - [ ] `allOf` ("intersection")
 - [ ] `additionalProperties` of type 
 - [ ] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends)
@@ -97,6 +96,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - `maxProperties` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L113))
 - `minProperties` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L112))
 - `not`/`disallow`
+- `oneOf` ("xor", use `anyOf` instead)
 - `pattern` ([string](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L203), [regex](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L207))
 - `patternProperties` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L97))
 - `uniqueItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L172))
@@ -105,4 +105,5 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 
 - JSON-schema spec: http://json-schema.org/latest/json-schema-core.html
 - JSON-schema wiki: https://github.com/json-schema/json-schema/wiki
+- JSON-schema test suite: https://github.com/json-schema/JSON-Schema-Test-Suite/blob/node
 - TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md

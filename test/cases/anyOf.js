@@ -1,11 +1,11 @@
 exports.in = `
 {
-  "title": "OneOf",
+  "title": "AnyOf",
   "type": "object",
   "properties": {
     "foo": {
       "type": "object",
-      "oneOf": [
+      "anyOf": [
         {"$ref": "#/definitions/foo"},
         {"$ref": "#/definitions/bar"},
         {"$ref": "#/definitions/baz"}
@@ -49,6 +49,6 @@ interface Baz {
   baz?: Bar;
   [k: string]: any;
 }
-interface OneOf {
+interface AnyOf {
   foo: Foo | Bar | Baz;
 }`

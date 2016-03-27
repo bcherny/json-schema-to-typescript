@@ -7,7 +7,7 @@ var RuleType;
 (function (RuleType) {
     RuleType[RuleType["TypedArray"] = 0] = "TypedArray";
     RuleType[RuleType["Enum"] = 1] = "Enum";
-    RuleType[RuleType["OneOf"] = 2] = "OneOf";
+    RuleType[RuleType["AnyOf"] = 2] = "AnyOf";
     RuleType[RuleType["Reference"] = 3] = "Reference";
     RuleType[RuleType["Schema"] = 4] = "Schema";
     RuleType[RuleType["String"] = 5] = "String";
@@ -58,8 +58,8 @@ class Compiler {
         if (rule.properties) {
             return RuleType.Schema;
         }
-        if (rule.oneOf) {
-            return RuleType.OneOf;
+        if (rule.anyOf) {
+            return RuleType.AnyOf;
         }
         if (rule.$ref) {
             return RuleType.Reference;
@@ -111,8 +111,8 @@ class Compiler {
             case RuleType.Object: return new TsType.Object;
             case RuleType.String: return new TsType.String;
             case RuleType.Void: return new TsType.Void;
-            case RuleType.OneOf:
-                return new TsType.Union(rule.oneOf.map(_ => {
+            case RuleType.AnyOf:
+                return new TsType.Union(rule.anyOf.map(_ => {
                     const path = this.parsePath(_.$ref);
                     return this.toTsType(_, root, lodash_1.last(path));
                 }));
