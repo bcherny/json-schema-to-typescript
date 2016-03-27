@@ -5,7 +5,8 @@ import {Readable} from 'stream'
 import {format} from './pretty-printer'
 import * as TsType from './TsTypes'
 
-enum RuleType {"TypedArray","Enum","OneOf","Reference","Schema","String","Number","Void","Object","Array","Boolean","Literal"}
+enum RuleType {"TypedArray","Enum","OneOf","Reference","Schema",
+  "String","Number","Void","Object","Array","Boolean","Literal"}
 
 interface CompilerState {
   interfaces: TsType.Interface[],
