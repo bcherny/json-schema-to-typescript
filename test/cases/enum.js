@@ -5,13 +5,25 @@ exports.in = `
   "properties": {
     "foo": {
       "enum": ["a", "b", "c"]
+    },
+    "bar": {
+      "enum": [1, 2, 3]
+    },
+    "baz": {
+      "enum": [
+        { "a": 1 },
+        { "a": 2 },
+        { "a": 3 }
+      ]
     }
   },
-  "required": ["foo"],
+  "required": ["foo", "bar", "baz"],
   "additionalProperties": false
 }
 `
 
 exports.out = `interface Enum {
   foo: "a" | "b" | "c";
+  bar: 1 | 2 | 3;
+  baz: { "a":1 } | { "a": 2 } | { "a": 3 };
 }`

@@ -3,6 +3,9 @@ declare module JSONSchema {
   interface Schema {
     $ref?: string
     additionalProperties?: boolean|Schema
+    definitions?: {
+      [a: string]: Schema
+    }
     description?: string
     enum?: (Schema|Type)[]
     items?: Schema
@@ -13,14 +16,13 @@ declare module JSONSchema {
     allOf?: Schema[]
     anyOf?: Schema[]
     oneOf?: Schema[]
-    properties: {
+    properties?: {
       [a: string]: Schema
     }
     required?: string[]
     title?: string
-    type: Type
+    type?: Type
     uniqueItems?: boolean
-    [a: string]: Object
   }
 
   type Type = "array"|"boolean"|"integer"|"null"|"number"|"object"|"string"

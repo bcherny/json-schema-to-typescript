@@ -32,7 +32,7 @@ export class Intersection extends TsType {
 export class Literal extends TsType {
   constructor(private value: any) { super() }
   toString() {
-    return `"${this.value}"` // TODO: support Number, Boolean, Array, and Object literals
+    return this.value
   }
 }
 export class Number extends TsType {

@@ -8,11 +8,6 @@ import * as TsType from './TsTypes'
 enum RuleType {"TypedArray","Enum","AllOf","AnyOf","Reference","Schema",
   "String","Number","Void","Object","Array","Boolean","Literal"}
 
-interface CompilerState {
-  interfaces: TsType.Interface[],
-  anonymousSchemaNameGenerator: IterableIterator<string>
-}
-
 class Compiler {
 
   static DEFAULT_SCHEMA: JSONSchema.Schema = {
@@ -33,7 +28,10 @@ class Compiler {
     )
   }
 
-  private state: CompilerState = {
+  private state: {
+    interfaces: TsType.Interface[],
+    anonymousSchemaNameGenerator: IterableIterator<string>
+  } = {
     interfaces: [],
     anonymousSchemaNameGenerator: this.generateSchemaName()
   }
@@ -96,7 +94,7 @@ class Compiler {
     return (path.slice(0, 2) === '#/' ? path.slice(2) : path).split('/')
   }
 
-  private getReference(path: string[], root: Object): JSONSchema.Schema {
+  private getReference(path: string[], root: JSONSchema.Schema): JSONSchema.Schema {
     switch (path.length) {
       case 0: throw ReferenceError(`$ref "#{path.join('/')}" points at invalid reference`)
       case 1: return root[path[0]]
@@ -104,23 +102,37 @@ class Compiler {
     }
   }
 
-  private getInterface (name: string) {
+  private getInterface (name: string): TsType.Interface {
     return this.state.interfaces.find(_ => _.name === this.toInterfaceName(name))
   }
 
+  private createInterfaceNx (rule: JSONSchema.Schema, name: string): TsType.Interface {
+    return this.getInterface(name) || (() => {
+      const a = this.toTsInterface(rule, name)
+      this.state.interfaces.push(a)
+      return a
+    })()
+  }
+
+  private toStringLiteral(a: boolean|number|string|Object): string {
+    switch (typeof a) {
+      case 'boolean': return a ? 'true' : 'false'
+      case 'number': return String(a)
+      case 'string': return `"${a}"`
+      default: return JSON.stringify(a)
+    }
+  }
+
   private toTsType (rule: JSONSchema.Schema, root: JSONSchema.Schema, name?: string): TsType.TsType {
-    let def, path
     switch (this.getRuleType(rule)) {
       case RuleType.Schema:
-        def = this.getInterface(name)
-        if (def) {
-          return new TsType.Class(def.name)
-        } else {
-          def = this.toTsInterface(rule, name)
-          this.state.interfaces.push(def)
-          return new TsType.Class(def.name)
-        }
-      case RuleType.Enum: return new TsType.Union(rule.enum.map(_ => this.toTsType(_, root)))
+        return new TsType.Class(
+          this.createInterfaceNx(rule, name).name
+        )
+      case RuleType.Enum:
+        return new TsType.Union(rule.enum.map(_ =>
+          this.toTsType(this.toStringLiteral(_), root)
+        ))
       case RuleType.Literal: return new TsType.Literal(rule)
       case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root))
       case RuleType.Array: return new TsType.Array
@@ -140,13 +152,11 @@ class Compiler {
           return this.toTsType(_, root, last(path))
         }))
       case RuleType.Reference:
-        path = this.parsePath(rule.$ref)
-        def = this.getInterface(last(path))
-        if (def) {
-          return def.name
-        } else {
-          return this.toTsType(this.getReference(path, root), root, last(path))
-        }
+        const path = this.parsePath(rule.$ref)
+        const int = this.getInterface(last(path))
+        return int
+          ? new TsType.Literal(int.name)
+          : this.toTsType(this.getReference(path, root), root, last(path))
     }
   }
   private toTsInterface (schema: JSONSchema.Schema, title?: string): TsType.Interface {

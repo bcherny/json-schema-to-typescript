@@ -96,20 +96,27 @@ class Compiler {
     getInterface(name) {
         return this.state.interfaces.find(_ => _.name === this.toInterfaceName(name));
     }
+    createInterfaceNx(rule, name) {
+        return this.getInterface(name) || (() => {
+            const a = this.toTsInterface(rule, name);
+            this.state.interfaces.push(a);
+            return a;
+        })();
+    }
+    toStringLiteral(a) {
+        switch (typeof a) {
+            case 'boolean': return a ? 'true' : 'false';
+            case 'number': return String(a);
+            case 'string': return `"${a}"`;
+            default: return JSON.stringify(a);
+        }
+    }
     toTsType(rule, root, name) {
-        let def, path;
         switch (this.getRuleType(rule)) {
             case RuleType.Schema:
-                def = this.getInterface(name);
-                if (def) {
-                    return new TsType.Class(def.name);
-                }
-                else {
-                    def = this.toTsInterface(rule, name);
-                    this.state.interfaces.push(def);
-                    return new TsType.Class(def.name);
-                }
-            case RuleType.Enum: return new TsType.Union(rule.enum.map(_ => this.toTsType(_, root)));
+                return new TsType.Class(this.createInterfaceNx(rule, name).name);
+            case RuleType.Enum:
+                return new TsType.Union(rule.enum.map(_ => this.toTsType(this.toStringLiteral(_), root)));
             case RuleType.Literal: return new TsType.Literal(rule);
             case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root));
             case RuleType.Array: return new TsType.Array;
@@ -129,14 +136,11 @@ class Compiler {
                     return this.toTsType(_, root, lodash_1.last(path));
                 }));
             case RuleType.Reference:
-                path = this.parsePath(rule.$ref);
-                def = this.getInterface(lodash_1.last(path));
-                if (def) {
-                    return def.name;
-                }
-                else {
-                    return this.toTsType(this.getReference(path, root), root, lodash_1.last(path));
-                }
+                const path = this.parsePath(rule.$ref);
+                const int = this.getInterface(lodash_1.last(path));
+                return int
+                    ? new TsType.Literal(int.name)
+                    : this.toTsType(this.getReference(path, root), root, lodash_1.last(path));
         }
     }
     toTsInterface(schema, title) {

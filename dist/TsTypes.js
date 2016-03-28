@@ -50,7 +50,7 @@ class Literal extends TsType {
         this.value = value;
     }
     toString() {
-        return `"${this.value}"`; // TODO: support Number, Boolean, Array, and Object literals
+        return this.value;
     }
 }
 exports.Literal = Literal;
