@@ -1,33 +1,28 @@
 declare module JSONSchema {
 
-  interface Rule {
+  interface Schema {
     $ref?: string
+    additionalProperties?: boolean|Schema
     description?: string
-    enum?: Type[]
-    items?: Rule
+    enum?: (Schema|Type)[]
+    items?: Schema
     minimum?: number
     minItems?: number
     maxLength?: number
     minLength?: number
-    allOf?: Rule[]
-    anyOf?: Rule[]
-    oneOf?: Rule[]
+    allOf?: Schema[]
+    anyOf?: Schema[]
+    oneOf?: Schema[]
+    properties: {
+      [a: string]: Schema
+    }
+    required?: string[]
+    title?: string
     type: Type
     uniqueItems?: boolean
     [a: string]: Object
   }
 
   type Type = "array"|"boolean"|"integer"|"null"|"number"|"object"|"string"
-
-  interface Schema {
-    additionalProperties?: boolean
-    description?: string
-    properties: {
-      [a: string]: Rule
-    }
-    required?: string[]
-    title?: string
-    type: "array"|"object"
-  }
 
 }

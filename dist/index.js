@@ -29,7 +29,7 @@ class Compiler {
     }
     toString() {
         return pretty_printer_1.format(this.state.interfaces
-            .concat(this.generateInterface(this.schema))
+            .concat(this.toTsInterface(this.schema))
             .map(_ => _.toString())
             .join('\n'));
     }
@@ -43,20 +43,23 @@ class Compiler {
         return schema.required.indexOf(propertyName) > -1;
     }
     supportsAdditionalProperties(schema) {
-        return !(schema.additionalProperties === false);
+        return schema.additionalProperties === true || lodash_1.isPlainObject(schema.additionalProperties);
     }
     toInterfaceName(a) {
         return lodash_1.upperFirst(lodash_1.camelCase(a))
             || this.state.anonymousSchemaNameGenerator.next().value;
     }
     getRuleType(rule) {
+        if (!lodash_1.isPlainObject(rule)) {
+            return RuleType.Literal;
+        }
         if (rule.type === 'array' && rule.items && rule.items.type) {
             return RuleType.TypedArray;
         }
         if (rule.enum) {
             return RuleType.Enum;
         }
-        if (rule.properties) {
+        if (rule.properties || rule.additionalProperties) {
             return RuleType.Schema;
         }
         if (rule.allOf) {
@@ -102,7 +105,7 @@ class Compiler {
                     return new TsType.Class(def.name);
                 }
                 else {
-                    def = this.generateInterface(rule, name);
+                    def = this.toTsInterface(rule, name);
                     this.state.interfaces.push(def);
                     return new TsType.Class(def.name);
                 }
@@ -136,7 +139,7 @@ class Compiler {
                 }
         }
     }
-    generateInterface(schema, title) {
+    toTsInterface(schema, title) {
         schema = lodash_1.merge({}, Compiler.DEFAULT_SCHEMA, schema);
         const props = lodash_1.map(schema.properties, (v, k) => new TsType.InterfaceProperty({
             isRequired: this.isRequired(k, schema),
@@ -148,7 +151,9 @@ class Compiler {
             props.push(new TsType.InterfaceProperty({
                 key: '[k: string]',
                 isRequired: true,
-                value: new TsType.Any
+                value: (schema.additionalProperties === true
+                    ? new TsType.Any
+                    : this.toTsType(schema.additionalProperties, schema))
             }));
         }
         return new TsType.Interface({
@@ -159,6 +164,7 @@ class Compiler {
     }
 }
 Compiler.DEFAULT_SCHEMA = {
+    additionalProperties: true,
     properties: {},
     required: [],
     type: 'object'

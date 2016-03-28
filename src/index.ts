@@ -1,4 +1,4 @@
-import {camelCase, last, map, merge, upperFirst} from 'lodash'
+import {camelCase, isPlainObject, last, map, merge, upperFirst} from 'lodash'
 import {readFile} from 'fs'
 import * as tsfmt from 'typescript-formatter'
 import {Readable} from 'stream'
@@ -16,6 +16,7 @@ interface CompilerState {
 class Compiler {
 
   static DEFAULT_SCHEMA: JSONSchema.Schema = {
+    additionalProperties: true,
     properties: {},
     required: [],
     type: 'object'
@@ -26,7 +27,7 @@ class Compiler {
   toString(): string {
     return format(
       this.state.interfaces
-        .concat(this.generateInterface(this.schema))
+        .concat(this.toTsInterface(this.schema))
         .map(_ => _.toString())
         .join('\n')
     )
@@ -49,7 +50,7 @@ class Compiler {
   }
 
   private supportsAdditionalProperties(schema: JSONSchema.Schema): boolean {
-    return !(schema.additionalProperties === false)
+    return schema.additionalProperties === true || isPlainObject(schema.additionalProperties)
   }
 
   private toInterfaceName (a: string): string {
@@ -57,14 +58,17 @@ class Compiler {
         || this.state.anonymousSchemaNameGenerator.next().value
   }
 
-  private getRuleType (rule: JSONSchema.Rule): RuleType {
+  private getRuleType (rule: JSONSchema.Schema): RuleType {
+    if (!isPlainObject(rule)) {
+      return RuleType.Literal
+    }
     if (rule.type === 'array' && rule.items && rule.items.type) {
       return RuleType.TypedArray
     }
     if (rule.enum) {
       return RuleType.Enum
     }
-    if (rule.properties) {
+    if (rule.properties || rule.additionalProperties) {
       return RuleType.Schema
     }
     if (rule.allOf) {
@@ -92,7 +96,7 @@ class Compiler {
     return (path.slice(0, 2) === '#/' ? path.slice(2) : path).split('/')
   }
 
-  private getReference(path: string[], root: Object): JSONSchema.Rule {
+  private getReference(path: string[], root: Object): JSONSchema.Schema {
     switch (path.length) {
       case 0: throw ReferenceError(`$ref "#{path.join('/')}" points at invalid reference`)
       case 1: return root[path[0]]
@@ -104,7 +108,7 @@ class Compiler {
     return this.state.interfaces.find(_ => _.name === this.toInterfaceName(name))
   }
 
-  private toTsType (rule: JSONSchema.Rule, root: JSONSchema.Schema, name?: string): TsType.TsType {
+  private toTsType (rule: JSONSchema.Schema, root: JSONSchema.Schema, name?: string): TsType.TsType {
     let def, path
     switch (this.getRuleType(rule)) {
       case RuleType.Schema:
@@ -112,7 +116,7 @@ class Compiler {
         if (def) {
           return new TsType.Class(def.name)
         } else {
-          def = this.generateInterface(rule, name)
+          def = this.toTsInterface(rule, name)
           this.state.interfaces.push(def)
           return new TsType.Class(def.name)
         }
@@ -145,21 +149,28 @@ class Compiler {
         }
     }
   }
-  private generateInterface (schema: JSONSchema.Schema, title?: string): TsType.Interface {
+  private toTsInterface (schema: JSONSchema.Schema, title?: string): TsType.Interface {
     schema = merge({}, Compiler.DEFAULT_SCHEMA, schema)
 
-    const props: TsType.InterfaceProperty[] = map(schema.properties, (v: JSONSchema.Rule, k: string) => new TsType.InterfaceProperty({
-      isRequired: this.isRequired(k, schema),
-      key: k,
-      value: this.toTsType(v, schema),
-      description: v.description
-    }))
+    const props: TsType.InterfaceProperty[] = map(
+      schema.properties,
+      (v: JSONSchema.Schema, k: string) => new TsType.InterfaceProperty({
+        isRequired: this.isRequired(k, schema),
+        key: k,
+        value: this.toTsType(v, schema),
+        description: v.description
+      })
+    )
 
     if (this.supportsAdditionalProperties(schema)) {
       props.push(new TsType.InterfaceProperty({
         key: '[k: string]',
         isRequired: true,
-        value: new TsType.Any
+        value: (
+          schema.additionalProperties === true
+          ? new TsType.Any
+          : this.toTsType(<JSONSchema.Schema>schema.additionalProperties, schema)
+        )
       }))
     }
 
