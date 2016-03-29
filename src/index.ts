@@ -1,4 +1,4 @@
-import {camelCase, isPlainObject, last, map, merge, upperFirst} from 'lodash'
+import {camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst} from 'lodash'
 import {readFile} from 'fs'
 import * as tsfmt from 'typescript-formatter'
 import {Readable} from 'stream'
@@ -116,10 +116,13 @@ class Compiler {
 
   private toStringLiteral(a: boolean|number|string|Object): string {
     switch (typeof a) {
-      case 'boolean': return a ? 'true' : 'false'
-      case 'number': return String(a)
+      case 'boolean': return 'boolean' // ts doesn't support literal boolean types
+      case 'number': return 'number'   // ts doesn't support literal numeric types
       case 'string': return `"${a}"`
       default: return JSON.stringify(a)
+      // TODO: support array types?
+      // TODO: support enums of enums
+      // TODO: support nulls
     }
   }
 
@@ -130,9 +133,12 @@ class Compiler {
           this.createInterfaceNx(rule, name).name
         )
       case RuleType.Enum:
-        return new TsType.Union(rule.enum.map(_ =>
-          this.toTsType(this.toStringLiteral(_), root)
-        ))
+        return new TsType.Union(uniqBy(
+          rule.enum.map(_ =>
+            this.toTsType(this.toStringLiteral(_), root)
+          )
+          , _ => _.toString())
+        )
       case RuleType.Literal: return new TsType.Literal(rule)
       case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root))
       case RuleType.Array: return new TsType.Array

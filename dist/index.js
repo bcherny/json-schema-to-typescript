@@ -105,8 +105,8 @@ class Compiler {
     }
     toStringLiteral(a) {
         switch (typeof a) {
-            case 'boolean': return a ? 'true' : 'false';
-            case 'number': return String(a);
+            case 'boolean': return 'boolean'; // ts doesn't support literal boolean types
+            case 'number': return 'number'; // ts doesn't support literal numeric types
             case 'string': return `"${a}"`;
             default: return JSON.stringify(a);
         }
@@ -116,7 +116,7 @@ class Compiler {
             case RuleType.Schema:
                 return new TsType.Class(this.createInterfaceNx(rule, name).name);
             case RuleType.Enum:
-                return new TsType.Union(rule.enum.map(_ => this.toTsType(this.toStringLiteral(_), root)));
+                return new TsType.Union(lodash_1.uniqBy(rule.enum.map(_ => this.toTsType(this.toStringLiteral(_), root)), _ => _.toString()));
             case RuleType.Literal: return new TsType.Literal(rule);
             case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root));
             case RuleType.Array: return new TsType.Array;
