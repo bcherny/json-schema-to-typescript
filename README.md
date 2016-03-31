@@ -1,5 +1,7 @@
 # json-schema-to-typescript
 
+**[In Alpha]**: Bug reports appreciated!
+
 [![Circle CI](https://circleci.com/gh/bcherny/json-schema-to-typescript/tree/master.svg?style=svg&circle-token=00757ca8245cb4510f896548b432c1d07ea52b5f)](https://circleci.com/gh/bcherny/json-schema-to-typescript/tree/master)
 
 > Compile json schema to typescript typings
