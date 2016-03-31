@@ -1,6 +1,5 @@
 import {camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst} from 'lodash'
 import {readFile} from 'fs'
-import * as tsfmt from 'typescript-formatter'
 import {Readable} from 'stream'
 import {format} from './pretty-printer'
 import * as TsType from './TsTypes'
