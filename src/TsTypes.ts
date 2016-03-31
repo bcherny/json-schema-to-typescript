@@ -17,7 +17,7 @@ export class Boolean extends TsType {
     return 'boolean'
   }
 }
-export class Class extends TsType {
+export class NamedClass extends TsType {
   constructor(private name: string) { super() }
   toString() {
     return this.name
@@ -76,6 +76,17 @@ export class InterfaceProperty extends TsType {
       `${this.data.value.toString()};`,
       this.data.description ? ` // ${this.data.description}` : ''
     ].join('')
+  }
+}
+
+export class AnonymousInterface extends TsType {
+  constructor(private props: InterfaceProperty[]) {
+    super()
+  }
+  toString() {
+    return `{
+      ${this.props.join('\n')}
+    }`
   }
 }
 

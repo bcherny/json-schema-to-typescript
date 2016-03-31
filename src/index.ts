@@ -5,7 +5,7 @@ import {Readable} from 'stream'
 import {format} from './pretty-printer'
 import * as TsType from './TsTypes'
 
-enum RuleType {"TypedArray","Enum","AllOf","AnyOf","Reference","Schema",
+enum RuleType {"Any","TypedArray","Enum","AllOf","AnyOf","Reference","NamedSchema", "AnonymousSchema",
   "String","Number","Void","Object","Array","Boolean","Literal"}
 
 class Compiler {
@@ -57,9 +57,6 @@ class Compiler {
   }
 
   private getRuleType (rule: JSONSchema.Schema): RuleType {
-    if (!isPlainObject(rule)) {
-      return RuleType.Literal
-    }
     if (rule.type === 'array' && rule.items && rule.items.type) {
       return RuleType.TypedArray
     }
@@ -67,7 +64,7 @@ class Compiler {
       return RuleType.Enum
     }
     if (rule.properties || rule.additionalProperties) {
-      return RuleType.Schema
+      return RuleType.NamedSchema
     }
     if (rule.allOf) {
       return RuleType.AllOf
@@ -86,7 +83,20 @@ class Compiler {
       case 'object': return RuleType.Object
       case 'string': return RuleType.String
     }
-    return RuleType.Literal // TODO: is it safe to do this as a catchall?
+    if (this.isNumberLiteral(rule)) {
+      return RuleType.Number
+    }
+    if (!isPlainObject(rule)) {
+      return RuleType.Literal
+    }
+    if (isPlainObject(rule)) {
+      return RuleType.AnonymousSchema // TODO: is it safe to do this as a catchall?
+    }
+    return RuleType.Any
+  }
+
+  private isNumberLiteral (a: any): boolean {
+    return /^[\d\.]+$/.test(a)
   }
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
@@ -114,12 +124,12 @@ class Compiler {
     })()
   }
 
-  private toStringLiteral(a: boolean|number|string|Object): string {
+  private toStringLiteral(a: boolean|number|string|Object): string|Object {
     switch (typeof a) {
       case 'boolean': return 'boolean' // ts doesn't support literal boolean types
       case 'number': return 'number'   // ts doesn't support literal numeric types
       case 'string': return `"${a}"`
-      default: return JSON.stringify(a)
+      default: return a
       // TODO: support array types?
       // TODO: support enums of enums
       // TODO: support nulls
@@ -128,8 +138,15 @@ class Compiler {
 
   private toTsType (rule: JSONSchema.Schema, root: JSONSchema.Schema, name?: string): TsType.TsType {
     switch (this.getRuleType(rule)) {
-      case RuleType.Schema:
-        return new TsType.Class(
+      case RuleType.AnonymousSchema:
+        return new TsType.AnonymousInterface(
+          this.schemaPropsToInterfaceProps(merge({}, Compiler.DEFAULT_SCHEMA, {
+            required: Object.keys(rule),
+            properties: rule
+          }))
+        )
+      case RuleType.NamedSchema:
+        return new TsType.NamedClass(
           this.createInterfaceNx(rule, name).name
         )
       case RuleType.Enum:
@@ -139,6 +156,7 @@ class Compiler {
           )
           , _ => _.toString())
         )
+      case RuleType.Any: return new TsType.Any
       case RuleType.Literal: return new TsType.Literal(rule)
       case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root))
       case RuleType.Array: return new TsType.Array
@@ -165,10 +183,8 @@ class Compiler {
           : this.toTsType(this.getReference(path, root), root, last(path))
     }
   }
-  private toTsInterface (schema: JSONSchema.Schema, title?: string): TsType.Interface {
-    schema = merge({}, Compiler.DEFAULT_SCHEMA, schema)
-
-    const props: TsType.InterfaceProperty[] = map(
+  private schemaPropsToInterfaceProps (schema: JSONSchema.Schema): TsType.InterfaceProperty[] {
+    return map(
       schema.properties,
       (v: JSONSchema.Schema, k: string) => new TsType.InterfaceProperty({
         isRequired: this.isRequired(k, schema),
@@ -177,6 +193,11 @@ class Compiler {
         description: v.description
       })
     )
+  }
+  private toTsInterface (schema: JSONSchema.Schema, title?: string): TsType.Interface {
+    schema = merge({}, Compiler.DEFAULT_SCHEMA, schema)
+
+    const props = this.schemaPropsToInterfaceProps(schema)
 
     if (this.supportsAdditionalProperties(schema)) {
       props.push(new TsType.InterfaceProperty({

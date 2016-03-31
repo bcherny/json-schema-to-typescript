@@ -5,19 +5,21 @@ const pretty_printer_1 = require('./pretty-printer');
 const TsType = require('./TsTypes');
 var RuleType;
 (function (RuleType) {
-    RuleType[RuleType["TypedArray"] = 0] = "TypedArray";
-    RuleType[RuleType["Enum"] = 1] = "Enum";
-    RuleType[RuleType["AllOf"] = 2] = "AllOf";
-    RuleType[RuleType["AnyOf"] = 3] = "AnyOf";
-    RuleType[RuleType["Reference"] = 4] = "Reference";
-    RuleType[RuleType["Schema"] = 5] = "Schema";
-    RuleType[RuleType["String"] = 6] = "String";
-    RuleType[RuleType["Number"] = 7] = "Number";
-    RuleType[RuleType["Void"] = 8] = "Void";
-    RuleType[RuleType["Object"] = 9] = "Object";
-    RuleType[RuleType["Array"] = 10] = "Array";
-    RuleType[RuleType["Boolean"] = 11] = "Boolean";
-    RuleType[RuleType["Literal"] = 12] = "Literal";
+    RuleType[RuleType["Any"] = 0] = "Any";
+    RuleType[RuleType["TypedArray"] = 1] = "TypedArray";
+    RuleType[RuleType["Enum"] = 2] = "Enum";
+    RuleType[RuleType["AllOf"] = 3] = "AllOf";
+    RuleType[RuleType["AnyOf"] = 4] = "AnyOf";
+    RuleType[RuleType["Reference"] = 5] = "Reference";
+    RuleType[RuleType["NamedSchema"] = 6] = "NamedSchema";
+    RuleType[RuleType["AnonymousSchema"] = 7] = "AnonymousSchema";
+    RuleType[RuleType["String"] = 8] = "String";
+    RuleType[RuleType["Number"] = 9] = "Number";
+    RuleType[RuleType["Void"] = 10] = "Void";
+    RuleType[RuleType["Object"] = 11] = "Object";
+    RuleType[RuleType["Array"] = 12] = "Array";
+    RuleType[RuleType["Boolean"] = 13] = "Boolean";
+    RuleType[RuleType["Literal"] = 14] = "Literal";
 })(RuleType || (RuleType = {}));
 class Compiler {
     constructor(schema) {
@@ -50,9 +52,6 @@ class Compiler {
             || this.state.anonymousSchemaNameGenerator.next().value;
     }
     getRuleType(rule) {
-        if (!lodash_1.isPlainObject(rule)) {
-            return RuleType.Literal;
-        }
         if (rule.type === 'array' && rule.items && rule.items.type) {
             return RuleType.TypedArray;
         }
@@ -60,7 +59,7 @@ class Compiler {
             return RuleType.Enum;
         }
         if (rule.properties || rule.additionalProperties) {
-            return RuleType.Schema;
+            return RuleType.NamedSchema;
         }
         if (rule.allOf) {
             return RuleType.AllOf;
@@ -80,7 +79,19 @@ class Compiler {
             case 'object': return RuleType.Object;
             case 'string': return RuleType.String;
         }
-        return RuleType.Literal; // TODO: is it safe to do this as a catchall?
+        if (this.isNumberLiteral(rule)) {
+            return RuleType.Number;
+        }
+        if (!lodash_1.isPlainObject(rule)) {
+            return RuleType.Literal;
+        }
+        if (lodash_1.isPlainObject(rule)) {
+            return RuleType.AnonymousSchema; // TODO: is it safe to do this as a catchall?
+        }
+        return RuleType.Any;
+    }
+    isNumberLiteral(a) {
+        return /^[\d\.]+$/.test(a);
     }
     // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
     parsePath(path) {
@@ -108,15 +119,21 @@ class Compiler {
             case 'boolean': return 'boolean'; // ts doesn't support literal boolean types
             case 'number': return 'number'; // ts doesn't support literal numeric types
             case 'string': return `"${a}"`;
-            default: return JSON.stringify(a);
+            default: return a;
         }
     }
     toTsType(rule, root, name) {
         switch (this.getRuleType(rule)) {
-            case RuleType.Schema:
-                return new TsType.Class(this.createInterfaceNx(rule, name).name);
+            case RuleType.AnonymousSchema:
+                return new TsType.AnonymousInterface(this.schemaPropsToInterfaceProps(lodash_1.merge({}, Compiler.DEFAULT_SCHEMA, {
+                    required: Object.keys(rule),
+                    properties: rule
+                })));
+            case RuleType.NamedSchema:
+                return new TsType.NamedClass(this.createInterfaceNx(rule, name).name);
             case RuleType.Enum:
                 return new TsType.Union(lodash_1.uniqBy(rule.enum.map(_ => this.toTsType(this.toStringLiteral(_), root)), _ => _.toString()));
+            case RuleType.Any: return new TsType.Any;
             case RuleType.Literal: return new TsType.Literal(rule);
             case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root));
             case RuleType.Array: return new TsType.Array;
@@ -143,14 +160,17 @@ class Compiler {
                     : this.toTsType(this.getReference(path, root), root, lodash_1.last(path));
         }
     }
-    toTsInterface(schema, title) {
-        schema = lodash_1.merge({}, Compiler.DEFAULT_SCHEMA, schema);
-        const props = lodash_1.map(schema.properties, (v, k) => new TsType.InterfaceProperty({
+    schemaPropsToInterfaceProps(schema) {
+        return lodash_1.map(schema.properties, (v, k) => new TsType.InterfaceProperty({
             isRequired: this.isRequired(k, schema),
             key: k,
             value: this.toTsType(v, schema),
             description: v.description
         }));
+    }
+    toTsInterface(schema, title) {
+        schema = lodash_1.merge({}, Compiler.DEFAULT_SCHEMA, schema);
+        const props = this.schemaPropsToInterfaceProps(schema);
         if (this.supportsAdditionalProperties(schema)) {
             props.push(new TsType.InterfaceProperty({
                 key: '[k: string]',

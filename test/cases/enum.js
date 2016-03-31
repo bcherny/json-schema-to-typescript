@@ -25,5 +25,7 @@ exports.in = `
 exports.out = `interface Enum {
   foo: "a" | "b" | "c";
   bar: number;
-  baz: { "a":1 } | { "a": 2 } | { "a": 3 };
+  baz: {
+    a: number;
+  };
 }`

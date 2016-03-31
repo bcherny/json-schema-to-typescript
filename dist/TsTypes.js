@@ -24,7 +24,7 @@ class Boolean extends TsType {
     }
 }
 exports.Boolean = Boolean;
-class Class extends TsType {
+class NamedClass extends TsType {
     constructor(name) {
         super();
         this.name = name;
@@ -33,7 +33,7 @@ class Class extends TsType {
         return this.name;
     }
 }
-exports.Class = Class;
+exports.NamedClass = NamedClass;
 class Intersection extends TsType {
     constructor(data) {
         super();
@@ -103,6 +103,18 @@ class InterfaceProperty extends TsType {
     }
 }
 exports.InterfaceProperty = InterfaceProperty;
+class AnonymousInterface extends TsType {
+    constructor(props) {
+        super();
+        this.props = props;
+    }
+    toString() {
+        return `{
+      ${this.props.join('\n')}
+    }`;
+    }
+}
+exports.AnonymousInterface = AnonymousInterface;
 class Interface extends TsType {
     constructor(data) {
         super();
