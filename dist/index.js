@@ -3,7 +3,6 @@ const lodash_1 = require('lodash');
 const fs_1 = require('fs');
 const pretty_printer_1 = require('./pretty-printer');
 const TsType = require('./TsTypes');
-process.platform;
 var RuleType;
 (function (RuleType) {
     RuleType[RuleType["Any"] = 0] = "Any";
