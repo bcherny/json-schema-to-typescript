@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "ava ./test/test.js",
-    "watch": "watch \"npm run build\" ./src/ ./test/"
+    "watch": "watch \"npm run build && npm run test\" ./src/ ./test/"
   },
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
     "lodash": "^4.6.1",
-    "typescript": "^1.8.9"
+    "typescript": "^2.0.0"
   },
   "devDependencies": {
     "ava": "^0.13.0",

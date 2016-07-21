@@ -7,7 +7,9 @@ import * as TsType from './TsTypes'
 enum RuleType {"Any","TypedArray","Enum","AllOf","AnyOf","Reference","NamedSchema", "AnonymousSchema",
   "String","Number","Void","Object","Array","Boolean","Literal"}
 
+
 class Compiler {
+  static DEFAULT_SETTINGS = TsType.DEFAULT_SETTINGS;
 
   static DEFAULT_SCHEMA: JSONSchema.Schema = {
     additionalProperties: true,
@@ -16,43 +18,36 @@ class Compiler {
     type: 'object'
   }
 
-  constructor(private schema: JSONSchema.Schema) {}
+  constructor(private schema: JSONSchema.Schema, settings?: TsType.TsTypeSettings) {
+    this.id = schema.id || schema.title || "Interface1";
+    this.declarations = new Map();
+    this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
+    let decl = this.declareType(this.toTsType(this.schema), this.id);
+    this.declarations.set(this.id, decl);
+  }
 
   toString(): string {
     return format(
-      this.state.interfaces
-        .concat(this.toTsInterface(this.schema))
-        .map(_ => _.toString())
+      Array.from(this.declarations.values())
+        .map(_ => _.toDeclaration(this.settings))
         .join('\n')
     )
   }
 
-  private state: {
-    interfaces: TsType.Interface[],
-    anonymousSchemaNameGenerator: IterableIterator<string>
-  } = {
-    interfaces: [],
-    anonymousSchemaNameGenerator: this.generateSchemaName()
-  }
-
-  private *generateSchemaName(): IterableIterator<string> {
-    let counter = 0
-    while (++counter) {
-      yield `Interface${counter}`
-    }
-  }
+  private settings: TsType.TsTypeSettings;
+  private id: string;
+  private declarations: Map<string, TsType.TsType>;
 
   private isRequired(propertyName: string, schema: JSONSchema.Schema): boolean {
-    return schema.required.indexOf(propertyName) > -1
+    return schema.required ? schema.required.indexOf(propertyName) > -1 : false;
   }
 
   private supportsAdditionalProperties(schema: JSONSchema.Schema): boolean {
     return schema.additionalProperties === true || isPlainObject(schema.additionalProperties)
   }
 
-  private toInterfaceName (a: string): string {
-    return upperFirst(camelCase(a))     
-        || this.state.anonymousSchemaNameGenerator.next().value
+  private toDeclarationName (a: string): string {
+    return upperFirst(camelCase(a))
   }
 
   private getRuleType (rule: JSONSchema.Schema): RuleType {
@@ -99,65 +94,65 @@ class Compiler {
   }
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
-  private parsePath (path: string): string[] {
-    return (path.slice(0, 2) === '#/' ? path.slice(2) : path).split('/')
-  }
-
-  private getReference(path: string[], root: JSONSchema.Schema): JSONSchema.Schema {
-    switch (path.length) {
-      case 0: throw ReferenceError(`$ref "#{path.join('/')}" points at invalid reference`)
-      case 1: return root[path[0]]
-      default: return this.getReference(path.slice(1), root[path[0]])
+  private resolveType(path: string): TsType.TsType {
+    if (path[0] !== '#')
+      throw new Error("reference must start with #");
+    console.info("resolving", path, this.id);
+    if (path === '#' || path === '#/')
+      return TsType.Interface.reference(this.id);
+    const parts = path.slice(2).split('/');
+    let ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined;
+    if (!ret) {
+      let cur: any = this.schema;
+      let i = 0;
+      for (let i = 0; cur && i < parts.length; ++i) {
+        cur = cur[parts[i]];
+      }
+      ret = this.toTsType(cur);
+      if (this.settings.declareReferenced)
+        this.declareType(ret, parts.join('/'));
     }
+    return ret;
   }
 
-  private getInterface (name: string): TsType.Interface {
-    return this.state.interfaces.find(_ => _.name === this.toInterfaceName(name))
+  private declareType(type: TsType.TsType, id: string) {
+      type.id = id;
+      this.declarations.set(type.id, type);
+      return type;
   }
 
-  private createInterfaceNx (rule: JSONSchema.Schema, name: string): TsType.Interface {
-    return this.getInterface(name) || (() => {
-      const a = this.toTsInterface(rule, name)
-      this.state.interfaces.push(a)
-      return a
-    })()
-  }
-
-  private toStringLiteral(a: boolean|number|string|Object): string|Object {
+  private toStringLiteral(a: boolean|number|string|Object): TsType.TsType {
     switch (typeof a) {
-      case 'boolean': return 'boolean' // ts doesn't support literal boolean types
-      case 'number': return 'number'   // ts doesn't support literal numeric types
-      case 'string': return `"${a}"`
-      default: return a
+      case 'boolean': return new TsType.Boolean; // ts doesn't support literal boolean types
+      case 'number': return new TsType.Number;   // ts doesn't support literal numeric types
+      case 'string': return new TsType.Literal(JSON.stringify(a));
+      default: return new TsType.Interface(map(
+        <any>a,
+        (v: JSONSchema.Schema, k: string) => {
+          let prop = <TsType.TsProp>this.toTsType(v);
+          prop.name = k;
+          prop.required = true;
+          return prop;
+        }));
       // TODO: support array types?
       // TODO: support enums of enums
       // TODO: support nulls
     }
   }
 
-  private toTsType (rule: JSONSchema.Schema, root: JSONSchema.Schema, name?: string): TsType.TsType {
+  private createTsType (rule: JSONSchema.Schema): TsType.TsType {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
-        return new TsType.AnonymousInterface(
-          this.schemaPropsToInterfaceProps(merge({}, Compiler.DEFAULT_SCHEMA, {
-            required: Object.keys(rule),
-            properties: rule
-          }))
-        )
       case RuleType.NamedSchema:
-        return new TsType.NamedClass(
-          this.createInterfaceNx(rule, name).name
-        )
+        return this.toTsDeclaration(rule);
       case RuleType.Enum:
         return new TsType.Union(uniqBy(
-          rule.enum.map(_ =>
-            this.toTsType(this.toStringLiteral(_), root)
-          )
-          , _ => _.toString())
+          rule.enum!.map(_ => this.toStringLiteral(_))
+          , _ => _.toType(this.settings))
         )
       case RuleType.Any: return new TsType.Any
       case RuleType.Literal: return new TsType.Literal(rule)
-      case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items, root))
+      case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items!))
       case RuleType.Array: return new TsType.Array
       case RuleType.Boolean: return new TsType.Boolean
       case RuleType.Number: return new TsType.Number
@@ -165,56 +160,38 @@ class Compiler {
       case RuleType.String: return new TsType.String
       case RuleType.Void: return new TsType.Void
       case RuleType.AllOf:
-        return new TsType.Intersection(rule.allOf.map(_ => {
-          const path = this.parsePath(_.$ref)
-          return this.toTsType(_, root, last(path))
-        }))
+        return new TsType.Intersection(rule.allOf!.map(_ => this.toTsType(_)))
       case RuleType.AnyOf:
-        return new TsType.Union(rule.anyOf.map(_ => {
-          const path = this.parsePath(_.$ref)
-          return this.toTsType(_, root, last(path))
-        }))
+        return new TsType.Union(rule.anyOf!.map(_ => this.toTsType(_)))
       case RuleType.Reference:
-        const path = this.parsePath(rule.$ref)
-        const int = this.getInterface(last(path))
-        return int
-          ? new TsType.Literal(int.name)
-          : this.toTsType(this.getReference(path, root), root, last(path))
+        return this.resolveType(rule.$ref!);
     }
+    throw "bug";
+  } 
+  private toTsType (rule: JSONSchema.Schema): TsType.TsType {
+    let type = this.createTsType(rule);
+    type.id = type.id || rule.id || rule.title;
+    type.description = type.description || rule.description;
+    return type;
   }
-  private schemaPropsToInterfaceProps (schema: JSONSchema.Schema): TsType.InterfaceProperty[] {
-    return map(
-      schema.properties,
-      (v: JSONSchema.Schema, k: string) => new TsType.InterfaceProperty({
-        isRequired: this.isRequired(k, schema),
-        key: k,
-        value: this.toTsType(v, schema),
-        description: v.description
-      })
-    )
-  }
-  private toTsInterface (schema: JSONSchema.Schema, title?: string): TsType.Interface {
-    schema = merge({}, Compiler.DEFAULT_SCHEMA, schema)
-
-    const props = this.schemaPropsToInterfaceProps(schema)
-
+  private toTsDeclaration (schema: JSONSchema.Schema) : TsType.TsType {
+    schema = merge({}, Compiler.DEFAULT_SCHEMA, schema);
+    let props = map(
+      schema.properties!,
+      (v: JSONSchema.Schema, k: string) => {
+        let prop = <TsType.TsProp>this.toTsType(v);
+        prop.name = k;
+        prop.required = this.isRequired(k, schema);
+        return prop;
+      });
     if (this.supportsAdditionalProperties(schema)) {
-      props.push(new TsType.InterfaceProperty({
-        key: '[k: string]',
-        isRequired: true,
-        value: (
-          schema.additionalProperties === true
-          ? new TsType.Any
-          : this.toTsType(<JSONSchema.Schema>schema.additionalProperties, schema)
-        )
-      }))
+      let prop = <TsType.TsProp>(schema.additionalProperties === true ? new TsType.Any
+          : this.toTsType(<JSONSchema.Schema>schema.additionalProperties));
+      prop.required = true;
+      prop.name = '[k: string]';
+      props.push(prop);
     }
-
-    return new TsType.Interface({
-      name: this.toInterfaceName(title || schema.title),
-      description: schema.description,
-      props
-    })
+    return new TsType.Interface(props);
   }
 }
 

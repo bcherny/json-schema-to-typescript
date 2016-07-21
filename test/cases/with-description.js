@@ -20,9 +20,7 @@ exports.in = `
 }
 `
 
-exports.out = `/*
-    My cool schema
-  */
+exports.out = `/** My cool schema */
 interface ExampleSchema {
   firstName: string;
   lastName: string;

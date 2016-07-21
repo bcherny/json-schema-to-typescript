@@ -1,6 +1,9 @@
 declare module JSONSchema {
 
+
   interface Schema {
+    id?: string;
+    title?: string;
     $ref?: string
     additionalProperties?: boolean|Schema
     definitions?: {
@@ -20,7 +23,6 @@ declare module JSONSchema {
       [a: string]: Schema
     }
     required?: string[]
-    title?: string
     type?: Type
     uniqueItems?: boolean
   }
