@@ -3,7 +3,7 @@ import {readFile} from 'fs'
 import {Readable} from 'stream'
 import {format} from './pretty-printer'
 import * as TsType from './TsTypes'
-
+process.platform
 enum RuleType {"Any","TypedArray","Enum","AllOf","AnyOf","Reference","NamedSchema", "AnonymousSchema",
   "String","Number","Void","Object","Array","Boolean","Literal"}
 
@@ -22,8 +22,7 @@ class Compiler {
     this.id = schema.id || schema.title || "Interface1";
     this.declarations = new Map();
     this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
-    let decl = this.declareType(this.toTsType(this.schema), this.id);
-    this.declarations.set(this.id, decl);
+    let decl = this.declareType(this.toTsType(this.schema), this.id, this.id);
   }
 
   toString(): string {
@@ -51,7 +50,7 @@ class Compiler {
   }
 
   private getRuleType (rule: JSONSchema.Schema): RuleType {
-    if (rule.type === 'array' && rule.items && rule.items.type) {
+    if (rule.type === 'array' && rule.items) {
       return RuleType.TypedArray
     }
     if (rule.enum) {
@@ -97,7 +96,6 @@ class Compiler {
   private resolveType(path: string): TsType.TsType {
     if (path[0] !== '#')
       throw new Error("reference must start with #");
-    console.info("resolving", path, this.id);
     if (path === '#' || path === '#/')
       return TsType.Interface.reference(this.id);
     const parts = path.slice(2).split('/');
@@ -109,15 +107,15 @@ class Compiler {
         cur = cur[parts[i]];
       }
       ret = this.toTsType(cur);
-      if (this.settings.declareReferenced)
-        this.declareType(ret, parts.join('/'));
+      if (this.settings.declareReferenced && (this.settings.declareSimpleType || !ret.isSimpleType()))
+        this.declareType(ret, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts));
     }
     return ret;
   }
 
-  private declareType(type: TsType.TsType, id: string) {
+  private declareType(type: TsType.TsType, path: string, id: string) {
       type.id = id;
-      this.declarations.set(type.id, type);
+      this.declarations.set(path, type);
       return type;
   }
 
@@ -129,10 +127,11 @@ class Compiler {
       default: return new TsType.Interface(map(
         <any>a,
         (v: JSONSchema.Schema, k: string) => {
-          let prop = <TsType.TsProp>this.toTsType(v);
-          prop.name = k;
-          prop.required = true;
-          return prop;
+          return {
+            type: this.toStringLiteral(v),
+            name: k,
+            required: true
+          };
         }));
       // TODO: support array types?
       // TODO: support enums of enums
@@ -175,28 +174,38 @@ class Compiler {
     return type;
   }
   private toTsDeclaration (schema: JSONSchema.Schema) : TsType.TsType {
-    schema = merge({}, Compiler.DEFAULT_SCHEMA, schema);
+    let copy = merge({}, Compiler.DEFAULT_SCHEMA, schema);
+    let set = new Set();
     let props = map(
-      schema.properties!,
+      copy.properties!,
       (v: JSONSchema.Schema, k: string) => {
-        let prop = <TsType.TsProp>this.toTsType(v);
-        prop.name = k;
-        prop.required = this.isRequired(k, schema);
-        return prop;
+        return {
+          type: this.toTsType(v),
+          name: k,
+          required: this.isRequired(k, copy)
+        };
       });
-    if (this.supportsAdditionalProperties(schema)) {
-      let prop = <TsType.TsProp>(schema.additionalProperties === true ? new TsType.Any
-          : this.toTsType(<JSONSchema.Schema>schema.additionalProperties));
-      prop.required = true;
-      prop.name = '[k: string]';
-      props.push(prop);
+    if (props.length === 0 && !("additionalProperties" in schema)) {
+      if ("default" in schema)
+        return new TsType.Void;
+    }
+    if (this.supportsAdditionalProperties(copy)) {
+      let short = copy.additionalProperties === true;
+      if (short && props.length === 0)
+        return new TsType.Any;
+      let type = short ? new TsType.Any : this.toTsType(<JSONSchema.Schema>copy.additionalProperties);
+      props.push({
+          type: type,
+          name: '[k: string]',
+          required: true
+        });
     }
     return new TsType.Interface(props);
   }
 }
 
-export function compile(schema: JSONSchema.Schema): string {
-  return new Compiler(schema).toString()
+export function compile(schema: JSONSchema.Schema, settings?: TsType.TsTypeSettings): string {
+  return new Compiler(schema, settings).toString()
 }
 
 export function compileFromFile(inputFilename: string): Promise<string|Error> {

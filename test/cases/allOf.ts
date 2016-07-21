@@ -1,4 +1,4 @@
-exports.in = `
+export var schema = 
 {
   "title": "AllOf",
   "type": "object",
@@ -31,15 +31,14 @@ exports.in = `
   "required": ["foo", "bar"],
   "additionalProperties": false
 }
-`
 
-exports.out = `interface Foo {
+export var types = `type Foo = {
   a: string;
   b: number;
-}
-interface Bar {
+};
+type Bar = {
   a: string;
-}
-interface AllOf {
+};
+type AllOf = {
   foo: Foo & Bar;
-}`
+};`

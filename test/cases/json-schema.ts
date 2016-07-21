@@ -1,4 +1,4 @@
-exports.in = `{
+export var schema = {
     "id": "http://json-schema.org/draft-04/schema#",
     "$schema": "http://json-schema.org/draft-04/schema#",
     "description": "Core schema meta-schema",
@@ -147,46 +147,90 @@ exports.in = `{
         "exclusiveMinimum": [ "minimum" ]
     },
     "default": {}
-}
-`
-
-exports.out = `type DefinitionsPositiveInteger = number;
-type DefinitionsPositiveIntegerDefault0 = number & {
-  [k: string]: any;
 };
-type DefinitionsSchemaArray = any[];
-type DefinitionsStringArray = string[];
-type DefinitionsSimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
+
+export var configurations = [
+{
+    settings: {
+        declareSimpleType: true
+    },
+    types:`type PositiveInteger = number;
+type PositiveIntegerDefault0 = PositiveInteger;
+type SchemaArray = HttpJsonSchemaOrgDraft04Schema[];
+type StringArray = string[];
+type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
 /** Core schema meta-schema */
 type HttpJsonSchemaOrgDraft04Schema = {
   id?: string;
   $schema?: string;
   title?: string;
   description?: string;
-  default?: {
-    [k: string]: any;
-  };
+  default?: any;
   multipleOf?: number;
   maximum?: number;
   exclusiveMaximum?: boolean;
   minimum?: number;
   exclusiveMinimum?: boolean;
-  maxProperties?: number;
-  minProperties?: number & {
-    [k: string]: any;
-  };
+  maxLength?: PositiveInteger;
+  minLength?: PositiveIntegerDefault0;
   pattern?: string;
   additionalItems?: boolean | HttpJsonSchemaOrgDraft04Schema;
-  items?: HttpJsonSchemaOrgDraft04Schema | any[];
-  maxProperties?: number;
-  minProperties?: number & {
-    [k: string]: any;
+  items?: HttpJsonSchemaOrgDraft04Schema | SchemaArray;
+  maxItems?: PositiveInteger;
+  minItems?: PositiveIntegerDefault0;
+  uniqueItems?: boolean;
+  maxProperties?: PositiveInteger;
+  minProperties?: PositiveIntegerDefault0;
+  required?: StringArray;
+  additionalProperties?: boolean | HttpJsonSchemaOrgDraft04Schema;
+  definitions?: {
+    [k: string]: HttpJsonSchemaOrgDraft04Schema;
   };
+  properties?: {
+    [k: string]: HttpJsonSchemaOrgDraft04Schema;
+  };
+  patternProperties?: {
+    [k: string]: HttpJsonSchemaOrgDraft04Schema;
+  };
+  dependencies?: {
+    [k: string]: HttpJsonSchemaOrgDraft04Schema | StringArray;
+  };
+  enum?: any[];
+  type?: SimpleTypes | SimpleTypes[];
+  allOf?: SchemaArray;
+  anyOf?: SchemaArray;
+  oneOf?: SchemaArray;
+  not?: HttpJsonSchemaOrgDraft04Schema;
+  [k: string]: any;
+};`
+    },
+    {
+    settings: {
+        declareSimpleType: false
+    },
+    types:`type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
+/** Core schema meta-schema */
+type HttpJsonSchemaOrgDraft04Schema = {
+  id?: string;
+  $schema?: string;
+  title?: string;
+  description?: string;
+  default?: any;
+  multipleOf?: number;
+  maximum?: number;
+  exclusiveMaximum?: boolean;
+  minimum?: number;
+  exclusiveMinimum?: boolean;
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string;
+  additionalItems?: boolean | HttpJsonSchemaOrgDraft04Schema;
+  items?: HttpJsonSchemaOrgDraft04Schema | HttpJsonSchemaOrgDraft04Schema[];
+  maxItems?: number;
+  minItems?: number;
   uniqueItems?: boolean;
   maxProperties?: number;
-  minProperties?: number & {
-    [k: string]: any;
-  };
+  minProperties?: number;
   required?: string[];
   additionalProperties?: boolean | HttpJsonSchemaOrgDraft04Schema;
   definitions?: {
@@ -202,10 +246,12 @@ type HttpJsonSchemaOrgDraft04Schema = {
     [k: string]: HttpJsonSchemaOrgDraft04Schema | string[];
   };
   enum?: any[];
-  type?: "array" | "boolean" | "integer" | "null" | "number" | "object" | "string" | any[];
-  oneOf?: any[];
-  oneOf?: any[];
-  oneOf?: any[];
+  type?: SimpleTypes | SimpleTypes[];
+  allOf?: HttpJsonSchemaOrgDraft04Schema[];
+  anyOf?: HttpJsonSchemaOrgDraft04Schema[];
+  oneOf?: HttpJsonSchemaOrgDraft04Schema[];
   not?: HttpJsonSchemaOrgDraft04Schema;
   [k: string]: any;
 };`
+    }
+]

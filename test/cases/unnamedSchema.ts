@@ -1,4 +1,4 @@
-exports.in = `
+export var schema = 
 {
   "type": "object",
   "properties": {
@@ -9,8 +9,7 @@ exports.in = `
   "required": ["foo"],
   "additionalProperties": false
 }
-`
 
-exports.out = `interface Interface1 {
+export var types = `type Interface1 = {
   foo: string;
-}`
+};`

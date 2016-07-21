@@ -1,11 +1,17 @@
-exports.in = `
+export var schema = 
 {
-  "title": "RootAnyOf",
-  "anyOf": [
-    {"$ref": "#/definitions/foo"},
-    {"$ref": "#/definitions/bar"},
-    {"$ref": "#/definitions/baz"}
-  ],
+  "title": "AnyOf",
+  "type": "object",
+  "properties": {
+    "foo": {
+      "type": "object",
+      "anyOf": [
+        {"$ref": "#/definitions/foo"},
+        {"$ref": "#/definitions/bar"},
+        {"$ref": "#/definitions/baz"}
+      ]
+    }
+  },
   "definitions": {
     "foo": {
       "properties": {
@@ -25,20 +31,24 @@ exports.in = `
         "baz": { "$ref": "#/definitions/bar" }
       }
     }
-  }
+  },
+  "required": ["foo"],
+  "additionalProperties": false
 }
-`
 
-exports.out = `interface Foo {
+
+export var types = `type Foo = {
   a: string;
   b?: number;
-}
-interface Bar {
+};
+type Bar = {
   a?: "a" | "b" | "c";
   [k: string]: any;
-}
-interface Baz {
+};
+type Baz = {
   baz?: Bar;
   [k: string]: any;
-}
-type RootAnyOf = Foo | Bar | Baz;`
+};
+type AnyOf = {
+  foo: Foo | Bar | Baz;
+};`

@@ -1,7 +1,6 @@
-exports.in = `
+export var schema = 
 {
   "title": "Example Schema",
-  "description": "My cool schema",
   "type": "object",
   "properties": {
     "firstName": {
@@ -16,14 +15,12 @@ exports.in = `
       "minimum": 0
     }
   },
-  "required": ["firstName", "lastName"]
+  "required": ["firstName", "lastName"],
+  "additionalProperties": false
 }
-`
 
-exports.out = `/** My cool schema */
-interface ExampleSchema {
+export var types = `type ExampleSchema = {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
-  [k: string]: any;
-}`
+};`
