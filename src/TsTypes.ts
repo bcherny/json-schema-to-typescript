@@ -1,113 +1,164 @@
+import {camelCase, upperFirst} from 'lodash'
+
+export type TsTypeSettings = {
+  declareSimpleType?: boolean;
+  declareReferenced?: boolean;
+  useFullReferencePathAsName?: boolean;
+  // TODO declareProperties?: boolean;
+  useInterfaceDeclaration?: boolean;
+  endTypeWithSemicolon?: boolean;
+  endPropertyWithSemicolon?: boolean;
+  declarationDescription?: boolean;
+  propertyDescription?: boolean;
+};
+
+export var DEFAULT_SETTINGS: TsTypeSettings = {
+  declareSimpleType: false,
+  declareReferenced: true,
+  useFullReferencePathAsName: false,
+  // declareProperties: false,
+  useInterfaceDeclaration: false,
+  endTypeWithSemicolon: true,
+  endPropertyWithSemicolon: true,
+  declarationDescription: true,
+  propertyDescription: true,
+};
+
 export abstract class TsType {
-  abstract toString(): string
+  id?: string;
+  description?: string;
+
+  protected safeId() {
+    return this.id && upperFirst(camelCase(this.id)); 
+  }
+  protected toBlockComment(settings: TsTypeSettings) {
+    return this.description && settings.declarationDescription ? `/** ${this.description} */\n` : '';
+  }
+  protected _toDeclaration(decl: string, settings: TsTypeSettings): string
+  {
+    return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ";" : "");
+  }
+  protected abstract _type(settings: TsTypeSettings): string;
+  isSimpleType() { return true; }
+  toDeclaration(settings: TsTypeSettings): string
+  {
+    return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings)}`, settings);
+  }
+  toSafeType(settings: TsTypeSettings): string
+  {
+    return this.toType(settings);
+  }
+  toType(settings: TsTypeSettings): string
+  {
+    return this.safeId() || this._type(settings);
+  }
+  toString() : string {
+    return this._type(DEFAULT_SETTINGS);
+  }
 }
+export type TsProp = {
+  name: string;
+  required: boolean;
+  type: TsType;
+}
+
 export class Any extends TsType {
-  toString() {
+  _type() {
     return 'any'
   }
 }
-export class Array extends TsType {
-  constructor(private type?: TsType) { super() }
-  toString() {
-    return `${this.type ? this.type.toString() : (new Any()).toString()}[]`
+export class String extends TsType {
+  _type() {
+    return 'string'
   }
 }
 export class Boolean extends TsType {
-  toString() {
+  _type() {
     return 'boolean'
   }
 }
-export class NamedClass extends TsType {
-  constructor(private name: string) { super() }
-  toString() {
-    return this.name
-  }
-}
-export class Intersection extends TsType {
-  constructor(private data: TsType[]) { super() }
-  toString() {
-    return this.data.join('&')
-  }
-}
-export class Literal extends TsType {
-  constructor(private value: any) { super() }
-  toString() {
-    return this.value
-  }
-}
 export class Number extends TsType {
-  toString() {
+  _type() {
     return 'number'
   }
 }
 export class Object extends TsType {
-  toString() {
+  _type() {
     return 'Object'
   }
 }
-export class String extends TsType {
-  toString() {
-    return 'string'
-  }
-}
-export class Union extends TsType {
-  constructor(private data: TsType[]) { super() }
-  toString() {
-    return this.data.join('|')
-  }
-}
 export class Void extends TsType {
-  toString() {
+  _type() {
     return 'void'
   }
 }
-
-export class InterfaceProperty extends TsType {
-  constructor(private data: {
-    isRequired: boolean,
-    key: string,
-    value: TsType,
-    description?: string
-  }) { super() }
-  toString(): string {
-    return [
-      this.data.key,
-      `${this.data.isRequired ? '' : '?'}: `,
-      `${this.data.value.toString()};`,
-      this.data.description ? ` // ${this.data.description}` : ''
-    ].join('')
+export class Literal extends TsType {
+  constructor(private value: any) { super() }
+  _type() {
+    return this.value
   }
 }
 
-export class AnonymousInterface extends TsType {
-  constructor(private props: InterfaceProperty[]) {
-    super()
+export class Array extends TsType {
+  constructor(private type?: TsType) { super() }
+  _type(settings: TsTypeSettings) {
+    return `${(this.type || new Any()).toSafeType(settings)}[]`
   }
-  toString() {
-    return `{
-      ${this.props.join('\n')}
-    }`
+}
+export class Intersection extends TsType {
+  constructor(protected data: TsType[]) { 
+    super() 
+  }
+  isSimpleType() { return this.data.filter(_ => !(_ instanceof Void)).length <= 1; }
+  _type(settings: TsTypeSettings) {
+    return this.data
+      .filter(_ => !(_ instanceof Void))
+      .map(_ => _.toSafeType(settings))
+      .join('&')
+  }
+  toSafeType(settings: TsTypeSettings) {
+    return `${this.toType(settings)}`;
+  }
+}
+export class Union extends Intersection {
+  isSimpleType() { return this.data.length <= 1; }
+  _type(settings: TsTypeSettings) {
+    return this.data
+      .map(_ => _.toSafeType(settings))
+      .join('|')
   }
 }
 
 export class Interface extends TsType {
-  constructor(private data: {name: string, description?: string, props: InterfaceProperty[]}) {
+  constructor(private props: TsProp[]) {
     super()
   }
-  get name (){ return this.data.name }
-  private toBlockComment(a: string) {
-    return `/*
-    ${a}
-  */
-    `
+  static reference(id: string) {
+    let ret = new Interface([]);
+    ret.id = id;
+    return ret;
   }
-  toString(): string {
-    return `${
-        this.data.description
-        ? this.toBlockComment(this.data.description)
-        : ''
-      }interface ${this.data.name} {
-        ${this.data.props.join('\n')}
-      }`
+  protected _type(settings: TsTypeSettings, declaration: boolean = false) {
+    let id = this.safeId();
+    return declaration || !id ? `{
+        ${this.props.map(_ => {
+          let decl = _.name;
+          if (!_.required)
+            decl += '?';
+          decl += ": " + _.type.toType(settings);
+          if (settings.endPropertyWithSemicolon)
+            decl += ';';
+          if (settings.propertyDescription && _.type.description)
+            decl += ' // ' + _.type.description;
+          return decl;
+        }).join('\n')}
+      }` : id;
+  }
+  isSimpleType() { return false; }
+  toDeclaration(settings: TsTypeSettings): string {
+    if (settings.useInterfaceDeclaration)
+      return `${this.toBlockComment(settings)}interface ${this.safeId()} ${this._type(settings, true)}`
+    else
+      return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings);
   }
 }

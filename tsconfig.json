@@ -4,13 +4,21 @@
     "moduleResolution": "node",
     "noImplicitAny": true,
     "preserveConstEnums": true,
-    "outDir": "dist",
+    "outDir": "out",
     "sourceMap": true,
-    "target": "es6"
+    "target": "es6",
+    "strictNullChecks": true,
+    "types": [
+      "node",
+      "mocha"
+    ]
   },
   "files": [
-    "./typings/main.d.ts",
-    "./src/JSONSchema.d.ts",
-    "./src/index.ts"
+    "src/JSONSchema.d.ts",
+    "src/index.ts",
+    "test/test.ts"
+  ],
+  "include": [
+    "test/cases/*.ts"
   ]
 }

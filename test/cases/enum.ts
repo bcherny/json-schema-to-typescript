@@ -1,4 +1,4 @@
-exports.in = `
+export var schema = 
 {
   "title": "Enum",
   "type": "object",
@@ -20,12 +20,11 @@ exports.in = `
   "required": ["foo", "bar", "baz"],
   "additionalProperties": false
 }
-`
 
-exports.out = `interface Enum {
+export var types = `type Enum = {
   foo: "a" | "b" | "c";
   bar: number;
   baz: {
     a: number;
   };
-}`
+};`

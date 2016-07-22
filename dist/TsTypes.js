@@ -1,138 +1,155 @@
 "use strict";
+const lodash_1 = require('lodash');
+exports.DEFAULT_SETTINGS = {
+    declareSimpleType: false,
+    declareReferenced: true,
+    useFullReferencePathAsName: false,
+    // declareProperties: false,
+    useInterfaceDeclaration: false,
+    endTypeWithSemicolon: true,
+    endPropertyWithSemicolon: true,
+    declarationDescription: true,
+    propertyDescription: true,
+};
 class TsType {
+    safeId() {
+        return this.id && lodash_1.upperFirst(lodash_1.camelCase(this.id));
+    }
+    toBlockComment(settings) {
+        return this.description && settings.declarationDescription ? `/** ${this.description} */\n` : '';
+    }
+    _toDeclaration(decl, settings) {
+        return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ";" : "");
+    }
+    isSimpleType() { return true; }
+    toDeclaration(settings) {
+        return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings)}`, settings);
+    }
+    toSafeType(settings) {
+        return this.toType(settings);
+    }
+    toType(settings) {
+        return this.safeId() || this._type(settings);
+    }
+    toString() {
+        return this._type(exports.DEFAULT_SETTINGS);
+    }
 }
 exports.TsType = TsType;
 class Any extends TsType {
-    toString() {
+    _type() {
         return 'any';
     }
 }
 exports.Any = Any;
-class Array extends TsType {
-    constructor(type) {
-        super();
-        this.type = type;
-    }
-    toString() {
-        return `${this.type ? this.type.toString() : (new Any()).toString()}[]`;
+class String extends TsType {
+    _type() {
+        return 'string';
     }
 }
-exports.Array = Array;
+exports.String = String;
 class Boolean extends TsType {
-    toString() {
+    _type() {
         return 'boolean';
     }
 }
 exports.Boolean = Boolean;
-class NamedClass extends TsType {
-    constructor(name) {
-        super();
-        this.name = name;
-    }
-    toString() {
-        return this.name;
-    }
-}
-exports.NamedClass = NamedClass;
-class Intersection extends TsType {
-    constructor(data) {
-        super();
-        this.data = data;
-    }
-    toString() {
-        return this.data.join('&');
-    }
-}
-exports.Intersection = Intersection;
-class Literal extends TsType {
-    constructor(value) {
-        super();
-        this.value = value;
-    }
-    toString() {
-        return this.value;
-    }
-}
-exports.Literal = Literal;
 class Number extends TsType {
-    toString() {
+    _type() {
         return 'number';
     }
 }
 exports.Number = Number;
 class Object extends TsType {
-    toString() {
+    _type() {
         return 'Object';
     }
 }
 exports.Object = Object;
-class String extends TsType {
-    toString() {
-        return 'string';
-    }
-}
-exports.String = String;
-class Union extends TsType {
-    constructor(data) {
-        super();
-        this.data = data;
-    }
-    toString() {
-        return this.data.join('|');
-    }
-}
-exports.Union = Union;
 class Void extends TsType {
-    toString() {
+    _type() {
         return 'void';
     }
 }
 exports.Void = Void;
-class InterfaceProperty extends TsType {
+class Literal extends TsType {
+    constructor(value) {
+        super();
+        this.value = value;
+    }
+    _type() {
+        return this.value;
+    }
+}
+exports.Literal = Literal;
+class Array extends TsType {
+    constructor(type) {
+        super();
+        this.type = type;
+    }
+    _type(settings) {
+        return `${(this.type || new Any()).toSafeType(settings)}[]`;
+    }
+}
+exports.Array = Array;
+class Intersection extends TsType {
     constructor(data) {
         super();
         this.data = data;
     }
-    toString() {
-        return [
-            this.data.key,
-            `${this.data.isRequired ? '' : '?'}: `,
-            `${this.data.value.toString()};`,
-            this.data.description ? ` // ${this.data.description}` : ''
-        ].join('');
+    isSimpleType() { return this.data.filter(_ => !(_ instanceof Void)).length <= 1; }
+    _type(settings) {
+        return this.data
+            .filter(_ => !(_ instanceof Void))
+            .map(_ => _.toSafeType(settings))
+            .join('&');
+    }
+    toSafeType(settings) {
+        return `${this.toType(settings)}`;
     }
 }
-exports.InterfaceProperty = InterfaceProperty;
-class AnonymousInterface extends TsType {
+exports.Intersection = Intersection;
+class Union extends Intersection {
+    isSimpleType() { return this.data.length <= 1; }
+    _type(settings) {
+        return this.data
+            .map(_ => _.toSafeType(settings))
+            .join('|');
+    }
+}
+exports.Union = Union;
+class Interface extends TsType {
     constructor(props) {
         super();
         this.props = props;
     }
-    toString() {
-        return `{
-      ${this.props.join('\n')}
-    }`;
+    static reference(id) {
+        let ret = new Interface([]);
+        ret.id = id;
+        return ret;
     }
-}
-exports.AnonymousInterface = AnonymousInterface;
-class Interface extends TsType {
-    constructor(data) {
-        super();
-        this.data = data;
+    _type(settings, declaration = false) {
+        let id = this.safeId();
+        return declaration || !id ? `{
+        ${this.props.map(_ => {
+            let decl = _.name;
+            if (!_.required)
+                decl += '?';
+            decl += ": " + _.type.toType(settings);
+            if (settings.endPropertyWithSemicolon)
+                decl += ';';
+            if (settings.propertyDescription && _.type.description)
+                decl += ' // ' + _.type.description;
+            return decl;
+        }).join('\n')}
+      }` : id;
     }
-    get name() { return this.data.name; }
-    toBlockComment(a) {
-        return `/*
-    ${a}
-  */
-    `;
-    }
-    toString() {
-        return `${this.data.description
-            ? this.toBlockComment(this.data.description)
-            : ''}interface ${this.data.name} {
-        ${this.data.props.join('\n')}
-      }`;
+    isSimpleType() { return false; }
+    toDeclaration(settings) {
+        if (settings.useInterfaceDeclaration)
+            return `${this.toBlockComment(settings)}interface ${this.safeId()} ${this._type(settings, true)}`;
+        else
+            return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings);
     }
 }
 exports.Interface = Interface;
