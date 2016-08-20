@@ -1,5 +1,7 @@
 import {camelCase, upperFirst} from 'lodash'
 
+export namespace TsType {
+
 export type TsTypeSettings = {
   declareSimpleType?: boolean;
   declareReferenced?: boolean;
@@ -161,4 +163,6 @@ export class Interface extends TsType {
     else
       return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings);
   }
+}
+
 }

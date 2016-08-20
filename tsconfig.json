@@ -5,6 +5,7 @@
     "noImplicitAny": true,
     "preserveConstEnums": true,
     "outDir": "out",
+    "declaration": true,
     "sourceMap": true,
     "target": "es5",
     "lib": [
@@ -17,7 +18,6 @@
     ]
   },
   "files": [
-    "src/JSONSchema.d.ts",
     "src/index.ts",
     "test/test.ts"
   ],

@@ -1,9 +1,8 @@
-declare module JSONSchema {
+export namespace JSONSchema {
 
-
-  type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
+  export type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
   /** Core schema meta-schema */
-  type HttpJsonSchemaOrgDraft04Schema = {
+  export type HttpJsonSchemaOrgDraft04Schema = {
     id?: string;
     $schema?: string;
     title?: string;
@@ -47,5 +46,5 @@ declare module JSONSchema {
     [k: string]: any;
   };
 
-  type Schema = HttpJsonSchemaOrgDraft04Schema & { $ref?: string };
+  export type Schema = HttpJsonSchemaOrgDraft04Schema & { $ref?: string };
 }
