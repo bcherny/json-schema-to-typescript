@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "tsc": "tsc",
-    "build": "gulp tsc",
+    "build": "gulp build",
     "test": "gulp test",
     "debug": "gulp debug",
     "watch": "watch \"npm run test\" ./src/ ./test/"

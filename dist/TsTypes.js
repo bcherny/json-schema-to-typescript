@@ -1,5 +1,10 @@
 "use strict";
-const lodash_1 = require('lodash');
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var lodash_1 = require('lodash');
 exports.DEFAULT_SETTINGS = {
     declareSimpleType: false,
     declareReferenced: true,
@@ -11,128 +16,173 @@ exports.DEFAULT_SETTINGS = {
     declarationDescription: true,
     propertyDescription: true,
 };
-class TsType {
-    safeId() {
+var TsType = (function () {
+    function TsType() {
+    }
+    TsType.prototype.safeId = function () {
         return this.id && lodash_1.upperFirst(lodash_1.camelCase(this.id));
-    }
-    toBlockComment(settings) {
-        return this.description && settings.declarationDescription ? `/** ${this.description} */\n` : '';
-    }
-    _toDeclaration(decl, settings) {
+    };
+    TsType.prototype.toBlockComment = function (settings) {
+        return this.description && settings.declarationDescription ? "/** " + this.description + " */\n" : '';
+    };
+    TsType.prototype._toDeclaration = function (decl, settings) {
         return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ";" : "");
-    }
-    isSimpleType() { return true; }
-    toDeclaration(settings) {
-        return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings)}`, settings);
-    }
-    toSafeType(settings) {
+    };
+    TsType.prototype.isSimpleType = function () { return true; };
+    TsType.prototype.toDeclaration = function (settings) {
+        return this._toDeclaration("type " + this.safeId() + " = " + this._type(settings), settings);
+    };
+    TsType.prototype.toSafeType = function (settings) {
         return this.toType(settings);
-    }
-    toType(settings) {
+    };
+    TsType.prototype.toType = function (settings) {
         return this.safeId() || this._type(settings);
-    }
-    toString() {
+    };
+    TsType.prototype.toString = function () {
         return this._type(exports.DEFAULT_SETTINGS);
-    }
-}
+    };
+    return TsType;
+}());
 exports.TsType = TsType;
-class Any extends TsType {
-    _type() {
+var Any = (function (_super) {
+    __extends(Any, _super);
+    function Any() {
+        _super.apply(this, arguments);
+    }
+    Any.prototype._type = function () {
         return 'any';
-    }
-}
+    };
+    return Any;
+}(TsType));
 exports.Any = Any;
-class String extends TsType {
-    _type() {
+var String = (function (_super) {
+    __extends(String, _super);
+    function String() {
+        _super.apply(this, arguments);
+    }
+    String.prototype._type = function () {
         return 'string';
-    }
-}
+    };
+    return String;
+}(TsType));
 exports.String = String;
-class Boolean extends TsType {
-    _type() {
+var Boolean = (function (_super) {
+    __extends(Boolean, _super);
+    function Boolean() {
+        _super.apply(this, arguments);
+    }
+    Boolean.prototype._type = function () {
         return 'boolean';
-    }
-}
+    };
+    return Boolean;
+}(TsType));
 exports.Boolean = Boolean;
-class Number extends TsType {
-    _type() {
+var Number = (function (_super) {
+    __extends(Number, _super);
+    function Number() {
+        _super.apply(this, arguments);
+    }
+    Number.prototype._type = function () {
         return 'number';
-    }
-}
+    };
+    return Number;
+}(TsType));
 exports.Number = Number;
-class Object extends TsType {
-    _type() {
+var Object = (function (_super) {
+    __extends(Object, _super);
+    function Object() {
+        _super.apply(this, arguments);
+    }
+    Object.prototype._type = function () {
         return 'Object';
-    }
-}
+    };
+    return Object;
+}(TsType));
 exports.Object = Object;
-class Void extends TsType {
-    _type() {
-        return 'void';
+var Void = (function (_super) {
+    __extends(Void, _super);
+    function Void() {
+        _super.apply(this, arguments);
     }
-}
+    Void.prototype._type = function () {
+        return 'void';
+    };
+    return Void;
+}(TsType));
 exports.Void = Void;
-class Literal extends TsType {
-    constructor(value) {
-        super();
+var Literal = (function (_super) {
+    __extends(Literal, _super);
+    function Literal(value) {
+        _super.call(this);
         this.value = value;
     }
-    _type() {
+    Literal.prototype._type = function () {
         return this.value;
-    }
-}
+    };
+    return Literal;
+}(TsType));
 exports.Literal = Literal;
-class Array extends TsType {
-    constructor(type) {
-        super();
+var Array = (function (_super) {
+    __extends(Array, _super);
+    function Array(type) {
+        _super.call(this);
         this.type = type;
     }
-    _type(settings) {
-        return `${(this.type || new Any()).toSafeType(settings)}[]`;
-    }
-}
+    Array.prototype._type = function (settings) {
+        return (this.type || new Any()).toSafeType(settings) + "[]";
+    };
+    return Array;
+}(TsType));
 exports.Array = Array;
-class Intersection extends TsType {
-    constructor(data) {
-        super();
+var Intersection = (function (_super) {
+    __extends(Intersection, _super);
+    function Intersection(data) {
+        _super.call(this);
         this.data = data;
     }
-    isSimpleType() { return this.data.filter(_ => !(_ instanceof Void)).length <= 1; }
-    _type(settings) {
+    Intersection.prototype.isSimpleType = function () { return this.data.filter(function (_) { return !(_ instanceof Void); }).length <= 1; };
+    Intersection.prototype._type = function (settings) {
         return this.data
-            .filter(_ => !(_ instanceof Void))
-            .map(_ => _.toSafeType(settings))
+            .filter(function (_) { return !(_ instanceof Void); })
+            .map(function (_) { return _.toSafeType(settings); })
             .join('&');
-    }
-    toSafeType(settings) {
-        return `${this.toType(settings)}`;
-    }
-}
+    };
+    Intersection.prototype.toSafeType = function (settings) {
+        return "" + this.toType(settings);
+    };
+    return Intersection;
+}(TsType));
 exports.Intersection = Intersection;
-class Union extends Intersection {
-    isSimpleType() { return this.data.length <= 1; }
-    _type(settings) {
-        return this.data
-            .map(_ => _.toSafeType(settings))
-            .join('|');
+var Union = (function (_super) {
+    __extends(Union, _super);
+    function Union() {
+        _super.apply(this, arguments);
     }
-}
+    Union.prototype.isSimpleType = function () { return this.data.length <= 1; };
+    Union.prototype._type = function (settings) {
+        return this.data
+            .map(function (_) { return _.toSafeType(settings); })
+            .join('|');
+    };
+    return Union;
+}(Intersection));
 exports.Union = Union;
-class Interface extends TsType {
-    constructor(props) {
-        super();
+var Interface = (function (_super) {
+    __extends(Interface, _super);
+    function Interface(props) {
+        _super.call(this);
         this.props = props;
     }
-    static reference(id) {
-        let ret = new Interface([]);
+    Interface.reference = function (id) {
+        var ret = new Interface([]);
         ret.id = id;
         return ret;
-    }
-    _type(settings, declaration = false) {
-        let id = this.safeId();
-        return declaration || !id ? `{
-        ${this.props.map(_ => {
-            let decl = _.name;
+    };
+    Interface.prototype._type = function (settings, declaration) {
+        if (declaration === void 0) { declaration = false; }
+        var id = this.safeId();
+        return declaration || !id ? "{\n        " + this.props.map(function (_) {
+            var decl = _.name;
             if (!_.required)
                 decl += '?';
             decl += ": " + _.type.toType(settings);
@@ -141,16 +191,16 @@ class Interface extends TsType {
             if (settings.propertyDescription && _.type.description)
                 decl += ' // ' + _.type.description;
             return decl;
-        }).join('\n')}
-      }` : id;
-    }
-    isSimpleType() { return false; }
-    toDeclaration(settings) {
+        }).join('\n') + "\n      }" : id;
+    };
+    Interface.prototype.isSimpleType = function () { return false; };
+    Interface.prototype.toDeclaration = function (settings) {
         if (settings.useInterfaceDeclaration)
-            return `${this.toBlockComment(settings)}interface ${this.safeId()} ${this._type(settings, true)}`;
+            return this.toBlockComment(settings) + "interface " + this.safeId() + " " + this._type(settings, true);
         else
-            return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings);
-    }
-}
+            return this._toDeclaration("type " + this.safeId() + " = " + this._type(settings, true), settings);
+    };
+    return Interface;
+}(TsType));
 exports.Interface = Interface;
 //# sourceMappingURL=TsTypes.js.map
