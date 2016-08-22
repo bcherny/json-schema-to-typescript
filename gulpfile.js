@@ -31,7 +31,7 @@ gulp.task('bundle', ['tsc'], function(cb) {
         outputAsModuleFolder: true,
         out: path.join(__dirname, "dist/index.d.ts")
     });
-    exec('browserify', 'out/src/index.js --no-bundle-external -o dist/index.js', cb);
+    exec('browserify', 'out/src/index.js --no-bundle-external -s json-schema-to-typescript -o dist/index.js', cb);
 });
 gulp.task('validate-bundle-typings', ['bundle'], function(cb) {    
     exec('tsc', 'dist/index.d.ts --lib es6 --noEmit', cb);
