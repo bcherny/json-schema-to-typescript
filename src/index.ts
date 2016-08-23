@@ -1,12 +1,12 @@
 import {camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst} from 'lodash'
+import {JSONSchema} from './JSONSchema'
 import {readFile} from 'fs'
 import {Readable} from 'stream'
 import {format} from './pretty-printer'
-import * as TsType from './TsTypes'
-process.platform
+import {TsType} from './TsTypes'
+
 enum RuleType {"Any","TypedArray","Enum","AllOf","AnyOf","Reference","NamedSchema", "AnonymousSchema",
   "String","Number","Void","Object","Array","Boolean","Literal"}
-
 
 class Compiler {
   static DEFAULT_SETTINGS = TsType.DEFAULT_SETTINGS;

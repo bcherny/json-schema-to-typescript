@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "compile json schema to typescript typings",
   "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "tsc": "tsc",
-    "build": "gulp tsc",
+    "build": "gulp build",
     "test": "gulp test",
     "debug": "gulp debug",
     "watch": "watch \"npm run test\" ./src/ ./test/"
@@ -40,7 +41,9 @@
     "@types/lodash": "0.0.28",
     "@types/mocha": "^2.2.28",
     "@types/node": "^4.0.30",
+    "browserify": "^13.1.0",
     "chai": "^3.5.0",
+    "dts-bundle": "^0.5.0",
     "gulp": "^3.9.1",
     "mocha": "^2.5.3",
     "watch": "^0.17.1"
