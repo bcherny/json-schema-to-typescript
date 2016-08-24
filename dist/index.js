@@ -14,6 +14,8 @@ var TsType;
         useFullReferencePathAsName: false,
         // declareProperties: false,
         useInterfaceDeclaration: false,
+        useTypescriptEnums: false,
+        exportInterfaces: false,
         endTypeWithSemicolon: true,
         endPropertyWithSemicolon: true,
         declarationDescription: true,
@@ -170,6 +172,38 @@ var TsType;
         return Union;
     }(Intersection));
     TsType_1.Union = Union;
+    var Enum = (function (_super) {
+        __extends(Enum, _super);
+        function Enum(data, literals) {
+            _super.call(this, data);
+            this.data = data;
+            this.literals = literals;
+        }
+        Enum.prototype.isSimpleType = function () { return false; };
+        Enum.prototype._type = function (settings, declaration) {
+            if (declaration === void 0) { declaration = false; }
+            var id = this.safeId();
+            var literals = this.literals;
+            // TODO if literals exist, get literal[i] below and write it first
+            return declaration || !id ? "{\n        " + this.data.map(function (_, i) {
+                var literal;
+                var decl = '';
+                if (literals) {
+                    literal = literals[i];
+                    decl += literal;
+                    decl += '=';
+                }
+                decl += _.toType(settings);
+                decl += ',';
+                return decl;
+            }).join('\n') + "\n      }" : id;
+        };
+        Enum.prototype.toDeclaration = function (settings) {
+            return this.toBlockComment(settings) + "enum " + this.safeId() + " " + this._type(settings, true);
+        };
+        return Enum;
+    }(Intersection));
+    TsType_1.Enum = Enum;
     var Interface = (function (_super) {
         __extends(Interface, _super);
         function Interface(props) {
@@ -199,7 +233,7 @@ var TsType;
         Interface.prototype.isSimpleType = function () { return false; };
         Interface.prototype.toDeclaration = function (settings) {
             if (settings.useInterfaceDeclaration)
-                return this.toBlockComment(settings) + "interface " + this.safeId() + " " + this._type(settings, true);
+                return "" + this.toBlockComment(settings) + (settings.exportInterfaces ? "export " : "") + "interface " + this.safeId() + " " + this._type(settings, true);
             else
                 return this._toDeclaration("type " + this.safeId() + " = " + this._type(settings, true), settings);
         };
@@ -212,6 +246,7 @@ var TsType;
 "use strict";
 var lodash_1 = require('lodash');
 var fs_1 = require('fs');
+var path_1 = require('path');
 var pretty_printer_1 = require('./pretty-printer');
 var TsTypes_1 = require('./TsTypes');
 var RuleType;
@@ -233,10 +268,12 @@ var RuleType;
     RuleType[RuleType["Literal"] = 14] = "Literal";
 })(RuleType || (RuleType = {}));
 var Compiler = (function () {
-    function Compiler(schema, settings) {
+    function Compiler(schema, filePath, settings) {
         this.schema = schema;
-        this.id = schema.id || schema.title || "Interface1";
+        var path = path_1.resolve(filePath);
+        this.filePath = path_1.parse(path);
         this.declarations = new Map();
+        this.id = schema.id || schema.title || this.filePath.name || "Interface1";
         this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
         var decl = this.declareType(this.toTsType(this.schema), this.id, this.id);
     }
@@ -298,12 +335,24 @@ var Compiler = (function () {
         return /^[\d\.]+$/.test(a);
     };
     // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
-    Compiler.prototype.resolveType = function (path) {
-        if (path[0] !== '#')
-            throw new Error("reference must start with #");
-        if (path === '#' || path === '#/')
+    Compiler.prototype.resolveType = function (refPath) {
+        if (refPath === '#' || refPath === '#/') {
             return TsTypes_1.TsType.Interface.reference(this.id);
-        var parts = path.slice(2).split('/');
+        }
+        if (refPath[0] !== '#') {
+            var fullPath = path_1.resolve(path_1.join(this.filePath.dir, refPath));
+            var file = fs_1.readFileSync(fullPath);
+            var targetType = this.toTsType(JSON.parse(file.toString()));
+            if (targetType.id) {
+                return new TsTypes_1.TsType.Literal(targetType.id);
+            }
+            else {
+                var parsedNewFile = path_1.parse(fullPath);
+                return new TsTypes_1.TsType.Literal(parsedNewFile.name);
+            }
+        }
+        ;
+        var parts = refPath.slice(2).split('/');
         var ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined;
         if (!ret) {
             var cur = this.schema;
@@ -317,9 +366,9 @@ var Compiler = (function () {
         }
         return ret;
     };
-    Compiler.prototype.declareType = function (type, path, id) {
+    Compiler.prototype.declareType = function (type, refPath, id) {
         type.id = id;
-        this.declarations.set(path, type);
+        this.declarations.set(refPath, type);
         return type;
     };
     Compiler.prototype.toStringLiteral = function (a) {
@@ -344,7 +393,18 @@ var Compiler = (function () {
             case RuleType.NamedSchema:
                 return this.toTsDeclaration(rule);
             case RuleType.Enum:
-                return new TsTypes_1.TsType.Union(lodash_1.uniqBy(rule.enum.map(function (_) { return _this.toStringLiteral(_); }), function (_) { return _.toType(_this.settings); }));
+                if (this.settings.useTypescriptEnums) {
+                    var enumValues = lodash_1.uniqBy(rule.enum.map(function (_) { return new TsTypes_1.TsType.Literal(_); }), function (_) { return _.toType(_this.settings); });
+                    if (rule.tsEnumNames) {
+                        return new TsTypes_1.TsType.Enum(enumValues, rule.tsEnumNames.map(function (_) { return new TsTypes_1.TsType.Literal(_); }));
+                    }
+                    else {
+                        return new TsTypes_1.TsType.Enum(enumValues);
+                    }
+                }
+                else {
+                    return new TsTypes_1.TsType.Union(lodash_1.uniqBy(rule.enum.map(function (_) { return _this.toStringLiteral(_); }), function (_) { return _.toType(_this.settings); }));
+                }
             case RuleType.Any: return new TsTypes_1.TsType.Any;
             case RuleType.Literal: return new TsTypes_1.TsType.Literal(rule);
             case RuleType.TypedArray: return new TsTypes_1.TsType.Array(this.toTsType(rule.items));
@@ -406,8 +466,8 @@ var Compiler = (function () {
     };
     return Compiler;
 }());
-function compile(schema, settings) {
-    return new Compiler(schema, settings).toString();
+function compile(schema, path, settings) {
+    return new Compiler(schema, path, settings).toString();
 }
 exports.compile = compile;
 function compileFromFile(inputFilename) {
@@ -417,14 +477,14 @@ function compileFromFile(inputFilename) {
                 reject(err);
             }
             else {
-                resolve(compile(JSON.parse(data.toString())));
+                resolve(compile(JSON.parse(data.toString()), inputFilename));
             }
         });
     });
 }
 exports.compileFromFile = compileFromFile;
 
-},{"./TsTypes":1,"./pretty-printer":3,"fs":undefined,"lodash":undefined}],3:[function(require,module,exports){
+},{"./TsTypes":1,"./pretty-printer":3,"fs":undefined,"lodash":undefined,"path":undefined}],3:[function(require,module,exports){
 // from https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#pretty-printer-using-the-ls-formatter
 "use strict";
 var ts = require("typescript");

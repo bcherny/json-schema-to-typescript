@@ -1,6 +1,7 @@
 import {camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst} from 'lodash'
 import {JSONSchema} from './JSONSchema'
-import {readFile} from 'fs'
+import {readFile, readFileSync} from 'fs'
+import {dirname, join, parse, resolve, ParsedPath} from 'path'
 import {Readable} from 'stream'
 import {format} from './pretty-printer'
 import {TsType} from './TsTypes'
@@ -18,9 +19,11 @@ class Compiler {
     type: 'object'
   }
 
-  constructor(private schema: JSONSchema.Schema, settings?: TsType.TsTypeSettings) {
-    this.id = schema.id || schema.title || "Interface1";
+  constructor(private schema: JSONSchema.Schema, filePath: string, settings?: TsType.TsTypeSettings) {
+    let path = resolve(filePath);
+    this.filePath = parse(path);
     this.declarations = new Map();
+    this.id = schema.id || schema.title || this.filePath.name || "Interface1";
     this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
     let decl = this.declareType(this.toTsType(this.schema), this.id, this.id);
   }
@@ -36,6 +39,7 @@ class Compiler {
   private settings: TsType.TsTypeSettings;
   private id: string;
   private declarations: Map<string, TsType.TsType>;
+  private filePath: ParsedPath;
 
   private isRequired(propertyName: string, schema: JSONSchema.Schema): boolean {
     return schema.required ? schema.required.indexOf(propertyName) > -1 : false;
@@ -93,12 +97,24 @@ class Compiler {
   }
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
-  private resolveType(path: string): TsType.TsType {
-    if (path[0] !== '#')
-      throw new Error("reference must start with #");
-    if (path === '#' || path === '#/')
+  private resolveType(refPath: string): TsType.TsType {
+    if (refPath === '#' || refPath === '#/'){
       return TsType.Interface.reference(this.id);
-    const parts = path.slice(2).split('/');
+    } 
+
+    if (refPath[0] !== '#'){
+      let fullPath = resolve(join(this.filePath.dir, refPath));
+      let file = readFileSync(fullPath);
+      let targetType = this.toTsType(JSON.parse(file.toString()));
+      if(targetType.id){
+        return new TsType.Literal(targetType.id);      
+      } else {
+        let parsedNewFile = parse(fullPath);
+        return new TsType.Literal(parsedNewFile.name);
+      }
+    };
+
+    const parts = refPath.slice(2).split('/');
     let ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined;
     if (!ret) {
       let cur: any = this.schema;
@@ -113,9 +129,9 @@ class Compiler {
     return ret;
   }
 
-  private declareType(type: TsType.TsType, path: string, id: string) {
+  private declareType(type: TsType.TsType, refPath: string, id: string) {
       type.id = id;
-      this.declarations.set(path, type);
+      this.declarations.set(refPath, type);
       return type;
   }
 
@@ -145,10 +161,24 @@ class Compiler {
       case RuleType.NamedSchema:
         return this.toTsDeclaration(rule);
       case RuleType.Enum:
-        return new TsType.Union(uniqBy(
-          rule.enum!.map(_ => this.toStringLiteral(_))
-          , _ => _.toType(this.settings))
-        )
+        // TODO:  honor the schema's "type" on the enum.  if string,
+        // skip all this mess; if int, either require the tsEnumNames 
+        // or generate literals for the values
+        if(this.settings.useTypescriptEnums){
+          let enumValues = uniqBy(
+              rule.enum!.map(_ => new TsType.Literal(_))
+              , _ => _.toType(this.settings))
+          if(rule.tsEnumNames){
+            return new TsType.Enum(enumValues,
+              rule.tsEnumNames!.map(_ => new TsType.Literal(_)));
+          } else {
+            return new TsType.Enum(enumValues);
+          }
+        } else {
+          return new TsType.Union(uniqBy(
+            rule.enum!.map(_ => this.toStringLiteral(_))
+            , _ => _.toType(this.settings)));
+        }
       case RuleType.Any: return new TsType.Any
       case RuleType.Literal: return new TsType.Literal(rule)
       case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items!))
@@ -204,8 +234,8 @@ class Compiler {
   }
 }
 
-export function compile(schema: JSONSchema.Schema, settings?: TsType.TsTypeSettings): string {
-  return new Compiler(schema, settings).toString()
+export function compile(schema: JSONSchema.Schema, path: string, settings?: TsType.TsTypeSettings): string {
+  return new Compiler(schema, path, settings).toString()
 }
 
 export function compileFromFile(inputFilename: string): Promise<string|Error> {
@@ -214,7 +244,7 @@ export function compileFromFile(inputFilename: string): Promise<string|Error> {
       if (err) {
         reject(err)
       } else {
-        resolve(compile(JSON.parse(data.toString())))
+        resolve(compile(JSON.parse(data.toString()), inputFilename))
       }
     })
   )

@@ -38,6 +38,10 @@ export namespace JSONSchema {
       [k: string]: HttpJsonSchemaOrgDraft04Schema | string[];
     };
     enum?: any[];
+
+    // schema extension to support numeric enums
+    tsEnumNames?: string[];
+
     type?: SimpleTypes | SimpleTypes[];
     allOf?: HttpJsonSchemaOrgDraft04Schema[];
     anyOf?: HttpJsonSchemaOrgDraft04Schema[];

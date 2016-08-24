@@ -8,6 +8,8 @@ export type TsTypeSettings = {
   useFullReferencePathAsName?: boolean;
   // TODO declareProperties?: boolean;
   useInterfaceDeclaration?: boolean;
+  useTypescriptEnums?: boolean;
+  exportInterfaces?: boolean;
   endTypeWithSemicolon?: boolean;
   endPropertyWithSemicolon?: boolean;
   declarationDescription?: boolean;
@@ -20,6 +22,8 @@ export var DEFAULT_SETTINGS: TsTypeSettings = {
   useFullReferencePathAsName: false,
   // declareProperties: false,
   useInterfaceDeclaration: false,
+  useTypescriptEnums: false,
+  exportInterfaces: false,
   endTypeWithSemicolon: true,
   endPropertyWithSemicolon: true,
   declarationDescription: true,
@@ -130,6 +134,35 @@ export class Union extends Intersection {
       .join('|')
   }
 }
+export class Enum extends Intersection {
+  constructor(protected data: TsType[], protected literals?: TsType[]) { 
+    super(data) 
+  }
+  isSimpleType() { return false; }
+  _type(settings: TsTypeSettings, declaration: boolean = false) {
+    let id = this.safeId();
+    let literals = this.literals;
+    // TODO if literals exist, get literal[i] below and write it first
+    return declaration || !id ? `{
+        ${this.data.map((_, i) => {
+          let literal: TsType;
+          let decl = '';
+          if(literals){
+            literal = literals[i];
+            decl += literal;
+            decl += '='
+          }
+          decl += _.toType(settings)
+          decl += ',';
+          return decl;
+        }).join('\n')}
+      }` : id;
+  }
+  toDeclaration(settings: TsTypeSettings): string {
+      return `${this.toBlockComment(settings)}enum ${this.safeId()} ${this._type(settings, true)}`;
+  }
+}
+
 
 export class Interface extends TsType {
   constructor(private props: TsProp[]) {
@@ -159,7 +192,7 @@ export class Interface extends TsType {
   isSimpleType() { return false; }
   toDeclaration(settings: TsTypeSettings): string {
     if (settings.useInterfaceDeclaration)
-      return `${this.toBlockComment(settings)}interface ${this.safeId()} ${this._type(settings, true)}`
+      return `${this.toBlockComment(settings)}${settings.exportInterfaces ? "export " : ""}interface ${this.safeId()} ${this._type(settings, true)}`;
     else
       return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings);
   }
