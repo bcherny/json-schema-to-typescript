@@ -142,7 +142,6 @@ export class Enum extends Intersection {
   _type(settings: TsTypeSettings, declaration: boolean = false) {
     let id = this.safeId();
     let literals = this.literals;
-    // TODO if literals exist, get literal[i] below and write it first
     return declaration || !id ? `{
         ${this.data.map((_, i) => {
           let literal: TsType;
@@ -159,7 +158,7 @@ export class Enum extends Intersection {
       }` : id;
   }
   toDeclaration(settings: TsTypeSettings): string {
-      return `${this.toBlockComment(settings)}enum ${this.safeId()} ${this._type(settings, true)}`;
+      return `${this.toBlockComment(settings)}${settings.exportInterfaces ? "export " : ""}enum ${this.safeId()} ${this._type(settings, true)}`;
   }
 }
 

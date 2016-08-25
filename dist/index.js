@@ -184,7 +184,6 @@ var TsType;
             if (declaration === void 0) { declaration = false; }
             var id = this.safeId();
             var literals = this.literals;
-            // TODO if literals exist, get literal[i] below and write it first
             return declaration || !id ? "{\n        " + this.data.map(function (_, i) {
                 var literal;
                 var decl = '';
@@ -199,7 +198,7 @@ var TsType;
             }).join('\n') + "\n      }" : id;
         };
         Enum.prototype.toDeclaration = function (settings) {
-            return this.toBlockComment(settings) + "enum " + this.safeId() + " " + this._type(settings, true);
+            return "" + this.toBlockComment(settings) + (settings.exportInterfaces ? "export " : "") + "enum " + this.safeId() + " " + this._type(settings, true);
         };
         return Enum;
     }(Intersection));
@@ -393,6 +392,9 @@ var Compiler = (function () {
             case RuleType.NamedSchema:
                 return this.toTsDeclaration(rule);
             case RuleType.Enum:
+                // TODO:  honor the schema's "type" on the enum.  if string,
+                // skip all this mess; if int, either require the tsEnumNames 
+                // or generate literals for the values
                 if (this.settings.useTypescriptEnums) {
                     var enumValues = lodash_1.uniqBy(rule.enum.map(function (_) { return new TsTypes_1.TsType.Literal(_); }), function (_) { return _.toType(_this.settings); });
                     if (rule.tsEnumNames) {
