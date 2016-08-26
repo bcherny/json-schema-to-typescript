@@ -47,5 +47,8 @@
     "gulp": "^3.9.1",
     "mocha": "^2.5.3",
     "watch": "^0.17.1"
+  },
+  "publishConfig": {
+    "registry": "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm-dev/"
   }
 }
