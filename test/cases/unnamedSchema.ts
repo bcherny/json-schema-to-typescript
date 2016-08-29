@@ -10,6 +10,6 @@ export var schema =
   "additionalProperties": false
 }
 
-export var types = `type Interface1 = {
+export var types = `type UnnamedSchema = {
   foo: string;
 };`

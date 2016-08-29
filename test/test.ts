@@ -22,7 +22,7 @@ modules.forEach((exports, name) => {
     describe(name, function() {
       exports.configurations.forEach((cfg: any) => {
         it(JSON.stringify(cfg.settings), () => {
-          expect(compile(exports.schema, cfg.settings)).to.be.equal(cfg.types);
+          expect(compile(exports.schema, name, cfg.settings)).to.be.equal(cfg.types);
         });
       });
     });
@@ -30,7 +30,7 @@ modules.forEach((exports, name) => {
   else {
     describe(name, function() {
       it("default settings", () => {
-        expect(compile(exports.schema, exports.settings)).to.be.equal(exports.types);
+        expect(compile(exports.schema, name, exports.settings)).to.be.equal(exports.types);
       });
     });
   }

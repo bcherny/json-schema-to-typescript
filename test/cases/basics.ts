@@ -44,6 +44,21 @@ export var configurations = [
   },
   {
     settings: {
+      useInterfaceDeclaration: true,
+      exportInterfaces: true
+    },
+    types:  `export interface ExampleSchema {
+  firstName: string;
+  lastName: string;
+  age?: number; // Age in years
+  height?: number;
+  favoriteFoods?: any[];
+  likesDogs?: boolean;
+  [k: string]: any;
+}`
+  },
+  {
+    settings: {
       propertyDescription: false
     },
     types:  `type ExampleSchema = {

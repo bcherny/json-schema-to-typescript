@@ -37,17 +37,27 @@ export var configurations = [
   }, 
   {
     settings: {
-      useTypescriptEnums: true,
-
+      useTypescriptEnums: true
     },
-    types: ``
+    types: `enum Foo {
+  a,
+  b,
+  c
+}
+enum Bar {
+  One = 1,
+  Two = 2,
+  Three = 3
+}
+enum Baz {
+  [object Object],
+  [object Object],
+  [object Object]
+}
+type Enum = {
+  foo: Foo;
+  bar: Bar;
+  baz: Baz;
+};`
   }
 ]
-
-export var types = `type Enum = {
-  foo: "a" | "b" | "c";
-  bar: number;
-  baz: {
-    a: number;
-  };
-};`
