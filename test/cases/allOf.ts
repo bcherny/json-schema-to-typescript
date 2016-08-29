@@ -31,13 +31,13 @@ export var schema = {
   "additionalProperties": false
 }
 
-export var types = `type Foo = {
+export var types = `interface Foo {
   a: string;
   b: number;
-};
-type Bar = {
+}
+interface Bar {
   a: string;
-};
-type AllOf = {
+}
+interface AllOf {
   foo: Foo & Bar;
-};`
+}`

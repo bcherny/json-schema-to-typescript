@@ -20,10 +20,10 @@ export var schema = {
   "additionalProperties": false
 }
 
-export var types = `type Enum = {
+export var types = `interface Enum {
   foo: "a" | "b" | "c";
   bar: number;
   baz: {
     a: number;
   };
-};`
+}`

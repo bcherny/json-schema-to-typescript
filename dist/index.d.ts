@@ -79,11 +79,11 @@ export namespace TsType {
         toType(settings: TsTypeSettings): string;
         toString(): string;
     }
-    type TsProp = {
+    interface TsProp {
         name: string;
         required: boolean;
         type: TsType;
-    };
+    }
     class Any extends TsType {
         _type(): string;
     }

@@ -27,16 +27,16 @@ export var schema = {
   }
 }
 
-export var types = `type Foo = {
+export var types = `interface Foo {
   a: string;
   b?: number;
-};
-type Bar = {
+}
+interface Bar {
   a?: "a" | "b" | "c";
   [k: string]: any;
-};
-type Baz = {
+}
+interface Baz {
   baz?: Bar;
   [k: string]: any;
-};
+}
 type RootAnyOf = Foo | Bar | Baz;`

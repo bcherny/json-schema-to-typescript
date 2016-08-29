@@ -17,7 +17,7 @@ var TsType;
         propertyDescription: true,
         useFullReferencePathAsName: false,
         // declareProperties: false,
-        useInterfaceDeclaration: false
+        useInterfaceDeclaration: true
     };
     var TsType = (function () {
         function TsType() {

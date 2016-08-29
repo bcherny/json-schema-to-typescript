@@ -19,9 +19,9 @@ export var schema = {
 }
 
 export var types = `/** My cool schema */
-type ExampleSchema = {
+interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
   [k: string]: any;
-};`
+}`
