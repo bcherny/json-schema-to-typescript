@@ -55,7 +55,7 @@ export namespace JSONSchema {
 }
 
 export namespace TsType {
-    type TsTypeSettings = {
+    interface TsTypeSettings {
         declareSimpleType?: boolean;
         declareReferenced?: boolean;
         useFullReferencePathAsName?: boolean;
@@ -64,7 +64,7 @@ export namespace TsType {
         endPropertyWithSemicolon?: boolean;
         declarationDescription?: boolean;
         propertyDescription?: boolean;
-    };
+    }
     var DEFAULT_SETTINGS: TsTypeSettings;
     abstract class TsType {
         id?: string;

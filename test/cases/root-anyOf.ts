@@ -1,5 +1,4 @@
-export var schema = 
-{
+export var schema = {
   "title": "RootAnyOf",
   "anyOf": [
     {"$ref": "#/definitions/foo"},

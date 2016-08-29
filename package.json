@@ -1,6 +1,6 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "compile json schema to typescript typings",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -45,7 +45,9 @@
     "chai": "^3.5.0",
     "dts-bundle": "^0.5.0",
     "gulp": "^3.9.1",
+    "gulp-tslint": "^6.1.1",
     "mocha": "^2.5.3",
+    "tslint": "^3.15.1",
     "watch": "^0.17.1"
   }
 }

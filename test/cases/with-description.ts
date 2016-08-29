@@ -1,5 +1,4 @@
-export var schema = 
-{
+export var schema = {
   "title": "Example Schema",
   "description": "My cool schema",
   "type": "object",

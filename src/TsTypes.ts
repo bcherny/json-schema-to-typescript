@@ -2,66 +2,62 @@ import {camelCase, upperFirst} from 'lodash'
 
 export namespace TsType {
 
-export type TsTypeSettings = {
-  declareSimpleType?: boolean;
-  declareReferenced?: boolean;
-  useFullReferencePathAsName?: boolean;
-  // TODO declareProperties?: boolean;
-  useInterfaceDeclaration?: boolean;
-  endTypeWithSemicolon?: boolean;
-  endPropertyWithSemicolon?: boolean;
-  declarationDescription?: boolean;
-  propertyDescription?: boolean;
-};
+export interface TsTypeSettings {
+  declareSimpleType?: boolean
+  declareReferenced?: boolean
+  useFullReferencePathAsName?: boolean
+  // TODO declareProperties?: boolean
+  useInterfaceDeclaration?: boolean
+  endTypeWithSemicolon?: boolean
+  endPropertyWithSemicolon?: boolean
+  declarationDescription?: boolean
+  propertyDescription?: boolean
+}
 
 export var DEFAULT_SETTINGS: TsTypeSettings = {
-  declareSimpleType: false,
+  declarationDescription: true,
   declareReferenced: true,
+  declareSimpleType: false,
+  endPropertyWithSemicolon: true,
+  endTypeWithSemicolon: true,
+  propertyDescription: true,
   useFullReferencePathAsName: false,
   // declareProperties: false,
-  useInterfaceDeclaration: false,
-  endTypeWithSemicolon: true,
-  endPropertyWithSemicolon: true,
-  declarationDescription: true,
-  propertyDescription: true,
-};
+  useInterfaceDeclaration: false
+}
 
 export abstract class TsType {
-  id?: string;
-  description?: string;
+  id?: string
+  description?: string
 
   protected safeId() {
-    return this.id && upperFirst(camelCase(this.id)); 
+    return this.id && upperFirst(camelCase(this.id))
   }
   protected toBlockComment(settings: TsTypeSettings) {
-    return this.description && settings.declarationDescription ? `/** ${this.description} */\n` : '';
+    return this.description && settings.declarationDescription ? `/** ${this.description} */\n` : ''
   }
-  protected _toDeclaration(decl: string, settings: TsTypeSettings): string
-  {
-    return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ";" : "");
+  protected _toDeclaration(decl: string, settings: TsTypeSettings): string {
+    return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '')
   }
-  protected abstract _type(settings: TsTypeSettings): string;
-  isSimpleType() { return true; }
-  toDeclaration(settings: TsTypeSettings): string
-  {
-    return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings)}`, settings);
+  protected abstract _type(settings: TsTypeSettings): string
+  isSimpleType() { return true }
+  toDeclaration(settings: TsTypeSettings): string {
+    return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings)}`, settings)
   }
-  toSafeType(settings: TsTypeSettings): string
-  {
-    return this.toType(settings);
+  toSafeType(settings: TsTypeSettings): string {
+    return this.toType(settings)
   }
-  toType(settings: TsTypeSettings): string
-  {
-    return this.safeId() || this._type(settings);
+  toType(settings: TsTypeSettings): string {
+    return this.safeId() || this._type(settings)
   }
-  toString() : string {
-    return this._type(DEFAULT_SETTINGS);
+  toString(): string {
+    return this._type(DEFAULT_SETTINGS)
   }
 }
 export type TsProp = {
-  name: string;
-  required: boolean;
-  type: TsType;
+  name: string
+  required: boolean
+  type: TsType
 }
 
 export class Any extends TsType {
@@ -108,10 +104,10 @@ export class Array extends TsType {
   }
 }
 export class Intersection extends TsType {
-  constructor(protected data: TsType[]) { 
-    super() 
+  constructor(protected data: TsType[]) {
+    super()
   }
-  isSimpleType() { return this.data.filter(_ => !(_ instanceof Void)).length <= 1; }
+  isSimpleType() { return this.data.filter(_ => !(_ instanceof Void)).length <= 1 }
   _type(settings: TsTypeSettings) {
     return this.data
       .filter(_ => !(_ instanceof Void))
@@ -119,11 +115,11 @@ export class Intersection extends TsType {
       .join('&')
   }
   toSafeType(settings: TsTypeSettings) {
-    return `${this.toType(settings)}`;
+    return `${this.toType(settings)}`
   }
 }
 export class Union extends Intersection {
-  isSimpleType() { return this.data.length <= 1; }
+  isSimpleType() { return this.data.length <= 1 }
   _type(settings: TsTypeSettings) {
     return this.data
       .map(_ => _.toSafeType(settings))
@@ -136,32 +132,33 @@ export class Interface extends TsType {
     super()
   }
   static reference(id: string) {
-    let ret = new Interface([]);
-    ret.id = id;
-    return ret;
+    let ret = new Interface([])
+    ret.id = id
+    return ret
   }
   protected _type(settings: TsTypeSettings, declaration: boolean = false) {
-    let id = this.safeId();
+    let id = this.safeId()
     return declaration || !id ? `{
         ${this.props.map(_ => {
-          let decl = _.name;
+          let decl = _.name
           if (!_.required)
-            decl += '?';
-          decl += ": " + _.type.toType(settings);
+            decl += '?'
+          decl += ': ' + _.type.toType(settings)
           if (settings.endPropertyWithSemicolon)
-            decl += ';';
+            decl += ';'
           if (settings.propertyDescription && _.type.description)
-            decl += ' // ' + _.type.description;
-          return decl;
+            decl += ' // ' + _.type.description
+          return decl
         }).join('\n')}
-      }` : id;
+      }` : id
   }
-  isSimpleType() { return false; }
+  isSimpleType() { return false }
   toDeclaration(settings: TsTypeSettings): string {
-    if (settings.useInterfaceDeclaration)
+    if (settings.useInterfaceDeclaration) {
       return `${this.toBlockComment(settings)}interface ${this.safeId()} ${this._type(settings, true)}`
-    else
-      return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings);
+    } else {
+      return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings)
+    }
   }
 }
 

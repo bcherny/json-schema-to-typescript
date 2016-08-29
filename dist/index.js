@@ -9,15 +9,15 @@ var lodash_1 = require('lodash');
 var TsType;
 (function (TsType_1) {
     TsType_1.DEFAULT_SETTINGS = {
-        declareSimpleType: false,
+        declarationDescription: true,
         declareReferenced: true,
+        declareSimpleType: false,
+        endPropertyWithSemicolon: true,
+        endTypeWithSemicolon: true,
+        propertyDescription: true,
         useFullReferencePathAsName: false,
         // declareProperties: false,
-        useInterfaceDeclaration: false,
-        endTypeWithSemicolon: true,
-        endPropertyWithSemicolon: true,
-        declarationDescription: true,
-        propertyDescription: true,
+        useInterfaceDeclaration: false
     };
     var TsType = (function () {
         function TsType() {
@@ -29,7 +29,7 @@ var TsType;
             return this.description && settings.declarationDescription ? "/** " + this.description + " */\n" : '';
         };
         TsType.prototype._toDeclaration = function (decl, settings) {
-            return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ";" : "");
+            return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '');
         };
         TsType.prototype.isSimpleType = function () { return true; };
         TsType.prototype.toDeclaration = function (settings) {
@@ -188,7 +188,7 @@ var TsType;
                 var decl = _.name;
                 if (!_.required)
                     decl += '?';
-                decl += ": " + _.type.toType(settings);
+                decl += ': ' + _.type.toType(settings);
                 if (settings.endPropertyWithSemicolon)
                     decl += ';';
                 if (settings.propertyDescription && _.type.description)
@@ -198,10 +198,12 @@ var TsType;
         };
         Interface.prototype.isSimpleType = function () { return false; };
         Interface.prototype.toDeclaration = function (settings) {
-            if (settings.useInterfaceDeclaration)
+            if (settings.useInterfaceDeclaration) {
                 return this.toBlockComment(settings) + "interface " + this.safeId() + " " + this._type(settings, true);
-            else
+            }
+            else {
                 return this._toDeclaration("type " + this.safeId() + " = " + this._type(settings, true), settings);
+            }
         };
         return Interface;
     }(TsType));
@@ -210,35 +212,35 @@ var TsType;
 
 },{"lodash":undefined}],2:[function(require,module,exports){
 "use strict";
-var lodash_1 = require('lodash');
-var fs_1 = require('fs');
 var pretty_printer_1 = require('./pretty-printer');
 var TsTypes_1 = require('./TsTypes');
+var fs_1 = require('fs');
+var lodash_1 = require('lodash');
 var RuleType;
 (function (RuleType) {
-    RuleType[RuleType["Any"] = 0] = "Any";
-    RuleType[RuleType["TypedArray"] = 1] = "TypedArray";
-    RuleType[RuleType["Enum"] = 2] = "Enum";
-    RuleType[RuleType["AllOf"] = 3] = "AllOf";
-    RuleType[RuleType["AnyOf"] = 4] = "AnyOf";
-    RuleType[RuleType["Reference"] = 5] = "Reference";
-    RuleType[RuleType["NamedSchema"] = 6] = "NamedSchema";
-    RuleType[RuleType["AnonymousSchema"] = 7] = "AnonymousSchema";
-    RuleType[RuleType["String"] = 8] = "String";
-    RuleType[RuleType["Number"] = 9] = "Number";
-    RuleType[RuleType["Void"] = 10] = "Void";
-    RuleType[RuleType["Object"] = 11] = "Object";
-    RuleType[RuleType["Array"] = 12] = "Array";
-    RuleType[RuleType["Boolean"] = 13] = "Boolean";
-    RuleType[RuleType["Literal"] = 14] = "Literal";
+    RuleType[RuleType['Any'] = 0] = 'Any';
+    RuleType[RuleType['TypedArray'] = 1] = 'TypedArray';
+    RuleType[RuleType['Enum'] = 2] = 'Enum';
+    RuleType[RuleType['AllOf'] = 3] = 'AllOf';
+    RuleType[RuleType['AnyOf'] = 4] = 'AnyOf';
+    RuleType[RuleType['Reference'] = 5] = 'Reference';
+    RuleType[RuleType['NamedSchema'] = 6] = 'NamedSchema';
+    RuleType[RuleType['AnonymousSchema'] = 7] = 'AnonymousSchema';
+    RuleType[RuleType['String'] = 8] = 'String';
+    RuleType[RuleType['Number'] = 9] = 'Number';
+    RuleType[RuleType['Void'] = 10] = 'Void';
+    RuleType[RuleType['Object'] = 11] = 'Object';
+    RuleType[RuleType['Array'] = 12] = 'Array';
+    RuleType[RuleType['Boolean'] = 13] = 'Boolean';
+    RuleType[RuleType['Literal'] = 14] = 'Literal';
 })(RuleType || (RuleType = {}));
 var Compiler = (function () {
     function Compiler(schema, settings) {
         this.schema = schema;
-        this.id = schema.id || schema.title || "Interface1";
-        this.declarations = new Map();
+        this.id = schema.id || schema.title || 'Interface1';
+        this.declarations = new Map;
         this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
-        var decl = this.declareType(this.toTsType(this.schema), this.id, this.id);
+        this.declareType(this.toTsType(this.schema), this.id, this.id);
     }
     Compiler.prototype.toString = function () {
         var _this = this;
@@ -251,9 +253,6 @@ var Compiler = (function () {
     };
     Compiler.prototype.supportsAdditionalProperties = function (schema) {
         return schema.additionalProperties === true || lodash_1.isPlainObject(schema.additionalProperties);
-    };
-    Compiler.prototype.toDeclarationName = function (a) {
-        return lodash_1.upperFirst(lodash_1.camelCase(a));
     };
     Compiler.prototype.getRuleType = function (rule) {
         if (rule.type === 'array' && rule.items) {
@@ -300,16 +299,15 @@ var Compiler = (function () {
     // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
     Compiler.prototype.resolveType = function (path) {
         if (path[0] !== '#')
-            throw new Error("reference must start with #");
+            throw new Error('reference must start with #');
         if (path === '#' || path === '#/')
             return TsTypes_1.TsType.Interface.reference(this.id);
         var parts = path.slice(2).split('/');
         var ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined;
         if (!ret) {
             var cur = this.schema;
-            var i = 0;
-            for (var i_1 = 0; cur && i_1 < parts.length; ++i_1) {
-                cur = cur[parts[i_1]];
+            for (var i = 0; cur && i < parts.length; ++i) {
+                cur = cur[parts[i]];
             }
             ret = this.toTsType(cur);
             if (this.settings.declareReferenced && (this.settings.declareSimpleType || !ret.isSimpleType()))
@@ -330,9 +328,9 @@ var Compiler = (function () {
             case 'string': return new TsTypes_1.TsType.Literal(JSON.stringify(a));
             default: return new TsTypes_1.TsType.Interface(lodash_1.map(a, function (v, k) {
                 return {
-                    type: _this.toStringLiteral(v),
                     name: k,
-                    required: true
+                    required: true,
+                    type: _this.toStringLiteral(v)
                 };
             }));
         }
@@ -361,7 +359,7 @@ var Compiler = (function () {
             case RuleType.Reference:
                 return this.resolveType(rule.$ref);
         }
-        throw "bug";
+        throw new Error('Unknown rule:' + rule.toString());
     };
     Compiler.prototype.toTsType = function (rule) {
         var type = this.createTsType(rule);
@@ -372,16 +370,15 @@ var Compiler = (function () {
     Compiler.prototype.toTsDeclaration = function (schema) {
         var _this = this;
         var copy = lodash_1.merge({}, Compiler.DEFAULT_SCHEMA, schema);
-        var set = new Set();
         var props = lodash_1.map(copy.properties, function (v, k) {
             return {
-                type: _this.toTsType(v),
                 name: k,
-                required: _this.isRequired(k, copy)
+                required: _this.isRequired(k, copy),
+                type: _this.toTsType(v)
             };
         });
-        if (props.length === 0 && !("additionalProperties" in schema)) {
-            if ("default" in schema)
+        if (props.length === 0 && !('additionalProperties' in schema)) {
+            if ('default' in schema)
                 return new TsTypes_1.TsType.Void;
         }
         if (this.supportsAdditionalProperties(copy)) {
@@ -390,9 +387,9 @@ var Compiler = (function () {
                 return new TsTypes_1.TsType.Any;
             var type = short ? new TsTypes_1.TsType.Any : this.toTsType(copy.additionalProperties);
             props.push({
-                type: type,
                 name: '[k: string]',
-                required: true
+                required: true,
+                type: type
             });
         }
         return new TsTypes_1.TsType.Interface(props);
@@ -427,11 +424,11 @@ exports.compileFromFile = compileFromFile;
 },{"./TsTypes":1,"./pretty-printer":3,"fs":undefined,"lodash":undefined}],3:[function(require,module,exports){
 // from https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#pretty-printer-using-the-ls-formatter
 "use strict";
-var ts = require("typescript");
+var ts = require('typescript');
 function format(text) {
     var options = getDefaultOptions();
     // Parse the source text
-    var sourceFile = ts.createSourceFile("file.ts", text, ts.ScriptTarget.Latest, /*setParentPointers*/ true);
+    var sourceFile = ts.createSourceFile('file.ts', text, ts.ScriptTarget.Latest, /*setParentPointers*/ true);
     // Get the formatting edits on the input sources
     var edits = ts.formatting.formatDocument(sourceFile, getRuleProvider(options), options);
     // Apply the edits on the input code
@@ -456,21 +453,21 @@ function format(text) {
     }
     function getDefaultOptions() {
         return {
-            IndentSize: 2,
-            TabSize: 2,
-            NewLineCharacter: '\n',
             ConvertTabsToSpaces: true,
+            IndentSize: 2,
             IndentStyle: ts.IndentStyle.Smart,
             InsertSpaceAfterCommaDelimiter: true,
+            InsertSpaceAfterFunctionKeywordForAnonymousFunctions: false,
+            InsertSpaceAfterKeywordsInControlFlowStatements: true,
+            InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: false,
+            InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: false,
+            InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: false,
             InsertSpaceAfterSemicolonInForStatements: true,
             InsertSpaceBeforeAndAfterBinaryOperators: true,
-            InsertSpaceAfterKeywordsInControlFlowStatements: true,
-            InsertSpaceAfterFunctionKeywordForAnonymousFunctions: false,
-            InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: false,
-            InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: false,
-            InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: false,
+            NewLineCharacter: '\n',
+            PlaceOpenBraceOnNewLineForControlBlocks: false,
             PlaceOpenBraceOnNewLineForFunctions: false,
-            PlaceOpenBraceOnNewLineForControlBlocks: false
+            TabSize: 2
         };
     }
 }
