@@ -169,25 +169,6 @@ export class Enum extends TsType {
   isSimpleType() { return false; }
   _type(settings: TsTypeSettings) {
     return this.safeId() || "SomeEnumType";
-    /*
-    let literals = this.literals;
-
-    // if this is a declaration, or this type has no ID (??)
-    // then we reference it in-line?  not really acceptable for this case
-    return declaration || !id ? `{
-        ${this.data.map((_, i) => {
-          let literal: TsType;
-          let decl = '';
-          if(literals){
-            literal = literals[i];
-            decl += literal;
-            decl += '='
-          }
-          decl += _.toType(settings)
-          decl += ',';
-          return decl;
-        }).join('\n')}
-      }` : id;*/
   }
   toSafeType(settings: TsTypeSettings) {
     return `${this.toType(settings)}`;

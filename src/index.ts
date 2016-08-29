@@ -105,15 +105,23 @@ class Compiler {
     } 
 
     if (refPath[0] !== '#'){
+      let retVal: TsType.TsType;
+      let id: string;
       let fullPath = resolve(join(this.filePath.dir, refPath));
       let file = readFileSync(fullPath);
       let targetType = this.toTsType(JSON.parse(file.toString()), propName, false, true);
       if(targetType.id){
-        return new TsType.Literal(targetType.id);      
+        id = targetType.toSafeType(this.settings);
       } else {
         let parsedNewFile = parse(fullPath);
-        return new TsType.Literal(parsedNewFile.name);
+        id = parsedNewFile.name;
       }
+
+      if(this.settings.declareReferenced){
+        this.declareType(targetType, id, id);
+      } 
+
+      return new TsType.Literal(id);
     };
 
     const parts = refPath.slice(2).split('/');

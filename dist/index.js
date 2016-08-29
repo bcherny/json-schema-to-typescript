@@ -204,25 +204,6 @@ var TsType;
         Enum.prototype.isSimpleType = function () { return false; };
         Enum.prototype._type = function (settings) {
             return this.safeId() || "SomeEnumType";
-            /*
-            let literals = this.literals;
-        
-            // if this is a declaration, or this type has no ID (??)
-            // then we reference it in-line?  not really acceptable for this case
-            return declaration || !id ? `{
-                ${this.data.map((_, i) => {
-                  let literal: TsType;
-                  let decl = '';
-                  if(literals){
-                    literal = literals[i];
-                    decl += literal;
-                    decl += '='
-                  }
-                  decl += _.toType(settings)
-                  decl += ',';
-                  return decl;
-                }).join('\n')}
-              }` : id;*/
         };
         Enum.prototype.toSafeType = function (settings) {
             return "" + this.toType(settings);
@@ -371,16 +352,22 @@ var Compiler = (function () {
             return TsTypes_1.TsType.Interface.reference(this.id);
         }
         if (refPath[0] !== '#') {
+            var retVal = void 0;
+            var id = void 0;
             var fullPath = path_1.resolve(path_1.join(this.filePath.dir, refPath));
             var file = fs_1.readFileSync(fullPath);
             var targetType = this.toTsType(JSON.parse(file.toString()), propName, false, true);
             if (targetType.id) {
-                return new TsTypes_1.TsType.Literal(targetType.id);
+                id = targetType.toSafeType(this.settings);
             }
             else {
                 var parsedNewFile = path_1.parse(fullPath);
-                return new TsTypes_1.TsType.Literal(parsedNewFile.name);
+                id = parsedNewFile.name;
             }
+            if (this.settings.declareReferenced) {
+                this.declareType(targetType, id, id);
+            }
+            return new TsTypes_1.TsType.Literal(id);
         }
         ;
         var parts = refPath.slice(2).split('/');
