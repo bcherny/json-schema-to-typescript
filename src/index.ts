@@ -1,4 +1,4 @@
-import {camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst} from 'lodash'
+import {camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst, zip} from 'lodash'
 import {JSONSchema} from './JSONSchema'
 import {readFile, readFileSync} from 'fs'
 import {dirname, join, parse, resolve, ParsedPath} from 'path'
@@ -25,7 +25,7 @@ class Compiler {
     this.declarations = new Map();
     this.id = schema.id || schema.title || this.filePath.name || "Interface1";
     this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
-    let decl = this.declareType(this.toTsType(this.schema), this.id, this.id);
+    let decl = this.declareType(this.toTsType(this.schema, '', true), this.id, this.id);
   }
 
   toString(): string {
@@ -57,6 +57,7 @@ class Compiler {
     if (rule.type === 'array' && rule.items) {
       return RuleType.TypedArray
     }
+    // enum type vs enum constant?
     if (rule.enum) {
       return RuleType.Enum
     }
@@ -97,7 +98,8 @@ class Compiler {
   }
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
-  private resolveType(refPath: string): TsType.TsType {
+  // only called in case of a $ref type
+  private resolveType(refPath: string, propName: string): TsType.TsType {
     if (refPath === '#' || refPath === '#/'){
       return TsType.Interface.reference(this.id);
     } 
@@ -105,7 +107,7 @@ class Compiler {
     if (refPath[0] !== '#'){
       let fullPath = resolve(join(this.filePath.dir, refPath));
       let file = readFileSync(fullPath);
-      let targetType = this.toTsType(JSON.parse(file.toString()));
+      let targetType = this.toTsType(JSON.parse(file.toString()), propName, false, true);
       if(targetType.id){
         return new TsType.Literal(targetType.id);      
       } else {
@@ -127,6 +129,10 @@ class Compiler {
         this.declareType(ret, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts));
     }
     return ret;
+  }
+
+  private isReference(schema: JSONSchema.Schema){
+    return schema.$ref; // && !schema.$ref.startsWith('#');
   }
 
   private declareType(type: TsType.TsType, refPath: string, id: string) {
@@ -155,25 +161,35 @@ class Compiler {
     }
   }
 
-  private createTsType (rule: JSONSchema.Schema): TsType.TsType {
+  private createTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsType {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
         return this.toTsDeclaration(rule);
       case RuleType.Enum:
         // TODO:  honor the schema's "type" on the enum.  if string,
-        // skip all this mess; if int, either require the tsEnumNames 
+        // skip all the zipping mess; if int, either require the tsEnumNames 
         // or generate literals for the values
+
+        // TODO:  what to do in the case where the value is an Object?  
+        // right now we just pring [Object object] as the literal which is bad
         if(this.settings.useTypescriptEnums){
-          let enumValues = uniqBy(
-              rule.enum!.map(_ => new TsType.Literal(_))
-              , _ => _.toType(this.settings))
-          if(rule.tsEnumNames){
-            return new TsType.Enum(enumValues,
-              rule.tsEnumNames!.map(_ => new TsType.Literal(_)));
-          } else {
-            return new TsType.Enum(enumValues);
+          var enumValues = zip(rule.tsEnumNames || [], 
+              rule.enum!.map(_ => new TsType.Literal(_).toType(this.settings)))
+            .map(_ => new TsType.EnumValue(_));
+
+          // TODO:  how do I get the property name under which this was declared
+          // (or the file name, failing that)? that would make a much better name here.
+          let path = rule.id || propName || ("Enum" + enumValues.map(_ => _.identifier).join(""));
+          let retVal: TsType.TsType = new TsType.Enum(enumValues);
+
+          // don't add this to the declarations map if this is the top-level type (already declared)
+          // or if it's a reference and we don't want to declare those.
+          if(!isTop && (!isReference || this.settings.declareReferenced)){
+            retVal = this.declareType(retVal, path, path);
           }
+          return retVal;
+          
         } else {
           return new TsType.Union(uniqBy(
             rule.enum!.map(_ => this.toStringLiteral(_))
@@ -193,12 +209,13 @@ class Compiler {
       case RuleType.AnyOf:
         return new TsType.Union(rule.anyOf!.map(_ => this.toTsType(_)))
       case RuleType.Reference:
-        return this.resolveType(rule.$ref!);
+        return this.resolveType(rule.$ref!, propName!);
     }
     throw "bug";
   } 
-  private toTsType (rule: JSONSchema.Schema): TsType.TsType {
-    let type = this.createTsType(rule);
+
+  private toTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsType {
+    let type = this.createTsType(rule, propName, isTop, isReference);
     type.id = type.id || rule.id || rule.title;
     type.description = type.description || rule.description;
     return type;
@@ -210,7 +227,7 @@ class Compiler {
       copy.properties!,
       (v: JSONSchema.Schema, k: string) => {
         return {
-          type: this.toTsType(v),
+          type: this.toTsType(v, k),
           name: k,
           required: this.isRequired(k, copy)
         };

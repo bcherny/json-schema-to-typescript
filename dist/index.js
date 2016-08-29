@@ -172,36 +172,66 @@ var TsType;
         return Union;
     }(Intersection));
     TsType_1.Union = Union;
+    var EnumValue = (function () {
+        function EnumValue(enumValues) {
+            var hasValue = !!enumValues[0];
+            // quirky propagation logic
+            if (hasValue) {
+                this.identifier = enumValues[0];
+                this.value = enumValues[1];
+            }
+            else {
+                this.identifier = enumValues[1];
+            }
+        }
+        EnumValue.prototype.toDeclaration = function () {
+            // if there is a value associated with the identifier, declare as identifier=value
+            // else declare as identifier
+            return "" + this.identifier + (this.value ? ('=' + this.value) : '');
+        };
+        EnumValue.prototype.toString = function () {
+            return "Enum" + this.identifier;
+        };
+        return EnumValue;
+    }());
+    TsType_1.EnumValue = EnumValue;
     var Enum = (function (_super) {
         __extends(Enum, _super);
-        function Enum(data, literals) {
-            _super.call(this, data);
-            this.data = data;
-            this.literals = literals;
+        function Enum(enumValues) {
+            _super.call(this);
+            this.enumValues = enumValues;
         }
         Enum.prototype.isSimpleType = function () { return false; };
-        Enum.prototype._type = function (settings, declaration) {
-            if (declaration === void 0) { declaration = false; }
-            var id = this.safeId();
-            var literals = this.literals;
-            return declaration || !id ? "{\n        " + this.data.map(function (_, i) {
-                var literal;
-                var decl = '';
-                if (literals) {
+        Enum.prototype._type = function (settings) {
+            return this.safeId() || "SomeEnumType";
+            /*
+            let literals = this.literals;
+        
+            // if this is a declaration, or this type has no ID (??)
+            // then we reference it in-line?  not really acceptable for this case
+            return declaration || !id ? `{
+                ${this.data.map((_, i) => {
+                  let literal: TsType;
+                  let decl = '';
+                  if(literals){
                     literal = literals[i];
                     decl += literal;
-                    decl += '=';
-                }
-                decl += _.toType(settings);
-                decl += ',';
-                return decl;
-            }).join('\n') + "\n      }" : id;
+                    decl += '='
+                  }
+                  decl += _.toType(settings)
+                  decl += ',';
+                  return decl;
+                }).join('\n')}
+              }` : id;*/
+        };
+        Enum.prototype.toSafeType = function (settings) {
+            return "" + this.toType(settings);
         };
         Enum.prototype.toDeclaration = function (settings) {
-            return "" + this.toBlockComment(settings) + (settings.exportInterfaces ? "export " : "") + "enum " + this.safeId() + " " + this._type(settings, true);
+            return "" + this.toBlockComment(settings) + (settings.exportInterfaces ? "export " : "") + "enum " + this._type(settings) + "{\n      " + this.enumValues.map(function (_) { return _.toDeclaration(); }).join(',\n') + "\n    }";
         };
         return Enum;
-    }(Intersection));
+    }(TsType));
     TsType_1.Enum = Enum;
     var Interface = (function (_super) {
         __extends(Interface, _super);
@@ -274,7 +304,7 @@ var Compiler = (function () {
         this.declarations = new Map();
         this.id = schema.id || schema.title || this.filePath.name || "Interface1";
         this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
-        var decl = this.declareType(this.toTsType(this.schema), this.id, this.id);
+        var decl = this.declareType(this.toTsType(this.schema, '', true), this.id, this.id);
     }
     Compiler.prototype.toString = function () {
         var _this = this;
@@ -295,6 +325,7 @@ var Compiler = (function () {
         if (rule.type === 'array' && rule.items) {
             return RuleType.TypedArray;
         }
+        // enum type vs enum constant?
         if (rule.enum) {
             return RuleType.Enum;
         }
@@ -334,14 +365,15 @@ var Compiler = (function () {
         return /^[\d\.]+$/.test(a);
     };
     // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
-    Compiler.prototype.resolveType = function (refPath) {
+    // only called in case of a $ref type
+    Compiler.prototype.resolveType = function (refPath, propName) {
         if (refPath === '#' || refPath === '#/') {
             return TsTypes_1.TsType.Interface.reference(this.id);
         }
         if (refPath[0] !== '#') {
             var fullPath = path_1.resolve(path_1.join(this.filePath.dir, refPath));
             var file = fs_1.readFileSync(fullPath);
-            var targetType = this.toTsType(JSON.parse(file.toString()));
+            var targetType = this.toTsType(JSON.parse(file.toString()), propName, false, true);
             if (targetType.id) {
                 return new TsTypes_1.TsType.Literal(targetType.id);
             }
@@ -365,6 +397,9 @@ var Compiler = (function () {
         }
         return ret;
     };
+    Compiler.prototype.isReference = function (schema) {
+        return schema.$ref; // && !schema.$ref.startsWith('#');
+    };
     Compiler.prototype.declareType = function (type, refPath, id) {
         type.id = id;
         this.declarations.set(refPath, type);
@@ -385,24 +420,33 @@ var Compiler = (function () {
             }));
         }
     };
-    Compiler.prototype.createTsType = function (rule) {
+    Compiler.prototype.createTsType = function (rule, propName, isTop, isReference) {
         var _this = this;
+        if (isTop === void 0) { isTop = false; }
+        if (isReference === void 0) { isReference = false; }
         switch (this.getRuleType(rule)) {
             case RuleType.AnonymousSchema:
             case RuleType.NamedSchema:
                 return this.toTsDeclaration(rule);
             case RuleType.Enum:
                 // TODO:  honor the schema's "type" on the enum.  if string,
-                // skip all this mess; if int, either require the tsEnumNames 
+                // skip all the zipping mess; if int, either require the tsEnumNames 
                 // or generate literals for the values
+                // TODO:  what to do in the case where the value is an Object?  
+                // right now we just pring [Object object] as the literal which is bad
                 if (this.settings.useTypescriptEnums) {
-                    var enumValues = lodash_1.uniqBy(rule.enum.map(function (_) { return new TsTypes_1.TsType.Literal(_); }), function (_) { return _.toType(_this.settings); });
-                    if (rule.tsEnumNames) {
-                        return new TsTypes_1.TsType.Enum(enumValues, rule.tsEnumNames.map(function (_) { return new TsTypes_1.TsType.Literal(_); }));
+                    var enumValues = lodash_1.zip(rule.tsEnumNames || [], rule.enum.map(function (_) { return new TsTypes_1.TsType.Literal(_).toType(_this.settings); }))
+                        .map(function (_) { return new TsTypes_1.TsType.EnumValue(_); });
+                    // TODO:  how do I get the property name under which this was declared
+                    // (or the file name, failing that)? that would make a much better name here.
+                    var path = rule.id || propName || ("Enum" + enumValues.map(function (_) { return _.identifier; }).join(""));
+                    var retVal = new TsTypes_1.TsType.Enum(enumValues);
+                    // don't add this to the declarations map if this is the top-level type (already declared)
+                    // or if it's a reference and we don't want to declare those.
+                    if (!isTop && (!isReference || this.settings.declareReferenced)) {
+                        retVal = this.declareType(retVal, path, path);
                     }
-                    else {
-                        return new TsTypes_1.TsType.Enum(enumValues);
-                    }
+                    return retVal;
                 }
                 else {
                     return new TsTypes_1.TsType.Union(lodash_1.uniqBy(rule.enum.map(function (_) { return _this.toStringLiteral(_); }), function (_) { return _.toType(_this.settings); }));
@@ -421,12 +465,14 @@ var Compiler = (function () {
             case RuleType.AnyOf:
                 return new TsTypes_1.TsType.Union(rule.anyOf.map(function (_) { return _this.toTsType(_); }));
             case RuleType.Reference:
-                return this.resolveType(rule.$ref);
+                return this.resolveType(rule.$ref, propName);
         }
         throw "bug";
     };
-    Compiler.prototype.toTsType = function (rule) {
-        var type = this.createTsType(rule);
+    Compiler.prototype.toTsType = function (rule, propName, isTop, isReference) {
+        if (isTop === void 0) { isTop = false; }
+        if (isReference === void 0) { isReference = false; }
+        var type = this.createTsType(rule, propName, isTop, isReference);
         type.id = type.id || rule.id || rule.title;
         type.description = type.description || rule.description;
         return type;
@@ -437,7 +483,7 @@ var Compiler = (function () {
         var set = new Set();
         var props = lodash_1.map(copy.properties, function (v, k) {
             return {
-                type: _this.toTsType(v),
+                type: _this.toTsType(v, k),
                 name: k,
                 required: _this.isRequired(k, copy)
             };

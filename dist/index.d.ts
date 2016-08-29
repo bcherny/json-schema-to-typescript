@@ -124,12 +124,19 @@ export namespace TsType {
         isSimpleType(): boolean;
         _type(settings: TsTypeSettings): string;
     }
-    class Enum extends Intersection {
-        protected data: TsType[];
-        protected literals?: TsType[];
-        constructor(data: TsType[], literals?: TsType[]);
+    class EnumValue {
+        identifier: string;
+        value: string;
+        constructor(enumValues: string[]);
+        toDeclaration(): string;
+        toString(): string;
+    }
+    class Enum extends TsType {
+        protected enumValues: EnumValue[];
+        constructor(enumValues: EnumValue[]);
         isSimpleType(): boolean;
-        _type(settings: TsTypeSettings, declaration?: boolean): string;
+        _type(settings: TsTypeSettings): string;
+        toSafeType(settings: TsTypeSettings): string;
         toDeclaration(settings: TsTypeSettings): string;
     }
     class Interface extends TsType {

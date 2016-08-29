@@ -134,14 +134,46 @@ export class Union extends Intersection {
       .join('|')
   }
 }
-export class Enum extends Intersection {
-  constructor(protected data: TsType[], protected literals?: TsType[]) { 
-    super(data) 
+
+export class EnumValue {
+  identifier: string;
+  value: string;
+
+  constructor(enumValues: string[]) {
+    let hasValue = !!enumValues[0];
+
+    // quirky propagation logic
+    if(hasValue){
+      this.identifier = enumValues[0];
+      this.value = enumValues[1];
+    } else {
+      this.identifier = enumValues[1];
+    }
+  } 
+
+  toDeclaration(){
+    // if there is a value associated with the identifier, declare as identifier=value
+    // else declare as identifier
+    return `${this.identifier}${this.value ? ('=' + this.value) : ''}`
+  }
+
+  toString(){
+    return `Enum${this.identifier}`
+  }
+}
+
+export class Enum extends TsType {
+  constructor(protected enumValues: EnumValue[]) { 
+    super() 
   }
   isSimpleType() { return false; }
-  _type(settings: TsTypeSettings, declaration: boolean = false) {
-    let id = this.safeId();
+  _type(settings: TsTypeSettings) {
+    return this.safeId() || "SomeEnumType";
+    /*
     let literals = this.literals;
+
+    // if this is a declaration, or this type has no ID (??)
+    // then we reference it in-line?  not really acceptable for this case
     return declaration || !id ? `{
         ${this.data.map((_, i) => {
           let literal: TsType;
@@ -155,10 +187,15 @@ export class Enum extends Intersection {
           decl += ',';
           return decl;
         }).join('\n')}
-      }` : id;
+      }` : id;*/
+  }
+  toSafeType(settings: TsTypeSettings) {
+    return `${this.toType(settings)}`;
   }
   toDeclaration(settings: TsTypeSettings): string {
-      return `${this.toBlockComment(settings)}${settings.exportInterfaces ? "export " : ""}enum ${this.safeId()} ${this._type(settings, true)}`;
+    return `${this.toBlockComment(settings)}${settings.exportInterfaces ? "export " : ""}enum ${this._type(settings)}{
+      ${this.enumValues.map(_ => _.toDeclaration()).join(',\n')}
+    }`;
   }
 }
 
