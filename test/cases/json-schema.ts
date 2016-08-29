@@ -160,7 +160,7 @@ type SchemaArray = HttpJsonSchemaOrgDraft04Schema[];
 type StringArray = string[];
 type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
 /** Core schema meta-schema */
-type HttpJsonSchemaOrgDraft04Schema = {
+interface HttpJsonSchemaOrgDraft04Schema {
   id?: string;
   $schema?: string;
   title?: string;
@@ -202,7 +202,7 @@ type HttpJsonSchemaOrgDraft04Schema = {
   oneOf?: SchemaArray;
   not?: HttpJsonSchemaOrgDraft04Schema;
   [k: string]: any;
-};`
+}`
     },
     {
     settings: {
@@ -210,7 +210,7 @@ type HttpJsonSchemaOrgDraft04Schema = {
     },
     types:`type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
 /** Core schema meta-schema */
-type HttpJsonSchemaOrgDraft04Schema = {
+interface HttpJsonSchemaOrgDraft04Schema {
   id?: string;
   $schema?: string;
   title?: string;
@@ -252,6 +252,6 @@ type HttpJsonSchemaOrgDraft04Schema = {
   oneOf?: HttpJsonSchemaOrgDraft04Schema[];
   not?: HttpJsonSchemaOrgDraft04Schema;
   [k: string]: any;
-};`
+}`
     }
 ]

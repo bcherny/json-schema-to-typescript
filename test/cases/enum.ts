@@ -1,5 +1,4 @@
-export var schema = 
-{
+export var schema = {
   "title": "Enum",
   "type": "object",
   "properties": {
@@ -27,13 +26,13 @@ export var configurations = [
     settings: {
       useTypescriptEnums: false
     },
-    types: `type Enum = {
+    types: `interface Enum {
   foo: "a" | "b" | "c";
   bar: number;
   baz: {
     a: number;
   };
-};`
+}`
   }, 
   {
     settings: {
@@ -54,10 +53,10 @@ enum Baz {
   [object Object],
   [object Object]
 }
-type Enum = {
+interface Enum {
   foo: Foo;
   bar: Bar;
   baz: Baz;
-};`
+}`
   }
 ]

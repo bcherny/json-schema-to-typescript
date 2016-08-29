@@ -1,5 +1,4 @@
-export var schema = 
-{
+export var schema = {
   "title": "Example Schema",
   "type": "object",
   "properties": {
@@ -25,14 +24,14 @@ export var schema =
     }
   },
   "required": ["firstName", "lastName"]
-};
+}
 
 export var configurations = [
   {
     settings: {
       useInterfaceDeclaration: true,
     },
-    types:  `interface ExampleSchema {
+    types: `interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
@@ -61,7 +60,7 @@ export var configurations = [
     settings: {
       propertyDescription: false
     },
-    types:  `type ExampleSchema = {
+    types: `interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number;
@@ -69,6 +68,6 @@ export var configurations = [
   favoriteFoods?: any[];
   likesDogs?: boolean;
   [k: string]: any;
-};`
+}`
   }
 ]

@@ -1,5 +1,4 @@
-export var schema = 
-{
+export var schema = {
   "title": "Array of type",
   "type": "object",
   "properties": {
@@ -12,7 +11,7 @@ export var schema =
   }
 }
 
-export var types =  `type ArrayOfType = {
+export var types =  `interface ArrayOfType {
   foo?: string[];
   [k: string]: any;
-};`
+}`

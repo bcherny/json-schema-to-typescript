@@ -1,5 +1,4 @@
-export var schema = 
-{
+export var schema = {
   "title": "AdditionalProperties",
   "type": "object",
   "properties": {
@@ -12,7 +11,7 @@ export var schema =
   }
 }
 
-export var types = `type AdditionalProperties = {
+export var types = `interface AdditionalProperties {
   foo?: string;
   [k: string]: number;
-};`
+}`

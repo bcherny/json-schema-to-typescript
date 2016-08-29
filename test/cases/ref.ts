@@ -16,7 +16,7 @@ export var configurations = [
     settings: {
       declareReferenced: true
     },
-    types: `type ExampleSchema = {
+    types: `interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
@@ -24,17 +24,17 @@ export var configurations = [
   favoriteFoods?: any[];
   likesDogs?: boolean;
   [k: string]: any;
-};
-type Referencing = {
+}
+interface Referencing {
   foo: ExampleSchema;
-};`
+}`
   }, 
   {
     settings: {
       declareReferenced: false
     },
-    types: `type Referencing = {
+    types: `interface Referencing {
   foo: ExampleSchema;
-};`
+}`
   }
 ]

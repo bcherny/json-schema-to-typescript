@@ -56,7 +56,7 @@ export namespace JSONSchema {
 }
 
 export namespace TsType {
-    type TsTypeSettings = {
+    interface TsTypeSettings {
         declareSimpleType?: boolean;
         declareReferenced?: boolean;
         useFullReferencePathAsName?: boolean;
@@ -67,7 +67,7 @@ export namespace TsType {
         endPropertyWithSemicolon?: boolean;
         declarationDescription?: boolean;
         propertyDescription?: boolean;
-    };
+    }
     var DEFAULT_SETTINGS: TsTypeSettings;
     abstract class TsType {
         id?: string;
@@ -82,11 +82,11 @@ export namespace TsType {
         toType(settings: TsTypeSettings): string;
         toString(): string;
     }
-    type TsProp = {
+    interface TsProp {
         name: string;
         required: boolean;
         type: TsType;
-    };
+    }
     class Any extends TsType {
         _type(): string;
     }
@@ -109,21 +109,6 @@ export namespace TsType {
         constructor(value: any);
         _type(): any;
     }
-    class Array extends TsType {
-        constructor(type?: TsType);
-        _type(settings: TsTypeSettings): string;
-    }
-    class Intersection extends TsType {
-        protected data: TsType[];
-        constructor(data: TsType[]);
-        isSimpleType(): boolean;
-        _type(settings: TsTypeSettings): string;
-        toSafeType(settings: TsTypeSettings): string;
-    }
-    class Union extends Intersection {
-        isSimpleType(): boolean;
-        _type(settings: TsTypeSettings): string;
-    }
     class EnumValue {
         identifier: string;
         value: string;
@@ -138,6 +123,21 @@ export namespace TsType {
         _type(settings: TsTypeSettings): string;
         toSafeType(settings: TsTypeSettings): string;
         toDeclaration(settings: TsTypeSettings): string;
+    }
+    class Array extends TsType {
+        constructor(type?: TsType);
+        _type(settings: TsTypeSettings): string;
+    }
+    class Intersection extends TsType {
+        protected data: TsType[];
+        constructor(data: TsType[]);
+        isSimpleType(): boolean;
+        _type(settings: TsTypeSettings): string;
+        toSafeType(settings: TsTypeSettings): string;
+    }
+    class Union extends Intersection {
+        isSimpleType(): boolean;
+        _type(settings: TsTypeSettings): string;
     }
     class Interface extends TsType {
         constructor(props: TsProp[]);

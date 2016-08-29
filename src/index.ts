@@ -1,16 +1,18 @@
-import {camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst, zip} from 'lodash'
-import {JSONSchema} from './JSONSchema'
-import {readFile, readFileSync} from 'fs'
-import {dirname, join, parse, resolve, ParsedPath} from 'path'
-import {Readable} from 'stream'
-import {format} from './pretty-printer'
-import {TsType} from './TsTypes'
+import { JSONSchema } from './JSONSchema'
+import { format } from './pretty-printer'
+import { TsType } from './TsTypes'
+import { readFile, readFileSync } from 'fs'
+import { dirname, join, parse, resolve, ParsedPath } from 'path'
+import { Readable } from 'stream'
+import { camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst, zip } from 'lodash'
 
-enum RuleType {"Any","TypedArray","Enum","AllOf","AnyOf","Reference","NamedSchema", "AnonymousSchema",
-  "String","Number","Void","Object","Array","Boolean","Literal"}
+enum RuleType {
+  'Any', 'TypedArray', 'Enum', 'AllOf', 'AnyOf', 'Reference', 'NamedSchema', 'AnonymousSchema',
+  'String', 'Number', 'Void', 'Object', 'Array', 'Boolean', 'Literal'
+}
 
 class Compiler {
-  static DEFAULT_SETTINGS = TsType.DEFAULT_SETTINGS;
+  static DEFAULT_SETTINGS = TsType.DEFAULT_SETTINGS
 
   static DEFAULT_SCHEMA: JSONSchema.Schema = {
     additionalProperties: true,
@@ -22,10 +24,10 @@ class Compiler {
   constructor(private schema: JSONSchema.Schema, filePath: string, settings?: TsType.TsTypeSettings) {
     let path = resolve(filePath);
     this.filePath = parse(path);
-    this.declarations = new Map();
-    this.id = schema.id || schema.title || this.filePath.name || "Interface1";
+    this.declarations = new Map
+    this.id = schema.id || schema.title || this.filePath.name || 'Interface1';
     this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
-    let decl = this.declareType(this.toTsType(this.schema, '', true), this.id, this.id);
+    this.declareType(this.toTsType(this.schema, '', true), this.id, this.id);
   }
 
   toString(): string {
@@ -42,18 +44,14 @@ class Compiler {
   private filePath: ParsedPath;
 
   private isRequired(propertyName: string, schema: JSONSchema.Schema): boolean {
-    return schema.required ? schema.required.indexOf(propertyName) > -1 : false;
+    return schema.required ? schema.required.indexOf(propertyName) > -1 : false
   }
 
   private supportsAdditionalProperties(schema: JSONSchema.Schema): boolean {
     return schema.additionalProperties === true || isPlainObject(schema.additionalProperties)
   }
 
-  private toDeclarationName (a: string): string {
-    return upperFirst(camelCase(a))
-  }
-
-  private getRuleType (rule: JSONSchema.Schema): RuleType {
+  private getRuleType(rule: JSONSchema.Schema): RuleType {
     if (rule.type === 'array' && rule.items) {
       return RuleType.TypedArray
     }
@@ -93,7 +91,7 @@ class Compiler {
     return RuleType.Any
   }
 
-  private isNumberLiteral (a: any): boolean {
+  private isNumberLiteral(a: any): boolean {
     return /^[\d\.]+$/.test(a)
   }
 
@@ -126,43 +124,39 @@ class Compiler {
 
     const parts = refPath.slice(2).split('/');
     let ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined;
-    if (!ret) {
-      let cur: any = this.schema;
-      let i = 0;
-      for (let i = 0; cur && i < parts.length; ++i) {
-        cur = cur[parts[i]];
-      }
-      ret = this.toTsType(cur);
-      if (this.settings.declareReferenced && (this.settings.declareSimpleType || !ret.isSimpleType()))
-        this.declareType(ret, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts));
-    }
-    return ret;
-  }
 
-  private isReference(schema: JSONSchema.Schema){
-    return schema.$ref; // && !schema.$ref.startsWith('#');
+    if (!ret) {
+      let cur: any = this.schema
+      for (let i = 0; cur && i < parts.length; ++i) {
+        cur = cur[parts[i]]
+      }
+      ret = this.toTsType(cur)
+      if (this.settings.declareReferenced && (this.settings.declareSimpleType || !ret.isSimpleType()))
+        this.declareType(ret, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
+    }
+    return ret
   }
 
   private declareType(type: TsType.TsType, refPath: string, id: string) {
-      type.id = id;
-      this.declarations.set(refPath, type);
-      return type;
+    type.id = id;
+    this.declarations.set(refPath, type);
+    return type;
   }
 
-  private toStringLiteral(a: boolean|number|string|Object): TsType.TsType {
+  private toStringLiteral(a: boolean | number | string | Object): TsType.TsType {
     switch (typeof a) {
-      case 'boolean': return new TsType.Boolean; // ts doesn't support literal boolean types
-      case 'number': return new TsType.Number;   // ts doesn't support literal numeric types
-      case 'string': return new TsType.Literal(JSON.stringify(a));
+      case 'boolean': return new TsType.Boolean // ts doesn't support literal boolean types
+      case 'number': return new TsType.Number   // ts doesn't support literal numeric types
+      case 'string': return new TsType.Literal(JSON.stringify(a))
       default: return new TsType.Interface(map(
-        <any>a,
+        (a as any),
         (v: JSONSchema.Schema, k: string) => {
           return {
-            type: this.toStringLiteral(v),
             name: k,
-            required: true
-          };
-        }));
+            required: true,
+            type: this.toStringLiteral(v)
+          }
+        }))
       // TODO: support array types?
       // TODO: support enums of enums
       // TODO: support nulls
@@ -173,7 +167,7 @@ class Compiler {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
-        return this.toTsDeclaration(rule);
+        return this.toTsDeclaration(rule)
       case RuleType.Enum:
         // TODO:  honor the schema's "type" on the enum.  if string,
         // skip all the zipping mess; if int, either require the tsEnumNames 
@@ -219,7 +213,7 @@ class Compiler {
       case RuleType.Reference:
         return this.resolveType(rule.$ref!, propName!);
     }
-    throw "bug";
+    throw new Error('Unknown rule:' + rule.toString())
   } 
 
   private toTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsType {
@@ -228,34 +222,33 @@ class Compiler {
     type.description = type.description || rule.description;
     return type;
   }
-  private toTsDeclaration (schema: JSONSchema.Schema) : TsType.TsType {
-    let copy = merge({}, Compiler.DEFAULT_SCHEMA, schema);
-    let set = new Set();
+  private toTsDeclaration(schema: JSONSchema.Schema): TsType.TsType {
+    let copy = merge({}, Compiler.DEFAULT_SCHEMA, schema)
     let props = map(
       copy.properties!,
       (v: JSONSchema.Schema, k: string) => {
         return {
-          type: this.toTsType(v, k),
           name: k,
-          required: this.isRequired(k, copy)
-        };
-      });
-    if (props.length === 0 && !("additionalProperties" in schema)) {
-      if ("default" in schema)
-        return new TsType.Void;
+          required: this.isRequired(k, copy),
+          type: this.toTsType(v, k),
+        }
+      })
+    if (props.length === 0 && !('additionalProperties' in schema)) {
+      if ('default' in schema)
+        return new TsType.Void
     }
     if (this.supportsAdditionalProperties(copy)) {
-      let short = copy.additionalProperties === true;
+      let short = copy.additionalProperties === true
       if (short && props.length === 0)
-        return new TsType.Any;
-      let type = short ? new TsType.Any : this.toTsType(<JSONSchema.Schema>copy.additionalProperties);
+        return new TsType.Any
+      let type = short ? new TsType.Any : this.toTsType(copy.additionalProperties as JSONSchema.Schema)
       props.push({
-          type: type,
-          name: '[k: string]',
-          required: true
-        });
+        name: '[k: string]',
+        required: true,
+        type: type
+      })
     }
-    return new TsType.Interface(props);
+    return new TsType.Interface(props)
   }
 }
 
@@ -263,7 +256,7 @@ export function compile(schema: JSONSchema.Schema, path: string, settings?: TsTy
   return new Compiler(schema, path, settings).toString()
 }
 
-export function compileFromFile(inputFilename: string): Promise<string|Error> {
+export function compileFromFile(inputFilename: string): Promise<string | Error> {
   return new Promise((resolve, reject) =>
     readFile(inputFilename, (err, data) => {
       if (err) {
