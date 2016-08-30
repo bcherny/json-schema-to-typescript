@@ -180,8 +180,10 @@ class Compiler {
               rule.enum!.map(_ => new TsType.Literal(_).toType(this.settings)))
             .map(_ => new TsType.EnumValue(_));
 
-          // TODO:  how do I get the property name under which this was declared
-          // (or the file name, failing that)? that would make a much better name here.
+          // name our anonymous enum, if it doesn't have an ID, by the property name under 
+          // which it was declared.  Failing both of these things, it'll concat together the 
+          // identifiers as EnumOneTwoThree for enum: ["One", "Two", "Three"].  Ugly, but
+          // practical.
           let path = rule.id || propName || ("Enum" + enumValues.map(_ => _.identifier).join(""));
           let retVal: TsType.TsType = new TsType.Enum(enumValues);
 
