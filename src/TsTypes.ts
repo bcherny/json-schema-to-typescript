@@ -190,7 +190,7 @@ export class EnumUtils extends TsType {
   }
   makeToStringValueMethod(settings: TsTypeSettings){
     let enumType = this.enm.toSafeType(settings)
-    return `static toStringValue(enm: ${enumType}): ${enumType} {
+    return `static toStringValue(enm: ${enumType}): string {
     switch(enm.toLowerCase()){
       ${this.enm.enumValues.map(_ => `case ${enumType + '.' + _.identifier}:
         return "${_.identifier.toLowerCase()}";`).join('\n')}

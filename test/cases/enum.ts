@@ -73,7 +73,7 @@ class FooUtil {
   static values(): Foo[] {
     return [Foo.a, Foo.b, Foo.c]
   }
-  static toStringValue(enm: Foo): Foo {
+  static toStringValue(enm: Foo): string {
     switch (enm.toLowerCase()) {
       case Foo.a:
         return "a";
@@ -108,7 +108,7 @@ class BarUtil {
   static values(): Bar[] {
     return [Bar.One, Bar.Two, Bar.Three]
   }
-  static toStringValue(enm: Bar): Bar {
+  static toStringValue(enm: Bar): string {
     switch (enm.toLowerCase()) {
       case Bar.One:
         return "one";
@@ -143,7 +143,7 @@ class BazUtil {
   static values(): Baz[] {
     return [Baz.[object Object], Baz.[object Object],Baz.[object Object]]
   }
-  static toStringValue(enm: Baz): Baz {
+  static toStringValue(enm: Baz): string {
     switch (enm.toLowerCase()) {
       case Baz.[object Object]:
         return "[object object]";
