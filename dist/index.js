@@ -454,7 +454,9 @@ var Compiler = (function () {
                 // TODO:  what to do in the case where the value is an Object?  
                 // right now we just pring [Object object] as the literal which is bad
                 if (this.settings.useTypescriptEnums) {
-                    var enumValues = lodash_1.zip(rule.tsEnumNames || [], rule.enum.map(function (_) { return new TsTypes_1.TsType.Literal(_).toType(_this.settings); }))
+                    var enumValues = lodash_1.zip(rule.tsEnumNames || [], 
+                    // If we try to create a literal from an object, bad stuff can happen... so we have to toString it
+                    rule.enum.map(function (_) { return new TsTypes_1.TsType.Literal(_).toType(_this.settings).toString(); }))
                         .map(function (_) { return new TsTypes_1.TsType.EnumValue(_); });
                     // name our anonymous enum, if it doesn't have an ID, by the property name under 
                     // which it was declared.  Failing both of these things, it'll concat together the 
