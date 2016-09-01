@@ -67,6 +67,7 @@ export namespace TsType {
         endPropertyWithSemicolon?: boolean;
         declarationDescription?: boolean;
         propertyDescription?: boolean;
+        addEnumUtils?: boolean;
     }
     var DEFAULT_SETTINGS: TsTypeSettings;
     abstract class TsType {
@@ -117,12 +118,24 @@ export namespace TsType {
         toString(): string;
     }
     class Enum extends TsType {
-        protected enumValues: EnumValue[];
+        enumValues: EnumValue[];
         constructor(enumValues: EnumValue[]);
         isSimpleType(): boolean;
         _type(settings: TsTypeSettings): string;
         toSafeType(settings: TsTypeSettings): string;
         toDeclaration(settings: TsTypeSettings): string;
+    }
+    class EnumUtils extends TsType {
+        protected enm: Enum;
+        constructor(enm: Enum);
+        isSimpleType(): boolean;
+        _type(settings: TsTypeSettings): string;
+        toSafeType(settings: TsTypeSettings): string;
+        toDeclaration(settings: TsTypeSettings): string;
+        makeValuesMethod(settings: TsTypeSettings): string;
+        makeFromStringValueMethod(settings: TsTypeSettings): string;
+        makeToStringValueMethod(settings: TsTypeSettings): string;
+        makeFromStringValuesMethod(settings: TsTypeSettings): string;
     }
     class Array extends TsType {
         constructor(type?: TsType);

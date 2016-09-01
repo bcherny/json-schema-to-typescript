@@ -20,6 +20,7 @@ var TsType;
         useInterfaceDeclaration: true,
         useTypescriptEnums: false,
         exportInterfaces: false,
+        addEnumUtils: false
     };
     var TsType = (function () {
         function TsType() {
@@ -169,6 +170,44 @@ var TsType;
         return Enum;
     }(TsType));
     TsType_1.Enum = Enum;
+    var EnumUtils = (function (_super) {
+        __extends(EnumUtils, _super);
+        function EnumUtils(enm) {
+            _super.call(this);
+            this.enm = enm;
+        }
+        EnumUtils.prototype.isSimpleType = function () { return false; };
+        EnumUtils.prototype._type = function (settings) {
+            // It's a bit hacky, but if this is a top level type, then addDeclaration changes 
+            // our enum type's ID out from under us when it adds the enum to the declaration map, *after*
+            // the util class is declared.  So we name ourselves by our enum's type, not our own ID'
+            return this.enm.toSafeType(settings) + "Util" || this.safeId() || "SomeEnumTypeUtils";
+        };
+        EnumUtils.prototype.toSafeType = function (settings) {
+            return "" + this.toType(settings);
+        };
+        EnumUtils.prototype.toDeclaration = function (settings) {
+            return "" + this.toBlockComment(settings) + (settings.exportInterfaces ? "export " : "") + "class " + this._type(settings) + " {\n      " + this.makeValuesMethod(settings) + "\n      " + this.makeToStringValueMethod(settings) + "\n      " + this.makeFromStringValueMethod(settings) + "\n      " + this.makeFromStringValuesMethod(settings) + "\n    }";
+        };
+        EnumUtils.prototype.makeValuesMethod = function (settings) {
+            var enumType = this.enm.toSafeType(settings);
+            return "static values(): " + enumType + "[] {\n    return [" + this.enm.enumValues.map(function (_) { return (enumType + "." + _.identifier); }).join(',') + "]\n  }";
+        };
+        EnumUtils.prototype.makeFromStringValueMethod = function (settings) {
+            var enumType = this.enm.toSafeType(settings);
+            return "static fromStringValue(value: string): " + enumType + " {\n    switch(value.toLowerCase()){\n      " + this.enm.enumValues.map(function (_) { return ("case \"" + _.identifier.toLowerCase() + "\":\n        return " + (enumType + '.' + _.identifier) + ";"); }).join('\n') + "\n      default:\n        throw new Error(\"Unrecognized " + enumType + ": \" + value);\n    }\n  }";
+        };
+        EnumUtils.prototype.makeToStringValueMethod = function (settings) {
+            var enumType = this.enm.toSafeType(settings);
+            return "static toStringValue(enm: " + enumType + "): " + enumType + " {\n    switch(enm.toLowerCase()){\n      " + this.enm.enumValues.map(function (_) { return ("case " + (enumType + '.' + _.identifier) + ":\n        return \"" + _.identifier.toLowerCase() + "\";"); }).join('\n') + "\n    }\n  }";
+        };
+        EnumUtils.prototype.makeFromStringValuesMethod = function (settings) {
+            var enumType = this.enm.toSafeType(settings);
+            return "static fromStringValues(values: string[]): " + enumType + "[] {\n    return _.map(values, value => " + this._type(settings) + ".fromStringValue(value));\n  }";
+        };
+        return EnumUtils;
+    }(TsType));
+    TsType_1.EnumUtils = EnumUtils;
     var Array = (function (_super) {
         __extends(Array, _super);
         function Array(type) {
@@ -417,14 +456,26 @@ var Compiler = (function () {
                 if (this.settings.useTypescriptEnums) {
                     var enumValues = lodash_1.zip(rule.tsEnumNames || [], rule.enum.map(function (_) { return new TsTypes_1.TsType.Literal(_).toType(_this.settings); }))
                         .map(function (_) { return new TsTypes_1.TsType.EnumValue(_); });
-                    // TODO:  how do I get the property name under which this was declared
-                    // (or the file name, failing that)? that would make a much better name here.
+                    // name our anonymous enum, if it doesn't have an ID, by the property name under 
+                    // which it was declared.  Failing both of these things, it'll concat together the 
+                    // identifiers as EnumOneTwoThree for enum: ["One", "Two", "Three"].  Ugly, but
+                    // practical.
                     var path = rule.id || propName || ("Enum" + enumValues.map(function (_) { return _.identifier; }).join(""));
-                    var retVal = new TsTypes_1.TsType.Enum(enumValues);
+                    var enm = new TsTypes_1.TsType.Enum(enumValues);
+                    var retVal = enm;
                     // don't add this to the declarations map if this is the top-level type (already declared)
                     // or if it's a reference and we don't want to declare those.
-                    if (!isTop && (!isReference || this.settings.declareReferenced)) {
-                        retVal = this.declareType(retVal, path, path);
+                    if ((!isReference || this.settings.declareReferenced)) {
+                        if (!isTop) {
+                            retVal = this.declareType(retVal, path, path);
+                        }
+                        else {
+                            retVal.id = path;
+                        }
+                        if (this.settings.addEnumUtils) {
+                            var utilPath = path + "Utils";
+                            this.declareType(new TsTypes_1.TsType.EnumUtils(enm), utilPath, utilPath);
+                        }
                     }
                     return retVal;
                 }
