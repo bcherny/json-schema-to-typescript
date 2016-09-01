@@ -199,7 +199,7 @@ var TsType;
         };
         EnumUtils.prototype.makeToStringValueMethod = function (settings) {
             var enumType = this.enm.toSafeType(settings);
-            return "static toStringValue(enm: " + enumType + "): string {\n    switch(enm.toLowerCase()){\n      " + this.enm.enumValues.map(function (_) { return ("case " + (enumType + '.' + _.identifier) + ":\n        return \"" + _.identifier.toLowerCase() + "\";"); }).join('\n') + "\n    }\n  }";
+            return "static toStringValue(enm: " + enumType + "): string {\n    switch(enm){\n      " + this.enm.enumValues.map(function (_) { return ("case " + (enumType + '.' + _.identifier) + ":\n        return \"" + _.identifier.toLowerCase() + "\";"); }).join('\n') + "\n    }\n  }";
         };
         EnumUtils.prototype.makeFromStringValuesMethod = function (settings) {
             var enumType = this.enm.toSafeType(settings);

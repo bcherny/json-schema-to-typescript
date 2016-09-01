@@ -74,7 +74,7 @@ class FooUtil {
     return [Foo.a, Foo.b, Foo.c]
   }
   static toStringValue(enm: Foo): string {
-    switch (enm.toLowerCase()) {
+    switch (enm) {
       case Foo.a:
         return "a";
       case Foo.b:
@@ -109,7 +109,7 @@ class BarUtil {
     return [Bar.One, Bar.Two, Bar.Three]
   }
   static toStringValue(enm: Bar): string {
-    switch (enm.toLowerCase()) {
+    switch (enm) {
       case Bar.One:
         return "one";
       case Bar.Two:
@@ -144,7 +144,7 @@ class BazUtil {
     return [Baz.[object Object], Baz.[object Object],Baz.[object Object]]
   }
   static toStringValue(enm: Baz): string {
-    switch (enm.toLowerCase()) {
+    switch (enm) {
       case Baz.[object Object]:
         return "[object object]";
       case Baz.[object Object]:
