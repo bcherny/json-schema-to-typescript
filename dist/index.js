@@ -17,6 +17,7 @@ var TsType;
         endPropertyWithSemicolon: true,
         endTypeWithSemicolon: true,
         propertyDescription: true,
+        useConstEnums: false,
         useFullReferencePathAsName: false,
         useInterfaceDeclaration: true,
         useTypescriptEnums: false
@@ -164,7 +165,7 @@ var TsType;
             return "" + this.toType(settings);
         };
         Enum.prototype.toDeclaration = function (settings) {
-            return this.toBlockComment(settings) + "export enum " + this._type(settings) + "{\n      " + this.enumValues.map(function (_) { return _.toDeclaration(); }).join(',\n') + "\n    }";
+            return this.toBlockComment(settings) + "export " + (settings.useConstEnums ? "const " : "") + "enum " + this._type(settings) + "{\n      " + this.enumValues.map(function (_) { return _.toDeclaration(); }).join(',\n') + "\n    }";
         };
         return Enum;
     }(TsType));

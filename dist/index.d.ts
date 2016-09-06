@@ -65,6 +65,7 @@ export namespace TsType {
         endPropertyWithSemicolon?: boolean;
         endTypeWithSemicolon?: boolean;
         propertyDescription?: boolean;
+        useConstEnums?: boolean;
         useFullReferencePathAsName?: boolean;
         useInterfaceDeclaration?: boolean;
         useTypescriptEnums?: boolean;

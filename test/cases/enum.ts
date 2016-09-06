@@ -24,7 +24,7 @@ export var configurations = [
   foo: "a" | "b" | "c";
   bar: number;
 }`
-  }, 
+  },
   {
     settings: {
       useTypescriptEnums: true
@@ -35,6 +35,26 @@ export var configurations = [
   c
 }
 export enum Bar {
+  One = 1,
+  Two = 2,
+  Three = 3
+}
+export interface Enum {
+  foo: Foo;
+  bar: Bar;
+}`
+  },
+  {
+    settings: {
+      useTypescriptEnums: true,
+      useConstEnums: true
+    },
+    types: `export const enum Foo {
+  a,
+  b,
+  c
+}
+export const enum Bar {
   One = 1,
   Two = 2,
   Three = 3
