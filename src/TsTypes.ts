@@ -147,7 +147,7 @@ export namespace TsType {
           decl += ': ' + _.type.toType(settings)
           if (settings.endPropertyWithSemicolon)
             decl += ';'
-          if (settings.propertyDescription && _.type.description)
+          if (settings.propertyDescription && _.type.description && !_.type.id)
             decl += ' // ' + _.type.description
           return decl
         }).join('\n')}
