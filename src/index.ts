@@ -2,9 +2,8 @@ import { JSONSchema } from './JSONSchema'
 import { format } from './pretty-printer'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
-import { dirname, join, parse, resolve, ParsedPath } from 'path'
-import { Readable } from 'stream'
-import { camelCase, isPlainObject, last, map, merge, uniqBy, upperFirst, zip } from 'lodash'
+import { isPlainObject, last, map, merge, uniqBy, zip } from 'lodash'
+import { join, parse, ParsedPath, resolve } from 'path'
 
 enum RuleType {
   'Any', 'TypedArray', 'Enum', 'AllOf', 'AnyOf', 'Reference', 'NamedSchema', 'AnonymousSchema',
@@ -22,12 +21,12 @@ class Compiler {
   }
 
   constructor(private schema: JSONSchema.Schema, filePath: string, settings?: TsType.TsTypeSettings) {
-    let path = resolve(filePath);
-    this.filePath = parse(path);
+    let path = resolve(filePath)
+    this.filePath = parse(path)
     this.declarations = new Map
-    this.id = schema.id || schema.title || this.filePath.name || 'Interface1';
-    this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings);
-    this.declareType(this.toTsType(this.schema, '', true), this.id, this.id);
+    this.id = schema.id || schema.title || this.filePath.name || 'Interface1'
+    this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings)
+    this.declareType(this.toTsType(this.schema, '', true), this.id, this.id)
   }
 
   toString(): string {
@@ -38,10 +37,10 @@ class Compiler {
     )
   }
 
-  private settings: TsType.TsTypeSettings;
-  private id: string;
-  private declarations: Map<string, TsType.TsType>;
-  private filePath: ParsedPath;
+  private settings: TsType.TsTypeSettings
+  private id: string
+  private declarations: Map<string, TsType.TsType>
+  private filePath: ParsedPath
 
   private isRequired(propertyName: string, schema: JSONSchema.Schema): boolean {
     return schema.required ? schema.required.indexOf(propertyName) > -1 : false
@@ -99,31 +98,30 @@ class Compiler {
   // only called in case of a $ref type
   private resolveType(refPath: string, propName: string): TsType.TsType {
     if (refPath === '#' || refPath === '#/'){
-      return TsType.Interface.reference(this.id);
-    } 
+      return TsType.Interface.reference(this.id)
+    }
 
     if (refPath[0] !== '#'){
-      let retVal: TsType.TsType;
-      let id: string;
-      let fullPath = resolve(join(this.filePath.dir, refPath));
-      let file = readFileSync(fullPath);
-      let targetType = this.toTsType(JSON.parse(file.toString()), propName, false, true);
-      if(targetType.id){
-        id = targetType.toSafeType(this.settings);
+      let id: string
+      let fullPath = resolve(join(this.filePath.dir, refPath))
+      let file = readFileSync(fullPath)
+      let targetType = this.toTsType(JSON.parse(file.toString()), propName, false, true)
+      if (targetType.id){
+        id = targetType.toSafeType(this.settings)
       } else {
-        let parsedNewFile = parse(fullPath);
-        id = parsedNewFile.name;
+        let parsedNewFile = parse(fullPath)
+        id = parsedNewFile.name
       }
 
-      if(this.settings.declareReferenced){
-        this.declareType(targetType, id, id);
-      } 
+      if (this.settings.declareReferenced){
+        this.declareType(targetType, id, id)
+      }
 
-      return new TsType.Literal(id);
+      return new TsType.Literal(id)
     };
 
-    const parts = refPath.slice(2).split('/');
-    let ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined;
+    const parts = refPath.slice(2).split('/')
+    let ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined
 
     if (!ret) {
       let cur: any = this.schema
@@ -138,9 +136,9 @@ class Compiler {
   }
 
   private declareType(type: TsType.TsType, refPath: string, id: string) {
-    type.id = id;
-    this.declarations.set(refPath, type);
-    return type;
+    type.id = id
+    this.declarations.set(refPath, type)
+    return type
   }
 
   private toStringLiteral(a: boolean | number | string | Object): TsType.TsType {
@@ -175,42 +173,42 @@ class Compiler {
 
         // TODO:  what to do in the case where the value is an Object?  
         // right now we just pring [Object object] as the literal which is bad
-        if(this.settings.useTypescriptEnums){
-          var enumValues = zip(rule.tsEnumNames || [], 
+        if (this.settings.useTypescriptEnums){
+          var enumValues = zip(rule.tsEnumNames || [],
               // If we try to create a literal from an object, bad stuff can happen... so we have to toString it
               rule.enum!.map(_ => new TsType.Literal(_).toType(this.settings).toString()))
-            .map(_ => new TsType.EnumValue(_));
+            .map(_ => new TsType.EnumValue(_))
 
           // name our anonymous enum, if it doesn't have an ID, by the property name under 
           // which it was declared.  Failing both of these things, it'll concat together the 
           // identifiers as EnumOneTwoThree for enum: ["One", "Two", "Three"].  Ugly, but
           // practical.
-          let path = rule.id || propName || ("Enum" + enumValues.map(_ => _.identifier).join(""));
+          let path = rule.id || propName || ('Enum' + enumValues.map(_ => _.identifier).join(''))
 
-          let enm = new TsType.Enum(enumValues);
-          let retVal: TsType.TsType = enm;
+          let enm = new TsType.Enum(enumValues)
+          let retVal: TsType.TsType = enm
 
           // don't add this to the declarations map if this is the top-level type (already declared)
           // or if it's a reference and we don't want to declare those.
-          if((!isReference || this.settings.declareReferenced)){
-            if(!isTop){ 
-              retVal = this.declareType(retVal, path, path);
+          if ((!isReference || this.settings.declareReferenced)){
+            if (!isTop){
+              retVal = this.declareType(retVal, path, path)
             } else {
-              retVal.id = path;
+              retVal.id = path
             }
 
-            if(this.settings.addEnumUtils){
-              let utilPath = path + "Utils"
+            if (this.settings.addEnumUtils){
+              let utilPath = path + 'Utils'
               this.declareType(new TsType.EnumUtils(enm), utilPath, utilPath)
             }
           }
 
-          return retVal;
-          
+          return retVal
+
         } else {
           return new TsType.Union(uniqBy(
             rule.enum!.map(_ => this.toStringLiteral(_))
-            , _ => _.toType(this.settings)));
+            , _ => _.toType(this.settings)))
         }
       case RuleType.Any: return new TsType.Any
       case RuleType.Literal: return new TsType.Literal(rule)
@@ -226,16 +224,16 @@ class Compiler {
       case RuleType.AnyOf:
         return new TsType.Union(rule.anyOf!.map(_ => this.toTsType(_)))
       case RuleType.Reference:
-        return this.resolveType(rule.$ref!, propName!);
+        return this.resolveType(rule.$ref!, propName!)
     }
     throw new Error('Unknown rule:' + rule.toString())
-  } 
+  }
 
   private toTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsType {
-    let type = this.createTsType(rule, propName, isTop, isReference);
-    type.id = type.id || rule.id || rule.title;
-    type.description = type.description || rule.description;
-    return type;
+    let type = this.createTsType(rule, propName, isTop, isReference)
+    type.id = type.id || rule.id || rule.title
+    type.description = type.description || rule.description
+    return type
   }
   private toTsDeclaration(schema: JSONSchema.Schema): TsType.TsType {
     let copy = merge({}, Compiler.DEFAULT_SCHEMA, schema)
@@ -245,7 +243,7 @@ class Compiler {
         return {
           name: k,
           required: this.isRequired(k, copy),
-          type: this.toTsType(v, k),
+          type: this.toTsType(v, k)
         }
       })
     if (props.length === 0 && !('additionalProperties' in schema)) {

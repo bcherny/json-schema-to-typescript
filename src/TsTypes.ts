@@ -3,33 +3,32 @@ import { camelCase, upperFirst } from 'lodash'
 export namespace TsType {
 
   export interface TsTypeSettings {
-    declareSimpleType?: boolean
-    declareReferenced?: boolean
-    useFullReferencePathAsName?: boolean
-    // TODO declareProperties?: boolean
-    useInterfaceDeclaration?: boolean
-    useTypescriptEnums?: boolean;
-    exportInterfaces?: boolean;
-    endTypeWithSemicolon?: boolean
-    endPropertyWithSemicolon?: boolean
-    declarationDescription?: boolean
-    propertyDescription?: boolean,
     addEnumUtils?: boolean
+    declarationDescription?: boolean
+    // TODO declareProperties?: boolean
+    declareReferenced?: boolean
+    declareSimpleType?: boolean
+    exportInterfaces?: boolean
+    endPropertyWithSemicolon?: boolean
+    endTypeWithSemicolon?: boolean
+    propertyDescription?: boolean
+    useFullReferencePathAsName?: boolean
+    useInterfaceDeclaration?: boolean
+    useTypescriptEnums?: boolean
   }
 
   export var DEFAULT_SETTINGS: TsTypeSettings = {
+    addEnumUtils: false,
     declarationDescription: true,
+    // declareProperties: false,
     declareReferenced: true,
     declareSimpleType: false,
     endPropertyWithSemicolon: true,
     endTypeWithSemicolon: true,
     propertyDescription: true,
     useFullReferencePathAsName: false,
-    // declareProperties: false,
     useInterfaceDeclaration: true,
-    useTypescriptEnums: false,
-    exportInterfaces: false,
-    addEnumUtils: false
+    useTypescriptEnums: false
   }
 
   export abstract class TsType {
@@ -105,20 +104,20 @@ export namespace TsType {
   }
 
 export class EnumValue {
-  identifier: string;
-  value: string;
+  identifier: string
+  value: string
 
   constructor(enumValues: string[]) {
-    let hasValue = !!enumValues[0];
+    let hasValue = !!enumValues[0]
 
     // quirky propagation logic
-    if(hasValue){
-      this.identifier = enumValues[0];
-      this.value = enumValues[1];
+    if (hasValue){
+      this.identifier = enumValues[0]
+      this.value = enumValues[1]
     } else {
-      this.identifier = enumValues[1];
+      this.identifier = enumValues[1]
     }
-  } 
+  }
 
   toDeclaration(){
     // if there is a value associated with the identifier, declare as identifier=value
@@ -132,44 +131,44 @@ export class EnumValue {
 }
 
 export class Enum extends TsType {
-  constructor(public enumValues: EnumValue[]) { 
-    super() 
+  constructor(public enumValues: EnumValue[]) {
+    super()
   }
-  isSimpleType() { return false; }
+  isSimpleType() { return false }
   _type(settings: TsTypeSettings) {
-    return this.safeId() || "SomeEnumType";
+    return this.safeId() || 'SomeEnumType'
   }
   toSafeType(settings: TsTypeSettings) {
-    return `${this.toType(settings)}`;
+    return `${this.toType(settings)}`
   }
   toDeclaration(settings: TsTypeSettings): string {
-    return `${this.toBlockComment(settings)}${settings.exportInterfaces ? "export " : ""}enum ${this._type(settings)}{
+    return `${this.toBlockComment(settings)}export enum ${this._type(settings)}{
       ${this.enumValues.map(_ => _.toDeclaration()).join(',\n')}
-    }`;
+    }`
   }
 }
 
 export class EnumUtils extends TsType {
-  constructor(protected enm: Enum) { 
-    super() 
+  constructor(protected enm: Enum) {
+    super()
   }
-  isSimpleType() { return false; }
+  isSimpleType() { return false }
   _type(settings: TsTypeSettings) {
     // It's a bit hacky, but if this is a top level type, then addDeclaration changes 
     // our enum type's ID out from under us when it adds the enum to the declaration map, *after*
     // the util class is declared.  So we name ourselves by our enum's type, not our own ID'
-    return `${this.enm.toSafeType(settings)}Util` || this.safeId() || "SomeEnumTypeUtils";
+    return `${this.enm.toSafeType(settings)}Util` || this.safeId() || 'SomeEnumTypeUtils'
   }
   toSafeType(settings: TsTypeSettings) {
-    return `${this.toType(settings)}`;
+    return `${this.toType(settings)}`
   }
   toDeclaration(settings: TsTypeSettings): string {
-    return `${this.toBlockComment(settings)}${settings.exportInterfaces ? "export " : ""}class ${this._type(settings)} {
+    return `${this.toBlockComment(settings)}export class ${this._type(settings)} {
       ${this.makeValuesMethod(settings)}
       ${this.makeToStringValueMethod(settings)}
       ${this.makeFromStringValueMethod(settings)}
       ${this.makeFromStringValuesMethod(settings)}
-    }`;
+    }`
   }
   makeValuesMethod(settings: TsTypeSettings){
     let enumType = this.enm.toSafeType(settings)
@@ -203,8 +202,6 @@ export class EnumUtils extends TsType {
     return _.map(values, value => ${this._type(settings)}.fromStringValue(value));
   }`
   }
-
-
 }
 
   export class Array extends TsType {
@@ -262,12 +259,11 @@ export class EnumUtils extends TsType {
         }).join('\n')}
       }` : id
     }
-    isSimpleType() { return false; }
+    isSimpleType() { return false }
     toDeclaration(settings: TsTypeSettings): string {
       if (settings.useInterfaceDeclaration)
-        return `${this.toBlockComment(settings)}${settings.exportInterfaces ? "export " : ""}interface ${this.safeId()} ${this._type(settings, true)}`;
-      else
-        return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings);
+        return `${this.toBlockComment(settings)}"export interface ${this.safeId()} ${this._type(settings, true)}`
+      return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings)
     }
   }
 
