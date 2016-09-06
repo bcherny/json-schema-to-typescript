@@ -247,7 +247,7 @@ export class EnumUtils extends TsType {
       let id = this.safeId()
       return declaration || !id ? `{
         ${this.props.map(_ => {
-          let decl = _.name
+          let decl = '    ' + _.name
           if (!_.required)
             decl += '?'
           decl += ': ' + _.type.toType(settings)
@@ -257,12 +257,12 @@ export class EnumUtils extends TsType {
             decl += ' // ' + _.type.description
           return decl
         }).join('\n')}
-      }` : id
+}` : id
     }
     isSimpleType() { return false }
     toDeclaration(settings: TsTypeSettings): string {
       if (settings.useInterfaceDeclaration)
-        return `${this.toBlockComment(settings)}"export interface ${this.safeId()} ${this._type(settings, true)}`
+        return `${this.toBlockComment(settings)}export interface ${this.safeId()} ${this._type(settings, true)}`
       return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings)
     }
   }

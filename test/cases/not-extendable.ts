@@ -18,7 +18,7 @@ export var schema = {
   "additionalProperties": false
 }
 
-export var types = `interface ExampleSchema {
+export var types = `export interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years

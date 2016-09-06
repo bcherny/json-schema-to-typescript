@@ -160,7 +160,7 @@ type SchemaArray = HttpJsonSchemaOrgDraft04Schema[];
 type StringArray = string[];
 type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
 /** Core schema meta-schema */
-interface HttpJsonSchemaOrgDraft04Schema {
+export interface HttpJsonSchemaOrgDraft04Schema {
   id?: string;
   $schema?: string;
   title?: string;
@@ -210,7 +210,7 @@ interface HttpJsonSchemaOrgDraft04Schema {
     },
     types:`type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
 /** Core schema meta-schema */
-interface HttpJsonSchemaOrgDraft04Schema {
+export interface HttpJsonSchemaOrgDraft04Schema {
   id?: string;
   $schema?: string;
   title?: string;

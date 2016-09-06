@@ -9,18 +9,17 @@ var lodash_1 = require('lodash');
 var TsType;
 (function (TsType_1) {
     TsType_1.DEFAULT_SETTINGS = {
+        addEnumUtils: false,
         declarationDescription: true,
+        // declareProperties: false,
         declareReferenced: true,
         declareSimpleType: false,
         endPropertyWithSemicolon: true,
         endTypeWithSemicolon: true,
         propertyDescription: true,
         useFullReferencePathAsName: false,
-        // declareProperties: false,
         useInterfaceDeclaration: true,
-        useTypescriptEnums: false,
-        exportInterfaces: false,
-        addEnumUtils: false
+        useTypescriptEnums: false
     };
     var TsType = (function () {
         function TsType() {
@@ -159,13 +158,13 @@ var TsType;
         }
         Enum.prototype.isSimpleType = function () { return false; };
         Enum.prototype._type = function (settings) {
-            return this.safeId() || "SomeEnumType";
+            return this.safeId() || 'SomeEnumType';
         };
         Enum.prototype.toSafeType = function (settings) {
             return "" + this.toType(settings);
         };
         Enum.prototype.toDeclaration = function (settings) {
-            return "" + this.toBlockComment(settings) + (settings.exportInterfaces ? "export " : "") + "enum " + this._type(settings) + "{\n      " + this.enumValues.map(function (_) { return _.toDeclaration(); }).join(',\n') + "\n    }";
+            return this.toBlockComment(settings) + "export enum " + this._type(settings) + "{\n      " + this.enumValues.map(function (_) { return _.toDeclaration(); }).join(',\n') + "\n    }";
         };
         return Enum;
     }(TsType));
@@ -181,13 +180,13 @@ var TsType;
             // It's a bit hacky, but if this is a top level type, then addDeclaration changes 
             // our enum type's ID out from under us when it adds the enum to the declaration map, *after*
             // the util class is declared.  So we name ourselves by our enum's type, not our own ID'
-            return this.enm.toSafeType(settings) + "Util" || this.safeId() || "SomeEnumTypeUtils";
+            return this.enm.toSafeType(settings) + "Util" || this.safeId() || 'SomeEnumTypeUtils';
         };
         EnumUtils.prototype.toSafeType = function (settings) {
             return "" + this.toType(settings);
         };
         EnumUtils.prototype.toDeclaration = function (settings) {
-            return "" + this.toBlockComment(settings) + (settings.exportInterfaces ? "export " : "") + "class " + this._type(settings) + " {\n      " + this.makeValuesMethod(settings) + "\n      " + this.makeToStringValueMethod(settings) + "\n      " + this.makeFromStringValueMethod(settings) + "\n      " + this.makeFromStringValuesMethod(settings) + "\n    }";
+            return this.toBlockComment(settings) + "export class " + this._type(settings) + " {\n      " + this.makeValuesMethod(settings) + "\n      " + this.makeToStringValueMethod(settings) + "\n      " + this.makeFromStringValueMethod(settings) + "\n      " + this.makeFromStringValuesMethod(settings) + "\n    }";
         };
         EnumUtils.prototype.makeValuesMethod = function (settings) {
             var enumType = this.enm.toSafeType(settings);
@@ -268,7 +267,7 @@ var TsType;
             if (declaration === void 0) { declaration = false; }
             var id = this.safeId();
             return declaration || !id ? "{\n        " + this.props.map(function (_) {
-                var decl = _.name;
+                var decl = '    ' + _.name;
                 if (!_.required)
                     decl += '?';
                 decl += ': ' + _.type.toType(settings);
@@ -277,14 +276,13 @@ var TsType;
                 if (settings.propertyDescription && _.type.description)
                     decl += ' // ' + _.type.description;
                 return decl;
-            }).join('\n') + "\n      }" : id;
+            }).join('\n') + "\n}" : id;
         };
         Interface.prototype.isSimpleType = function () { return false; };
         Interface.prototype.toDeclaration = function (settings) {
             if (settings.useInterfaceDeclaration)
-                return "" + this.toBlockComment(settings) + (settings.exportInterfaces ? "export " : "") + "interface " + this.safeId() + " " + this._type(settings, true);
-            else
-                return this._toDeclaration("type " + this.safeId() + " = " + this._type(settings, true), settings);
+                return this.toBlockComment(settings) + "export interface " + this.safeId() + " " + this._type(settings, true);
+            return this._toDeclaration("type " + this.safeId() + " = " + this._type(settings, true), settings);
         };
         return Interface;
     }(TsType));
@@ -296,8 +294,8 @@ var TsType;
 var pretty_printer_1 = require('./pretty-printer');
 var TsTypes_1 = require('./TsTypes');
 var fs_1 = require('fs');
-var path_1 = require('path');
 var lodash_1 = require('lodash');
+var path_1 = require('path');
 var RuleType;
 (function (RuleType) {
     RuleType[RuleType['Any'] = 0] = 'Any';
@@ -388,7 +386,6 @@ var Compiler = (function () {
             return TsTypes_1.TsType.Interface.reference(this.id);
         }
         if (refPath[0] !== '#') {
-            var retVal = void 0;
             var id = void 0;
             var fullPath = path_1.resolve(path_1.join(this.filePath.dir, refPath));
             var file = fs_1.readFileSync(fullPath);
@@ -462,7 +459,7 @@ var Compiler = (function () {
                     // which it was declared.  Failing both of these things, it'll concat together the 
                     // identifiers as EnumOneTwoThree for enum: ["One", "Two", "Three"].  Ugly, but
                     // practical.
-                    var path = rule.id || propName || ("Enum" + enumValues.map(function (_) { return _.identifier; }).join(""));
+                    var path = rule.id || propName || ('Enum' + enumValues.map(function (_) { return _.identifier; }).join(''));
                     var enm = new TsTypes_1.TsType.Enum(enumValues);
                     var retVal = enm;
                     // don't add this to the declarations map if this is the top-level type (already declared)
@@ -475,7 +472,7 @@ var Compiler = (function () {
                             retVal.id = path;
                         }
                         if (this.settings.addEnumUtils) {
-                            var utilPath = path + "Utils";
+                            var utilPath = path + 'Utils';
                             this.declareType(new TsTypes_1.TsType.EnumUtils(enm), utilPath, utilPath);
                         }
                     }
@@ -517,7 +514,7 @@ var Compiler = (function () {
             return {
                 name: k,
                 required: _this.isRequired(k, copy),
-                type: _this.toTsType(v, k),
+                type: _this.toTsType(v, k)
             };
         });
         if (props.length === 0 && !('additionalProperties' in schema)) {

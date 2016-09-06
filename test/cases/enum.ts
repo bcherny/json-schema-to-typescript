@@ -26,7 +26,7 @@ export var configurations = [
     settings: {
       useTypescriptEnums: false
     },
-    types: `interface Enum {
+    types: `export interface Enum {
   foo: "a" | "b" | "c";
   bar: number;
   baz: {
@@ -38,22 +38,22 @@ export var configurations = [
     settings: {
       useTypescriptEnums: true
     },
-    types: `enum Foo {
+    types: `export enum Foo {
   a,
   b,
   c
 }
-enum Bar {
+export enum Bar {
   One = 1,
   Two = 2,
   Three = 3
 }
-enum Baz {
+export enum Baz {
   [object Object],
   [object Object],
   [object Object]
 }
-interface Enum {
+export interface Enum {
   foo: Foo;
   bar: Bar;
   baz: Baz;
@@ -64,12 +64,12 @@ interface Enum {
       useTypescriptEnums: true,
       addEnumUtils: true
     },
-    types: `enum Foo {
+    types: `export enum Foo {
   a,
   b,
   c
 }
-class FooUtil {
+export class FooUtil {
   static values(): Foo[] {
     return [Foo.a, Foo.b, Foo.c]
   }
@@ -99,12 +99,12 @@ class FooUtil {
     return _.map(values, value => FooUtil.fromStringValue(value));
   }
 }
-enum Bar {
+export enum Bar {
   One = 1,
   Two = 2,
   Three = 3
 }
-class BarUtil {
+export class BarUtil {
   static values(): Bar[] {
     return [Bar.One, Bar.Two, Bar.Three]
   }
@@ -134,12 +134,12 @@ class BarUtil {
     return _.map(values, value => BarUtil.fromStringValue(value));
   }
 }
-enum Baz {
+export enum Baz {
   [object Object],
   [object Object],
   [object Object]
 }
-class BazUtil {
+export class BazUtil {
   static values(): Baz[] {
     return [Baz.[object Object], Baz.[object Object],Baz.[object Object]]
   }
@@ -169,7 +169,7 @@ class BazUtil {
     return _.map(values, value => BazUtil.fromStringValue(value));
   }
 }
-interface Enum {
+export interface Enum {
   foo: Foo;
   bar: Bar;
   baz: Baz;

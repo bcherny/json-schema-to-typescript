@@ -57,17 +57,17 @@ export namespace JSONSchema {
 
 export namespace TsType {
     interface TsTypeSettings {
-        declareSimpleType?: boolean;
+        addEnumUtils?: boolean;
+        declarationDescription?: boolean;
         declareReferenced?: boolean;
+        declareSimpleType?: boolean;
+        exportInterfaces?: boolean;
+        endPropertyWithSemicolon?: boolean;
+        endTypeWithSemicolon?: boolean;
+        propertyDescription?: boolean;
         useFullReferencePathAsName?: boolean;
         useInterfaceDeclaration?: boolean;
         useTypescriptEnums?: boolean;
-        exportInterfaces?: boolean;
-        endTypeWithSemicolon?: boolean;
-        endPropertyWithSemicolon?: boolean;
-        declarationDescription?: boolean;
-        propertyDescription?: boolean;
-        addEnumUtils?: boolean;
     }
     var DEFAULT_SETTINGS: TsTypeSettings;
     abstract class TsType {

@@ -36,18 +36,18 @@ export var schema = {
 }
 
 
-export var types = `interface Foo {
+export var types = `export interface Foo {
   a: string;
   b?: number;
 }
-interface Bar {
+export interface Bar {
   a?: "a" | "b" | "c";
   [k: string]: any;
 }
-interface Baz {
+export interface Baz {
   baz?: Bar;
   [k: string]: any;
 }
-interface AnyOf {
+export interface AnyOf {
   foo: Foo | Bar | Baz;
 }`
