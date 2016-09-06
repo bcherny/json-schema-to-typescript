@@ -144,7 +144,7 @@ export class Enum extends TsType {
     return `${this.toType(settings)}`
   }
   toDeclaration(settings: TsTypeSettings): string {
-    return `${this.toBlockComment(settings)}export ${settings.useConstEnums ? "const " : ""}enum ${this._type(settings)}{
+    return `${this.toBlockComment(settings)}export ${settings.useConstEnums ? 'const ' : ''}enum ${this._type(settings)}{
       ${this.enumValues.map(_ => _.toDeclaration()).join(',\n')}
     }`
   }
