@@ -49,7 +49,7 @@ export namespace TsType {
     protected abstract _type(settings: TsTypeSettings): string
     isSimpleType() { return true }
     toDeclaration(settings: TsTypeSettings): string {
-      return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings)}`, settings)
+      return this._toDeclaration(`export type ${this.safeId()} = ${this._type(settings)}`, settings)
     }
     toSafeType(settings: TsTypeSettings): string {
       return this.toType(settings)
@@ -255,7 +255,7 @@ export class EnumUtils extends TsType {
           decl += ': ' + _.type.toType(settings)
           if (settings.endPropertyWithSemicolon)
             decl += ';'
-          if (settings.propertyDescription && _.type.description)
+          if (settings.propertyDescription && _.type.description && !_.type.id)
             decl += ' // ' + _.type.description
           return decl
         }).join('\n')}
@@ -265,7 +265,7 @@ export class EnumUtils extends TsType {
     toDeclaration(settings: TsTypeSettings): string {
       if (settings.useInterfaceDeclaration)
         return `${this.toBlockComment(settings)}export interface ${this.safeId()} ${this._type(settings, true)}`
-      return this._toDeclaration(`type ${this.safeId()} = ${this._type(settings, true)}`, settings)
+      return this._toDeclaration(`export type ${this.safeId()} = ${this._type(settings, true)}`, settings)
     }
   }
 

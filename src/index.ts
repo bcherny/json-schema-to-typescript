@@ -276,7 +276,12 @@ class Compiler {
 
   private toTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsType {
     let type = this.createTsType(rule, propName, isTop, isReference)
-    type.id = type.id || rule.id || rule.title
+    if (!type.id) {
+      // the type is not declared, let's check if we should declare it or keep it inline
+      type.id = rule.id || rule.title
+      if (type.id && !isReference)
+        this.declareType(type, type.id, type.id)
+    }
     type.description = type.description || rule.description
     return type
   }
