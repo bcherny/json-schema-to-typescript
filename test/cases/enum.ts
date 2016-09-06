@@ -6,18 +6,12 @@ export var schema = {
       "enum": ["a", "b", "c"]
     },
     "bar": {
+      "type": "integer",
       "enum": [1, 2, 3],
       "tsEnumNames": ["One","Two","Three"]
-    },
-    "baz": {
-      "enum": [
-        { "a": 1 },
-        { "a": 2 },
-        { "a": 3 }
-      ]
     }
   },
-  "required": ["foo", "bar", "baz"],
+  "required": ["foo", "bar"],
   "additionalProperties": false
 }
 
@@ -29,9 +23,6 @@ export var configurations = [
     types: `export interface Enum {
   foo: "a" | "b" | "c";
   bar: number;
-  baz: {
-    a: number;
-  };
 }`
   }, 
   {
@@ -48,15 +39,9 @@ export enum Bar {
   Two = 2,
   Three = 3
 }
-export enum Baz {
-  [object Object],
-  [object Object],
-  [object Object]
-}
 export interface Enum {
   foo: Foo;
   bar: Bar;
-  baz: Baz;
 }`
   },
     {
@@ -134,45 +119,9 @@ export class BarUtil {
     return _.map(values, value => BarUtil.fromStringValue(value));
   }
 }
-export enum Baz {
-  [object Object],
-  [object Object],
-  [object Object]
-}
-export class BazUtil {
-  static values(): Baz[] {
-    return [Baz.[object Object], Baz.[object Object],Baz.[object Object]]
-  }
-  static toStringValue(enm: Baz): string {
-    switch (enm) {
-      case Baz.[object Object]:
-        return "[object object]";
-      case Baz.[object Object]:
-        return "[object object]";
-      case Baz.[object Object]:
-        return "[object object]";
-    }
-  }
-  static fromStringValue(value: string): Baz {
-    switch (value.toLowerCase()) {
-      case "[object object]":
-        return Baz.[object Object];
-      case "[object object]":
-        return Baz.[object Object];
-      case "[object object]":
-        return Baz.[object Object];
-      default:
-        throw new Error("Unrecognized Baz: " + value);
-    }
-  }
-  static fromStringValues(values: string[]): Baz[] {
-    return _.map(values, value => BazUtil.fromStringValue(value));
-  }
-}
 export interface Enum {
   foo: Foo;
   bar: Bar;
-  baz: Baz;
 }`
   }
 ]

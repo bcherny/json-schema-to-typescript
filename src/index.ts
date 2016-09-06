@@ -171,9 +171,9 @@ class Compiler {
         // skip all the zipping mess; if int, either require the tsEnumNames 
         // or generate literals for the values
 
-        // TODO:  what to do in the case where the value is an Object?  
-        // right now we just pring [Object object] as the literal which is bad
         if (this.settings.useTypescriptEnums){
+          this.validateEnumMembers(rule)
+
           var enumValues = zip(rule.tsEnumNames || [],
               // If we try to create a literal from an object, bad stuff can happen... so we have to toString it
               rule.enum!.map(_ => new TsType.Literal(_).toType(this.settings).toString()))
@@ -227,6 +227,51 @@ class Compiler {
         return this.resolveType(rule.$ref!, propName!)
     }
     throw new Error('Unknown rule:' + rule.toString())
+  }
+
+  private validateEnumMembers(rule: JSONSchema.Schema){
+    if (!rule.type) rule.type = 'string'
+
+    let isDeclaredStringEnum = rule.type === 'string'
+    let isDeclaredIntegerEnum = rule.type === 'integer'
+
+    if (!isDeclaredStringEnum && !isDeclaredIntegerEnum){
+      throw TypeError('Enum type must be string or integer when useTypescriptEnums=true; default is string if undefined')
+    }
+
+    if (rule.enum!.some(_ => _ instanceof Object)){
+      throw TypeError('Enum members must be a list of strings or a list of integers when useTypescriptEnums=true; instead, found an Object')
+    }
+
+    let isActuallyStringEnum = rule.enum!.every(_ => typeof(_) === 'string')
+    let isActuallyIntegerEnum = rule.enum!.every(_ => typeof(_) === 'number')
+    let isIntegerEnumWithValidStringValues = isActuallyIntegerEnum
+      && rule.tsEnumNames
+      && rule.tsEnumNames.length === rule.enum!.length
+      && rule.tsEnumNames!.every(_ => typeof(_) === 'string')
+
+    if (isDeclaredStringEnum && !isActuallyStringEnum){
+      throw TypeError('Enum was declared as a string type but found at least one non-string member')
+    }
+
+    if (isDeclaredIntegerEnum && !isIntegerEnumWithValidStringValues){
+      if (!isActuallyIntegerEnum){
+        throw TypeError('Enum was declared as an integer type, but found at least one non-integer member')
+      }
+      if (!rule.tsEnumNames){
+        throw TypeError('Property tsEnumValues is required when enum is declared as an integer type')
+      }
+      if (rule.tsEnumNames.length !== rule.enum!.length){
+        throw TypeError('Property enum and property tsEnumValues must be the same length')
+      }
+
+      throw TypeError('Enum was declared as an integer type, but found at least one non-string tsEnumValue')
+    }
+
+    // I don't think we should ever hit this case.
+    if (!isActuallyStringEnum && !isIntegerEnumWithValidStringValues){
+      throw TypeError('Enum members must be a list of strings or a list of integers (with corresponding tsEnumValues) when useTypescriptEnums=true')
+    }
   }
 
   private toTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsType {
