@@ -1,3 +1,4 @@
+import { EnumUtils } from './EnumUtils'
 import { JSONSchema } from './JSONSchema'
 import { format } from './pretty-printer'
 import { TsType } from './TsTypes'
@@ -8,6 +9,11 @@ import { join, parse, ParsedPath, resolve } from 'path'
 enum RuleType {
   'Any', 'TypedArray', 'Enum', 'AllOf', 'AnyOf', 'Reference', 'NamedSchema', 'AnonymousSchema',
   'String', 'Number', 'Void', 'Object', 'Array', 'Boolean', 'Literal'
+}
+
+enum EnumType {
+  String,
+  Integer
 }
 
 class Compiler {
@@ -39,7 +45,7 @@ class Compiler {
 
   private settings: TsType.TsTypeSettings
   private id: string
-  private declarations: Map<string, TsType.TsType>
+  private declarations: Map<string, TsType.TsTypeBase>
   private filePath: ParsedPath
 
   private isRequired(propertyName: string, schema: JSONSchema.Schema): boolean {
@@ -96,7 +102,7 @@ class Compiler {
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
   // only called in case of a $ref type
-  private resolveType(refPath: string, propName: string): TsType.TsType {
+  private resolveType(refPath: string, propName: string): TsType.TsTypeBase {
     if (refPath === '#' || refPath === '#/'){
       return TsType.Interface.reference(this.id)
     }
@@ -135,13 +141,13 @@ class Compiler {
     return ret
   }
 
-  private declareType(type: TsType.TsType, refPath: string, id: string) {
+  private declareType(type: TsType.TsTypeBase, refPath: string, id: string) {
     type.id = id
     this.declarations.set(refPath, type)
     return type
   }
 
-  private toStringLiteral(a: boolean | number | string | Object): TsType.TsType {
+  private toStringLiteral(a: boolean | number | string | Object): TsType.TsTypeBase {
     switch (typeof a) {
       case 'boolean': return new TsType.Boolean // ts doesn't support literal boolean types
       case 'number': return new TsType.Number   // ts doesn't support literal numeric types
@@ -161,54 +167,52 @@ class Compiler {
     }
   }
 
-  private createTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsType {
+  private createTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsTypeBase {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
         return this.toTsDeclaration(rule)
       case RuleType.Enum:
-        // TODO:  honor the schema's "type" on the enum.  if string,
-        // skip all the zipping mess; if int, either require the tsEnumNames 
-        // or generate literals for the values
+        // we honor the schema's "type" on the enum.  if string, generate a union.
+        // if int, require the tsEnumNames
+        let enumType = this.validateEnumMembers(rule)
 
-        if (this.settings.useTypescriptEnums){
-          this.validateEnumMembers(rule)
+        switch (enumType){
+          case EnumType.Integer:
+            var enumValues = zip(rule.tsEnumNames || [],
+                // If we try to create a literal from an object, bad stuff can happen... so we have to toString it
+                rule.enum!.map(_ => new TsType.Literal(_).toType(this.settings).toString()))
+              .map(_ => new TsType.EnumValue(_))
 
-          var enumValues = zip(rule.tsEnumNames || [],
-              // If we try to create a literal from an object, bad stuff can happen... so we have to toString it
-              rule.enum!.map(_ => new TsType.Literal(_).toType(this.settings).toString()))
-            .map(_ => new TsType.EnumValue(_))
+            // name our anonymous enum, if it doesn't have an ID, by the property name under 
+            // which it was declared.  Failing both of these things, it'll concat together the 
+            // identifiers as EnumOneTwoThree for enum: ["One", "Two", "Three"].  Ugly, but
+            // practical.
+            let path = rule.id || propName || ('Enum' + enumValues.map(_ => _.identifier).join(''))
 
-          // name our anonymous enum, if it doesn't have an ID, by the property name under 
-          // which it was declared.  Failing both of these things, it'll concat together the 
-          // identifiers as EnumOneTwoThree for enum: ["One", "Two", "Three"].  Ugly, but
-          // practical.
-          let path = rule.id || propName || ('Enum' + enumValues.map(_ => _.identifier).join(''))
+            let enm = new TsType.Enum(enumValues)
+            let retVal: TsType.TsTypeBase = enm
 
-          let enm = new TsType.Enum(enumValues)
-          let retVal: TsType.TsType = enm
+            // don't add this to the declarations map if this is the top-level type (already declared)
+            // or if it's a reference and we don't want to declare those.
+            if ((!isReference || this.settings.declareReferenced)){
+              if (!isTop){
+                retVal = this.declareType(retVal, path, path)
+              } else {
+                retVal.id = path
+              }
 
-          // don't add this to the declarations map if this is the top-level type (already declared)
-          // or if it's a reference and we don't want to declare those.
-          if ((!isReference || this.settings.declareReferenced)){
-            if (!isTop){
-              retVal = this.declareType(retVal, path, path)
-            } else {
-              retVal.id = path
+              if (this.settings.addEnumUtils){
+                let utilPath = path + 'Utils'
+                this.declareType(new EnumUtils(enm), utilPath, utilPath)
+              }
             }
 
-            if (this.settings.addEnumUtils){
-              let utilPath = path + 'Utils'
-              this.declareType(new TsType.EnumUtils(enm), utilPath, utilPath)
-            }
-          }
-
-          return retVal
-
-        } else {
-          return new TsType.Union(uniqBy(
-            rule.enum!.map(_ => this.toStringLiteral(_))
-            , _ => _.toType(this.settings)))
+            return retVal
+          case EnumType.String:
+            return new TsType.Union(uniqBy(
+              rule.enum!.map(_ => this.toStringLiteral(_))
+              , _ => _.toType(this.settings)))
         }
       case RuleType.Any: return new TsType.Any
       case RuleType.Literal: return new TsType.Literal(rule)
@@ -229,18 +233,18 @@ class Compiler {
     throw new Error('Unknown rule:' + rule.toString())
   }
 
-  private validateEnumMembers(rule: JSONSchema.Schema){
+  private validateEnumMembers(rule: JSONSchema.Schema): EnumType {
     if (!rule.type) rule.type = 'string'
 
     let isDeclaredStringEnum = rule.type === 'string'
     let isDeclaredIntegerEnum = rule.type === 'integer'
 
     if (!isDeclaredStringEnum && !isDeclaredIntegerEnum){
-      throw TypeError('Enum type must be string or integer when useTypescriptEnums=true; default is string if undefined')
+      throw TypeError('Enum type must be string or integer; default is string if undefined')
     }
 
     if (rule.enum!.some(_ => _ instanceof Object)){
-      throw TypeError('Enum members must be a list of strings or a list of integers when useTypescriptEnums=true; instead, found an Object')
+      throw TypeError('Enum members must be a list of strings or a list of integers; instead, found an Object')
     }
 
     let isActuallyStringEnum = rule.enum!.every(_ => typeof(_) === 'string')
@@ -270,11 +274,17 @@ class Compiler {
 
     // I don't think we should ever hit this case.
     if (!isActuallyStringEnum && !isIntegerEnumWithValidStringValues){
-      throw TypeError('Enum members must be a list of strings or a list of integers (with corresponding tsEnumValues) when useTypescriptEnums=true')
+      throw TypeError('Enum members must be a list of strings or a list of integers (with corresponding tsEnumValues)')
+    }
+
+    if (isIntegerEnumWithValidStringValues){
+      return EnumType.Integer
+    } else {
+      return EnumType.String
     }
   }
 
-  private toTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsType {
+  private toTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsTypeBase {
     let type = this.createTsType(rule, propName, isTop, isReference)
     if (!type.id) {
       // the type is not declared, let's check if we should declare it or keep it inline
@@ -285,7 +295,7 @@ class Compiler {
     type.description = type.description || rule.description
     return type
   }
-  private toTsDeclaration(schema: JSONSchema.Schema): TsType.TsType {
+  private toTsDeclaration(schema: JSONSchema.Schema): TsType.TsTypeBase {
     let copy = merge({}, Compiler.DEFAULT_SCHEMA, schema)
     let props = map(
       copy.properties!,

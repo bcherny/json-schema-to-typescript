@@ -15,7 +15,6 @@ export namespace TsType {
     useConstEnums?: boolean
     useFullReferencePathAsName?: boolean
     useInterfaceDeclaration?: boolean
-    useTypescriptEnums?: boolean
   }
 
   export var DEFAULT_SETTINGS: TsTypeSettings = {
@@ -30,10 +29,9 @@ export namespace TsType {
     useConstEnums: false,
     useFullReferencePathAsName: false,
     useInterfaceDeclaration: true,
-    useTypescriptEnums: false
   }
 
-  export abstract class TsType {
+  export abstract class TsTypeBase {
     id?: string
     description?: string
 
@@ -65,155 +63,99 @@ export namespace TsType {
   export interface TsProp {
     name: string
     required: boolean
-    type: TsType
+    type: TsTypeBase
   }
 
-  export class Any extends TsType {
+  export class Any extends TsTypeBase {
     _type() {
       return 'any'
     }
   }
-  export class String extends TsType {
+  export class String extends TsTypeBase {
     _type() {
       return 'string'
     }
   }
-  export class Boolean extends TsType {
+  export class Boolean extends TsTypeBase {
     _type() {
       return 'boolean'
     }
   }
-  export class Number extends TsType {
+  export class Number extends TsTypeBase {
     _type() {
       return 'number'
     }
   }
-  export class Object extends TsType {
+  export class Object extends TsTypeBase {
     _type() {
       return 'Object'
     }
   }
-  export class Void extends TsType {
+  export class Void extends TsTypeBase {
     _type() {
       return 'void'
     }
   }
-  export class Literal extends TsType {
+  export class Literal extends TsTypeBase {
     constructor(private value: any) { super() }
     _type() {
       return this.value
     }
   }
 
-export class EnumValue {
-  identifier: string
-  value: string
+  export class EnumValue {
+    identifier: string
+    value: string
 
-  constructor(enumValues: string[]) {
-    let hasValue = !!enumValues[0]
+    constructor(enumValues: string[]) {
+      let hasValue = !!enumValues[0]
 
-    // quirky propagation logic
-    if (hasValue){
-      this.identifier = enumValues[0]
-      this.value = enumValues[1]
-    } else {
-      this.identifier = enumValues[1]
+      // quirky propagation logic
+      if (hasValue){
+        this.identifier = enumValues[0]
+        this.value = enumValues[1]
+      } else {
+        this.identifier = enumValues[1]
+      }
+    }
+
+    toDeclaration(){
+      // if there is a value associated with the identifier, declare as identifier=value
+      // else declare as identifier
+      return `${this.identifier}${this.value ? ('=' + this.value) : ''}`
+    }
+
+    toString(){
+      return `Enum${this.identifier}`
     }
   }
 
-  toDeclaration(){
-    // if there is a value associated with the identifier, declare as identifier=value
-    // else declare as identifier
-    return `${this.identifier}${this.value ? ('=' + this.value) : ''}`
-  }
-
-  toString(){
-    return `Enum${this.identifier}`
-  }
-}
-
-export class Enum extends TsType {
-  constructor(public enumValues: EnumValue[]) {
-    super()
-  }
-  isSimpleType() { return false }
-  _type(settings: TsTypeSettings) {
-    return this.safeId() || 'SomeEnumType'
-  }
-  toSafeType(settings: TsTypeSettings) {
-    return `${this.toType(settings)}`
-  }
-  toDeclaration(settings: TsTypeSettings): string {
-    return `${this.toBlockComment(settings)}export ${settings.useConstEnums ? 'const ' : ''}enum ${this._type(settings)}{
-      ${this.enumValues.map(_ => _.toDeclaration()).join(',\n')}
-    }`
-  }
-}
-
-export class EnumUtils extends TsType {
-  constructor(protected enm: Enum) {
-    super()
-  }
-  isSimpleType() { return false }
-  _type(settings: TsTypeSettings) {
-    // It's a bit hacky, but if this is a top level type, then addDeclaration changes 
-    // our enum type's ID out from under us when it adds the enum to the declaration map, *after*
-    // the util class is declared.  So we name ourselves by our enum's type, not our own ID'
-    return `${this.enm.toSafeType(settings)}Util` || this.safeId() || 'SomeEnumTypeUtils'
-  }
-  toSafeType(settings: TsTypeSettings) {
-    return `${this.toType(settings)}`
-  }
-  toDeclaration(settings: TsTypeSettings): string {
-    return `${this.toBlockComment(settings)}export class ${this._type(settings)} {
-      ${this.makeValuesMethod(settings)}
-      ${this.makeToStringValueMethod(settings)}
-      ${this.makeFromStringValueMethod(settings)}
-      ${this.makeFromStringValuesMethod(settings)}
-    }`
-  }
-  makeValuesMethod(settings: TsTypeSettings){
-    let enumType = this.enm.toSafeType(settings)
-    return `static values(): ${enumType}[] {
-    return [${this.enm.enumValues.map(_ => `${enumType}.${_.identifier}`).join(',')}]
-  }`
-  }
-  makeFromStringValueMethod(settings: TsTypeSettings){
-    let enumType = this.enm.toSafeType(settings)
-    return `static fromStringValue(value: string): ${enumType} {
-    switch(value.toLowerCase()){
-      ${this.enm.enumValues.map(_ => `case "${_.identifier.toLowerCase()}":
-        return ${enumType + '.' + _.identifier};`).join('\n')}
-      default:
-        throw new Error("Unrecognized ${enumType}: " + value);
+  export class Enum extends TsTypeBase {
+    constructor(public enumValues: EnumValue[]) {
+      super()
     }
-  }`
-  }
-  makeToStringValueMethod(settings: TsTypeSettings){
-    let enumType = this.enm.toSafeType(settings)
-    return `static toStringValue(enm: ${enumType}): string {
-    switch(enm){
-      ${this.enm.enumValues.map(_ => `case ${enumType + '.' + _.identifier}:
-        return "${_.identifier.toLowerCase()}";`).join('\n')}
+    isSimpleType() { return false }
+    _type(settings: TsTypeSettings) {
+      return this.safeId() || 'SomeEnumType'
     }
-  }`
+    toSafeType(settings: TsTypeSettings) {
+      return `${this.toType(settings)}`
+    }
+    toDeclaration(settings: TsTypeSettings): string {
+      return `${this.toBlockComment(settings)}export ${settings.useConstEnums ? 'const ' : ''}enum ${this._type(settings)}{
+        ${this.enumValues.map(_ => _.toDeclaration()).join(',\n')}
+      }`
+    }
   }
-  makeFromStringValuesMethod(settings: TsTypeSettings){
-    let enumType = this.enm.toSafeType(settings)
-    return `static fromStringValues(values: string[]): ${enumType}[] {
-    return _.map(values, value => ${this._type(settings)}.fromStringValue(value));
-  }`
-  }
-}
 
-  export class Array extends TsType {
-    constructor(private type?: TsType) { super() }
+  export class Array extends TsTypeBase {
+    constructor(private type?: TsTypeBase) { super() }
     _type(settings: TsTypeSettings) {
       return `${(this.type || new Any()).toSafeType(settings)}[]`
     }
   }
-  export class Intersection extends TsType {
-    constructor(protected data: TsType[]) {
+  export class Intersection extends TsTypeBase {
+    constructor(protected data: TsTypeBase[]) {
       super()
     }
     isSimpleType() { return this.data.filter(_ => !(_ instanceof Void)).length <= 1 }
@@ -236,7 +178,7 @@ export class EnumUtils extends TsType {
     }
   }
 
-  export class Interface extends TsType {
+  export class Interface extends TsTypeBase {
     constructor(private props: TsProp[]) {
       super()
     }

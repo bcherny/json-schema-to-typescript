@@ -68,10 +68,9 @@ export namespace TsType {
         useConstEnums?: boolean;
         useFullReferencePathAsName?: boolean;
         useInterfaceDeclaration?: boolean;
-        useTypescriptEnums?: boolean;
     }
     var DEFAULT_SETTINGS: TsTypeSettings;
-    abstract class TsType {
+    abstract class TsTypeBase {
         id?: string;
         description?: string;
         protected safeId(): string | undefined;
@@ -87,27 +86,27 @@ export namespace TsType {
     interface TsProp {
         name: string;
         required: boolean;
-        type: TsType;
+        type: TsTypeBase;
     }
-    class Any extends TsType {
+    class Any extends TsTypeBase {
         _type(): string;
     }
-    class String extends TsType {
+    class String extends TsTypeBase {
         _type(): string;
     }
-    class Boolean extends TsType {
+    class Boolean extends TsTypeBase {
         _type(): string;
     }
-    class Number extends TsType {
+    class Number extends TsTypeBase {
         _type(): string;
     }
-    class Object extends TsType {
+    class Object extends TsTypeBase {
         _type(): string;
     }
-    class Void extends TsType {
+    class Void extends TsTypeBase {
         _type(): string;
     }
-    class Literal extends TsType {
+    class Literal extends TsTypeBase {
         constructor(value: any);
         _type(): any;
     }
@@ -118,7 +117,7 @@ export namespace TsType {
         toDeclaration(): string;
         toString(): string;
     }
-    class Enum extends TsType {
+    class Enum extends TsTypeBase {
         enumValues: EnumValue[];
         constructor(enumValues: EnumValue[]);
         isSimpleType(): boolean;
@@ -126,25 +125,13 @@ export namespace TsType {
         toSafeType(settings: TsTypeSettings): string;
         toDeclaration(settings: TsTypeSettings): string;
     }
-    class EnumUtils extends TsType {
-        protected enm: Enum;
-        constructor(enm: Enum);
-        isSimpleType(): boolean;
-        _type(settings: TsTypeSettings): string;
-        toSafeType(settings: TsTypeSettings): string;
-        toDeclaration(settings: TsTypeSettings): string;
-        makeValuesMethod(settings: TsTypeSettings): string;
-        makeFromStringValueMethod(settings: TsTypeSettings): string;
-        makeToStringValueMethod(settings: TsTypeSettings): string;
-        makeFromStringValuesMethod(settings: TsTypeSettings): string;
-    }
-    class Array extends TsType {
-        constructor(type?: TsType);
+    class Array extends TsTypeBase {
+        constructor(type?: TsTypeBase);
         _type(settings: TsTypeSettings): string;
     }
-    class Intersection extends TsType {
-        protected data: TsType[];
-        constructor(data: TsType[]);
+    class Intersection extends TsTypeBase {
+        protected data: TsTypeBase[];
+        constructor(data: TsTypeBase[]);
         isSimpleType(): boolean;
         _type(settings: TsTypeSettings): string;
         toSafeType(settings: TsTypeSettings): string;
@@ -153,7 +140,7 @@ export namespace TsType {
         isSimpleType(): boolean;
         _type(settings: TsTypeSettings): string;
     }
-    class Interface extends TsType {
+    class Interface extends TsTypeBase {
         constructor(props: TsProp[]);
         static reference(id: string): Interface;
         protected _type(settings: TsTypeSettings, declaration?: boolean): string;

@@ -18,93 +18,37 @@ export var schema = {
 export var configurations = [
   {
     settings: {
-      useTypescriptEnums: false
+      useConstEnums: false
     },
-    types: `export interface Enum {
-  foo: "a" | "b" | "c";
-  bar: number;
-}`
-  },
-  {
-    settings: {
-      useTypescriptEnums: true
-    },
-    types: `export enum Foo {
-  a,
-  b,
-  c
-}
-export enum Bar {
+    types: `export enum Bar {
   One = 1,
   Two = 2,
   Three = 3
 }
 export interface Enum {
-  foo: Foo;
+  foo: "a" | "b" | "c";
   bar: Bar;
 }`
   },
   {
     settings: {
-      useTypescriptEnums: true,
       useConstEnums: true
     },
-    types: `export const enum Foo {
-  a,
-  b,
-  c
-}
-export const enum Bar {
+    types: `export const enum Bar {
   One = 1,
   Two = 2,
   Three = 3
 }
 export interface Enum {
-  foo: Foo;
+  foo: "a" | "b" | "c";
   bar: Bar;
 }`
   },
     {
     settings: {
-      useTypescriptEnums: true,
       addEnumUtils: true
     },
-    types: `export enum Foo {
-  a,
-  b,
-  c
-}
-export class FooUtil {
-  static values(): Foo[] {
-    return [Foo.a, Foo.b, Foo.c]
-  }
-  static toStringValue(enm: Foo): string {
-    switch (enm) {
-      case Foo.a:
-        return "a";
-      case Foo.b:
-        return "b";
-      case Foo.c:
-        return "c";
-    }
-  }
-  static fromStringValue(value: string): Foo {
-    switch (value.toLowerCase()) {
-      case "a":
-        return Foo.a;
-      case "b":
-        return Foo.b;
-      case "c":
-        return Foo.c;
-      default:
-        throw new Error("Unrecognized Foo: " + value);
-    }
-  }
-  static fromStringValues(values: string[]): Foo[] {
-    return _.map(values, value => FooUtil.fromStringValue(value));
-  }
-}
-export enum Bar {
+    types: `export enum Bar {
   One = 1,
   Two = 2,
   Three = 3
@@ -140,7 +84,7 @@ export class BarUtil {
   }
 }
 export interface Enum {
-  foo: Foo;
+  foo: "a" | "b" | "c";
   bar: Bar;
 }`
   }
