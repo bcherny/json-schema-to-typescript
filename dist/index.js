@@ -16,7 +16,7 @@ var TsType;
         endPropertyWithSemicolon: true,
         endTypeWithSemicolon: true,
         propertyDescription: true,
-        useConstEnums: false,
+        useConstEnums: true,
         useFullReferencePathAsName: false,
         useInterfaceDeclaration: true
     };
