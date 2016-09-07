@@ -1,4 +1,3 @@
-import { EnumUtils } from './EnumUtils'
 import { JSONSchema } from './JSONSchema'
 import { format } from './pretty-printer'
 import { TsType } from './TsTypes'
@@ -200,11 +199,6 @@ class Compiler {
                 retVal = this.declareType(retVal, path, path)
               } else {
                 retVal.id = path
-              }
-
-              if (this.settings.addEnumUtils){
-                let utilPath = path + 'Utils'
-                this.declareType(new EnumUtils(enm), utilPath, utilPath)
               }
             }
 
