@@ -57,11 +57,9 @@ export namespace JSONSchema {
 
 export namespace TsType {
     interface TsTypeSettings {
-        addEnumUtils?: boolean;
         declarationDescription?: boolean;
         declareReferenced?: boolean;
         declareSimpleType?: boolean;
-        exportInterfaces?: boolean;
         endPropertyWithSemicolon?: boolean;
         endTypeWithSemicolon?: boolean;
         propertyDescription?: boolean;
