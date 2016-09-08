@@ -24,6 +24,10 @@ Input:
       "description": "Age in years",
       "type": "integer",
       "minimum": 0
+    },
+    "hairColor": {
+      "enum": ["black", "brown", "blue"],
+      "type": "string"
     }
   },
   "required": ["firstName", "lastName"]
@@ -32,10 +36,11 @@ Input:
 
 Output:
 ```ts
-interface ExampleSchema {
+export interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
+  hairColor?: "black" | "brown" | "blue";
 }
 ```
 
@@ -66,19 +71,21 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
   - [x] null
   - [x] object
   - [x] string
-  - [x] enum
+  - [x] string enum
+  - [x] number enum
 - [x] Non/extensible interfaces
 - [ ] Custom JSON-schema extensions
 - [x] Nested properties
 - [x] Schema definitions
 - [x] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
+- [x] Local (filesystem) schema references
 - [ ] External (network) schema references
 - [ ] Add support for running in browser
 - [x] default interface name
 - [ ] infer unnamed interface name from filename
 - [x] `anyOf` ("union")
 - [x] `allOf` ("intersection")
-- [x] `additionalProperties` of type 
+- [x] `additionalProperties` of type
 - [ ] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends)
 - [x] `required` properties on objects ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L130))
 - [ ] `validateRequired` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L124))
