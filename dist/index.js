@@ -128,15 +128,8 @@ var TsType;
     TsType.Literal = Literal;
     var EnumValue = (function () {
         function EnumValue(enumValues) {
-            var hasValue = !!enumValues[0];
-            // quirky propagation logic
-            if (hasValue) {
-                this.identifier = enumValues[0];
-                this.value = enumValues[1];
-            }
-            else {
-                this.identifier = enumValues[1];
-            }
+            this.identifier = enumValues[0];
+            this.value = enumValues[1];
         }
         EnumValue.prototype.toDeclaration = function () {
             // if there is a value associated with the identifier, declare as identifier=value
