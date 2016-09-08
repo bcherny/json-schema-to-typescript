@@ -11,7 +11,7 @@ export var schema = {
   }
 }
 
-export var types =  `interface ArrayOfType {
+export var types =  `export interface ArrayOfType {
   foo?: string[];
   [k: string]: any;
 }`

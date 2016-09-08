@@ -1,4 +1,4 @@
-export var schema = {
+{
   "title": "Example Schema",
   "type": "object",
   "properties": {
@@ -12,14 +12,16 @@ export var schema = {
       "description": "Age in years",
       "type": "integer",
       "minimum": 0
+    },
+    "height": {
+      "type": "number"
+    },
+    "favoriteFoods": {
+      "type": "array"
+    },
+    "likesDogs": {
+      "type": "boolean"
     }
   },
-  "required": ["firstName", "lastName"],
-  "additionalProperties": false
+  "required": ["firstName", "lastName"]
 }
-
-export var types = `export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
-  age?: number; // Age in years
-}`

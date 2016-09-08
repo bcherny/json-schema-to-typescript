@@ -21,14 +21,22 @@ modules.forEach((exports, name) => {
     describe(name, function() {
       exports.configurations.forEach((cfg: any) => {
         it(JSON.stringify(cfg.settings), () => {
-          expect(compile(exports.schema, cfg.settings)).to.be.equal(cfg.types)
+          if (cfg.error){
+            expect(() => compile(cfg.schema, name, cfg.settings) ).to.throw(cfg.error.type, cfg.error.message)
+          } else {
+            expect(compile(exports.schema, name, cfg.settings)).to.be.equal(cfg.types)
+          }
         })
       })
     })
   } else {
     describe(name, function() {
       it('default settings', () => {
-        expect(compile(exports.schema, exports.settings)).to.be.equal(exports.types)
+        if (exports.error){
+          expect(() => compile(exports.schema, name, exports.settings) ).to.throw(exports.error.type, exports.error.message)
+        } else {
+          expect(compile(exports.schema, name, exports.settings)).to.be.equal(exports.types)
+        }
       })
     })
   }

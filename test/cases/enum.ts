@@ -6,24 +6,42 @@ export var schema = {
       "enum": ["a", "b", "c"]
     },
     "bar": {
-      "enum": [1, 2, 3]
-    },
-    "baz": {
-      "enum": [
-        { "a": 1 },
-        { "a": 2 },
-        { "a": 3 }
-      ]
+      "type": "integer",
+      "enum": [1, 2, 3],
+      "tsEnumNames": ["One","Two","Three"]
     }
   },
-  "required": ["foo", "bar", "baz"],
+  "required": ["foo", "bar"],
   "additionalProperties": false
 }
 
-export var types = `interface Enum {
+export var configurations = [
+  {
+    settings: {
+      useConstEnums: false
+    },
+    types: `export enum Bar {
+  One = 1,
+  Two = 2,
+  Three = 3
+}
+export interface Enum {
   foo: "a" | "b" | "c";
-  bar: number;
-  baz: {
-    a: number;
-  };
+  bar: Bar;
 }`
+  },
+  {
+    settings: {
+      useConstEnums: true
+    },
+    types: `export const enum Bar {
+  One = 1,
+  Two = 2,
+  Three = 3
+}
+export interface Enum {
+  foo: "a" | "b" | "c";
+  bar: Bar;
+}`
+  }
+]

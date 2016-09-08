@@ -11,7 +11,7 @@ export var schema = {
   }
 }
 
-export var types = `interface AdditionalProperties {
+export var types = `export interface AdditionalProperties {
   foo?: string;
   [k: string]: number;
 }`

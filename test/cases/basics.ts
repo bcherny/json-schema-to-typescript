@@ -31,7 +31,7 @@ export var configurations = [
     settings: {
       useInterfaceDeclaration: true,
     },
-    types: `interface ExampleSchema {
+    types: `export interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number; // Age in years
@@ -45,7 +45,7 @@ export var configurations = [
     settings: {
       propertyDescription: false
     },
-    types: `interface ExampleSchema {
+    types: `export interface ExampleSchema {
   firstName: string;
   lastName: string;
   age?: number;

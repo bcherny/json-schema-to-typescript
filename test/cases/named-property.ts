@@ -15,9 +15,9 @@ export var schema = {
 }
 
 export var types = `/** Array of authorized user ids. */
-type UserIdArray = string[];
+export type UserIdArray = string[];
 /** My cool schema */
-interface ExampleSchema {
+export interface ExampleSchema {
   users?: UserIdArray;
   [k: string]: any;
 }`
