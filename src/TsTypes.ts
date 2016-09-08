@@ -105,15 +105,8 @@ export namespace TsType {
     value: string
 
     constructor(enumValues: string[]) {
-      let hasValue = !!enumValues[0]
-
-      // quirky propagation logic
-      if (hasValue){
-        this.identifier = enumValues[0]
-        this.value = enumValues[1]
-      } else {
-        this.identifier = enumValues[1]
-      }
+      this.identifier = enumValues[0]
+      this.value = enumValues[1]
     }
 
     toDeclaration(){
