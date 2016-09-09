@@ -25,7 +25,11 @@ class Compiler {
     type: 'object'
   }
 
-  constructor(private schema: JSONSchema.Schema, filePath: string, settings?: TsType.TsTypeSettings) {
+  constructor(
+    private schema: JSONSchema.Schema,
+    filePath: string | undefined = '',
+    settings?: TsType.TsTypeSettings
+  ) {
     let path = resolve(filePath)
     this.filePath = parse(path)
     this.declarations = new Map
@@ -194,8 +198,8 @@ class Compiler {
                 rule.enum!.map(_ => new TsType.Literal(_).toType(this.settings).toString()))
               .map(_ => new TsType.EnumValue(_))
 
-            // name our anonymous enum, if it doesn't have an ID, by the property name under 
-            // which it was declared.  Failing both of these things, it'll concat together the 
+            // name our anonymous enum, if it doesn't have an ID, by the property name under
+            // which it was declared.  Failing both of these things, it'll concat together the
             // identifiers as EnumOneTwoThree for enum: ["One", "Two", "Three"].  Ugly, but
             // practical.
             let path = rule.id || propName || ('Enum' + enumValues.map(_ => _.identifier).join(''))
@@ -330,7 +334,11 @@ class Compiler {
   }
 }
 
-export function compile(schema: JSONSchema.Schema, path: string, settings?: TsType.TsTypeSettings): string {
+export function compile(
+  schema: JSONSchema.Schema,
+  path: string | undefined,
+  settings?: TsType.TsTypeSettings
+): string {
   return new Compiler(schema, path, settings).toString()
 }
 

@@ -275,6 +275,7 @@ var EnumType;
 })(EnumType || (EnumType = {}));
 var Compiler = (function () {
     function Compiler(schema, filePath, settings) {
+        if (filePath === void 0) { filePath = ''; }
         this.schema = schema;
         var path = path_1.resolve(filePath);
         this.filePath = path_1.parse(path);
@@ -422,8 +423,8 @@ var Compiler = (function () {
                         // If we try to create a literal from an object, bad stuff can happen... so we have to toString it
                         rule.enum.map(function (_) { return new TsTypes_1.TsType.Literal(_).toType(_this.settings).toString(); }))
                             .map(function (_) { return new TsTypes_1.TsType.EnumValue(_); });
-                        // name our anonymous enum, if it doesn't have an ID, by the property name under 
-                        // which it was declared.  Failing both of these things, it'll concat together the 
+                        // name our anonymous enum, if it doesn't have an ID, by the property name under
+                        // which it was declared.  Failing both of these things, it'll concat together the
                         // identifiers as EnumOneTwoThree for enum: ["One", "Two", "Three"].  Ugly, but
                         // practical.
                         var path = rule.id || propName || ('Enum' + enumValues.map(function (_) { return _.identifier; }).join(''));
