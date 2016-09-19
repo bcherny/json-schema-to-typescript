@@ -36,7 +36,7 @@ export namespace TsType {
       return this.id && upperFirst(camelCase(this.id))
     }
     protected toBlockComment(settings: TsTypeSettings) {
-      return this.description && settings.declarationDescription ? `/** ${this.description} */\n` : ''
+      return this.description && settings.declarationDescription ? `/** ${this.description.replace(/(\\n)|(\n)/, ' ')} */\n` : ''
     }
     protected _toDeclaration(decl: string, settings: TsTypeSettings): string {
       return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '')
@@ -188,7 +188,7 @@ export namespace TsType {
           if (settings.endPropertyWithSemicolon)
             decl += ';'
           if (settings.propertyDescription && _.type.description && !_.type.id)
-            decl += ' // ' + _.type.description
+            decl += ' // ' + _.type.description.replace(/(\\n)|(\n)/, ' ')
           return decl
         }).join('\n')}
 }` : id

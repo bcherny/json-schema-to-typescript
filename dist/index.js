@@ -27,7 +27,7 @@ var TsType;
             return this.id && lodash_1.upperFirst(lodash_1.camelCase(this.id));
         };
         TsTypeBase.prototype.toBlockComment = function (settings) {
-            return this.description && settings.declarationDescription ? "/** " + this.description + " */\n" : '';
+            return this.description && settings.declarationDescription ? "/** " + this.description.replace(/(\\n)|(\n)/, ' ') + " */\n" : '';
         };
         TsTypeBase.prototype._toDeclaration = function (decl, settings) {
             return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '');
@@ -228,7 +228,7 @@ var TsType;
                 if (settings.endPropertyWithSemicolon)
                     decl += ';';
                 if (settings.propertyDescription && _.type.description && !_.type.id)
-                    decl += ' // ' + _.type.description;
+                    decl += ' // ' + _.type.description.replace(/(\\n)|(\n)/, ' ');
                 return decl;
             }).join('\n') + "\n}" : id;
         };
