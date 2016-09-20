@@ -16,6 +16,6 @@ export var settings = {
 }
 
 export var error = {
-  type: TypeError,
-  message: 'Property tsEnumNames is required when enum is declared as an integer type'
+  message: 'Property tsEnumNames is required when enum is declared as an integer type',
+  type: TypeError
 }
