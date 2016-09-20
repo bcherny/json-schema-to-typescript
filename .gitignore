@@ -4,3 +4,4 @@ node_modules
 typings
 *.map
 out/
+dist/

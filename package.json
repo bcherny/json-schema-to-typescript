@@ -9,7 +9,8 @@
     "build": "gulp build",
     "test": "gulp test && gulp lint",
     "debug": "gulp debug",
-    "watch": "watch \"npm run test\" ./src/ ./test/"
+    "watch": "watch \"npm run test\" ./src/ ./test/",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
