@@ -17,6 +17,6 @@ export var settings = {
 }
 
 export var error = {
-  type: TypeError,
-  message: 'Enum was declared as a string type but found at least one non-string member'
+  message: 'Enum was declared as a string type but found at least one non-string member',
+  type: TypeError
 }

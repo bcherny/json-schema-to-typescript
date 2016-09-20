@@ -17,6 +17,6 @@ export var settings = {
 }
 
 export var error = {
-  type: TypeError,
-  message: 'Enum was declared as an integer type, but found at least one non-string tsEnumValue'
+  message: 'Enum was declared as an integer type, but found at least one non-string tsEnumValue',
+  type: TypeError
 }
