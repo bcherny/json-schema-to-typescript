@@ -1,6 +1,6 @@
 export namespace JSONSchema {
 
-  export type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
+  export type SimpleTypes = 'array' | 'boolean' | 'integer' | 'null' | 'number' | 'object' | 'string';
   /** Core schema meta-schema */
   export type HttpJsonSchemaOrgDraft04Schema = {
     id?: string;
