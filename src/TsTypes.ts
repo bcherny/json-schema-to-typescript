@@ -1,5 +1,10 @@
 import { camelCase, upperFirst } from 'lodash'
 
+const multiLineCommentStart  = '/** '
+const multiLineCommentIndent = ' *  '
+const multiLineCommentEnd    = ' */'
+const newLineRegex = /\\n|\n/
+
 export namespace TsType {
 
   export interface TsTypeSettings {
@@ -36,7 +41,13 @@ export namespace TsType {
       return this.id && upperFirst(camelCase(this.id))
     }
     protected toBlockComment(settings: TsTypeSettings) {
-      return this.description && settings.declarationDescription ? `/** ${this.description} */\n` : ''
+      return this.description && settings.declarationDescription ?
+        `${this.description
+            .split(newLineRegex)
+            .map((line, lineNum) => (lineNum > 0 ? multiLineCommentIndent : multiLineCommentStart) + line)
+            .join('\n') + multiLineCommentEnd + '\n'
+        }` :
+        ''
     }
     protected _toDeclaration(decl: string, settings: TsTypeSettings): string {
       return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '')
@@ -181,14 +192,26 @@ export namespace TsType {
       let id = this.safeId()
       return declaration || !id ? `{
         ${this.props.map(_ => {
-          let decl = '    ' + _.name
+          const indentString =  '    '
+          let decl = indentString + _.name
+
           if (!_.required)
             decl += '?'
           decl += ': ' + _.type.toType(settings)
           if (settings.endPropertyWithSemicolon)
             decl += ';'
+
+          //Single line description in comment to the right of declaration
+          //Multiple line description in comment above
           if (settings.propertyDescription && _.type.description && !_.type.id)
-            decl += ' // ' + _.type.description
+            decl = newLineRegex.test(_.type.description) ?
+              _.type.description
+                .split(newLineRegex)
+                .map((line, lineNum) => indentString + (lineNum > 0 ? multiLineCommentIndent : multiLineCommentStart) + line)
+                .join('\n') +
+                '\n' + indentString + multiLineCommentEnd + '\n' + decl :
+              decl + ' // ' + _.type.description
+
           return decl
         }).join('\n')}
 }` : id
