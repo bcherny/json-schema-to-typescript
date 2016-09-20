@@ -1,5 +1,10 @@
 import { camelCase, upperFirst } from 'lodash'
 
+const multiLineCommentStart  = '/** '
+const multiLineCommentIndent = ' *  '
+const multiLineCommentEnd    = ' */'
+const newLineRegex = /\\n|\n/
+
 export namespace TsType {
 
   export interface TsTypeSettings {
@@ -36,7 +41,13 @@ export namespace TsType {
       return this.id && upperFirst(camelCase(this.id))
     }
     protected toBlockComment(settings: TsTypeSettings) {
-      return this.description && settings.declarationDescription ? `/** ${this.description} */\n` : ''
+      return this.description && settings.declarationDescription ?
+        `${this.description
+            .split(newLineRegex)
+            .map((line, lineNum) => (lineNum > 0 ? multiLineCommentIndent : multiLineCommentStart) + line)
+            .join('\n') + multiLineCommentEnd + '\n'
+        }` :
+        ''
     }
     protected _toDeclaration(decl: string, settings: TsTypeSettings): string {
       return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '')
@@ -181,14 +192,23 @@ export namespace TsType {
       let id = this.safeId()
       return declaration || !id ? `{
         ${this.props.map(_ => {
-          let decl = '    ' + _.name
+          const indentString =  '    '
+          let decl = indentString + _.name
+
           if (!_.required)
             decl += '?'
           decl += ': ' + _.type.toType(settings)
           if (settings.endPropertyWithSemicolon)
             decl += ';'
+
+          //All descriptions will be inside jsdoc-style comments to support hinting in editors
+          //(ie intellisense)
           if (settings.propertyDescription && _.type.description && !_.type.id)
-            decl += ' // ' + _.type.description
+            decl = _.type.description
+                .split(newLineRegex)
+                .map((line, lineNum, lines) => (lineNum > 0 ? multiLineCommentIndent : indentString + multiLineCommentStart) + line)
+                .join('\n' + indentString) + multiLineCommentEnd + '\n' + decl
+
           return decl
         }).join('\n')}
 }` : id

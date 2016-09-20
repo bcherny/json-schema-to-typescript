@@ -34,7 +34,8 @@ export var configurations = [
     types: `export interface ExampleSchema {
   firstName: string;
   lastName: string;
-  age?: number; // Age in years
+  /** Age in years */
+  age?: number;
   height?: number;
   favoriteFoods?: any[];
   likesDogs?: boolean;
