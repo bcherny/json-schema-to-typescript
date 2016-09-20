@@ -21,5 +21,6 @@ export var schema = {
 export var types = `export interface ExampleSchema {
   firstName: string;
   lastName: string;
-  age?: number; // Age in years
+  /** Age in years */
+  age?: number;
 }`
