@@ -1,8 +1,10 @@
-# json-schema-to-typescript
+# json-schema-to-typescript [![Build Status][build]](https://circleci.com/gh/bcherny/json-schema-to-typescript) [![npm]](https://www.npmjs.com/package/json-schema-to-typescript) [![mit]](https://opensource.org/licenses/MIT)
 
 **[In Beta]**: Bug reports appreciated!
 
-[![Circle CI](https://circleci.com/gh/bcherny/json-schema-to-typescript/tree/master.svg?style=svg&circle-token=00757ca8245cb4510f896548b432c1d07ea52b5f)](https://circleci.com/gh/bcherny/json-schema-to-typescript/tree/master)
+[build]: https://img.shields.io/circleci/project/bcherny/json-schema-to-typescript.svg?branch=master&style=flat-square
+[npm]: https://img.shields.io/npm/v/json-schema-to-typescript.svg?style=flat-square
+[mit]: https://img.shields.io/npm/l/json-schema-to-typescript.svg?style=flat-square
 
 > Compile json schema to typescript typings
 
