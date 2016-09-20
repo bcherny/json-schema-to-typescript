@@ -201,16 +201,13 @@ export namespace TsType {
           if (settings.endPropertyWithSemicolon)
             decl += ';'
 
-          //Single line description in comment to the right of declaration
-          //Multiple line description in comment above
+          //All descriptions will be inside jsdoc-style comments to support hinting in editors
+          //(ie intellisense)
           if (settings.propertyDescription && _.type.description && !_.type.id)
-            decl = newLineRegex.test(_.type.description) ?
-              _.type.description
+            decl = _.type.description
                 .split(newLineRegex)
-                .map((line, lineNum) => indentString + (lineNum > 0 ? multiLineCommentIndent : multiLineCommentStart) + line)
-                .join('\n') +
-                '\n' + indentString + multiLineCommentEnd + '\n' + decl :
-              decl + ' // ' + _.type.description
+                .map((line, lineNum, lines) => (lineNum > 0 ? multiLineCommentIndent : indentString + multiLineCommentStart) + line)
+                .join('\n' + indentString) + multiLineCommentEnd + '\n' + decl
 
           return decl
         }).join('\n')}

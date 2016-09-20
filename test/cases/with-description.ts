@@ -22,6 +22,7 @@ export var types = `/** My cool schema */
 export interface ExampleSchema {
   firstName: string;
   lastName: string;
-  age?: number; // Age in years
+  /** Age in years */
+  age?: number;
   [k: string]: any;
 }`
