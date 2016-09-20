@@ -7,7 +7,7 @@ import { join, parse, ParsedPath, resolve } from 'path'
 
 enum RuleType {
   'Any', 'TypedArray', 'Enum', 'AllOf', 'AnyOf', 'Reference', 'NamedSchema', 'AnonymousSchema',
-  'String', 'Number', 'Void', 'Object', 'Array', 'Boolean', 'Literal'
+  'String', 'Number', 'Void', 'Object', 'Array', 'Boolean', 'Literal', 'Union'
 }
 
 enum EnumType {
@@ -86,6 +86,9 @@ class Compiler {
       case 'null': return RuleType.Void
       case 'object': return RuleType.Object
       case 'string': return RuleType.String
+    }
+    if (Array.isArray(rule.type)) {
+      return RuleType.Union
     }
     if (this.isNumberLiteral(rule)) {
       return RuleType.Number
@@ -238,6 +241,8 @@ class Compiler {
         return new TsType.Union(rule.anyOf!.map(_ => this.toTsType(_)))
       case RuleType.Reference:
         return this.resolveType(rule.$ref!, propName!)
+      case RuleType.Union:
+        return new TsType.Union((rule.type as any[]).map(_ => this.toTsType(_)))
     }
     throw new Error('Unknown rule:' + rule.toString())
   }
