@@ -5,11 +5,12 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "tsc": "tsc",
-    "build": "gulp build",
-    "test": "gulp test && gulp lint",
-    "debug": "gulp debug",
-    "watch": "watch \"npm run test\" ./src/ ./test/",
+    "tsc": "./node_modules/.bin/tsc",
+    "gulp": "./node_modules/.bin/gulp",
+    "build": "npm run gulp build",
+    "test": "npm run gulp test && npm run gulp lint",
+    "debug": "npm run gulp debug",
+    "watch": "./node_modules/.bin/watch \"npm run test\" ./src/ ./test/",
     "prepublish": "npm run build"
   },
   "repository": {
