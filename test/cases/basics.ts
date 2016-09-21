@@ -29,7 +29,7 @@ export var schema = {
 export var configurations = [
   {
     settings: {
-      useInterfaceDeclaration: true,
+      useInterfaceDeclaration: true
     },
     types: `export interface ExampleSchema {
   firstName: string;
