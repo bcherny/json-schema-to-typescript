@@ -17,6 +17,6 @@ export var settings = {
 }
 
 export var error = {
-  type: TypeError,
-  message: 'Property enum and property tsEnumNames must be the same length'
+  message: 'Property enum and property tsEnumNames must be the same length',
+  type: TypeError
 }
