@@ -168,7 +168,11 @@ class Compiler {
     switch (typeof a) {
       case 'boolean': return new TsType.Boolean // ts doesn't support literal boolean types
       case 'number': return new TsType.Number   // ts doesn't support literal numeric types
-      case 'string': return new TsType.Literal(JSON.stringify(a))
+      case 'string':
+        // output single quotes for tslint with inner quotes (if any) escapped
+        var stringValue = JSON.stringify(a)
+        stringValue = `'${stringValue.substring(1, stringValue.length - 1).replace(/'/g,'\\\'')}'`
+        return new TsType.Literal(stringValue)
       default: return new TsType.Interface(map(
         (a as any),
         (v: JSONSchema.Schema, k: string) => {

@@ -26,7 +26,7 @@ export var configurations = [
   Three = 3
 }
 export interface Enum {
-  foo: "a" | "b" | "c";
+  foo: 'a' | 'b' | 'c';
   bar: Bar;
 }`
   },
@@ -40,7 +40,7 @@ export interface Enum {
   Three = 3
 }
 export interface Enum {
-  foo: "a" | "b" | "c";
+  foo: 'a' | 'b' | 'c';
   bar: Bar;
 }`
   }

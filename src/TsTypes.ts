@@ -206,7 +206,7 @@ export namespace TsType {
           if (settings.propertyDescription && _.type.description && !_.type.id)
             decl = _.type.description
                 .split(newLineRegex)
-                .map((line, lineNum, lines) => (lineNum > 0 ? multiLineCommentIndent : indentString + multiLineCommentStart) + line)
+                .map((line, lineNum) => (lineNum > 0 ? multiLineCommentIndent : indentString + multiLineCommentStart) + line)
                 .join('\n' + indentString) + multiLineCommentEnd + '\n' + decl
 
           return decl

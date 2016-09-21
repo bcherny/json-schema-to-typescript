@@ -29,7 +29,7 @@ export var configurations = [
 export interface Referencing {
   foo: ExampleSchema;
 }`
-  }, 
+  },
   {
     settings: {
       declareReferenced: false
