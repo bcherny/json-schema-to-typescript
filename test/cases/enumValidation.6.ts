@@ -4,7 +4,8 @@ export var schema = {
   "properties": {
     "bar": {
       "type": "integer",
-      "enum": [1, 2, 3]
+      "enum": [1, 2, 3],
+      "tsEnumNames": ["One",2,"Three"]
     }
   },
   "required": ["bar"],
@@ -15,7 +16,8 @@ export var settings = {
   useTypescriptEnums: true
 }
 
+//Sixth Validation in private validateEnumMembers(): in index.ts
 export var error = {
-  message: 'Property tsEnumNames is required when enum is declared as an integer type',
+  message: 'Enum was declared as "integer" type, but found at least one non-string tsEnumValue',
   type: TypeError
 }

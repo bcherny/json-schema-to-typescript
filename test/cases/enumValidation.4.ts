@@ -4,8 +4,7 @@ export var schema = {
   "properties": {
     "bar": {
       "type": "integer",
-      "enum": [1, 2, 3],
-      "tsEnumNames": ["One","Three"]
+      "enum": [1, 2, 3]
     }
   },
   "required": ["bar"],
@@ -16,7 +15,8 @@ export var settings = {
   useTypescriptEnums: true
 }
 
+//Fourth Validation in private validateEnumMembers(): in index.ts
 export var error = {
-  message: 'Property enum and property tsEnumNames must be the same length',
+  message: 'Property tsEnumNames is required when enum is declared as an integer type',
   type: TypeError
 }

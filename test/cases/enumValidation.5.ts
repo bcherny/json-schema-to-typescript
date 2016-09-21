@@ -2,12 +2,13 @@ export var schema = {
   "title": "Enum",
   "type": "object",
   "properties": {
-    "foo": {
+    "bar": {
       "type": "integer",
-      "enum": ["a", "b", "c"]
+      "enum": [1, 2, 3],
+      "tsEnumNames": ["One","Three"]
     }
   },
-  "required": ["foo"],
+  "required": ["bar"],
   "additionalProperties": false
 }
 
@@ -15,7 +16,8 @@ export var settings = {
   useTypescriptEnums: true
 }
 
+//Fifth Validation in private validateEnumMembers(): in index.ts
 export var error = {
-  message: 'Enum was declared as an integer type, but found at least one non-integer member',
+  message: 'Property enum and property tsEnumNames must be the same length',
   type: TypeError
 }

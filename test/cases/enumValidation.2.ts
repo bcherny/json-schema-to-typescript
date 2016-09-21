@@ -3,9 +3,8 @@ export var schema = {
   "type": "object",
   "properties": {
     "bar": {
-      "type": "integer",
-      "enum": [1, 2, 3],
-      "tsEnumNames": ["One",2,"Three"]
+      "type": "Number",
+      "enum": [1.1, 2.2, 3.3]
     }
   },
   "required": ["bar"],
@@ -16,7 +15,9 @@ export var settings = {
   useTypescriptEnums: true
 }
 
+//Second Validation in private validateEnumMembers(): in index.ts
+//a type was specified that compiler does not handle
 export var error = {
-  message: 'Enum was declared as an integer type, but found at least one non-string tsEnumValue',
+  message: 'Enum type must be string, boolean or integer. It was declared as Number',
   type: TypeError
 }
