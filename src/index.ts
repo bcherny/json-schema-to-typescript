@@ -141,7 +141,7 @@ class Compiler {
       }
 
       return new TsType.Literal(id)
-    };
+    }
 
     const parts = refPath.slice(2).split('/')
     let ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined
