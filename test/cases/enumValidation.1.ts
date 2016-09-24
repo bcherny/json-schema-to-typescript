@@ -3,9 +3,7 @@ export var schema = {
   "type": "object",
   "properties": {
     "bar": {
-      "type": "string",
-      "enum": ["foo", 2, 3],
-      "tsEnumNames": ["One","Two","Three"]
+      "enum": [1, 2, 'a'],
     }
   },
   "required": ["bar"],
@@ -16,7 +14,9 @@ export var settings = {
   useTypescriptEnums: true
 }
 
+//First Validation in index.ts
+//rule.type is undefined or it was not inferable
 export var error = {
-  message: 'Enum was declared as a string type but found at least one non-string member',
+  message: 'Enum type must be string, boolean or integer. It was not declared or could not be inferred by enum values',
   type: TypeError
 }

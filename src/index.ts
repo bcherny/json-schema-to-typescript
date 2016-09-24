@@ -2,7 +2,7 @@ import { JSONSchema } from './JSONSchema'
 import { format } from './pretty-printer'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
-import { isPlainObject, last, map, merge, uniqBy, zip } from 'lodash'
+import { isPlainObject, last, map, merge, uniq, uniqBy, zip } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
 
 enum RuleType {
@@ -12,6 +12,7 @@ enum RuleType {
 
 enum EnumType {
   String,
+  Boolean,
   Integer
 }
 
@@ -221,6 +222,8 @@ class Compiler {
             }
 
             return retVal
+          case EnumType.Boolean:
+            return new TsType.Union(uniq(rule.enum!.map(_ => this.toTsType(_))))
           case EnumType.String:
             return new TsType.Union(uniqBy(
               rule.enum!.map(_ => this.toStringLiteral(_))
@@ -248,54 +251,62 @@ class Compiler {
   }
 
   private validateEnumMembers(rule: JSONSchema.Schema): EnumType {
-    if (!rule.type) rule.type = 'string'
+    // Note: `candidateTypes` sequence corresponds to `enum EnumType` and integer is intentionally
+    // last because in one thrown error message, '(with corresponding tsEnumNames)' is appended
+    // and applies to 'integer'
+    const candidateTypes: JSONSchema.SimpleTypes[] = ['string', 'boolean', 'integer']
+    const getPossibilitiesString = () => candidateTypes.reduce((prev, cand, index, cands) => {
+          return `${prev}${index > 0 ?
+            (index < cands.length - 1) ? ', ' : ' or ' :
+            ''
+            }${cand}`
+      }, '')
 
-    let isDeclaredStringEnum = rule.type === 'string'
-    let isDeclaredIntegerEnum = rule.type === 'integer'
+    const isActually = candidateTypes.find(candType => rule.enum!.every(_ =>
+      candType === 'integer' ? Number.isInteger(_) : typeof(_) === candType))
 
-    if (!isDeclaredStringEnum && !isDeclaredIntegerEnum){
-      throw TypeError('Enum type must be string or integer; default is string if undefined')
+    // if undeclared, infer type from isActually
+    if (rule.type === undefined && isActually !== undefined) rule.type = isActually
+
+    // First Validation
+    if (rule.type === undefined) {
+      throw TypeError(`Enum type must be ${getPossibilitiesString()}. It was not declared or could not be inferred by enum values`)
     }
 
-    if (rule.enum!.some(_ => _ instanceof Object)){
-      throw TypeError('Enum members must be a list of strings or a list of integers; instead, found an Object')
+    // Second Validation: rule.type defined, but unknown (includes Object)
+    if (candidateTypes.find(candType => rule.type === candType) === undefined) {
+      throw TypeError(`Enum type must be ${getPossibilitiesString()}. It was declared as ${rule.type}`)
     }
 
-    let isActuallyStringEnum = rule.enum!.every(_ => typeof(_) === 'string')
-    let isActuallyIntegerEnum = rule.enum!.every(_ => typeof(_) === 'number')
-    let isIntegerEnumWithValidStringValues = isActuallyIntegerEnum
-      && rule.tsEnumNames
-      && rule.tsEnumNames.length === rule.enum!.length
-      && rule.tsEnumNames!.every(_ => typeof(_) === 'string')
-
-    if (isDeclaredStringEnum && !isActuallyStringEnum){
-      throw TypeError('Enum was declared as a string type but found at least one non-string member')
+    // Third Validation: rule type doesn't match the enum members or the members aren't a consistent type
+    if (isActually === undefined || rule.type !== isActually) {
+      throw TypeError(`Enum was declared as "${rule.type}" type, but found at least one non-${rule.type} member`)
     }
 
-    if (isDeclaredIntegerEnum && !isIntegerEnumWithValidStringValues){
-      if (!isActuallyIntegerEnum){
-        throw TypeError('Enum was declared as an integer type, but found at least one non-integer member')
-      }
-      if (!rule.tsEnumNames){
+    if (isActually === 'integer') {
+      // Fourth Validation
+      if (!rule.tsEnumNames) {
         throw TypeError('Property tsEnumNames is required when enum is declared as an integer type')
       }
-      if (rule.tsEnumNames.length !== rule.enum!.length){
+      // Fifth Validation
+      if (rule.tsEnumNames.length !== rule.enum!.length) {
         throw TypeError('Property enum and property tsEnumNames must be the same length')
       }
 
-      throw TypeError('Enum was declared as an integer type, but found at least one non-string tsEnumValue')
+      // Sixth Validation
+      if (rule.tsEnumNames!.some(_ => typeof(_) !== 'string')) {
+        throw TypeError('Enum was declared as "integer" type, but found at least one non-string tsEnumValue')
+      }
     }
 
     // I don't think we should ever hit this case.
-    if (!isActuallyStringEnum && !isIntegerEnumWithValidStringValues){
-      throw TypeError('Enum members must be a list of strings or a list of integers (with corresponding tsEnumNames)')
+    if (isActually === undefined){
+      throw TypeError(`Enum members must be a list of ${getPossibilitiesString()} (with corresponding tsEnumNames)`)
     }
 
-    if (isIntegerEnumWithValidStringValues){
-      return EnumType.Integer
-    } else {
-      return EnumType.String
-    }
+    if (rule.type === 'string') return EnumType.String
+    if (rule.type === 'boolean') return EnumType.Boolean
+    return EnumType.Integer // this is the only remaining possibility. An error would have been thrown otherwise.
   }
 
   private toTsType (rule: JSONSchema.Schema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsTypeBase {
