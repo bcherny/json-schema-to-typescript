@@ -1,5 +1,5 @@
 import { JSONSchema } from './JSONSchema'
-import { format } from './pretty-printer'
+import { format } from './prettyPrinter'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
 import { isPlainObject, last, map, merge, uniq, uniqBy, zip } from 'lodash'
