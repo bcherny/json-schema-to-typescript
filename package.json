@@ -10,8 +10,8 @@
     "build-tests": "tsc -p ./tsconfig.test.json",
     "watch": "tsc -p ./tsconfig.json --watch && tsc -p ./tsconfig.test.json --watch",
     "lint": "tslint -c tslint.json src/*.ts",
-    "test": "npm run build-tests && ava ./dist_tests/test/test.js",
-    "tdd": "npm run watch & ava ./dist_tests/test/test.js --watch",
+    "test": "npm run build-tests && ava ./dist_tests/test/test.js --verbose",
+    "tdd": "npm run watch & ava ./dist_tests/test/test.js --watch --verbose",
     "prepublish": "npm run build"
   },
   "repository": {
