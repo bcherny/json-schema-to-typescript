@@ -1,5 +1,5 @@
 import { compile } from '../src/index'
-import { expect } from 'chai'
+import test from 'ava'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -18,26 +18,19 @@ fs.readdirSync(dir).forEach(function(moduleName) {
 })
 modules.forEach((exports, name) => {
   if (exports.configurations) {
-    describe(name, function() {
-      exports.configurations.forEach((cfg: any) => {
-        it(JSON.stringify(cfg.settings), () => {
-          if (cfg.error){
-            expect(() => compile(cfg.schema, name, cfg.settings) ).to.throw(cfg.error.type, cfg.error.message)
-          } else {
-            expect(compile(exports.schema, name, cfg.settings)).to.be.equal(cfg.types)
-          }
-        })
-      })
-    })
-  } else {
-    describe(name, function() {
-      it('default settings', () => {
-        if (exports.error){
-          expect(() => compile(exports.schema, name, exports.settings) ).to.throw(exports.error.type, exports.error.message)
+    exports.configurations.forEach((cfg: any) => {
+      test(`${name}: ${JSON.stringify(cfg.settings)}`, t => {
+        if (cfg.error) {
+          t.throws(() => compile(cfg.schema, name, cfg.settings), cfg.error.type)
         } else {
-          expect(compile(exports.schema, name, exports.settings)).to.be.equal(exports.types)
+          t.is(compile(exports.schema, name, cfg.settings), cfg.types)
         }
       })
     })
+  } else {
+    test(name, t => exports.error
+      ? t.throws(() => compile(exports.schema, name, exports.settings), exports.error.type)
+      : t.is(compile(exports.schema, name, exports.settings), exports.types)
+    )
   }
 })

@@ -1,10 +1,10 @@
-export var schema = 
+export var schema =
 {
   "title": "Referencing",
   "type": "object",
   "properties": {
     "foo": {
-      "$ref": "test/resources/ReferencedType.json"
+      "$ref": "../../test/resources/ReferencedType.json"
     }
   },
   "required": ["foo"],

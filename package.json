@@ -5,11 +5,13 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "tsc": "tsc",
-    "build": "gulp build",
-    "test": "gulp test && gulp lint",
-    "debug": "gulp debug",
-    "watch": "watch \"npm run test\" ./src/ ./test/",
+    "build": "npm run build-sources && npm test && npm run lint",
+    "build-sources": "tsc -p ./tsconfig.json",
+    "build-tests": "tsc -p ./tsconfig.test.json",
+    "watch": "tsc -p ./tsconfig.json --watch && tsc -p ./tsconfig.test.json --watch",
+    "lint": "tslint -c tslint.json src/*.ts",
+    "test": "npm run build-tests && ava ./dist_tests/test/test.js",
+    "tdd": "npm run watch & ava ./dist_tests/test/test.js --watch",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -34,21 +36,13 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "lodash": "^4.6.1",
-    "typescript": "^2.0.0"
+    "lodash": "^4.6.1"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.29",
     "@types/lodash": "0.0.28",
-    "@types/mocha": "^2.2.28",
     "@types/node": "^4.0.30",
-    "browserify": "^13.1.0",
-    "chai": "^3.5.0",
-    "dts-bundle": "^0.5.0",
-    "gulp": "^3.9.1",
-    "gulp-tslint": "^6.1.1",
-    "mocha": "^2.5.3",
+    "ava": "^0.16.0",
     "tslint": "^3.15.1",
-    "watch": "^0.17.1"
+    "typescript": "^2.0.0"
   }
 }
