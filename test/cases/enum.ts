@@ -35,25 +35,24 @@ export var configurations = [false, true].map(useConstEnums => {
     settings: {
       useConstEnums: useConstEnums
     },
-      types: [
-      `export${useConstEnums ? ' const ' : ' '}enum AnIntegerEnum {`,
-      '  One = 1,',
-      '  Two = 2,',
-      '  Three = 3',
-      '}',
-      `export${useConstEnums ? ' const ' : ' '}enum AnImpliedIntegerEnum {`,
-      '  Four = 4,',
-      '  Five = 5,',
-      '  Six = 6',
-      '}',
-      'export interface Enum {',
-      '  aStringEnum: "a" | "b" | "c";',
-      '  anImpliedStringEnum: "a" | "b" | "c";',
-      '  aBooleanEnum: true;', // Note, type is `true` and not boolean (the enumeration disallows `false`)
-      '  anImpliedBooleanType: true;', // Note, type is `true` and not boolean (the enumeration disallows `false`)
-      '  anIntegerEnum: AnIntegerEnum;',
-      '  anImpliedIntegerEnum: AnImpliedIntegerEnum;',
-      '}'
-      ].join('\n')
+      types:
+`export${useConstEnums ? ' const ' : ' '}enum AnIntegerEnum {
+  One = 1,
+  Two = 2,
+  Three = 3
+}
+export${useConstEnums ? ' const ' : ' '}enum AnImpliedIntegerEnum {
+  Four = 4,
+  Five = 5,
+  Six = 6
+}
+export interface Enum {
+  aStringEnum: "a" | "b" | "c";
+  anImpliedStringEnum: "a" | "b" | "c";
+  aBooleanEnum: true;
+  anImpliedBooleanType: true;
+  anIntegerEnum: AnIntegerEnum;
+  anImpliedIntegerEnum: AnImpliedIntegerEnum;
+}`
   }
 })
