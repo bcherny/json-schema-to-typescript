@@ -10,8 +10,8 @@
     "build-tests": "tsc -p ./tsconfig.test.json",
     "watch": "tsc -p ./tsconfig.json --watch && tsc -p ./tsconfig.test.json --watch",
     "lint": "tslint -c tslint.json src/*.ts",
-    "test": "npm run build-tests && ava ./dist_tests/test/test.js --verbose",
-    "tdd": "npm run watch & ava ./dist_tests/test/test.js --watch --verbose",
+    "test": "npm run build-tests && ava",
+    "tdd": "npm run watch & ava --watch",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -44,5 +44,13 @@
     "ava": "^0.16.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.0"
+  },
+  "ava": {
+    "files": ["./dist_tests/test/test.js"],
+    "source": [
+      "./dist_tests/test/cases/*.js",
+      "./dist_tests/src/*.js"
+    ],
+    "vebose": true
   }
 }
