@@ -7,11 +7,25 @@ export var schema = {
         "type": "string"
       },
       "type": "array"
+    },
+    "bar": {
+      "items": {
+        "type": "string"
+      },
+      "type": ["array"]
+    },
+    "baz": {
+      "items": {
+        "type": ["string", "number"]
+      },
+      "type": ["array"]
     }
   }
 }
 
 export var types =  `export interface ArrayOfType {
   foo?: string[];
+  bar?: string[];
+  baz?: (string | number)[];
   [k: string]: any;
 }`

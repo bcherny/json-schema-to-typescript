@@ -62,6 +62,14 @@ class Compiler {
   }
 
   private getRuleType(rule: JSONSchema): RuleType {
+
+    // normalize rule
+    // TODO: move this somewhere else
+    // TODO: avoid mutating rule
+    if (rule.type && Array.isArray(rule.type) && rule.type.length === 1) {
+      rule.type = rule.type[0]
+    }
+
     if (rule.type === 'array' && rule.items) {
       return RuleType.TypedArray
     }

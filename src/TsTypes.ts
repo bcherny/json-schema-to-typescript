@@ -157,7 +157,8 @@ export namespace TsType {
   export class Array extends TsTypeBase {
     constructor(private type?: TsTypeBase) { super() }
     _type(settings: TsTypeSettings) {
-      return `${(this.type || new Any()).toSafeType(settings)}[]`
+      const type = (this.type || new Any()).toSafeType(settings)
+      return `${type.indexOf('|') > -1 || type.indexOf('&') > -1 ? `(${type})` : type}[]` // hacky
     }
   }
   export class Intersection extends TsTypeBase {
