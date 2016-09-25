@@ -1,8 +1,8 @@
-import { EnumJSONSchema, NamedEnumJSONSchema, JSONSchema, SimpleType } from './JSONSchema'
+import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
 import { format } from './prettyPrinter'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
-import { isPlainObject, last, map, merge, uniq, uniqBy, zip } from 'lodash'
+import { isPlainObject, last, map, merge, zip } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
 
 enum RuleType {
