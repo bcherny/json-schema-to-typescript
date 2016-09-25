@@ -2,31 +2,42 @@ export var schema = {
   "title": "Enum",
   "type": "object",
   "properties": {
-    "aStringEnum": {
+    "stringEnum": {
       "type": "string",
       "enum": ["a", "b", "c"]
     },
-    "anImpliedStringEnum": {
+    "impliedStringEnum": {
       "enum": ["a", "b", "c"]
     },
-    "aBooleanEnum": {
+    "booleanEnum": {
       "type" : "boolean",
       "enum": [ true ]
     },
-    "anImpliedBooleanType": {
+    "impliedBooleanEnum": {
       "enum": [ true ]
     },
-    "anIntegerEnum": {
+    "integerEnum": {
+      "type": "integer",
+      "enum": [-1, 0, 1]
+    },
+    "impliedIntegerEnum": {
+      "enum": [-1, 0, 1]
+    },
+    "numberEnum": {
+      "type": "number",
+      "enum": [-1.1, 0, 1.2]
+    },
+    "namedIntegerEnum": {
       "type": "integer",
       "enum": [1, 2, 3],
       "tsEnumNames": ["One","Two","Three"]
     },
-    "anImpliedIntegerEnum": {
+    "impliedNamedIntegerEnum": {
       "enum": [4, 5, 6],
       "tsEnumNames": ["Four","Five","Six"]
     }
   },
-  "required": ["aStringEnum", "anImpliedStringEnum", "aBooleanEnum", "anImpliedBooleanType", "anIntegerEnum", "anImpliedIntegerEnum"],
+  "required": ["stringEnum", "impliedStringEnum", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum"],
   "additionalProperties": false
 }
 
@@ -36,23 +47,26 @@ export var configurations = [false, true].map(useConstEnums => {
       useConstEnums: useConstEnums
     },
       types:
-`export${useConstEnums ? ' const ' : ' '}enum AnIntegerEnum {
+`export${useConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
   One = 1,
   Two = 2,
   Three = 3
 }
-export${useConstEnums ? ' const ' : ' '}enum AnImpliedIntegerEnum {
+export${useConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
   Four = 4,
   Five = 5,
   Six = 6
 }
 export interface Enum {
-  aStringEnum: "a" | "b" | "c";
-  anImpliedStringEnum: "a" | "b" | "c";
-  aBooleanEnum: true;
-  anImpliedBooleanType: true;
-  anIntegerEnum: AnIntegerEnum;
-  anImpliedIntegerEnum: AnImpliedIntegerEnum;
+  stringEnum: "a" | "b" | "c";
+  impliedStringEnum: "a" | "b" | "c";
+  booleanEnum: true;
+  impliedBooleanEnum: true;
+  integerEnum: -1 | 0 | 1;
+  impliedIntegerEnum: -1 | 0 | 1;
+  numberEnum?: -1.1 | 0 | 1.2;
+  namedIntegerEnum?: NamedIntegerEnum;
+  impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
 }`
   }
 })

@@ -34,11 +34,11 @@ export namespace TsType {
   }
 
   export abstract class TsTypeBase {
-    id?: string
+    id: string
     description?: string
 
     protected safeId() {
-      return this.id && upperFirst(camelCase(this.id))
+      return nameToTsSafeName(this.id)
     }
     protected toBlockComment(settings: TsTypeSettings) {
       return this.description && settings.declarationDescription ?
@@ -99,16 +99,21 @@ export namespace TsType {
       return 'Object'
     }
   }
-  export class Void extends TsTypeBase {
+  export class Null extends TsTypeBase {
     _type() {
-      return 'void'
+      return 'null'
     }
   }
   export class Literal extends TsTypeBase {
     constructor(private value: any) { super() }
     _type() {
-      return this.value
+      return JSON.stringify(this.value)
     }
+  }
+
+  export class Reference extends TsTypeBase {
+    constructor(private value: string) { super() }
+    _type() { return this.value }
   }
 
   export class EnumValue {
@@ -132,18 +137,18 @@ export namespace TsType {
   }
 
   export class Enum extends TsTypeBase {
-    constructor(public enumValues: EnumValue[]) {
+    constructor(public id: string, public enumValues: EnumValue[]) {
       super()
     }
     isSimpleType() { return false }
-    _type(settings: TsTypeSettings) {
-      return this.safeId() || 'SomeEnumType'
+    _type(settings: TsTypeSettings): string {
+      return this.safeId()
     }
     toSafeType(settings: TsTypeSettings) {
       return `${this.toType(settings)}`
     }
     toDeclaration(settings: TsTypeSettings): string {
-      return `${this.toBlockComment(settings)}export ${settings.useConstEnums ? 'const ' : ''}enum ${this._type(settings)}{
+      return `${this.toBlockComment(settings)}export ${settings.useConstEnums ? 'const ' : ''}enum ${this.safeId()}{
         ${this.enumValues.map(_ => _.toDeclaration()).join(',\n')}
       }`
     }
@@ -159,10 +164,10 @@ export namespace TsType {
     constructor(protected data: TsTypeBase[]) {
       super()
     }
-    isSimpleType() { return this.data.filter(_ => !(_ instanceof Void)).length <= 1 }
+    isSimpleType() { return this.data.filter(_ => !(_ instanceof Null)).length <= 1 }
     _type(settings: TsTypeSettings) {
       return this.data
-        .filter(_ => !(_ instanceof Void))
+        .filter(_ => !(_ instanceof Null))
         .map(_ => _.toSafeType(settings))
         .join('&')
     }
@@ -221,4 +226,14 @@ export namespace TsType {
     }
   }
 
+}
+
+// eg.
+//   foo -> Foo
+//   fooBar -> FooBar
+//   foo_1bar -> Foo_1bar
+// TODO: more safety
+// TODO: unit tests
+function nameToTsSafeName(name: string): string {
+  return upperFirst(camelCase(name))
 }

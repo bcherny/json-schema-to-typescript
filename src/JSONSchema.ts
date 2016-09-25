@@ -1,54 +1,60 @@
-export namespace JSONSchema {
+export type SimpleType = 'array' | 'boolean' | 'integer' | 'null' | 'number' | 'object' | 'string'
 
-  export type SimpleTypes = 'array' | 'boolean' | 'integer' | 'null' | 'number' | 'object' | 'string';
-  /** Core schema meta-schema */
-  export type HttpJsonSchemaOrgDraft04Schema = {
-    id?: string;
-    $schema?: string;
-    title?: string;
-    description?: string;
-    default?: any;
-    multipleOf?: number;
-    maximum?: number;
-    exclusiveMaximum?: boolean;
-    minimum?: number;
-    exclusiveMinimum?: boolean;
-    maxLength?: number;
-    minLength?: number;
-    pattern?: string;
-    additionalItems?: boolean | HttpJsonSchemaOrgDraft04Schema;
-    items?: HttpJsonSchemaOrgDraft04Schema | HttpJsonSchemaOrgDraft04Schema[];
-    maxItems?: number;
-    minItems?: number;
-    uniqueItems?: boolean;
-    maxProperties?: number;
-    minProperties?: number;
-    required?: string[];
-    additionalProperties?: boolean | HttpJsonSchemaOrgDraft04Schema;
-    definitions?: {
-      [k: string]: HttpJsonSchemaOrgDraft04Schema;
-    };
-    properties?: {
-      [k: string]: HttpJsonSchemaOrgDraft04Schema;
-    };
-    patternProperties?: {
-      [k: string]: HttpJsonSchemaOrgDraft04Schema;
-    };
-    dependencies?: {
-      [k: string]: HttpJsonSchemaOrgDraft04Schema | string[];
-    };
-    enum?: any[];
+export type HttpJsonSchemaOrgDraft04Schema = JSONSchema
 
-    // schema extension to support numeric enums
-    tsEnumNames?: string[];
+export interface JSONSchema {
+  id?: string
+  $ref?: string
+  $schema?: string
+  title?: string
+  description?: string
+  default?: any
+  multipleOf?: number
+  maximum?: number
+  exclusiveMaximum?: boolean
+  minimum?: number
+  exclusiveMinimum?: boolean
+  maxLength?: number
+  minLength?: number
+  pattern?: string
+  additionalItems?: boolean | JSONSchema
+  items?: JSONSchema | JSONSchema[]
+  maxItems?: number
+  minItems?: number
+  uniqueItems?: boolean
+  maxProperties?: number
+  minProperties?: number
+  required?: string[]
+  additionalProperties?: boolean | JSONSchema
+  definitions?: {
+    [k: string]: JSONSchema
+  }
+  properties?: {
+    [k: string]: JSONSchema
+  }
+  patternProperties?: {
+    [k: string]: JSONSchema
+  }
+  dependencies?: {
+    [k: string]: JSONSchema | string[]
+  }
+  enum?: any[]
 
-    type?: SimpleTypes | SimpleTypes[];
-    allOf?: HttpJsonSchemaOrgDraft04Schema[];
-    anyOf?: HttpJsonSchemaOrgDraft04Schema[];
-    oneOf?: HttpJsonSchemaOrgDraft04Schema[];
-    not?: HttpJsonSchemaOrgDraft04Schema;
-    [k: string]: any;
-  };
+  // schema extension to support numeric enums
+  tsEnumNames?: string[]
 
-  export type Schema = HttpJsonSchemaOrgDraft04Schema & { $ref?: string };
+  type?: SimpleType | SimpleType[]
+  allOf?: JSONSchema[]
+  anyOf?: JSONSchema[]
+  oneOf?: JSONSchema[]
+  not?: JSONSchema
+  [k: string]: any
+}
+
+export interface EnumJSONSchema extends JSONSchema {
+  enum: any[]
+}
+
+export interface NamedEnumJSONSchema extends EnumJSONSchema {
+  tsEnumNames: string[]
 }
