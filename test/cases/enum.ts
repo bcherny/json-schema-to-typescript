@@ -35,6 +35,9 @@ export var schema = {
     "impliedNamedIntegerEnum": {
       "enum": [4, 5, 6],
       "tsEnumNames": ["Four","Five","Six"]
+    },
+    "impliedHeterogeneousEnum": {
+      "enum": [-20.1, null, "foo", false]
     }
   },
   "required": ["stringEnum", "impliedStringEnum", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum"],
@@ -67,6 +70,7 @@ export interface Enum {
   numberEnum?: -1.1 | 0 | 1.2;
   namedIntegerEnum?: NamedIntegerEnum;
   impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
+  impliedHeterogeneousEnum?: -20.1 | null | "foo" | false;
 }`
   }
 })
