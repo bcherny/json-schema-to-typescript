@@ -17,7 +17,6 @@ export namespace TsType {
     propertyDescription?: boolean
     useConstEnums?: boolean
     useFullReferencePathAsName?: boolean
-    useInterfaceDeclaration?: boolean
   }
 
   export var DEFAULT_SETTINGS: TsTypeSettings = {
@@ -29,25 +28,27 @@ export namespace TsType {
     endTypeWithSemicolon: true,
     propertyDescription: true,
     useConstEnums: true,
-    useFullReferencePathAsName: false,
-    useInterfaceDeclaration: true
+    useFullReferencePathAsName: false
   }
 
   export abstract class TsTypeBase {
     id: string
     description?: string
 
+    private generateComment(string: string): string {
+      return string
+        .split(newLineRegex)
+        .map((line, lineNum) => (lineNum > 0 ? multiLineCommentIndent : multiLineCommentStart) + line)
+        .join('\n') + multiLineCommentEnd + '\n'
+    }
+
     protected safeId() {
       return nameToTsSafeName(this.id)
     }
     protected toBlockComment(settings: TsTypeSettings) {
-      return this.description && settings.declarationDescription ?
-        `${this.description
-            .split(newLineRegex)
-            .map((line, lineNum) => (lineNum > 0 ? multiLineCommentIndent : multiLineCommentStart) + line)
-            .join('\n') + multiLineCommentEnd + '\n'
-        }` :
-        ''
+      return this.description && settings.declarationDescription
+        ? `${this.generateComment(this.description)}`
+        : ''
     }
     protected _toDeclaration(decl: string, settings: TsTypeSettings): string {
       return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '')
@@ -207,8 +208,8 @@ export namespace TsType {
           if (settings.endPropertyWithSemicolon)
             decl += ';'
 
-          //All descriptions will be inside jsdoc-style comments to support hinting in editors
-          //(ie intellisense)
+          // All descriptions will be inside jsdoc-style comments to support hinting in editors
+          // (eg. intellisense)
           if (settings.propertyDescription && _.type.description && !_.type.id)
             decl = _.type.description
                 .split(newLineRegex)
@@ -221,9 +222,7 @@ export namespace TsType {
     }
     isSimpleType() { return false }
     toDeclaration(settings: TsTypeSettings): string {
-      if (settings.useInterfaceDeclaration)
-        return `${this.toBlockComment(settings)}export interface ${this.safeId()} ${this._type(settings, true)}`
-      return this._toDeclaration(`export type ${this.safeId()} = ${this._type(settings, true)}`, settings)
+      return `${this.toBlockComment(settings)}export interface ${this.safeId()} ${this._type(settings, true)}`
     }
   }
 
