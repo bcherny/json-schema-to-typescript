@@ -35,7 +35,6 @@ export var schema = {
   "additionalProperties": false
 }
 
-
 export var types = `export interface Foo {
   a: string;
   b?: number;
