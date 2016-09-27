@@ -41,7 +41,10 @@ Output:
 export interface ExampleSchema {
   firstName: string;
   lastName: string;
-  age?: number; // Age in years
+  /**
+   * Age in years
+   */
+  age?: number;
   hairColor?: "black" | "brown" | "blue";
 }
 ```
@@ -66,15 +69,15 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - [x] `title` => `interface`
 - [x] Primitive types:
   - [x] array
-  - [x] array of type
+  - [x] homogeneous array
   - [x] boolean
   - [x] integer
   - [x] number
   - [x] null
   - [x] object
   - [x] string
-  - [x] string enum
-  - [x] number enum
+  - [x] homogeneous enum
+  - [x] heterogeneous enum
 - [x] Non/extensible interfaces
 - [ ] Custom JSON-schema extensions
 - [x] Nested properties
