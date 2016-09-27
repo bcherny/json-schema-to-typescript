@@ -1,8 +1,11 @@
 import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
-import { isPlainObject, last, zip } from 'lodash'
+import { isPlainObject, last } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
+
+// Inspired from http://stackoverflow.com/questions/4856717/javascript-equivalent-of-pythons-zip-function#answer-10284006
+const zip = (...args: any[]) => args[0].map((_: any, index: number) => args.map(row => row[index]))
 
 enum RuleType {
   Any, TypedArray, Enum, AllOf, AnyOf, Reference, NamedSchema, AnonymousSchema,
@@ -218,7 +221,7 @@ class Compiler {
           zip(
             (rule as NamedEnumJSONSchema).tsEnumNames,
             (rule as NamedEnumJSONSchema).enum
-          ).map(_ => new TsType.EnumValue(_))
+          ).map((_: any) => new TsType.EnumValue(_))
         )
         this.namedEnums.set(name, tsEnum)
         return tsEnum
