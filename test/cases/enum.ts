@@ -9,6 +9,10 @@ export var schema = {
     "impliedStringEnum": {
       "enum": ["a", "b", "c"]
     },
+    "literalWithSingleQuote": {
+      "type": "string",
+      "enum": ["Some 'string' with inner single quote", "b", "c"]
+    },
     "booleanEnum": {
       "type" : "boolean",
       "enum": [ true ]
@@ -40,7 +44,7 @@ export var schema = {
       "enum": [-20.1, null, "foo", false]
     }
   },
-  "required": ["stringEnum", "impliedStringEnum", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum"],
+  "required": ["stringEnum", "impliedStringEnum", "literalWithSingleQuote", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum"],
   "additionalProperties": false
 }
 
@@ -61,8 +65,9 @@ export${useConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
   Six = 6
 }
 export interface Enum {
-  stringEnum: "a" | "b" | "c";
-  impliedStringEnum: "a" | "b" | "c";
+  stringEnum: 'a' | 'b' | 'c';
+  impliedStringEnum: 'a' | 'b' | 'c';
+  literalWithSingleQuote: 'Some \\\'string\\\' with inner single quote' | 'b' | 'c';
   booleanEnum: true;
   impliedBooleanEnum: true;
   integerEnum: -1 | 0 | 1;
@@ -70,7 +75,7 @@ export interface Enum {
   numberEnum?: -1.1 | 0 | 1.2;
   namedIntegerEnum?: NamedIntegerEnum;
   impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
-  impliedHeterogeneousEnum?: -20.1 | null | "foo" | false;
+  impliedHeterogeneousEnum?: -20.1 | null | 'foo' | false;
 }`
   }
 })

@@ -103,7 +103,13 @@ export namespace TsType {
   export class Literal extends TsTypeBase {
     constructor(private value: any) { super() }
     _type() {
-      return JSON.stringify(this.value)
+      // if Literal is a string, format result with single quoted string literals
+      var stringValue = JSON.stringify(this.value)
+      const lastPos = stringValue.length - 1
+      if (stringValue.charAt(0) === '"' && stringValue.charAt(lastPos) === '"') {
+        stringValue = `'${stringValue.substring(1, lastPos).replace(/'/g,'\\\'')}'`
+      }
+      return stringValue
     }
   }
 

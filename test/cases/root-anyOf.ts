@@ -32,7 +32,7 @@ export var types = `export interface Foo {
   b?: number;
 }
 export interface Bar {
-  a?: "a" | "b" | "c";
+  a?: 'a' | 'b' | 'c';
   [k: string]: any;
 }
 export interface Baz {
