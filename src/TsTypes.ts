@@ -201,7 +201,7 @@ export namespace TsType {
           ? this.generateComment(_.type.description).join(`\n${INDENT_STRING}`) + `\n${INDENT_STRING}`
           : ''
         }${_.name}${_.required ? '' : '?'}: ${
-          _.type.toType(settings).replace(/\n/g, '\n' + INDENT_STRING)
+          _.type.toType(settings).replace(/\n/g, '\n' + INDENT_STRING) // ghetto nested indents
         }${
           settings.endPropertyWithSemicolon ? ';' : ''
         }`
