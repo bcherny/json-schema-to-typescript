@@ -1,7 +1,7 @@
 import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
-import { isPlainObject, last, map, merge, zip } from 'lodash'
+import { isPlainObject, last, merge, zip } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
 
 enum RuleType {
@@ -181,9 +181,8 @@ class Compiler {
       case 'number':
       case 'string':
         return new TsType.Literal(a)
-      default: return new TsType.Interface(map(
-        (a as any),
-        (v: JSONSchema, k: string) => {
+      default: return new TsType.Interface(Object.keys(a).map(k => {
+          var v = (a as any)[k]
           return {
             name: k,
             required: true,
@@ -271,10 +270,9 @@ class Compiler {
     return type
   }
   private toTsDeclaration(schema: JSONSchema): TsType.TsTypeBase {
-    const copy = merge({}, Compiler.DEFAULT_SCHEMA, schema)
-    const props = map(
-      copy.properties!,
-      (v: JSONSchema, k: string) => {
+    const copy: JSONSchema = merge({}, Compiler.DEFAULT_SCHEMA, schema)
+    const props = copy.properties === undefined ? [] : Object.keys(copy.properties).map(k => {
+        var v = copy.properties![k] // Asserting copy.properties[k] is always defined here
         return {
           name: k,
           required: this.isRequired(k, copy),
