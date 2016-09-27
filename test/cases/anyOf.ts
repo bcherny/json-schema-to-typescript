@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "AnyOf",
   "type": "object",
@@ -34,6 +35,7 @@ export var schema = {
   "required": ["foo"],
   "additionalProperties": false
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 
 export var types = `export interface Foo {

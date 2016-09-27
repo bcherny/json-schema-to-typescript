@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
     "id": "http://json-schema.org/draft-04/schema#",
     "$schema": "http://json-schema.org/draft-04/schema#",
@@ -148,6 +149,7 @@ export var schema = {
     },
     "default": {}
 };
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 export var configurations = [
 {

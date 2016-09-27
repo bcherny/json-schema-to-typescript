@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "RootAnyOf",
   "anyOf": [
@@ -26,6 +27,7 @@ export var schema = {
     }
   }
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 export var types = `export interface Foo {
   a: string;

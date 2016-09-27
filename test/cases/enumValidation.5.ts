@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "Enum",
   "type": "object",
@@ -11,6 +12,7 @@ export var schema = {
   "required": ["bar"],
   "additionalProperties": false
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 export var settings = {
   useTypescriptEnums: true

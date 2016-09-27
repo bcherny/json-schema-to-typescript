@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "Enum",
   "type": "object",
@@ -47,6 +48,7 @@ export var schema = {
   "required": ["stringEnum", "impliedStringEnum", "literalWithSingleQuote", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum"],
   "additionalProperties": false
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 export var configurations = [false, true].map(useConstEnums => {
   return {

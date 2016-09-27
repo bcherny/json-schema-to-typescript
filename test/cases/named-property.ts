@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "Example Schema",
   "description": "My cool schema",
@@ -13,6 +14,7 @@ export var schema = {
     }
   }
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 // TODO: 2nd block comment should annotate UserIdArray, not users
 export var types = `export type UserIdArray = string[];

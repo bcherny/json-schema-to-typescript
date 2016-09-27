@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "AdditionalProperties",
   "type": "object",
@@ -10,6 +11,7 @@ export var schema = {
     "type": "number"
   }
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 export var types = `export interface AdditionalProperties {
   foo?: string;
