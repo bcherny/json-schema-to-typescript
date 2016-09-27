@@ -1,5 +1,4 @@
 import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
-import { format } from './prettyPrinter'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
 import { isPlainObject, last, map, merge, zip } from 'lodash'
@@ -37,14 +36,13 @@ class Compiler {
   }
 
   toString(): string {
-    return format(
-      [
+    return  [
         ...Array.from(this.namedEnums.values()),
         ...Array.from(this.declarations.values())
       ]
       .map(_ => _.toDeclaration(this.settings))
       .join('\n')
-    )
+
   }
 
   private settings: TsType.TsTypeSettings

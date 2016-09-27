@@ -3,7 +3,7 @@ import { camelCase, upperFirst } from 'lodash'
 const COMMENT_START  = '/**'
 const COMMENT_INDENT = ' * '
 const COMMENT_END    = ' */'
-const INDENT_STRING  = '    '
+const INDENT_STRING  = '  '
 
 export namespace TsType {
 
@@ -124,7 +124,7 @@ export namespace TsType {
     toDeclaration(){
       // if there is a value associated with the identifier, declare as identifier=value
       // else declare as identifier
-      return `${this.identifier}${this.value ? ('=' + this.value) : ''}`
+      return `${this.identifier}${this.value ? (' = ' + this.value) : ''}`
     }
 
     toString(){
@@ -144,9 +144,13 @@ export namespace TsType {
       return `${this.toType(settings)}`
     }
     toDeclaration(settings: TsTypeSettings): string {
-      return `${this.toBlockComment(settings)}export ${settings.useConstEnums ? 'const ' : ''}enum ${this.safeId()}{
-        ${this.enumValues.map(_ => _.toDeclaration()).join(',\n')}
-      }`
+      return this.toBlockComment(settings)
+        + `export ${settings.useConstEnums ? 'const ' : ''}enum ${this.safeId()} {`
+        + '\n'
+        + INDENT_STRING
+        + this.enumValues.map(_ => _.toDeclaration()).join(`,\n${INDENT_STRING}`)
+        + '\n'
+        + '}'
     }
   }
 
@@ -166,7 +170,7 @@ export namespace TsType {
       return this.data
         .filter(_ => !(_ instanceof Null))
         .map(_ => _.toSafeType(settings))
-        .join('&')
+        .join(' & ')
     }
     toSafeType(settings: TsTypeSettings) {
       return `${this.toType(settings)}`
@@ -177,7 +181,7 @@ export namespace TsType {
     _type(settings: TsTypeSettings) {
       return this.data
         .map(_ => _.toSafeType(settings))
-        .join('|')
+        .join(' | ')
     }
   }
 
@@ -196,9 +200,11 @@ export namespace TsType {
         `${INDENT_STRING}${_.type.description
           ? this.generateComment(_.type.description).join(`\n${INDENT_STRING}`) + `\n${INDENT_STRING}`
           : ''
-        }${_.name}${_.required ? '' : '?'}: ${_.type.toType(settings)}${
-            settings.endPropertyWithSemicolon ? ';' : ''
-          }`
+        }${_.name}${_.required ? '' : '?'}: ${
+          _.type.toType(settings).replace(/\n/g, '\n' + INDENT_STRING)
+        }${
+          settings.endPropertyWithSemicolon ? ';' : ''
+        }`
         ).join('\n')}
 }`
     }
