@@ -1,7 +1,7 @@
 import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
-import { isPlainObject, last, merge, zip } from 'lodash'
+import { isPlainObject, last, zip } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
 
 enum RuleType {
@@ -270,15 +270,25 @@ class Compiler {
     return type
   }
   private toTsDeclaration(schema: JSONSchema): TsType.TsTypeBase {
-    const copy: JSONSchema = merge({}, Compiler.DEFAULT_SCHEMA, schema)
+    // Notes:
+    // * `copy` is only read. To be absolutely sure it is frozen.
+    // * As well, there is no need for lodash merge which uses deep clone.
+    // * Below `this.toTsType()` is called with `copy.additionalProperties`,
+    //   which may lead back to `this.toTsDeclaration`, in which case another
+    //   shallow clone will occur.
+    // * Using Object.assign() rather than Object.create() because schema is a POJO (so
+    //   we shouldn't need to copy property definitions) and the copy will be frozen.
+    const copy: JSONSchema = Object.freeze(Object.assign({}, Compiler.DEFAULT_SCHEMA, schema))
     const props = copy.properties === undefined ? [] : Object.keys(copy.properties).map(k => {
-        var v = copy.properties![k] // Asserting copy.properties[k] is always defined here
-        return {
-          name: k,
-          required: this.isRequired(k, copy),
-          type: this.toTsType(v, k)
-        }
-      })
+      // Asserting copy.properties[k] is always defined here because Object.keys() wouldn't
+      // emit a key if it was undefined.  Note: In future Object.entries() should be used.
+      var v = copy.properties![k]
+      return {
+        name: k,
+        required: this.isRequired(k, copy),
+        type: this.toTsType(v, k)
+      }
+    })
     if (props.length === 0 && !('additionalProperties' in schema)) {
       if ('default' in schema)
         return new TsType.Null
@@ -287,6 +297,8 @@ class Compiler {
       const short = copy.additionalProperties === true
       if (short && props.length === 0)
         return new TsType.Any
+      // TODO: Can recursive call to this.toTsType() be minimized or eliminated with 
+      // trampolining or other approach?
       const type = short ? new TsType.Any : this.toTsType(copy.additionalProperties as JSONSchema)
       props.push({
         name: '[k: string]',
