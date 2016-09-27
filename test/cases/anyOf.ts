@@ -37,7 +37,6 @@ export var schema = {
 }
 /* tslint:enable:quotemark object-literal-key-quotes */
 
-
 export var types = `export interface Foo {
   a: string;
   b?: number;
