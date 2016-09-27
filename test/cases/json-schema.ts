@@ -148,7 +148,7 @@ export var schema = {
         "exclusiveMinimum": [ "minimum" ]
     },
     "default": {}
-};
+}
 /* tslint:enable:quotemark object-literal-key-quotes */
 
 export var configurations = [
