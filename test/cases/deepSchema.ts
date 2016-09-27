@@ -12,7 +12,7 @@ import { INDENT_STRING } from  '../../src/TsTypes'
 // levels === 700 is fine but higher blows the stack.
 // I can achieve 1200 by eliminating use of lodash merge(). There is still room to improve by eliminating
 // recursion. But I hope this is sufficient.
-const levels: number = 1200
+const levels: number = 1600
 
 const schemaLeaf = {
   leaf: {

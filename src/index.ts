@@ -7,6 +7,9 @@ import { join, parse, ParsedPath, resolve } from 'path'
 // Inspired from http://stackoverflow.com/questions/4856717/javascript-equivalent-of-pythons-zip-function#answer-10284006
 const zip = (...args: any[]) => args[0].map((_: any, index: number) => args.map(row => row[index]))
 
+// This ITypeBaseOrTrampFunc is used for Tail Call Optimization using a trampoline
+type ITypeBaseOrTrampFunc = TsType.TsTypeBase | ((schema: JSONSchema) => ITypeBaseOrTrampFunc)
+
 enum RuleType {
   Any, TypedArray, Enum, AllOf, AnyOf, Reference, NamedSchema, AnonymousSchema,
   String, Number, Null, Object, Array, Boolean, Literal, NamedEnum, Union
@@ -202,11 +205,11 @@ class Compiler {
     return rule.id || propName || `Enum${this.namedEnums.size}`
   }
 
-  private generateTsType (rule: JSONSchema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsTypeBase {
+  private generateTsType (rule: JSONSchema, propName?: string, isTop: boolean = false, isReference: boolean = false): ITypeBaseOrTrampFunc {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
-        return this.toTsDeclaration(rule)
+        return this.toTsDeclaration
 
       case RuleType.Enum:
         return new TsType.Union(
@@ -262,7 +265,8 @@ class Compiler {
     isTop: boolean = false,
     isReference: boolean = false
   ): TsType.TsTypeBase {
-    const type = this.generateTsType(rule, propName, isTop, isReference)
+    var type = this.generateTsType(rule, propName, isTop, isReference)
+    while (typeof type === 'function') type = type.call(this, rule) // type === toTsDeclaration
     if (!type.id) {
       // the type is not declared, let's check if we should declare it or keep it inline
       type.id = rule.id || rule.title as string // TODO: fix types
