@@ -14,11 +14,15 @@ export var schema = {
   }
 }
 
-export var types = `/** Array of authorized user ids. */
-export type UserIdArray = string[];
-/** My cool schema */
+// TODO: 2nd block comment should annotate UserIdArray, not users
+export var types = `export type UserIdArray = string[];
+/**
+ * My cool schema
+ */
 export interface ExampleSchema {
+  /**
+   * Array of authorized user ids.
+   */
   users?: UserIdArray;
   [k: string]: any;
 }`
-

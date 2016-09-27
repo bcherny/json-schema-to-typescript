@@ -13,7 +13,9 @@ export var schema = {
   "required": ["value"]
 }
 
-export var types = `/** My cool schema */
+export var types = `/**
+ * My cool schema
+ */
 export interface ExampleSchema {
   value: number | string;
   anotherValue?: null | string;

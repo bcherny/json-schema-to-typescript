@@ -159,7 +159,9 @@ export type PositiveIntegerDefault0 = PositiveInteger;
 export type SchemaArray = HttpJsonSchemaOrgDraft04Schema[];
 export type StringArray = string[];
 export type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
-/** Core schema meta-schema */
+/**
+ * Core schema meta-schema
+ */
 export interface HttpJsonSchemaOrgDraft04Schema {
   id?: string;
   $schema?: string;
@@ -209,7 +211,9 @@ export interface HttpJsonSchemaOrgDraft04Schema {
         declareSimpleType: false
     },
     types:`export type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
-/** Core schema meta-schema */
+/**
+ * Core schema meta-schema
+ */
 export interface HttpJsonSchemaOrgDraft04Schema {
   id?: string;
   $schema?: string;

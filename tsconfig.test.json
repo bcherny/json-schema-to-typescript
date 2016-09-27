@@ -9,7 +9,7 @@
     "sourceMap": true,
     "target": "es6",
     "lib": [
-      "es6"
+      "es2015"
     ],
     "strictNullChecks": true,
     "types": [

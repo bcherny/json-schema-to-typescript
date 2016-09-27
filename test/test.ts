@@ -1,22 +1,34 @@
 import { compile } from '../src/index'
+import { JSONSchema } from '../src/JSONSchema'
+import { TsType } from '../src/TsTypes'
 import test from 'ava'
+import { find } from 'lodash'
 import * as fs from 'fs'
 import * as path from 'path'
 
-var modules = new Map<string, any>()
-var dir = __dirname + '/cases'
-fs.readdirSync(dir).forEach(function(moduleName) {
-  if (!/^.*\.js$/.test(moduleName))
-    return
-  var p = path.join(dir, moduleName)
-  try {
-    let module = require(p)
-    modules.set(moduleName, module)
-  } catch (e) {
-    console.error('Unable to load module', moduleName, e)
-  }
-})
-modules.forEach((exports, name) => {
+const dir = __dirname + '/cases'
+const modules = fs.readdirSync(dir)
+  .filter(_ => /^.*\.js$/.test(_))
+  .map(_ => [_, require(path.join(dir, _))]) as [string, TestCase][]
+
+const only = find(modules, _ => _[1].only)
+
+if (only) {
+  run(only[1], only[0])
+} else {
+  modules.forEach(_ => run(_[1], _[0]))
+}
+
+interface TestCase {
+  configurations?: { settings: TsType.TsTypeSettings, types: string }[]
+  error?: { type: ErrorConstructor }
+  schema: JSONSchema
+  settings?: TsType.TsTypeSettings
+  types?: string
+  only?: boolean
+}
+
+function run(exports: TestCase, name: string) {
   if (exports.configurations) {
     exports.configurations.forEach((cfg: any) => {
       test(`${name}: ${JSON.stringify(cfg.settings)}`, t => {
@@ -33,4 +45,4 @@ modules.forEach((exports, name) => {
       : t.is(compile(exports.schema, name, exports.settings), exports.types)
     )
   }
-})
+}

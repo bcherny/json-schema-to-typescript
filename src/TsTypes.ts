@@ -1,32 +1,26 @@
 import { camelCase, upperFirst } from 'lodash'
 
-const multiLineCommentStart  = '/** '
-const multiLineCommentIndent = ' *  '
-const multiLineCommentEnd    = ' */'
-const newLineRegex = /\\n|\n/
+const COMMENT_START  = '/**'
+const COMMENT_INDENT = ' * '
+const COMMENT_END    = ' */'
+const INDENT_STRING  = '    '
 
 export namespace TsType {
 
   export interface TsTypeSettings {
-    declarationDescription?: boolean
-    // TODO declareProperties?: boolean
     declareReferenced?: boolean
     declareSimpleType?: boolean
     endPropertyWithSemicolon?: boolean
     endTypeWithSemicolon?: boolean
-    propertyDescription?: boolean
     useConstEnums?: boolean
     useFullReferencePathAsName?: boolean
   }
 
-  export var DEFAULT_SETTINGS: TsTypeSettings = {
-    declarationDescription: true,
-    // declareProperties: false,
+  export const DEFAULT_SETTINGS: TsTypeSettings = {
     declareReferenced: true,
     declareSimpleType: false,
     endPropertyWithSemicolon: true,
     endTypeWithSemicolon: true,
-    propertyDescription: true,
     useConstEnums: true,
     useFullReferencePathAsName: false
   }
@@ -35,19 +29,20 @@ export namespace TsType {
     id: string
     description?: string
 
-    private generateComment(string: string): string {
-      return string
-        .split(newLineRegex)
-        .map((line, lineNum) => (lineNum > 0 ? multiLineCommentIndent : multiLineCommentStart) + line)
-        .join('\n') + multiLineCommentEnd + '\n'
+    protected generateComment(string: string): string[] {
+      return [
+        COMMENT_START,
+        ...string.split('\n').map(_ => COMMENT_INDENT + _),
+        COMMENT_END
+      ]
     }
 
     protected safeId() {
       return nameToTsSafeName(this.id)
     }
     protected toBlockComment(settings: TsTypeSettings) {
-      return this.description && settings.declarationDescription
-        ? `${this.generateComment(this.description)}`
+      return this.description && !this.isSimpleType()
+        ? `${this.generateComment(this.description).join('\n')}\n`
         : ''
     }
     protected _toDeclaration(decl: string, settings: TsTypeSettings): string {
@@ -195,34 +190,21 @@ export namespace TsType {
       ret.id = id
       return ret
     }
-    protected _type(settings: TsTypeSettings, declaration: boolean = false) {
-      let id = this.safeId()
-      return declaration || !id ? `{
-        ${this.props.map(_ => {
-          const indentString =  '    '
-          let decl = indentString + _.name
-
-          if (!_.required)
-            decl += '?'
-          decl += ': ' + _.type.toType(settings)
-          if (settings.endPropertyWithSemicolon)
-            decl += ';'
-
-          // All descriptions will be inside jsdoc-style comments to support hinting in editors
-          // (eg. intellisense)
-          if (settings.propertyDescription && _.type.description && !_.type.id)
-            decl = _.type.description
-                .split(newLineRegex)
-                .map((line, lineNum) => (lineNum > 0 ? multiLineCommentIndent : indentString + multiLineCommentStart) + line)
-                .join('\n' + indentString) + multiLineCommentEnd + '\n' + decl
-
-          return decl
-        }).join('\n')}
-}` : id
+    protected _type(settings: TsTypeSettings) {
+      return `{\n`
+        + `${this.props.map(_ =>
+        `${INDENT_STRING}${_.type.description
+          ? this.generateComment(_.type.description).join(`\n${INDENT_STRING}`) + `\n${INDENT_STRING}`
+          : ''
+        }${_.name}${_.required ? '' : '?'}: ${_.type.toType(settings)}${
+            settings.endPropertyWithSemicolon ? ';' : ''
+          }`
+        ).join('\n')}
+}`
     }
     isSimpleType() { return false }
     toDeclaration(settings: TsTypeSettings): string {
-      return `${this.toBlockComment(settings)}export interface ${this.safeId()} ${this._type(settings, true)}`
+      return `${this.toBlockComment(settings)}export interface ${this.safeId()} ${this._type(settings)}`
     }
   }
 

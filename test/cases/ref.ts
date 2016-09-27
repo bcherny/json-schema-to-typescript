@@ -19,7 +19,9 @@ export var configurations = [
     types: `export interface ExampleSchema {
   firstName: string;
   lastName: string;
-  /** Age in years */
+  /**
+   * Age in years
+   */
   age?: number;
   height?: number;
   favoriteFoods?: any[];

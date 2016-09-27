@@ -28,27 +28,12 @@ export var schema = {
 
 export var configurations = [
   {
-    settings: {
-      useInterfaceDeclaration: true
-    },
     types: `export interface ExampleSchema {
   firstName: string;
   lastName: string;
-  /** Age in years */
-  age?: number;
-  height?: number;
-  favoriteFoods?: any[];
-  likesDogs?: boolean;
-  [k: string]: any;
-}`
-  },
-  {
-    settings: {
-      propertyDescription: false
-    },
-    types: `export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  /**
+   * Age in years
+   */
   age?: number;
   height?: number;
   favoriteFoods?: any[];

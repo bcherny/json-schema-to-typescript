@@ -19,13 +19,19 @@ export var schema = {
   "required": ["firstName", "lastName"]
 }
 
-export var types = `/** My cool schema */
+export var types = `/**
+ * My cool schema
+ */
 export interface ExampleSchema {
-  /** first name single line description */
+  /**
+   * first name single line description
+   */
   firstName: string;
   lastName: string;
-  /** Age description with
-   *  multiple lines */
+  /**
+   * Age description with
+   * multiple lines
+   */
   age?: number;
   [k: string]: any;
 }`
