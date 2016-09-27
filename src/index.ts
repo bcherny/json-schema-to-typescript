@@ -1,8 +1,14 @@
 import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
-import { isPlainObject, last, map, merge, zip } from 'lodash'
+import { isPlainObject, last } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
+
+// Inspired from http://stackoverflow.com/questions/4856717/javascript-equivalent-of-pythons-zip-function#answer-10284006
+const zip = (...args: any[]) => args[0].map((_: any, index: number) => args.map(row => row[index]))
+
+// This ITypeBaseOrTrampFunc is used for Tail Call Optimization using a trampoline
+type ITypeBaseOrTrampFunc = TsType.TsTypeBase | ((schema: JSONSchema) => ITypeBaseOrTrampFunc)
 
 enum RuleType {
   Any, TypedArray, Enum, AllOf, AnyOf, Reference, NamedSchema, AnonymousSchema,
@@ -181,9 +187,8 @@ class Compiler {
       case 'number':
       case 'string':
         return new TsType.Literal(a)
-      default: return new TsType.Interface(map(
-        (a as any),
-        (v: JSONSchema, k: string) => {
+      default: return new TsType.Interface(Object.keys(a).map(k => {
+          var v = (a as any)[k]
           return {
             name: k,
             required: true,
@@ -200,11 +205,11 @@ class Compiler {
     return rule.id || propName || `Enum${this.namedEnums.size}`
   }
 
-  private generateTsType (rule: JSONSchema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsTypeBase {
+  private generateTsType (rule: JSONSchema, propName?: string, isTop: boolean = false, isReference: boolean = false): ITypeBaseOrTrampFunc {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
-        return this.toTsDeclaration(rule)
+        return this.toTsDeclaration
 
       case RuleType.Enum:
         return new TsType.Union(
@@ -219,7 +224,7 @@ class Compiler {
           zip(
             (rule as NamedEnumJSONSchema).tsEnumNames,
             (rule as NamedEnumJSONSchema).enum
-          ).map(_ => new TsType.EnumValue(_))
+          ).map((_: any) => new TsType.EnumValue(_))
         )
         this.namedEnums.set(name, tsEnum)
         return tsEnum
@@ -260,7 +265,8 @@ class Compiler {
     isTop: boolean = false,
     isReference: boolean = false
   ): TsType.TsTypeBase {
-    const type = this.generateTsType(rule, propName, isTop, isReference)
+    var type = this.generateTsType(rule, propName, isTop, isReference)
+    while (typeof type === 'function') type = type.call(this, rule) // type === toTsDeclaration
     if (!type.id) {
       // the type is not declared, let's check if we should declare it or keep it inline
       type.id = rule.id || rule.title as string // TODO: fix types
@@ -271,16 +277,25 @@ class Compiler {
     return type
   }
   private toTsDeclaration(schema: JSONSchema): TsType.TsTypeBase {
-    const copy = merge({}, Compiler.DEFAULT_SCHEMA, schema)
-    const props = map(
-      copy.properties!,
-      (v: JSONSchema, k: string) => {
-        return {
-          name: k,
-          required: this.isRequired(k, copy),
-          type: this.toTsType(v, k)
-        }
-      })
+    // Notes:
+    // * `copy` is only read. To be absolutely sure it is frozen.
+    // * As well, there is no need for lodash merge which uses deep clone.
+    // * Below `this.toTsType()` is called with `copy.additionalProperties`,
+    //   which may lead back to `this.toTsDeclaration`, in which case another
+    //   shallow clone will occur.
+    // * Using Object.assign() rather than Object.create() because schema is a POJO (so
+    //   we shouldn't need to copy property definitions) and the copy will be frozen.
+    const copy: JSONSchema = Object.freeze(Object.assign({}, Compiler.DEFAULT_SCHEMA, schema))
+    const props = copy.properties === undefined ? [] : Object.keys(copy.properties).map(k => {
+      // Asserting copy.properties[k] is always defined here because Object.keys() wouldn't
+      // emit a key if it was undefined.  Note: In future Object.entries() should be used.
+      var v = copy.properties![k]
+      return {
+        name: k,
+        required: this.isRequired(k, copy),
+        type: this.toTsType(v, k)
+      }
+    })
     if (props.length === 0 && !('additionalProperties' in schema)) {
       if ('default' in schema)
         return new TsType.Null
@@ -289,6 +304,8 @@ class Compiler {
       const short = copy.additionalProperties === true
       if (short && props.length === 0)
         return new TsType.Any
+      // TODO: Can recursive call to this.toTsType() be minimized or eliminated with 
+      // trampolining or other approach?
       const type = short ? new TsType.Any : this.toTsType(copy.additionalProperties as JSONSchema)
       props.push({
         name: '[k: string]',

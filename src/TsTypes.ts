@@ -3,7 +3,7 @@ import { camelCase, upperFirst } from 'lodash'
 const COMMENT_START  = '/**'
 const COMMENT_INDENT = ' * '
 const COMMENT_END    = ' */'
-const INDENT_STRING  = '  '
+export const INDENT_STRING  = '  '
 
 export namespace TsType {
 
