@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "Example Schema",
   "type": "object",
@@ -25,6 +26,7 @@ export var schema = {
   },
   "required": ["firstName", "lastName"]
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 export var configurations = [
   {

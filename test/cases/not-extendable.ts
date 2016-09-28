@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "Example Schema",
   "type": "object",
@@ -17,6 +18,7 @@ export var schema = {
   "required": ["firstName", "lastName"],
   "additionalProperties": false
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 export var types = `export interface ExampleSchema {
   firstName: string;

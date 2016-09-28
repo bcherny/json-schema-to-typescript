@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-key-quotes */
 export var schema = {
   "title": "Enum",
   "type": "object",
@@ -8,6 +9,10 @@ export var schema = {
     },
     "impliedStringEnum": {
       "enum": ["a", "b", "c"]
+    },
+    "literalWithSingleQuote": {
+      "type": "string",
+      "enum": ["Some 'string' with inner single quote", "b", "c"]
     },
     "booleanEnum": {
       "type" : "boolean",
@@ -30,19 +35,20 @@ export var schema = {
     "namedIntegerEnum": {
       "type": "integer",
       "enum": [1, 2, 3],
-      "tsEnumNames": ["One","Two","Three"]
+      "tsEnumNames": ["One", "Two", "Three"]
     },
     "impliedNamedIntegerEnum": {
       "enum": [4, 5, 6],
-      "tsEnumNames": ["Four","Five","Six"]
+      "tsEnumNames": ["Four", "Five", "Six"]
     },
     "impliedHeterogeneousEnum": {
       "enum": [-20.1, null, "foo", false]
     }
   },
-  "required": ["stringEnum", "impliedStringEnum", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum"],
+  "required": ["stringEnum", "impliedStringEnum", "literalWithSingleQuote", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum"],
   "additionalProperties": false
 }
+/* tslint:enable:quotemark object-literal-key-quotes */
 
 export var configurations = [false, true].map(useConstEnums => {
   return {
@@ -61,8 +67,9 @@ export${useConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
   Six = 6
 }
 export interface Enum {
-  stringEnum: "a" | "b" | "c";
-  impliedStringEnum: "a" | "b" | "c";
+  stringEnum: 'a' | 'b' | 'c';
+  impliedStringEnum: 'a' | 'b' | 'c';
+  literalWithSingleQuote: 'Some \\\'string\\\' with inner single quote' | 'b' | 'c';
   booleanEnum: true;
   impliedBooleanEnum: true;
   integerEnum: -1 | 0 | 1;
@@ -70,7 +77,7 @@ export interface Enum {
   numberEnum?: -1.1 | 0 | 1.2;
   namedIntegerEnum?: NamedIntegerEnum;
   impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
-  impliedHeterogeneousEnum?: -20.1 | null | "foo" | false;
+  impliedHeterogeneousEnum?: -20.1 | null | 'foo' | false;
 }`
   }
 })
