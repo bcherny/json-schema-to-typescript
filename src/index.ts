@@ -272,7 +272,7 @@ class Compiler {
       props.push({
         name: '[k: string]',
         required: true,
-        type: type
+        type
       })
     }
     return new TsType.Interface(props)
