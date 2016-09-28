@@ -30,11 +30,11 @@ export var schema = {
     "namedIntegerEnum": {
       "type": "integer",
       "enum": [1, 2, 3],
-      "tsEnumNames": ["One","Two","Three"]
+      "tsEnumNames": ["One", "Two", "Three"]
     },
     "impliedNamedIntegerEnum": {
       "enum": [4, 5, 6],
-      "tsEnumNames": ["Four","Five","Six"]
+      "tsEnumNames": ["Four", "Five", "Six"]
     },
     "impliedHeterogeneousEnum": {
       "enum": [-20.1, null, "foo", false]
