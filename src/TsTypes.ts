@@ -53,9 +53,6 @@ export namespace TsType {
     toDeclaration(settings: TsTypeSettings): string {
       return this._toDeclaration(`export type ${this.safeId()} = ${this._type(settings)}`, settings)
     }
-    toSafeType(settings: TsTypeSettings): string {
-      return this.toType(settings)
-    }
     toType(settings: TsTypeSettings): string {
       return this.safeId() || this._type(settings)
     }
@@ -140,9 +137,6 @@ export namespace TsType {
     _type(settings: TsTypeSettings): string {
       return this.safeId()
     }
-    toSafeType(settings: TsTypeSettings) {
-      return `${this.toType(settings)}`
-    }
     toDeclaration(settings: TsTypeSettings): string {
       return this.toBlockComment(settings)
         + `export ${settings.useConstEnums ? 'const ' : ''}enum ${this.safeId()} {`
@@ -157,7 +151,7 @@ export namespace TsType {
   export class Array extends TsTypeBase {
     constructor(private type?: TsTypeBase) { super() }
     _type(settings: TsTypeSettings) {
-      const type = (this.type || new Any()).toSafeType(settings)
+      const type = (this.type || new Any()).toType(settings)
       return `${type.indexOf('|') > -1 || type.indexOf('&') > -1 ? `(${type})` : type}[]` // hacky
     }
   }
@@ -169,18 +163,15 @@ export namespace TsType {
     _type(settings: TsTypeSettings) {
       return this.data
         .filter(_ => !(_ instanceof Null))
-        .map(_ => _.toSafeType(settings))
+        .map(_ => _.toType(settings))
         .join(' & ')
-    }
-    toSafeType(settings: TsTypeSettings) {
-      return `${this.toType(settings)}`
     }
   }
   export class Union extends Intersection {
     isSimpleType() { return this.data.length <= 1 }
     _type(settings: TsTypeSettings) {
       return this.data
-        .map(_ => _.toSafeType(settings))
+        .map(_ => _.toType(settings))
         .join(' | ')
     }
   }

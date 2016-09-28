@@ -133,7 +133,7 @@ class Compiler {
     )
     const targetType = this.toTsType(contents, propName, false, true)
     const id = targetType.id
-      ? targetType.toSafeType(this.settings)
+      ? targetType.toType(this.settings)
       : parse(fullPath).name
 
     if (this.settings.declareReferenced) {
