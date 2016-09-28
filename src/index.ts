@@ -175,27 +175,6 @@ class Compiler {
     return type
   }
 
-  private toStringLiteral(a: boolean | number | string | Object): TsType.TsTypeBase {
-    switch (typeof a) {
-      case 'boolean':
-      case 'number':
-      case 'string':
-        return new TsType.Literal(a)
-      default: return new TsType.Interface(map(
-        (a as any),
-        (v: JSONSchema, k: string) => {
-          return {
-            name: k,
-            required: true,
-            type: this.toStringLiteral(v)
-          }
-        }))
-      // TODO: support array types?
-      // TODO: support enums of enums
-      // TODO: support nulls
-    }
-  }
-
   private generateEnumName(rule: JSONSchema, propName: string | undefined): string {
     return rule.id || propName || `Enum${this.namedEnums.size}`
   }
