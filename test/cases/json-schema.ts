@@ -147,7 +147,7 @@ export var schema = {
         "exclusiveMinimum": [ "minimum" ]
     },
     "default": {}
-};
+}
 
 export var configurations = [
 {
