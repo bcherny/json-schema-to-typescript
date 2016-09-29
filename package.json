@@ -8,7 +8,7 @@
     "build": "npm run build-sources && npm test && npm run lint",
     "build-sources": "tsc -p ./tsconfig.json",
     "build-tests": "rm -rf ./dist_tests && tsc -p ./tsconfig.test.json",
-    "watch": "tsc -p ./tsconfig.json --watch && tsc -p ./tsconfig.test.json --watch",
+    "watch": "tsc -p ./tsconfig.json --watch & tsc -p ./tsconfig.test.json --watch",
     "lint": "tslint -c tslint.json src/*.ts",
     "test": "npm run build-tests && ava",
     "tdd": "npm run watch & ava --watch",
