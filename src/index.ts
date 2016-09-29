@@ -1,5 +1,5 @@
 import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
-import { TsType } from './TsTypes'
+import * as TsType from './TsTypes'
 import { readFile, readFileSync } from 'fs'
 import { get, isPlainObject, last, map, merge, zip } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
@@ -11,8 +11,23 @@ enum RuleType {
 
 enum EnumType { Boolean, Number, String }
 
+export interface Settings {
+  declareReferenced?: boolean
+  endPropertyWithSemicolon?: boolean
+  endTypeWithSemicolon?: boolean
+  useConstEnums?: boolean
+  useFullReferencePathAsName?: boolean
+}
+
 class Compiler {
-  static DEFAULT_SETTINGS = TsType.DEFAULT_SETTINGS
+
+  static DEFAULT_SETTINGS: Settings = {
+    declareReferenced: true,
+    endPropertyWithSemicolon: true,
+    endTypeWithSemicolon: true,
+    useConstEnums: true,
+    useFullReferencePathAsName: false
+  }
 
   static DEFAULT_SCHEMA: JSONSchema = {
     additionalProperties: true,
@@ -24,7 +39,7 @@ class Compiler {
   constructor(
     private schema: JSONSchema,
     filePath: string | undefined = '',
-    settings?: TsType.TsTypeSettings
+    settings?: Settings
   ) {
     this.filePath = parse(resolve(filePath))
     this.declarations = new Map
@@ -44,9 +59,9 @@ class Compiler {
 
   }
 
-  private settings: TsType.TsTypeSettings
+  private settings: Settings
   private id: string
-  private declarations: Map<string, TsType.TsTypeBase<any>>
+  private declarations: Map<string, TsType.TsType<any>>
   private namedEnums: Map<string, TsType.Enum>
   private filePath: ParsedPath
 
@@ -144,7 +159,7 @@ class Compiler {
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
   // only called in case of a $ref type
-  private resolveRef(refPath: string, propName: string): TsType.TsTypeBase<any> {
+  private resolveRef(refPath: string, propName: string): TsType.TsType<any> {
     if (refPath === '#' || refPath === '#/'){
       return TsType.Interface.reference(this.id)
     }
@@ -179,7 +194,7 @@ class Compiler {
     return rule.id || propName || `Enum${this.namedEnums.size}`
   }
 
-  private generateTsType (rule: JSONSchema, propName?: string, isReference: boolean = false): TsType.TsTypeBase<any> {
+  private generateTsType (rule: JSONSchema, propName?: string, isReference: boolean = false): TsType.TsType<any> {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
@@ -237,7 +252,7 @@ class Compiler {
     rule: JSONSchema,
     propName?: string,
     isReference: boolean = false
-  ): TsType.TsTypeBase<T> {
+  ): TsType.TsType<T> {
     const type = this.generateTsType(rule, propName, isReference)
     if (!type.id) {
       // the type is not declared, let's check if we should declare it or keep it inline
@@ -281,7 +296,7 @@ class Compiler {
 export function compile(
   schema: JSONSchema,
   path: string | undefined,
-  settings?: TsType.TsTypeSettings
+  settings?: Settings
 ): string {
   return new Compiler(schema, path, settings).toString()
 }

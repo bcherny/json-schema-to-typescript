@@ -1,9 +1,8 @@
-import { compile } from '../src/index'
+import { compile, Settings } from '../src/index'
 import { JSONSchema } from '../src/JSONSchema'
-import { TsType } from '../src/TsTypes'
 import test from 'ava'
-import { find } from 'lodash'
 import * as fs from 'fs'
+import { find } from 'lodash'
 import * as path from 'path'
 
 const dir = __dirname + '/cases'
@@ -23,11 +22,11 @@ if (only) {
 }
 
 interface TestCase {
-  configurations?: { settings: TsType.TsTypeSettings, types: string }[]
+  configurations?: { settings: Settings, types: string }[]
   error?: { type: ErrorConstructor }
   exclude?: boolean
   schema: JSONSchema
-  settings?: TsType.TsTypeSettings
+  settings?: Settings
   types?: string
   only?: boolean
 }
