@@ -31,7 +31,7 @@ class Compiler {
     this.namedEnums = new Map
     this.id = schema.id || schema.title || this.filePath.name || 'Interface1'
     this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings)
-    this.declareType(this.toTsType(this.schema, '', true), this.id, this.id)
+    this.declareType(this.toTsType(this.schema, '', true) as TsType.Interface, this.id, this.id)
   }
 
   toString(): string {
@@ -46,7 +46,7 @@ class Compiler {
 
   private settings: TsType.TsTypeSettings
   private id: string
-  private declarations: Map<string, TsType.TsTypeBase>
+  private declarations: Map<string, TsType.TsTypeBase<any>>
   private namedEnums: Map<string, TsType.Enum>
   private filePath: ParsedPath
 
@@ -115,7 +115,7 @@ class Compiler {
     return /^[\d\.]+$/.test(a)
   }
 
-  private resolveRefFromLocalFS(refPath: string, propName: string): TsType.TsTypeBase {
+  private resolveRefFromLocalFS<T>(refPath: string, propName: string): TsType.Reference {
     const fullPath = resolve(join(this.filePath.dir, refPath))
 
     if (fullPath.startsWith('http')) {
@@ -136,7 +136,7 @@ class Compiler {
       : parse(fullPath).name
 
     if (this.settings.declareReferenced) {
-      this.declareType(targetType, id, id)
+      this.declareType(targetType as TsType.Interface, id, id)
     }
 
     return new TsType.Reference(id)
@@ -144,7 +144,7 @@ class Compiler {
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
   // only called in case of a $ref type
-  private resolveRef(refPath: string, propName: string): TsType.TsTypeBase {
+  private resolveRef(refPath: string, propName: string): TsType.TsTypeBase<any> {
     if (refPath === '#' || refPath === '#/'){
       return TsType.Interface.reference(this.id)
     }
@@ -164,12 +164,12 @@ class Compiler {
     // resolve from elsewhere in the schema
     const type = this.toTsType(get(this.schema, parts.join('.')))
     if (this.settings.declareReferenced || !type.isSimpleType()) {
-      this.declareType(type, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
+      this.declareType(type as TsType.Interface, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
     }
     return type
   }
 
-  private declareType(type: TsType.TsTypeBase, refPath: string, id: string) {
+  private declareType(type: TsType.Interface, refPath: string, id: string) {
     type.id = id
     this.declarations.set(refPath, type)
     return type
@@ -179,7 +179,7 @@ class Compiler {
     return rule.id || propName || `Enum${this.namedEnums.size}`
   }
 
-  private generateTsType (rule: JSONSchema, propName?: string, isReference: boolean = false): TsType.TsTypeBase {
+  private generateTsType (rule: JSONSchema, propName?: string, isReference: boolean = false): TsType.TsTypeBase<any> {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
@@ -233,11 +233,11 @@ class Compiler {
     }
   }
 
-  private toTsType(
+  private toTsType<T>(
     rule: JSONSchema,
     propName?: string,
     isReference: boolean = false
-  ): TsType.TsTypeBase {
+  ): TsType.TsTypeBase<T> {
     const type = this.generateTsType(rule, propName, isReference)
     if (!type.id) {
       // the type is not declared, let's check if we should declare it or keep it inline
@@ -248,7 +248,7 @@ class Compiler {
     type.description = type.description || rule.description
     return type
   }
-  private toTsDeclaration(schema: JSONSchema): TsType.TsTypeBase {
+  private toTsDeclaration(schema: JSONSchema): TsType.Interface | TsType.Null {
     const copy = merge({}, Compiler.DEFAULT_SCHEMA, schema)
     const props = map(
       copy.properties!,
@@ -272,7 +272,7 @@ class Compiler {
         name: '[k: string]',
         required: true,
         type
-      })
+      } as any) // TODO: fix type
     }
     return new TsType.Interface(props)
   }

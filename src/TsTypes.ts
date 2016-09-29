@@ -23,32 +23,25 @@ export namespace TsType {
     useFullReferencePathAsName: false
   }
 
-  export abstract class TsTypeBase {
+  export abstract class TsTypeBase<T> {
     id: string
     description?: string
 
-    protected generateComment(string: string): string[] {
-      return [
-        COMMENT_START,
-        ...string.split('\n').map(_ => COMMENT_INDENT + _),
-        COMMENT_END
-      ]
-    }
+    constructor(protected value: T) {}
 
     protected safeId() {
       return nameToTsSafeName(this.id)
     }
     protected toBlockComment(settings: TsTypeSettings) {
       return this.description && !this.isSimpleType()
-        ? `${this.generateComment(this.description).join('\n')}\n`
+        ? `${generateComment(this.description).join('\n')}\n`
         : ''
-    }
-    protected _toDeclaration(decl: string, settings: TsTypeSettings): string {
-      return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '')
     }
     isSimpleType() { return true }
     toDeclaration(settings: TsTypeSettings): string {
-      return this._toDeclaration(`export type ${this.safeId()} = ${this.toString(settings)}`, settings)
+      return this.toBlockComment(settings)
+        + `export type ${this.safeId()} = ${this.toString(settings)}`
+        + (settings.endTypeWithSemicolon ? ';' : '')
     }
     toType(settings: TsTypeSettings): string {
       return this.safeId() || this.toString(settings)
@@ -56,61 +49,65 @@ export namespace TsType {
     abstract toString(settings: TsTypeSettings): string
   }
 
-  export interface TsProp {
+  export interface TsProp<T> {
     name: string
     required: boolean
-    type: TsTypeBase
+    type: TsTypeBase<T>
   }
 
-  export class Any extends TsTypeBase {
+  export class Any extends TsTypeBase<void> {
+    constructor() { super(undefined) }
     toString() {
       return 'any'
     }
   }
-  export class String extends TsTypeBase {
+  export class String extends TsTypeBase<void> {
+    constructor() { super(undefined) }
     toString() {
       return 'string'
     }
   }
-  export class Boolean extends TsTypeBase {
+  export class Boolean extends TsTypeBase<void> {
+    constructor() { super(undefined) }
     toString() {
       return 'boolean'
     }
   }
-  export class Number extends TsTypeBase {
+  export class Number extends TsTypeBase<void> {
+    constructor() { super(undefined) }
     toString() {
       return 'number'
     }
   }
-  export class Object extends TsTypeBase {
+  export class Object extends TsTypeBase<void> {
+    constructor() { super(undefined) }
     toString() {
       return 'Object'
     }
   }
-  export class Null extends TsTypeBase {
+  export class Null extends TsTypeBase<void> {
+    constructor() { super(undefined) }
     toString() {
       return 'null'
     }
   }
-  export class Literal extends TsTypeBase {
-    constructor(private value: any) { super() }
+  export class Literal<T> extends TsTypeBase<T> {
     toString() {
       return JSON.stringify(this.value)
     }
   }
 
-  export class Reference extends TsTypeBase {
-    constructor(private value: string) { super() }
+  export class Reference extends TsTypeBase<string> {
     toString() { return this.value }
   }
 
-  export class EnumValue {
+  export class EnumValue extends TsTypeBase<string> {
     identifier: string
     value: string
 
-    constructor(enumValues: string[]) {
-      this.identifier = enumValues[0]
-      this.value = enumValues[1]
+    constructor([identifier, value]: string[]) {
+      super(value)
+      this.identifier = identifier
     }
 
     toDeclaration(){
@@ -124,9 +121,9 @@ export namespace TsType {
     }
   }
 
-  export class Enum extends TsTypeBase {
-    constructor(public id: string, public enumValues: EnumValue[]) {
-      super()
+  export class Enum extends TsTypeBase<EnumValue[]> {
+    constructor(public id: string, value: EnumValue[]) {
+      super(value)
     }
     isSimpleType() { return false }
     toString(settings: TsTypeSettings = DEFAULT_SETTINGS): string {
@@ -137,44 +134,40 @@ export namespace TsType {
         + `export ${settings.useConstEnums ? 'const ' : ''}enum ${this.safeId()} {`
         + '\n'
         + INDENT_STRING
-        + this.enumValues.map(_ => _.toDeclaration()).join(`,\n${INDENT_STRING}`)
+        + this.value.map(_ => _.toDeclaration()).join(`,\n${INDENT_STRING}`)
         + '\n'
         + '}'
     }
   }
 
-  export class Array extends TsTypeBase {
-    constructor(private type?: TsTypeBase) { super() }
+  export class Array extends TsTypeBase<TsTypeBase<any>> {
+    constructor(value: TsTypeBase<any> = new Any) { super(value) }
     toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
-      const type = (this.type || new Any()).toType(settings)
+      const type = this.value.toType(settings)
       return `${type.indexOf('|') > -1 || type.indexOf('&') > -1 ? `(${type})` : type}[]` // hacky
     }
   }
-  export class Intersection extends TsTypeBase {
-    constructor(protected data: TsTypeBase[]) {
-      super()
-    }
-    isSimpleType() { return this.data.filter(_ => !(_ instanceof Null)).length <= 1 }
+
+  export class Intersection<T> extends TsTypeBase<TsTypeBase<T>[]> {
+    isSimpleType() { return this.value.filter(_ => !(_ instanceof Null)).length <= 1 }
     toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
-      return this.data
+      return this.value
         .filter(_ => !(_ instanceof Null))
         .map(_ => _.toType(settings))
         .join(' & ')
     }
   }
-  export class Union extends Intersection {
-    isSimpleType() { return this.data.length <= 1 }
+
+  export class Union<T> extends TsTypeBase<TsTypeBase<T>[]> {
+    isSimpleType() { return this.value.length <= 1 }
     toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
-      return this.data
+      return this.value
         .map(_ => _.toType(settings))
         .join(' | ')
     }
   }
 
-  export class Interface extends TsTypeBase {
-    constructor(private props: TsProp[]) {
-      super()
-    }
+  export class Interface extends TsTypeBase<TsProp<any>[]> {
     static reference(id: string) {
       let ret = new Interface([])
       ret.id = id
@@ -182,9 +175,9 @@ export namespace TsType {
     }
     toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
       return `{\n`
-        + `${this.props.map(_ =>
+        + `${this.value.map(_ =>
         `${INDENT_STRING}${_.type.description
-          ? this.generateComment(_.type.description).join(`\n${INDENT_STRING}`) + `\n${INDENT_STRING}`
+          ? generateComment(_.type.description).join(`\n${INDENT_STRING}`) + `\n${INDENT_STRING}`
           : ''
         }${_.name}${_.required ? '' : '?'}: ${
           _.type.toType(settings).replace(/\n/g, '\n' + INDENT_STRING) // ghetto nested indents
@@ -210,4 +203,12 @@ export namespace TsType {
 // TODO: unit tests
 function nameToTsSafeName(name: string): string {
   return upperFirst(camelCase(name))
+}
+
+function generateComment(string: string): string[] {
+  return [
+    COMMENT_START,
+    ...string.split('\n').map(_ => COMMENT_INDENT + _),
+    COMMENT_END
+  ]
 }
