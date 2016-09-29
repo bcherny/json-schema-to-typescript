@@ -149,7 +149,7 @@ export namespace TsType {
   }
 
   export class Intersection<T> extends TsTypeBase<TsTypeBase<T>[]> {
-    isSimpleType() { return this.value.filter(_ => !(_ instanceof Null)).length <= 1 }
+    isSimpleType() { return this.value.length <= 1 }
     toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
       return this.value
         .filter(_ => !(_ instanceof Null))
