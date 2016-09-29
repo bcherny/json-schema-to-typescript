@@ -46,17 +46,14 @@ export namespace TsType {
     protected _toDeclaration(decl: string, settings: TsTypeSettings): string {
       return this.toBlockComment(settings) + decl + (settings.endTypeWithSemicolon ? ';' : '')
     }
-    protected abstract _type(settings: TsTypeSettings): string
     isSimpleType() { return true }
     toDeclaration(settings: TsTypeSettings): string {
-      return this._toDeclaration(`export type ${this.safeId()} = ${this._type(settings)}`, settings)
+      return this._toDeclaration(`export type ${this.safeId()} = ${this.toString(settings)}`, settings)
     }
     toType(settings: TsTypeSettings): string {
-      return this.safeId() || this._type(settings)
+      return this.safeId() || this.toString(settings)
     }
-    toString(): string {
-      return this._type(DEFAULT_SETTINGS)
-    }
+    abstract toString(settings: TsTypeSettings): string
   }
 
   export interface TsProp {
@@ -66,45 +63,45 @@ export namespace TsType {
   }
 
   export class Any extends TsTypeBase {
-    _type() {
+    toString() {
       return 'any'
     }
   }
   export class String extends TsTypeBase {
-    _type() {
+    toString() {
       return 'string'
     }
   }
   export class Boolean extends TsTypeBase {
-    _type() {
+    toString() {
       return 'boolean'
     }
   }
   export class Number extends TsTypeBase {
-    _type() {
+    toString() {
       return 'number'
     }
   }
   export class Object extends TsTypeBase {
-    _type() {
+    toString() {
       return 'Object'
     }
   }
   export class Null extends TsTypeBase {
-    _type() {
+    toString() {
       return 'null'
     }
   }
   export class Literal extends TsTypeBase {
     constructor(private value: any) { super() }
-    _type() {
+    toString() {
       return JSON.stringify(this.value)
     }
   }
 
   export class Reference extends TsTypeBase {
     constructor(private value: string) { super() }
-    _type() { return this.value }
+    toString() { return this.value }
   }
 
   export class EnumValue {
@@ -132,7 +129,7 @@ export namespace TsType {
       super()
     }
     isSimpleType() { return false }
-    _type(settings: TsTypeSettings): string {
+    toString(settings: TsTypeSettings = DEFAULT_SETTINGS): string {
       return this.safeId()
     }
     toDeclaration(settings: TsTypeSettings): string {
@@ -148,7 +145,7 @@ export namespace TsType {
 
   export class Array extends TsTypeBase {
     constructor(private type?: TsTypeBase) { super() }
-    _type(settings: TsTypeSettings) {
+    toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
       const type = (this.type || new Any()).toType(settings)
       return `${type.indexOf('|') > -1 || type.indexOf('&') > -1 ? `(${type})` : type}[]` // hacky
     }
@@ -158,7 +155,7 @@ export namespace TsType {
       super()
     }
     isSimpleType() { return this.data.filter(_ => !(_ instanceof Null)).length <= 1 }
-    _type(settings: TsTypeSettings) {
+    toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
       return this.data
         .filter(_ => !(_ instanceof Null))
         .map(_ => _.toType(settings))
@@ -167,7 +164,7 @@ export namespace TsType {
   }
   export class Union extends Intersection {
     isSimpleType() { return this.data.length <= 1 }
-    _type(settings: TsTypeSettings) {
+    toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
       return this.data
         .map(_ => _.toType(settings))
         .join(' | ')
@@ -183,7 +180,7 @@ export namespace TsType {
       ret.id = id
       return ret
     }
-    protected _type(settings: TsTypeSettings) {
+    toString(settings: TsTypeSettings = DEFAULT_SETTINGS) {
       return `{\n`
         + `${this.props.map(_ =>
         `${INDENT_STRING}${_.type.description
@@ -199,7 +196,7 @@ export namespace TsType {
     }
     isSimpleType() { return false }
     toDeclaration(settings: TsTypeSettings): string {
-      return `${this.toBlockComment(settings)}export interface ${this.safeId()} ${this._type(settings)}`
+      return `${this.toBlockComment(settings)}export interface ${this.safeId()} ${this.toString(settings)}`
     }
   }
 
