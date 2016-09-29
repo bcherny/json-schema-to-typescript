@@ -11,17 +11,21 @@ const modules = fs.readdirSync(dir)
   .filter(_ => /^.*\.js$/.test(_))
   .map(_ => [_, require(path.join(dir, _))]) as [string, TestCase][]
 
+// exporting `const only=true` will only run that test
+// exporting `const exclude=true` will not run that test
 const only = find(modules, _ => _[1].only)
-
 if (only) {
   run(only[1], only[0])
 } else {
-  modules.forEach(_ => run(_[1], _[0]))
+  modules
+    .filter(_ => !_[1].exclude)
+    .forEach(_ => run(_[1], _[0]))
 }
 
 interface TestCase {
   configurations?: { settings: TsType.TsTypeSettings, types: string }[]
   error?: { type: ErrorConstructor }
+  exclude?: boolean
   schema: JSONSchema
   settings?: TsType.TsTypeSettings
   types?: string

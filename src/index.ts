@@ -1,7 +1,7 @@
 import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
 import { TsType } from './TsTypes'
 import { readFile, readFileSync } from 'fs'
-import { isPlainObject, last, map, merge, zip } from 'lodash'
+import { get, isPlainObject, last, map, merge, zip } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
 
 enum RuleType {
@@ -26,8 +26,7 @@ class Compiler {
     filePath: string | undefined = '',
     settings?: TsType.TsTypeSettings
   ) {
-    let path = resolve(filePath)
-    this.filePath = parse(path)
+    this.filePath = parse(resolve(filePath))
     this.declarations = new Map
     this.namedEnums = new Map
     this.id = schema.id || schema.title || this.filePath.name || 'Interface1'
@@ -131,7 +130,7 @@ class Compiler {
       () => JSON.parse(file.toString()),
       () => { throw new TypeError(`Referenced local schema "${fullPath}" contains malformed JSON`) }
     )
-    const targetType = this.toTsType(contents, propName, false, true)
+    const targetType = this.toTsType(contents, propName, true)
     const id = targetType.id
       ? targetType.toType(this.settings)
       : parse(fullPath).name
@@ -155,18 +154,19 @@ class Compiler {
     }
 
     const parts = refPath.slice(2).split('/')
-    let ret = this.settings.declareReferenced ? this.declarations.get(parts.join('/')) : undefined
+    const existingRef = this.declarations.get(parts.join('/'))
 
-    if (!ret) {
-      let cur: any = this.schema
-      for (let i = 0; cur && i < parts.length; ++i) {
-        cur = cur[parts[i]]
-      }
-      ret = this.toTsType(cur)
-      if (this.settings.declareReferenced || !ret.isSimpleType())
-        this.declareType(ret, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
+    // resolve existing declaration?
+    if (existingRef) {
+      return existingRef
     }
-    return ret
+
+    // resolve from elsewhere in the schema
+    const type = this.toTsType(get(this.schema, parts.join('.')))
+    if (this.settings.declareReferenced || !type.isSimpleType()) {
+      this.declareType(type, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
+    }
+    return type
   }
 
   private declareType(type: TsType.TsTypeBase, refPath: string, id: string) {
@@ -179,7 +179,7 @@ class Compiler {
     return rule.id || propName || `Enum${this.namedEnums.size}`
   }
 
-  private generateTsType (rule: JSONSchema, propName?: string, isTop: boolean = false, isReference: boolean = false): TsType.TsTypeBase {
+  private generateTsType (rule: JSONSchema, propName?: string, isReference: boolean = false): TsType.TsTypeBase {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
@@ -236,10 +236,9 @@ class Compiler {
   private toTsType(
     rule: JSONSchema,
     propName?: string,
-    isTop: boolean = false,
     isReference: boolean = false
   ): TsType.TsTypeBase {
-    const type = this.generateTsType(rule, propName, isTop, isReference)
+    const type = this.generateTsType(rule, propName, isReference)
     if (!type.id) {
       // the type is not declared, let's check if we should declare it or keep it inline
       type.id = rule.id || rule.title as string // TODO: fix types
