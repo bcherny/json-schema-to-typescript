@@ -152,7 +152,6 @@ export var schema = {
 export var configurations = [
 {
     settings: {
-        declareSimpleType: true
     },
     types: `export type PositiveInteger = number;
 export type PositiveIntegerDefault0 = PositiveInteger;
@@ -202,58 +201,6 @@ export interface HttpJsonSchemaOrgDraft04Schema {
   allOf?: SchemaArray;
   anyOf?: SchemaArray;
   oneOf?: SchemaArray;
-  not?: HttpJsonSchemaOrgDraft04Schema;
-  [k: string]: any;
-}`
-    },
-    {
-    settings: {
-        declareSimpleType: false
-    },
-    types:`export type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | "object" | "string";
-/**
- * Core schema meta-schema
- */
-export interface HttpJsonSchemaOrgDraft04Schema {
-  id?: string;
-  $schema?: string;
-  title?: string;
-  description?: string;
-  default?: any;
-  multipleOf?: number;
-  maximum?: number;
-  exclusiveMaximum?: boolean;
-  minimum?: number;
-  exclusiveMinimum?: boolean;
-  maxLength?: number;
-  minLength?: number;
-  pattern?: string;
-  additionalItems?: boolean | HttpJsonSchemaOrgDraft04Schema;
-  items?: HttpJsonSchemaOrgDraft04Schema | HttpJsonSchemaOrgDraft04Schema[];
-  maxItems?: number;
-  minItems?: number;
-  uniqueItems?: boolean;
-  maxProperties?: number;
-  minProperties?: number;
-  required?: string[];
-  additionalProperties?: boolean | HttpJsonSchemaOrgDraft04Schema;
-  definitions?: {
-    [k: string]: HttpJsonSchemaOrgDraft04Schema;
-  };
-  properties?: {
-    [k: string]: HttpJsonSchemaOrgDraft04Schema;
-  };
-  patternProperties?: {
-    [k: string]: HttpJsonSchemaOrgDraft04Schema;
-  };
-  dependencies?: {
-    [k: string]: HttpJsonSchemaOrgDraft04Schema | string[];
-  };
-  enum?: any[];
-  type?: SimpleTypes | SimpleTypes[];
-  allOf?: HttpJsonSchemaOrgDraft04Schema[];
-  anyOf?: HttpJsonSchemaOrgDraft04Schema[];
-  oneOf?: HttpJsonSchemaOrgDraft04Schema[];
   not?: HttpJsonSchemaOrgDraft04Schema;
   [k: string]: any;
 }`

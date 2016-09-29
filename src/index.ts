@@ -163,7 +163,7 @@ class Compiler {
         cur = cur[parts[i]]
       }
       ret = this.toTsType(cur)
-      if (this.settings.declareReferenced && (this.settings.declareSimpleType || !ret.isSimpleType()))
+      if (this.settings.declareReferenced || !ret.isSimpleType())
         this.declareType(ret, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
     }
     return ret

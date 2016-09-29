@@ -9,7 +9,6 @@ export namespace TsType {
 
   export interface TsTypeSettings {
     declareReferenced?: boolean
-    declareSimpleType?: boolean
     endPropertyWithSemicolon?: boolean
     endTypeWithSemicolon?: boolean
     useConstEnums?: boolean
@@ -18,7 +17,6 @@ export namespace TsType {
 
   export const DEFAULT_SETTINGS: TsTypeSettings = {
     declareReferenced: true,
-    declareSimpleType: false,
     endPropertyWithSemicolon: true,
     endTypeWithSemicolon: true,
     useConstEnums: true,
