@@ -184,7 +184,7 @@ class Compiler {
     return type
   }
 
-  private declareType(type: TsType.Interface, refPath: string, id: string) {
+  private declareType<T>(type: TsType.TsType<T>, refPath: string, id: string) {
     type.id = id
     this.declarations.set(refPath, type)
     return type
@@ -194,7 +194,7 @@ class Compiler {
     return rule.id || propName || `Enum${this.namedEnums.size}`
   }
 
-  private generateTsType (rule: JSONSchema, propName?: string, isReference: boolean = false): TsType.TsType<any> {
+  private generateTsType (rule: JSONSchema, propName?: string): TsType.TsType<any> {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
@@ -253,7 +253,7 @@ class Compiler {
     propName?: string,
     isReference: boolean = false
   ): TsType.TsType<T> {
-    const type = this.generateTsType(rule, propName, isReference)
+    const type = this.generateTsType(rule, propName)
     if (!type.id) {
       // the type is not declared, let's check if we should declare it or keep it inline
       type.id = rule.id || rule.title as string // TODO: fix types
