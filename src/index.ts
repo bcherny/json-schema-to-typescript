@@ -49,7 +49,7 @@ class Compiler {
     this.declareType(this.toTsType(this.schema, '', true) as TsType.Interface, this.id, this.id)
   }
 
-  toString(): string {
+  toDeclaration(): string {
     return  [
         ...Array.from(this.namedEnums.values()),
         ...Array.from(this.declarations.values())
@@ -298,7 +298,7 @@ export function compile(
   path: string | undefined,
   settings?: Settings
 ): string {
-  return new Compiler(schema, path, settings).toString()
+  return new Compiler(schema, path, settings).toDeclaration()
 }
 
 export function compileFromFile(inputFilename: string): Promise<string | NodeJS.ErrnoException> {

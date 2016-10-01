@@ -23,13 +23,13 @@ export abstract class TsType<T> {
   isSimpleType() { return true }
   toDeclaration(settings: Settings): string {
     return this.toBlockComment()
-      + `export type ${this.safeId()} = ${this.toString(settings)}`
+      + `export type ${this.safeId()} = ${this.toReference(settings)}`
       + (settings.endTypeWithSemicolon ? ';' : '')
   }
   toType(settings: Settings): string {
-    return this.safeId() || this.toString(settings)
+    return this.safeId() || this.toReference(settings)
   }
-  abstract toString(settings: Settings): string
+  abstract toReference(settings: Settings): string
 }
 
 export interface TsProp<T> {
@@ -40,48 +40,48 @@ export interface TsProp<T> {
 
 export class Any extends TsType<void> {
   constructor() { super(undefined) }
-  toString() {
+  toReference() {
     return 'any'
   }
 }
 export class String extends TsType<void> {
   constructor() { super(undefined) }
-  toString() {
+  toReference() {
     return 'string'
   }
 }
 export class Boolean extends TsType<void> {
   constructor() { super(undefined) }
-  toString() {
+  toReference() {
     return 'boolean'
   }
 }
 export class Number extends TsType<void> {
   constructor() { super(undefined) }
-  toString() {
+  toReference() {
     return 'number'
   }
 }
 export class Object extends TsType<void> {
   constructor() { super(undefined) }
-  toString() {
+  toReference() {
     return 'Object'
   }
 }
 export class Null extends TsType<void> {
   constructor() { super(undefined) }
-  toString() {
+  toReference() {
     return 'null'
   }
 }
 export class Literal<T> extends TsType<T> {
-  toString() {
+  toReference() {
     return JSON.stringify(this.value)
   }
 }
 
 export class Reference extends TsType<string> {
-  toString() { return this.value }
+  toReference() { return this.value }
 }
 
 export class EnumValue extends TsType<string> {
@@ -99,7 +99,7 @@ export class EnumValue extends TsType<string> {
     return `${this.identifier}${this.value ? (' = ' + this.value) : ''}`
   }
 
-  toString(){
+  toReference(){
     return `Enum${this.identifier}`
   }
 }
@@ -109,7 +109,7 @@ export class Enum extends TsType<EnumValue[]> {
     super(value)
   }
   isSimpleType() { return false }
-  toString(settings: Settings): string {
+  toReference(settings: Settings): string {
     return this.safeId()
   }
   toDeclaration(settings: Settings): string {
@@ -125,7 +125,7 @@ export class Enum extends TsType<EnumValue[]> {
 
 export class Array extends TsType<TsType<any>> {
   constructor(value: TsType<any> = new Any) { super(value) }
-  toString(settings: Settings) {
+  toReference(settings: Settings) {
     const type = this.value.toType(settings)
     return `${type.indexOf('|') > -1 || type.indexOf('&') > -1 ? `(${type})` : type}[]` // hacky
   }
@@ -133,7 +133,7 @@ export class Array extends TsType<TsType<any>> {
 
 export class Intersection<T> extends TsType<TsType<T>[]> {
   isSimpleType() { return this.value.length <= 1 }
-  toString(settings: Settings) {
+  toReference(settings: Settings) {
     return this.value
       .filter(_ => !(_ instanceof Null))
       .map(_ => _.toType(settings))
@@ -143,7 +143,7 @@ export class Intersection<T> extends TsType<TsType<T>[]> {
 
 export class Union<T> extends TsType<TsType<T>[]> {
   isSimpleType() { return this.value.length <= 1 }
-  toString(settings: Settings) {
+  toReference(settings: Settings) {
     return this.value
       .map(_ => _.toType(settings))
       .join(' | ')
@@ -156,7 +156,7 @@ export class Interface extends TsType<TsProp<any>[]> {
     ret.id = id
     return ret
   }
-  toString(settings: Settings) {
+  toReference(settings: Settings) {
     return `{\n`
       + `${this.value.map(_ =>
       `${INDENT_STRING}${_.type.description
@@ -172,7 +172,7 @@ export class Interface extends TsType<TsProp<any>[]> {
   }
   isSimpleType() { return false }
   toDeclaration(settings: Settings): string {
-    return `${this.toBlockComment()}export interface ${this.safeId()} ${this.toString(settings)}`
+    return `${this.toBlockComment()}export interface ${this.safeId()} ${this.toReference(settings)}`
   }
 }
 
