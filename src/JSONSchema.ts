@@ -58,3 +58,13 @@ export interface EnumJSONSchema extends JSONSchema {
 export interface NamedEnumJSONSchema extends EnumJSONSchema {
   tsEnumNames: string[]
 }
+
+// when parsing a JSONSchema, we assign defaults to it so we can assume that
+// some commonly used props exist, and we don't have to check every time.
+export interface QualifiedJSONSchema extends JSONSchema {
+  allOf: JSONSchema[]
+  anyOf: JSONSchema[]
+  dependencies: { [k: string]: JSONSchema | string[] }
+  oneOf: JSONSchema[]
+  properties: { [k: string]: JSONSchema }
+}

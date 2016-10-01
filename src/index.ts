@@ -1,4 +1,4 @@
-import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
+import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, QualifiedJSONSchema } from './JSONSchema'
 import * as TsType from './TsTypes'
 import { readFile, readFileSync } from 'fs'
 import { get, isPlainObject, last, map, merge, zip } from 'lodash'
@@ -264,16 +264,12 @@ class Compiler {
     return type
   }
   private toTsDeclaration(schema: JSONSchema): TsType.Interface | TsType.Null {
-    const copy = merge({}, Compiler.DEFAULT_SCHEMA, schema)
-    const props = map(
-      copy.properties!,
-      (v: JSONSchema, k: string) => {
-        return {
-          name: k,
-          required: this.isRequired(k, copy),
-          type: this.toTsType(v, k)
-        }
-      })
+    const copy = merge<QualifiedJSONSchema>({}, Compiler.DEFAULT_SCHEMA, schema)
+    const props = map(copy.properties, (v: JSONSchema, k: string) => ({
+      name: k,
+      required: this.isRequired(k, copy),
+      type: this.toTsType(v, k)
+    }))
     if (props.length === 0 && !('additionalProperties' in schema)) {
       if ('default' in schema)
         return new TsType.Null
@@ -287,7 +283,7 @@ class Compiler {
         name: '[k: string]',
         required: true,
         type
-      } as any) // TODO: fix type
+      } as TsType.TsProp<typeof type>)
     }
     return new TsType.Interface(props)
   }
