@@ -11,7 +11,7 @@
     "watch": "tsc -p ./tsconfig.json --watch & tsc -p ./tsconfig.test.json --watch",
     "lint": "tslint -c tslint.json src/*.ts",
     "test": "npm run build-tests && ava",
-    "tdd": "npm run watch & ava --watch",
+    "tdd": "ava --watch",
     "prepublish": "npm run build"
   },
   "repository": {
