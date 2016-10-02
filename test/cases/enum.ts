@@ -54,12 +54,12 @@ export var configurations = [false, true].map(useConstEnums => {
   One = 1,
   Two = 2,
   Three = 3
-}
+};
 export${useConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
   Four = 4,
   Five = 5,
   Six = 6
-}
+};
 export interface Enum {
   stringEnum: "a" | "b" | "c";
   impliedStringEnum: "a" | "b" | "c";

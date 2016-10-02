@@ -172,7 +172,12 @@ class Compiler {
       $ref = existingRef
     } else {
       // resolve from elsewhere in the schema
-      $ref = this.toTsType(get(this.schema, parts.join('.')))
+      const path = parts.join('.')
+      const ref = get(this.schema, path)
+      if (!ref) {
+        throw new ReferenceError(`Schema ${this.id} has a $ref that points at the path "${refPath}", but that path does not exist on this schema. Double check that your $ref points to the correct path.`)
+      }
+      $ref = this.toTsType(ref)
     }
 
     // rule: declare if referenced via $ref

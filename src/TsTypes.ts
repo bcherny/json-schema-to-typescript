@@ -120,6 +120,7 @@ export class Enum extends TsType<EnumValue[]> {
       + this.value.map(_ => _.toDeclaration()).join(`,\n${INDENT_STRING}`)
       + '\n'
       + '}'
+      + (settings.endPropertyWithSemicolon ? ';' : '')
   }
 }
 
