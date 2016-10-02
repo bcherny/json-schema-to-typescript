@@ -173,7 +173,7 @@ export class Interface extends TsType<TsProp<any>[]> {
   }
   isSimpleType() { return false }
   toDeclaration(settings: Settings): string {
-    return `${this.toBlockComment()}export interface ${this.safeId()} ${this.toReference(settings)}`
+    return `${this.toBlockComment()}export interface ${this.safeId()} ${this.toReference(settings)}${settings.endPropertyWithSemicolon ? ';' : ''}`
   }
 }
 

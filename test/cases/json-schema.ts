@@ -203,6 +203,6 @@ export interface HttpJsonSchemaOrgDraft04Schema {
   oneOf?: SchemaArray;
   not?: HttpJsonSchemaOrgDraft04Schema;
   [k: string]: any;
-}`
+};`
     }
 ]

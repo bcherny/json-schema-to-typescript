@@ -59,7 +59,7 @@ export const enum Size {
 };
 export interface Tire {
   size: Size;
-}
+};
 export interface Car {
   color: Color;
   interior: {
@@ -69,4 +69,4 @@ export interface Car {
     [k: string]: any;
   };
   tire: Tire;
-}`
+};`

@@ -71,6 +71,6 @@ export interface Enum {
   namedIntegerEnum?: NamedIntegerEnum;
   impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
   impliedHeterogeneousEnum?: -20.1 | null | "foo" | false;
-}`
+};`
   }
 })

@@ -25,4 +25,4 @@ export var types = `export interface ExampleSchema {
    * Age in years
    */
   age?: number;
-}`
+};`

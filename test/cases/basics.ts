@@ -39,6 +39,6 @@ export var configurations = [
   favoriteFoods?: any[];
   likesDogs?: boolean;
   [k: string]: any;
-}`
+};`
   }
 ]

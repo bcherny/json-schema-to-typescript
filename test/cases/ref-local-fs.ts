@@ -27,10 +27,10 @@ export var configurations = [
   favoriteFoods?: any[];
   likesDogs?: boolean;
   [k: string]: any;
-}
+};
 export interface Referencing {
   foo: ExampleSchema;
-}`
+};`
   },
   {
     settings: {
@@ -38,6 +38,6 @@ export interface Referencing {
     },
     types: `export interface Referencing {
   foo: ExampleSchema;
-}`
+};`
   }
 ]

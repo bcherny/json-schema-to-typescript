@@ -14,4 +14,4 @@ export var schema = {
 export var types = `export interface AdditionalProperties {
   foo?: string;
   [k: string]: number;
-}`
+};`
