@@ -1,5 +1,6 @@
 import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, QualifiedJSONSchema } from './JSONSchema'
 import * as TsType from './TsTypes'
+import { nameToTsSafeName, tryFn } from './utils'
 import { readFile, readFileSync } from 'fs'
 import { get, isPlainObject, last, map, merge, zip } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
@@ -43,27 +44,24 @@ class Compiler {
   ) {
     this.filePath = parse(resolve(filePath))
     this.declarations = new Map
-    this.namedEnums = new Map
     this.id = schema.id || schema.title || this.filePath.name || 'Interface1'
     this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings)
     this.declareType(this.toTsType(this.schema, '', true) as TsType.Interface, this.id, this.id)
+    this.namedEnumCounter = 0
   }
 
   toDeclaration(): string {
-    return  [
-        ...Array.from(this.namedEnums.values()),
-        ...Array.from(this.declarations.values())
-      ]
+    return Array
+      .from(this.declarations.values())
       .map(_ => _.toDeclaration(this.settings))
       .join('\n')
-
   }
 
   private settings: Settings
   private id: string
   private declarations: Map<string, TsType.TsType<any>>
-  private namedEnums: Map<string, TsType.Enum>
   private filePath: ParsedPath
+  private namedEnumCounter: number
 
   private isRequired(propertyName: string, schema: JSONSchema): boolean {
     return schema.required ? schema.required.indexOf(propertyName) > -1 : false
@@ -130,7 +128,7 @@ class Compiler {
     return /^[\d\.]+$/.test(a)
   }
 
-  private resolveRefFromLocalFS<T>(refPath: string, propName: string): TsType.Reference {
+  private resolveRefFromLocalFS<T>(refPath: string, propName: string): TsType.TsType<T> {
     const fullPath = resolve(join(this.filePath.dir, refPath))
 
     if (fullPath.startsWith('http')) {
@@ -145,56 +143,58 @@ class Compiler {
       () => JSON.parse(file.toString()),
       () => { throw new TypeError(`Referenced local schema "${fullPath}" contains malformed JSON`) }
     )
-    const targetType = this.toTsType(contents, propName, true)
-    const id = targetType.id
-      ? targetType.toType(this.settings)
+    const type = this.toTsType<T>(contents, propName, true)
+    type.id = type.id
+      ? type.toType(this.settings)
       : parse(fullPath).name
 
-    if (this.settings.declareReferenced) {
-      this.declareType(targetType as TsType.Interface, id, id)
-    }
-
-    return new TsType.Reference(id)
+    return type
   }
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
   // only called in case of a $ref type
   private resolveRef(refPath: string, propName: string): TsType.TsType<any> {
-    if (refPath === '#' || refPath === '#/'){
-      return TsType.Interface.reference(this.id)
-    }
 
-    if (refPath[0] !== '#'){
-      return this.resolveRefFromLocalFS(refPath, propName)
+    // TODO: use TsType.Reference, or TsType.Interface directly
+    if (refPath === '#' || refPath === '#/') {
+      return TsType.Interface.reference(this.id)
     }
 
     const parts = refPath.slice(2).split('/')
     const existingRef = this.declarations.get(parts.join('/'))
+    let $ref: TsType.TsType<any>
 
-    // resolve existing declaration?
-    if (existingRef) {
-      return existingRef
+    if (refPath[0] !== '#') {
+      // resolve from local filesystem
+      $ref = this.resolveRefFromLocalFS(refPath, propName)
+    } else if (existingRef) {
+      // resolve existing reference
+      $ref = existingRef
+    } else {
+      // resolve from elsewhere in the schema
+      $ref = this.toTsType(get(this.schema, parts.join('.')))
     }
 
-    // resolve from elsewhere in the schema
-    const type = this.toTsType(get(this.schema, parts.join('.')))
-    if (this.settings.declareReferenced || !type.isSimpleType()) {
-      this.declareType(type as TsType.Interface, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
+    // rule: declare if referenced via $ref
+    if (this.settings.declareReferenced) {
+      const id = $ref.id || $ref.title || (this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
+      this.declareType($ref, parts.join('/'), id)
     }
-    return type
+
+    return $ref
   }
 
   private declareType<T>(type: TsType.TsType<T>, refPath: string, id: string) {
-    type.id = id
-    this.declarations.set(refPath, type)
+    type.id = nameToTsSafeName(id)
+    this.declarations.set(type.id, type)
     return type
   }
 
   private generateEnumName(rule: JSONSchema, propName: string | undefined): string {
-    return rule.id || propName || `Enum${this.namedEnums.size}`
+    return rule.id || propName || `Enum${this.namedEnumCounter++}`
   }
 
-  private generateTsType (rule: JSONSchema, propName?: string): TsType.TsType<any> {
+  private generateTsType(rule: JSONSchema, propName?: string): TsType.TsType<any> {
     switch (this.getRuleType(rule)) {
       case RuleType.AnonymousSchema:
       case RuleType.NamedSchema:
@@ -215,7 +215,7 @@ class Compiler {
             (rule as NamedEnumJSONSchema).enum
           ).map(_ => new TsType.EnumValue(_))
         )
-        this.namedEnums.set(name, tsEnum)
+        this.declareType(tsEnum, name, name)
         return tsEnum
 
       case RuleType.Any: return new TsType.Any
@@ -249,18 +249,24 @@ class Compiler {
   }
 
   private toTsType<T>(
-    rule: JSONSchema,
+    schema: JSONSchema,
     propName?: string,
     isReference: boolean = false
   ): TsType.TsType<T> {
-    const type = this.generateTsType(rule, propName)
-    if (!type.id) {
-      // the type is not declared, let's check if we should declare it or keep it inline
-      type.id = rule.id || rule.title as string // TODO: fix types
-      if (type.id && !isReference)
+    const type = this.generateTsType(schema, propName)
+
+    // explicitly declare ID?
+    const explicitId = schema.id || schema.title
+    if (explicitId) {
+      type.id = explicitId
+      if (!isReference || this.settings.declareReferenced) {
         this.declareType(type, type.id, type.id)
+      }
     }
-    type.description = type.description || rule.description
+
+    // description?
+    type.description = type.description || schema.description
+
     return type
   }
   private toTsDeclaration(schema: JSONSchema): TsType.Interface | TsType.Null {
@@ -307,13 +313,4 @@ export function compileFromFile(inputFilename: string): Promise<string | NodeJS.
       }
     })
   )
-}
-
-// TODO: pull out into a separate package
-function tryFn<T>(fn: () => T, err: (e: Error) => any): T {
-  try {
-    return fn()
-  } catch (e) {
-    return err(e as Error)
-  }
 }

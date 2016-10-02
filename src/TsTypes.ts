@@ -1,5 +1,5 @@
 import { Settings } from './index'
-import { camelCase, upperFirst } from 'lodash'
+import { nameToTsSafeName } from './utils'
 
 const COMMENT_START  = '/**'
 const COMMENT_INDENT = ' * '
@@ -174,16 +174,6 @@ export class Interface extends TsType<TsProp<any>[]> {
   toDeclaration(settings: Settings): string {
     return `${this.toBlockComment()}export interface ${this.safeId()} ${this.toReference(settings)}`
   }
-}
-
-// eg.
-//   foo -> Foo
-//   fooBar -> FooBar
-//   foo_1bar -> Foo_1bar
-// TODO: more safety
-// TODO: unit tests
-function nameToTsSafeName(name: string): string {
-  return upperFirst(camelCase(name))
 }
 
 function generateComment(string: string): string[] {

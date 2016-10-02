@@ -64,6 +64,7 @@ export interface NamedEnumJSONSchema extends EnumJSONSchema {
 export interface QualifiedJSONSchema extends JSONSchema {
   allOf: JSONSchema[]
   anyOf: JSONSchema[]
+  definitions: { [k: string]: JSONSchema }
   dependencies: { [k: string]: JSONSchema | string[] }
   oneOf: JSONSchema[]
   properties: { [k: string]: JSONSchema }
