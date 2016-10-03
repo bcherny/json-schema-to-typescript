@@ -1,17 +1,19 @@
-export var schema =
-{
+export const schema = {
   "title": "Referencing",
   "type": "object",
   "properties": {
     "foo": {
-      "$ref": "../../test/resources/ReferencedType.json"
+      "$ref": "../resources/ReferencedType.json"
+    },
+    "bar": {
+      "$ref": "../resources/ReferencedType.json#/properties/age"
     }
   },
   "required": ["foo"],
   "additionalProperties": false
-  }
+}
 
-export var configurations = [
+export const configurations = [
   {
     settings: {
       declareReferenced: true
@@ -28,8 +30,13 @@ export var configurations = [
   likesDogs?: boolean;
   [k: string]: any;
 };
+export type Age = number;
 export interface Referencing {
   foo: ExampleSchema;
+  /**
+   * Age in years
+   */
+  bar?: Age;
 };`
   },
   {
@@ -38,6 +45,10 @@ export interface Referencing {
     },
     types: `export interface Referencing {
   foo: ExampleSchema;
+  /**
+   * Age in years
+   */
+  bar?: number;
 };`
   }
 ]

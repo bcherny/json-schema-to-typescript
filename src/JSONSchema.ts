@@ -55,6 +55,10 @@ export interface EnumJSONSchema extends JSONSchema {
   enum: any[]
 }
 
+export interface RefJSONSchema extends JSONSchema {
+  $ref: string
+}
+
 export interface NamedEnumJSONSchema extends EnumJSONSchema {
   tsEnumNames: string[]
 }
