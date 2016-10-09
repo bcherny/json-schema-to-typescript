@@ -1,55 +1,53 @@
 import { JSONSchema } from './JSONSchema'
-import { JSONSchemaType, typeOfSchema } from './typeOfSchema'
+import { SCHEMA_TYPE, typeOfSchema } from './typeOfSchema'
 
-export enum AST_TYPE { ANY, ARRAY, BOOLEAN, ENUM, INTERFACE, INTERSECTION, NUMBER, NULL, OBJECT, REFERENCE, STRING, TUPLE, UNION }
+export type AST_TYPE  = 'ANY' | 'ARRAY' | 'BOOLEAN' | 'ENUM' | 'INTERFACE' | 'INTERSECTION' | 'NUMBER' | 'NULL' | 'OBJECT' | 'REFERENCE' | 'STRING' | 'TUPLE' | 'UNION'
 
 export interface AST {
   comment?: string
   keyName: string
   isRequired: boolean
   type: AST_TYPE
-  params: any
 }
 
 ////////////////////////////////////////////     types
 
 export interface TArray extends AST {
-  type: AST_TYPE.ARRAY
+  type: 'ARRAY'
   params: AST
 }
 
 export interface TTuple extends AST {
-  type: AST_TYPE.TUPLE
+  type: 'TUPLE'
   params: AST[]
 }
 
 export interface TInterface extends AST {
-  type: AST_TYPE.INTERFACE
+  type: 'INTERFACE'
   params: AST[]
 }
 
 export interface TReference extends AST {
-  type: AST_TYPE.REFERENCE
+  type: 'REFERENCE'
   params: string
 }
 
 export interface TAny extends AST {
-  type: AST_TYPE.ANY
-  params: undefined
+  type: 'ANY'
 }
 
 export interface TIntersection extends AST {
-  type: AST_TYPE.INTERSECTION
+  type: 'INTERSECTION'
   params: AST[]
 }
 
 export interface TReference extends AST {
-  type: AST_TYPE.REFERENCE
+  type: 'REFERENCE'
   params: string
 }
 
 export interface TUnion extends AST {
-  type: AST_TYPE.UNION
+  type: 'UNION'
   params: AST[]
 }
 
@@ -57,47 +55,47 @@ export interface TUnion extends AST {
 
 const TAny: TAny = {
   isRequired: false,
-  params: undefined,
-  type: AST_TYPE.ANY,
+  keyName: '',
+  type: 'ANY'
 }
 
 ////////////////////////////////////////////     parser
 
 export function parse(schema: JSONSchema, keyName: string): AST {
   switch (typeOfSchema(schema)) {
-    case JSONSchemaType.AllOf:
+    case 'ALL_OF':
       // TODO: support schema.properties
-      return { keyName, isRequired: false, params: schema.allOf!.map(parse), type: AST_TYPE.INTERSECTION }
-    case JSONSchemaType.AnyOf:
-      return { keyName, isRequired: false, params: schema.anyOf!.map(parse), type: AST_TYPE.UNION }
-    case JSONSchemaType.TypedArray:
+      return { keyName, isRequired: false, params: schema.allOf!.map(parse), type: 'INTERSECTION' }
+    case 'ANY':
+      return { keyName, isRequired: false, type: 'ANY' }
+    case 'ANY_OF':
+      return { keyName, isRequired: false, params: schema.anyOf!.map(parse), type: 'UNION' }
+    case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
-        return { keyName, isRequired: false, params: schema.items.map(parse), type: AST_TYPE.TUPLE }
+        return { keyName, isRequired: false, params: schema.items.map(parse), type: 'TUPLE' }
       } else {
-        return { keyName, isRequired: false, params: parse(schema.items!), type: AST_TYPE.ARRAY }
+        return { keyName, isRequired: false, params: parse(schema.items!), type: 'ARRAY' } as TArray
       }
-    case JSONSchemaType.UntypedArray:
-      return { keyName, isRequired: false, params: TAny, type: AST_TYPE.ARRAY }
-    case JSONSchemaType.UnnamedEnum:
-      return { keyName, isRequired: false, params: schema.enum!.map(parse), type: AST_TYPE.UNION }
-    case JSONSchemaType.NamedEnum:
+    case 'UNTYPED_ARRAY':
+      return { keyName, isRequired: false, params: TAny, type: 'ARRAY' }
+    case 'UNNAMED_ENUM':
+      return { keyName, isRequired: false, params: schema.enum!.map(parse), type: 'UNION' }
+    case 'NAMED_ENUM':
       return {
-        keyName, isRequired: false, params: schema.enum!.map(parse).map((_, n) => [schema.tsEnumNames, _]), type: AST_TYPE.ENUM
+        keyName, isRequired: false, params: schema.enum!.map(parse).map((_, n) => [schema.tsEnumNames, _]), type: 'ENUM'
       }
-    case JSONSchemaType.Boolean:
-      return { keyName, isRequired: false, params: undefined, type: AST_TYPE.BOOLEAN }
-    case JSONSchemaType.Number:
-      return { keyName, isRequired: false, params: undefined, type: AST_TYPE.NUMBER }
-    case JSONSchemaType.Null:
-      return { keyName, isRequired: false, params: undefined, type: AST_TYPE.NULL }
-    case JSONSchemaType.Object:
-      return { keyName, isRequired: false, params: undefined, type: AST_TYPE.OBJECT }
-    case JSONSchemaType.String:
-      return { keyName, isRequired: false, params: undefined, type: AST_TYPE.STRING }
-    case JSONSchemaType.Union:
-      return { keyName, isRequired: false, params: schema.type!.map(parse), type: AST_TYPE.UNION }
-    case JSONSchemaType.Any:
-      return { keyName, isRequired: false, params: undefined, type: AST_TYPE.ANY }
+    case 'BOOLEAN':
+      return { keyName, isRequired: false, type: 'BOOLEAN' }
+    case 'NUMBER':
+      return { keyName, isRequired: false, type: 'NUMBER' }
+    case 'NULL':
+      return { keyName, isRequired: false, type: 'NULL' }
+    case 'OBJECT':
+      return { keyName, isRequired: false, type: 'OBJECT' }
+    case 'STRING':
+      return { keyName, isRequired: false, type: 'STRING' }
+    case 'UNION':
+      return { keyName, isRequired: false, params: schema.type!.map(parse), type: 'UNION' }
   }
 }
 

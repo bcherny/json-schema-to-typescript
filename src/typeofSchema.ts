@@ -1,63 +1,28 @@
 import { JSONSchema } from './JSONSchema'
 import { isPlainObject } from 'lodash'
 
-export enum JSONSchemaType {
-  Any, TypedArray, UnnamedEnum, AllOf, AnyOf, Reference, NamedSchema, AnonymousSchema,
-  String, Number, Null, Object, UntypedArray, Boolean, Literal, NamedEnum, Union
-}
+export type SCHEMA_TYPE = 'ALL_OF' | 'UNNAMED_SCHEMA' | 'ANY' | 'ANY_OF' | 'BOOLEAN' | 'LITERAL' | 'NAMED_ENUM' | 'NAMED_SCHEMA' | 'NULL' | 'NUMBER' | 'STRING' | 'OBJECT' | 'TYPED_ARRAY' | 'REFERENCE' | 'UNION' | 'UNNAMED_ENUM' | 'UNTYPED_ARRAY'
 
-export function typeOfSchema(schema: JSONSchema): JSONSchemaType {
-
-  /**
-   * @see https://github.com/json-schema-org/JSON-Schema-Test-Suite/blob/master/tests/draft4/allOf.json
-   */
-  if (schema.allOf) {
-    return JSONSchemaType.AllOf
-  }
-
-  /**
-   * @see https://github.com/json-schema-org/JSON-Schema-Test-Suite/blob/master/tests/draft4/anyOf.json
-   */
-  if (schema.anyOf) {
-    return JSONSchemaType.AnyOf
-  }
-
-  /**
-   * @see https://github.com/json-schema-org/JSON-Schema-Test-Suite/blob/develop/tests/draft4/items.json
-   */
-  if (schema.items) {
-    return JSONSchemaType.TypedArray
-  }
-
-  if (schema.enum && schema.tsEnumNames) {
-    return JSONSchemaType.NamedEnum
-  }
-  if (schema.enum) {
-    return JSONSchemaType.UnnamedEnum
-  }
-  if (schema.properties || schema.additionalProperties) {
-    return JSONSchemaType.NamedSchema
-  }
-  if (schema.$ref) {
-    return JSONSchemaType.Reference
-  }
+export function typeOfSchema(schema: JSONSchema): SCHEMA_TYPE {
+  if (schema.allOf) return 'ALL_OF'
+  if (schema.anyOf) return 'ANY_OF'
+  if (schema.items) return 'TYPED_ARRAY'
+  if (schema.enum && schema.tsEnumNames) return 'NAMED_ENUM'
+  if (schema.enum) return 'UNNAMED_ENUM'
+  if (schema.properties || schema.additionalProperties) return 'NAMED_SCHEMA'
+  if (schema.$ref) return 'REFERENCE'
+  if (Array.isArray(schema.type)) return 'UNION'
   switch (schema.type) {
-    case 'array': return JSONSchemaType.UntypedArray
-    case 'boolean': return JSONSchemaType.Boolean
-    case 'integer': return JSONSchemaType.Number
-    case 'number': return JSONSchemaType.Number
-    case 'null': return JSONSchemaType.Null
-    case 'object': return JSONSchemaType.Object // TODO: is this ok?
-    case 'string': return JSONSchemaType.String
+    case 'string': return 'STRING'
+    case 'number': return 'NUMBER'
+    case 'integer': return 'NUMBER'
+    case 'boolean': return 'BOOLEAN'
+    case 'object': return 'OBJECT' // TODO: is this ok?
+    case 'array': return 'UNTYPED_ARRAY'
+    case 'null': return 'NULL'
+    case 'any': return 'ANY'
   }
-  if (Array.isArray(schema.type)) {
-    return JSONSchemaType.Union
-  }
-  if (!isPlainObject(schema)) {
-    return JSONSchemaType.Literal
-  }
-  if (isPlainObject(schema)) {
-    return JSONSchemaType.AnonymousSchema
-  }
-  return JSONSchemaType.Any
+  if (!isPlainObject(schema)) return 'LITERAL'
+  if (isPlainObject(schema)) return 'UNNAMED_SCHEMA'
+  return 'ANY'
 }
