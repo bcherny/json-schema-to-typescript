@@ -118,7 +118,7 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 
 ## Further Reading
 
-- JSON-schema spec: http://json-schema.org/latest/json-schema-core.html
+- JSON-schema spec: https://tools.ietf.org/html/draft-zyp-json-schema-04
 - JSON-schema wiki: https://github.com/json-schema/json-schema/wiki
 - JSON-schema test suite: https://github.com/json-schema/JSON-Schema-Test-Suite/blob/node
 - TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md
