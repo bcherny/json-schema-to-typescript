@@ -1,0 +1,21 @@
+{
+  "name": "json-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {   
+    "build": "npm run clean && npm run build-sources && npm run lint && node dist/index.js",
+    "clean": "rimraf dist",
+    "build-sources": "tsc -p ./tsconfig.json",
+    "lint": "tslint -c tslint.json src/*.ts",
+    "prepublish": "npm run build"
+  },
+  
+  "dependencies": {
+    "@types/node": "4.0.30",
+    "tslint": "3.15.1",
+    "typescript": "2.0.0",
+    "json-schema-to-typescript": "2.4.1"
+  }
+}
