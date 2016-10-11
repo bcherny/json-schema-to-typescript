@@ -60,11 +60,7 @@ Check [example app](example) for more details.
 ```js
 import {compileFromFile} from 'json-schema-to-typescript'
 
-async function generate() {
-  fs.writeFileSync('dist/foo.d.ts', await compileFromFile('src/foo.json'))
-}
-
-generate()
+fs.writeFileSync('dist/foo.d.ts', await compileFromFile('src/foo.json'))
 ```
 
 ## Tests
