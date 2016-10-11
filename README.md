@@ -55,11 +55,10 @@ export interface ExampleSchema {
 
 ## Usage
 
-Check [sample app](sample/foo-typescript) for more details.
+Check [example app](example) for more details.
 
 ```js
 import {compileFromFile} from 'json-schema-to-typescript'
-fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 
 async function generate() {
   fs.writeFileSync('dist/foo.d.ts', await compileFromFile('src/foo.json'))
