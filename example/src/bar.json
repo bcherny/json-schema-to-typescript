@@ -1,0 +1,9 @@
+{
+  "title": "Bar",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    }
+  }
+}
