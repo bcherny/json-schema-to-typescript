@@ -1,5 +1,5 @@
 {
-  "title": "Foo",
+  "title": "Person",
   "type": "object",
   "properties": {
     "firstName": {
@@ -16,10 +16,6 @@
     "hairColor": {
       "enum": ["black", "brown", "blue"],
       "type": "string"
-    },
-    "bar": {
-      "required": true,
-      "$ref": "bar.json"
     }
   },
   "required": ["firstName", "lastName"]
