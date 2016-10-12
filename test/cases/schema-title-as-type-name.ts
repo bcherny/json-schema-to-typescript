@@ -5,10 +5,11 @@ export var schema = {
     "type": "object",
     "properties": {
         "ref": {
-            "$ref": "../../test/resources/ReferencedTypeWithId.json"
+            "$ref": "../../test/resources/ReferencedType.json"
         }
     },
-    "required": ["ref"]
+    "required": ["ref"],
+    "additionalProperties": false
 }
 
 /**
@@ -19,13 +20,20 @@ export var configurations = [
     settings: {
       declareReferenced: true
     },
-    types: `export interface ReferencedTypedWithId {
+    types: `export interface ExampleSchema {
   firstName: string;
+  lastName: string;
+  /**
+   * Age in years
+   */
+  age?: number;
+  height?: number;
+  favoriteFoods?: any[];
+  likesDogs?: boolean;
   [k: string]: any;
 }
 export interface Referencing {
-  ref: ReferencedTypedWithId;
-  [k: string]: any;
+  ref: ExampleSchema;
 }`
   },
   {
@@ -33,8 +41,7 @@ export interface Referencing {
       declareReferenced: false
     },
     types: `export interface Referencing {
-  ref: ReferencedTypedWithId;
-  [k: string]: any;
+  ref: ExampleSchema;
 }`
   }
 ]
