@@ -55,6 +55,8 @@ export interface ExampleSchema {
 
 ## Usage
 
+Check [example app](example) for more details.
+
 ```js
 import {compileFromFile} from 'json-schema-to-typescript'
 
