@@ -1,4 +1,6 @@
-export var schema = {
+export const only = true
+
+export const schema = {
   "title": "Example Schema",
   "type": "object",
   "properties": {
@@ -26,9 +28,7 @@ export var schema = {
   "required": ["firstName", "lastName"]
 }
 
-export var configurations = [
-  {
-    types: `export interface ExampleSchema {
+export const types = `export interface ExampleSchema {
   firstName: string;
   lastName: string;
   /**
@@ -40,5 +40,3 @@ export var configurations = [
   likesDogs?: boolean;
   [k: string]: any;
 }`
-  }
-]

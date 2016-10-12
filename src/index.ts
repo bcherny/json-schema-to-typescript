@@ -10,9 +10,14 @@ export interface Options {
   indentWith: string
 }
 
+export const DEFAULT_OPTIONS: Options = {
+  enableTrailingSemicolon: true,
+  indentWith: '  '
+}
+
 export function compileFromFile(
   filename: string,
-  options: Options
+  options = DEFAULT_OPTIONS
 ): string | NodeJS.ErrnoException {
   const contents = Try(
     () => readFileSync(filename),
@@ -22,12 +27,13 @@ export function compileFromFile(
     () => JSON.parse(contents.toString()),
     () => { throw new TypeError(`Error parsing JSON in file "${filename}"`)}
   )
-  return compile(schema, options)
+  return compile(schema, filename, options)
 }
 
 export function compile(
   schema: JSONSchema,
-  options: Options
+  name: string,
+  options = DEFAULT_OPTIONS
 ): string | NodeJS.ErrnoException {
-  return generate(parse(normalize(schema)), options)
+  return generate(parse(normalize(schema), name), options)
 }

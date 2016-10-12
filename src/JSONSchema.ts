@@ -93,10 +93,10 @@ export interface JSONSchema {
 
   /**
    * This attribute defines a schema for all properties that are not
-   * explicitly defined in an object type definition.  If specified, the
-   * value MUST be a schema or a boolean.  If false is provided, no
+   * explicitly defined in an object type definition. If specified, the
+   * value MUST be a schema or a boolean. If false is provided, no
    * additional properties are allowed beyond the properties defined in
-   * the schema.  The default value is an empty schema which allows any
+   * the schema. The default value is an empty schema which allows any
    * value for additional properties.
    *
    * @see https://tools.ietf.org/html/draft-zyp-json-schema-03#section-5.4
@@ -109,13 +109,13 @@ export interface JSONSchema {
 
   /**
    * This attribute is an object with property definitions that define the
-   * valid values of instance object property values.  When the instance
+   * valid values of instance object property values. When the instance
    * value is an object, the property values of the instance object MUST
-   * conform to the property definitions in this object.  In this object,
+   * conform to the property definitions in this object. In this object,
    * each property definition's value MUST be a schema, and the property's
    * name MUST be the name of the instance property that it defines.  The
    * instance property value MUST be valid according to the schema from
-   * the property definition.  Properties are considered unordered, the
+   * the property definition. Properties are considered unordered, the
    * order of the instance properties MAY be in any order.
    *
    * @see https://tools.ietf.org/html/draft-zyp-json-schema-03#section-5.2
@@ -126,9 +126,9 @@ export interface JSONSchema {
 
   /**
    * This attribute is an object that defines the schema for a set of
-   * property names of an object instance.  The name of each property of
+   * property names of an object instance. The name of each property of
    * this attribute's object is a regular expression pattern in the ECMA
-   * 262/Perl 5 format, while the value is a schema.  If the pattern
+   * 262/Perl 5 format, while the value is a schema. If the pattern
    * matches the name of a property on the instance object, the value of
    * the instance's property MUST be valid against the pattern name's
    * schema value.
@@ -144,8 +144,8 @@ export interface JSONSchema {
 
   /**
    * This provides an enumeration of all possible values that are valid
-   * for the instance property.  This MUST be an array, and each item in
-   * the array represents a possible value for the instance value.  If
+   * for the instance property. This MUST be an array, and each item in
+   * the array represents a possible value for the instance value. If
    * this attribute is defined, the instance value MUST be one of the
    * values in the array in order for the schema to be valid.
    *
@@ -198,4 +198,11 @@ export interface EnumJSONSchema extends JSONSchema {
 
 export interface NamedEnumJSONSchema extends EnumJSONSchema {
   tsEnumNames: string[]
+}
+
+export interface SchemaSchema extends JSONSchema {
+  properties: {
+    [k: string]: JSONSchema
+  }
+  required: string[]
 }
