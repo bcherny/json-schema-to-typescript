@@ -63,6 +63,8 @@ import {compileFromFile} from 'json-schema-to-typescript'
 fs.writeFileSync('dist/foo.d.ts', await compileFromFile('src/foo.json'))
 ```
 
+See [/example](example) for a fully working demo.
+
 ## Tests
 
 `npm test`
