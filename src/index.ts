@@ -44,7 +44,7 @@ class Compiler {
     this.filePath = parse(resolve(filePath))
     this.declarations = new Map
     this.namedEnums = new Map
-    this.id = schema.id || schema.title || this.filePath.name || 'Interface1'
+    this.id = schema.title || schema.id || this.filePath.name || 'Interface1'
     this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings)
     this.declareType(this.toTsType(this.schema, '', true) as TsType.Interface, this.id, this.id)
   }
@@ -256,7 +256,7 @@ class Compiler {
     const type = this.generateTsType(rule, propName, isReference)
     if (!type.id) {
       // the type is not declared, let's check if we should declare it or keep it inline
-      type.id = rule.id || rule.title as string // TODO: fix types
+      type.id = rule.title || rule.id as string // TODO: fix types
       if (type.id && !isReference)
         this.declareType(type, type.id, type.id)
     }

@@ -1,0 +1,11 @@
+{
+  "id": "http://dummy.com/api/referenced-type-with-id",
+  "title": "ReferencedTypedWithId",
+  "type": "object",
+  "properties": {
+    "firstName": {
+      "type": "string"
+    }
+  },
+  "required": ["firstName"]
+}
