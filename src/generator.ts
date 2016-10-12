@@ -4,7 +4,6 @@ import { AST, TArray, TInterface, TIntersection, TTuple, TUnion } from './parser
 // TODO: call for referenced types
 // TODO: use discriminated union types to prevent asserts
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
-  console.log('generate', ast)
   switch (ast.type) {
     case 'ANY': return 'any'
     case 'ARRAY': return generate((ast as TArray).params, options) + '[]'
@@ -28,7 +27,8 @@ function generateInterface(ast: TInterface, options: Options): string {
     + ast.params
         .map(_ => [_, generate(_, options)])
         .map(([ast, type]: [AST, string]) =>
-          options.indentWith
+          (ast.comment ? generateComment(ast.comment).join('\n' + options.indentWith) : '')
+            + options.indentWith
             + ast.name
             + (ast.isRequired ? '' : '?')
             + ': '
@@ -36,7 +36,17 @@ function generateInterface(ast: TInterface, options: Options): string {
             + (options.enableTrailingSemicolon ? ';' : '')
         )
         .join('\n')
+    + '\n'
     + '}'
     + (options.enableTrailingSemicolon ? ';' : '')
     + '\n'
+}
+
+function generateComment(comment: string): string[] {
+  return [
+    '/**',
+    ...comment.split('\n').map(_ => ' * ' + _),
+    ' */',
+    '\n'
+  ]
 }

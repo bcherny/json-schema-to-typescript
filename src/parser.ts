@@ -1,6 +1,6 @@
 import { JSONSchema, SchemaSchema } from './JSONSchema'
 import { typeOfSchema } from './typeOfSchema'
-import { map } from 'lodash'
+import { camelCase, map, upperFirst } from 'lodash'
 
 export type AST_TYPE  = 'ANY' | 'ARRAY' | 'BOOLEAN' | 'ENUM' | 'INTERFACE' | 'INTERSECTION' | 'NUMBER' | 'NULL' | 'OBJECT' | 'REFERENCE' | 'STRING' | 'TUPLE' | 'UNION'
 
@@ -84,44 +84,62 @@ export function parse(
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       // TODO: support schema.properties
-      return { name, isRequired, params: schema.allOf!.map(parse), type: 'INTERSECTION' }
+      return { comment: schema.description, name, isRequired, params: schema.allOf!.map(parse), type: 'INTERSECTION' }
     case 'ANY':
-      return { name, isRequired, type: 'ANY' }
+      return { comment: schema.description, name, isRequired, type: 'ANY' }
     case 'ANY_OF':
-      return { name, isRequired, params: schema.anyOf!.map(parse), type: 'UNION' }
+      return { comment: schema.description, name, isRequired, params: schema.anyOf!.map(parse), type: 'UNION' }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
-        return { name, isRequired, params: schema.items.map(parse), type: 'TUPLE' }
+        return { comment: schema.description, name, isRequired, params: schema.items.map(parse), type: 'TUPLE' }
       } else {
-        return { name, isRequired, params: parse(schema.items!), type: 'ARRAY' } as TArray
+        return { comment: schema.description, name, isRequired, params: parse(schema.items!), type: 'ARRAY' } as TArray
       }
     case 'UNTYPED_ARRAY':
-      return { name, isRequired, params: T_ANY, type: 'ARRAY' }
+      return { comment: schema.description, name, isRequired, params: T_ANY, type: 'ARRAY' }
     case 'UNNAMED_ENUM':
-      return { name, isRequired, params: schema.enum!.map(parse), type: 'UNION' }
+      return { comment: schema.description, name, isRequired, params: schema.enum!.map(parse), type: 'UNION' }
     case 'NAMED_ENUM':
-      return {
+      return { comment: schema.description,
         name, isRequired, params: schema.enum!.map(parse).map((_, n) => [schema.tsEnumNames, _]), type: 'ENUM'
       }
     case 'BOOLEAN':
-      return { name, isRequired, type: 'BOOLEAN' }
+      return { comment: schema.description, name, isRequired, type: 'BOOLEAN' }
     case 'NUMBER':
-      return { name, isRequired, type: 'NUMBER' }
+      return { comment: schema.description, name, isRequired, type: 'NUMBER' }
     case 'NULL':
-      return { name, isRequired, type: 'NULL' }
+      return { comment: schema.description, name, isRequired, type: 'NULL' }
     case 'OBJECT':
-      return { name, isRequired, type: 'OBJECT' }
+      return { comment: schema.description, name, isRequired, type: 'OBJECT' }
     case 'STRING':
-      return { name, isRequired, type: 'STRING' }
+      return { comment: schema.description, name, isRequired, type: 'STRING' }
     case 'UNION':
-      return { name, isRequired, params: schema.type!.map(parse), type: 'UNION' } as TUnion
+      return { comment: schema.description, name, isRequired, params: schema.type!.map(parse), type: 'UNION' } as TUnion
     case 'NAMED_SCHEMA':
-      return { name, isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' } as TInterface
+      return { comment: schema.description, name: computeSchemaName(schema as SchemaSchema, name), isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' } as TInterface
     case 'UNNAMED_SCHEMA':
-      return { name: 'Foo', isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' } as TInterface
+      return { comment: schema.description, name: 'Foo', isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' } as TInterface
     case 'REFERENCE':
       return parse(resolveReference(schema.$ref as string, rootSchema), '', schema)
   }
+}
+
+/**
+ * Compute a schema name using a series of fallbacks
+ */
+function computeSchemaName(
+  schema: SchemaSchema,
+  name?: string // name from schema's filename
+): string {
+  return toSafeString(schema.title || schema.id || name || 'Interface1') // TODO: increment interface number
+}
+
+/**
+ * Convert a string that might contain spaces or special characters to one that
+ * can safely be used as a TypeScript interface or enum name
+ */
+function toSafeString(string: string) {
+  return upperFirst(camelCase(string))
 }
 
 /**
@@ -134,19 +152,12 @@ function parseSchemaSchema(
   const asts = map(schema.properties, (value, key) =>
     parse(value, key, rootSchema, schema.required.includes(key))
   )
-
   // handle additionalProperties
   switch (schema.additionalProperties) {
-    case true:
-      asts.concat(T_ANY_ADDITIONAL_PROPERTIES)
-      break
-    case false:
-      break
-    default:
-      asts.concat(parseSchemaSchema(schema.additionalProperties as SchemaSchema, rootSchema))
+    case true: return asts.concat(T_ANY_ADDITIONAL_PROPERTIES)
+    case false: return asts
+    default: return asts.concat(parseSchemaSchema(schema.additionalProperties as SchemaSchema, rootSchema))
   }
-
-  return asts
 }
 
 function resolveReference(
