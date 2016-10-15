@@ -1,4 +1,5 @@
 import { isPlainObject } from 'lodash'
+import { basename } from 'path'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -18,4 +19,11 @@ export function dft<T, U>(object: { [k: string]: any }, cb: (value: U, key: stri
     if (isPlainObject(object[key])) dft(object[key], cb)
     cb(object[key], key)
   }
+}
+
+/**
+ * Avoid appending "Js" to top-level unnamed schemas
+ */
+export function stripExtension(filename: string): string {
+  return basename(filename, '.js')
 }

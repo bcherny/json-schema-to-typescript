@@ -2,7 +2,7 @@ import { generate } from './generator'
 import { JSONSchema } from './JSONSchema'
 import { normalize } from './normalizer'
 import { parse } from './parser'
-import { Try } from './utils'
+import { stripExtension, Try } from './utils'
 import { readFileSync } from 'fs'
 
 export interface Options {
@@ -33,7 +33,7 @@ export function compileFromFile(
     () => JSON.parse(contents.toString()),
     () => { throw new TypeError(`Error parsing JSON in file "${filename}"`)}
   )
-  return compile(schema, filename, options)
+  return compile(schema, stripExtension(filename), options)
 }
 
 export function compile(

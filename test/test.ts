@@ -1,5 +1,6 @@
 import { compile, Options } from '../src/index'
 import { JSONSchema } from '../src/JSONSchema'
+import { stripExtension } from '../src/utils'
 import { diff } from './diff'
 import test, { ContextualTestContext } from 'ava'
 import { bold, green, red, white } from 'cli-color'
@@ -39,16 +40,16 @@ function run(exports: TestCase, name: string) {
       const caseName = `${name}: ${JSON.stringify(cfg.settings)}`
       test(caseName, t => {
         if (cfg.error) {
-          t.throws(() => compile(cfg.schema, name, cfg.settings), cfg.error.type)
+          t.throws(() => compile(cfg.schema, stripExtension(name), cfg.settings), cfg.error.type)
         } else {
-          compare(t, caseName, compile(exports.schema, name, cfg.settings) as string, cfg.types)
+          compare(t, caseName, compile(exports.schema, stripExtension(name), cfg.settings) as string, cfg.types)
         }
       })
     })
   } else {
     test(name, t => exports.error
-      ? t.throws(() => compile(exports.schema, name, exports.settings), exports.error.type)
-      : compare(t, name, compile(exports.schema, name, exports.settings) as string, exports.types as string)
+      ? t.throws(() => compile(exports.schema, stripExtension(name), exports.settings), exports.error.type)
+      : compare(t, name, compile(exports.schema, stripExtension(name), exports.settings) as string, exports.types as string)
     )
   }
 }
