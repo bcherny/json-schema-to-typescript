@@ -1,6 +1,8 @@
-import { compile, Settings } from '../src/index'
+import { compile, Options } from '../src/index'
 import { JSONSchema } from '../src/JSONSchema'
-import test from 'ava'
+import { diff } from './diff'
+import test, { ContextualTestContext } from 'ava'
+import { bold, green, red, white } from 'cli-color'
 import * as fs from 'fs'
 import { find } from 'lodash'
 import * as path from 'path'
@@ -22,11 +24,11 @@ if (only) {
 }
 
 interface TestCase {
-  configurations?: { settings: Settings, types: string }[]
+  configurations?: { settings: Options, types: string }[]
   error?: { type: ErrorConstructor }
   exclude?: boolean
   schema: JSONSchema
-  settings?: Settings
+  settings?: Options
   types?: string
   only?: boolean
 }
@@ -34,18 +36,42 @@ interface TestCase {
 function run(exports: TestCase, name: string) {
   if (exports.configurations) {
     exports.configurations.forEach((cfg: any) => {
-      test(`${name}: ${JSON.stringify(cfg.settings)}`, t => {
+      const caseName = `${name}: ${JSON.stringify(cfg.settings)}`
+      test(caseName, t => {
         if (cfg.error) {
           t.throws(() => compile(cfg.schema, name, cfg.settings), cfg.error.type)
         } else {
-          t.is(compile(exports.schema, name, cfg.settings), cfg.types)
+          compare(t, caseName, compile(exports.schema, name, cfg.settings) as string, cfg.types)
         }
       })
     })
   } else {
     test(name, t => exports.error
       ? t.throws(() => compile(exports.schema, name, exports.settings), exports.error.type)
-      : t.is(compile(exports.schema, name, exports.settings), exports.types)
+      : compare(t, name, compile(exports.schema, name, exports.settings) as string, exports.types as string)
     )
+  }
+}
+
+function compare(t: ContextualTestContext, caseName: string, a: string, b: string) {
+  if (a !== b) {
+    console.log(
+      '\n',
+      '─────────────────────────────────────────────────────────',
+      '\n',
+      bold(red(`${caseName} failed`)),
+      '\n',
+      '\n',
+      green('Green') + white(' = Extraneous character in output'),
+      '\n',
+      '  ' + red('Red') + white(' = Missing character in output'),
+      '\n',
+      '\n',
+      diff(a, b),
+      '─────────────────────────────────────────────────────────'
+    )
+    t.fail()
+  } else {
+    t.pass()
   }
 }
