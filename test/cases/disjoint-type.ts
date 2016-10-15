@@ -13,12 +13,13 @@ export const input = {
   "required": ["value"]
 }
 
+// TODO: dont generate  extraneous parens around union types
 export const output = `/**
  * My cool schema
  */
 export interface ExampleSchema {
-  value: number | string;
-  anotherValue?: null | string;
+  value: (number | string);
+  anotherValue?: (null | string);
   [k: string]: any;
 }
 `
