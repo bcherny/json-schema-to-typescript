@@ -22,15 +22,13 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
 }
 
 function generateInterface(ast: TInterface, options: Options): string {
-  return `export interface ${ast.name} {`
+  return (ast.comment ? generateComment(ast.comment, options, 0) : '')
+    + `export interface ${ast.name} {`
     + '\n'
     + ast.params
         .map(_ => [_, generate(_, options)])
         .map(([ast, type]: [AST, string]) =>
-          (ast.comment
-            ? options.indentWith + generateComment(ast.comment).join('\n' + options.indentWith) + '\n'
-            : ''
-          )
+          (ast.comment ? generateComment(ast.comment, options, 1) : '')
             + options.indentWith
             + ast.name
             + (ast.isRequired ? '' : '?')
@@ -45,10 +43,12 @@ function generateInterface(ast: TInterface, options: Options): string {
     + '\n'
 }
 
-function generateComment(comment: string): string[] {
-  return [
-    '/**',
-    ...comment.split('\n').map(_ => ' * ' + _),
-    ' */'
-  ]
+function generateComment(comment: string, options: Options, indentDepth: number): string {
+  return options.indentWith.repeat(indentDepth)
+    + [
+        '/**',
+        ...comment.split('\n').map(_ => ' * ' + _),
+        ' */'
+      ].join('\n' + options.indentWith.repeat(indentDepth))
+    + '\n'
 }

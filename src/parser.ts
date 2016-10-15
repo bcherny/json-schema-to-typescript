@@ -1,4 +1,4 @@
-import { JSONSchema, SchemaSchema } from './JSONSchema'
+import { JSONSchema, SchemaSchema, SimpleType } from './JSONSchema'
 import { typeOfSchema } from './typeOfSchema'
 import { camelCase, map, upperFirst } from 'lodash'
 
@@ -114,7 +114,7 @@ export function parse(
     case 'STRING':
       return { comment: schema.description, name, isRequired, type: 'STRING' }
     case 'UNION':
-      return { comment: schema.description, name, isRequired, params: schema.type!.map(parse), type: 'UNION' } as TUnion
+      return { comment: schema.description, name, isRequired, params: (schema.type as SimpleType[]).map(_ => parse({ type: _})), type: 'UNION' } as TUnion
     case 'NAMED_SCHEMA':
       return { comment: schema.description, name: computeSchemaName(schema as SchemaSchema, name), isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' } as TInterface
     case 'UNNAMED_SCHEMA':
