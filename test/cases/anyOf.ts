@@ -49,4 +49,5 @@ export interface Baz {
 }
 export interface AnyOf {
   foo: Foo | Bar | Baz;
-}`
+}
+`

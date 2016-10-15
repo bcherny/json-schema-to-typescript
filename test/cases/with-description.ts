@@ -29,4 +29,5 @@ export interface ExampleSchema {
    */
   age?: number;
   [k: string]: any;
-}`
+}
+`

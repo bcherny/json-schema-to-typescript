@@ -20,4 +20,5 @@ export interface ExampleSchema {
   value: number | string;
   anotherValue?: null | string;
   [k: string]: any;
-}`
+}
+`

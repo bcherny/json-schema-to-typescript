@@ -30,7 +30,8 @@ export var configurations = [
 }
 export interface Referencing {
   foo: ExampleSchema;
-}`
+}
+`
   },
   {
     settings: {
@@ -38,6 +39,7 @@ export interface Referencing {
     },
     types: `export interface Referencing {
   foo: ExampleSchema;
-}`
+}
+`
   }
 ]

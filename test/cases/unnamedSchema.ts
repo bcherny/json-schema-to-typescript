@@ -11,4 +11,5 @@ export var schema = {
 
 export var types = `export interface UnnamedSchema {
   foo: string;
-}`
+}
+`

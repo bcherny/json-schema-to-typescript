@@ -35,4 +35,5 @@ export var types =  `export interface ArrayOfType {
   baz?: (string | number)[];
   moo?: [number, string];
   [k: string]: any;
-}`
+}
+`

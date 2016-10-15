@@ -149,11 +149,7 @@ export var schema = {
     "default": {}
 }
 
-export var configurations = [
-{
-    settings: {
-    },
-    types: `export type PositiveInteger = number;
+export const types = `export type PositiveInteger = number;
 export type PositiveIntegerDefault0 = PositiveInteger;
 export type SchemaArray = HttpJsonSchemaOrgDraft04Schema[];
 export type StringArray = string[];
@@ -203,6 +199,5 @@ export interface HttpJsonSchemaOrgDraft04Schema {
   oneOf?: SchemaArray;
   not?: HttpJsonSchemaOrgDraft04Schema;
   [k: string]: any;
-}`
-    }
-]
+}
+`

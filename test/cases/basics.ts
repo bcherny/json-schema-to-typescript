@@ -1,5 +1,3 @@
-export const only = true
-
 export const schema = {
   "title": "Example Schema",
   "type": "object",

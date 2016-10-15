@@ -22,4 +22,5 @@ export const types = `export interface SchemaWithSubschema {
   }
   firstName: string;
   [k: string]: any;
-}`
+}
+`

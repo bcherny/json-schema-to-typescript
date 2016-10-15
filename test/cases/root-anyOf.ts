@@ -39,4 +39,5 @@ export interface Baz {
   baz?: Bar;
   [k: string]: any;
 }
-export type RootAnyOf = Foo | Bar | Baz;`
+export type RootAnyOf = Foo | Bar | Baz;
+`

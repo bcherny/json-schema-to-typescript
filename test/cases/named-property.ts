@@ -25,4 +25,5 @@ export interface ExampleSchema {
    */
   users?: UserIdArray;
   [k: string]: any;
-}`
+}
+`

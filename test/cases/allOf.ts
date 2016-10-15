@@ -40,4 +40,5 @@ export interface Bar {
 }
 export interface AllOf {
   foo: Foo & Bar;
-}`
+}
+`
