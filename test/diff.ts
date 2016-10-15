@@ -1,4 +1,4 @@
-import { green, red, white } from 'cli-color'
+import { green, red } from 'cli-color'
 const genericDiff = require('generic-diff')
 
 interface Edit {

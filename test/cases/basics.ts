@@ -39,4 +39,5 @@ export const types = `export interface ExampleSchema {
   favoriteFoods?: any[];
   likesDogs?: boolean;
   [k: string]: any;
-}`
+}
+`

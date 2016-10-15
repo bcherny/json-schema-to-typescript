@@ -27,18 +27,21 @@ function generateInterface(ast: TInterface, options: Options): string {
     + ast.params
         .map(_ => [_, generate(_, options)])
         .map(([ast, type]: [AST, string]) =>
-          (ast.comment ? generateComment(ast.comment).join('\n' + options.indentWith) : '')
+          (ast.comment
+            ? options.indentWith + generateComment(ast.comment).join('\n' + options.indentWith) + '\n'
+            : ''
+          )
             + options.indentWith
             + ast.name
             + (ast.isRequired ? '' : '?')
             + ': '
             + type
-            + (options.enableTrailingSemicolon ? ';' : '')
+            + (options.enableTrailingSemicolonForInterfaceProperties ? ';' : '')
         )
         .join('\n')
     + '\n'
     + '}'
-    + (options.enableTrailingSemicolon ? ';' : '')
+    + (options.enableTrailingSemicolonForInterfaces ? ';' : '')
     + '\n'
 }
 
@@ -46,7 +49,6 @@ function generateComment(comment: string): string[] {
   return [
     '/**',
     ...comment.split('\n').map(_ => ' * ' + _),
-    ' */',
-    '\n'
+    ' */'
   ]
 }

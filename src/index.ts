@@ -6,12 +6,18 @@ import { Try } from './utils'
 import { readFileSync } from 'fs'
 
 export interface Options {
-  enableTrailingSemicolon: boolean
+  enableTrailingSemicolonForTypes: boolean
+  enableTrailingSemicolonForEnums: boolean
+  enableTrailingSemicolonForInterfaceProperties: boolean
+  enableTrailingSemicolonForInterfaces: boolean
   indentWith: string
 }
 
 export const DEFAULT_OPTIONS: Options = {
-  enableTrailingSemicolon: true,
+  enableTrailingSemicolonForEnums: false,
+  enableTrailingSemicolonForInterfaceProperties: true,
+  enableTrailingSemicolonForInterfaces: false,
+  enableTrailingSemicolonForTypes: true,
   indentWith: '  '
 }
 
