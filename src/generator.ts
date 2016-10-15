@@ -10,15 +10,24 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
     case 'BOOLEAN': return 'boolean'
     // case 'ENUM'
     case 'INTERFACE': return generateInterface(ast as TInterface, options)
-    case 'INTERSECTION': return (ast as TIntersection).params.map(_ => generate(_, options)).join(' & ')
+    case 'INTERSECTION': return generateSetOperation(ast as TIntersection, options)
     case 'NUMBER': return 'number'
     case 'NULL': return 'null'
     // case 'OBJECT'
     // case 'REFERENCE'
     case 'STRING': return 'string'
     case 'TUPLE': return '[' + (ast as TTuple).params.map(_ => generate(_, options)).join(', ') + ']'
-    case 'UNION': return (ast as TUnion).params.map(_ => generate(_, options)).join(' | ')
+    case 'UNION': return generateSetOperation(ast as TUnion, options)
   }
+}
+
+/**
+ * Generate a Union or Intersection
+ */
+function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
+  const members = (ast as TUnion).params.map(_ => generate(_, options))
+  const separator = ast.type === 'UNION' ? '|' : '&'
+  return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
 
 function generateInterface(ast: TInterface, options: Options): string {
