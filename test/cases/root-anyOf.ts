@@ -1,4 +1,4 @@
-export var schema = {
+export const input = {
   "title": "RootAnyOf",
   "anyOf": [
     {"$ref": "#/definitions/foo"},
@@ -27,7 +27,7 @@ export var schema = {
   }
 }
 
-export var types = `export interface Foo {
+export const output = `export interface Foo {
   a: string;
   b?: number;
 }

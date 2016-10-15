@@ -1,4 +1,4 @@
-export var schema = {
+export const input = {
   "title": "Example Schema",
   "description": "My cool schema",
   "type": "object",
@@ -15,7 +15,7 @@ export var schema = {
 }
 
 // TODO: 2nd block comment should annotate UserIdArray, not users
-export var types = `export type UserIdArray = string[];
+export const output = `export type UserIdArray = string[];
 /**
  * My cool schema
  */

@@ -1,4 +1,4 @@
-export const schema = {
+export const input = {
   "type": "object",
   "properties": {
     "foo": {
@@ -9,7 +9,7 @@ export const schema = {
   "additionalProperties": false
 }
 
-export const types = `export interface UnnamedSchema {
+export const output = `export interface UnnamedSchema {
   foo: string;
 }
 `

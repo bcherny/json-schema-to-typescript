@@ -1,4 +1,4 @@
-export var schema = {
+export const input = {
     "id": "http://json-schema.org/draft-04/schema#",
     "$schema": "http://json-schema.org/draft-04/schema#",
     "description": "Core schema meta-schema",
@@ -149,7 +149,7 @@ export var schema = {
     "default": {}
 }
 
-export const types = `export type PositiveInteger = number;
+export const output = `export type PositiveInteger = number;
 export type PositiveIntegerDefault0 = PositiveInteger;
 export type SchemaArray = HttpJsonSchemaOrgDraft04Schema[];
 export type StringArray = string[];

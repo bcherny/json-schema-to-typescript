@@ -1,4 +1,4 @@
-export var schema = {
+export const input = {
   "title": "Enum",
   "type": "object",
   "properties": {
@@ -44,13 +44,12 @@ export var schema = {
   "additionalProperties": false
 }
 
-export var configurations = [false, true].map(useConstEnums => {
+export const outputs = [false, true].map(useConstEnums => {
   return {
     settings: {
-      useConstEnums: useConstEnums
+      useConstEnums
     },
-      types:
-`export${useConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
+    output: `export${useConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
   One = 1,
   Two = 2,
   Three = 3

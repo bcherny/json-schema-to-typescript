@@ -1,4 +1,4 @@
-export var schema = {
+export const input = {
   "title": "Example Schema",
   "type": "object",
   "properties": {
@@ -18,7 +18,7 @@ export var schema = {
   "additionalProperties": false
 }
 
-export var types = `export interface ExampleSchema {
+export const output = `export interface ExampleSchema {
   firstName: string;
   lastName: string;
   /**

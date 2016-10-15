@@ -1,4 +1,4 @@
-export var schema =
+export const input =
 {
   "title": "Referencing",
   "type": "object",
@@ -11,12 +11,12 @@ export var schema =
   "additionalProperties": false
 }
 
-export var configurations = [
+export const outputs = [
   {
     settings: {
       declareReferenced: true
     },
-    types: `export interface ExampleSchema {
+    output: `export interface ExampleSchema {
   firstName: string;
   lastName: string;
   /**
@@ -37,7 +37,7 @@ export interface Referencing {
     settings: {
       declareReferenced: false
     },
-    types: `export interface Referencing {
+    output: `export interface Referencing {
   foo: ExampleSchema;
 }
 `

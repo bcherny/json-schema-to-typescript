@@ -1,4 +1,4 @@
-export const schema = {
+export const input = {
   "title": "Schema with Subschema",
   "friend": {
     "properties": {
@@ -15,7 +15,7 @@ export const schema = {
   "required": ["firstName"]
 }
 
-export const types = `export interface SchemaWithSubschema {
+export const output = `export interface SchemaWithSubschema {
   friend: {
     firstName: string;
     [k: string]: any;

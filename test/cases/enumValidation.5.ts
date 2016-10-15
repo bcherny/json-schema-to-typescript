@@ -1,4 +1,4 @@
-export var schema = {
+export const input = {
   "title": "Enum",
   "type": "object",
   "properties": {
@@ -12,10 +12,10 @@ export var schema = {
   "additionalProperties": false
 }
 
-export var settings = {
+export const settings = {
   useTypescriptEnums: true
 }
 
-export var error = {
+export const error = {
   type: TypeError
 }

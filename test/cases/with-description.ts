@@ -1,4 +1,4 @@
-export var schema = {
+export const input = {
   "title": "Example Schema",
   "description": "My cool schema",
   "type": "object",
@@ -18,7 +18,7 @@ export var schema = {
   "required": ["firstName", "lastName"]
 }
 
-export var types = `/**
+export const output = `/**
  * My cool schema
  */
 export interface ExampleSchema {

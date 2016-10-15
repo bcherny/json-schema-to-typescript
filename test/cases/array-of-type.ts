@@ -1,4 +1,4 @@
-export var schema = {
+export const input = {
   "title": "Array of type",
   "type": "object",
   "properties": {
@@ -29,7 +29,7 @@ export var schema = {
   }
 }
 
-export var types =  `export interface ArrayOfType {
+export const output =  `export interface ArrayOfType {
   foo?: string[];
   bar?: string[];
   baz?: (string | number)[];

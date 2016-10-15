@@ -24,34 +24,48 @@ if (only) {
     .forEach(_ => run(_[1], _[0]))
 }
 
-interface TestCase {
-  configurations?: { settings: Options, types: string }[]
-  error?: { type: ErrorConstructor }
+interface BaseTestCase {
+  input: JSONSchema
   exclude?: boolean
-  schema: JSONSchema
-  settings?: Options
-  types?: string
   only?: boolean
 }
 
+interface TestInterface {
+  error?: { type: ErrorConstructor }
+  output: string
+  settings?: Options
+}
+
+interface SingleTestCase extends TestInterface, BaseTestCase {}
+
+interface MultiTestCase extends BaseTestCase {
+  outputs: TestInterface[]
+}
+
+type TestCase = SingleTestCase | MultiTestCase
+
 function run(exports: TestCase, name: string) {
-  if (exports.configurations) {
-    exports.configurations.forEach((cfg: any) => {
-      const caseName = `${name}: ${JSON.stringify(cfg.settings)}`
+  if (isMultiTestCase(exports)) {
+    exports.outputs.forEach(_ => {
+      const caseName = `${name}: ${JSON.stringify(_.settings)}`
       test(caseName, t => {
-        if (cfg.error) {
-          t.throws(() => compile(cfg.schema, stripExtension(name), cfg.settings), cfg.error.type)
+        if (_.error) {
+          t.throws(() => compile(exports.input, stripExtension(name), _.settings), _.error.type)
         } else {
-          compare(t, caseName, compile(exports.schema, stripExtension(name), cfg.settings) as string, cfg.types)
+          compare(t, caseName, compile(exports.input, stripExtension(name), _.settings) as string, _.output)
         }
       })
     })
   } else {
     test(name, t => exports.error
-      ? t.throws(() => compile(exports.schema, stripExtension(name), exports.settings), exports.error.type)
-      : compare(t, name, compile(exports.schema, stripExtension(name), exports.settings) as string, exports.types as string)
+      ? t.throws(() => compile(exports.input, stripExtension(name), exports.settings), exports.error.type)
+      : compare(t, name, compile(exports.input, stripExtension(name), exports.settings) as string, exports.output)
     )
   }
+}
+
+function isMultiTestCase(exports: TestCase): exports is MultiTestCase {
+  return 'outputs' in exports
 }
 
 function compare(t: ContextualTestContext, caseName: string, a: string, b: string) {
