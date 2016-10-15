@@ -156,7 +156,10 @@ function parseSchemaSchema(
   switch (schema.additionalProperties) {
     case true: return asts.concat(T_ANY_ADDITIONAL_PROPERTIES)
     case false: return asts
-    default: return asts.concat(parseSchemaSchema(schema.additionalProperties as SchemaSchema, rootSchema))
+
+    // pass "true" as the last param because in TS, properties
+    // defined via index signatures are already optional
+    default: return asts.concat(parse(schema.additionalProperties as JSONSchema, '[k: string]', rootSchema, true))
   }
 }
 
