@@ -6,6 +6,7 @@ import { stripExtension, Try } from './utils'
 import { readFileSync } from 'fs'
 
 export interface Options {
+  enableConstEnums: boolean
   enableTrailingSemicolonForTypes: boolean
   enableTrailingSemicolonForEnums: boolean
   enableTrailingSemicolonForInterfaceProperties: boolean
@@ -14,6 +15,7 @@ export interface Options {
 }
 
 export const DEFAULT_OPTIONS: Options = {
+  enableConstEnums: true, // by default, avoid generating code
   enableTrailingSemicolonForEnums: false,
   enableTrailingSemicolonForInterfaceProperties: true,
   enableTrailingSemicolonForInterfaces: false,
@@ -41,5 +43,7 @@ export function compile(
   name: string,
   options = DEFAULT_OPTIONS
 ): string | NodeJS.ErrnoException {
-  return generate(parse(normalize(schema), name), options)
+  return generate(
+    parse(normalize(schema), name),
+    Object.assign({}, DEFAULT_OPTIONS, options))
 }

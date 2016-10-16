@@ -1,4 +1,4 @@
-import { isPlainObject } from 'lodash'
+import { camelCase, isPlainObject, upperFirst } from 'lodash'
 import { basename } from 'path'
 
 // TODO: pull out into a separate package
@@ -26,4 +26,12 @@ export function dft<T, U>(object: { [k: string]: any }, cb: (value: U, key: stri
  */
 export function stripExtension(filename: string): string {
   return basename(filename, '.js')
+}
+
+/**
+ * Convert a string that might contain spaces or special characters to one that
+ * can safely be used as a TypeScript interface or enum name
+ */
+export function toSafeString(string: string) {
+  return upperFirst(camelCase(string))
 }

@@ -44,32 +44,32 @@ export const input = {
   "additionalProperties": false
 }
 
-export const outputs = [false, true].map(useConstEnums => {
+export const outputs = [false, true].map(enableConstEnums => {
   return {
     settings: {
-      useConstEnums
+      enableConstEnums
     },
-    output: `export${useConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
+    output: `export${enableConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
   One = 1,
   Two = 2,
   Three = 3
 }
-export${useConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
+export${enableConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
   Four = 4,
   Five = 5,
   Six = 6
 }
 export interface Enum {
-  stringEnum: "a" | "b" | "c";
-  impliedStringEnum: "a" | "b" | "c";
+  stringEnum: ("a" | "b" | "c");
+  impliedStringEnum: ("a" | "b" | "c");
   booleanEnum: true;
   impliedBooleanEnum: true;
-  integerEnum: -1 | 0 | 1;
-  impliedIntegerEnum: -1 | 0 | 1;
-  numberEnum?: -1.1 | 0 | 1.2;
+  integerEnum: (-1 | 0 | 1);
+  impliedIntegerEnum: (-1 | 0 | 1);
+  numberEnum?: (-1.1 | 0 | 1.2);
   namedIntegerEnum?: NamedIntegerEnum;
   impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
-  impliedHeterogeneousEnum?: -20.1 | null | "foo" | false;
+  impliedHeterogeneousEnum?: (-20.1 | null | "foo" | false);
 }
 `
   }

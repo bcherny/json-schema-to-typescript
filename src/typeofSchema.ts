@@ -7,6 +7,7 @@ export type SCHEMA_TYPE = 'ALL_OF' | 'UNNAMED_SCHEMA' | 'ANY' | 'ANY_OF' | 'BOOL
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
  */
 export function typeOfSchema(schema: JSONSchema): SCHEMA_TYPE {
+  if (!isPlainObject(schema)) return 'LITERAL'
   if (schema.allOf) return 'ALL_OF'
   if (schema.anyOf) return 'ANY_OF'
   if (schema.items) return 'TYPED_ARRAY'
@@ -25,7 +26,6 @@ export function typeOfSchema(schema: JSONSchema): SCHEMA_TYPE {
     case 'null': return 'NULL'
     case 'any': return 'ANY'
   }
-  if (!isPlainObject(schema)) return 'LITERAL'
   if (isPlainObject(schema)) return 'UNNAMED_SCHEMA'
   return 'ANY'
 }

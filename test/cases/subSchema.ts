@@ -2,8 +2,8 @@ export const input = {
   "title": "Schema with Subschema",
   "friend": {
     "properties": {
-      "firstName": {
-        "type": "string"
+      "knowsFrom": {
+        "enum": ["work", "school", "other"]
       }
     }
   },
@@ -17,7 +17,7 @@ export const input = {
 
 export const output = `export interface SchemaWithSubschema {
   friend: {
-    firstName: string;
+    knowsFrom: "work" | "school" | "other";
     [k: string]: any;
   }
   firstName: string;
