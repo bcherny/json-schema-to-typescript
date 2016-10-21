@@ -53,12 +53,25 @@ export interface ExampleSchema {
 
 `npm install json-schema-to-typescript`
 
+or, to install the `json-schema-to-typescript` CLI utility:
+
+`npm install -g json-schema-to-typescript`
+
 ## Usage
+### API
 
 ```js
 import {compileFromFile} from 'json-schema-to-typescript'
 
 fs.writeFileSync('dist/foo.d.ts', await compileFromFile('src/foo.json'))
+```
+
+### CLI
+```
+$ json-schema-to-typescript src/foo.json
+... snipped output here, on stdout ...
+$ json-schema-to-typescript src/foo.json dist/foo.d.ts
+$
 ```
 
 See [/example](example) for a fully working demo.
