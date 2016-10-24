@@ -14,6 +14,9 @@
     "tdd": "npm run watch & ava --watch",
     "prepublish": "npm run build"
   },
+  "bin": {
+    "json-schema-to-typescript": "./bin/json-schema-to-typescript.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bcherny/json-schema-to-typescript.git"
@@ -36,6 +39,7 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
+    "commander": "^2.9.0",
     "lodash": "^4.6.1"
   },
   "devDependencies": {
