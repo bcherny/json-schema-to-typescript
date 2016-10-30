@@ -3,6 +3,9 @@
   "version": "3.0.0",
   "description": "compile json schema to typescript typings",
   "main": "dist/index.js",
+  "bin": {
+    "json2ts": "dist/cli.js"
+  },
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "npm run build-sources && npm test && npm run lint",
@@ -36,17 +39,24 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "lodash": "^4.6.1"
+    "lodash": "^4.6.1",
+    "minimist": "^1.2.0",
+    "mz": "^2.4.0",
+    "stdin": "0.0.1"
   },
   "devDependencies": {
     "@types/lodash": "0.0.28",
+    "@types/minimist": "^1.1.29",
+    "@types/mz": "0.0.30",
     "@types/node": "^4.0.30",
     "ava": "^0.16.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.0"
   },
   "ava": {
-    "files": ["./dist_tests/test/test.js"],
+    "files": [
+      "./dist_tests/test/test.js"
+    ],
     "source": [
       "./dist_tests/test/cases/*.js",
       "./dist_tests/src/*.js"

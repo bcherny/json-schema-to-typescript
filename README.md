@@ -63,6 +63,21 @@ fs.writeFileSync('dist/foo.d.ts', await compileFromFile('src/foo.json'))
 
 See [/example](example) for a fully working demo.
 
+### CLI
+Simple CLI utility is provided within the package.
+```
+cat foo.json | json2ts > bar.d.ts
+# or
+json2ts foo.json bar.d.ts
+# or
+json2ts foo.json bar.d.ts
+# or
+json2ts --input foo.json --output bar.d.ts
+# or
+json2ts -i foo.json -o bar.d.ts
+```
+In case you don't specify output path, results are saved in input directory in `.d.ts` file.
+
 ## Tests
 
 `npm test`
