@@ -6,8 +6,8 @@ import { diff } from './diff'
 import test, { ContextualTestContext } from 'ava'
 import { bold, green, red, white } from 'cli-color'
 import * as fs from 'fs'
-import { find } from 'lodash'
-import * as path from 'path'
+import { find, template } from 'lodash'
+import { join } from 'path'
 
 interface BaseTestCase {
   input: JSONSchema
@@ -83,7 +83,7 @@ function compare(t: ContextualTestContext, caseName: string, a: string, b: strin
 // const dir = __dirname + '/e2e'
 // const modules = fs.readdirSync(dir)
 //   .filter(_ => /^.*\.js$/.test(_))
-//   .map(_ => [_, require(path.join(dir, _))]) as [string, TestCase][]
+//   .map(_ => [_, require(join(dir, _))]) as [string, TestCase][]
 
 // // exporting `const only=true` will only run that test
 // // exporting `const exclude=true` will not run that test
@@ -107,17 +107,22 @@ interface JSONTestCase {
   out: JSONSchema
 }
 
-
 const normalizerDir = `${__dirname}/../../test/normalizer`
 fs.readdirSync(normalizerDir)
   .filter(_ => /^.*\.json$/.test(_))
-  .map(_ => path.join(normalizerDir, _))
+  .map(_ => join(normalizerDir, _))
   .map(_ => [_, require(_) as JSONTestCase])
-  .forEach(([fileName, json]: [string, JSONTestCase]) =>
+  .forEach(([filename, json]: [string, JSONTestCase]) => {
+    const params = { filename }
     test(json.name, t =>
-      compare(t, json.name, toString(normalize(json.in, fileName)), toString(json.out))
+      compare(
+        t,
+        json.name,
+        template(toString(normalize(json.in, filename)))(params),
+        template(toString(json.out))(params)
+      )
     )
-  )
+  })
 
 function toString(json: Object): string {
   return JSON.stringify(json, null, 2)

@@ -55,8 +55,8 @@ function schemaNeedsID(key?: string): boolean {
 
 // - {$ref: '#/'} => {$ref: '#'}
 rules.set('Normalize self-ref', schema => {
-  if (schema.$ref === '#/') {
-    schema.$ref = '#'
+  if (schema.$ref && schema.$ref.endsWith('#/')) {
+    schema.$ref = schema.$ref.replace('#/', '#')
   }
   return schema
 })
@@ -64,11 +64,14 @@ rules.set('Normalize self-ref', schema => {
 // hacky implementation, because we need to preserve context
 //  - "#" -> "file.json/#"
 //  - "#/foo/bar" -> "file.json/foo/bar
-rules.set('Convert relative $refs to absolute', schema => {
+rules.set('Convert relative $refs to absolute', (schema, rootSchema, key, fileName) => {
+  if (schema.$ref && schema.$ref.startsWith('#')) {
+    schema.$ref = fileName + schema.$ref
+  }
   return schema
 })
 
-export function normalize(schema: JSONSchema, fileName?: string): JSONSchema {
+export function normalize(schema: JSONSchema, fileName: string): JSONSchema {
   let _schema = cloneDeep(schema)
   rules.forEach((rule, key) => {
     _schema = mapDeep(_schema, (schema, key) => rule(schema, _schema, key, fileName))

@@ -1,12 +1,16 @@
 {
-  "name": "Normalize self-ref",
+  "name": "Convert relative $refs to absolute",
   "in": {
     "id": "foo",
     "type": ["object"],
     "properties": {
       "a": {
-        "$ref": "<%= filename %>#/",
+        "$ref": "#",
         "id": "a"
+      },
+      "b": {
+        "$ref": "#/properties/b",
+        "id": "b"
       }
     },
     "required": []
@@ -18,6 +22,10 @@
       "a": {
         "$ref": "<%= filename %>#",
         "id": "a"
+      },
+      "b": {
+        "$ref": "<%= filename %>#/properties/b",
+        "id": "b"
       }
     },
     "required": [],
