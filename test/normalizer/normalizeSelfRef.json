@@ -1,0 +1,26 @@
+{
+  "name": "Normalize self-ref",
+  "in": {
+    "id": "foo",
+    "type": ["object"],
+    "properties": {
+      "a": {
+        "$ref": "#/",
+        "id": "a"
+      }
+    },
+    "required": []
+  },
+  "out": {
+    "id": "foo",
+    "type": "object",
+    "properties": {
+      "a": {
+        "$ref": "#",
+        "id": "a"
+      }
+    },
+    "required": [],
+    "additionalProperties": true
+  }
+}

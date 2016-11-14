@@ -1,9 +1,10 @@
 import { JSONSchema } from './JSONSchema'
+import { justName, mapDeep, toSafeString } from './utils'
 import { cloneDeep } from 'lodash'
 
-const rules = new Map<string, (schema: JSONSchema) => JSONSchema>()
+type Rule = (schema: JSONSchema, rootSchema: JSONSchema, key?: string, fileName?: string) => JSONSchema
+const rules = new Map<string, Rule>()
 
-// TODO: less opaque name
 rules.set('Destructure unary types', schema => {
   if (schema.type && Array.isArray(schema.type) && schema.type.length === 1) {
     schema.type = schema.type[0]
@@ -33,16 +34,44 @@ rules.set('Default additionalProperties to true', schema => {
   return schema
 })
 
-// TODO: convert relative refs to absolute:
+// TODO: avoid assigning duplicate IDs
+// TODO: should IDs be full paths?
+let anonymousSchemaIDCounter = 0
+rules.set('Default `id`', (schema, rootSchema, key, fileName) => {
+  if (!schema.id && schemaNeedsID(key)) {
+    if (key) {
+      schema.id = key
+    } else if (fileName) {
+      schema.id = toSafeString(justName(fileName))
+    } else {
+      schema.id = `Interface${anonymousSchemaIDCounter++}`
+    }
+  }
+  return schema
+})
+function schemaNeedsID(key?: string): boolean {
+  return key !== 'definitions' && key !== 'properties'
+}
+
+// - {$ref: '#/'} => {$ref: '#'}
+rules.set('Normalize self-ref', schema => {
+  if (schema.$ref === '#/') {
+    schema.$ref = '#'
+  }
+  return schema
+})
+
+// hacky implementation, because we need to preserve context
 //  - "#" -> "file.json/#"
 //  - "#/foo/bar" -> "file.json/foo/bar
-// TODO: convert {$ref: '#/'} => {$ref: '#'}
+rules.set('Convert relative $refs to absolute', schema => {
+  return schema
+})
 
-// TODO: apply rules recursively
-export function normalize(schema: JSONSchema): JSONSchema {
+export function normalize(schema: JSONSchema, fileName?: string): JSONSchema {
   let _schema = cloneDeep(schema)
   rules.forEach((rule, key) => {
-    _schema = rule(_schema)
+    _schema = mapDeep(_schema, (schema, key) => rule(schema, _schema, key, fileName))
     console.info(`[Normalize] Applied rule: "${key}"`)
   })
   return _schema

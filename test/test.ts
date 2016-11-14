@@ -1,5 +1,6 @@
-import { compile, Options } from '../src/index'
+import { compile, Options } from '../src'
 import { JSONSchema } from '../src/JSONSchema'
+import { normalize } from '../src/normalizer'
 import { stripExtension } from '../src/utils'
 import { diff } from './diff'
 import test, { ContextualTestContext } from 'ava'
@@ -7,22 +8,6 @@ import { bold, green, red, white } from 'cli-color'
 import * as fs from 'fs'
 import { find } from 'lodash'
 import * as path from 'path'
-
-const dir = __dirname + '/cases'
-const modules = fs.readdirSync(dir)
-  .filter(_ => /^.*\.js$/.test(_))
-  .map(_ => [_, require(path.join(dir, _))]) as [string, TestCase][]
-
-// exporting `const only=true` will only run that test
-// exporting `const exclude=true` will not run that test
-const only = find(modules, _ => _[1].only)
-if (only) {
-  run(only[1], only[0])
-} else {
-  modules
-    .filter(_ => !_[1].exclude)
-    .forEach(_ => run(_[1], _[0]))
-}
 
 interface BaseTestCase {
   input: JSONSchema
@@ -89,4 +74,51 @@ function compare(t: ContextualTestContext, caseName: string, a: string, b: strin
   } else {
     t.pass()
   }
+}
+
+
+///////////////////////////    e2e    ///////////////////////////
+
+
+// const dir = __dirname + '/e2e'
+// const modules = fs.readdirSync(dir)
+//   .filter(_ => /^.*\.js$/.test(_))
+//   .map(_ => [_, require(path.join(dir, _))]) as [string, TestCase][]
+
+// // exporting `const only=true` will only run that test
+// // exporting `const exclude=true` will not run that test
+// const only = find(modules, _ => _[1].only)
+// if (only) {
+//   run(only[1], only[0])
+// } else {
+//   modules
+//     .filter(_ => !_[1].exclude)
+//     .forEach(_ => run(_[1], _[0]))
+// }
+
+
+///////////////////////////    normalizer    ///////////////////////////
+
+
+// TODO: port all test cases to this shape
+interface JSONTestCase {
+  name: string
+  in: JSONSchema
+  out: JSONSchema
+}
+
+
+const normalizerDir = `${__dirname}/../../test/normalizer`
+fs.readdirSync(normalizerDir)
+  .filter(_ => /^.*\.json$/.test(_))
+  .map(_ => path.join(normalizerDir, _))
+  .map(_ => [_, require(_) as JSONTestCase])
+  .forEach(([fileName, json]: [string, JSONTestCase]) =>
+    test(json.name, t =>
+      compare(t, json.name, toString(normalize(json.in, fileName)), toString(json.out))
+    )
+  )
+
+function toString(json: Object): string {
+  return JSON.stringify(json, null, 2)
 }

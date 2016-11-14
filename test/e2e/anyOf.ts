@@ -1,3 +1,5 @@
+export const only = true
+
 export const input = {
   "title": "AnyOf",
   "type": "object",

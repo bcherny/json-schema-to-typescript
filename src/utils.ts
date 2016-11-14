@@ -1,5 +1,5 @@
-import { camelCase, isPlainObject, upperFirst } from 'lodash'
-import { basename } from 'path'
+import { camelCase, isPlainObject, mapValues, upperFirst } from 'lodash'
+import { basename, extname } from 'path'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -21,16 +21,37 @@ export function dft<T, U>(object: { [k: string]: any }, cb: (value: U, key: stri
   }
 }
 
+export function mapDeep<T, U>(
+  object: Obj<T>,
+  fn: (value: Obj<T>, key?: string) => Obj<U>,
+  key?: string
+): Obj<U> {
+  return fn(mapValues(object, (_, key) =>
+    isPlainObject(_) ? mapDeep(_, fn, key) : _
+  ), key)
+}
+
+export type Obj<T> = { [k: string]: T }
+
+/**
+ * Eg. `foo/bar/baz.json` => `baz`
+ */
+export function justName(filename: string): string {
+  return stripExtension(basename(filename))
+}
+
 /**
  * Avoid appending "Js" to top-level unnamed schemas
  */
 export function stripExtension(filename: string): string {
-  return basename(filename, '.js')
+  return filename.replace(extname(filename), '')
 }
 
 /**
  * Convert a string that might contain spaces or special characters to one that
- * can safely be used as a TypeScript interface or enum name
+ * can safely be used as a TypeScript interface or enum name.
+ *
+ * TODO: be non-destructive for caps (eg. "fooBAR" is ok, and shouldn't be converted to "fooBar")
  */
 export function toSafeString(string: string) {
   return upperFirst(camelCase(string))

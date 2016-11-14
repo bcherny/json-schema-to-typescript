@@ -167,13 +167,43 @@ function parseSchemaSchema(
 
 function resolveReference(
   $ref: string,
-  rootSchema: JSONSchema,
-  definitions: Map<string, TEnum | TInterface>,
-  context: AST[]
+  rootSchema: JSONSchema
+  // definitions: Map<string, TEnum | TInterface>,
+  // context: AST[]
 ): JSONSchema {
-  // if ($ref === '#') {
-  //   return
-  // }
+  const [schemaId, path] = $ref.split('#')
+  const schema = schemaId === rootSchema.id
+    ? rootSchema
+    : resolveSchema(schemaId)
+
+  console.log('schema', schema)
+  return resolvePath(schema, path.split('/').slice(1))
+}
+
+function resolvePath(schema: JSONSchema, path: string[]): JSONSchema {
+  switch (path.length) {
+    case 0: return schema
+    default:
+
+      // TODO: move to validator
+      if (!(path[0] in schema)) {
+        throw new ReferenceError(`Referenced path "${path.join('/')}" does not exist in schema`)
+      }
+
+      return resolvePath(schema[path[0]], path.slice(1))
+  }
+}
+
+// TODO
+// TODO: use BigstickCarpet/json-schema-ref-parser
+function resolveSchema(schemaId: string): Promise<JSONSchema> {
+  if (schemaId.startsWith('http://') || schemaId.startsWith('https://')) {
+    throw new ReferenceError(`Error resolving schema "${schemaId}" - HTTP schemas are not yet supported!`)
+  }
+
+  if (schemaId) {
+    throw new ReferenceError(`Error resolving schema "${schemaId}" - external file schemas are not yet supported!`)
+  }
 }
 
 function resolveExistingReference(

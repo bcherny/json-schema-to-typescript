@@ -1,0 +1,43 @@
+{
+  "name": "Default `id` for unnamed schemas",
+  "in": {
+    "friend": {
+      "properties": {
+        "knowsFrom": {
+          "enum": ["work", "school", "other"]
+        }
+      },
+      "additionalProperties": true,
+      "required": []
+    },
+    "properties": {
+      "firstName": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": true,
+    "required": ["firstName"]
+  },
+  "out": {
+    "friend": {
+      "properties": {
+        "knowsFrom": {
+          "enum": ["work", "school", "other"],
+          "id": "knowsFrom"
+        }
+      },
+      "additionalProperties": true,
+      "required": [],
+      "id": "friend"
+    },
+    "properties": {
+      "firstName": {
+        "type": "string",
+        "id": "firstName"
+      }
+    },
+    "additionalProperties": true,
+    "required": ["firstName"],
+    "id": "DefaultId"
+  }
+}
