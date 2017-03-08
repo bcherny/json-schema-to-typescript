@@ -23,6 +23,6 @@ export interface ExampleSchema {
   /**
    * Array of authorized user ids.
    */
-  users?: UserIdArray;
+  "users"?: UserIdArray;
   [k: string]: any;
 }`

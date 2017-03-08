@@ -39,13 +39,13 @@ Input:
 Output:
 ```ts
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  "firstName": string;
+  "lastName": string;
   /**
    * Age in years
    */
-  age?: number;
-  hairColor?: "black" | "brown" | "blue";
+  "age"?: number;
+  "hairColor"?: "black" | "brown" | "blue";
 }
 ```
 

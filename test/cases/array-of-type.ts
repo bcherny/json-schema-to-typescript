@@ -24,8 +24,8 @@ export var schema = {
 }
 
 export var types =  `export interface ArrayOfType {
-  foo?: string[];
-  bar?: string[];
-  baz?: (string | number)[];
+  "foo"?: string[];
+  "bar"?: string[];
+  "baz"?: (string | number)[];
   [k: string]: any;
 }`

@@ -17,7 +17,7 @@ export var types = `/**
  * My cool schema
  */
 export interface ExampleSchema {
-  value: number | string;
-  anotherValue?: null | string;
+  "value": number | string;
+  "anotherValue"?: null | string;
   [k: string]: any;
 }`

@@ -162,46 +162,46 @@ export type SimpleTypes = "array" | "boolean" | "integer" | "null" | "number" | 
  * Core schema meta-schema
  */
 export interface HttpJsonSchemaOrgDraft04Schema {
-  id?: string;
-  $schema?: string;
-  title?: string;
-  description?: string;
-  default?: any;
-  multipleOf?: number;
-  maximum?: number;
-  exclusiveMaximum?: boolean;
-  minimum?: number;
-  exclusiveMinimum?: boolean;
-  maxLength?: PositiveInteger;
-  minLength?: PositiveIntegerDefault0;
-  pattern?: string;
-  additionalItems?: boolean | HttpJsonSchemaOrgDraft04Schema;
-  items?: HttpJsonSchemaOrgDraft04Schema | SchemaArray;
-  maxItems?: PositiveInteger;
-  minItems?: PositiveIntegerDefault0;
-  uniqueItems?: boolean;
-  maxProperties?: PositiveInteger;
-  minProperties?: PositiveIntegerDefault0;
-  required?: StringArray;
-  additionalProperties?: boolean | HttpJsonSchemaOrgDraft04Schema;
-  definitions?: {
+  "id"?: string;
+  "$schema"?: string;
+  "title"?: string;
+  "description"?: string;
+  "default"?: any;
+  "multipleOf"?: number;
+  "maximum"?: number;
+  "exclusiveMaximum"?: boolean;
+  "minimum"?: number;
+  "exclusiveMinimum"?: boolean;
+  "maxLength"?: PositiveInteger;
+  "minLength"?: PositiveIntegerDefault0;
+  "pattern"?: string;
+  "additionalItems"?: boolean | HttpJsonSchemaOrgDraft04Schema;
+  "items"?: HttpJsonSchemaOrgDraft04Schema | SchemaArray;
+  "maxItems"?: PositiveInteger;
+  "minItems"?: PositiveIntegerDefault0;
+  "uniqueItems"?: boolean;
+  "maxProperties"?: PositiveInteger;
+  "minProperties"?: PositiveIntegerDefault0;
+  "required"?: StringArray;
+  "additionalProperties"?: boolean | HttpJsonSchemaOrgDraft04Schema;
+  "definitions"?: {
     [k: string]: HttpJsonSchemaOrgDraft04Schema;
   };
-  properties?: {
+  "properties"?: {
     [k: string]: HttpJsonSchemaOrgDraft04Schema;
   };
-  patternProperties?: {
+  "patternProperties"?: {
     [k: string]: HttpJsonSchemaOrgDraft04Schema;
   };
-  dependencies?: {
+  "dependencies"?: {
     [k: string]: HttpJsonSchemaOrgDraft04Schema | StringArray;
   };
-  enum?: any[];
-  type?: SimpleTypes | SimpleTypes[];
-  allOf?: SchemaArray;
-  anyOf?: SchemaArray;
-  oneOf?: SchemaArray;
-  not?: HttpJsonSchemaOrgDraft04Schema;
+  "enum"?: any[];
+  "type"?: SimpleTypes | SimpleTypes[];
+  "allOf"?: SchemaArray;
+  "anyOf"?: SchemaArray;
+  "oneOf"?: SchemaArray;
+  "not"?: HttpJsonSchemaOrgDraft04Schema;
   [k: string]: any;
 }`
     }

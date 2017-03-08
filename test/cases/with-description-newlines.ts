@@ -26,12 +26,12 @@ export interface ExampleSchema {
   /**
    * first name single line description
    */
-  firstName: string;
-  lastName: string;
+  "firstName": string;
+  "lastName": string;
   /**
    * Age description with
    * multiple lines
    */
-  age?: number;
+  "age"?: number;
   [k: string]: any;
 }`

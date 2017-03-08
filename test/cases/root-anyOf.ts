@@ -28,15 +28,15 @@ export var schema = {
 }
 
 export var types = `export interface Foo {
-  a: string;
-  b?: number;
+  "a": string;
+  "b"?: number;
 }
 export interface Bar {
-  a?: "a" | "b" | "c";
+  "a"?: "a" | "b" | "c";
   [k: string]: any;
 }
 export interface Baz {
-  baz?: Bar;
+  "baz"?: Bar;
   [k: string]: any;
 }
 export type RootAnyOf = Foo | Bar | Baz;`
