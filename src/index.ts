@@ -321,3 +321,5 @@ function tryFn<T>(fn: () => T, err: (e: Error) => any): T {
     return err(e as Error)
   }
 }
+
+export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
