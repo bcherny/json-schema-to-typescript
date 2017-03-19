@@ -1,5 +1,5 @@
-import { Settings } from './index'
 import { camelCase, upperFirst } from 'lodash'
+import { Settings } from './index'
 
 const COMMENT_START  = '/**'
 const COMMENT_INDENT = ' * '

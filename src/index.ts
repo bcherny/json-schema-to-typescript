@@ -1,8 +1,8 @@
-import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
-import * as TsType from './TsTypes'
 import { readFile, readFileSync } from 'fs'
 import { get, isPlainObject, last, map, merge, zip } from 'lodash'
 import { join, parse, ParsedPath, resolve } from 'path'
+import { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './JSONSchema'
+import * as TsType from './TsTypes'
 
 enum RuleType {
   Any, TypedArray, Enum, AllOf, AnyOf, Reference, NamedSchema, AnonymousSchema,
