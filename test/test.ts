@@ -18,7 +18,7 @@ if (only) {
 } else {
   modules
     .filter(_ => !_[1].exclude)
-    .forEach(_ => run(_[1], _[0]))
+    .forEach(_ => run(_[1], path.resolve(__dirname, _[0])))
 }
 
 interface TestCase {

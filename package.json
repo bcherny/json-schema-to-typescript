@@ -1,6 +1,6 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "compile json schema to typescript typings",
   "main": "dist/index.js",
   "bin": {
@@ -39,19 +39,19 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "lodash": "^4.6.1",
+    "lodash": "^4.17.4",
     "minimist": "^1.2.0",
-    "mz": "^2.4.0",
+    "mz": "^2.6.0",
     "stdin": "0.0.1"
   },
   "devDependencies": {
-    "@types/lodash": "0.0.28",
-    "@types/minimist": "^1.1.29",
+    "@types/lodash": "4.14.55",
+    "@types/minimist": "^1.2.0",
     "@types/mz": "0.0.30",
-    "@types/node": "^4.0.30",
-    "ava": "^0.16.0",
-    "tslint": "^3.15.1",
-    "typescript": "^2.0.0"
+    "@types/node": "^7.0.8",
+    "ava": "^0.18.2",
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1"
   },
   "ava": {
     "files": [

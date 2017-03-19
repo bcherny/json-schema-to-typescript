@@ -38,53 +38,53 @@ export interface TsProp<T> {
   type: TsType<T>
 }
 
-export class Any extends TsType<void> {
+export class TAny extends TsType<void> {
   constructor() { super(undefined) }
   toString() {
     return 'any'
   }
 }
-export class String extends TsType<void> {
+export class TString extends TsType<void> {
   constructor() { super(undefined) }
   toString() {
     return 'string'
   }
 }
-export class Boolean extends TsType<void> {
+export class TBoolean extends TsType<void> {
   constructor() { super(undefined) }
   toString() {
     return 'boolean'
   }
 }
-export class Number extends TsType<void> {
+export class TNumber extends TsType<void> {
   constructor() { super(undefined) }
   toString() {
     return 'number'
   }
 }
-export class Object extends TsType<void> {
+export class TObject extends TsType<void> {
   constructor() { super(undefined) }
   toString() {
     return 'Object'
   }
 }
-export class Null extends TsType<void> {
+export class TNull extends TsType<void> {
   constructor() { super(undefined) }
   toString() {
     return 'null'
   }
 }
-export class Literal<T> extends TsType<T> {
+export class TLiteral<T> extends TsType<T> {
   toString() {
     return JSON.stringify(this.value)
   }
 }
 
-export class Reference extends TsType<string> {
+export class TReference extends TsType<string> {
   toString() { return this.value }
 }
 
-export class EnumValue extends TsType<string> {
+export class TEnumValue extends TsType<string> {
   identifier: string
   value: string
 
@@ -104,8 +104,8 @@ export class EnumValue extends TsType<string> {
   }
 }
 
-export class Enum extends TsType<EnumValue[]> {
-  constructor(public id: string, value: EnumValue[]) {
+export class TEnum extends TsType<TEnumValue[]> {
+  constructor(public id: string, value: TEnumValue[]) {
     super(value)
   }
   isSimpleType() { return false }
@@ -123,25 +123,25 @@ export class Enum extends TsType<EnumValue[]> {
   }
 }
 
-export class Array extends TsType<TsType<any>> {
-  constructor(value: TsType<any> = new Any) { super(value) }
+export class TArray extends TsType<TsType<any>> {
+  constructor(value: TsType<any> = new TAny) { super(value) }
   toString(settings: Settings) {
     const type = this.value.toType(settings)
     return `${type.indexOf('|') > -1 || type.indexOf('&') > -1 ? `(${type})` : type}[]` // hacky
   }
 }
 
-export class Intersection<T> extends TsType<TsType<T>[]> {
+export class TIntersection<T> extends TsType<TsType<T>[]> {
   isSimpleType() { return this.value.length <= 1 }
   toString(settings: Settings) {
     return this.value
-      .filter(_ => !(_ instanceof Null))
+      .filter(_ => !(_ instanceof TNull))
       .map(_ => _.toType(settings))
       .join(' & ')
   }
 }
 
-export class Union<T> extends TsType<TsType<T>[]> {
+export class TUnion<T> extends TsType<TsType<T>[]> {
   isSimpleType() { return this.value.length <= 1 }
   toString(settings: Settings) {
     return this.value
@@ -150,9 +150,9 @@ export class Union<T> extends TsType<TsType<T>[]> {
   }
 }
 
-export class Interface extends TsType<TsProp<any>[]> {
+export class TInterface extends TsType<TsProp<any>[]> {
   static reference(id: string) {
-    let ret = new Interface([])
+    let ret = new TInterface([])
     ret.id = id
     return ret
   }

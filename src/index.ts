@@ -46,7 +46,7 @@ class Compiler {
     this.namedEnums = new Map
     this.id = schema.title || schema.id || this.filePath.name || 'Interface1'
     this.settings = Object.assign({}, Compiler.DEFAULT_SETTINGS, settings)
-    this.declareType(this.toTsType(this.schema, '', true) as TsType.Interface, this.id, this.id)
+    this.declareType(this.toTsType(this.schema, '', true) as TsType.TInterface, this.id, this.id)
   }
 
   toString(): string {
@@ -62,7 +62,7 @@ class Compiler {
   private settings: Settings
   private id: string
   private declarations: Map<string, TsType.TsType<any>>
-  private namedEnums: Map<string, TsType.Enum>
+  private namedEnums: Map<string, TsType.TEnum>
   private filePath: ParsedPath
 
   private isRequired(propertyName: string, schema: JSONSchema): boolean {
@@ -130,17 +130,14 @@ class Compiler {
     return /^[\d\.]+$/.test(a)
   }
 
-  private resolveRefFromLocalFS<T>(refPath: string, propName: string): TsType.Reference {
+  private resolveRefFromLocalFS<T>(refPath: string, propName: string): TsType.TReference {
     const fullPath = resolve(join(this.filePath.dir, refPath))
 
     if (fullPath.startsWith('http')) {
       throw new ReferenceError('Remote http references are not yet supported.  Could not read ' + fullPath)
     }
 
-    const file = tryFn(
-      () => readFileSync(fullPath),
-      () => { throw new ReferenceError(`Unable to find referenced file "${fullPath}"`) }
-    )
+    const file = readFileSync(fullPath)
     const contents = tryFn(
       () => JSON.parse(file.toString()),
       () => { throw new TypeError(`Referenced local schema "${fullPath}" contains malformed JSON`) }
@@ -151,17 +148,17 @@ class Compiler {
       : parse(fullPath).name
 
     if (this.settings.declareReferenced) {
-      this.declareType(targetType as TsType.Interface, id, id)
+      this.declareType(targetType as TsType.TInterface, id, id)
     }
 
-    return new TsType.Reference(id)
+    return new TsType.TReference(id)
   }
 
   // eg. "#/definitions/diskDevice" => ["definitions", "diskDevice"]
   // only called in case of a $ref type
   private resolveRef(refPath: string, propName: string): TsType.TsType<any> {
     if (refPath === '#' || refPath === '#/'){
-      return TsType.Interface.reference(this.id)
+      return TsType.TInterface.reference(this.id)
     }
 
     if (refPath[0] !== '#'){
@@ -179,12 +176,12 @@ class Compiler {
     // resolve from elsewhere in the schema
     const type = this.toTsType(get(this.schema, parts.join('.')))
     if (this.settings.declareReferenced || !type.isSimpleType()) {
-      this.declareType(type as TsType.Interface, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
+      this.declareType(type as TsType.TInterface, parts.join('/'), this.settings.useFullReferencePathAsName ? parts.join('/') : last(parts))
     }
     return type
   }
 
-  private declareType(type: TsType.Interface, refPath: string, id: string) {
+  private declareType(type: TsType.TInterface, refPath: string, id: string) {
     type.id = id
     this.declarations.set(refPath, type)
     return type
@@ -201,40 +198,40 @@ class Compiler {
         return this.toTsDeclaration(rule)
 
       case RuleType.Enum:
-        return new TsType.Union(
-          (rule as EnumJSONSchema).enum.map(_ => new TsType.Literal(_))
+        return new TsType.TUnion(
+          (rule as EnumJSONSchema).enum.map(_ => new TsType.TLiteral(_))
         )
 
       case RuleType.NamedEnum:
         Compiler.validateNamedEnum(rule as NamedEnumJSONSchema)
 
         const name = this.generateEnumName(rule, propName)
-        const tsEnum = new TsType.Enum(name,
+        const tsEnum = new TsType.TEnum(name,
           zip(
             (rule as NamedEnumJSONSchema).tsEnumNames,
             (rule as NamedEnumJSONSchema).enum
-          ).map(_ => new TsType.EnumValue(_))
+          ).map(_ => new TsType.TEnumValue(_))
         )
         this.namedEnums.set(name, tsEnum)
         return tsEnum
 
-      case RuleType.Any: return new TsType.Any
-      case RuleType.Literal: return new TsType.Literal(rule)
-      case RuleType.TypedArray: return new TsType.Array(this.toTsType(rule.items!))
-      case RuleType.Array: return new TsType.Array
-      case RuleType.Boolean: return new TsType.Boolean
-      case RuleType.Null: return new TsType.Null
-      case RuleType.Number: return new TsType.Number
-      case RuleType.Object: return new TsType.Object
-      case RuleType.String: return new TsType.String
+      case RuleType.Any: return new TsType.TAny
+      case RuleType.Literal: return new TsType.TLiteral(rule)
+      case RuleType.TypedArray: return new TsType.TArray(this.toTsType(rule.items!))
+      case RuleType.Array: return new TsType.TArray
+      case RuleType.Boolean: return new TsType.TBoolean
+      case RuleType.Null: return new TsType.TNull
+      case RuleType.Number: return new TsType.TNumber
+      case RuleType.Object: return new TsType.TObject
+      case RuleType.String: return new TsType.TString
       case RuleType.AllOf:
-        return new TsType.Intersection(rule.allOf!.map(_ => this.toTsType(_)))
+        return new TsType.TIntersection(rule.allOf!.map(_ => this.toTsType(_)))
       case RuleType.AnyOf:
-        return new TsType.Union(rule.anyOf!.map(_ => this.toTsType(_)))
+        return new TsType.TUnion(rule.anyOf!.map(_ => this.toTsType(_)))
       case RuleType.Reference:
         return this.resolveRef(rule.$ref!, propName!)
       case RuleType.Union:
-        return new TsType.Union((rule.type as any[]).map(_ => this.toTsType({ type: _ })))
+        return new TsType.TUnion((rule.type as any[]).map(_ => this.toTsType({ type: _ })))
     }
     throw new Error('Unknown rule:' + rule.toString())
   }
@@ -263,7 +260,7 @@ class Compiler {
     type.description = type.description || rule.description
     return type
   }
-  private toTsDeclaration(schema: JSONSchema): TsType.Interface | TsType.Null {
+  private toTsDeclaration(schema: JSONSchema): TsType.TInterface | TsType.TNull {
     const copy = merge({}, Compiler.DEFAULT_SCHEMA, schema)
     const props = map(
       copy.properties!,
@@ -276,20 +273,20 @@ class Compiler {
       })
     if (props.length === 0 && !('additionalProperties' in schema)) {
       if ('default' in schema)
-        return new TsType.Null
+        return new TsType.TNull
     }
     if (this.supportsAdditionalProperties(copy)) {
       const short = copy.additionalProperties === true
       if (short && props.length === 0)
-        return new TsType.Any
-      const type = short ? new TsType.Any : this.toTsType(copy.additionalProperties as JSONSchema)
+        return new TsType.TAny
+      const type = short ? new TsType.TAny : this.toTsType(copy.additionalProperties as JSONSchema)
       props.push({
         name: '[k: string]',
         required: true,
         type
       } as any) // TODO: fix type
     }
-    return new TsType.Interface(props)
+    return new TsType.TInterface(props)
   }
 }
 
