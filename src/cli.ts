@@ -52,7 +52,7 @@ function readInput(): Promise<string> {
     return new Promise(stdin)
   }
 
-  return readFile(argIn)
+  return readFile(argIn, { encoding: 'utf-8' })
 }
 
 function writeOutput(compiled: string): Promise<void> {
