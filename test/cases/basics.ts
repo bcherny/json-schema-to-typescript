@@ -29,15 +29,15 @@ export var schema = {
 export var configurations = [
   {
     types: `export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  "firstName": string;
+  "lastName": string;
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: any[];
-  likesDogs?: boolean;
+  "age"?: number;
+  "height"?: number;
+  "favoriteFoods"?: any[];
+  "likesDogs"?: boolean;
   [k: string]: any;
 }`
   }

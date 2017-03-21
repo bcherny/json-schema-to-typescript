@@ -61,16 +61,16 @@ export${useConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
   Six = 6
 }
 export interface Enum {
-  stringEnum: "a" | "b" | "c";
-  impliedStringEnum: "a" | "b" | "c";
-  booleanEnum: true;
-  impliedBooleanEnum: true;
-  integerEnum: -1 | 0 | 1;
-  impliedIntegerEnum: -1 | 0 | 1;
-  numberEnum?: -1.1 | 0 | 1.2;
-  namedIntegerEnum?: NamedIntegerEnum;
-  impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
-  impliedHeterogeneousEnum?: -20.1 | null | "foo" | false;
+  "stringEnum": "a" | "b" | "c";
+  "impliedStringEnum": "a" | "b" | "c";
+  "booleanEnum": true;
+  "impliedBooleanEnum": true;
+  "integerEnum": -1 | 0 | 1;
+  "impliedIntegerEnum": -1 | 0 | 1;
+  "numberEnum"?: -1.1 | 0 | 1.2;
+  "namedIntegerEnum"?: NamedIntegerEnum;
+  "impliedNamedIntegerEnum": ImpliedNamedIntegerEnum;
+  "impliedHeterogeneousEnum"?: -20.1 | null | "foo" | false;
 }`
   }
 })

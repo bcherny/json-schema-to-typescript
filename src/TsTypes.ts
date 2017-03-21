@@ -162,7 +162,7 @@ export class TInterface extends TsType<TsProp<any>[]> {
       `${INDENT_STRING}${_.type.description
         ? generateComment(_.type.description).join(`\n${INDENT_STRING}`) + `\n${INDENT_STRING}`
         : ''
-      }${_.name}${_.required ? '' : '?'}: ${
+      }${'[k: string]' === _.name ? _.name : JSON.stringify(_.name)}${_.required ? '' : '?'}: ${
         _.type.toType(settings).replace(/\n/g, '\n' + INDENT_STRING) // ghetto nested indents
       }${
         settings.endPropertyWithSemicolon ? ';' : ''

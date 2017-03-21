@@ -19,10 +19,10 @@ export var schema = {
 }
 
 export var types = `export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  "firstName": string;
+  "lastName": string;
   /**
    * Age in years
    */
-  age?: number;
+  "age"?: number;
 }`

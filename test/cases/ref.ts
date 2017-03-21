@@ -17,19 +17,19 @@ export var configurations = [
       declareReferenced: true
     },
     types: `export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  "firstName": string;
+  "lastName": string;
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: any[];
-  likesDogs?: boolean;
+  "age"?: number;
+  "height"?: number;
+  "favoriteFoods"?: any[];
+  "likesDogs"?: boolean;
   [k: string]: any;
 }
 export interface Referencing {
-  foo: ExampleSchema;
+  "foo": ExampleSchema;
 }`
   },
   {
@@ -37,7 +37,7 @@ export interface Referencing {
       declareReferenced: false
     },
     types: `export interface Referencing {
-  foo: ExampleSchema;
+  "foo": ExampleSchema;
 }`
   }
 ]

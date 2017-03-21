@@ -22,11 +22,11 @@ export var types = `/**
  * My cool schema
  */
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  "firstName": string;
+  "lastName": string;
   /**
    * Age in years
    */
-  age?: number;
+  "age"?: number;
   [k: string]: any;
 }`
