@@ -5,7 +5,7 @@
     "noImplicitAny": true,
     "preserveConstEnums": true,
     "outDir": "dist",
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "target": "es6",
     "lib": [

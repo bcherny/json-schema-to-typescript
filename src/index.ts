@@ -1,9 +1,9 @@
+import { readFileSync } from 'fs'
 import { generate } from './generator'
-import { JSONSchema } from './JSONSchema'
 import { normalize } from './normalizer'
 import { parse } from './parser'
+import { JSONSchema } from './types/JSONSchema'
 import { stripExtension, Try } from './utils'
-import { readFileSync } from 'fs'
 
 export interface Options {
   enableConstEnums: boolean

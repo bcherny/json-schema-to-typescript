@@ -1,6 +1,6 @@
-import { JSONSchema } from './JSONSchema'
-import { justName, mapDeep, toSafeString } from './utils'
 import { cloneDeep } from 'lodash'
+import { JSONSchema } from './types/JSONSchema'
+import { justName, mapDeep, toSafeString } from './utils'
 
 type Rule = (schema: JSONSchema, rootSchema: JSONSchema, key?: string, fileName?: string) => JSONSchema
 const rules = new Map<string, Rule>()

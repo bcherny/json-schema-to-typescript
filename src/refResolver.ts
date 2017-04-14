@@ -1,4 +1,4 @@
-import { JSONSchema } from './JSONSchema'
+import { JSONSchema } from './types/JSONSchema'
 import { dft, Try } from './utils'
 import { readFileSync } from 'fs'
 import { uniq } from 'lodash'

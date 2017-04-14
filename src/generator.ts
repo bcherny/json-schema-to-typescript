@@ -1,5 +1,5 @@
 import { DEFAULT_OPTIONS, Options } from './index'
-import { AST, TArray, TEnum, TInterface, TIntersection, TLiteral, TTuple, TUnion } from './parser'
+import { AST, TArray, TEnum, TInterface, TIntersection, TLiteral, TTuple, TUnion, hasComment, ASTWithName } from './types/AST'
 import { toSafeString } from './utils'
 
 // TODO: call for referenced types
@@ -16,7 +16,7 @@ function declareEnums(ast: AST, options: Options): string[] {
   }
   if (ast.type === 'INTERFACE') {
     return (ast as TInterface).params
-      .reduce((prev, cur) => prev.concat(declareEnums(cur, options)), [])
+      .reduce<string[]>((prev, cur) => prev.concat(declareEnums(cur, options)), [])
       .filter(Boolean)
   }
   return []
@@ -55,7 +55,7 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
 }
 
 function generateEnum(ast: TEnum, options: Options): string {
-  return (ast.comment ? generateComment(ast.comment, options, 0) : '')
+  return (hasComment(ast) ? generateComment(ast.comment, options, 0) : '')
     + 'export ' + (options.enableConstEnums ? 'const ' : '') + `enum ${toSafeString(ast.name)} {`
     + '\n'
     + ast.params.map(_ =>
@@ -71,13 +71,13 @@ function generateEnum(ast: TEnum, options: Options): string {
 }
 
 function generateInterface(ast: TInterface, options: Options): string {
-  return (ast.comment ? generateComment(ast.comment, options, 0) : '')
+  return (hasComment(ast) ? generateComment(ast.comment, options, 0) : '')
     + `export interface ${toSafeString(ast.name)} {`
     + '\n'
     + ast.params
         .map(_ => [_, generateType(_, options)])
-        .map(([ast, type]: [AST, string]) =>
-          (ast.comment ? generateComment(ast.comment, options, 1) : '')
+        .map(([ast, type]: [ASTWithName, string]) =>
+          (hasComment(ast) ? generateComment(ast.comment, options, 1) : '')
             + options.indentWith
             + ast.name
             + (ast.isRequired ? '' : '?')

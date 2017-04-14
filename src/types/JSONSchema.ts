@@ -1,3 +1,7 @@
+export type SCHEMA_TYPE = 'ALL_OF' | 'UNNAMED_SCHEMA' | 'ANY' | 'ANY_OF' | 'BOOLEAN'
+  | 'LITERAL' | 'NAMED_ENUM' | 'NAMED_SCHEMA' | 'NULL' | 'NUMBER' | 'STRING' | 'OBJECT'
+  | 'TYPED_ARRAY' | 'REFERENCE' | 'UNION' | 'UNNAMED_ENUM' | 'UNTYPED_ARRAY'
+
 /**
  * @see https://tools.ietf.org/html/draft-zyp-json-schema-03#section-5.1
  */
@@ -12,7 +16,7 @@ export type Type = any[] | boolean | number | null | Object | string
  * JSON Schema V4
  * @see https://tools.ietf.org/html/draft-zyp-json-schema-04
  */
-export interface JSONSchema {
+export interface JSONSchema extends Object {
   id?: string
   $ref?: string
   $schema?: 'http://json-schema.org/schema#' | 'http://json-schema.org/hyper-schema#' | 'http://json-schema.org/draft-04/schema#' | 'http://json-schema.org/draft-04/hyper-schema#' | 'http://json-schema.org/draft-03/schema#' | 'http://json-schema.org/draft-03/hyper-schema#' | string
@@ -192,17 +196,40 @@ export interface JSONSchema {
   [k: string]: any
 }
 
-export interface EnumJSONSchema extends JSONSchema {
+export interface NormalizedJSONSchema extends JSONSchema {
+  additionalItems?: boolean | NormalizedJSONSchema
+  additionalProperties: boolean | NormalizedJSONSchema
+  items?: NormalizedJSONSchema | NormalizedJSONSchema[]
+  definitions?: {
+    [k: string]: NormalizedJSONSchema
+  }
+  properties?: {
+    [k: string]: NormalizedJSONSchema
+  }
+  patternProperties?: {
+    [k: string]: NormalizedJSONSchema
+  }
+  dependencies?: {
+    [k: string]: NormalizedJSONSchema | string[]
+  }
+  allOf?: NormalizedJSONSchema[]
+  anyOf?: NormalizedJSONSchema[]
+  oneOf?: NormalizedJSONSchema[]
+  not?: NormalizedJSONSchema
+  required: string[]
+}
+
+export interface EnumJSONSchema extends NormalizedJSONSchema {
   enum: any[]
 }
 
-export interface NamedEnumJSONSchema extends EnumJSONSchema {
+export interface NamedEnumJSONSchema extends NormalizedJSONSchema {
   tsEnumNames: string[]
 }
 
-export interface SchemaSchema extends JSONSchema {
+export interface SchemaSchema extends NormalizedJSONSchema {
   properties: {
-    [k: string]: JSONSchema
+    [k: string]: NormalizedJSONSchema
   }
   required: string[]
 }

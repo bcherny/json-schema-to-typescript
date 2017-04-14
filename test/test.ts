@@ -1,13 +1,13 @@
-import { compile, Options } from '../src'
-import { JSONSchema } from '../src/JSONSchema'
-import { normalize } from '../src/normalizer'
-import { stripExtension } from '../src/utils'
-import { diff } from './diff'
-import test, { ContextualTestContext } from 'ava'
+import test, { AssertContext } from 'ava'
 import { bold, green, red, white } from 'cli-color'
 import * as fs from 'fs'
 import { find, template } from 'lodash'
 import { join } from 'path'
+import { compile, Options } from '../src'
+import { normalize } from '../src/normalizer'
+import { JSONSchema } from '../src/types/JSONSchema'
+import { stripExtension } from '../src/utils'
+import { diff } from './diff'
 
 interface BaseTestCase {
   input: JSONSchema
@@ -53,7 +53,7 @@ function isMultiTestCase(exports: TestCase): exports is MultiTestCase {
   return 'outputs' in exports
 }
 
-function compare(t: ContextualTestContext, caseName: string, a: string, b: string) {
+function compare(t: AssertContext, caseName: string, a: string, b: string) {
   if (a !== b) {
     console.log(
       '\n',
@@ -76,9 +76,7 @@ function compare(t: ContextualTestContext, caseName: string, a: string, b: strin
   }
 }
 
-
 ///////////////////////////    e2e    ///////////////////////////
-
 
 // const dir = __dirname + '/e2e'
 // const modules = fs.readdirSync(dir)
@@ -96,9 +94,7 @@ function compare(t: ContextualTestContext, caseName: string, a: string, b: strin
 //     .forEach(_ => run(_[1], _[0]))
 // }
 
-
 ///////////////////////////    normalizer    ///////////////////////////
-
 
 // TODO: port all test cases to this shape
 interface JSONTestCase {
