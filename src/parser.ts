@@ -1,7 +1,9 @@
+import { whiteBright } from 'cli-color'
 import { map } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
-import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TEnum, TInterface, ASTWithName } from './types/AST'
+import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, ASTWithName } from './types/AST'
 import { NormalizedJSONSchema, SchemaSchema, SimpleType } from './types/JSONSchema'
+import { log } from "./utils";
 
 export function parse(
   schema: NormalizedJSONSchema,
@@ -9,6 +11,7 @@ export function parse(
   rootSchema: NormalizedJSONSchema = schema,
   isRequired = false
 ): AST {
+  log(whiteBright.bgMagenta('parser'), schema)
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       // TODO: support schema.properties
@@ -92,6 +95,7 @@ function resolveReference(
   // definitions: Map<string, TEnum | TInterface>,
   // context: AST[]
 ): NormalizedJSONSchema {
+  log('resolveReference', $ref)
   const [schemaId, path] = $ref.split('#')
   const schema = schemaId === rootSchema.id
     ? rootSchema

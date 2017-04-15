@@ -1,6 +1,7 @@
+import { whiteBright } from 'cli-color'
 import { DEFAULT_OPTIONS, Options } from './index'
-import { AST, TArray, TEnum, TInterface, TIntersection, TLiteral, TTuple, TUnion, hasComment, ASTWithName } from './types/AST'
-import { toSafeString } from './utils'
+import { AST, ASTWithName, hasComment, TArray, TEnum, TInterface, TIntersection, TLiteral, TTuple, TUnion } from './types/AST'
+import { log, toSafeString } from './utils'
 
 // TODO: call for referenced types
 // TODO: use discriminated union types to prevent asserts
@@ -27,6 +28,7 @@ function declareNamedInterfaces(ast: AST, options: Options): string {
 }
 
 function generateType(ast: AST, options: Options): string {
+  log(whiteBright.bgBlue('generator'), ast)
   switch (ast.type) {
     case 'ANY': return 'any'
     case 'ARRAY': return generateType((ast as TArray).params, options) + '[]'
@@ -37,8 +39,8 @@ function generateType(ast: AST, options: Options): string {
     case 'LITERAL': return JSON.stringify((ast as TLiteral).params)
     case 'NUMBER': return 'number'
     case 'NULL': return 'null'
-    // case 'OBJECT'
-    // case 'REFERENCE'
+    case 'OBJECT': return 'object'
+    case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
     case 'TUPLE': return '[' + (ast as TTuple).params.map(_ => generateType(_, options)).join(', ') + ']'
     case 'UNION': return generateSetOperation(ast as TUnion, options)
@@ -93,6 +95,7 @@ function generateInterface(ast: TInterface, options: Options): string {
 }
 
 function generateComment(comment: string, options: Options, indentDepth: number): string {
+  log('generateComment', comment)
   return options.indentWith.repeat(indentDepth)
     + [
         '/**',

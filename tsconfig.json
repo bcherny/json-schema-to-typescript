@@ -1,18 +1,21 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "preserveConstEnums": true,
-    "outDir": "dist",
     "declaration": false,
-    "sourceMap": true,
-    "target": "es6",
     "lib": [
       "es2015",
       "es2016.array.include"
     ],
-    "strictNullChecks": true
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "dist",
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "target": "es6"
   },
   "exclude": [
     "node_modules"

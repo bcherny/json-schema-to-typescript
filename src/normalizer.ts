@@ -1,6 +1,7 @@
+import { whiteBright } from 'cli-color'
 import { cloneDeep } from 'lodash'
 import { JSONSchema } from './types/JSONSchema'
-import { justName, mapDeep, toSafeString } from './utils'
+import { justName, log, mapDeep, toSafeString } from './utils'
 
 type Rule = (schema: JSONSchema, rootSchema: JSONSchema, key?: string, fileName?: string) => JSONSchema
 const rules = new Map<string, Rule>()
@@ -75,7 +76,7 @@ export function normalize(schema: JSONSchema, fileName: string): JSONSchema {
   let _schema = cloneDeep(schema)
   rules.forEach((rule, key) => {
     _schema = mapDeep(_schema, (schema, key) => rule(schema, _schema, key, fileName))
-    console.info(`[Normalize] Applied rule: "${key}"`)
+    log(whiteBright.bgGreen('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema
 }

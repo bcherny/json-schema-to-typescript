@@ -18,7 +18,7 @@ export type ASTWithComment = AST & { comment: string }
 export type ASTWithName = AST & { name: string }
 
 export function hasComment(ast: AST): ast is ASTWithComment {
-  return 'comment' in ast
+  return 'comment' in ast && ast.comment != null && ast.comment !== ''
 }
 
 export function hasName(ast: AST): ast is ASTWithName {

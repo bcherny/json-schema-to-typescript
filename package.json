@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc -d",
     "lint": "tslint -c tslint.json src/*.ts",
-    "tdd": "concurrently -k 'npm run watch' 'npm run watch:test'",
+    "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
     "test": "ava",
     "prepublish": "npm test",
     "pretest": "npm run build",

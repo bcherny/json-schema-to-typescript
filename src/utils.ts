@@ -1,3 +1,4 @@
+import { whiteBright } from 'cli-color'
 import { camelCase, isPlainObject, mapValues, upperFirst } from 'lodash'
 import { basename, extname } from 'path'
 
@@ -55,4 +56,10 @@ export function stripExtension(filename: string): string {
  */
 export function toSafeString(string: string) {
   return upperFirst(camelCase(string))
+}
+
+export function log(...messages: any[]) {
+  if (process.env.DEBUG) {
+    console.info(whiteBright.bgCyan('debug'), ...messages)
+  }
 }
