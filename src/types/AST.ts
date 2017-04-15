@@ -11,11 +11,14 @@ export type AST = TAny | TArray | TBoolean | TEnum | TInterface
 interface AbstractAST {
   comment?: string
   isRequired: boolean
+  name?: string
+  standaloneName?: string
   type: AST_TYPE
 }
 
 export type ASTWithComment = AST & { comment: string }
 export type ASTWithName = AST & { name: string }
+export type ASTWithStandaloneName = AST & { standaloneName: string }
 
 export function hasComment(ast: AST): ast is ASTWithComment {
   return 'comment' in ast && ast.comment != null && ast.comment !== ''
@@ -23,6 +26,10 @@ export function hasComment(ast: AST): ast is ASTWithComment {
 
 export function hasName(ast: AST): ast is ASTWithName {
   return 'name' in ast
+}
+
+export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
+  return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
 }
 
 ////////////////////////////////////////////     types
@@ -41,13 +48,13 @@ export interface TBoolean extends AbstractAST {
 }
 
 export interface TEnum extends AbstractAST {
-  name: string
+  standaloneName: string
   type: 'ENUM'
   params: ASTWithName[]
 }
 
 export interface TInterface extends AbstractAST {
-  name: string
+  standaloneName: string
   type: 'INTERFACE'
   params: ASTWithName[]
 

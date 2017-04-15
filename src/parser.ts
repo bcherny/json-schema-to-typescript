@@ -4,57 +4,69 @@ import { typeOfSchema } from './typeOfSchema'
 import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, ASTWithName } from './types/AST'
 import { NormalizedJSONSchema, SchemaSchema, SimpleType } from './types/JSONSchema'
 import { log } from "./utils";
+import { JSONSchema } from "../dist/src/JSONSchema";
 
 export function parse(
-  schema: NormalizedJSONSchema,
+  schema: JSONSchema,
   name?: string,
-  rootSchema: NormalizedJSONSchema = schema,
+  rootSchema: JSONSchema = schema,
   isRequired = false
 ): AST {
-  log(whiteBright.bgMagenta('parser'), schema)
+  log(whiteBright.bgGreen('parser'), schema)
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       // TODO: support schema.properties
-      return { comment: schema.description, name, isRequired, params: schema.allOf!.map(_ => parse(_)), type: 'INTERSECTION' }
+      return { comment: schema.description, name, isRequired, params: schema.allOf!.map(_ => parse(_)), standaloneName: schema.title, type: 'INTERSECTION' }
     case 'ANY':
-      return { comment: schema.description, name, isRequired, type: 'ANY' }
+      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'ANY' }
     case 'ANY_OF':
-      return { comment: schema.description, name, isRequired, params: schema.anyOf!.map(_ => parse(_)), type: 'UNION' }
+      return { comment: schema.description, name, isRequired, params: schema.anyOf!.map(_ => parse(_)), standaloneName: schema.title, type: 'UNION' }
     case 'BOOLEAN':
-      return { comment: schema.description, name, isRequired, type: 'BOOLEAN' }
+      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'BOOLEAN' }
     case 'LITERAL':
       return { isRequired, name, params: schema, type: 'LITERAL' }
     case 'NAMED_ENUM':
-      return { comment: schema.description, name: name!, isRequired,
+      return {
+        comment: schema.description,
+        isRequired,
+        name: name!,
         params: schema.enum!.map((_, n) => parse(_, schema.tsEnumNames![n], rootSchema) as ASTWithName),
+        standaloneName: name!,
         type: 'ENUM'
       }
     case 'NAMED_SCHEMA':
-      return { comment: schema.description, name: computeSchemaName(schema as SchemaSchema, name), isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' } as TInterface
+      return { comment: schema.description, standaloneName: computeSchemaName(schema as SchemaSchema, name), isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' } as TInterface
     case 'NULL':
-      return { comment: schema.description, name, isRequired, type: 'NULL' }
+      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'NULL' }
     case 'NUMBER':
-      return { comment: schema.description, name, isRequired, type: 'NUMBER' }
+      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'NUMBER' }
     case 'OBJECT':
-      return { comment: schema.description, name, isRequired, type: 'OBJECT' }
+      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'OBJECT' }
     case 'REFERENCE':
       return parse(resolveReference(schema.$ref as string, rootSchema), '', schema)
     case 'STRING':
-      return { comment: schema.description, name, isRequired, type: 'STRING' }
+      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'STRING' }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
-        return { comment: schema.description, name, isRequired, params: schema.items.map(_ => parse(_)), type: 'TUPLE' }
+        return { comment: schema.description, name, isRequired, params: schema.items.map(_ => parse(_)), standaloneName: schema.title, type: 'TUPLE' }
       } else {
-        return { comment: schema.description, name, isRequired, params: parse(schema.items!), type: 'ARRAY' }
+        return { comment: schema.description, name, isRequired, params: parse(schema.items!), standaloneName: schema.title, type: 'ARRAY' }
       }
     case 'UNION':
-      return { comment: schema.description, name, isRequired, params: (schema.type as SimpleType[]).map(_ => parse({ additionalProperties: true, required: [], type: _})), type: 'UNION' }
+      return {
+        comment: schema.description,
+        name,
+        isRequired,
+        params: (schema.type as SimpleType[]).map(_ => parse({ required: [], type: _ })),
+        standaloneName: schema.title,
+        type: 'UNION'
+      }
     case 'UNNAMED_ENUM':
-      return { comment: schema.description, name, isRequired, params: schema.enum!.map(_ => parse(_)), type: 'UNION' }
+      return { comment: schema.description, name, isRequired, params: schema.enum!.map(_ => parse(_)), standaloneName: schema.title, type: 'UNION' }
     case 'UNNAMED_SCHEMA':
-      return { comment: schema.description, name: 'Foo', isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' }
+      return { comment: schema.description, isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), standaloneName: 'foo', type: 'INTERFACE' }
     case 'UNTYPED_ARRAY':
-      return { comment: schema.description, name, isRequired, params: T_ANY, type: 'ARRAY' }
+      return { comment: schema.description, name, isRequired, params: T_ANY, standaloneName: schema.title, type: 'ARRAY' }
   }
 }
 
@@ -73,7 +85,7 @@ function computeSchemaName(
  */
 function parseSchemaSchema(
   schema: SchemaSchema,
-  rootSchema: NormalizedJSONSchema
+  rootSchema: JSONSchema
 ): ASTWithName[] {
   const asts = map(schema.properties, (value, key) =>
     parse(value, key, rootSchema, schema.required.includes(key!)) as ASTWithName
@@ -85,16 +97,16 @@ function parseSchemaSchema(
 
     // pass "true" as the last param because in TS, properties
     // defined via index signatures are already optional
-    default: return asts.concat(parse(schema.additionalProperties as NormalizedJSONSchema, '[k: string]', rootSchema, true) as ASTWithName)
+    default: return asts.concat(parse(schema.additionalProperties as JSONSchema, '[k: string]', rootSchema, true) as ASTWithName)
   }
 }
 
 function resolveReference(
   $ref: string,
-  rootSchema: NormalizedJSONSchema
+  rootSchema: JSONSchema
   // definitions: Map<string, TEnum | TInterface>,
   // context: AST[]
-): NormalizedJSONSchema {
+): JSONSchema {
   log('resolveReference', $ref)
   const [schemaId, path] = $ref.split('#')
   const schema = schemaId === rootSchema.id

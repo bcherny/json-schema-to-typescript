@@ -59,6 +59,7 @@ export${enableConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
   Five = 5,
   Six = 6
 }
+
 export interface Enum {
   stringEnum: ("a" | "b" | "c");
   impliedStringEnum: ("a" | "b" | "c");

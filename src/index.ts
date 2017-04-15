@@ -44,6 +44,6 @@ export function compile(
   options = DEFAULT_OPTIONS
 ): string | NodeJS.ErrnoException {
   return generate(
-    parse(normalize(schema), name),
+    parse(normalize(schema, name), name),
     Object.assign({}, DEFAULT_OPTIONS, options))
 }

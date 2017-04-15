@@ -1,14 +1,19 @@
 import { whiteBright } from 'cli-color'
+import { omit } from 'lodash'
 import { DEFAULT_OPTIONS, Options } from './index'
-import { AST, ASTWithName, hasComment, TArray, TEnum, TInterface, TIntersection, TLiteral, TTuple, TUnion } from './types/AST'
+import { AST, ASTWithName, hasComment, TArray, TEnum, TInterface, TIntersection, TLiteral, TTuple, TUnion, hasStandaloneName, ASTWithStandaloneName } from './types/AST'
 import { log, toSafeString } from './utils'
 
 // TODO: call for referenced types
 // TODO: use discriminated union types to prevent asserts
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
-  return declareNamedInterfaces(ast, options)
-    + declareEnums(ast, options).join('')
-    + generateType(ast, options)
+  return [
+    declareNamedTypes(ast, options),
+    declareEnums(ast, options).join(''),
+    generateType(ast, options)
+  ]
+    .filter(Boolean)
+    .join('\n')
 }
 
 function declareEnums(ast: AST, options: Options): string[] {
@@ -23,27 +28,40 @@ function declareEnums(ast: AST, options: Options): string[] {
   return []
 }
 
-function declareNamedInterfaces(ast: AST, options: Options): string {
-  return ''
+function declareNamedTypes(ast: AST, options: Options): string {
+  switch (ast.type) {
+    case 'ENUM': return ''
+    case 'INTERFACE': return ast.params.map(_ => declareNamedTypes(_, options)).filter(Boolean).join('\n')
+    default:
+      if (hasStandaloneName(ast)) {
+        return generateStandaloneType(ast, options)
+      }
+      return ''
+  }
 }
 
 function generateType(ast: AST, options: Options): string {
   log(whiteBright.bgBlue('generator'), ast)
+
+  if (hasStandaloneName(ast) && ast.type !== 'INTERFACE') {
+    return toSafeString(ast.standaloneName)
+  }
+
   switch (ast.type) {
     case 'ANY': return 'any'
-    case 'ARRAY': return generateType((ast as TArray).params, options) + '[]'
+    case 'ARRAY': return generateType(ast.params, options) + '[]'
     case 'BOOLEAN': return 'boolean'
-    case 'ENUM': return ast.name
-    case 'INTERFACE': return generateInterface(ast as TInterface, options)
-    case 'INTERSECTION': return generateSetOperation(ast as TIntersection, options)
-    case 'LITERAL': return JSON.stringify((ast as TLiteral).params)
+    // case 'ENUM': return ast.standaloneName
+    case 'INTERFACE': return generateInterface(ast, options)
+    case 'INTERSECTION': return generateSetOperation(ast, options)
+    case 'LITERAL': return JSON.stringify(ast.params)
     case 'NUMBER': return 'number'
     case 'NULL': return 'null'
     case 'OBJECT': return 'object'
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
-    case 'TUPLE': return '[' + (ast as TTuple).params.map(_ => generateType(_, options)).join(', ') + ']'
-    case 'UNION': return generateSetOperation(ast as TUnion, options)
+    case 'TUPLE': return '[' + ast.params.map(_ => generateType(_, options)).join(', ') + ']'
+    case 'UNION': return generateSetOperation(ast, options)
   }
 }
 
@@ -58,7 +76,7 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
 
 function generateEnum(ast: TEnum, options: Options): string {
   return (hasComment(ast) ? generateComment(ast.comment, options, 0) : '')
-    + 'export ' + (options.enableConstEnums ? 'const ' : '') + `enum ${toSafeString(ast.name)} {`
+    + 'export ' + (options.enableConstEnums ? 'const ' : '') + `enum ${toSafeString(ast.standaloneName)} {`
     + '\n'
     + ast.params.map(_ =>
         options.indentWith
@@ -74,7 +92,7 @@ function generateEnum(ast: TEnum, options: Options): string {
 
 function generateInterface(ast: TInterface, options: Options): string {
   return (hasComment(ast) ? generateComment(ast.comment, options, 0) : '')
-    + `export interface ${toSafeString(ast.name)} {`
+    + `export interface ${toSafeString(ast.standaloneName)} {`
     + '\n'
     + ast.params
         .map(_ => [_, generateType(_, options)])
@@ -95,7 +113,6 @@ function generateInterface(ast: TInterface, options: Options): string {
 }
 
 function generateComment(comment: string, options: Options, indentDepth: number): string {
-  log('generateComment', comment)
   return options.indentWith.repeat(indentDepth)
     + [
         '/**',
@@ -103,4 +120,9 @@ function generateComment(comment: string, options: Options, indentDepth: number)
         ' */'
       ].join('\n' + options.indentWith.repeat(indentDepth))
     + '\n'
+}
+
+function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
+  return `export type ${toSafeString(ast.standaloneName)} = ${generateType(omit<ASTWithStandaloneName, AST>(ast, 'standaloneName'), options)}`
+    + (options.enableTrailingSemicolonForTypes ? ';' : '')
 }

@@ -1,6 +1,6 @@
 import { whiteBright } from 'cli-color'
 import { cloneDeep } from 'lodash'
-import { JSONSchema } from './types/JSONSchema'
+import { JSONSchema, NormalizedJSONSchema } from './types/JSONSchema'
 import { justName, log, mapDeep, toSafeString } from './utils'
 
 type Rule = (schema: JSONSchema, rootSchema: JSONSchema, key?: string, fileName?: string) => JSONSchema
@@ -38,7 +38,7 @@ rules.set('Default additionalProperties to true', schema => {
 // TODO: avoid assigning duplicate IDs
 // TODO: should IDs be full paths?
 let anonymousSchemaIDCounter = 0
-rules.set('Default `id`', (schema, rootSchema, key, fileName) => {
+rules.set('Default `id`', (schema, _rootSchema, key, fileName) => {
   if (!schema.id && schemaNeedsID(key)) {
     if (key) {
       schema.id = key
@@ -72,11 +72,11 @@ rules.set('Convert relative $refs to absolute', (schema, rootSchema, key, fileNa
   return schema
 })
 
-export function normalize(schema: JSONSchema, fileName: string): JSONSchema {
-  let _schema = cloneDeep(schema)
+export function normalize(schema: JSONSchema, filename: string): NormalizedJSONSchema {
+  let _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
-    _schema = mapDeep(_schema, (schema, key) => rule(schema, _schema, key, fileName))
-    log(whiteBright.bgGreen('normalizer'), `Applied rule: "${key}"`)
+    _schema = mapDeep(_schema, (schema, key) => rule(schema, _schema, key, filename)) as NormalizedJSONSchema
+    log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema
 }
