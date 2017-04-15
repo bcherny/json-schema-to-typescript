@@ -3,7 +3,7 @@ import { bold, green, red, white } from 'cli-color'
 import * as fs from 'fs'
 import { find } from 'lodash'
 import { join } from 'path'
-import { compile, Options } from '../src'
+import { compile, Options, ValidationError } from '../src'
 import { JSONSchema } from '../src/types/JSONSchema'
 import { log, stripExtension } from '../src/utils'
 import { diff } from './diff'
@@ -15,7 +15,7 @@ interface BaseTestCase {
 }
 
 interface TestInterface {
-  error?: { type: ErrorConstructor }
+  error?: true
   output: string
   settings?: Options
 }
@@ -35,7 +35,7 @@ function run(exports: TestCase, name: string) {
       const caseName = `${name}: ${JSON.stringify(_.settings)}`
       test(caseName, t => {
         if (_.error) {
-          t.throws(() => compile(exports.input, stripExtension(name), _.settings), _.error.type)
+          t.throws(() => compile(exports.input, stripExtension(name), _.settings))
         } else {
           compare(t, caseName, compile(exports.input, stripExtension(name), _.settings) as string, _.output)
         }
@@ -43,7 +43,7 @@ function run(exports: TestCase, name: string) {
     })
   } else {
     test(name, t => exports.error
-      ? t.throws(() => compile(exports.input, stripExtension(name), exports.settings), exports.error.type)
+      ? t.throws(() => compile(exports.input, stripExtension(name), exports.settings))
       : compare(t, name, compile(exports.input, stripExtension(name), exports.settings) as string, exports.output)
     )
   }

@@ -15,7 +15,7 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "es6"
+    "target": "es2016"
   },
   "exclude": [
     "node_modules"

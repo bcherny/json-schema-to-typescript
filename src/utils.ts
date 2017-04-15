@@ -58,6 +58,10 @@ export function toSafeString(string: string) {
   return upperFirst(camelCase(string))
 }
 
+export function error(...messages: any[]) {
+  console.error(whiteBright.bgRedBright('error'), ...messages)
+}
+
 export function log(...messages: any[]) {
   if (process.env.DEBUG) {
     console.info(whiteBright.bgCyan('debug'), ...messages)

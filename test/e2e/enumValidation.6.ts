@@ -12,10 +12,4 @@ export const input = {
   "additionalProperties": false
 }
 
-export const settings = {
-  useTypescriptEnums: true
-}
-
-export const error = {
-  type: TypeError
-}
+export const error = true

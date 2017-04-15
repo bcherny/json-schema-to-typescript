@@ -3,7 +3,8 @@ import { generate } from './generator'
 import { normalize } from './normalizer'
 import { parse } from './parser'
 import { JSONSchema } from './types/JSONSchema'
-import { stripExtension, Try } from './utils'
+import { stripExtension, Try, error } from './utils'
+import { validate } from './validator'
 
 export interface Options {
   enableConstEnums: boolean
@@ -43,7 +44,14 @@ export function compile(
   name: string,
   options = DEFAULT_OPTIONS
 ): string | NodeJS.ErrnoException {
+  const errors = validate(schema, name)
+  if (errors.length) {
+    errors.forEach(_ => error(_))
+    throw ValidationError
+  }
   return generate(
     parse(normalize(schema, name), name),
     Object.assign({}, DEFAULT_OPTIONS, options))
 }
+
+export class ValidationError extends Error {}
