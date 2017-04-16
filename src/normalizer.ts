@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { JSONSchema, NormalizedJSONSchema } from './types/JSONSchema'
 import { justName, log, mapDeep, toSafeString } from './utils'
 
-type Rule = (schema: JSONSchema, rootSchema: JSONSchema, key?: string, fileName?: string) => JSONSchema
+type Rule = (schema: JSONSchema, key?: string, fileName?: string) => JSONSchema
 const rules = new Map<string, Rule>()
 
 rules.set('Destructure unary types', schema => {
@@ -14,14 +14,14 @@ rules.set('Destructure unary types', schema => {
 })
 
 rules.set('Add empty `required` property if none is defined', schema => {
-  if (schema.properties && !('required' in schema)) {
+  if (willBeInterface(schema) && !('required' in schema)) {
     schema.required = []
   }
   return schema
 })
 
 rules.set('Transform `required`=false to `required`=[]', schema => {
-  if (schema.properties && schema.required === false) {
+  if (willBeInterface(schema) && schema.required === false) {
     schema.required = []
   }
   return schema
@@ -29,7 +29,7 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
 
 // TODO: default to empty schema (as per spec) instead
 rules.set('Default additionalProperties to true', schema => {
-  if (schema.properties && !('additionalProperties' in schema)) {
+  if (willBeInterface(schema) && !('additionalProperties' in schema)) {
     schema.additionalProperties = true
   }
   return schema
@@ -38,8 +38,8 @@ rules.set('Default additionalProperties to true', schema => {
 // TODO: avoid assigning duplicate IDs
 // TODO: should IDs be full paths?
 let anonymousSchemaIDCounter = 0
-rules.set('Default `id`', (schema, _rootSchema, key, fileName) => {
-  if (!schema.id && schemaNeedsID(key)) {
+rules.set('Default `id`', (schema, key, fileName) => {
+  if (!schema.id && willBeInterface(schema)) {
     if (key) {
       schema.id = key
     } else if (fileName) {
@@ -50,9 +50,6 @@ rules.set('Default `id`', (schema, _rootSchema, key, fileName) => {
   }
   return schema
 })
-function schemaNeedsID(key?: string): boolean {
-  return key !== 'definitions' && key !== 'properties'
-}
 
 // - {$ref: '#/'} => {$ref: '#'}
 rules.set('Normalize self-ref', schema => {
@@ -65,7 +62,7 @@ rules.set('Normalize self-ref', schema => {
 // hacky implementation, because we need to preserve context
 //  - "#" -> "file.json/#"
 //  - "#/foo/bar" -> "file.json/foo/bar
-rules.set('Convert relative $refs to absolute', (schema, rootSchema, key, fileName) => {
+rules.set('Convert relative $refs to absolute', (schema, _key, fileName) => {
   if (schema.$ref && schema.$ref.startsWith('#')) {
     schema.$ref = fileName + schema.$ref
   }
@@ -75,8 +72,12 @@ rules.set('Convert relative $refs to absolute', (schema, rootSchema, key, fileNa
 export function normalize(schema: JSONSchema, filename: string): NormalizedJSONSchema {
   let _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
-    _schema = mapDeep(_schema, (schema, key) => rule(schema, _schema, key, filename)) as NormalizedJSONSchema
+    _schema = mapDeep(_schema, (schema, key) => rule(schema, key, filename)) as NormalizedJSONSchema
     log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema
+}
+
+function willBeInterface(schema: JSONSchema) {
+  return schema.id || schema.title || schema.properties || schema.definitions
 }

@@ -11,8 +11,8 @@ export function typeOfSchema(schema: JSONSchema): SCHEMA_TYPE {
   if (schema.items) return 'TYPED_ARRAY'
   if (schema.enum && schema.tsEnumNames) return 'NAMED_ENUM'
   if (schema.enum) return 'UNNAMED_ENUM'
-  if (schema.properties || schema.additionalProperties) return 'NAMED_SCHEMA'
   if (schema.$ref) return 'REFERENCE'
+  if (schema.id) return 'NAMED_SCHEMA'
   if (Array.isArray(schema.type)) return 'UNION'
   switch (schema.type) {
     case 'string': return 'STRING'

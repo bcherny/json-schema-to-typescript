@@ -1,10 +1,10 @@
 import { whiteBright } from 'cli-color'
+import { JSONSchema4TypeName } from 'json-schema'
 import { map } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
-import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, ASTWithName } from './types/AST'
-import { NormalizedJSONSchema, SchemaSchema, SimpleType } from './types/JSONSchema'
-import { log } from "./utils";
-import { JSONSchema } from "../dist/src/JSONSchema";
+import { AST, ASTWithName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES } from './types/AST'
+import { JSONSchema, NormalizedJSONSchema, SchemaSchema } from './types/JSONSchema'
+import { log } from './utils'
 
 export function parse(
   schema: JSONSchema,
@@ -12,7 +12,7 @@ export function parse(
   rootSchema: JSONSchema = schema,
   isRequired = false
 ): AST {
-  log(whiteBright.bgGreen('parser'), schema)
+  log(whiteBright.bgGreen('parser'), schema, '<-' + typeOfSchema(schema))
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       // TODO: support schema.properties
@@ -29,13 +29,20 @@ export function parse(
       return {
         comment: schema.description,
         isRequired,
-        name: name!,
+        name,
         params: schema.enum!.map((_, n) => parse(_, schema.tsEnumNames![n], rootSchema) as ASTWithName),
         standaloneName: name!,
         type: 'ENUM'
       }
     case 'NAMED_SCHEMA':
-      return { comment: schema.description, standaloneName: computeSchemaName(schema as SchemaSchema, name), isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), type: 'INTERFACE' } as TInterface
+      return {
+        comment: schema.description,
+        isRequired,
+        name,
+        params: parseSchemaSchema(schema as SchemaSchema, rootSchema),
+        standaloneName: computeSchemaName(schema as SchemaSchema, name),
+        type: 'INTERFACE'
+      }
     case 'NULL':
       return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'NULL' }
     case 'NUMBER':
@@ -57,7 +64,7 @@ export function parse(
         comment: schema.description,
         name,
         isRequired,
-        params: (schema.type as SimpleType[]).map(_ => parse({ required: [], type: _ })),
+        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ })),
         standaloneName: schema.title,
         type: 'UNION'
       }
@@ -97,7 +104,7 @@ function parseSchemaSchema(
 
     // pass "true" as the last param because in TS, properties
     // defined via index signatures are already optional
-    default: return asts.concat(parse(schema.additionalProperties as JSONSchema, '[k: string]', rootSchema, true) as ASTWithName)
+    default: return asts.concat(parse(schema.additionalProperties, '[k: string]', rootSchema, true) as ASTWithName)
   }
 }
 

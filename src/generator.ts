@@ -1,7 +1,7 @@
 import { whiteBright } from 'cli-color'
 import { omit } from 'lodash'
 import { DEFAULT_OPTIONS, Options } from './index'
-import { AST, ASTWithName, hasComment, TArray, TEnum, TInterface, TIntersection, TLiteral, TTuple, TUnion, hasStandaloneName, ASTWithStandaloneName } from './types/AST'
+import { AST, ASTWithName, ASTWithStandaloneName, hasComment, hasStandaloneName, TEnum, TInterface, TIntersection, TUnion } from './types/AST'
 import { log, toSafeString } from './utils'
 
 // TODO: call for referenced types
@@ -9,8 +9,8 @@ import { log, toSafeString } from './utils'
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return [
     declareNamedTypes(ast, options),
-    declareEnums(ast, options).join(''),
-    generateType(ast, options)
+    declareNamedInterfaces(ast, options, ast.standaloneName!),
+    declareEnums(ast, options).join('')
   ]
     .filter(Boolean)
     .join('\n')
@@ -28,6 +28,18 @@ function declareEnums(ast: AST, options: Options): string[] {
   return []
 }
 
+function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string): string {
+  switch (ast.type) {
+    case 'INTERFACE':
+      return (
+        hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareReferenced)
+          ? generateInterface(ast, options)
+          : ''
+      ) + ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName)).filter(Boolean).join('\n')
+    default: return ''
+  }
+}
+
 function declareNamedTypes(ast: AST, options: Options): string {
   switch (ast.type) {
     case 'ENUM': return ''
@@ -43,7 +55,7 @@ function declareNamedTypes(ast: AST, options: Options): string {
 function generateType(ast: AST, options: Options): string {
   log(whiteBright.bgBlue('generator'), ast)
 
-  if (hasStandaloneName(ast) && ast.type !== 'INTERFACE') {
+  if (hasStandaloneName(ast)) {
     return toSafeString(ast.standaloneName)
   }
 
@@ -52,7 +64,7 @@ function generateType(ast: AST, options: Options): string {
     case 'ARRAY': return generateType(ast.params, options) + '[]'
     case 'BOOLEAN': return 'boolean'
     // case 'ENUM': return ast.standaloneName
-    case 'INTERFACE': return generateInterface(ast, options)
+    // case 'INTERFACE': return generateInterface(ast, options)
     case 'INTERSECTION': return generateSetOperation(ast, options)
     case 'LITERAL': return JSON.stringify(ast.params)
     case 'NUMBER': return 'number'

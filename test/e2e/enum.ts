@@ -49,18 +49,7 @@ export const outputs = [false, true].map(enableConstEnums => {
     settings: {
       enableConstEnums
     },
-    output: `export${enableConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
-  One = 1,
-  Two = 2,
-  Three = 3
-}
-export${enableConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
-  Four = 4,
-  Five = 5,
-  Six = 6
-}
-
-export interface Enum {
+    output: `export interface Enum {
   stringEnum: ("a" | "b" | "c");
   impliedStringEnum: ("a" | "b" | "c");
   booleanEnum: true;
@@ -71,6 +60,17 @@ export interface Enum {
   namedIntegerEnum?: NamedIntegerEnum;
   impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
   impliedHeterogeneousEnum?: (-20.1 | null | "foo" | false);
+}
+
+export${enableConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
+  One = 1,
+  Two = 2,
+  Three = 3
+}
+export${enableConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
+  Four = 4,
+  Five = 5,
+  Six = 6
 }
 `
   }

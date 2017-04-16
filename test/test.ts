@@ -3,7 +3,7 @@ import { bold, green, red, white } from 'cli-color'
 import * as fs from 'fs'
 import { find } from 'lodash'
 import { join } from 'path'
-import { compile, Options, ValidationError } from '../src'
+import { compile, Options } from '../src'
 import { JSONSchema } from '../src/types/JSONSchema'
 import { log, stripExtension } from '../src/utils'
 import { diff } from './diff'
@@ -33,18 +33,18 @@ function run(exports: TestCase, name: string) {
   if (isMultiTestCase(exports)) {
     exports.outputs.forEach(_ => {
       const caseName = `${name}: ${JSON.stringify(_.settings)}`
-      test(caseName, t => {
+      test(caseName, async t => {
         if (_.error) {
-          t.throws(() => compile(exports.input, stripExtension(name), _.settings))
+          t.throws(async () => await compile(exports.input, stripExtension(name), _.settings))
         } else {
-          compare(t, caseName, compile(exports.input, stripExtension(name), _.settings) as string, _.output)
+          compare(t, caseName, await compile(exports.input, stripExtension(name), _.settings) as string, _.output)
         }
       })
     })
   } else {
-    test(name, t => exports.error
-      ? t.throws(() => compile(exports.input, stripExtension(name), exports.settings))
-      : compare(t, name, compile(exports.input, stripExtension(name), exports.settings) as string, exports.output)
+    test(name, async t => exports.error
+      ? t.throws(async () => await compile(exports.input, stripExtension(name), exports.settings))
+      : compare(t, name, await compile(exports.input, stripExtension(name), exports.settings) as string, exports.output)
     )
   }
 }
@@ -97,13 +97,13 @@ if (only) {
 ///////////////////////////    normalizer    ///////////////////////////
 
 // TODO: port all test cases to this shape
-interface JSONTestCase {
-  name: string
-  in: JSONSchema
-  out: JSONSchema
-}
+// interface JSONTestCase {
+//   name: string
+//   in: JSONSchema
+//   out: JSONSchema
+// }
 
-const normalizerDir = `${__dirname}/../../test/normalizer`
+// const normalizerDir = `${__dirname}/../../test/normalizer`
 // fs.readdirSync(normalizerDir)
 //   .filter(_ => /^.*\.json$/.test(_))
 //   .map(_ => join(normalizerDir, _))
@@ -118,8 +118,8 @@ const normalizerDir = `${__dirname}/../../test/normalizer`
 //         template(toString(json.out))(params)
 //       )
 //     )
-  })
+  // })
 
-function toString(json: Object): string {
-  return JSON.stringify(json, null, 2)
-}
+// function toString(json: Object): string {
+//   return JSON.stringify(json, null, 2)
+// }

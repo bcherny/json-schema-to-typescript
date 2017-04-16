@@ -2,11 +2,13 @@ import { readFileSync } from 'fs'
 import { generate } from './generator'
 import { normalize } from './normalizer'
 import { parse } from './parser'
-import { JSONSchema } from './types/JSONSchema'
+import { JSONSchema4 } from 'json-schema'
 import { stripExtension, Try, error } from './utils'
 import { validate } from './validator'
+import { dereference } from "./refResolver";
 
 export interface Options {
+  declareReferenced: boolean
   enableConstEnums: boolean
   enableTrailingSemicolonForTypes: boolean
   enableTrailingSemicolonForEnums: boolean
@@ -16,6 +18,7 @@ export interface Options {
 }
 
 export const DEFAULT_OPTIONS: Options = {
+  declareReferenced: true,
   enableConstEnums: true, // by default, avoid generating code
   enableTrailingSemicolonForEnums: false,
   enableTrailingSemicolonForInterfaceProperties: true,
@@ -27,30 +30,31 @@ export const DEFAULT_OPTIONS: Options = {
 export function compileFromFile(
   filename: string,
   options = DEFAULT_OPTIONS
-): string | NodeJS.ErrnoException {
+): Promise<string | NodeJS.ErrnoException> {
   const contents = Try(
     () => readFileSync(filename),
     () => { throw new ReferenceError(`Unable to read file "${filename}"`) }
   )
-  const schema = Try<JSONSchema>(
+  const schema = Try<JSONSchema4>(
     () => JSON.parse(contents.toString()),
     () => { throw new TypeError(`Error parsing JSON in file "${filename}"`)}
   )
   return compile(schema, stripExtension(filename), options)
 }
 
-export function compile(
-  schema: JSONSchema,
+export async function compile(
+  schema: JSONSchema4,
   name: string,
   options = DEFAULT_OPTIONS
-): string | NodeJS.ErrnoException {
+): Promise<string | NodeJS.ErrnoException> {
   const errors = validate(schema, name)
   if (errors.length) {
     errors.forEach(_ => error(_))
     throw ValidationError
   }
+  await dereference(normalize(schema, name))
   return generate(
-    parse(normalize(schema, name), name),
+    parse(normalize(await dereference(schema), name)),
     Object.assign({}, DEFAULT_OPTIONS, options))
 }
 

@@ -1,4 +1,4 @@
-import { Type } from './JSONSchema'
+import { JSONSchema4Type } from 'json-schema'
 
 export type AST_TYPE = 'ANY' | 'ARRAY' | 'BOOLEAN' | 'ENUM' | 'INTERFACE'
   | 'INTERSECTION' | 'LITERAL' | 'NUMBER' | 'NULL' | 'OBJECT' | 'REFERENCE'
@@ -8,7 +8,7 @@ export type AST = TAny | TArray | TBoolean | TEnum | TInterface
   | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
   | TString | TTuple | TUnion
 
-interface AbstractAST {
+export interface AbstractAST {
   comment?: string
   isRequired: boolean
   name?: string
@@ -72,7 +72,7 @@ export interface TIntersection extends AbstractAST {
 }
 
 export interface TLiteral extends AbstractAST {
-  params: Type
+  params: JSONSchema4Type
   type: 'LITERAL'
 }
 

@@ -4,7 +4,7 @@ export const input =
   "type": "object",
   "properties": {
     "foo": {
-      "$ref": "../../test/resources/ReferencedType.json"
+      "$ref": "test/resources/ReferencedType.json"
     }
   },
   "required": ["foo"],
@@ -16,7 +16,10 @@ export const outputs = [
     settings: {
       declareReferenced: true
     },
-    output: `export interface ExampleSchema {
+    output: `export interface Referencing {
+  foo: ExampleSchema;
+}
+export interface ExampleSchema {
   firstName: string;
   lastName: string;
   /**
@@ -27,9 +30,6 @@ export const outputs = [
   favoriteFoods?: any[];
   likesDogs?: boolean;
   [k: string]: any;
-}
-export interface Referencing {
-  foo: ExampleSchema;
 }
 `
   },
