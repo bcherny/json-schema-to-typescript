@@ -1,5 +1,5 @@
 import { whiteBright } from 'cli-color'
-import { JSONSchema4TypeName, JSONSchema4Type } from 'json-schema'
+import { JSONSchema4TypeName } from 'json-schema'
 import { map } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
 import { AST, ASTWithName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES } from './types/AST'
@@ -113,12 +113,17 @@ function parseSchemaSchema(
   )
   // handle additionalProperties
   switch (schema.additionalProperties) {
-    case true: return asts.concat(T_ANY_ADDITIONAL_PROPERTIES)
-    case false: return asts
+    case undefined:
+    case true:
+      return asts.concat(T_ANY_ADDITIONAL_PROPERTIES)
+
+    case false:
+      return asts
 
     // pass "true" as the last param because in TS, properties
     // defined via index signatures are already optional
-    default: return asts.concat(parse(schema.additionalProperties, '[k: string]', rootSchema, true) as ASTWithName)
+    default:
+      return asts.concat(parse(schema.additionalProperties, '[k: string]', rootSchema, true) as ASTWithName)
   }
 }
 

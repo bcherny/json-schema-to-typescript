@@ -20,7 +20,11 @@ export function typeOfSchema(schema: JSONSchema | JSONSchema4Type): SCHEMA_TYPE 
     case 'number': return 'NUMBER'
     case 'integer': return 'NUMBER'
     case 'boolean': return 'BOOLEAN'
-    case 'object': return 'OBJECT' // TODO: is this ok?
+    case 'object':
+      if (!schema.properties && !isPlainObject(schema)) {
+        return 'OBJECT'
+      }
+      break
     case 'array': return 'UNTYPED_ARRAY'
     case 'null': return 'NULL'
     case 'any': return 'ANY'
