@@ -35,19 +35,21 @@ export const input = {
   "additionalProperties": false
 }
 
-export const output = `export interface Foo {
+export const output = `export interface AnyOf {
+  foo: (Foo | Bar | Baz);
+}
+export interface Foo {
   a: string;
   b?: number;
 }
+
 export interface Bar {
-  a?: "a" | "b" | "c";
+  a?: ("a" | "b" | "c");
   [k: string]: any;
 }
+
 export interface Baz {
   baz?: Bar;
   [k: string]: any;
-}
-export interface AnyOf {
-  foo: Foo | Bar | Baz;
 }
 `

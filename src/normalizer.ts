@@ -52,22 +52,22 @@ rules.set('Default `id`', (schema, key, fileName) => {
 })
 
 // - {$ref: '#/'} => {$ref: '#'}
-rules.set('Normalize self-ref', schema => {
-  if (schema.$ref && schema.$ref.endsWith('#/')) {
-    schema.$ref = schema.$ref.replace('#/', '#')
-  }
-  return schema
-})
+// rules.set('Normalize self-ref', schema => {
+//   if (schema.$ref && schema.$ref.endsWith('#/')) {
+//     schema.$ref = schema.$ref.replace('#/', '#')
+//   }
+//   return schema
+// })
 
 // hacky implementation, because we need to preserve context
 //  - "#" -> "file.json/#"
 //  - "#/foo/bar" -> "file.json/foo/bar
-rules.set('Convert relative $refs to absolute', (schema, _key, fileName) => {
-  if (schema.$ref && schema.$ref.startsWith('#')) {
-    schema.$ref = fileName + schema.$ref
-  }
-  return schema
-})
+// rules.set('Convert relative $refs to absolute', (schema, _key, fileName) => {
+//   if (schema.$ref && schema.$ref.startsWith('#')) {
+//     schema.$ref = fileName + schema.$ref
+//   }
+//   return schema
+// })
 
 export function normalize(schema: JSONSchema, filename: string): NormalizedJSONSchema {
   let _schema = cloneDeep(schema) as NormalizedJSONSchema
@@ -79,5 +79,5 @@ export function normalize(schema: JSONSchema, filename: string): NormalizedJSONS
 }
 
 function willBeInterface(schema: JSONSchema) {
-  return schema.id || schema.title || schema.properties || schema.definitions
+  return Boolean(schema.id || schema.title || schema.properties || schema.definitions)
 }

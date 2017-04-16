@@ -28,15 +28,21 @@ function declareEnums(ast: AST, options: Options): string[] {
   return []
 }
 
-function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string): string {
+function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<string>()): string {
   switch (ast.type) {
     case 'INTERFACE':
-      return (
-        hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareReferenced)
-          ? generateInterface(ast, options)
-          : ''
-      ) + ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName)).filter(Boolean).join('\n')
-    default: return ''
+      let _interface = ''
+      if (hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareReferenced) && !processed.has(ast.standaloneName)) {
+        _interface = generateInterface(ast, options)
+        processed.add(ast.standaloneName)
+      }
+      return _interface
+        + ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
+    case 'INTERSECTION':
+    case 'UNION':
+      return ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
+    default:
+      return ''
   }
 }
 
@@ -53,7 +59,7 @@ function declareNamedTypes(ast: AST, options: Options): string {
 }
 
 function generateType(ast: AST, options: Options): string {
-  log(whiteBright.bgBlue('generator'), ast)
+  log(whiteBright.bgMagenta('generator'), ast)
 
   if (hasStandaloneName(ast)) {
     return toSafeString(ast.standaloneName)

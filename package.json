@@ -55,7 +55,7 @@
       "./dist/test/test.js"
     ],
     "source": [
-      "./dist/test/cases/*.js",
+      "./dist/test/e2e/*.js",
       "./dist/src/*.js"
     ],
     "vebose": true

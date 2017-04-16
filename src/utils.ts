@@ -42,7 +42,7 @@ export function justName(filename: string): string {
 }
 
 /**
- * Avoid appending "Js" to top-level unnamed schemas
+ * Avoid appending "js" to top-level unnamed schemas
  */
 export function stripExtension(filename: string): string {
   return filename.replace(extname(filename), '')

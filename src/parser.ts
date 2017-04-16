@@ -1,5 +1,5 @@
 import { whiteBright } from 'cli-color'
-import { JSONSchema4TypeName } from 'json-schema'
+import { JSONSchema4TypeName, JSONSchema4Type } from 'json-schema'
 import { map } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
 import { AST, ASTWithName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES } from './types/AST'
@@ -12,7 +12,7 @@ export function parse(
   rootSchema: JSONSchema = schema,
   isRequired = false
 ): AST {
-  log(whiteBright.bgGreen('parser'), schema, '<-' + typeOfSchema(schema))
+  log(whiteBright.bgBlue('parser'), JSON.stringify(schema, null, 2), '<-' + typeOfSchema(schema), name)
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       // TODO: support schema.properties
@@ -69,9 +69,23 @@ export function parse(
         type: 'UNION'
       }
     case 'UNNAMED_ENUM':
-      return { comment: schema.description, name, isRequired, params: schema.enum!.map(_ => parse(_)), standaloneName: schema.title, type: 'UNION' }
+      return {
+        comment: schema.description,
+        isRequired,
+        name,
+        params: schema.enum!.map(_ => parse(_)),
+        standaloneName: schema.title,
+        type: 'UNION'
+      }
     case 'UNNAMED_SCHEMA':
-      return { comment: schema.description, isRequired, params: parseSchemaSchema(schema as SchemaSchema, rootSchema), standaloneName: 'foo', type: 'INTERFACE' }
+      return {
+        comment: schema.description,
+        isRequired,
+        name,
+        params: parseSchemaSchema(schema as SchemaSchema, rootSchema),
+        standaloneName: computeSchemaName(schema as SchemaSchema, name),
+        type: 'INTERFACE'
+      }
     case 'UNTYPED_ARRAY':
       return { comment: schema.description, name, isRequired, params: T_ANY, standaloneName: schema.title, type: 'ARRAY' }
   }
@@ -95,7 +109,7 @@ function parseSchemaSchema(
   rootSchema: JSONSchema
 ): ASTWithName[] {
   const asts = map(schema.properties, (value, key) =>
-    parse(value, key, rootSchema, schema.required.includes(key!)) as ASTWithName
+    parse(value, key, rootSchema, (schema.required || []).includes(key!)) as ASTWithName
   )
   // handle additionalProperties
   switch (schema.additionalProperties) {
