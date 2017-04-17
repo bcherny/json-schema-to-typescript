@@ -8,7 +8,7 @@ export type AST = TAny | TArray | TBoolean | TEnum | TInterface
   | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
   | TString | TTuple | TUnion
 
-interface AbstractAST {
+export interface AbstractAST {
   comment?: string
   isRequired: boolean
   name?: string

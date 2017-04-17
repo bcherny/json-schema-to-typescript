@@ -4,7 +4,7 @@ import { dirname } from 'path'
 import { generate } from './generator'
 import { normalize } from './normalizer'
 import { parse } from './parser'
-import { dereference } from './refResolver'
+import { dereference } from './resolver'
 import { error, stripExtension, Try } from './utils'
 import { validate } from './validator'
 

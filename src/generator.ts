@@ -46,16 +46,28 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
   }
 }
 
-function declareNamedTypes(ast: AST, options: Options): string {
+let last: AST | null = null
+function declareNamedTypes(ast: AST, options: Options, processed = new Map<AST, string>()): string {
+  console.log('declareNamedTypes', processed.has(ast), ast, ast === last)
+  last = ast
+  if (processed.has(ast)) {
+    return processed.get(ast)!
+  }
+  processed.set(ast, '[PLACEHOLDER]')
+  let type = ''
   switch (ast.type) {
-    case 'ENUM': return ''
-    case 'INTERFACE': return ast.params.map(_ => declareNamedTypes(_, options)).filter(Boolean).join('\n')
+    case 'ENUM':
+      type = ''
+      break
+    case 'INTERFACE':
+      type = ast.params.map(_ => declareNamedTypes(_, options, processed)).filter(Boolean).join('\n')
+      break
     default:
       if (hasStandaloneName(ast)) {
-        return generateStandaloneType(ast, options)
+        type = generateStandaloneType(ast, options)
       }
-      return ''
   }
+  return type
 }
 
 function generateType(ast: AST, options: Options): string {

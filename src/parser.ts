@@ -10,17 +10,47 @@ export function parse(
   schema: JSONSchema,
   name?: string,
   rootSchema: JSONSchema = schema,
-  isRequired = false
+  isRequired = false,
+  processed = new Map<JSONSchema, AST>()
 ): AST {
-  log(whiteBright.bgBlue('parser'), JSON.stringify(schema, null, 2), '<-' + typeOfSchema(schema), name)
+  log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(CACHED)' : '')
+  if (processed.has(schema)) {
+    return processed.get(schema)!
+  }
+  const ast = parseSchema(schema, name, rootSchema, isRequired, processed)
+  processed.set(schema, ast)
+  return ast
+}
+
+function parseSchema(
+  schema: JSONSchema,
+  name: string | undefined,
+  rootSchema: JSONSchema,
+  isRequired: boolean,
+  processed: Map<JSONSchema, AST>
+): AST {
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       // TODO: support schema.properties
-      return { comment: schema.description, name, isRequired, params: schema.allOf!.map(_ => parse(_)), standaloneName: schema.title, type: 'INTERSECTION' }
+      return {
+        comment: schema.description,
+        isRequired,
+        name,
+        get params() { return schema.allOf!.map(_ => parse(_, undefined, rootSchema, undefined, processed)) },
+        standaloneName: schema.title,
+        type: 'INTERSECTION'
+      }
     case 'ANY':
       return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'ANY' }
     case 'ANY_OF':
-      return { comment: schema.description, name, isRequired, params: schema.anyOf!.map(_ => parse(_)), standaloneName: schema.title, type: 'UNION' }
+      return {
+        comment: schema.description,
+        isRequired,
+        name,
+        get params() { return schema.anyOf!.map(_ => parse(_, undefined, rootSchema, undefined, processed)) },
+        standaloneName: schema.title,
+        type: 'UNION'
+      }
     case 'BOOLEAN':
       return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'BOOLEAN' }
     case 'LITERAL':
@@ -30,7 +60,7 @@ export function parse(
         comment: schema.description,
         isRequired,
         name,
-        params: schema.enum!.map((_, n) => parse(_, schema.tsEnumNames![n], rootSchema) as ASTWithName),
+        get params() { return schema.enum!.map((_, n) => parse(_, schema.tsEnumNames![n], rootSchema, undefined, processed) as ASTWithName) },
         standaloneName: name!,
         type: 'ENUM'
       }
@@ -39,7 +69,7 @@ export function parse(
         comment: schema.description,
         isRequired,
         name,
-        params: parseSchemaSchema(schema as SchemaSchema, rootSchema),
+        get params() { return parseSchemaSchema(schema as SchemaSchema, rootSchema, processed) },
         standaloneName: computeSchemaName(schema as SchemaSchema, name),
         type: 'INTERFACE'
       }
@@ -50,21 +80,35 @@ export function parse(
     case 'OBJECT':
       return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'OBJECT' }
     case 'REFERENCE':
-      return parse(resolveReference(schema.$ref as string, rootSchema), '', schema)
+      return parse(resolveReference(schema.$ref as string, rootSchema), '', schema, undefined, processed)
     case 'STRING':
       return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'STRING' }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
-        return { comment: schema.description, name, isRequired, params: schema.items.map(_ => parse(_)), standaloneName: schema.title, type: 'TUPLE' }
+        return {
+          comment: schema.description,
+          name,
+          isRequired,
+          get params() { return schema.items.map(_ => parse(_, undefined, rootSchema, undefined, processed)) },
+          standaloneName: schema.title,
+          type: 'TUPLE'
+        }
       } else {
-        return { comment: schema.description, name, isRequired, params: parse(schema.items!), standaloneName: schema.title, type: 'ARRAY' }
+        return {
+          comment: schema.description,
+          name,
+          isRequired,
+          get params() { return parse(schema.items!, undefined, rootSchema, undefined, processed) },
+          standaloneName: schema.title,
+          type: 'ARRAY'
+        }
       }
     case 'UNION':
       return {
         comment: schema.description,
         name,
         isRequired,
-        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ })),
+        get params() { return (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ }, undefined, rootSchema, undefined, processed)) },
         standaloneName: schema.title,
         type: 'UNION'
       }
@@ -73,7 +117,7 @@ export function parse(
         comment: schema.description,
         isRequired,
         name,
-        params: schema.enum!.map(_ => parse(_)),
+        get params() { return schema.enum!.map(_ => parse(_, undefined, rootSchema, undefined, processed)) },
         standaloneName: schema.title,
         type: 'UNION'
       }
@@ -82,12 +126,19 @@ export function parse(
         comment: schema.description,
         isRequired,
         name,
-        params: parseSchemaSchema(schema as SchemaSchema, rootSchema),
+        get params() { return parseSchemaSchema(schema as SchemaSchema, rootSchema, processed) },
         standaloneName: computeSchemaName(schema as SchemaSchema, name),
         type: 'INTERFACE'
       }
     case 'UNTYPED_ARRAY':
-      return { comment: schema.description, name, isRequired, params: T_ANY, standaloneName: schema.title, type: 'ARRAY' }
+      return {
+        comment: schema.description,
+        name,
+        isRequired,
+        params: T_ANY,
+        standaloneName: schema.title,
+        type: 'ARRAY'
+      }
   }
 }
 
@@ -106,10 +157,11 @@ function computeSchemaName(
  */
 function parseSchemaSchema(
   schema: SchemaSchema,
-  rootSchema: JSONSchema
+  rootSchema: JSONSchema,
+  processed: Map<JSONSchema, AST>
 ): ASTWithName[] {
   const asts = map(schema.properties, (value, key) =>
-    parse(value, key, rootSchema, (schema.required || []).includes(key!)) as ASTWithName
+    parse(value, key, rootSchema, (schema.required || []).includes(key!), processed) as ASTWithName
   )
   // handle additionalProperties
   switch (schema.additionalProperties) {
@@ -123,7 +175,7 @@ function parseSchemaSchema(
     // pass "true" as the last param because in TS, properties
     // defined via index signatures are already optional
     default:
-      return asts.concat(parse(schema.additionalProperties, '[k: string]', rootSchema, true) as ASTWithName)
+      return asts.concat(parse(schema.additionalProperties, '[k: string]', rootSchema, true, processed) as ASTWithName)
   }
 }
 
