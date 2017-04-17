@@ -13,132 +13,131 @@ export function parse(
   isRequired = false,
   processed = new Map<JSONSchema, AST>()
 ): AST {
-  log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(CACHED)' : '')
+
+  log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
+
+  // If we've seen this node before, return it.
   if (processed.has(schema)) {
     return processed.get(schema)!
   }
-  const ast = parseSchema(schema, name, rootSchema, isRequired, processed)
-  processed.set(schema, ast)
-  return ast
-}
 
-function parseSchema(
-  schema: JSONSchema,
-  name: string | undefined,
-  rootSchema: JSONSchema,
-  isRequired: boolean,
-  processed: Map<JSONSchema, AST>
-): AST {
+  // Cache processed ASTs before they are actually computed, then update
+  // them in place using set(). This is to avoid cycles.
+  // TODO: Investigate alternative approaches (lazy-computing nodes, etc.)
+  let ast = {} as AST
+  processed.set(schema, ast)
+  const set = (_ast: AST) => Object.assign(ast, _ast)
+
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       // TODO: support schema.properties
-      return {
+      return set({
         comment: schema.description,
         isRequired,
         name,
-        get params() { return schema.allOf!.map(_ => parse(_, undefined, rootSchema, undefined, processed)) },
+        params: schema.allOf!.map(_ => parse(_, undefined, rootSchema, undefined, processed)),
         standaloneName: schema.title,
         type: 'INTERSECTION'
-      }
+      })
     case 'ANY':
-      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'ANY' }
+      return set({ comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'ANY' })
     case 'ANY_OF':
-      return {
+      return set({
         comment: schema.description,
         isRequired,
         name,
-        get params() { return schema.anyOf!.map(_ => parse(_, undefined, rootSchema, undefined, processed)) },
+        params: schema.anyOf!.map(_ => parse(_, undefined, rootSchema, undefined, processed)),
         standaloneName: schema.title,
         type: 'UNION'
-      }
+      })
     case 'BOOLEAN':
-      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'BOOLEAN' }
+      return set({ comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'BOOLEAN' })
     case 'LITERAL':
-      return { isRequired, name, params: schema, type: 'LITERAL' }
+      return set({ isRequired, name, params: schema, type: 'LITERAL' })
     case 'NAMED_ENUM':
-      return {
+      return set({
         comment: schema.description,
         isRequired,
         name,
-        get params() { return schema.enum!.map((_, n) => parse(_, schema.tsEnumNames![n], rootSchema, undefined, processed) as ASTWithName) },
+        params: schema.enum!.map((_, n) => parse(_, schema.tsEnumNames![n], rootSchema, undefined, processed) as ASTWithName),
         standaloneName: name!,
         type: 'ENUM'
-      }
+      })
     case 'NAMED_SCHEMA':
-      return {
+      return set({
         comment: schema.description,
         isRequired,
         name,
-        get params() { return parseSchemaSchema(schema as SchemaSchema, rootSchema, processed) },
+        params: parseSchemaSchema(schema as SchemaSchema, rootSchema, processed),
         standaloneName: computeSchemaName(schema as SchemaSchema, name),
         type: 'INTERFACE'
-      }
+      })
     case 'NULL':
-      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'NULL' }
+      return set({ comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'NULL' })
     case 'NUMBER':
-      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'NUMBER' }
+      return set({ comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'NUMBER' })
     case 'OBJECT':
-      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'OBJECT' }
+      return set({ comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'OBJECT' })
     case 'REFERENCE':
-      return parse(resolveReference(schema.$ref as string, rootSchema), '', schema, undefined, processed)
+      return set(parse(resolveReference(schema.$ref as string, rootSchema), '', schema, undefined, processed))
     case 'STRING':
-      return { comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'STRING' }
+      return set({ comment: schema.description, name, isRequired, standaloneName: schema.title, type: 'STRING' })
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
-        return {
+        return set({
           comment: schema.description,
           name,
           isRequired,
-          get params() { return schema.items.map(_ => parse(_, undefined, rootSchema, undefined, processed)) },
+          params: schema.items.map(_ => parse(_, undefined, rootSchema, undefined, processed)),
           standaloneName: schema.title,
           type: 'TUPLE'
-        }
+        })
       } else {
-        return {
+        return set({
           comment: schema.description,
           name,
           isRequired,
-          get params() { return parse(schema.items!, undefined, rootSchema, undefined, processed) },
+          params: parse(schema.items!, undefined, rootSchema, undefined, processed),
           standaloneName: schema.title,
           type: 'ARRAY'
-        }
+        })
       }
     case 'UNION':
-      return {
+      return set({
         comment: schema.description,
         name,
         isRequired,
-        get params() { return (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ }, undefined, rootSchema, undefined, processed)) },
+        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ }, undefined, rootSchema, undefined, processed)),
         standaloneName: schema.title,
         type: 'UNION'
-      }
+      })
     case 'UNNAMED_ENUM':
-      return {
+      return set({
         comment: schema.description,
         isRequired,
         name,
-        get params() { return schema.enum!.map(_ => parse(_, undefined, rootSchema, undefined, processed)) },
+        params: schema.enum!.map(_ => parse(_, undefined, rootSchema, undefined, processed)),
         standaloneName: schema.title,
         type: 'UNION'
-      }
+      })
     case 'UNNAMED_SCHEMA':
-      return {
+      return set({
         comment: schema.description,
         isRequired,
         name,
-        get params() { return parseSchemaSchema(schema as SchemaSchema, rootSchema, processed) },
+        params: parseSchemaSchema(schema as SchemaSchema, rootSchema, processed),
         standaloneName: computeSchemaName(schema as SchemaSchema, name),
         type: 'INTERFACE'
-      }
+      })
     case 'UNTYPED_ARRAY':
-      return {
+      return set({
         comment: schema.description,
         name,
         isRequired,
         params: T_ANY,
         standaloneName: schema.title,
         type: 'ARRAY'
-      }
+      })
   }
 }
 

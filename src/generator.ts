@@ -10,51 +10,88 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return [
     declareNamedTypes(ast, options),
     declareNamedInterfaces(ast, options, ast.standaloneName!),
-    declareEnums(ast, options).join('')
+    declareEnums(ast, options)
   ]
     .filter(Boolean)
     .join('\n')
 }
 
-function declareEnums(ast: AST, options: Options): string[] {
-  if (ast.type === 'ENUM') {
-    return [generateEnum(ast as TEnum, options)]
-  }
-  if (ast.type === 'INTERFACE') {
-    return (ast as TInterface).params
-      .reduce<string[]>((prev, cur) => prev.concat(declareEnums(cur, options)), [])
-      .filter(Boolean)
-  }
-  return []
-}
+function declareEnums(
+  ast: AST,
+  options: Options,
+  processed = new Set<AST>()
+): string {
 
-function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<string>()): string {
+  if (processed.has(ast)) {
+    return ''
+  }
+
+  processed.add(ast)
+  let type = ''
+
   switch (ast.type) {
+    case 'ENUM':
+      type = generateEnum(ast, options)
+      break
     case 'INTERFACE':
-      let _interface = ''
-      if (hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareReferenced) && !processed.has(ast.standaloneName)) {
-        _interface = generateInterface(ast, options)
-        processed.add(ast.standaloneName)
-      }
-      return _interface
-        + ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
-    case 'INTERSECTION':
-    case 'UNION':
-      return ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
+      type = ast.params.reduce((prev, cur) =>
+        prev + declareEnums(cur, options, processed),
+        '')
+      break
     default:
       return ''
   }
+
+  return type
 }
 
-let last: AST | null = null
-function declareNamedTypes(ast: AST, options: Options, processed = new Map<AST, string>()): string {
-  console.log('declareNamedTypes', processed.has(ast), ast, ast === last)
-  last = ast
+function declareNamedInterfaces(
+  ast: AST,
+  options: Options,
+  rootASTName: string,
+  processed = new Set<AST>()
+): string {
+
   if (processed.has(ast)) {
-    return processed.get(ast)!
+    return ''
   }
-  processed.set(ast, '[PLACEHOLDER]')
+
+  processed.add(ast)
   let type = ''
+
+  switch (ast.type) {
+    case 'INTERFACE':
+      let _interface = ''
+      if (hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareReferenced)) {
+        _interface = generateInterface(ast, options)
+      }
+      type = _interface
+        + ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
+      break
+    case 'INTERSECTION':
+    case 'UNION':
+      type = ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
+      break
+    default:
+      type = ''
+  }
+
+  return type
+}
+
+function declareNamedTypes(
+  ast: AST,
+  options: Options,
+  processed = new Set<AST>()
+): string {
+
+  if (processed.has(ast)) {
+    return ''
+  }
+
+  processed.add(ast)
+  let type = ''
+
   switch (ast.type) {
     case 'ENUM':
       type = ''
@@ -67,6 +104,7 @@ function declareNamedTypes(ast: AST, options: Options, processed = new Map<AST, 
         type = generateStandaloneType(ast, options)
       }
   }
+
   return type
 }
 
