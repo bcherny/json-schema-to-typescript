@@ -20,7 +20,6 @@
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
     "no-unused-new": true,
-    "no-unused-variable": true,
     "no-var-keyword": true,
     "object-literal-key-quotes": [true, "as-needed"],
     "object-literal-shorthand": true,

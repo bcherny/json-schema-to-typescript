@@ -10,7 +10,6 @@ export type AST = TAny | TArray | TBoolean | TEnum | TInterface
 
 export interface AbstractAST {
   comment?: string
-  isRequired: boolean
   keyName?: string
   standaloneName?: string
   type: AST_TYPE
@@ -50,20 +49,24 @@ export interface TBoolean extends AbstractAST {
 export interface TEnum extends AbstractAST {
   standaloneName: string
   type: 'ENUM'
-  params: ASTWithName[]
+  params: TEnumParam[]
+}
+
+export interface TEnumParam {
+  ast: AST
+  keyName: string
 }
 
 export interface TInterface extends AbstractAST {
   standaloneName: string
   type: 'INTERFACE'
-  params: ASTWithName[]
+  params: TInterfaceParam[]
+}
 
-  /**
-   * Which ID should $refs reference?
-   * eg. "/Users/boris/project/schema.json#"
-   * eg. "/Users/boris/project/schema.json#foo/bar"
-   */
-  // refId: string
+export interface TInterfaceParam {
+  ast: AST
+  keyName: string
+  isRequired: boolean
 }
 
 export interface TIntersection extends AbstractAST {
@@ -110,12 +113,10 @@ export interface TUnion extends AbstractAST {
 ////////////////////////////////////////////     literals
 
 export const T_ANY: TAny = {
-  isRequired: false,
   type: 'ANY'
 }
 
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
-  isRequired: true,
   keyName: '[k: string]',
   type: 'ANY'
 }

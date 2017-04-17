@@ -1,19 +1,24 @@
 export const input = {
-  "title": "Local Cycle (2)",
+  "title": "Cycle (2)",
   "properties": {
     "foo": {
-      "$ref": "#"
-    },
-    "bar": {
-      "$ref": "#"
+      "$ref": "test/resources/cycle.3.json"
     }
   },
   "required": ["foo"],
-  "additionalProperties": false
+  "additionalProperties": true
 }
 
-export const output = `export interface LocalCycle {
-  foo: LocalCycle;
-  bar: LocalCycle;
+export const output = `export interface Cycle2 {
+  foo: Cycle3;
+  [k: string]: any;
+}
+export interface Cycle3 {
+  foo?: Cycle4;
+}
+export interface Cycle4 {
+  foo?: number;
+  bar?: Cycle3;
+  [k: string]: any;
 }
 `

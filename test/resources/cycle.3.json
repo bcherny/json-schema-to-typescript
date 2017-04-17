@@ -1,0 +1,10 @@
+{
+  "title": "Cycle (3)",
+  "type": "object",
+  "properties": {
+    "foo": {
+      "$ref": "./cycle.4.json"
+    }
+  },
+  "additionalProperties": false
+}

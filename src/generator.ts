@@ -1,7 +1,7 @@
 import { whiteBright } from 'cli-color'
 import { omit } from 'lodash'
 import { DEFAULT_OPTIONS, Options } from './index'
-import { AST, ASTWithName, ASTWithStandaloneName, hasComment, hasStandaloneName, TEnum, TInterface, TIntersection, TUnion } from './types/AST'
+import { AST, ASTWithStandaloneName, hasComment, hasStandaloneName, TEnum, TInterface, TIntersection, TUnion } from './types/AST'
 import { log, toSafeString } from './utils'
 
 // TODO: call for referenced types
@@ -34,8 +34,8 @@ function declareEnums(
       type = generateEnum(ast, options)
       break
     case 'INTERFACE':
-      type = ast.params.reduce((prev, cur) =>
-        prev + declareEnums(cur, options, processed),
+      type = ast.params.reduce((prev, { ast }) =>
+        prev + declareEnums(ast, options, processed),
         '')
       break
     default:
@@ -66,7 +66,7 @@ function declareNamedInterfaces(
         _interface = generateInterface(ast, options)
       }
       type = _interface
-        + ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
+        + ast.params.map(({ ast }) => declareNamedInterfaces(ast, options, rootASTName, processed)).filter(Boolean).join('\n')
       break
     case 'INTERSECTION':
     case 'UNION':
@@ -97,7 +97,7 @@ function declareNamedTypes(
       type = ''
       break
     case 'INTERFACE':
-      type = ast.params.map(_ => declareNamedTypes(_, options, processed)).filter(Boolean).join('\n')
+      type = ast.params.map(({ ast }) => declareNamedTypes(ast, options, processed)).filter(Boolean).join('\n')
       break
     default:
       if (hasStandaloneName(ast)) {
@@ -146,11 +146,11 @@ function generateEnum(ast: TEnum, options: Options): string {
   return (hasComment(ast) ? generateComment(ast.comment, options, 0) : '')
     + 'export ' + (options.enableConstEnums ? 'const ' : '') + `enum ${toSafeString(ast.standaloneName)} {`
     + '\n'
-    + ast.params.map(_ =>
+    + ast.params.map(({ ast, keyName }) =>
         options.indentWith
-          + _.name
+          + keyName
           + ' = '
-          + generateType(_, options)
+          + generateType(ast, options)
       )
       .join(',\n')
     + '\n'
@@ -163,12 +163,12 @@ function generateInterface(ast: TInterface, options: Options): string {
     + `export interface ${toSafeString(ast.standaloneName)} {`
     + '\n'
     + ast.params
-        .map(_ => [_, generateType(_, options)])
-        .map(([ast, type]: [ASTWithName, string]) =>
+        .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string])
+        .map(([isRequired, keyName, ast, type]) =>
           (hasComment(ast) ? generateComment(ast.comment, options, 1) : '')
             + options.indentWith
-            + ast.name
-            + (ast.isRequired ? '' : '?')
+            + keyName
+            + (isRequired ? '' : '?')
             + ': '
             + (ast.type === 'ENUM' || ast.type === 'INTERFACE' ? toSafeString(type) : type)
             + (options.enableTrailingSemicolonForInterfaceProperties ? ';' : '')

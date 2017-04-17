@@ -56,7 +56,8 @@
     ],
     "source": [
       "./dist/test/e2e/*.js",
-      "./dist/src/*.js"
+      "./dist/src/*.js",
+      "./test/resources/*.json"
     ],
     "vebose": true
   }
