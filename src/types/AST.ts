@@ -11,13 +11,13 @@ export type AST = TAny | TArray | TBoolean | TEnum | TInterface
 export interface AbstractAST {
   comment?: string
   isRequired: boolean
-  name?: string
+  keyName?: string
   standaloneName?: string
   type: AST_TYPE
 }
 
 export type ASTWithComment = AST & { comment: string }
-export type ASTWithName = AST & { name: string }
+export type ASTWithName = AST & { keyName: string }
 export type ASTWithStandaloneName = AST & { standaloneName: string }
 
 export function hasComment(ast: AST): ast is ASTWithComment {
@@ -116,6 +116,6 @@ export const T_ANY: TAny = {
 
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   isRequired: true,
-  name: '[k: string]',
+  keyName: '[k: string]',
   type: 'ANY'
 }
