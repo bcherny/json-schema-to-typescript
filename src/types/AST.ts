@@ -23,10 +23,6 @@ export function hasComment(ast: AST): ast is ASTWithComment {
   return 'comment' in ast && ast.comment != null && ast.comment !== ''
 }
 
-export function hasName(ast: AST): ast is ASTWithName {
-  return 'name' in ast
-}
-
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
   return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
 }

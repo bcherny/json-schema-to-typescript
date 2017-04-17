@@ -29,7 +29,14 @@ export function typeOfSchema(schema: JSONSchema | JSONSchema4Type): SCHEMA_TYPE 
     case 'null': return 'NULL'
     case 'any': return 'ANY'
   }
-  if (isPlainObject(schema)) return 'UNNAMED_SCHEMA'
+
+  switch (typeof schema.default) {
+    case 'boolean': return 'BOOLEAN'
+    case 'number': return 'NUMBER'
+    case 'string': return 'STRING'
+  }
+
+  if (isPlainObject(schema) && Object.keys(schema).length) return 'UNNAMED_SCHEMA'
   return 'ANY'
 }
 

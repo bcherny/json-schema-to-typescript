@@ -7,6 +7,7 @@ import { parse } from './parser'
 import { dereference } from './resolver'
 import { error, stripExtension, Try } from './utils'
 import { validate } from './validator'
+import { optimize } from "./optimizer";
 
 export interface Options {
   cwd: string
@@ -60,7 +61,7 @@ export async function compile(
     throw new ValidationError
   }
   return generate(
-    parse(await dereference(normalize(schema, name), options.cwd)),
+    optimize(parse(await dereference(normalize(schema, name), options.cwd))),
     { ...DEFAULT_OPTIONS, ...options }
   )
 }

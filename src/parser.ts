@@ -2,7 +2,7 @@ import { whiteBright } from 'cli-color'
 import { JSONSchema4TypeName } from 'json-schema'
 import { map } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
-import { AST, ASTWithName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterfaceParam } from './types/AST'
+import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterfaceParam } from './types/AST'
 import { JSONSchema, SchemaSchema } from './types/JSONSchema'
 import { error, log } from './utils'
 
@@ -65,7 +65,7 @@ export function parse(
       return set({
         comment: schema.description,
         keyName,
-        params: parseSchemaSchema(schema as SchemaSchema, processed),
+        params: parseSchema(schema as SchemaSchema, processed),
         standaloneName: computeSchemaName(schema as SchemaSchema, keyName),
         type: 'INTERFACE'
       })
@@ -117,7 +117,7 @@ export function parse(
       return set({
         comment: schema.description,
         keyName,
-        params: parseSchemaSchema(schema as SchemaSchema, processed),
+        params: parseSchema(schema as SchemaSchema, processed),
         standaloneName: computeSchemaName(schema as SchemaSchema, keyName),
         type: 'INTERFACE'
       })
@@ -145,7 +145,7 @@ function computeSchemaName(
 /**
  * Helper to parse schema properties into params on the parent schema's type
  */
-function parseSchemaSchema(
+function parseSchema(
   schema: SchemaSchema,
   processed: Map<JSONSchema, AST>
 ): TInterfaceParam[] {

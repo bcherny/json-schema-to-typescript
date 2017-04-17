@@ -119,8 +119,6 @@ function generateType(ast: AST, options: Options): string {
     case 'ANY': return 'any'
     case 'ARRAY': return generateType(ast.params, options) + '[]'
     case 'BOOLEAN': return 'boolean'
-    // case 'ENUM': return ast.standaloneName
-    // case 'INTERFACE': return generateInterface(ast, options)
     case 'INTERSECTION': return generateSetOperation(ast, options)
     case 'LITERAL': return JSON.stringify(ast.params)
     case 'NUMBER': return 'number'
