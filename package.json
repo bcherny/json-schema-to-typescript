@@ -36,6 +36,7 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
+    "@types/json-schema": "^4.0.0",
     "json-schema-ref-parser": "^3.1.2",
     "lodash": "^4.17.4"
   },
