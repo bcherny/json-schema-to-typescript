@@ -32,13 +32,13 @@ export interface ExampleSchema {
 }
 `
   },
-//   {
-//     settings: {
-//       declareReferenced: false
-//     },
-//     output: `export interface Referencing {
-//   foo: ExampleSchema;
-// }
-// `
-//   }
+  {
+    settings: {
+      declareReferenced: false
+    },
+    output: `export interface Referencing {
+  foo: ExampleSchema;
+}
+`
+  }
 ]
