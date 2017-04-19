@@ -66,6 +66,24 @@ function isMultiTestCase(exports: TestCase): exports is MultiTestCase {
   return 'outputs' in exports
 }
 
+type Reporter = (a: string, b: string) => string
+
+const tableReporter: Reporter = (a: string, b: string) => {
+  const Table = require('table-layout')
+  const table = new Table(
+    [
+      {
+        expected: bold('Expected') + '\n\n' + b,
+        actual: bold('Actual') + '\n\n' + a
+      }
+    ],
+    { columns: [{ width: 80 }, { width: 80 }], noTrim: true }
+  )
+  return table.toString()
+}
+
+const diffReporter: Reporter = (a: string, b: string) => diff(a, b)
+
 function compare(t: AssertContext, caseName: string, a: string, b: string) {
   if (a !== b) {
     console.log(
@@ -80,7 +98,7 @@ function compare(t: AssertContext, caseName: string, a: string, b: string) {
       '  ' + red('Red') + white(' = Missing character in output'),
       '\n',
       '\n',
-      diff(a, b),
+      tableReporter(a, b),
       '─────────────────────────────────────────────────────────'
     )
     t.fail()

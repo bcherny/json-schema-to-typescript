@@ -44,11 +44,9 @@ declare module 'json-schema-ref-parser' {
      * @param options (optional)
      * @param callback (optional) A callback that will receive the dereferenced schema object
      */
-    dereference(
-      schema: string | JSONSchema4,
-      options?: Options,
-      callback?: (err: Error | null, schema: JSONSchema4 | null) => any
-    ): Promise<JSONSchema4>
+    dereference(path: string, schema: string | JSONSchema4, options?: Options, callback?: (err: Error | null, schema: JSONSchema4 | null) => any): Promise<JSONSchema4>
+    dereference(path: string, options?: Options, callback?: (err: Error | null, schema: JSONSchema4 | null) => any): Promise<JSONSchema4>
+    dereference(schema: JSONSchema4, options?: Options, callback?: (err: Error | null, schema: JSONSchema4 | null) => any): Promise<JSONSchema4>
 
     /**
      * Bundles all referenced files/URLs into a single schema that only has internal `$ref` pointers. This lets you split-up your schema however you want while you're building it, but easily combine all those files together when it's time to package or distribute the schema to other people. The resulting schema size will be small, since it will still contain internal JSON references rather than being fully-dereferenced.
@@ -105,7 +103,7 @@ declare module 'json-schema-ref-parser' {
   /**
    * See https://github.com/BigstickCarpet/json-schema-ref-parser/blob/master/docs/options.md
    */
-  interface Options {
+  type Options = object & {
 
     /**
      * The `parse` options determine how different types of files will be parsed.
@@ -258,7 +256,7 @@ declare module 'json-schema-ref-parser' {
    *
    * See https://github.com/BigstickCarpet/json-schema-ref-parser/blob/master/docs/refs.md
    */
-  declare class $Refs {
+  class $Refs {
     /**
      * This property is true if the schema contains any circular references. You may want to check this property before serializing the dereferenced schema as JSON, since JSON.stringify() does not support circular references by default.
      *

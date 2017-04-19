@@ -1,6 +1,6 @@
 import { whiteBright } from 'cli-color'
 import { JSONSchema4TypeName } from 'json-schema'
-import { map } from 'lodash'
+import { isPlainObject, map, some } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
 import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterfaceParam } from './types/AST'
 import { JSONSchema, SchemaSchema } from './types/JSONSchema'
@@ -8,9 +8,15 @@ import { error, log } from './utils'
 
 export function parse(
   schema: JSONSchema,
+  rootSchema = schema,
   keyName?: string,
-  processed = new Map<JSONSchema, AST>()
+  processed = new Map<JSONSchema, AST>(),
+  definitions: D
 ): AST {
+
+  if (schema === rootSchema) {
+    console.log('getDefinitions', getDefinitions(schema))
+  }
 
   log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
 
@@ -32,7 +38,7 @@ export function parse(
       return set({
         comment: schema.description,
         keyName,
-        params: schema.allOf!.map(_ => parse(_, undefined, processed)),
+        params: schema.allOf!.map(_ => parse(_, rootSchema, undefined, processed)),
         standaloneName: schema.title,
         type: 'INTERSECTION'
       })
@@ -42,7 +48,7 @@ export function parse(
       return set({
         comment: schema.description,
         keyName,
-        params: schema.anyOf!.map(_ => parse(_, undefined, processed)),
+        params: schema.anyOf!.map(_ => parse(_, rootSchema, undefined, processed)),
         standaloneName: schema.title,
         type: 'UNION'
       })
@@ -55,7 +61,7 @@ export function parse(
         comment: schema.description,
         keyName,
         params: schema.enum!.map((_, n) => ({
-          ast: parse(_, undefined, processed),
+          ast: parse(_, rootSchema, undefined, processed),
           keyName: schema.tsEnumNames![n]
         })),
         standaloneName: keyName!,
@@ -65,8 +71,8 @@ export function parse(
       return set({
         comment: schema.description,
         keyName,
-        params: parseSchema(schema as SchemaSchema, processed),
-        standaloneName: computeSchemaName(schema as SchemaSchema, keyName),
+        params: parseSchema(schema as SchemaSchema, rootSchema, processed),
+        standaloneName: computeSchemaName(schema as SchemaSchema) || (isDefinition(rootSchema, schema) ? keyName : undefined),
         type: 'INTERFACE'
       })
     case 'NULL':
@@ -84,7 +90,7 @@ export function parse(
         return set({
           comment: schema.description,
           keyName,
-          params: schema.items.map(_ => parse(_, undefined, processed)),
+          params: schema.items.map(_ => parse(_, rootSchema, undefined, processed)),
           standaloneName: schema.title,
           type: 'TUPLE'
         })
@@ -92,7 +98,7 @@ export function parse(
         return set({
           comment: schema.description,
           keyName,
-          params: parse(schema.items!, undefined, processed),
+          params: parse(schema.items!, rootSchema, undefined, processed),
           standaloneName: schema.title,
           type: 'ARRAY'
         })
@@ -101,7 +107,7 @@ export function parse(
       return set({
         comment: schema.description,
         keyName,
-        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ }, undefined, processed)),
+        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ }, rootSchema, undefined, processed)),
         standaloneName: schema.title,
         type: 'UNION'
       })
@@ -109,7 +115,7 @@ export function parse(
       return set({
         comment: schema.description,
         keyName,
-        params: schema.enum!.map(_ => parse(_, undefined, processed)),
+        params: schema.enum!.map(_ => parse(_, rootSchema, undefined, processed)),
         standaloneName: schema.title,
         type: 'UNION'
       })
@@ -117,8 +123,8 @@ export function parse(
       return set({
         comment: schema.description,
         keyName,
-        params: parseSchema(schema as SchemaSchema, processed),
-        standaloneName: computeSchemaName(schema as SchemaSchema, keyName),
+        params: parseSchema(schema as SchemaSchema, rootSchema, processed),
+        standaloneName: computeSchemaName(schema as SchemaSchema) || (isDefinition(rootSchema, schema) ? keyName : undefined),
         type: 'INTERFACE'
       })
     case 'UNTYPED_ARRAY':
@@ -135,11 +141,8 @@ export function parse(
 /**
  * Compute a schema name using a series of fallbacks
  */
-function computeSchemaName(
-  schema: SchemaSchema,
-  name?: string // name from schema's filename
-): string {
-  return schema.title || schema.id || name || 'Interface1' // TODO: increment interface number
+function computeSchemaName(schema: SchemaSchema): string | undefined {
+  return schema.title || schema.id
 }
 
 /**
@@ -147,11 +150,12 @@ function computeSchemaName(
  */
 function parseSchema(
   schema: SchemaSchema,
+  rootSchema: JSONSchema,
   processed: Map<JSONSchema, AST>
 ): TInterfaceParam[] {
 
   const asts = map(schema.properties, (value, key: string) => ({
-    ast: parse(value, key, processed),
+    ast: parse(value, rootSchema, key, processed),
     isRequired: (schema.required || []).includes(key),
     keyName: key
   }))
@@ -173,9 +177,48 @@ function parseSchema(
     // defined via index signatures are already optional
     default:
       return asts.concat({
-        ast: parse(schema.additionalProperties, '[k: string]', processed),
+        ast: parse(schema.additionalProperties, rootSchema, '[k: string]', processed),
         isRequired: true,
         keyName: '[k: string]'
       })
   }
+}
+
+function isDefinition(
+  schema: JSONSchema,
+  value: any,
+  parentKey = '',
+  processed = new Set<JSONSchema>()
+): boolean {
+  console.log('isDefinition', schema, value)
+  if (parentKey === 'definitions' && schema === value) {
+    return true
+  }
+  if (processed.has(schema)) {
+    return false
+  }
+  if (!isPlainObject(schema) && !Array.isArray(schema)) {
+    return false
+  }
+  processed.add(schema)
+  return some(schema, (v, k) => isDefinition(v, value, k, processed))
+}
+
+type Definitions = { [k: string]: JSONSchema }
+
+function getDefinitions(schema: JSONSchema, processed = new Set<JSONSchema>()): Definitions {
+  if (processed.has(schema)) {
+    return {}
+  }
+  processed.add(schema)
+  if (Array.isArray(schema)) {
+    return schema.reduce((prev, cur) => ({ ...prev, ...getDefinitions(cur, processed) }), {})
+  }
+  if (isPlainObject(schema)) {
+    return {
+      ...('definitions' in schema ? schema.definitions! : {}),
+      ...Object.keys(schema).reduce<Definitions>((prev, cur) => ({ ...prev, ...getDefinitions(schema[cur], processed) }), {})
+    }
+  }
+  return {}
 }

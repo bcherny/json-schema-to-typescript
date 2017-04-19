@@ -48,6 +48,7 @@
     "cli-color": "^1.2.0",
     "concurrently": "^3.4.0",
     "generic-diff": "^1.0.1",
+    "table-layout": "^0.4.0",
     "tslint": "^4.5.1",
     "typescript": "^2.2.2"
   },

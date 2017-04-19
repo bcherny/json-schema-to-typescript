@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { JSONSchema, NormalizedJSONSchema } from './types/JSONSchema'
 import { justName, log, mapDeep, toSafeString } from './utils'
 
-type Rule = (schema: JSONSchema, key?: string, fileName?: string) => JSONSchema
+type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string) => JSONSchema
 const rules = new Map<string, Rule>()
 
 rules.set('Destructure unary types', schema => {
@@ -35,18 +35,9 @@ rules.set('Default additionalProperties to true', schema => {
   return schema
 })
 
-// TODO: avoid assigning duplicate IDs
-// TODO: should IDs be full paths?
-let anonymousSchemaIDCounter = 0
-rules.set('Default `id`', (schema, key, fileName) => {
-  if (!schema.id && willBeInterface(schema)) {
-    if (key) {
-      schema.id = key
-    } else if (fileName) {
-      schema.id = toSafeString(justName(fileName))
-    } else {
-      schema.id = `Interface${anonymousSchemaIDCounter++}`
-    }
+rules.set('Default top level `id`', (schema, rootSchema, fileName) => {
+  if (!schema.id && schema === rootSchema) {
+    schema.id = toSafeString(justName(fileName))
   }
   return schema
 })
@@ -54,7 +45,7 @@ rules.set('Default `id`', (schema, key, fileName) => {
 export function normalize(schema: JSONSchema, filename: string): NormalizedJSONSchema {
   let _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
-    _schema = mapDeep(_schema, (schema, key) => rule(schema, key, filename)) as NormalizedJSONSchema
+    _schema = mapDeep(_schema, schema => rule(schema, _schema, filename)) as NormalizedJSONSchema
     log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema

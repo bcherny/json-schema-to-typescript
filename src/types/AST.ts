@@ -4,7 +4,7 @@ export type AST_TYPE = 'ANY' | 'ARRAY' | 'BOOLEAN' | 'ENUM' | 'INTERFACE'
   | 'INTERSECTION' | 'LITERAL' | 'NUMBER' | 'NULL' | 'OBJECT' | 'REFERENCE'
   | 'STRING' | 'TUPLE' | 'UNION'
 
-export type AST = TAny | TArray | TBoolean | TEnum | TInterface
+export type AST = TAny | TArray | TBoolean | TEnum | TInterface | TNamedInterface
   | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
   | TString | TTuple | TUnion
 
@@ -54,6 +54,11 @@ export interface TEnumParam {
 }
 
 export interface TInterface extends AbstractAST {
+  type: 'INTERFACE'
+  params: TInterfaceParam[]
+}
+
+export interface TNamedInterface extends AbstractAST {
   standaloneName: string
   type: 'INTERFACE'
   params: TInterfaceParam[]

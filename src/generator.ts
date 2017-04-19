@@ -1,7 +1,7 @@
 import { whiteBright } from 'cli-color'
 import { omit } from 'lodash'
 import { DEFAULT_OPTIONS, Options } from './index'
-import { AST, ASTWithStandaloneName, hasComment, hasStandaloneName, TEnum, TInterface, TIntersection, TUnion } from './types/AST'
+import { AST, ASTWithStandaloneName, hasComment, hasStandaloneName, TEnum, TInterface, TIntersection, TNamedInterface, TUnion } from './types/AST'
 import { log, toSafeString } from './utils'
 
 // TODO: call for referenced types
@@ -119,6 +119,7 @@ function generateType(ast: AST, options: Options): string {
     case 'ANY': return 'any'
     case 'ARRAY': return generateType(ast.params, options) + '[]'
     case 'BOOLEAN': return 'boolean'
+    case 'INTERFACE': return generateInlineInterface(ast, options)
     case 'INTERSECTION': return generateSetOperation(ast, options)
     case 'LITERAL': return JSON.stringify(ast.params)
     case 'NUMBER': return 'number'
@@ -156,9 +157,8 @@ function generateEnum(ast: TEnum, options: Options): string {
     + '\n'
 }
 
-function generateInterface(ast: TInterface, options: Options): string {
-  return (hasComment(ast) ? generateComment(ast.comment, options, 0) : '')
-    + `export interface ${toSafeString(ast.standaloneName)} {`
+function generateInlineInterface(ast: TInterface, options: Options): string {
+  return `{`
     + '\n'
     + ast.params
         .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string])
@@ -174,6 +174,12 @@ function generateInterface(ast: TInterface, options: Options): string {
         .join('\n')
     + '\n'
     + '}'
+}
+
+function generateInterface(ast: TNamedInterface, options: Options): string {
+  return (hasComment(ast) ? generateComment(ast.comment, options, 0) : '')
+    + `export interface ${toSafeString(ast.standaloneName)} `
+    + generateInlineInterface(ast, options)
     + (options.enableTrailingSemicolonForInterfaces ? ';' : '')
     + '\n'
 }
