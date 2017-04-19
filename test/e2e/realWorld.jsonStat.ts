@@ -1,3 +1,5 @@
+export let exclude = true
+
 /**
  * @see https://github.com/fge/sample-json-schemas/blob/master/json-stat
  */

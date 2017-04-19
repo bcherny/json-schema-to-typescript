@@ -1,9 +1,9 @@
 import { whiteBright } from 'cli-color'
 import { JSONSchema4TypeName } from 'json-schema'
-import { findKey, isPlainObject, map, some } from 'lodash'
+import { findKey, isPlainObject, map } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
 import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterfaceParam } from './types/AST'
-import { JSONSchema, SchemaSchema } from './types/JSONSchema'
+import { JSONSchema, SchemaSchema, JSONSchemaWithDefinitions } from './types/JSONSchema'
 import { error, log } from './utils'
 
 export function parse(
@@ -14,6 +14,7 @@ export function parse(
 ): AST {
 
   const definitions = getDefinitions(rootSchema)
+  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
 
   log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
 
@@ -36,23 +37,38 @@ export function parse(
         comment: schema.description,
         keyName,
         params: schema.allOf!.map(_ => parse(_, rootSchema, undefined, processed)),
-        standaloneName: schema.title,
+        standaloneName: schema.title || keyNameFromDefinition,
         type: 'INTERSECTION'
       })
     case 'ANY':
-      return set({ comment: schema.description, keyName, standaloneName: schema.title, type: 'ANY' })
+      return set({
+        comment: schema.description,
+        keyName,
+        standaloneName: schema.title || keyNameFromDefinition,
+        type: 'ANY'
+      })
     case 'ANY_OF':
       return set({
         comment: schema.description,
         keyName,
         params: schema.anyOf!.map(_ => parse(_, rootSchema, undefined, processed)),
-        standaloneName: schema.title,
+        standaloneName: schema.title || keyNameFromDefinition,
         type: 'UNION'
       })
     case 'BOOLEAN':
-      return set({ comment: schema.description, keyName, standaloneName: schema.title, type: 'BOOLEAN' })
+      return set({
+        comment: schema.description,
+        keyName,
+        standaloneName: schema.title || keyNameFromDefinition,
+        type: 'BOOLEAN'
+      })
     case 'LITERAL':
-      return set({ keyName, params: schema, type: 'LITERAL' })
+      return set({
+        keyName,
+        params: schema,
+        standaloneName: keyNameFromDefinition,
+        type: 'LITERAL'
+      })
     case 'NAMED_ENUM':
       return set({
         comment: schema.description,
@@ -73,22 +89,42 @@ export function parse(
         type: 'INTERFACE'
       })
     case 'NULL':
-      return set({ comment: schema.description, keyName, standaloneName: schema.title, type: 'NULL' })
+      return set({
+        comment: schema.description,
+        keyName,
+        standaloneName: schema.title || keyNameFromDefinition,
+        type: 'NULL'
+      })
     case 'NUMBER':
-      return set({ comment: schema.description, keyName, standaloneName: schema.title, type: 'NUMBER' })
+      return set({
+        comment: schema.description,
+        keyName,
+        standaloneName: schema.title || keyNameFromDefinition,
+        type: 'NUMBER'
+      })
     case 'OBJECT':
-      return set({ comment: schema.description, keyName, standaloneName: schema.title, type: 'OBJECT' })
+      return set({
+        comment: schema.description,
+        keyName,
+        standaloneName: schema.title || keyNameFromDefinition,
+        type: 'OBJECT'
+      })
     case 'REFERENCE':
       throw error('Refs should have been resolved by the resolver!', schema)
     case 'STRING':
-      return set({ comment: schema.description, keyName, standaloneName: schema.title, type: 'STRING' })
+      return set({
+        comment: schema.description,
+        keyName,
+        standaloneName: schema.title || keyNameFromDefinition,
+        type: 'STRING'
+      })
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
         return set({
           comment: schema.description,
           keyName,
           params: schema.items.map(_ => parse(_, rootSchema, undefined, processed)),
-          standaloneName: schema.title,
+          standaloneName: schema.title || keyNameFromDefinition,
           type: 'TUPLE'
         })
       } else {
@@ -96,7 +132,7 @@ export function parse(
           comment: schema.description,
           keyName,
           params: parse(schema.items!, rootSchema, undefined, processed),
-          standaloneName: schema.title,
+          standaloneName: schema.title || keyNameFromDefinition,
           type: 'ARRAY'
         })
       }
@@ -105,7 +141,7 @@ export function parse(
         comment: schema.description,
         keyName,
         params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ }, rootSchema, undefined, processed)),
-        standaloneName: schema.title,
+        standaloneName: schema.title || keyNameFromDefinition,
         type: 'UNION'
       })
     case 'UNNAMED_ENUM':
@@ -113,7 +149,7 @@ export function parse(
         comment: schema.description,
         keyName,
         params: schema.enum!.map(_ => parse(_, rootSchema, undefined, processed)),
-        standaloneName: schema.title,
+        standaloneName: schema.title || keyNameFromDefinition,
         type: 'UNION'
       })
     case 'UNNAMED_SCHEMA':
@@ -122,7 +158,7 @@ export function parse(
         keyName,
         params: parseSchema(schema as SchemaSchema, rootSchema, processed),
         standaloneName: computeSchemaName(schema as SchemaSchema)
-                     || findKey(definitions, _ => _ === schema),
+                     || keyNameFromDefinition,
         type: 'INTERFACE'
       })
     case 'UNTYPED_ARRAY':
@@ -130,7 +166,7 @@ export function parse(
         comment: schema.description,
         keyName,
         params: T_ANY,
-        standaloneName: schema.title,
+        standaloneName: schema.title || keyNameFromDefinition,
         type: 'ARRAY'
       })
   }
@@ -200,7 +236,7 @@ function getDefinitions(schema: JSONSchema, processed = new Set<JSONSchema>()): 
   }
   if (isPlainObject(schema)) {
     return {
-      ...('definitions' in schema ? schema.definitions! : {}),
+      ...(hasDefinitions(schema) ? schema.definitions! : {}),
       ...Object.keys(schema).reduce<Definitions>((prev, cur) => ({
         ...prev,
         ...getDefinitions(schema[cur], processed)
@@ -208,4 +244,13 @@ function getDefinitions(schema: JSONSchema, processed = new Set<JSONSchema>()): 
     }
   }
   return {}
+}
+
+/**
+ * TODO: Reduce rate of false positives
+ */
+function hasDefinitions(schema: JSONSchema): schema is JSONSchemaWithDefinitions {
+  return isPlainObject(schema)
+      && 'definitions' in schema
+      && Object.keys(schema.definitions).every(_ => isPlainObject(schema.definitions![_]))
 }

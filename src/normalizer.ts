@@ -2,6 +2,7 @@ import { whiteBright } from 'cli-color'
 import { cloneDeep } from 'lodash'
 import { JSONSchema, NormalizedJSONSchema } from './types/JSONSchema'
 import { justName, log, mapDeep, toSafeString } from './utils'
+import stringify = require('json-stringify-safe')
 
 type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string) => JSONSchema
 const rules = new Map<string, Rule>()
@@ -36,7 +37,7 @@ rules.set('Default additionalProperties to true', schema => {
 })
 
 rules.set('Default top level `id`', (schema, rootSchema, fileName) => {
-  if (!schema.id && schema === rootSchema) {
+  if (!schema.id && stringify(schema) === stringify(rootSchema)) {
     schema.id = toSafeString(justName(fileName))
   }
   return schema

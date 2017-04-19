@@ -98,7 +98,7 @@ function compare(t: AssertContext, caseName: string, a: string, b: string) {
       '  ' + red('Red') + white(' = Missing character in output'),
       '\n',
       '\n',
-      tableReporter(a, b),
+      diffReporter(a, b),
       '─────────────────────────────────────────────────────────'
     )
     t.fail()

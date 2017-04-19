@@ -11,6 +11,16 @@ export interface JSONSchema extends JSONSchema4 {
   tsEnumNames?: string[]
 }
 
+// const SCHEMA_PROPERTIES = [
+//   'additionalItems', 'additionalProperties', 'items', 'definitions',
+//   'properties', 'patternProperties', 'dependencies', 'allOf', 'anyOf',
+//   'oneOf', 'not', 'required', '$schema', 'title', 'description',
+// ]
+
+// export function isSchema(a: any): a is SchemaSchema {
+//   return []
+// }
+
 export interface NormalizedJSONSchema extends JSONSchema {
   additionalItems?: boolean | NormalizedJSONSchema
   additionalProperties: boolean | NormalizedJSONSchema
@@ -47,4 +57,10 @@ export interface SchemaSchema extends NormalizedJSONSchema {
     [k: string]: NormalizedJSONSchema
   }
   required: string[]
+}
+
+export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {
+  definitions: {
+    [k: string]: NormalizedJSONSchema
+  }
 }

@@ -72,6 +72,7 @@ export${enableConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
   Five = 5,
   Six = 6
 }
+
 `
   }
 })

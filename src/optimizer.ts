@@ -2,6 +2,7 @@ import { whiteBright } from 'cli-color'
 import { uniqBy } from 'lodash'
 import { AST, T_ANY } from './types/AST'
 import { log } from "./utils";
+import stringify = require('json-stringify-safe')
 
 export function optimize(ast: AST, processed = new Map<AST, AST>()): AST {
 
@@ -31,7 +32,7 @@ export function optimize(ast: AST, processed = new Map<AST, AST>()): AST {
 
       // [A, B, B] -> [A, B]
       ast.params = uniqBy(ast.params, _ =>
-        `${_.type}------${(_ as any).params}`
+        `${_.type}------${stringify((_ as any).params)}`
       )
 
       return Object.assign(ast, {
