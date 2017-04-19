@@ -167,7 +167,7 @@ function generateInterface(
         .map(([isRequired, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, options, indentDepth + 1) + '\n' : '')
             + options.indentWith
-            + keyName
+            + escapeKeyName(keyName)
             + (isRequired ? '' : '?')
             + ': '
             + (hasStandaloneName(ast) ? toSafeString(type) : type)
@@ -213,4 +213,18 @@ function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): s
   return (hasComment(ast) ? generateComment(ast.comment, options, 0) + '\n' : '')
     +  `export type ${toSafeString(ast.standaloneName)} = ${generateType(omit<ASTWithStandaloneName, AST>(ast, 'standaloneName'), options, 0)}`
     + (options.enableTrailingSemicolonForTypes ? ';' : '')
+}
+
+function escapeKeyName(keyName: string): string {
+  if (
+    keyName.length
+    && /[A-Za-z_$]/.test(keyName.charAt(0))
+    && /^[\w$]+$/.test(keyName)
+  ) {
+    return keyName
+  }
+  if (keyName === '[k: string]') {
+    return keyName
+  }
+  return JSON.stringify(keyName)
 }
