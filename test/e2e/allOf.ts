@@ -1,5 +1,3 @@
-export let only = true
-
 export const input = {
   "title": "AllOf",
   "type": "object",

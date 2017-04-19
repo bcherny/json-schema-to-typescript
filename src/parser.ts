@@ -1,6 +1,6 @@
 import { whiteBright } from 'cli-color'
 import { JSONSchema4TypeName } from 'json-schema'
-import { isPlainObject, map, some } from 'lodash'
+import { findKey, isPlainObject, map, some } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
 import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterfaceParam } from './types/AST'
 import { JSONSchema, SchemaSchema } from './types/JSONSchema'
@@ -10,13 +10,10 @@ export function parse(
   schema: JSONSchema,
   rootSchema = schema,
   keyName?: string,
-  processed = new Map<JSONSchema, AST>(),
-  definitions: D
+  processed = new Map<JSONSchema, AST>()
 ): AST {
 
-  if (schema === rootSchema) {
-    console.log('getDefinitions', getDefinitions(schema))
-  }
+  const definitions = getDefinitions(rootSchema)
 
   log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
 
@@ -72,7 +69,7 @@ export function parse(
         comment: schema.description,
         keyName,
         params: parseSchema(schema as SchemaSchema, rootSchema, processed),
-        standaloneName: computeSchemaName(schema as SchemaSchema) || (isDefinition(rootSchema, schema) ? keyName : undefined),
+        standaloneName: computeSchemaName(schema as SchemaSchema),
         type: 'INTERFACE'
       })
     case 'NULL':
@@ -124,7 +121,8 @@ export function parse(
         comment: schema.description,
         keyName,
         params: parseSchema(schema as SchemaSchema, rootSchema, processed),
-        standaloneName: computeSchemaName(schema as SchemaSchema) || (isDefinition(rootSchema, schema) ? keyName : undefined),
+        standaloneName: computeSchemaName(schema as SchemaSchema)
+                     || findKey(definitions, _ => _ === schema),
         type: 'INTERFACE'
       })
     case 'UNTYPED_ARRAY':
@@ -184,40 +182,29 @@ function parseSchema(
   }
 }
 
-function isDefinition(
-  schema: JSONSchema,
-  value: any,
-  parentKey = '',
-  processed = new Set<JSONSchema>()
-): boolean {
-  console.log('isDefinition', schema, value)
-  if (parentKey === 'definitions' && schema === value) {
-    return true
-  }
-  if (processed.has(schema)) {
-    return false
-  }
-  if (!isPlainObject(schema) && !Array.isArray(schema)) {
-    return false
-  }
-  processed.add(schema)
-  return some(schema, (v, k) => isDefinition(v, value, k, processed))
-}
-
 type Definitions = { [k: string]: JSONSchema }
 
+/**
+ * TODO: Memoize
+ */
 function getDefinitions(schema: JSONSchema, processed = new Set<JSONSchema>()): Definitions {
   if (processed.has(schema)) {
     return {}
   }
   processed.add(schema)
   if (Array.isArray(schema)) {
-    return schema.reduce((prev, cur) => ({ ...prev, ...getDefinitions(cur, processed) }), {})
+    return schema.reduce((prev, cur) => ({
+      ...prev,
+      ...getDefinitions(cur, processed)
+    }), {})
   }
   if (isPlainObject(schema)) {
     return {
       ...('definitions' in schema ? schema.definitions! : {}),
-      ...Object.keys(schema).reduce<Definitions>((prev, cur) => ({ ...prev, ...getDefinitions(schema[cur], processed) }), {})
+      ...Object.keys(schema).reduce<Definitions>((prev, cur) => ({
+        ...prev,
+        ...getDefinitions(schema[cur], processed)
+      }), {})
     }
   }
   return {}
