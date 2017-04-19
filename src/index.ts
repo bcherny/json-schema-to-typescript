@@ -3,11 +3,13 @@ import { JSONSchema4 } from 'json-schema'
 import { dirname } from 'path'
 import { generate } from './generator'
 import { normalize } from './normalizer'
+import { optimize } from './optimizer'
 import { parse } from './parser'
 import { dereference } from './resolver'
 import { error, stripExtension, Try } from './utils'
 import { validate } from './validator'
-import { optimize } from "./optimizer";
+
+export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './types/JSONSchema'
 
 export interface Options {
   cwd: string
