@@ -1,9 +1,10 @@
 import test, { AssertContext } from 'ava'
 import { bold, green, red, white } from 'cli-color'
 import * as fs from 'fs'
-import { find } from 'lodash'
+import { find, template } from 'lodash'
 import { dirname, join } from 'path'
 import { compile, Options, ValidationError } from '../src'
+import { normalize } from '../src/normalizer'
 import { JSONSchema } from '../src/types/JSONSchema'
 import { log, stripExtension } from '../src/utils'
 import { diff } from './diff'
@@ -131,30 +132,29 @@ if (only) {
 
 ///////////////////////////    normalizer    ///////////////////////////
 
-// TODO: port all test cases to this shape
-// interface JSONTestCase {
-//   name: string
-//   in: JSONSchema
-//   out: JSONSchema
-// }
+interface JSONTestCase {
+  name: string
+  in: JSONSchema
+  out: JSONSchema
+}
 
-// const normalizerDir = `${__dirname}/../../test/normalizer`
-// fs.readdirSync(normalizerDir)
-//   .filter(_ => /^.*\.json$/.test(_))
-//   .map(_ => join(normalizerDir, _))
-//   .map(_ => [_, require(_) as JSONTestCase])
-//   .forEach(([filename, json]: [string, JSONTestCase]) => {
-//     const params = { filename }
-//     test(json.name, t =>
-//       compare(
-//         t,
-//         json.name,
-//         template(toString(normalize(json.in, filename)))(params),
-//         template(toString(json.out))(params)
-//       )
-//     )
-  // })
+const normalizerDir = `${__dirname}/../../test/normalizer`
+fs.readdirSync(normalizerDir)
+  .filter(_ => /^.*\.json$/.test(_))
+  .map(_ => join(normalizerDir, _))
+  .map(_ => [_, require(_) as JSONTestCase])
+  .forEach(([filename, json]: [string, JSONTestCase]) => {
+    const params = { filename }
+    test(json.name, t =>
+      compare(
+        t,
+        json.name,
+        template(toString(normalize(json.in, filename)))(params),
+        template(toString(json.out))(params)
+      )
+    )
+  })
 
-// function toString(json: Object): string {
-//   return JSON.stringify(json, null, 2)
-// }
+function toString(json: Object): string {
+  return JSON.stringify(json, null, 2)
+}

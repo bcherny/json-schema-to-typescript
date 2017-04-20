@@ -85,6 +85,24 @@ See [example app](example) for a full demo.
 | enableTrailingSemicolonForInterfaces | boolean | |
 | indentWith | string | Tabs or spaces? |
 
+## CLI
+
+A simple CLI utility is provided with this package.
+
+```sh
+cat foo.json | json2ts > foo.d.ts
+# or
+json2ts foo.json
+# or
+json2ts foo.json foo.d.ts
+# or
+json2ts --input foo.json --output foo.d.ts
+# or
+json2ts -i foo.json -o foo.d.ts
+```
+
+Note: If you don't specify an output path, results will be saved in a `.d.ts` file in the input directory.
+
 ## Tests
 
 `npm test`
