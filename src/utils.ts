@@ -22,17 +22,15 @@ export function dft<T, U>(object: { [k: string]: any }, cb: (value: U, key: stri
   }
 }
 
-export function mapDeep<T, U>(
-  object: Obj<T>,
-  fn: (value: Obj<T>, key?: string) => Obj<U>,
+export function mapDeep(
+  object: object,
+  fn: (value: object, key?: string) => object,
   key?: string
-): Obj<U> {
+): object {
   return fn(mapValues(object, (_, key) =>
     isPlainObject(_) ? mapDeep(_, fn, key) : _
   ), key)
 }
-
-export type Obj<T> = { [k: string]: T }
 
 /**
  * Eg. `foo/bar/baz.json` => `baz`

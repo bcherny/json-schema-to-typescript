@@ -68,19 +68,21 @@ function isMultiTestCase(exports: TestCase): exports is MultiTestCase {
 
 type Reporter = (a: string, b: string) => string
 
-const tableReporter: Reporter = (a: string, b: string) => {
-  const Table = require('table-layout')
-  const table = new Table(
-    [
-      {
-        expected: bold('Expected') + '\n\n' + b,
-        actual: bold('Actual') + '\n\n' + a
-      }
-    ],
-    { columns: [{ width: 80 }, { width: 80 }], noTrim: true }
-  )
-  return table.toString()
-}
+// // USEFUL FOR DEVELOPMENT
+//
+// const tableReporter: Reporter = (a: string, b: string) => {
+//   const Table = require('table-layout')
+//   const table = new Table(
+//     [
+//       {
+//         expected: bold('Expected') + '\n\n' + b,
+//         actual: bold('Actual') + '\n\n' + a
+//       }
+//     ],
+//     { columns: [{ width: 80 }, { width: 80 }], noTrim: true }
+//   )
+//   return table.toString()
+// }
 
 const diffReporter: Reporter = (a: string, b: string) => diff(a, b)
 

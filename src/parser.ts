@@ -1,27 +1,25 @@
 import { whiteBright } from 'cli-color'
-import { JSONSchema4TypeName } from 'json-schema'
+import { JSONSchema4Type, JSONSchema4TypeName } from 'json-schema'
 import { findKey, isPlainObject, map } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
 import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterfaceParam } from './types/AST'
-import { JSONSchema, SchemaSchema, JSONSchemaWithDefinitions } from './types/JSONSchema'
+import { JSONSchema, JSONSchemaWithDefinitions, SchemaSchema } from './types/JSONSchema'
 import { error, log } from './utils'
 
 export function parse(
-  schema: JSONSchema,
-  rootSchema = schema,
+  schema: JSONSchema | JSONSchema4Type,
+  rootSchema = schema as JSONSchema,
   keyName?: string,
-  processed = new Map<JSONSchema, AST>()
+  processed = new Map<JSONSchema | JSONSchema4Type, AST>()
 ): AST {
-
-  const definitions = getDefinitions(rootSchema)
-  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
-
-  log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
 
   // If we've seen this node before, return it.
   if (processed.has(schema)) {
     return processed.get(schema)!
   }
+
+  const definitions = getDefinitions(rootSchema)
+  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
 
   // Cache processed ASTs before they are actually computed, then update
   // them in place using set(). This is to avoid cycles.
@@ -30,9 +28,38 @@ export function parse(
   processed.set(schema, ast)
   const set = (_ast: AST) => Object.assign(ast, _ast)
 
+  return isSchema(schema)
+    ? parseNonLiteral(schema, rootSchema, keyName, keyNameFromDefinition, set, processed)
+    : parseLiteral(schema, keyName, keyNameFromDefinition, set)
+}
+
+function parseLiteral(
+  schema: JSONSchema4Type,
+  keyName: string | undefined,
+  keyNameFromDefinition: string | undefined,
+  set: (ast: AST) => AST
+) {
+  return set({
+    keyName,
+    params: schema,
+    standaloneName: keyNameFromDefinition,
+    type: 'LITERAL'
+  })
+}
+
+function parseNonLiteral(
+  schema: JSONSchema,
+  rootSchema: JSONSchema,
+  keyName: string | undefined,
+  keyNameFromDefinition: string | undefined,
+  set: (ast: AST) => AST,
+  processed: Map<JSONSchema | JSONSchema4Type, AST>
+) {
+
+  log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
+
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
-      // TODO: support schema.properties
       return set({
         comment: schema.description,
         keyName,
@@ -61,13 +88,6 @@ export function parse(
         keyName,
         standaloneName: schema.title || keyNameFromDefinition,
         type: 'BOOLEAN'
-      })
-    case 'LITERAL':
-      return set({
-        keyName,
-        params: schema,
-        standaloneName: keyNameFromDefinition,
-        type: 'LITERAL'
       })
     case 'NAMED_ENUM':
       return set({
@@ -185,7 +205,7 @@ function computeSchemaName(schema: SchemaSchema): string | undefined {
 function parseSchema(
   schema: SchemaSchema,
   rootSchema: JSONSchema,
-  processed: Map<JSONSchema, AST>
+  processed: Map<JSONSchema | JSONSchema4Type, AST>
 ): TInterfaceParam[] {
 
   const asts = map(schema.properties, (value, key: string) => ({
@@ -253,4 +273,8 @@ function hasDefinitions(schema: JSONSchema): schema is JSONSchemaWithDefinitions
   return isPlainObject(schema)
       && 'definitions' in schema
       && Object.keys(schema.definitions).every(_ => isPlainObject(schema.definitions![_]))
+}
+
+function isSchema(schema: JSONSchema | JSONSchema4Type): schema is JSONSchema {
+  return isPlainObject(schema)
 }
