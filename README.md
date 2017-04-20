@@ -6,8 +6,6 @@
 
 > Compile json schema to typescript typings
 
-**[In Beta]**: Bug reports appreciated!
-
 ## Example
 
 Input:
@@ -45,20 +43,45 @@ export interface ExampleSchema {
    * Age in years
    */
   age?: number;
-  hairColor?: "black" | "brown" | "blue";
+  hairColor?: ("black" | "brown" | "blue");
 }
 ```
 
 ## Installation
 
-`npm install json-schema-to-typescript`
+`npm install json-schema-to-typescript --save`
 
 ## Usage
 
 ```js
-import {compileFromFile} from 'json-schema-to-typescript'
-fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
+import { compile, compileFromFile } from 'json-schema-to-typescript'
+
+// compile from file
+compileFromFile('foo.json')
+  .then(ts => fs.writeFileSync('foo.d.ts', ts)
+
+// or, compile a JS object
+let mySchema = {
+  properties: [...]
+}
+compile(mySchema, 'MySchema')
+  .then(ts => ...)
 ```
+
+## Options
+
+`compileFromFile` and `compile` accept options as their last argument (all keys are optional):
+
+| key       | type        | note               |
+|-----------|-------------|--------------------|
+| cwd       | string      | Root directory for resolving `$ref`s |
+| declareReferenced | boolean | Declare schemas referenced via `$ref`? |
+| enableConstEnums | boolean | Prepend enums with `const`? |
+| enableTrailingSemicolonForTypes | boolean | |
+| enableTrailingSemicolonForEnums | boolean | |
+| enableTrailingSemicolonForInterfaceProperties | boolean | |
+| enableTrailingSemicolonForInterfaces | boolean | |
+| indentWith | string | Tabs or spaces? |
 
 ## Tests
 
@@ -84,10 +107,10 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - [x] Schema definitions
 - [x] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
 - [x] Local (filesystem) schema references
-- [ ] External (network) schema references
+- [x] External (network) schema references
 - [ ] Add support for running in browser
 - [x] default interface name
-- [ ] infer unnamed interface name from filename
+- [x] infer unnamed interface name from filename
 - [x] `anyOf` ("union")
 - [x] `allOf` ("intersection")
 - [x] `additionalProperties` of type
@@ -96,7 +119,6 @@ fs.writeFileSync('foo.d.ts', await compileFromFile('foo.json'))
 - [ ] `validateRequired` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L124))
 - [x] literal objects in enum ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L236))
 - [ ] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
-- [ ] clean up + refactor code
 
 ## Not expressible in TypeScript:
 
