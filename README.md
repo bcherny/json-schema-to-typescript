@@ -68,6 +68,8 @@ compile(mySchema, 'MySchema')
   .then(ts => ...)
 ```
 
+See [example app](example) for a full demo.
+
 ## Options
 
 `compileFromFile` and `compile` accept options as their last argument (all keys are optional):
