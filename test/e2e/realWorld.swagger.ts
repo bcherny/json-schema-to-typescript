@@ -1,3 +1,5 @@
+export let exclude = true
+
 /**
  * @see https://github.com/bcherny/json-schema-to-typescript/issues/49
  */

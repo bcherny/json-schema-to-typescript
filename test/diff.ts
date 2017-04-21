@@ -1,20 +1,14 @@
 import { green, red } from 'cli-color'
-const genericDiff = require('generic-diff')
-
-interface Edit {
-  added: boolean
-  items: string[]
-  removed: boolean
-}
+import fastDiff = require('fast-diff')
 
 export function diff(a: string, b: string) {
-  return genericDiff(b, a).map((edit: Edit) => {
-    if (edit.added) {
-      return green(showHiddenChars(edit.items.join('')))
-    } else if (edit.removed) {
-      return red(showHiddenChars(edit.items.join('')))
+  return fastDiff(b, a).map((edit: fastDiff.Edit) => {
+    if (edit[0] === fastDiff.INSERT) {
+      return green(showHiddenChars(edit[1]))
+    } else if (edit[0] === fastDiff.DELETE) {
+      return red(showHiddenChars(edit[1]))
     } else {
-      return edit.items.join('')
+      return edit[1]
     }
   }).join('')
 }

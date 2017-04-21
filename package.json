@@ -56,7 +56,7 @@
     "ava": "^0.19.1",
     "cli-color": "^1.2.0",
     "concurrently": "^3.4.0",
-    "generic-diff": "^1.0.1",
+    "fast-diff": "^1.1.1",
     "table-layout": "^0.4.0",
     "tslint": "^5.1.0",
     "typescript": "^2.2.2"
