@@ -22,7 +22,7 @@ type Reporter = (a: string, b: string) => string
 
 const diffReporter: Reporter = (a: string, b: string) => diff(a, b)
 
-export function compare(t: AssertContext, caseName: string, a: string, b: string) {
+export function compare(t: AssertContext, caseName: string, a = '', b = '') {
   if (a !== b) {
     console.log(
       '\n',

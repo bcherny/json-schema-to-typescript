@@ -2,11 +2,11 @@ import { test } from 'ava'
 import { readdirSync } from 'fs'
 import { find } from 'lodash'
 import { dirname, join } from 'path'
-import { compile, JSONSchema, Options, ValidationError } from '../../src'
-import { log, stripExtension } from '../../src/utils'
-import { compare } from '../reporter'
+import { compile, JSONSchema, Options, ValidationError } from '../src'
+import { log, stripExtension } from '../src/utils'
+import { compare } from './reporter'
 
-const dir = __dirname
+const dir = __dirname + '/e2e'
 
 interface BaseTestCase {
   input: JSONSchema
@@ -61,7 +61,7 @@ function runOne(exports: TestCase, name: string, dirname: string) {
             t.true(e instanceof ValidationError)
           }
         } else {
-          compare(t, caseName, await compile(exports.input, stripExtension(name), settings) as string, _.output)
+          compare(t, caseName, await compile(exports.input, stripExtension(name), settings), _.output)
         }
       })
     })
@@ -75,7 +75,7 @@ function runOne(exports: TestCase, name: string, dirname: string) {
           t.true(e instanceof ValidationError)
         }
       } else {
-        compare(t, name, await compile(exports.input, stripExtension(name), settings) as string, exports.output)
+        compare(t, name, await compile(exports.input, stripExtension(name), settings), exports.output)
       }
     })
   }

@@ -11,7 +11,7 @@
     "build": "rm -rf dist && tsc -d",
     "lint": "tslint -c tslint.json src/*.ts",
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
-    "test": "ava",
+    "test": "ava --verbose",
     "prepublish": "npm test",
     "pretest": "npm run build",
     "watch": "tsc -w",

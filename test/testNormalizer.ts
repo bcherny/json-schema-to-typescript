@@ -2,9 +2,9 @@ import { test } from 'ava'
 import { readdirSync } from 'fs'
 import { template } from 'lodash'
 import { join } from 'path'
-import { JSONSchema } from '../../src'
-import { normalize } from '../../src/normalizer'
-import { compare } from '../reporter'
+import { JSONSchema } from '../src'
+import { normalize } from '../src/normalizer'
+import { compare } from './reporter'
 
 interface JSONTestCase {
   name: string
@@ -12,7 +12,7 @@ interface JSONTestCase {
   out: JSONSchema
 }
 
-const normalizerDir = __dirname
+const normalizerDir = __dirname + '/../../test/normalizer'
 
 export function run() {
   readdirSync(normalizerDir)

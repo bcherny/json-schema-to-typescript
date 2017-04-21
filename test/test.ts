@@ -1,6 +1,6 @@
-import { run as runCLITests } from './cli'
-import { run as runE2ETests } from './e2e'
-import { run as runNormalizerTests } from './normalizer'
+import { run as runCLITests } from './testCLI'
+import { run as runE2ETests } from './testE2E'
+import { run as runNormalizerTests } from './testNormalizer'
 
 runCLITests()
 runE2ETests()

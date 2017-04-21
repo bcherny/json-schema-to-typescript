@@ -17,7 +17,9 @@
     "properties": {
       "a": {
         "type": "integer",
-        "id": "a"
+        "id": "a",
+        "required": [],
+        "additionalProperties": true
       }
     },
     "additionalProperties": true,

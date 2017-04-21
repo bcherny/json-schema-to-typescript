@@ -8,7 +8,8 @@
         }
       },
       "additionalProperties": true,
-      "required": []
+      "required": [],
+      "id": "friend"
     },
     "properties": {
       "firstName": {
@@ -22,8 +23,7 @@
     "friend": {
       "properties": {
         "knowsFrom": {
-          "enum": ["work", "school", "other"],
-          "id": "knowsFrom"
+          "enum": ["work", "school", "other"]
         }
       },
       "additionalProperties": true,
@@ -32,8 +32,7 @@
     },
     "properties": {
       "firstName": {
-        "type": "string",
-        "id": "firstName"
+        "type": "string"
       }
     },
     "additionalProperties": true,
