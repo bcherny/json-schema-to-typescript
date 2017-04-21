@@ -4,7 +4,7 @@
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
-    "json2ts": "dist/cli.js"
+    "json2ts": "dist/src/cli.js"
   },
   "typings": "dist/src/index.d.ts",
   "scripts": {

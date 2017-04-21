@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readFile, writeFile } from 'mz/fs'
-import { basename, dirname, join } from 'path'
+import { join } from 'path'
 import stdin = require('stdin')
 import { JSONSchema4 } from 'json-schema'
 import { compile } from './index'
@@ -23,7 +23,7 @@ async function main(argv: minimist.ParsedArgs) {
   }
 
   const argIn: string = argv._[0] || argv.input
-  const argOut: string = argv._[1] || argv.output || getOutFilePath(argIn)
+  const argOut: string = argv._[1] || argv.output
 
   try {
     const schema: JSONSchema4 = JSON.parse(await readInput(argIn))
@@ -36,21 +36,11 @@ async function main(argv: minimist.ParsedArgs) {
 
 }
 
-function getOutFilePath(inFilePath?: string) {
-  if (!inFilePath) {
-    return
-  }
-  return join(
-    dirname(inFilePath),
-    basename(inFilePath, '.json') + '.d.ts'
-  )
-}
-
 function readInput(argIn?: string) {
   if (!argIn) {
     return new Promise(stdin)
   }
-  return readFile(argIn, 'utf-8')
+  return readFile(join(process.cwd(), argIn), 'utf-8')
 }
 
 function writeOutput(ts: string, argOut: string): Promise<void> {
