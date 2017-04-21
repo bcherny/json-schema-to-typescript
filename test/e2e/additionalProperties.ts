@@ -1,13 +1,13 @@
 export const input = {
-  "title": "AdditionalProperties",
-  "type": "object",
-  "properties": {
-    "foo": {
-      "type": "string"
+  title: 'AdditionalProperties',
+  type: 'object',
+  properties: {
+    foo: {
+      type: 'string'
     }
   },
-  "additionalProperties": {
-    "type": "number"
+  additionalProperties: {
+    type: 'number'
   }
 }
 

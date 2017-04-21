@@ -8,7 +8,6 @@ export const input = {
   "title": "JSON-stat 2.0 Schema",
   "id": "https://json-stat.org/format/schema/2.0/",
   "description": "This is version 1.03 of the JSON-stat 2.0 Schema (2016-05-04)",
-
   "definitions": {
     "strarray": {
       "type": "array",
@@ -479,4 +478,10 @@ export const input = {
   ]
 }
 
-export const output = ''
+export const output = `/**
+ * This is version 1.03 of the JSON-stat 2.0 Schema (2016-05-04)
+ */
+export interface JsonStat20Schema {
+
+}
+`
