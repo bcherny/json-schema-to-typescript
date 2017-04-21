@@ -18,6 +18,7 @@
     "target": "es2016"
   },
   "exclude": [
+    "example",
     "node_modules"
   ]
 }
