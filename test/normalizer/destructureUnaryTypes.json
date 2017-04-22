@@ -1,0 +1,43 @@
+{
+  "name": "Destructure unary types",
+  "in": {
+    "id": "foo",
+    "type": ["object"],
+    "definitions": {
+      "a": {
+        "type": ["integer"],
+        "id": "a"
+      }
+    },
+    "properties": {
+      "b": {
+        "type": ["string"],
+        "id": "b"
+      }
+    },
+    "additionalProperties": true,
+    "required": []
+  },
+  "out": {
+    "id": "foo",
+    "type": "object",
+    "definitions": {
+      "a": {
+        "type": "integer",
+        "id": "a",
+        "required": [],
+        "additionalProperties": true
+      }
+    },
+    "properties": {
+      "b": {
+        "type": "string",
+        "id": "b",
+        "required": [],
+        "additionalProperties": true
+      }
+    },
+    "additionalProperties": true,
+    "required": []
+  }
+}

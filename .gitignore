@@ -5,4 +5,3 @@ node_modules
 *.map
 dist/
 dist_tests/
-out/

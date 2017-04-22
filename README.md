@@ -6,8 +6,6 @@
 
 > Compile json schema to typescript typings
 
-**[In Beta]**: Bug reports appreciated!
-
 ## Example
 
 Input:
@@ -39,33 +37,59 @@ Input:
 Output:
 ```ts
 export interface ExampleSchema {
-  "firstName": string;
-  "lastName": string;
+  firstName: string;
+  lastName: string;
   /**
    * Age in years
    */
-  "age"?: number;
-  "hairColor"?: "black" | "brown" | "blue";
+  age?: number;
+  hairColor?: ("black" | "brown" | "blue");
 }
 ```
 
 ## Installation
 
-`npm install json-schema-to-typescript`
+`npm install json-schema-to-typescript --save`
 
 ## Usage
 
 ```js
-import {compileFromFile} from 'json-schema-to-typescript'
+import { compile, compileFromFile } from 'json-schema-to-typescript'
 
-fs.writeFileSync('dist/foo.d.ts', await compileFromFile('src/foo.json'))
+// compile from file
+compileFromFile('foo.json')
+  .then(ts => fs.writeFileSync('foo.d.ts', ts)
+
+// or, compile a JS object
+let mySchema = {
+  properties: [...]
+}
+compile(mySchema, 'MySchema')
+  .then(ts => ...)
 ```
 
-See [/example](example) for a fully working demo.
+See [example app](example) for a full demo.
 
-### CLI
-Simple CLI utility is provided within the package.
-```
+## Options
+
+`compileFromFile` and `compile` accept options as their last argument (all keys are optional):
+
+| key       | type        | note               |
+|-----------|-------------|--------------------|
+| cwd       | string      | Root directory for resolving `$ref`s |
+| declareReferenced | boolean | Declare schemas referenced via `$ref`? |
+| enableConstEnums | boolean | Prepend enums with `const`? |
+| enableTrailingSemicolonForTypes | boolean | |
+| enableTrailingSemicolonForEnums | boolean | |
+| enableTrailingSemicolonForInterfaceProperties | boolean | |
+| enableTrailingSemicolonForInterfaces | boolean | |
+| indentWith | string | Tabs or spaces? |
+
+## CLI
+
+A simple CLI utility is provided with this package.
+
+```sh
 cat foo.json | json2ts > foo.d.ts
 # or
 json2ts foo.json
@@ -76,7 +100,8 @@ json2ts --input foo.json --output foo.d.ts
 # or
 json2ts -i foo.json -o foo.d.ts
 ```
-In case you don't specify output path, results are saved in input directory in `.d.ts` file.
+
+Note: If you don't specify an output path, results will be saved in a `.d.ts` file in the input directory.
 
 ## Tests
 
@@ -102,10 +127,10 @@ In case you don't specify output path, results are saved in input directory in `
 - [x] Schema definitions
 - [x] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
 - [x] Local (filesystem) schema references
-- [ ] External (network) schema references
+- [x] External (network) schema references
 - [ ] Add support for running in browser
 - [x] default interface name
-- [ ] infer unnamed interface name from filename
+- [x] infer unnamed interface name from filename
 - [x] `anyOf` ("union")
 - [x] `allOf` ("intersection")
 - [x] `additionalProperties` of type
@@ -114,7 +139,6 @@ In case you don't specify output path, results are saved in input directory in `
 - [ ] `validateRequired` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L124))
 - [x] literal objects in enum ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L236))
 - [ ] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
-- [ ] clean up + refactor code
 
 ## Not expressible in TypeScript:
 
@@ -136,7 +160,7 @@ In case you don't specify output path, results are saved in input directory in `
 
 ## Further Reading
 
-- JSON-schema spec: http://json-schema.org/latest/json-schema-core.html
+- JSON-schema spec: https://tools.ietf.org/html/draft-zyp-json-schema-04
 - JSON-schema wiki: https://github.com/json-schema/json-schema/wiki
 - JSON-schema test suite: https://github.com/json-schema/JSON-Schema-Test-Suite/blob/node
 - TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md

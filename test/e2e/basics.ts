@@ -1,5 +1,4 @@
-{
-  "id": "http://dummy.com/api/example-schema",
+export const input = {
   "title": "Example Schema",
   "type": "object",
   "properties": {
@@ -26,3 +25,17 @@
   },
   "required": ["firstName", "lastName"]
 }
+
+export const output = `export interface ExampleSchema {
+  firstName: string;
+  lastName: string;
+  /**
+   * Age in years
+   */
+  age?: number;
+  height?: number;
+  favoriteFoods?: any[];
+  likesDogs?: boolean;
+  [k: string]: any;
+}
+`

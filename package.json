@@ -1,21 +1,21 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "3.1.4",
+  "version": "3.0.0",
   "description": "compile json schema to typescript typings",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "bin": {
-    "json2ts": "dist/cli.js"
+    "json2ts": "dist/src/cli.js"
   },
-  "typings": "dist/index.d.ts",
+  "typings": "dist/src/index.d.ts",
   "scripts": {
-    "build": "npm run build-sources && npm test && npm run lint",
-    "build-sources": "tsc -p ./tsconfig.json",
-    "build-tests": "rm -rf ./dist_tests && tsc -p ./tsconfig.test.json",
-    "watch": "tsc -p ./tsconfig.json --watch & tsc -p ./tsconfig.test.json --watch",
+    "build": "rm -rf dist && tsc -d",
     "lint": "tslint -c tslint.json src/*.ts",
-    "test": "npm run build-tests && ava",
-    "tdd": "npm run watch & ava --watch",
-    "prepublish": "npm run build"
+    "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
+    "test": "ava --verbose",
+    "prepublish": "npm test",
+    "pretest": "npm run build",
+    "watch": "tsc -w",
+    "watch:test": "ava -w"
   },
   "repository": {
     "type": "git",
@@ -39,27 +39,36 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
+    "json-schema-ref-parser": "^3.1.2",
+    "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "mz": "^2.6.0",
     "stdin": "0.0.1"
   },
   "devDependencies": {
-    "@types/lodash": "4.14.55",
+    "@types/cli-color": "^0.3.29",
+    "@types/json-schema": "^4.0.0",
+    "@types/lodash": "4.14.62",
     "@types/minimist": "^1.2.0",
-    "@types/mz": "0.0.30",
-    "@types/node": "^7.0.8",
-    "ava": "^0.18.2",
-    "tslint": "^4.5.1",
-    "typescript": "^2.2.1"
+    "@types/mz": "0.0.31",
+    "@types/node": "^7.0.13",
+    "ava": "^0.19.1",
+    "cli-color": "^1.2.0",
+    "concurrently": "^3.4.0",
+    "fast-diff": "^1.1.1",
+    "table-layout": "^0.4.0",
+    "tslint": "^5.1.0",
+    "typescript": "^2.2.2"
   },
   "ava": {
     "files": [
-      "./dist_tests/test/test.js"
+      "./dist/test/test.js"
     ],
     "source": [
-      "./dist_tests/test/cases/*.js",
-      "./dist_tests/src/*.js"
+      "./dist/test/e2e/*.js",
+      "./dist/src/*.js",
+      "./test/resources/*.json"
     ],
     "vebose": true
   }

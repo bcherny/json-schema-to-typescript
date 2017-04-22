@@ -1,6 +1,6 @@
-{
-  "id": "http://dummy.com/api/example-schema",
+export const input = {
   "title": "Example Schema",
+  "description": "My cool schema",
   "type": "object",
   "properties": {
     "firstName": {
@@ -13,16 +13,21 @@
       "description": "Age in years",
       "type": "integer",
       "minimum": 0
-    },
-    "height": {
-      "type": "number"
-    },
-    "favoriteFoods": {
-      "type": "array"
-    },
-    "likesDogs": {
-      "type": "boolean"
     }
   },
   "required": ["firstName", "lastName"]
 }
+
+export const output = `/**
+ * My cool schema
+ */
+export interface ExampleSchema {
+  firstName: string;
+  lastName: string;
+  /**
+   * Age in years
+   */
+  age?: number;
+  [k: string]: any;
+}
+`

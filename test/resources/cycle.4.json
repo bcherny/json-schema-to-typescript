@@ -1,0 +1,12 @@
+{
+  "title": "Cycle (4)",
+  "type": "object",
+  "properties": {
+    "foo": {
+      "type": "integer"
+    },
+    "bar": {
+      "$ref": "./cycle.3.json"
+    }
+  }
+}

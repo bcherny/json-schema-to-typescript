@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "typings": "index.d.ts",
   "scripts": {
-    "build": "tsc && node ./index.js"
+    "build": "npm run clean && tsc && node index.js",
+    "clean": "rm -f index.js index.d.ts person.d.ts"
   },
+
   "dependencies": {
-    "@types/node": "^4",
-    "typescript": "^2",
-    "json-schema-to-typescript": "^2"
+    "@types/node": "^7.0.13",
+    "typescript": "2.2.2",
+    "json-schema-to-typescript": "3.1.4"
   }
 }

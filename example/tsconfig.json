@@ -1,22 +1,22 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "preserveConstEnums": true,
-    "outDir": ".",
     "declaration": false,
-    "sourceMap": false,
-    "target": "es6",
     "lib": [
       "es2015"
     ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": ".",
+    "preserveConstEnums": true,
+    "sourceMap": true,
     "strictNullChecks": true,
-    "types": [
-      "node"
-    ]
+    "target": "es2016"
   },
   "files": [
-    "index.ts"
+    "./index.ts"
   ]
 }

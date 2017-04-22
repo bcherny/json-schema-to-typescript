@@ -1,5 +1,4 @@
-{
-  "id": "http://dummy.com/api/example-schema",
+export const input = {
   "title": "Example Schema",
   "type": "object",
   "properties": {
@@ -13,16 +12,18 @@
       "description": "Age in years",
       "type": "integer",
       "minimum": 0
-    },
-    "height": {
-      "type": "number"
-    },
-    "favoriteFoods": {
-      "type": "array"
-    },
-    "likesDogs": {
-      "type": "boolean"
     }
   },
-  "required": ["firstName", "lastName"]
+  "required": ["firstName", "lastName"],
+  "additionalProperties": false
 }
+
+export const output = `export interface ExampleSchema {
+  firstName: string;
+  lastName: string;
+  /**
+   * Age in years
+   */
+  age?: number;
+}
+`
