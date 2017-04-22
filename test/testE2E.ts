@@ -28,6 +28,13 @@ interface MultiTestCase extends BaseTestCase {
 
 type TestCase = SingleTestCase | MultiTestCase
 
+export function hasOnly() {
+  return readdirSync(dir)
+    .filter(_ => /^.*\.js$/.test(_))
+    .map(_ => require(join(dir, _)))
+    .some(_ => _.only)
+}
+
 export function run() {
 
   // [filename, absolute dirname, contents][]

@@ -129,6 +129,14 @@ function parseNonLiteral(
         standaloneName: schema.title || keyNameFromDefinition,
         type: 'OBJECT'
       })
+    case 'ONE_OF':
+      return set({
+        comment: schema.description,
+        keyName,
+        params: schema.oneOf!.map(_ => parse(_, rootSchema, undefined, processed)),
+        standaloneName: schema.title || keyNameFromDefinition,
+        type: 'UNION'
+      })
     case 'REFERENCE':
       throw error('Refs should have been resolved by the resolver!', schema)
     case 'STRING':

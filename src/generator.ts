@@ -128,10 +128,10 @@ function generateType(ast: AST, options: Options, indentDepth: number): string {
 
   switch (ast.type) {
     case 'ANY': return 'any'
-    case 'ARRAY': return generateType(ast.params, options, indentDepth) + '[]'
+    case 'ARRAY': return generateType(ast.params, options, indentDepth + 1) + '[]'
     case 'BOOLEAN': return 'boolean'
     case 'INTERFACE': return generateInterface(ast, options, indentDepth + 1)
-    case 'INTERSECTION': return generateSetOperation(ast, options)
+    case 'INTERSECTION': return generateSetOperation(ast, options, indentDepth)
     case 'LITERAL': return JSON.stringify(ast.params)
     case 'NUMBER': return 'number'
     case 'NULL': return 'null'
@@ -139,17 +139,17 @@ function generateType(ast: AST, options: Options, indentDepth: number): string {
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
     case 'TUPLE': return '['
-      + ast.params.map(_ => generateType(_, options, indentDepth)).join(', ')
+      + ast.params.map(_ => generateType(_, options, indentDepth + 1)).join(', ')
       + ']'
-    case 'UNION': return generateSetOperation(ast, options)
+    case 'UNION': return generateSetOperation(ast, options, indentDepth)
   }
 }
 
 /**
  * Generate a Union or Intersection
  */
-function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
-  const members = (ast as TUnion).params.map(_ => generateType(_, options, 0))
+function generateSetOperation(ast: TIntersection | TUnion, options: Options, indentDepth: number): string {
+  const members = (ast as TUnion).params.map(_ => generateType(_, options, indentDepth))
   const separator = ast.type === 'UNION' ? '|' : '&'
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }

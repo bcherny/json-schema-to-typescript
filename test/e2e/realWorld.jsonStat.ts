@@ -1,5 +1,3 @@
-export let exclude = true
-
 /**
  * @see https://github.com/fge/sample-json-schemas/blob/master/json-stat
  */
@@ -481,7 +479,137 @@ export const input = {
 export const output = `/**
  * This is version 1.03 of the JSON-stat 2.0 Schema (2016-05-04)
  */
-export interface JsonStat20Schema {
+export type JsonStat20Schema = ({
+    class: "dataset";
+    version: Version;
+    href?: Href;
+    label?: Label;
+    note?: Strarray;
+    link?: Link;
+    updated?: Updated;
+    source?: Source;
+    error?: Error;
+    extension?: Extension;
+    id: Strarray;
+    size: number[];
+    role?: {
+      time?: Strarray;
+      geo?: Strarray;
+      metric?: Strarray;
+    };
+    dimension: {
+      [k: string]: {
+        href?: Href;
+        label?: Label;
+        note?: Strarray;
+        link?: Link;
+        extension?: Extension;
+        category: Category;
+      };
+    };
+    value: ((number | null | string)[] | {
+      [k: string]: (number | null | string);
+    });
+    status?: (string | string[] | {
+      [k: string]: string;
+    });
+  } | {
+    class: "dimension";
+    version: Version;
+    href?: Href;
+    label?: Label;
+    note?: Strarray;
+    link?: Link;
+    updated?: Updated;
+    source?: Source;
+    error?: Error;
+    extension?: Extension;
+    category: Category;
+  } | {
+    class: "collection";
+    version: Version;
+    href?: Href;
+    label?: Label;
+    note?: Strarray;
+    link: {
+      item?: {
+          type?: string;
+          class?: ("dataset" | "collection" | "dimension");
+          href?: Href;
+          label?: Label;
+          note?: Strarray;
+          link?: Link;
+          updated?: Updated;
+          source?: Source;
+          extension?: Extension;
+          category?: Category;
+          id?: Strarray;
+          size?: number[];
+          role?: {
+            time?: Strarray;
+            geo?: Strarray;
+            metric?: Strarray;
+          };
+          dimension?: {
+            [k: string]: {
+              href?: Href;
+              label?: Label;
+              note?: Strarray;
+              link?: Link;
+              extension?: Extension;
+              category: Category;
+            };
+          };
+          value?: ((number | null | string)[] | {
+            [k: string]: (number | null | string);
+          });
+          status?: (string | string[] | {
+            [k: string]: string;
+          });
+        }[];
+    };
+    updated?: Updated;
+    source?: Source;
+    error?: Error;
+    extension?: Extension;
+  });
+export type Version = "2.0";
+export type Href = string;
+export type Label = string;
+export type Strarray = string[];
+export type Updated = string;
+export type Source = string;
+export type Error = any[];
 
+export interface Link {
+
+}
+export interface Extension {
+  [k: string]: any;
+}
+export interface Category {
+  index?: (Strarray | {
+    [k: string]: number;
+  });
+  label?: {
+    [k: string]: string;
+  };
+  note?: {
+    [k: string]: Strarray;
+  };
+  unit?: {
+    [k: string]: {
+      label?: Label;
+      decimals?: number;
+      position?: ("start" | "end");
+      [k: string]: any;
+    };
+  };
+  coordinates?: {
+    [k: string]: [number, number];
+  };
+  child?: {
+    [k: string]: Strarray;
+  };
 }
 `
