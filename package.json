@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/cli-color": "^0.3.29",
     "@types/json-schema": "^4.0.0",
-    "@types/lodash": "4.14.62",
+    "@types/lodash": "4.14.63",
     "@types/minimist": "^1.2.0",
     "@types/mz": "0.0.31",
     "@types/node": "^7.0.13",
