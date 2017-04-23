@@ -68,7 +68,7 @@ compile(mySchema, 'MySchema')
   .then(ts => ...)
 ```
 
-See [example app](example) for a full demo.
+See [server demo](example) and [browser demo](https://github.com/bcherny/json-schema-to-typescript-browser) for full examples.
 
 ## Options
 
