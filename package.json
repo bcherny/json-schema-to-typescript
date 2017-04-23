@@ -1,6 +1,6 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
@@ -8,7 +8,10 @@
   },
   "typings": "dist/src/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc -d",
+    "build": "npm run clean && mkdir dist && npm run build:browser && npm run build:server",
+    "build:browser": "browserify src/index.ts -s jstt -p tsify > dist/bundle.js",
+    "build:server": "tsc -d",
+    "clean": "rm -rf dist",
     "lint": "tslint -c tslint.json src/*.ts",
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
     "test": "ava --verbose",
@@ -54,10 +57,12 @@
     "@types/mz": "0.0.31",
     "@types/node": "^7.0.13",
     "ava": "^0.19.1",
+    "browserify": "^14.3.0",
     "cli-color": "^1.2.0",
     "concurrently": "^3.4.0",
     "fast-diff": "^1.1.1",
     "table-layout": "^0.4.0",
+    "tsify": "^3.0.1",
     "tslint": "^5.1.0",
     "typescript": "^2.2.2"
   },
