@@ -2,8 +2,7 @@
   "compilerOptions": {
     "declaration": false,
     "lib": [
-      "es2015",
-      "es2016.array.include"
+      "es2015"
     ],
     "module": "commonjs",
     "moduleResolution": "node",
@@ -15,7 +14,7 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "es2016"
+    "target": "es5"
   },
   "exclude": [
     "example",

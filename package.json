@@ -7,6 +7,9 @@
     "json2ts": "dist/src/cli.js"
   },
   "typings": "dist/src/index.d.ts",
+  "engines": {
+    "node": ">=4.5.0"
+  },
   "scripts": {
     "build": "npm run clean && mkdir dist && npm run build:browser && npm run build:server",
     "build:browser": "browserify src/index.ts -s jstt -p tsify > dist/bundle.js",

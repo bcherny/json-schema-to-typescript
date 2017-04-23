@@ -2,7 +2,7 @@ import { test } from 'ava'
 import { readdirSync } from 'fs'
 import { find } from 'lodash'
 import { dirname, join } from 'path'
-import { compile, JSONSchema, Options, ValidationError } from '../src'
+import { compile, JSONSchema, Options } from '../src'
 import { log, stripExtension } from '../src/utils'
 import { compare } from './reporter'
 
@@ -65,7 +65,7 @@ function runOne(exports: TestCase, name: string, dirname: string) {
           try {
             await compile(exports.input, stripExtension(name), settings)
           } catch (e) {
-            t.true(e instanceof ValidationError)
+            t.true(e instanceof Error)
           }
         } else {
           compare(t, caseName, await compile(exports.input, stripExtension(name), settings), _.output)
@@ -79,7 +79,7 @@ function runOne(exports: TestCase, name: string, dirname: string) {
         try {
           await compile(exports.input, stripExtension(name), settings)
         } catch (e) {
-          t.true(e instanceof ValidationError)
+          t.true(e instanceof Error)
         }
       } else {
         compare(t, name, await compile(exports.input, stripExtension(name), settings), exports.output)
