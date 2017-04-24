@@ -1,10 +1,10 @@
 import { whiteBright } from 'cli-color'
 import { JSONSchema4Type, JSONSchema4TypeName } from 'json-schema'
-import { findKey, includes, isPlainObject, map } from 'lodash'
+import { findKey, includes, isPlainObject } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
 import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterfaceParam } from './types/AST'
 import { JSONSchema, JSONSchemaWithDefinitions, SchemaSchema } from './types/JSONSchema'
-import { error, log } from './utils'
+import { error, log, mapStable } from './utils'
 
 export function parse(
   schema: JSONSchema | JSONSchema4Type,
@@ -217,7 +217,7 @@ function parseSchema(
   processed: Map<JSONSchema | JSONSchema4Type, AST>
 ): TInterfaceParam[] {
 
-  const asts = map(schema.properties, (value, key: string) => ({
+  const asts: TInterfaceParam[] = mapStable(schema.properties, (value, key) => ({
     ast: parse(value, rootSchema, key, true, processed),
     isRequired: includes(schema.required || [], key),
     keyName: key

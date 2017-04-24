@@ -32,6 +32,17 @@ export function mapDeep(
   ), key)
 }
 
+export function mapStable<
+  T extends object,
+  U extends keyof T,
+  V
+>(
+  object: Record<U, T[U]>,
+  fn: (value: T[U], key: U) => V
+): V[] {
+  return Object.keys(object).sort().map(_ => fn(object[_], _ as U))
+}
+
 /**
  * Eg. `foo/bar/baz.json` => `baz`
  */
