@@ -92,7 +92,7 @@ A simple CLI utility is provided with this package.
 ```sh
 cat foo.json | json2ts > foo.d.ts
 # or
-json2ts foo.json
+json2ts foo.json > foo.d.ts
 # or
 json2ts foo.json foo.d.ts
 # or
@@ -100,8 +100,6 @@ json2ts --input foo.json --output foo.d.ts
 # or
 json2ts -i foo.json -o foo.d.ts
 ```
-
-Note: If you don't specify an output path, results will be saved in a `.d.ts` file in the input directory.
 
 ## Tests
 
@@ -128,17 +126,18 @@ Note: If you don't specify an output path, results will be saved in a `.d.ts` fi
 - [x] [Schema references](http://json-schema.org/latest/json-schema-core.html#rfc.section.7.2.2)
 - [x] Local (filesystem) schema references
 - [x] External (network) schema references
-- [ ] Add support for running in browser
+- [x] Add support for running in browser
 - [x] default interface name
 - [x] infer unnamed interface name from filename
-- [x] `anyOf` ("union")
 - [x] `allOf` ("intersection")
+- [x] `anyOf` ("union")
+- [x] `oneOf` (treated like `anyOf`)
 - [x] `additionalProperties` of type
 - [ ] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends)
 - [x] `required` properties on objects ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L130))
 - [ ] `validateRequired` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L124))
 - [x] literal objects in enum ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L236))
-- [ ] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
+- [x] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
 
 ## Not expressible in TypeScript:
 
