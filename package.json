@@ -75,6 +75,7 @@
     ],
     "source": [
       "./dist/test/e2e/*.js",
+      "./dist/test/normalizer/*.json",
       "./dist/src/*.js",
       "./test/resources/*.json"
     ],

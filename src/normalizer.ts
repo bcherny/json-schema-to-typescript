@@ -14,23 +14,23 @@ rules.set('Destructure unary types', schema => {
   return schema
 })
 
-rules.set('Add empty `required` property if none is defined', schema => {
-  if (willBeInterface(schema) && !('required' in schema)) {
+rules.set('Add empty `required` property if none is defined', (schema, rootSchema) => {
+  if (stringify(schema) === stringify(rootSchema) && !('required' in schema)) {
     schema.required = []
   }
   return schema
 })
 
-rules.set('Transform `required`=false to `required`=[]', schema => {
-  if (willBeInterface(schema) && schema.required === false) {
+rules.set('Transform `required`=false to `required`=[]', (schema, rootSchema) => {
+  if (stringify(schema) === stringify(rootSchema) && schema.required === false) {
     schema.required = []
   }
   return schema
 })
 
 // TODO: default to empty schema (as per spec) instead
-rules.set('Default additionalProperties to true', schema => {
-  if (willBeInterface(schema) && !('additionalProperties' in schema)) {
+rules.set('Default additionalProperties to true', (schema, rootSchema) => {
+  if (stringify(schema) === stringify(rootSchema) && !('additionalProperties' in schema)) {
     schema.additionalProperties = true
   }
   return schema
@@ -50,8 +50,4 @@ export function normalize(schema: JSONSchema, filename: string): NormalizedJSONS
     log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema
-}
-
-function willBeInterface(schema: JSONSchema) {
-  return Boolean(schema.id || schema.title || schema.properties || schema.definitions)
 }

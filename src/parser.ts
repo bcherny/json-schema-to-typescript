@@ -10,6 +10,7 @@ export function parse(
   schema: JSONSchema | JSONSchema4Type,
   rootSchema = schema as JSONSchema,
   keyName?: string,
+  isSchema = true,
   processed = new Map<JSONSchema | JSONSchema4Type, AST>()
 ): AST {
 
@@ -28,8 +29,8 @@ export function parse(
   processed.set(schema, ast)
   const set = (_ast: AST) => Object.assign(ast, _ast)
 
-  return isSchema(schema)
-    ? parseNonLiteral(schema, rootSchema, keyName, keyNameFromDefinition, set, processed)
+  return isSchema
+    ? parseNonLiteral(schema as SchemaSchema, rootSchema, keyName, keyNameFromDefinition, set, processed)
     : parseLiteral(schema, keyName, keyNameFromDefinition, set)
 }
 
@@ -63,7 +64,7 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        params: schema.allOf!.map(_ => parse(_, rootSchema, undefined, processed)),
+        params: schema.allOf!.map(_ => parse(_, rootSchema, undefined, true, processed)),
         standaloneName: schema.title || keyNameFromDefinition,
         type: 'INTERSECTION'
       })
@@ -78,7 +79,7 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        params: schema.anyOf!.map(_ => parse(_, rootSchema, undefined, processed)),
+        params: schema.anyOf!.map(_ => parse(_, rootSchema, undefined, true, processed)),
         standaloneName: schema.title || keyNameFromDefinition,
         type: 'UNION'
       })
@@ -94,7 +95,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.enum!.map((_, n) => ({
-          ast: parse(_, rootSchema, undefined, processed),
+          ast: parse(_, rootSchema, undefined, false, processed),
           keyName: schema.tsEnumNames![n]
         })),
         standaloneName: keyName!,
@@ -133,7 +134,7 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        params: schema.oneOf!.map(_ => parse(_, rootSchema, undefined, processed)),
+        params: schema.oneOf!.map(_ => parse(_, rootSchema, undefined, true, processed)),
         standaloneName: schema.title || keyNameFromDefinition,
         type: 'UNION'
       })
@@ -151,7 +152,7 @@ function parseNonLiteral(
         return set({
           comment: schema.description,
           keyName,
-          params: schema.items.map(_ => parse(_, rootSchema, undefined, processed)),
+          params: schema.items.map(_ => parse(_, rootSchema, undefined, true, processed)),
           standaloneName: schema.title || keyNameFromDefinition,
           type: 'TUPLE'
         })
@@ -159,7 +160,7 @@ function parseNonLiteral(
         return set({
           comment: schema.description,
           keyName,
-          params: parse(schema.items!, rootSchema, undefined, processed),
+          params: parse(schema.items!, rootSchema, undefined, true, processed),
           standaloneName: schema.title || keyNameFromDefinition,
           type: 'ARRAY'
         })
@@ -168,7 +169,7 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ required: [], type: _ }, rootSchema, undefined, processed)),
+        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ type: _ }, rootSchema, undefined, true, processed)),
         standaloneName: schema.title || keyNameFromDefinition,
         type: 'UNION'
       })
@@ -176,7 +177,7 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        params: schema.enum!.map(_ => parse(_, rootSchema, undefined, processed)),
+        params: schema.enum!.map(_ => parse(_, rootSchema, undefined, false, processed)),
         standaloneName: schema.title || keyNameFromDefinition,
         type: 'UNION'
       })
@@ -217,7 +218,7 @@ function parseSchema(
 ): TInterfaceParam[] {
 
   const asts = map(schema.properties, (value, key: string) => ({
-    ast: parse(value, rootSchema, key, processed),
+    ast: parse(value, rootSchema, key, true, processed),
     isRequired: includes(schema.required || [], key),
     keyName: key
   }))
@@ -239,7 +240,7 @@ function parseSchema(
     // defined via index signatures are already optional
     default:
       return asts.concat({
-        ast: parse(schema.additionalProperties, rootSchema, '[k: string]', processed),
+        ast: parse(schema.additionalProperties, rootSchema, '[k: string]', true, processed),
         isRequired: true,
         keyName: '[k: string]'
       })
@@ -251,7 +252,11 @@ type Definitions = { [k: string]: JSONSchema }
 /**
  * TODO: Memoize
  */
-function getDefinitions(schema: JSONSchema, processed = new Set<JSONSchema>()): Definitions {
+function getDefinitions(
+  schema: JSONSchema,
+  isSchema = true,
+  processed = new Set<JSONSchema>()
+): Definitions {
   if (processed.has(schema)) {
     return {}
   }
@@ -259,15 +264,15 @@ function getDefinitions(schema: JSONSchema, processed = new Set<JSONSchema>()): 
   if (Array.isArray(schema)) {
     return schema.reduce((prev, cur) => ({
       ...prev,
-      ...getDefinitions(cur, processed)
+      ...getDefinitions(cur, false, processed)
     }), {})
   }
   if (isPlainObject(schema)) {
     return {
-      ...(hasDefinitions(schema) ? schema.definitions! : {}),
+      ...(isSchema && hasDefinitions(schema) ? schema.definitions : {}),
       ...Object.keys(schema).reduce<Definitions>((prev, cur) => ({
         ...prev,
-        ...getDefinitions(schema[cur], processed)
+        ...getDefinitions(schema[cur], false, processed)
       }), {})
     }
   }
@@ -278,11 +283,5 @@ function getDefinitions(schema: JSONSchema, processed = new Set<JSONSchema>()): 
  * TODO: Reduce rate of false positives
  */
 function hasDefinitions(schema: JSONSchema): schema is JSONSchemaWithDefinitions {
-  return isPlainObject(schema)
-      && 'definitions' in schema
-      && Object.keys(schema.definitions).every(_ => isPlainObject(schema.definitions![_]))
-}
-
-function isSchema(schema: JSONSchema | JSONSchema4Type): schema is JSONSchema {
-  return isPlainObject(schema)
+  return 'definitions' in schema
 }

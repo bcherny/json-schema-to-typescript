@@ -24,17 +24,13 @@
     "definitions": {
       "a": {
         "type": "integer",
-        "id": "a",
-        "required": [],
-        "additionalProperties": true
+        "id": "a"
       }
     },
     "properties": {
       "b": {
         "type": "string",
-        "id": "b",
-        "required": [],
-        "additionalProperties": true
+        "id": "b"
       }
     },
     "additionalProperties": true,
