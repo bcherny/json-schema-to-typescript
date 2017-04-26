@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs'
 import { JSONSchema4 } from 'json-schema'
+import { endsWith } from 'lodash'
 import { dirname } from 'path'
 import { generate } from './generator'
 import { normalize } from './normalizer'
@@ -55,16 +56,25 @@ export function compileFromFile(
 export async function compile(
   schema: JSONSchema4,
   name: string,
-  options = DEFAULT_OPTIONS
+  options = {}
 ): Promise<string> {
+
+  const _options = { ...DEFAULT_OPTIONS, ...options }
+
   const errors = validate(schema, name)
   if (errors.length) {
     errors.forEach(_ => error(_))
     throw new ValidationError
   }
+
+  // normalize options
+  if (!endsWith(_options.cwd, '/')) {
+    _options.cwd += '/'
+  }
+
   return generate(
-    optimize(parse(await dereference(normalize(schema, name), options.cwd))),
-    { ...DEFAULT_OPTIONS, ...options }
+    optimize(parse(await dereference(normalize(schema, name), _options.cwd))),
+    _options
   )
 }
 

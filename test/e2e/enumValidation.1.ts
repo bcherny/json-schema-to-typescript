@@ -12,7 +12,7 @@ export const input = {
   "additionalProperties": false
 }
 
-export const settings = {
+export const options = {
   useTypescriptEnums: true
 }
 

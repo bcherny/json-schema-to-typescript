@@ -46,7 +46,7 @@ export const input = {
 
 export const outputs = [false, true].map(enableConstEnums => {
   return {
-    settings: {
+    options: {
       enableConstEnums
     },
     output: `export interface Enum {

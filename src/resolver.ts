@@ -6,5 +6,5 @@ import { log } from './utils'
 export async function dereference(schema: JSONSchema, cwd: string): Promise<JSONSchema> {
   log(whiteBright.bgGreen('resolver'), schema, cwd)
   const parser = new $RefParser
-  return parser.dereference(schema)
+  return parser.dereference(cwd, schema, {})
 }

@@ -12,7 +12,7 @@ export const input = {
 
 export const outputs = [
   {
-    settings: {
+    options: {
       declareReferenced: true
     },
     output: `export interface Referencing {
@@ -33,7 +33,7 @@ export interface ExampleSchema {
 `
   },
   {
-    settings: {
+    options: {
       declareReferenced: false
     },
     output: `export interface Referencing {
