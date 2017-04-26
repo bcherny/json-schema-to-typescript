@@ -1,6 +1,6 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "4.1.4",
+  "version": "4.1.5",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
@@ -45,6 +45,7 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
+    "cli-color": "^1.2.0",
     "json-schema-ref-parser": "^3.1.2",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.4",
@@ -61,7 +62,6 @@
     "@types/node": "^7.0.13",
     "ava": "^0.19.1",
     "browserify": "^14.3.0",
-    "cli-color": "^1.2.0",
     "concurrently": "^3.4.0",
     "fast-diff": "^1.1.1",
     "table-layout": "^0.4.0",
