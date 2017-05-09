@@ -30,6 +30,7 @@ Input:
       "type": "string"
     }
   },
+  "additionalProperties": false,
   "required": ["firstName", "lastName"]
 }
 ```
