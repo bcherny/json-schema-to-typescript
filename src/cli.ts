@@ -56,7 +56,7 @@ function writeOutput(ts: string, argOut: string): Promise<void> {
 }
 
 function printHelp() {
-  const pkg = require('../package.json')
+  const pkg = require('../../package.json')
 
   process.stdout.write(
 `
