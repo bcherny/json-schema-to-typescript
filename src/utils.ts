@@ -35,7 +35,7 @@ export function mapDeep(
 /**
  * Eg. `foo/bar/baz.json` => `baz`
  */
-export function justName(filename: string): string {
+export function justName(filename = ''): string {
   return stripExtension(basename(filename))
 }
 

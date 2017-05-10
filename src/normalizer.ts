@@ -4,7 +4,7 @@ import { JSONSchema, NormalizedJSONSchema } from './types/JSONSchema'
 import { justName, log, mapDeep, toSafeString } from './utils'
 import stringify = require('json-stringify-safe')
 
-type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string) => JSONSchema
+type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName?: string) => JSONSchema
 const rules = new Map<string, Rule>()
 
 rules.set('Destructure unary types', schema => {
@@ -43,7 +43,7 @@ rules.set('Default top level `id`', (schema, rootSchema, fileName) => {
   return schema
 })
 
-export function normalize(schema: JSONSchema, filename: string): NormalizedJSONSchema {
+export function normalize(schema: JSONSchema, filename?: string): NormalizedJSONSchema {
   let _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
     _schema = mapDeep(_schema, schema => rule(schema, _schema, filename)) as NormalizedJSONSchema

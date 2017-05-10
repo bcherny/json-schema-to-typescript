@@ -25,6 +25,13 @@ export function run() {
     )
   })
 
+  test('pipe in (schema without ID), pipe out', t => {
+    t.is(
+      execSync('cat ./test/resources/ReferencedTypeWithoutID.json | node dist/src/cli.js', { encoding: 'utf-8' }).toString(),
+      expected
+    )
+  })
+
   test('file in (no flags), pipe out', t => {
     t.is(
       execSync('node dist/src/cli.js ./test/resources/ReferencedType.json').toString(),
