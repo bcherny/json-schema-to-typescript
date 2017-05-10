@@ -6,6 +6,7 @@ import { log, toSafeString } from './utils'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return [
+    options.bannerComment,
     declareNamedTypes(ast, options),
     declareNamedInterfaces(ast, options, ast.standaloneName!),
     declareEnums(ast, options)
