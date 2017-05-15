@@ -1,7 +1,10 @@
 import { whiteBright } from 'cli-color'
 import { omit } from 'lodash'
 import { DEFAULT_OPTIONS, Options } from './index'
-import { AST, ASTWithStandaloneName, hasComment, hasStandaloneName, TEnum, TInterface, TIntersection, TNamedInterface, TUnion } from './types/AST'
+import {
+  AST, ASTWithStandaloneName, hasComment, hasStandaloneName, TArray, TEnum, TInterface, TIntersection,
+  TNamedInterface, TUnion
+} from './types/AST'
 import { log, toSafeString } from './utils'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
@@ -60,6 +63,9 @@ function declareNamedInterfaces(
   let type = ''
 
   switch (ast.type) {
+    case 'ARRAY':
+      type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
+      break
     case 'INTERFACE':
       type = [
         hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareReferenced) && generateStandaloneInterface(ast, options),
