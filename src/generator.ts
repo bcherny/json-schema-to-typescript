@@ -107,11 +107,6 @@ function declareNamedTypes(
       break
     case 'INTERSECTION':
     case 'UNION':
-
-      if (hasStandaloneName(ast)) {
-        type = generateStandaloneType(ast, options)
-      }
-
       type = [
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
         ast.params.map(ast => declareNamedTypes(ast, options, processed)).filter(Boolean).join('\n')
