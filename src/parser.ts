@@ -65,14 +65,14 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.allOf!.map(_ => parse(_, rootSchema, undefined, true, processed)),
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'INTERSECTION'
       })
     case 'ANY':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'ANY'
       })
     case 'ANY_OF':
@@ -80,14 +80,14 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.anyOf!.map(_ => parse(_, rootSchema, undefined, true, processed)),
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'UNION'
       })
     case 'BOOLEAN':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'BOOLEAN'
       })
     case 'NAMED_ENUM':
@@ -113,21 +113,21 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'NULL'
       })
     case 'NUMBER':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'NUMBER'
       })
     case 'OBJECT':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'OBJECT'
       })
     case 'ONE_OF':
@@ -135,7 +135,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.oneOf!.map(_ => parse(_, rootSchema, undefined, true, processed)),
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'UNION'
       })
     case 'REFERENCE':
@@ -144,7 +144,7 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'STRING'
       })
     case 'TYPED_ARRAY':
@@ -153,7 +153,7 @@ function parseNonLiteral(
           comment: schema.description,
           keyName,
           params: schema.items.map(_ => parse(_, rootSchema, undefined, true, processed)),
-          standaloneName: schema.title || keyNameFromDefinition,
+          standaloneName: schema.title || schema.id || keyNameFromDefinition,
           type: 'TUPLE'
         })
       } else {
@@ -161,7 +161,7 @@ function parseNonLiteral(
           comment: schema.description,
           keyName,
           params: parse(schema.items!, rootSchema, undefined, true, processed),
-          standaloneName: schema.title || keyNameFromDefinition,
+          standaloneName: schema.title || schema.id || keyNameFromDefinition,
           type: 'ARRAY'
         })
       }
@@ -170,7 +170,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ type: _ }, rootSchema, undefined, true, processed)),
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'UNION'
       })
     case 'UNNAMED_ENUM':
@@ -178,7 +178,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.enum!.map(_ => parse(_, rootSchema, undefined, false, processed)),
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'UNION'
       })
     case 'UNNAMED_SCHEMA':
@@ -195,7 +195,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: T_ANY,
-        standaloneName: schema.title || keyNameFromDefinition,
+        standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'ARRAY'
       })
   }

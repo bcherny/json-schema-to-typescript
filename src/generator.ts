@@ -101,7 +101,7 @@ function declareNamedTypes(
   switch (ast.type) {
     case 'ARRAY':
       type = [
-        declareNamedTypes((ast as TArray).params, options, processed),
+        declareNamedTypes(ast.params, options, processed),
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined
       ].filter(Boolean).join('\n')
       break
