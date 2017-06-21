@@ -13,15 +13,15 @@ import { validate } from './validator'
 export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './types/JSONSchema'
 
 export interface Options {
-  bannerComment: string,
-  cwd: string
-  declareReferenced: boolean
-  enableConstEnums: boolean
-  enableTrailingSemicolonForTypes: boolean
-  enableTrailingSemicolonForEnums: boolean
-  enableTrailingSemicolonForInterfaceProperties: boolean
-  enableTrailingSemicolonForInterfaces: boolean
-  indentWith: string
+  bannerComment?: string,
+  cwd?: string
+  declareReferenced?: boolean
+  enableConstEnums?: boolean
+  enableTrailingSemicolonForTypes?: boolean
+  enableTrailingSemicolonForEnums?: boolean
+  enableTrailingSemicolonForInterfaceProperties?: boolean
+  enableTrailingSemicolonForInterfaces?: boolean
+  indentWith?: string
 }
 
 export const DEFAULT_OPTIONS: Options = {
