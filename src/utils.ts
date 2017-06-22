@@ -47,6 +47,13 @@ export function stripExtension(filename: string): string {
 }
 
 /**
+ * Check if array is not null or undefined and not empty
+ */
+export function isPresent(a: Array<string>): boolean {
+  return (!(a == null) && a.length > 0);
+}
+
+/**
  * Convert a string that might contain spaces or special characters to one that
  * can safely be used as a TypeScript interface or enum name.
  *
