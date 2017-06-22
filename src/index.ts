@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import { JSONSchema4 } from 'json-schema'
 import { endsWith } from 'lodash'
 import { dirname } from 'path'
@@ -7,7 +7,7 @@ import { normalize } from './normalizer'
 import { optimize } from './optimizer'
 import { parse } from './parser'
 import { dereference } from './resolver'
-import { error, stripExtension, Try } from './utils'
+import { error, isPresent, stripExtension, Try } from './utils'
 import { validate } from './validator'
 
 export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './types/JSONSchema'
@@ -57,6 +57,18 @@ export function compileFromFile(
     stripExtension(filename),
     {...options, cwd: dirname(filename) }
   )
+}
+
+export function compileFromDir(
+  filenames: Array<string>,
+  options = DEFAULT_OPTIONS
+): void {
+  if(!isPresent(filenames)) throw new ReferenceError(`Unable to read files "${filenames}"`);
+
+  filenames.forEach((f: string) => {
+    compileFromFile(f, options)
+      .then((ts: string) => writeFileSync('${f}.d.ts', ts));
+  });
 }
 
 export async function compile(
