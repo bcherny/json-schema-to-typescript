@@ -42,7 +42,7 @@ export const DEFAULT_OPTIONS: Options = {
 
 export function compileFromFile(
   filename: string,
-  options = DEFAULT_OPTIONS
+  options: Partial<Options> = DEFAULT_OPTIONS
 ): Promise<string> {
   const contents = Try(
     () => readFileSync(filename),
@@ -62,7 +62,7 @@ export function compileFromFile(
 export async function compile(
   schema: JSONSchema4,
   name: string,
-  options = {}
+  options: Partial<Options> = {}
 ): Promise<string> {
 
   const _options = { ...DEFAULT_OPTIONS, ...options }
