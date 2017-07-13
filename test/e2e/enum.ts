@@ -38,9 +38,21 @@ export const input = {
     },
     "impliedHeterogeneousEnum": {
       "enum": [-20.1, null, "foo", false]
+    },
+    "namedIntegerEnumTitle": {
+      "type": "integer",
+      "enum": [1, 2, 3],
+      "title": "NamedInteger",
+      "tsEnumNames": ["One", "Two", "Three"]
+    },
+    "impliedNamedIntegerEnumTitle": {
+      "enum": [4, 5, 6],
+      "title": "ImpliedNamedInteger",
+      "tsEnumNames": ["Four", "Five", "Six"]
     }
   },
-  "required": ["stringEnum", "impliedStringEnum", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum"],
+  "required": ["stringEnum", "impliedStringEnum", "booleanEnum", "impliedBooleanEnum", "integerEnum", "impliedIntegerEnum", "impliedNamedIntegerEnum", 
+  "namedIntegerEnumTitle", "impliedNamedIntegerEnumTitle"],
   "additionalProperties": false
 }
 
@@ -66,6 +78,8 @@ export interface Enum {
   namedIntegerEnum?: NamedIntegerEnum;
   impliedNamedIntegerEnum: ImpliedNamedIntegerEnum;
   impliedHeterogeneousEnum?: (-20.1 | null | "foo" | false);
+  namedIntegerEnumTitle: NamedInteger;
+  impliedNamedIntegerEnumTitle: ImpliedNamedInteger;
 }
 
 export${enableConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
@@ -74,6 +88,16 @@ export${enableConstEnums ? ' const ' : ' '}enum NamedIntegerEnum {
   Three = 3
 }
 export${enableConstEnums ? ' const ' : ' '}enum ImpliedNamedIntegerEnum {
+  Four = 4,
+  Five = 5,
+  Six = 6
+}
+export${enableConstEnums ? ' const ' : ' '}enum NamedInteger {
+  One = 1,
+  Two = 2,
+  Three = 3
+}
+export${enableConstEnums ? ' const ' : ' '}enum ImpliedNamedInteger {
   Four = 4,
   Five = 5,
   Six = 6
