@@ -13,6 +13,7 @@ export interface AbstractAST {
   keyName?: string
   standaloneName?: string
   type: AST_TYPE
+  was$ref?: true
 }
 
 export type ASTWithComment = AST & { comment: string }

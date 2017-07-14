@@ -1,12 +1,20 @@
 export const input = {
-  "title": "Referencing",
-  'type': "object",
+  title: 'Referencing',
+  type: 'object',
   properties: {
-    "foo": {
-      "$ref": "test/resources/ReferencedType.json"
+    foo: {
+      $ref: 'test/resources/ReferencedType.json'
+    },
+    bar: {
+      $ref: '#/definitions/InlineReference'
     }
   },
-  required: ["foo"],
+  definitions: {
+    InlineReference: {
+      type: 'string'
+    }
+  },
+  required: ['foo'],
   additionalProperties: false
 }
 
@@ -21,8 +29,11 @@ export const outputs = [
 * and run json-schema-to-typescript to regenerate this file.
 */
 
+export type InlineReference = string;
+
 export interface Referencing {
   foo: ExampleSchema;
+  bar?: InlineReference;
 }
 export interface ExampleSchema {
   firstName: string;
@@ -50,6 +61,7 @@ export interface ExampleSchema {
 
 export interface Referencing {
   foo: ExampleSchema;
+  bar?: InlineReference;
 }
 `
   }

@@ -10,6 +10,11 @@ export interface JSONSchema extends JSONSchema4 {
    * schema extension to support numeric enums
    */
   tsEnumNames?: string[]
+
+  /**
+   * Indicates that this property was dereferenced
+   */
+  __$ref?: true
 }
 
 // const SCHEMA_PROPERTIES = [

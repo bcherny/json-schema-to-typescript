@@ -98,6 +98,10 @@ function declareNamedTypes(
   processed.add(ast)
   let type = ''
 
+  if (!options.declareReferenced && ast.was$ref) {
+    return ''
+  }
+
   switch (ast.type) {
     case 'ARRAY':
       type = [
