@@ -78,7 +78,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | key       | type        | note               |
 |-----------|-------------|--------------------|
 | cwd       | string      | Root directory for resolving `$ref`s |
-| declareReferenced | boolean | Declare schemas referenced via `$ref`? |
+| declareExternallyReferenced | boolean | Declare external schemas referenced via `$ref`? |
 | enableConstEnums | boolean | Prepend enums with `const`? |
 | enableTrailingSemicolonForTypes | boolean | |
 | enableTrailingSemicolonForEnums | boolean | |

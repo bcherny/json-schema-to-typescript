@@ -15,7 +15,7 @@ export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './types/JSONSch
 export interface Options {
   bannerComment: string,
   cwd: string
-  declareReferenced: boolean
+  declareExternallyReferenced: boolean
   enableConstEnums: boolean
   enableTrailingSemicolonForTypes: boolean
   enableTrailingSemicolonForEnums: boolean
@@ -31,7 +31,7 @@ export const DEFAULT_OPTIONS: Options = {
 * and run json-schema-to-typescript to regenerate this file.
 */`,
   cwd: process.cwd(),
-  declareReferenced: true,
+  declareExternallyReferenced: true,
   enableConstEnums: true, // by default, avoid generating code
   enableTrailingSemicolonForEnums: false,
   enableTrailingSemicolonForInterfaceProperties: true,

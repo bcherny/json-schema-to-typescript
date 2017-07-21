@@ -68,7 +68,7 @@ function declareNamedInterfaces(
       break
     case 'INTERFACE':
       type = [
-        hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareReferenced) && generateStandaloneInterface(ast, options),
+        hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareExternallyReferenced) && generateStandaloneInterface(ast, options),
         ast.params.map(({ ast }) =>
           declareNamedInterfaces(ast, options, rootASTName, processed)
         ).filter(Boolean).join('\n')
