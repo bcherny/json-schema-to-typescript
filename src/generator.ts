@@ -136,7 +136,10 @@ function generateType(ast: AST, options: Options, indentDepth: number): string {
 
   switch (ast.type) {
     case 'ANY': return 'any'
-    case 'ARRAY': return generateType(ast.params, options, indentDepth + 1) + '[]'
+    case 'ARRAY': return (() => {
+      let type = generateType(ast.params, options, indentDepth + 1)
+      return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+    })()
     case 'BOOLEAN': return 'boolean'
     case 'INTERFACE': return generateInterface(ast, options, indentDepth + 1)
     case 'INTERSECTION': return generateSetOperation(ast, options, indentDepth)

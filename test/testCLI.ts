@@ -26,14 +26,14 @@ export function run() {
 
   test('pipe in, pipe out', t => {
     t.is(
-      execSync('cat ./test/resources/ReferencedType.json | node dist/src/cli.js', { encoding: 'utf-8' }).toString(),
+      execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js', { encoding: 'utf-8' }).toString(),
       expected
     )
   })
 
   test('pipe in (schema without ID), pipe out', t => {
     t.is(
-      execSync('cat ./test/resources/ReferencedTypeWithoutID.json | node dist/src/cli.js', { encoding: 'utf-8' }).toString(),
+      execSync('shx cat ./test/resources/ReferencedTypeWithoutID.json | node dist/src/cli.js', { encoding: 'utf-8' }).toString(),
       expected
     )
   })
@@ -60,13 +60,13 @@ export function run() {
   })
 
   test('pipe in, file out (--output)', t => {
-    execSync('cat ./test/resources/ReferencedType.json | node dist/src/cli.js --output ./ReferencedType.d.ts').toString()
+    execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js --output ./ReferencedType.d.ts').toString()
     t.is(readFileSync('./ReferencedType.d.ts', 'utf-8'), expected)
     unlinkSync('./ReferencedType.d.ts')
   })
 
   test('pipe in, file out (-o)', t => {
-    execSync('cat ./test/resources/ReferencedType.json | node dist/src/cli.js -o ./ReferencedType.d.ts').toString()
+    execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js -o ./ReferencedType.d.ts').toString()
     t.is(readFileSync('./ReferencedType.d.ts', 'utf-8'), expected)
     unlinkSync('./ReferencedType.d.ts')
   })

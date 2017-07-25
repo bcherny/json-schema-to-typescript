@@ -22,7 +22,17 @@ export const input = {
     },
     "bar": {
       "properties": {
-        "a": { "enum": ["a", "b", "c"] }
+        "a": { "enum": ["a", "b", "c"] },
+        "bam": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "enum": ["wam"]
+              }
+            ]
+          }
+        }
       }
     },
     "baz": {
@@ -50,6 +60,7 @@ export interface Foo {
 }
 export interface Bar {
   a?: ("a" | "b" | "c");
+  bam?: ("wam")[];
   [k: string]: any;
 }
 export interface Baz {
