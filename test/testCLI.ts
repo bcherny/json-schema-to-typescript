@@ -59,6 +59,13 @@ export function run() {
     )
   })
 
+  test('file in (-i), pipe out (absolute path)', t => {
+    t.is(
+      execSync(`node dist/src/cli.js -i ${__dirname}/../../test/resources/ReferencedType.json`).toString(),
+      expected
+    )
+  })
+
   test('pipe in, file out (--output)', t => {
     execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js --output ./ReferencedType.d.ts').toString()
     t.is(readFileSync('./ReferencedType.d.ts', 'utf-8'), expected)

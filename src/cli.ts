@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readFile, writeFile } from 'mz/fs'
-import { join } from 'path'
+import { resolve } from 'path'
 import stdin = require('stdin')
 import { JSONSchema4 } from 'json-schema'
 import { compile } from './index'
@@ -40,7 +40,7 @@ function readInput(argIn?: string) {
   if (!argIn) {
     return new Promise(stdin)
   }
-  return readFile(join(process.cwd(), argIn), 'utf-8')
+  return readFile(resolve(process.cwd(), argIn), 'utf-8')
 }
 
 function writeOutput(ts: string, argOut: string): Promise<void> {
