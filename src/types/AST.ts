@@ -27,6 +27,10 @@ export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
   return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
 }
 
+export function hasName(ast: TInterface): ast is TNamedInterface {
+  return hasStandaloneName(ast)
+}
+
 ////////////////////////////////////////////     types
 
 export interface TAny extends AbstractAST {
@@ -56,12 +60,14 @@ export interface TEnumParam {
 export interface TInterface extends AbstractAST {
   type: 'INTERFACE'
   params: TInterfaceParam[]
+  superTypes: TNamedInterface[]
 }
 
 export interface TNamedInterface extends AbstractAST {
   standaloneName: string
   type: 'INTERFACE'
   params: TInterfaceParam[]
+  superTypes: TNamedInterface[]
 }
 
 export interface TInterfaceParam {

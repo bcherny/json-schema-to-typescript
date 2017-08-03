@@ -37,7 +37,7 @@ function declareEnums(
       type = generateStandaloneEnum(ast, options) + '\n'
       break
     case 'INTERFACE':
-      type = ast.params.reduce((prev, { ast }) =>
+      type = getSuperTypesAndParams(ast).reduce((prev, ast) =>
         prev + declareEnums(ast, options, processed),
         '')
       break
@@ -69,7 +69,7 @@ function declareNamedInterfaces(
     case 'INTERFACE':
       type = [
         hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareExternallyReferenced) && generateStandaloneInterface(ast, options),
-        ast.params.map(({ ast }) =>
+        getSuperTypesAndParams(ast).map(ast =>
           declareNamedInterfaces(ast, options, rootASTName, processed)
         ).filter(Boolean).join('\n')
       ].filter(Boolean).join('\n')
@@ -109,7 +109,7 @@ function declareNamedTypes(
       type = ''
       break
     case 'INTERFACE':
-      type = ast.params.map(({ ast }) => declareNamedTypes(ast, options, processed)).filter(Boolean).join('\n')
+      type = getSuperTypesAndParams(ast).map(ast => declareNamedTypes(ast, options, processed)).filter(Boolean).join('\n')
       break
     case 'INTERSECTION':
     case 'UNION':
@@ -216,6 +216,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (hasComment(ast) ? generateComment(ast.comment, options, 0) + '\n' : '')
     + `export interface ${toSafeString(ast.standaloneName)} `
+    + (ast.superTypes.length > 0 ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} ` : '')
     + generateInterface(ast, options, 0)
     + (options.enableTrailingSemicolonForInterfaces ? ';' : '')
 }
@@ -238,4 +239,10 @@ function escapeKeyName(keyName: string): string {
     return keyName
   }
   return JSON.stringify(keyName)
+}
+
+function getSuperTypesAndParams(ast: TInterface): AST[] {
+  return ast.params
+      .map(param => param.ast)
+      .concat(ast.superTypes)
 }

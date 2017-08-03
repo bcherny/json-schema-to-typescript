@@ -2,7 +2,7 @@ import { whiteBright } from 'cli-color'
 import { JSONSchema4Type, JSONSchema4TypeName } from 'json-schema'
 import { findKey, includes, isPlainObject, map } from 'lodash'
 import { typeOfSchema } from './typeOfSchema'
-import { AST, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterfaceParam } from './types/AST'
+import { AST, hasName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, TInterfaceParam, TNamedInterface } from './types/AST'
 import { JSONSchema, JSONSchemaWithDefinitions, SchemaSchema } from './types/JSONSchema'
 import { error, log } from './utils'
 
@@ -102,13 +102,7 @@ function parseNonLiteral(
         type: 'ENUM'
       })
     case 'NAMED_SCHEMA':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: parseSchema(schema as SchemaSchema, rootSchema, processed),
-        standaloneName: computeSchemaName(schema as SchemaSchema),
-        type: 'INTERFACE'
-      })
+      return set(newInterface(schema, rootSchema, processed, keyName))
     case 'NULL':
       return set({
         comment: schema.description,
@@ -182,14 +176,7 @@ function parseNonLiteral(
         type: 'UNION'
       })
     case 'UNNAMED_SCHEMA':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: parseSchema(schema as SchemaSchema, rootSchema, processed),
-        standaloneName: computeSchemaName(schema as SchemaSchema)
-                     || keyNameFromDefinition,
-        type: 'INTERFACE'
-      })
+      return set(newInterface(schema, rootSchema, processed, keyName, keyNameFromDefinition))
     case 'UNTYPED_ARRAY':
       return set({
         comment: schema.description,
@@ -198,6 +185,39 @@ function parseNonLiteral(
         standaloneName: schema.title || schema.id || keyNameFromDefinition,
         type: 'ARRAY'
       })
+  }
+}
+
+function newInterface(schema: JSONSchema, rootSchema: JSONSchema, processed: Map<JSONSchema | JSONSchema4Type, AST>, keyName?: string,
+                      keyNameFromDefinition?: string): TInterface {
+  return {
+    comment: schema.description,
+    keyName,
+    params: parseSchema(schema as SchemaSchema, rootSchema, processed),
+    standaloneName: computeSchemaName(schema as SchemaSchema) || keyNameFromDefinition,
+    superTypes: parseSuperTypes(schema as SchemaSchema, processed),
+    type: 'INTERFACE'
+  }
+}
+
+function parseSuperTypes(schema: SchemaSchema, processed: Map<JSONSchema | JSONSchema4Type, AST>): TNamedInterface[] {
+  // type assertion needed because of dereferencing step
+  const superTypes = schema.extends as SchemaSchema | SchemaSchema[] | undefined
+  if (typeof superTypes === 'undefined') {
+    return []
+  } else if (superTypes instanceof Array) {
+    return superTypes.map(superType => newNamedInterface(superType, superType, processed))
+  } else {
+    return [newNamedInterface(superTypes, superTypes, processed)]
+  }
+}
+
+function newNamedInterface(schema: JSONSchema, rootSchema: JSONSchema, processed: Map<JSONSchema | JSONSchema4Type, AST>): TNamedInterface {
+  const namedInterface = newInterface(schema, rootSchema, processed)
+  if (hasName(namedInterface)) {
+    return namedInterface
+  } else {
+    throw error('Supertype must have standalone name!', namedInterface)
   }
 }
 
