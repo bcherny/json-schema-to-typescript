@@ -252,11 +252,22 @@ function parseSchema(
   processed: Processed
 ): TInterfaceParam[] {
 
-  const asts = map(schema.properties, (value, key: string) => ({
+  let asts = map(schema.properties, (value, key: string) => ({
     ast: parse(value, rootSchema, key, true, processed),
     isRequired: includes(schema.required || [], key),
     keyName: key
   }))
+
+  // Very basic support for patternProperties.
+  if (schema.patternProperties) {
+    const patternProps = map(schema.patternProperties, (value, key: string) => ({
+      ast: parse(value, rootSchema, key, true, processed),
+      isRequired: includes(schema.required || [], key),
+      keyName: '[k: string]'
+    }))
+
+    asts = asts.concat(patternProps)
+  }
 
   // handle additionalProperties
   switch (schema.additionalProperties) {
