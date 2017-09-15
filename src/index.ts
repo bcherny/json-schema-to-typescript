@@ -1,7 +1,9 @@
 import { readFileSync } from 'fs'
 import { JSONSchema4 } from 'json-schema'
-import { endsWith } from 'lodash'
+import { endsWith, merge } from 'lodash'
 import { dirname } from 'path'
+import { Options as PrettierOptions } from 'prettier'
+import { format } from './formatter'
 import { generate } from './generator'
 import { normalize } from './normalizer'
 import { optimize } from './optimizer'
@@ -17,11 +19,7 @@ export interface Options {
   cwd: string
   declareExternallyReferenced: boolean
   enableConstEnums: boolean
-  enableTrailingSemicolonForTypes: boolean
-  enableTrailingSemicolonForEnums: boolean
-  enableTrailingSemicolonForInterfaceProperties: boolean
-  enableTrailingSemicolonForInterfaces: boolean
-  indentWith: string
+  style: PrettierOptions
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -33,11 +31,15 @@ export const DEFAULT_OPTIONS: Options = {
   cwd: process.cwd(),
   declareExternallyReferenced: true,
   enableConstEnums: true, // by default, avoid generating code
-  enableTrailingSemicolonForEnums: false,
-  enableTrailingSemicolonForInterfaceProperties: true,
-  enableTrailingSemicolonForInterfaces: false,
-  enableTrailingSemicolonForTypes: true,
-  indentWith: '  '
+  style: {
+    bracketSpacing: false,
+    printWidth: 120,
+    semi: true,
+    singleQuote: false,
+    tabWidth: 2,
+    trailingComma: 'none',
+    useTabs: false
+  }
 }
 
 export function compileFromFile(
@@ -65,7 +67,7 @@ export async function compile(
   options: Partial<Options> = {}
 ): Promise<string> {
 
-  const _options = { ...DEFAULT_OPTIONS, ...options }
+  const _options = merge({}, DEFAULT_OPTIONS, options)
 
   const errors = validate(schema, name)
   if (errors.length) {
@@ -78,10 +80,10 @@ export async function compile(
     _options.cwd += '/'
   }
 
-  return generate(
+  return format(generate(
     optimize(parse(await dereference(normalize(schema, name), _options.cwd))),
     _options
-  )
+  ))
 }
 
 export class ValidationError extends Error {}

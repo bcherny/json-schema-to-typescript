@@ -23,3 +23,7 @@ Optimizes the IR to produce concise and readable TypeScript in step (6).
 #### 6. Generator
 
 Converts the intermediate respresentation to TypeScript code.
+
+#### 7. Formatter
+
+Formats the code so it is properly indented, etc.

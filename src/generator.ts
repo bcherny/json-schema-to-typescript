@@ -127,7 +127,7 @@ function declareNamedTypes(
   return type
 }
 
-function generateType(ast: AST, options: Options, indentDepth: number): string {
+function generateType(ast: AST, options: Options): string {
   log(whiteBright.bgMagenta('generator'), ast)
 
   if (hasStandaloneName(ast)) {
@@ -137,12 +137,12 @@ function generateType(ast: AST, options: Options, indentDepth: number): string {
   switch (ast.type) {
     case 'ANY': return 'any'
     case 'ARRAY': return (() => {
-      let type = generateType(ast.params, options, indentDepth + 1)
+      let type = generateType(ast.params, options)
       return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
     })()
     case 'BOOLEAN': return 'boolean'
-    case 'INTERFACE': return generateInterface(ast, options, indentDepth + 1)
-    case 'INTERSECTION': return generateSetOperation(ast, options, indentDepth)
+    case 'INTERFACE': return generateInterface(ast, options)
+    case 'INTERSECTION': return generateSetOperation(ast, options)
     case 'LITERAL': return JSON.stringify(ast.params)
     case 'NUMBER': return 'number'
     case 'NULL': return 'null'
@@ -150,63 +150,55 @@ function generateType(ast: AST, options: Options, indentDepth: number): string {
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
     case 'TUPLE': return '['
-      + ast.params.map(_ => generateType(_, options, indentDepth + 1)).join(', ')
+      + ast.params.map(_ => generateType(_, options)).join(', ')
       + ']'
-    case 'UNION': return generateSetOperation(ast, options, indentDepth)
+    case 'UNION': return generateSetOperation(ast, options)
   }
 }
 
 /**
  * Generate a Union or Intersection
  */
-function generateSetOperation(ast: TIntersection | TUnion, options: Options, indentDepth: number): string {
-  const members = (ast as TUnion).params.map(_ => generateType(_, options, indentDepth))
+function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
+  const members = (ast as TUnion).params.map(_ => generateType(_, options))
   const separator = ast.type === 'UNION' ? '|' : '&'
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
 
 function generateInterface(
   ast: TInterface,
-  options: Options,
-  indentDepth: number
+  options: Options
 ): string {
   return `{`
     + '\n'
-    + options.indentWith.repeat(indentDepth)
     + ast.params
-        .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options, indentDepth)] as [boolean, string, AST, string])
+        .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string])
         .map(([isRequired, keyName, ast, type]) =>
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, options, indentDepth + 1) + '\n' : '')
-            + options.indentWith
+          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '')
             + escapeKeyName(keyName)
             + (isRequired ? '' : '?')
             + ': '
             + (hasStandaloneName(ast) ? toSafeString(type) : type)
-            + (options.enableTrailingSemicolonForInterfaceProperties ? ';' : '')
         )
-        .join('\n' + options.indentWith.repeat(indentDepth))
+        .join('\n')
     + '\n'
-    + options.indentWith.repeat(indentDepth) + '}'
+    + '}'
 }
 
-function generateComment(comment: string, options: Options, indentDepth: number): string {
-  return options.indentWith.repeat(indentDepth)
-    + [
-        '/**',
-        ...comment.split('\n').map(_ => ' * ' + _),
-        ' */'
-      ].join('\n' + options.indentWith.repeat(indentDepth))
+function generateComment(comment: string): string {
+  return [
+    '/**',
+    ...comment.split('\n').map(_ => ' * ' + _),
+    ' */'
+  ].join('\n')
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
-  return (hasComment(ast) ? generateComment(ast.comment, options, 0) + '\n' : '')
+  return (hasComment(ast) ? generateComment(ast.comment) + '\n' : '')
     + 'export ' + (options.enableConstEnums ? 'const ' : '') + `enum ${toSafeString(ast.standaloneName)} {`
     + '\n'
     + ast.params.map(({ ast, keyName }) =>
-        options.indentWith
-          + keyName
-          + ' = '
-          + generateType(ast, options, 0)
+        keyName + ' = ' + generateType(ast, options)
       )
       .join(',\n')
     + '\n'
@@ -214,17 +206,15 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 }
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
-  return (hasComment(ast) ? generateComment(ast.comment, options, 0) + '\n' : '')
+  return (hasComment(ast) ? generateComment(ast.comment) + '\n' : '')
     + `export interface ${toSafeString(ast.standaloneName)} `
     + (ast.superTypes.length > 0 ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} ` : '')
-    + generateInterface(ast, options, 0)
-    + (options.enableTrailingSemicolonForInterfaces ? ';' : '')
+    + generateInterface(ast, options)
 }
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
-  return (hasComment(ast) ? generateComment(ast.comment, options, 0) + '\n' : '')
-    +  `export type ${toSafeString(ast.standaloneName)} = ${generateType(omit<ASTWithStandaloneName, AST>(ast, 'standaloneName'), options, 0)}`
-    + (options.enableTrailingSemicolonForTypes ? ';' : '')
+  return (hasComment(ast) ? generateComment(ast.comment) + '\n' : '')
+    +  `export type ${toSafeString(ast.standaloneName)} = ${generateType(omit<ASTWithStandaloneName, AST>(ast, 'standaloneName'), options)}`
 }
 
 function escapeKeyName(keyName: string): string {
