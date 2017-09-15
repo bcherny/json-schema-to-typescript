@@ -44,7 +44,7 @@ export function run() {
 
   // exporting `const only=true` will only run that test
   // exporting `const exclude=true` will not run that test
-  const only = find(modules, _ => _[1].only)
+  const only = find(modules, _ => Boolean(_[1].only))
   if (only) {
     runOne(only[1], only[0])
   } else {
