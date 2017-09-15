@@ -1,6 +1,6 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "4.6.1",
+  "version": "4.6.2",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
@@ -18,7 +18,7 @@
     "lint": "tslint -c tslint.json src/*.ts",
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
     "test": "ava --verbose",
-    "prepublish": "npm test",
+    "prepublishOnly": "npm test",
     "pretest": "npm run build",
     "watch": "tsc -w",
     "watch:test": "ava -w"
@@ -46,29 +46,29 @@
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
     "cli-color": "^1.2.0",
-    "json-schema-ref-parser": "^3.1.2",
+    "json-schema-ref-parser": "^3.3.1",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
-    "mz": "^2.6.0",
+    "mz": "^2.7.0",
     "stdin": "0.0.1"
   },
   "devDependencies": {
     "@types/cli-color": "^0.3.29",
     "@types/json-schema": "^4.0.0",
-    "@types/lodash": "4.14.62",
+    "@types/lodash": "4.14.74",
     "@types/minimist": "^1.2.0",
     "@types/mz": "0.0.31",
-    "@types/node": "^7.0.13",
-    "ava": "^0.19.1",
-    "browserify": "^14.3.0",
-    "concurrently": "^3.4.0",
+    "@types/node": "^8.0.28",
+    "ava": "^0.22.0",
+    "browserify": "^14.4.0",
+    "concurrently": "^3.5.0",
     "fast-diff": "^1.1.1",
     "shx": "^0.2.2",
-    "table-layout": "^0.4.0",
-    "tsify": "^3.0.1",
-    "tslint": "^5.1.0",
-    "typescript": "^2.2.2"
+    "table-layout": "^0.4.2",
+    "tsify": "^3.0.3",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2"
   },
   "ava": {
     "files": [

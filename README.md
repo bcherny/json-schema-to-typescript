@@ -50,7 +50,13 @@ export interface ExampleSchema {
 
 ## Installation
 
-`npm install json-schema-to-typescript --save`
+```sh
+# Using Yarn:
+yarn add json-schema-to-typescript
+
+# Or, using NPM:
+npm install json-schema-to-typescript --save
+```
 
 ## Usage
 
