@@ -1,0 +1,11 @@
+{
+  "title": "Referencing",
+  "type": "object",
+  "properties": {
+    "foo": {
+      "$ref": "ReferencedType.json"
+    }
+  },
+  "required": ["foo"],
+  "additionalProperties": false
+}
