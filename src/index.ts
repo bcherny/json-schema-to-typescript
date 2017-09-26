@@ -55,7 +55,7 @@ export function compileFromFile(
   return compile(
     schema,
     stripExtension(filename),
-    {...options, cwd: dirname(filename) }
+    {cwd: dirname(filename), ...options }
   )
 }
 
