@@ -1,29 +1,30 @@
 export const input = {
-  "title": "Example Schema",
-  "type": "object",
-  "properties": {
-    "firstName": {
-      "type": "string"
+  title: 'Example Schema',
+  type: 'object',
+  properties: {
+    firstName: {
+      type: 'string'
     },
-    "lastName": {
-      "type": "string"
+    lastName: {
+      id: 'lastName',
+      type: 'string'
     },
-    "age": {
-      "description": "Age in years",
-      "type": "integer",
-      "minimum": 0
+    age: {
+      description: 'Age in years',
+      type: 'integer',
+      minimum: 0
     },
-    "height": {
-      "type": "number"
+    height: {
+      type: 'number'
     },
-    "favoriteFoods": {
-      "type": "array"
+    favoriteFoods: {
+      type: 'array'
     },
-    "likesDogs": {
-      "type": "boolean"
+    likesDogs: {
+      type: 'boolean'
     }
   },
-  "required": ["firstName", "lastName"]
+  required: ['firstName', 'lastName']
 }
 
 export const output = `/**
@@ -32,9 +33,11 @@ export const output = `/**
 * and run json-schema-to-typescript to regenerate this file.
 */
 
+export type LastName = string;
+
 export interface ExampleSchema {
   firstName: string;
-  lastName: string;
+  lastName: LastName;
   /**
    * Age in years
    */

@@ -12,7 +12,6 @@ export function typeOfSchema(schema: JSONSchema): SCHEMA_TYPE {
   if (schema.enum && schema.tsEnumNames) return 'NAMED_ENUM'
   if (schema.enum) return 'UNNAMED_ENUM'
   if (schema.$ref) return 'REFERENCE'
-  if (schema.id) return 'NAMED_SCHEMA'
   if (Array.isArray(schema.type)) return 'UNION'
   switch (schema.type) {
     case 'string': return 'STRING'
@@ -34,7 +33,7 @@ export function typeOfSchema(schema: JSONSchema): SCHEMA_TYPE {
     case 'number': return 'NUMBER'
     case 'string': return 'STRING'
   }
-
+  if (schema.id) return 'NAMED_SCHEMA'
   if (isPlainObject(schema) && Object.keys(schema).length) return 'UNNAMED_SCHEMA'
   return 'ANY'
 }
