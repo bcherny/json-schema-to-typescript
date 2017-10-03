@@ -1,0 +1,10 @@
+{
+  "title": "Example Schema",
+  "properties": {
+    "isConflict": {
+      "type": "boolean"
+    }
+  },
+  "required": ["isConflict"],
+  "additionalProperties": false
+}
