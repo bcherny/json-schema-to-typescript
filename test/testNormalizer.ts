@@ -4,7 +4,6 @@ import { template } from 'lodash'
 import { join } from 'path'
 import { JSONSchema } from '../src'
 import { normalize } from '../src/normalizer'
-import { compare } from './reporter'
 
 interface JSONTestCase {
   name: string
@@ -22,12 +21,7 @@ export function run() {
     .forEach(([filename, json]: [string, JSONTestCase]) => {
       const params = { filename }
       test(json.name, t =>
-        compare(
-          t,
-          json.name,
-          template(toString(normalize(json.in, filename)))(params),
-          template(toString(json.out))(params)
-        )
+        t.snapshot(template(toString(normalize(json.in, filename)))(params))
       )
     })
 }

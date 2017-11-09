@@ -62,20 +62,19 @@
     "@types/mz": "0.0.31",
     "@types/node": "^7.0.13",
     "@types/prettier": "^1.7.2",
-    "ava": "^0.19.1",
+    "ava": "^0.23.0",
     "browserify": "^14.3.0",
     "concurrently": "^3.4.0",
-    "fast-diff": "^1.1.1",
     "shx": "^0.2.2",
-    "table-layout": "^0.4.2",
-    "tsify": "^3.0.3",
-    "tslint": "^5.7.0",
-    "typescript": "^2.5.2"
+    "tsify": "^3.0.1",
+    "tslint": "^5.1.0",
+    "typescript": "^2.2.2"
   },
   "ava": {
     "files": [
       "./dist/test/test.js"
     ],
+    "snapshotDir": "./test/__snapshots__",
     "source": [
       "./dist/test/e2e/*.js",
       "./dist/test/normalizer/*.json",

@@ -4,7 +4,6 @@ import { find } from 'lodash'
 import { join } from 'path'
 import { compile, JSONSchema, Options } from '../src'
 import { log, stripExtension } from '../src/utils'
-import { compare } from './reporter'
 
 const dir = __dirname + '/e2e'
 
@@ -17,7 +16,6 @@ interface BaseTestCase {
 interface TestInterface {
   error?: true
   options?: Options
-  output: string
 }
 
 interface SingleTestCase extends TestInterface, BaseTestCase {}
@@ -67,7 +65,7 @@ function runOne(exports: TestCase, name: string) {
             t.true(e instanceof Error)
           }
         } else {
-          compare(t, caseName, await compile(exports.input, stripExtension(name), _.options), _.output)
+          t.snapshot(await compile(exports.input, stripExtension(name), _.options))
         }
       })
     })
@@ -80,7 +78,7 @@ function runOne(exports: TestCase, name: string) {
           t.true(e instanceof Error)
         }
       } else {
-        compare(t, name, await compile(exports.input, stripExtension(name), exports.options), exports.output)
+        t.snapshot(await compile(exports.input, stripExtension(name), exports.options))
       }
     })
   }
