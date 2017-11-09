@@ -96,8 +96,8 @@ export const input = {
           "additionalProperties": {
             "type": "array",
             "items": [
-              { "type": "number" },
-              { "type": "number" }
+              { 'type': "number" },
+              { 'type': "number" }
             ],
             "additionalItems": false
           }
@@ -113,9 +113,9 @@ export const input = {
       "additionalProperties": false
     },
 
-    "link": {
-      "type": "object",
-      "patternProperties": {
+    link: {
+      type: "object",
+      patternProperties: {
         "^(about|alternate|appendix|archives|author|blocked-by|bookmark|canonical|chapter|collection|contents|copyright|create-form|current|derivedfrom|describedby|describes|disclosure|dns-prefetch|duplicate|edit|edit-form|edit-media|enclosure|first|glossary|help|hosts|hub|icon|index|item|last|latest-version|license|lrdd|memento|monitor|monitor-group|next|next-archive|nofollow|noreferrer|original|payment|pingback|preconnect|predecessor-version|prefetch|preload|prerender|prev|preview|previous|prev-archive|privacy-policy|profile|related|replies|search|section|self|service|start|stylesheet|subsection|successor-version|tag|terms-of-service|timegate|timemap|type|up|version-history|via|webmention|working-copy|working-copy-of)$": {
           "type": "array",
           "items": {
@@ -221,36 +221,36 @@ export const input = {
           }
         }
       },
-      "additionalProperties": false
+      additionalProperties: false
     }
   },
 
-  "oneOf": [
+  oneOf: [
     {
-      "type": "object",
-      "properties": {
-        "class": { "type": "string", "enum": ["dataset"] },
+      type: "object",
+      properties: {
+        class: { "type": "string", "enum": ["dataset"] },
 
-        "version": { "$ref": "#/definitions/version" },
-        "href": { "$ref": "#/definitions/href" },
-        "label": { "$ref": "#/definitions/label" },
-        "note": { "$ref": "#/definitions/note" },
-        "link": { "$ref": "#/definitions/link" },
-        "updated": { "$ref": "#/definitions/updated" },
-        "source": { "$ref": "#/definitions/source" },
-        "error": { "$ref": "#/definitions/error" },
-        "extension": { "$ref": "#/definitions/extension" },
+        version: { "$ref": "#/definitions/version" },
+        href: { "$ref": "#/definitions/href" },
+        label: { "$ref": "#/definitions/label" },
+        note: { "$ref": "#/definitions/note" },
+        link: { "$ref": "#/definitions/link" },
+        updated: { "$ref": "#/definitions/updated" },
+        source: { "$ref": "#/definitions/source" },
+        error: { "$ref": "#/definitions/error" },
+        extension: { "$ref": "#/definitions/extension" },
 
-        "id": { "$ref": "#/definitions/strarray" },
+        id: { "$ref": "#/definitions/strarray" },
 
-        "size": {
+        size: {
           "type": "array",
           "items": {
             "type": "integer"
           }
         },
 
-        "role": {
+        role: {
           "type": "object",
           "properties": {
             "time": { "$ref": "#/definitions/strarray" },
@@ -260,7 +260,7 @@ export const input = {
           "additionalProperties": false
         },
 
-        "dimension": {
+        dimension: {
           "type": "object",
           "additionalProperties": {
             "type": "object",
@@ -278,7 +278,7 @@ export const input = {
           }
         },
 
-        "value": {
+        value: {
           "oneOf": [
             {
               "type": "array",
@@ -303,59 +303,59 @@ export const input = {
           ]
         },
 
-        "status": {
-          "oneOf": [
+        status: {
+          oneOf: [
             {
-              "type": "string"
+              type: "string"
             },
             {
-              "type": "array",
-              "items": {
-                "type": "string"
+              type: "array",
+              items: {
+                type: "string"
               }
             },
             {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
+              type: "object",
+              additionalProperties: {
+                type: "string"
               }
             }
           ]
         }
       },
-      "additionalProperties": false,
-      "required": [ "version", "class", "value", "id", "size", "dimension" ]
+      additionalProperties: false,
+      required: [ "version", "class", "value", "id", "size", "dimension" ]
     },
     {
-      "type": "object",
-      "properties": {
-        "class": { "type": "string", "enum": ["dimension"] },
+      type: "object",
+      properties: {
+        class: { "type": "string", "enum": ["dimension"] },
 
-        "version": { "$ref": "#/definitions/version" },
-        "href": { "$ref": "#/definitions/href" },
-        "label": { "$ref": "#/definitions/label" },
-        "note": { "$ref": "#/definitions/note" },
-        "link": { "$ref": "#/definitions/link" },
-        "updated": { "$ref": "#/definitions/updated" },
-        "source": { "$ref": "#/definitions/source" },
-        "error": { "$ref": "#/definitions/error" },
-        "extension": { "$ref": "#/definitions/extension" },
+        version: { "$ref": "#/definitions/version" },
+        href: { "$ref": "#/definitions/href" },
+        label: { "$ref": "#/definitions/label" },
+        note: { "$ref": "#/definitions/note" },
+        link: { "$ref": "#/definitions/link" },
+        updated: { "$ref": "#/definitions/updated" },
+        source: { "$ref": "#/definitions/source" },
+        error: { "$ref": "#/definitions/error" },
+        extension: { "$ref": "#/definitions/extension" },
 
-        "category": { "$ref": "#/definitions/category" }
+        category: { $ref: "#/definitions/category" }
       },
-      "additionalProperties": false,
-      "required": [ "version", "class", "category" ]
+      additionalProperties: false,
+      required: [ "version", "class", "category" ]
     },
     {
-      "type": "object",
-      "properties": {
-        "class": { "type": "string", "enum": ["collection"] },
+      type: "object",
+      properties: {
+        class: { "type": "string", "enum": ["collection"] },
 
-        "version": { "$ref": "#/definitions/version" },
-        "href": { "$ref": "#/definitions/href" },
-        "label": { "$ref": "#/definitions/label" },
-        "note": { "$ref": "#/definitions/note" },
-        "link": {
+        version: { "$ref": "#/definitions/version" },
+        href: { "$ref": "#/definitions/href" },
+        label: { "$ref": "#/definitions/label" },
+        note: { "$ref": "#/definitions/note" },
+        link: {
           "type": "object",
           "properties": {
             "item": {
@@ -465,27 +465,27 @@ export const input = {
           },
           "additionalProperties": false
         },
-        "updated": { "$ref": "#/definitions/updated" },
-        "source": { "$ref": "#/definitions/source" },
-        "error": { "$ref": "#/definitions/error" },
-        "extension": { "$ref": "#/definitions/extension" }
+        updated: { "$ref": "#/definitions/updated" },
+        source: { "$ref": "#/definitions/source" },
+        error: { "$ref": "#/definitions/error" },
+        extension: { $ref: '#/definitions/extension' }
       },
-      "additionalProperties": false,
-      "required": [ "version", "class", "link" ]
+      additionalProperties: false,
+      required: [ 'version', 'class', 'link' ]
     }
   ]
 }
 
 export const output = `/**
-* This file was automatically generated by json-schema-to-typescript.
-* DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
-* and run json-schema-to-typescript to regenerate this file.
-*/
+ * This file was automatically generated by json-schema-to-typescript.
+ * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
+ * and run json-schema-to-typescript to regenerate this file.
+ */
 
 /**
  * This is version 1.03 of the JSON-stat 2.0 Schema (2016-05-04)
  */
-export type JsonStat20Schema = ({
+export type JsonStat20Schema = {
     class: "dataset";
     version: Version;
     href?: Href;
@@ -513,12 +513,17 @@ export type JsonStat20Schema = ({
         category: Category;
       };
     };
-    value: ((number | null | string)[] | {
-      [k: string]: (number | null | string);
-    });
-    status?: (string | string[] | {
-      [k: string]: string;
-    });
+    value:
+      (number | null | string)[]
+      | {
+        [k: string]: number | null | string;
+      };
+    status?:
+      string
+      | string[]
+      | {
+        [k: string]: string;
+      };
   } | {
     class: "dimension";
     version: Version;
@@ -540,7 +545,7 @@ export type JsonStat20Schema = ({
     link: {
       item?: {
           type?: string;
-          class?: ("dataset" | "collection" | "dimension");
+          class?: "dataset" | "collection" | "dimension";
           href?: Href;
           label?: Label;
           note?: Strarray;
@@ -566,19 +571,24 @@ export type JsonStat20Schema = ({
               category: Category;
             };
           };
-          value?: ((number | null | string)[] | {
-            [k: string]: (number | null | string);
-          });
-          status?: (string | string[] | {
-            [k: string]: string;
-          });
+          value?:
+            (number | null | string)[]
+            | {
+              [k: string]: number | null | string;
+            }
+          status?:
+            string
+            | string[]
+            | {
+              [k: string]: string;
+            };
         }[];
     };
     updated?: Updated;
     source?: Source;
     error?: Error;
     extension?: Extension;
-  });
+  };
 export type Version = "2.0";
 export type Href = string;
 export type Label = string;
@@ -588,7 +598,6 @@ export type Source = string;
 export type Error = any[];
 
 export interface Link {
-
 }
 export interface Extension {
   [k: string]: any;
@@ -607,7 +616,7 @@ export interface Category {
     [k: string]: {
       label?: Label;
       decimals?: number;
-      position?: ("start" | "end");
+      position?: "start" | "end";
       [k: string]: any;
     };
   };

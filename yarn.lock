@@ -80,9 +80,9 @@
   version "7.0.43"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.43.tgz#a187e08495a075f200ca946079c914e1a5fe962c"
 
-"@types/prettier@^1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-1.6.1.tgz#b92e866b098e5d37b2d4dd2402291a8eb6072bf8"
+"@types/prettier@^1.7.2":
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-1.7.2.tgz#32f59de25ea57b75286b43ecfdbad1a912c09175"
   dependencies:
     "@types/babel-types" "*"
 
@@ -2936,9 +2936,9 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-prettier@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.7.0.tgz#47481588f41f7c90f63938feb202ac82554e7150"
+prettier@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.8.2.tgz#bff83e7fd573933c607875e5ba3abbdffb96aeb8"
 
 pretty-format@^19.0.0:
   version "19.0.0"

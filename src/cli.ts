@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
+import { JSONSchema4 } from 'json-schema'
+import minimist = require('minimist')
 import { readFile, writeFile } from 'mz/fs'
 import { resolve } from 'path'
 import stdin = require('stdin')
-import { JSONSchema4 } from 'json-schema'
 import { compile } from './index'
-import minimist = require('minimist')
 
 main(minimist(process.argv.slice(2), {
   alias: {

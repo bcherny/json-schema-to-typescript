@@ -44,7 +44,7 @@ export interface ExampleSchema {
    * Age in years
    */
   age?: number;
-  hairColor?: ("black" | "brown" | "blue");
+  hairColor?: "black" | "brown" | "blue";
 }
 ```
 
