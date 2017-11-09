@@ -46,29 +46,29 @@
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
     "cli-color": "^1.2.0",
-    "json-schema-ref-parser": "^3.3.1",
+    "json-schema-ref-parser": "^4.0.4",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
-    "mz": "^2.6.0",
+    "mz": "^2.7.0",
     "prettier": "^1.8.2",
     "stdin": "0.0.1"
   },
   "devDependencies": {
     "@types/cli-color": "^0.3.29",
     "@types/json-schema": "^4.0.0",
-    "@types/lodash": "4.14.74",
+    "@types/lodash": "4.14.83",
     "@types/minimist": "^1.2.0",
-    "@types/mz": "0.0.31",
-    "@types/node": "^7.0.13",
+    "@types/mz": "0.0.32",
+    "@types/node": "^8.0.50",
     "@types/prettier": "^1.7.2",
     "ava": "^0.23.0",
-    "browserify": "^14.3.0",
-    "concurrently": "^3.4.0",
+    "browserify": "^14.5.0",
+    "concurrently": "^3.5.0",
     "shx": "^0.2.2",
-    "tsify": "^3.0.1",
-    "tslint": "^5.1.0",
-    "typescript": "^2.2.2"
+    "tsify": "^3.0.3",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.1"
   },
   "ava": {
     "files": [
