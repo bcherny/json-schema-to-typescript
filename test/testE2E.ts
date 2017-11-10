@@ -7,24 +7,13 @@ import { log, stripExtension } from '../src/utils'
 
 const dir = __dirname + '/e2e'
 
-interface BaseTestCase {
+type TestCase = {
   input: JSONSchema
+  error?: true
   exclude?: boolean
   only?: boolean
-}
-
-interface TestInterface {
-  error?: true
   options?: Options
 }
-
-interface SingleTestCase extends TestInterface, BaseTestCase {}
-
-interface MultiTestCase extends BaseTestCase {
-  outputs: TestInterface[]
-}
-
-type TestCase = SingleTestCase | MultiTestCase
 
 export function hasOnly() {
   return readdirSync(dir)
@@ -54,36 +43,15 @@ export function run() {
 
 function runOne(exports: TestCase, name: string) {
   log(`Running test: "${name}"`)
-  if (isMultiTestCase(exports)) {
-    exports.outputs.forEach(_ => {
-      const caseName = `${name}: ${JSON.stringify(_.options)}`
-      test(caseName, async t => {
-        if (_.error) {
-          try {
-            await compile(exports.input, stripExtension(name), _.options)
-          } catch (e) {
-            t.true(e instanceof Error)
-          }
-        } else {
-          t.snapshot(await compile(exports.input, stripExtension(name), _.options))
-        }
-      })
-    })
-  } else {
-    test(name, async t => {
-      if (exports.error) {
-        try {
-          await compile(exports.input, stripExtension(name), exports.options)
-        } catch (e) {
-          t.true(e instanceof Error)
-        }
-      } else {
-        t.snapshot(await compile(exports.input, stripExtension(name), exports.options))
+  test(name, async t => {
+    if (exports.error) {
+      try {
+        await compile(exports.input, stripExtension(name), exports.options)
+      } catch (e) {
+        t.true(e instanceof Error)
       }
-    })
-  }
-}
-
-function isMultiTestCase(exports: TestCase): exports is MultiTestCase {
-  return 'outputs' in exports
+    } else {
+      t.snapshot(await compile(exports.input, stripExtension(name), exports.options))
+    }
+  })
 }

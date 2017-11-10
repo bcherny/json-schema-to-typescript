@@ -55,3 +55,7 @@ export const input = {
   'namedIntegerEnumTitle', 'impliedNamedIntegerEnumTitle'],
   additionalProperties: false
 }
+
+export const options = {
+  enableConstEnums: true
+}

@@ -1,5 +1,9 @@
 export const input = {
+  title: 'Extends',
   type: 'object',
+  extends: {
+    $ref: 'test/resources/BaseType.1.json'
+  },
   properties: {
     foo: {
       type: 'string'
@@ -7,4 +11,8 @@ export const input = {
   },
   required: ['foo'],
   additionalProperties: false
+}
+
+export const options = {
+  declareExternallyReferenced: true
 }

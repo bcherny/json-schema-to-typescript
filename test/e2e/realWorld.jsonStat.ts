@@ -95,7 +95,7 @@ export const input = {
           "type": "object",
           "additionalProperties": {
             "type": "array",
-            "items": [
+            'items': [
               { 'type': "number" },
               { 'type': "number" }
             ],
@@ -110,17 +110,17 @@ export const input = {
           }
         }
       },
-      "additionalProperties": false
+      additionalProperties: false
     },
 
     link: {
       type: "object",
       patternProperties: {
         "^(about|alternate|appendix|archives|author|blocked-by|bookmark|canonical|chapter|collection|contents|copyright|create-form|current|derivedfrom|describedby|describes|disclosure|dns-prefetch|duplicate|edit|edit-form|edit-media|enclosure|first|glossary|help|hosts|hub|icon|index|item|last|latest-version|license|lrdd|memento|monitor|monitor-group|next|next-archive|nofollow|noreferrer|original|payment|pingback|preconnect|predecessor-version|prefetch|preload|prerender|prev|preview|previous|prev-archive|privacy-policy|profile|related|replies|search|section|self|service|start|stylesheet|subsection|successor-version|tag|terms-of-service|timegate|timemap|type|up|version-history|via|webmention|working-copy|working-copy-of)$": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
               "type": {
                 "type": "string"
               },
@@ -217,7 +217,7 @@ export const input = {
                 ]
               }
             },
-            "additionalProperties": false
+            additionalProperties: false
           }
         }
       },
@@ -229,42 +229,42 @@ export const input = {
     {
       type: "object",
       properties: {
-        class: { "type": "string", "enum": ["dataset"] },
+        class: { type: "string", enum: ["dataset"] },
 
-        version: { "$ref": "#/definitions/version" },
-        href: { "$ref": "#/definitions/href" },
-        label: { "$ref": "#/definitions/label" },
-        note: { "$ref": "#/definitions/note" },
-        link: { "$ref": "#/definitions/link" },
-        updated: { "$ref": "#/definitions/updated" },
-        source: { "$ref": "#/definitions/source" },
-        error: { "$ref": "#/definitions/error" },
-        extension: { "$ref": "#/definitions/extension" },
+        version: { $ref: "#/definitions/version" },
+        href: { $ref: "#/definitions/href" },
+        label: { $ref: "#/definitions/label" },
+        note: { $ref: "#/definitions/note" },
+        link: { $ref: "#/definitions/link" },
+        updated: { $ref: "#/definitions/updated" },
+        source: { $ref: "#/definitions/source" },
+        error: { $ref: "#/definitions/error" },
+        extension: { $ref: "#/definitions/extension" },
 
-        id: { "$ref": "#/definitions/strarray" },
+        id: { $ref: "#/definitions/strarray" },
 
         size: {
-          "type": "array",
-          "items": {
-            "type": "integer"
+          type: "array",
+          items: {
+            type: "integer"
           }
         },
 
         role: {
-          "type": "object",
-          "properties": {
+          type: "object",
+          properties: {
             "time": { "$ref": "#/definitions/strarray" },
             "geo": { "$ref": "#/definitions/strarray" },
             "metric": { "$ref": "#/definitions/strarray" }
           },
-          "additionalProperties": false
+          additionalProperties: false
         },
 
         dimension: {
-          "type": "object",
-          "additionalProperties": {
-            "type": "object",
-            "properties": {
+          type: "object",
+          additionalProperties: {
+            type: "object",
+            properties: {
               "href": { "$ref": "#/definitions/href" },
               "label": { "$ref": "#/definitions/label" },
               "note": { "$ref": "#/definitions/note" },
@@ -273,30 +273,30 @@ export const input = {
 
               "category": { "$ref": "#/definitions/category" }
             },
-            "additionalProperties": false,
-            "required": [ "category" ]
+            additionalProperties: false,
+            required: [ "category" ]
           }
         },
 
         value: {
-          "oneOf": [
+          oneOf: [
             {
-              "type": "array",
-              "items": {
-                "anyOf": [
-                  { "type": "number" },
-                  { "type": "null" },
-                  { "type": "string" }
+              type: "array",
+              items: {
+                anyOf: [
+                  { type: "number" },
+                  { type: "null" },
+                  { type: "string" }
                 ]
               }
             },
             {
-              "type": "object",
-              "additionalProperties": {
-                "anyOf": [
-                  { "type": "number" },
-                  { "type": "null" },
-                  { "type": "string" }
+              type: "object",
+              additionalProperties: {
+                anyOf: [
+                  { type: "number" },
+                  { type: "null" },
+                  { type: "string" }
                 ]
               }
             }
@@ -329,17 +329,17 @@ export const input = {
     {
       type: "object",
       properties: {
-        class: { "type": "string", "enum": ["dimension"] },
+        class: { type: "string", enum: ["dimension"] },
 
-        version: { "$ref": "#/definitions/version" },
-        href: { "$ref": "#/definitions/href" },
-        label: { "$ref": "#/definitions/label" },
-        note: { "$ref": "#/definitions/note" },
-        link: { "$ref": "#/definitions/link" },
-        updated: { "$ref": "#/definitions/updated" },
-        source: { "$ref": "#/definitions/source" },
-        error: { "$ref": "#/definitions/error" },
-        extension: { "$ref": "#/definitions/extension" },
+        version: { $ref: "#/definitions/version" },
+        href: { $ref: "#/definitions/href" },
+        label: { $ref: "#/definitions/label" },
+        note: { $ref: "#/definitions/note" },
+        link: { $ref: "#/definitions/link" },
+        updated: { $ref: "#/definitions/updated" },
+        source: { $ref: "#/definitions/source" },
+        error: { $ref: "#/definitions/error" },
+        extension: { $ref: "#/definitions/extension" },
 
         category: { $ref: "#/definitions/category" }
       },
@@ -349,15 +349,15 @@ export const input = {
     {
       type: "object",
       properties: {
-        class: { "type": "string", "enum": ["collection"] },
+        class: { type: "string", enum: ["collection"] },
 
-        version: { "$ref": "#/definitions/version" },
-        href: { "$ref": "#/definitions/href" },
-        label: { "$ref": "#/definitions/label" },
-        note: { "$ref": "#/definitions/note" },
+        version: { $ref: "#/definitions/version" },
+        href: { $ref: "#/definitions/href" },
+        label: { $ref: "#/definitions/label" },
+        note: { $ref: "#/definitions/note" },
         link: {
-          "type": "object",
-          "properties": {
+          type: "object",
+          properties: {
             "item": {
               "type": "array",
               "items": {
@@ -463,11 +463,11 @@ export const input = {
               }
             }
           },
-          "additionalProperties": false
+          additionalProperties: false
         },
-        updated: { "$ref": "#/definitions/updated" },
-        source: { "$ref": "#/definitions/source" },
-        error: { "$ref": "#/definitions/error" },
+        updated: { $ref: "#/definitions/updated" },
+        source: { $ref: "#/definitions/source" },
+        error: { $ref: '#/definitions/error' },
         extension: { $ref: '#/definitions/extension' }
       },
       additionalProperties: false,
@@ -475,156 +475,3 @@ export const input = {
     }
   ]
 }
-
-export const output = `/**
- * This file was automatically generated by json-schema-to-typescript.
- * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
- * and run json-schema-to-typescript to regenerate this file.
- */
-
-/**
- * This is version 1.03 of the JSON-stat 2.0 Schema (2016-05-04)
- */
-export type JsonStat20Schema = {
-    class: "dataset";
-    version: Version;
-    href?: Href;
-    label?: Label;
-    note?: Strarray;
-    link?: Link;
-    updated?: Updated;
-    source?: Source;
-    error?: Error;
-    extension?: Extension;
-    id: Strarray;
-    size: number[];
-    role?: {
-      time?: Strarray;
-      geo?: Strarray;
-      metric?: Strarray;
-    };
-    dimension: {
-      [k: string]: {
-        href?: Href;
-        label?: Label;
-        note?: Strarray;
-        link?: Link;
-        extension?: Extension;
-        category: Category;
-      };
-    };
-    value:
-      (number | null | string)[]
-      | {
-        [k: string]: number | null | string;
-      };
-    status?:
-      string
-      | string[]
-      | {
-        [k: string]: string;
-      };
-  } | {
-    class: "dimension";
-    version: Version;
-    href?: Href;
-    label?: Label;
-    note?: Strarray;
-    link?: Link;
-    updated?: Updated;
-    source?: Source;
-    error?: Error;
-    extension?: Extension;
-    category: Category;
-  } | {
-    class: "collection";
-    version: Version;
-    href?: Href;
-    label?: Label;
-    note?: Strarray;
-    link: {
-      item?: {
-          type?: string;
-          class?: "dataset" | "collection" | "dimension";
-          href?: Href;
-          label?: Label;
-          note?: Strarray;
-          link?: Link;
-          updated?: Updated;
-          source?: Source;
-          extension?: Extension;
-          category?: Category;
-          id?: Strarray;
-          size?: number[];
-          role?: {
-            time?: Strarray;
-            geo?: Strarray;
-            metric?: Strarray;
-          };
-          dimension?: {
-            [k: string]: {
-              href?: Href;
-              label?: Label;
-              note?: Strarray;
-              link?: Link;
-              extension?: Extension;
-              category: Category;
-            };
-          };
-          value?:
-            (number | null | string)[]
-            | {
-              [k: string]: number | null | string;
-            }
-          status?:
-            string
-            | string[]
-            | {
-              [k: string]: string;
-            };
-        }[];
-    };
-    updated?: Updated;
-    source?: Source;
-    error?: Error;
-    extension?: Extension;
-  };
-export type Version = "2.0";
-export type Href = string;
-export type Label = string;
-export type Strarray = string[];
-export type Updated = string;
-export type Source = string;
-export type Error = any[];
-
-export interface Link {
-}
-export interface Extension {
-  [k: string]: any;
-}
-export interface Category {
-  index?: (Strarray | {
-    [k: string]: number;
-  });
-  label?: {
-    [k: string]: string;
-  };
-  note?: {
-    [k: string]: Strarray;
-  };
-  unit?: {
-    [k: string]: {
-      label?: Label;
-      decimals?: number;
-      position?: "start" | "end";
-      [k: string]: any;
-    };
-  };
-  coordinates?: {
-    [k: string]: [number, number];
-  };
-  child?: {
-    [k: string]: Strarray;
-  };
-}
-`

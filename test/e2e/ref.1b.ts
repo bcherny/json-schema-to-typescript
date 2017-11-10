@@ -1,13 +1,15 @@
 export const input = {
-  $schema: 'http://json-schema.org/draft-03/schema',
-  id: 'http://mycompany.com/api/referencing.json',
   title: 'Referencing',
   type: 'object',
   properties: {
-    ref: {
+    foo: {
       $ref: 'test/resources/ReferencedType.json'
     }
   },
-  required: ['ref'],
+  required: ['foo'],
   additionalProperties: false
+}
+
+export const options = {
+  declareExternallyReferenced: false
 }

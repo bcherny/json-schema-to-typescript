@@ -298,12 +298,12 @@ export const input = {
           "type": "boolean",
           "default": false
         },
-        "security": {
+        security: {
           "$ref": "#/definitions/security"
         }
       }
     },
-    "pathItem": {
+    pathItem: {
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
@@ -341,7 +341,7 @@ export const input = {
         }
       }
     },
-    "responses": {
+    responses: {
       "type": "object",
       "description": "Response objects names can either be any valid HTTP status code or 'default'.",
       "minProperties": 1,
@@ -364,7 +364,7 @@ export const input = {
         }
       }
     },
-    "responseValue": {
+    responseValue: {
       "oneOf": [
         {
           "$ref": "#/definitions/response"
@@ -374,7 +374,7 @@ export const input = {
         }
       ]
     },
-    "response": {
+    response: {
       "type": "object",
       "required": [
         "description"
@@ -407,13 +407,13 @@ export const input = {
         }
       }
     },
-    "headers": {
+    headers: {
       "type": "object",
       "additionalProperties": {
         "$ref": "#/definitions/header"
       }
     },
-    "header": {
+    header: {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -488,12 +488,12 @@ export const input = {
         }
       }
     },
-    "vendorExtension": {
+    vendorExtension: {
       "description": "Any property starting with x- is valid.",
       "additionalProperties": true,
       "additionalItems": true
     },
-    "bodyParameter": {
+    bodyParameter: {
       "type": "object",
       "required": [
         "name",
@@ -532,7 +532,7 @@ export const input = {
       },
       "additionalProperties": false
     },
-    "headerParameterSubSchema": {
+    headerParameterSubSchema: {
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
@@ -620,7 +620,7 @@ export const input = {
         }
       }
     },
-    "queryParameterSubSchema": {
+    queryParameterSubSchema: {
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
@@ -713,7 +713,7 @@ export const input = {
         }
       }
     },
-    "formDataParameterSubSchema": {
+    formDataParameterSubSchema: {
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
@@ -807,7 +807,7 @@ export const input = {
         }
       }
     },
-    "pathParameterSubSchema": {
+    pathParameterSubSchema: {
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
@@ -900,7 +900,7 @@ export const input = {
         }
       }
     },
-    "nonBodyParameter": {
+    nonBodyParameter: {
       "type": "object",
       "required": [
         "name",
@@ -922,7 +922,7 @@ export const input = {
         }
       ]
     },
-    "parameter": {
+    parameter: {
       "oneOf": [
         {
           "$ref": "#/definitions/bodyParameter"
@@ -932,7 +932,7 @@ export const input = {
         }
       ]
     },
-    "schema": {
+    schema: {
       "id": "JSONSchema",
       "type": "object",
       "description": "A deterministic version of a JSON Schema object.",
@@ -1062,7 +1062,7 @@ export const input = {
       },
       "additionalProperties": false
     },
-    "fileSchema": {
+    fileSchema: {
       "type": "object",
       "description": "A deterministic version of a JSON Schema object.",
       "patternProperties": {
@@ -1106,7 +1106,7 @@ export const input = {
       },
       "additionalProperties": false
     },
-    "primitivesItems": {
+    primitivesItems: {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -1175,14 +1175,14 @@ export const input = {
         }
       }
     },
-    "security": {
+    security: {
       "type": "array",
       "items": {
         "$ref": "#/definitions/securityRequirement"
       },
       "uniqueItems": true
     },
-    "securityRequirement": {
+    securityRequirement: {
       "type": "object",
       "additionalProperties": {
         "type": "array",
@@ -1192,7 +1192,7 @@ export const input = {
         "uniqueItems": true
       }
     },
-    "xml": {
+    xml: {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -1220,7 +1220,7 @@ export const input = {
         }
       }
     },
-    "tag": {
+    tag: {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1243,7 +1243,7 @@ export const input = {
         }
       }
     },
-    "securityDefinitions": {
+    securityDefinitions: {
       "type": "object",
       "additionalProperties": {
         "oneOf": [
@@ -1268,7 +1268,7 @@ export const input = {
         ]
       }
     },
-    "basicAuthenticationSecurity": {
+    basicAuthenticationSecurity: {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1291,7 +1291,7 @@ export const input = {
         }
       }
     },
-    "apiKeySecurity": {
+    apiKeySecurity: {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1326,7 +1326,7 @@ export const input = {
         }
       }
     },
-    "oauth2ImplicitSecurity": {
+    oauth2ImplicitSecurity: {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1364,7 +1364,7 @@ export const input = {
         }
       }
     },
-    "oauth2PasswordSecurity": {
+    oauth2PasswordSecurity: {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1402,7 +1402,7 @@ export const input = {
         }
       }
     },
-    "oauth2ApplicationSecurity": {
+    oauth2ApplicationSecurity: {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1440,7 +1440,7 @@ export const input = {
         }
       }
     },
-    "oauth2AccessCodeSecurity": {
+    oauth2AccessCodeSecurity: {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1483,20 +1483,20 @@ export const input = {
         }
       }
     },
-    "oauth2Scopes": {
+    oauth2Scopes: {
       "type": "object",
       "additionalProperties": {
         "type": "string"
       }
     },
-    "mediaTypeList": {
+    mediaTypeList: {
       "type": "array",
       "items": {
         "$ref": "#/definitions/mimeType"
       },
       "uniqueItems": true
     },
-    "parametersList": {
+    parametersList: {
       "type": "array",
       "description": "The parameters needed to send a valid API call.",
       "additionalItems": false,
@@ -1512,7 +1512,7 @@ export const input = {
       },
       "uniqueItems": true
     },
-    "schemesList": {
+    schemesList: {
       "type": "array",
       "description": "The transfer protocol of the API.",
       "items": {
@@ -1526,7 +1526,7 @@ export const input = {
       },
       "uniqueItems": true
     },
-    "collectionFormat": {
+    collectionFormat: {
       "type": "string",
       "enum": [
         "csv",
@@ -1536,7 +1536,7 @@ export const input = {
       ],
       "default": "csv"
     },
-    "collectionFormatWithMulti": {
+    collectionFormatWithMulti: {
       "type": "string",
       "enum": [
         "csv",
@@ -1547,69 +1547,62 @@ export const input = {
       ],
       "default": "csv"
     },
-    "title": {
+    title: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
     },
-    "description": {
+    description: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/description"
     },
-    "default": {
+    default: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/default"
     },
-    "multipleOf": {
+    multipleOf: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/multipleOf"
     },
-    "maximum": {
+    maximum: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/maximum"
     },
-    "exclusiveMaximum": {
+    exclusiveMaximum: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/exclusiveMaximum"
     },
-    "minimum": {
+    minimum: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/minimum"
     },
-    "exclusiveMinimum": {
+    exclusiveMinimum: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/exclusiveMinimum"
     },
-    "maxLength": {
+    maxLength: {
       "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveInteger"
     },
-    "minLength": {
+    minLength: {
       "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
     },
-    "pattern": {
+    pattern: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/pattern"
     },
-    "maxItems": {
+    maxItems: {
       "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveInteger"
     },
-    "minItems": {
+    minItems: {
       "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
     },
-    "uniqueItems": {
+    uniqueItems: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/uniqueItems"
     },
-    "enum": {
+    enum: {
       "$ref": "http://json-schema.org/draft-04/schema#/properties/enum"
     },
-    "jsonReference": {
-      "type": "object",
-      "required": [
+    jsonReference: {
+      type: "object",
+      required: [
         "$ref"
       ],
-      "additionalProperties": false,
-      "properties": {
-        "$ref": {
-          "type": "string"
+      additionalProperties: false,
+      properties: {
+        $ref: {
+          type: 'string'
         }
       }
     }
   }
 }
-
-export let output = `/**
- * This file was automatically generated by json-schema-to-typescript.
- * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
- * and run json-schema-to-typescript to regenerate this file.
- */
-`
