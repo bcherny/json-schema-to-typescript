@@ -1,6 +1,6 @@
 import { format as prettify } from 'prettier'
-import { DEFAULT_OPTIONS, Options } from './'
+import { Options } from './'
 
-export function format(code: string, options: Options = DEFAULT_OPTIONS): string {
+export function format(code: string, options: Options): string {
   return prettify(code, { parser: 'typescript', ...options.style })
 }

@@ -83,7 +83,7 @@ export async function compile(
   return format(generate(
     optimize(parse(await dereference(normalize(schema, name), _options.cwd))),
     _options
-  ))
+  ), _options)
 }
 
 export class ValidationError extends Error {}
