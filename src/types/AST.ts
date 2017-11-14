@@ -1,8 +1,6 @@
 import { JSONSchema4Type } from 'json-schema'
 
-export type AST_TYPE = 'ANY' | 'ARRAY' | 'BOOLEAN' | 'ENUM' | 'INTERFACE'
-  | 'INTERSECTION' | 'LITERAL' | 'NUMBER' | 'NULL' | 'OBJECT' | 'REFERENCE'
-  | 'STRING' | 'TUPLE' | 'UNION'
+export type AST_TYPE = AST['type']
 
 export type AST = TAny | TArray | TBoolean | TEnum | TInterface | TNamedInterface
   | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
@@ -70,6 +68,7 @@ export interface TInterfaceParam {
   ast: AST
   keyName: string
   isRequired: boolean
+  isPatternProperty: boolean
 }
 
 export interface TIntersection extends AbstractAST {

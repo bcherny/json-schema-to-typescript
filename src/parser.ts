@@ -216,11 +216,12 @@ function newInterface(
   keyName?: string,
   keyNameFromDefinition?: string
 ): TInterface {
+  let name = standaloneName(schema, keyNameFromDefinition, usedNames)!
   return {
     comment: schema.description,
     keyName,
-    params: parseSchema(schema, rootSchema, processed, usedNames),
-    standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+    params: parseSchema(schema, rootSchema, processed, usedNames, name),
+    standaloneName: name,
     superTypes: parseSuperTypes(schema, processed, usedNames),
     type: 'INTERFACE'
   }
@@ -264,14 +265,31 @@ function parseSchema(
   schema: SchemaSchema,
   rootSchema: JSONSchema,
   processed: Processed,
-  usedNames: UsedNames
+  usedNames: UsedNames,
+  parentSchemaName: string
 ): TInterfaceParam[] {
 
-  const asts = map(schema.properties, (value, key: string) => ({
+  let asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
     ast: parse(value, rootSchema, key, true, processed, usedNames),
+    isPatternProperty: false,
     isRequired: includes(schema.required || [], key),
     keyName: key
   }))
+
+  if ('patternProperties' in schema) {
+    asts = asts.concat(map(schema.patternProperties, (value, key: string) => {
+      let ast = parse(value, rootSchema, key, true, processed, usedNames)
+      let comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
+via the \`patternProperty\` "${key}".`
+      ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+      return ({
+        ast,
+        isPatternProperty: true,
+        isRequired: includes(schema.required || [], key),
+        keyName: key
+      })
+    }))
+  }
 
   // handle additionalProperties
   switch (schema.additionalProperties) {
@@ -279,6 +297,7 @@ function parseSchema(
     case true:
       return asts.concat({
         ast: T_ANY_ADDITIONAL_PROPERTIES,
+        isPatternProperty: false,
         isRequired: true,
         keyName: '[k: string]'
       })
@@ -291,6 +310,7 @@ function parseSchema(
     default:
       return asts.concat({
         ast: parse(schema.additionalProperties, rootSchema, '[k: string]', true, processed, usedNames),
+        isPatternProperty: false,
         isRequired: true,
         keyName: '[k: string]'
       })

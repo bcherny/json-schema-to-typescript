@@ -172,6 +172,7 @@ function generateInterface(
   return `{`
     + '\n'
     + ast.params
+        .filter(_ => !_.isPatternProperty)
         .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string])
         .map(([isRequired, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '')
