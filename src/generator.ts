@@ -172,16 +172,16 @@ function generateInterface(
   return `{`
     + '\n'
     + ast.params
-        .filter(_ => !_.isPatternProperty)
-        .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string])
-        .map(([isRequired, keyName, ast, type]) =>
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '')
-            + escapeKeyName(keyName)
-            + (isRequired ? '' : '?')
-            + ': '
-            + (hasStandaloneName(ast) ? toSafeString(type) : type)
-        )
-        .join('\n')
+      .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
+      .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string])
+      .map(([isRequired, keyName, ast, type]) =>
+        (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '')
+        + escapeKeyName(keyName)
+        + (isRequired ? '' : '?')
+        + ': '
+        + (hasStandaloneName(ast) ? toSafeString(type) : type)
+      )
+      .join('\n')
     + '\n'
     + '}'
 }
@@ -199,8 +199,8 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
     + 'export ' + (options.enableConstEnums ? 'const ' : '') + `enum ${toSafeString(ast.standaloneName)} {`
     + '\n'
     + ast.params.map(({ ast, keyName }) =>
-        keyName + ' = ' + generateType(ast, options)
-      )
+      keyName + ' = ' + generateType(ast, options)
+    )
       .join(',\n')
     + '\n'
     + '}'
@@ -215,7 +215,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (hasComment(ast) ? generateComment(ast.comment) + '\n' : '')
-    +  `export type ${toSafeString(ast.standaloneName)} = ${generateType(omit<AST>(ast, 'standaloneName') as AST /* TODO */, options)}`
+    + `export type ${toSafeString(ast.standaloneName)} = ${generateType(omit<AST>(ast, 'standaloneName') as AST /* TODO */, options)}`
 }
 
 function escapeKeyName(keyName: string): string {
@@ -234,6 +234,6 @@ function escapeKeyName(keyName: string): string {
 
 function getSuperTypesAndParams(ast: TInterface): AST[] {
   return ast.params
-      .map(param => param.ast)
-      .concat(ast.superTypes)
+    .map(param => param.ast)
+    .concat(ast.superTypes)
 }

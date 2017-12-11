@@ -87,6 +87,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | declareExternallyReferenced | boolean | Declare external schemas referenced via `$ref`? |
 | enableConstEnums | boolean | Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)? |
 | style | object | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
+| unreachableDefinitions | boolean | Generates code for `definitions` that aren't referenced by the schema. |
 
 ## CLI
 

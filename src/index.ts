@@ -15,11 +15,12 @@ import { validate } from './validator'
 export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './types/JSONSchema'
 
 export interface Options {
-  bannerComment: string,
+  bannerComment: string
   cwd: string
   declareExternallyReferenced: boolean
   enableConstEnums: boolean
   style: PrettierOptions
+  unreachableDefinitions: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -39,7 +40,8 @@ export const DEFAULT_OPTIONS: Options = {
     tabWidth: 2,
     trailingComma: 'none',
     useTabs: false
-  }
+  },
+  unreachableDefinitions: false
 }
 
 export function compileFromFile(
@@ -52,12 +54,12 @@ export function compileFromFile(
   )
   const schema = Try<JSONSchema4>(
     () => JSON.parse(contents.toString()),
-    () => { throw new TypeError(`Error parsing JSON in file "${filename}"`)}
+    () => { throw new TypeError(`Error parsing JSON in file "${filename}"`) }
   )
   return compile(
     schema,
     stripExtension(filename),
-    {cwd: dirname(filename), ...options }
+    { cwd: dirname(filename), ...options }
   )
 }
 
@@ -81,9 +83,11 @@ export async function compile(
   }
 
   return format(generate(
-    optimize(parse(await dereference(normalize(schema, name), _options.cwd))),
+    optimize(
+      parse(await dereference(normalize(schema, name), _options.cwd), _options)
+    ),
     _options
   ), _options)
 }
 
-export class ValidationError extends Error {}
+export class ValidationError extends Error { }
