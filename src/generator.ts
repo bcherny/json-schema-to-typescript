@@ -215,7 +215,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (hasComment(ast) ? generateComment(ast.comment) + '\n' : '')
-    + `export type ${toSafeString(ast.standaloneName)} = ${generateType(omit<AST>(ast, 'standaloneName') as AST /* TODO */, options)}`
+    + `export type ${toSafeString(ast.standaloneName)} = ${generateType(omit<ASTWithStandaloneName, AST>(ast, 'standaloneName') as AST /* TODO */, options)}`
 }
 
 function escapeKeyName(keyName: string): string {
