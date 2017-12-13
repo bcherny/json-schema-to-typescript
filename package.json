@@ -1,6 +1,6 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "5.2.1",
+  "version": "5.2.2",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
@@ -45,6 +45,13 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
+    "@types/cli-color": "^0.3.29",
+    "@types/json-schema": "^4.0.0",
+    "@types/lodash": "4.14.83",
+    "@types/minimist": "^1.2.0",
+    "@types/mz": "0.0.32",
+    "@types/node": "^8.0.50",
+    "@types/prettier": "^1.7.2",
     "cli-color": "^1.2.0",
     "json-schema-ref-parser": "^4.0.4",
     "json-stringify-safe": "^5.0.1",
@@ -55,13 +62,6 @@
     "stdin": "0.0.1"
   },
   "devDependencies": {
-    "@types/cli-color": "^0.3.29",
-    "@types/json-schema": "^4.0.0",
-    "@types/lodash": "4.14.83",
-    "@types/minimist": "^1.2.0",
-    "@types/mz": "0.0.32",
-    "@types/node": "^8.0.50",
-    "@types/prettier": "^1.7.2",
     "ava": "^0.23.0",
     "browserify": "^14.5.0",
     "concurrently": "^3.5.0",
