@@ -3,6 +3,11 @@
 ## How to run the demo
 
 ```sh
+# Using Yarn:
+yarn
+yarn build
+
+# Or, using NPM:
 npm install
 npm run build
 ```

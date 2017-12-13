@@ -8,10 +8,19 @@
     "build": "npm run clean && tsc && node index.js",
     "clean": "rm -f index.js index.d.ts person.d.ts"
   },
-
   "dependencies": {
-    "@types/node": "^7.0.13",
-    "typescript": "2.2.2",
-    "json-schema-to-typescript": "3.1.4"
-  }
+    "@types/node": "^8.0.58",
+    "typescript": "2.6.2",
+    "json-schema-to-typescript": "5.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bcherny/json-schema-to-typescript.git"
+  },
+  "author": "Boris Cherny <boris@performancejs.com> (http://performancejs.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bcherny/json-schema-to-typescript/issues"
+  },
+  "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme"
 }
