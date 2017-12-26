@@ -136,10 +136,7 @@ function generateType(ast: AST, options: Options): string {
 
   switch (ast.type) {
     case 'ANY': return 'any'
-    case 'ARRAY': return (() => {
-      let type = generateType(ast.params, options)
-      return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
-    })()
+    case 'ARRAY': return `(${generateType(ast.params, options)})[]`
     case 'BOOLEAN': return 'boolean'
     case 'INTERFACE': return generateInterface(ast, options)
     case 'INTERSECTION': return generateSetOperation(ast, options)
@@ -160,7 +157,7 @@ function generateType(ast: AST, options: Options): string {
  * Generate a Union or Intersection
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
-  const members = (ast as TUnion).params.map(_ => generateType(_, options))
+  const members = ast.params.map(_ => generateType(_, options))
   const separator = ast.type === 'UNION' ? '|' : '&'
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
