@@ -105,6 +105,8 @@ json2ts --input foo.json --output foo.d.ts
 json2ts -i foo.json -o foo.d.ts
 ```
 
+You can use any of the options described above like `--unreachableDefinitions`. 
+
 ## Tests
 
 `npm test`
