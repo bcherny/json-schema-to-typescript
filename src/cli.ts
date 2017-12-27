@@ -27,7 +27,7 @@ async function main(argv: minimist.ParsedArgs) {
 
   try {
     const schema: JSONSchema4 = JSON.parse(await readInput(argIn))
-    const ts = await compile(schema, argIn)
+    const ts = await compile(schema, argIn, argv as any)
     await writeOutput(ts, argOut)
   } catch (e) {
     process.stderr.write(e.message)
