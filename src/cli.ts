@@ -5,7 +5,7 @@ import minimist = require('minimist')
 import { readFile, writeFile } from 'mz/fs'
 import { resolve } from 'path'
 import stdin = require('stdin')
-import { compile } from './index'
+import { compile, Options } from './index'
 
 main(minimist(process.argv.slice(2), {
   alias: {
@@ -27,7 +27,7 @@ async function main(argv: minimist.ParsedArgs) {
 
   try {
     const schema: JSONSchema4 = JSON.parse(await readInput(argIn))
-    const ts = await compile(schema, argIn, argv as any)
+    const ts = await compile(schema, argIn, argv as Partial<Options>)
     await writeOutput(ts, argOut)
   } catch (e) {
     process.stderr.write(e.message)
