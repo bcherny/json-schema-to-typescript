@@ -40,6 +40,12 @@ export function run() {
     )
   })
 
+  test('file in (-i), style flags, pipe out', t => {
+    t.snapshot(
+      execSync('node dist/src/cli.js -i ./test/resources/DefinitionsOnly.json --style.singleQuote --no-style.semi').toString()
+    )
+  })
+
   test('file in (-i), pipe out (absolute path)', t => {
     t.snapshot(
       execSync(`node dist/src/cli.js -i ${__dirname}/../../test/resources/ReferencedType.json`).toString()
