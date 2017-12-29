@@ -61,7 +61,7 @@ function printHelp() {
   process.stdout.write(
 `
 ${pkg.name} ${pkg.version}
-Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE]
+Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE] [OPTIONS]
 
 With no IN_FILE, or when IN_FILE is -, read standard input.
 With no OUT_FILE and when IN_FILE is specified, create .d.ts file in the same directory.
