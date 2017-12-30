@@ -66,6 +66,20 @@ Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE] [OPTIONS]
 With no IN_FILE, or when IN_FILE is -, read standard input.
 With no OUT_FILE and when IN_FILE is specified, create .d.ts file in the same directory.
 With no OUT_FILE nor IN_FILE, write to standard output.
+
+You can use any of the following options by adding them at the end.
+Boolean values can be set to false using the 'no-' prefix.
+
+  --cwd=XXX
+      Root directory for resolving $ref
+  --declareExternallyReferenced
+      Declare external schemas referenced via '$ref'?
+  --enableConstEnums
+      Prepend enums with 'const'?
+  --style.XXX=YYY
+      Prettier configuration
+  --unreachableDefinitions
+      Generates code for definitions that aren't referenced by the schema.
 `
   )
 }
