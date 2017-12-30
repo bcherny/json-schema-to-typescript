@@ -42,7 +42,7 @@ export function run() {
 
   test('file in (-i), style flags, pipe out', t => {
     t.snapshot(
-      execSync('node dist/src/cli.js -i ./test/resources/DefinitionsOnly.json --style.singleQuote --no-style.semi').toString()
+      execSync('node dist/src/cli.js -i ./test/resources/Enum.json --style.singleQuote --no-style.semi').toString()
     )
   })
 
