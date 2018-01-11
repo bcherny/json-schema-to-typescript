@@ -169,10 +169,24 @@ function generateInterface(
   ast: TInterface,
   options: Options
 ): string {
+  const reachableProperties = ast.params.filter(_ => !_.isUnreachableDefinition)
+  const patternProperties = reachableProperties.filter(_ => _.isPatternProperty)
+  const nonPatternProperties = reachableProperties.filter(_ => !_.isPatternProperty)
+
+  const patternTypes = patternProperties.length === 0 ? '' : '[k: string]: '
+    + reachableProperties
+      .map(({ ast }) => [ast, generateType(ast, options)] as [AST, string])
+      .map(([ast, type]) => hasStandaloneName(ast) ? toSafeString(type) : type)
+      .concat(nonPatternProperties.filter(_ => !_.isRequired).length > 0 ? ['undefined'] : [])
+      .reduce((uniqueValues, value) => uniqueValues.indexOf(value) >= 0 ? uniqueValues : uniqueValues.concat(value), new Array<string>())
+      .join(' | ')
+    + '\n'
+
   return `{`
     + '\n'
-    + ast.params
-      .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
+    + patternTypes
+    + nonPatternProperties
+      .filter(_ => !patternTypes || _.keyName !== '[k: string]')
       .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string])
       .map(([isRequired, keyName, ast, type]) =>
         (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '')
