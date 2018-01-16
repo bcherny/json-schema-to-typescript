@@ -105,6 +105,15 @@ json2ts --input foo.json --output foo.d.ts
 json2ts -i foo.json -o foo.d.ts
 ```
 
+You can use any of the options described above, including style options, by adding them at the end. Boolean values can be set to false using the `no-` prefix.
+
+```
+# generate code for definitions that aren't referenced
+json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
+# use single quotes and disable trailing semi-colons
+json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
+```
+
 ## Tests
 
 `npm test`

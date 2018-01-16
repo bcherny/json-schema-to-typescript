@@ -1,0 +1,11 @@
+{
+  "definitions": {
+    "DummyPerson": {
+      "properties": {
+        "age": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

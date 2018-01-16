@@ -5,7 +5,7 @@ import minimist = require('minimist')
 import { readFile, writeFile } from 'mz/fs'
 import { resolve } from 'path'
 import stdin = require('stdin')
-import { compile } from './index'
+import { compile, Options } from './index'
 
 main(minimist(process.argv.slice(2), {
   alias: {
@@ -27,7 +27,7 @@ async function main(argv: minimist.ParsedArgs) {
 
   try {
     const schema: JSONSchema4 = JSON.parse(await readInput(argIn))
-    const ts = await compile(schema, argIn)
+    const ts = await compile(schema, argIn, argv as Partial<Options>)
     await writeOutput(ts, argOut)
   } catch (e) {
     process.stderr.write(e.message)
@@ -61,11 +61,25 @@ function printHelp() {
   process.stdout.write(
 `
 ${pkg.name} ${pkg.version}
-Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE]
+Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE] [OPTIONS]
 
 With no IN_FILE, or when IN_FILE is -, read standard input.
 With no OUT_FILE and when IN_FILE is specified, create .d.ts file in the same directory.
 With no OUT_FILE nor IN_FILE, write to standard output.
+
+You can use any of the following options by adding them at the end.
+Boolean values can be set to false using the 'no-' prefix.
+
+  --cwd=XXX
+      Root directory for resolving $ref
+  --declareExternallyReferenced
+      Declare external schemas referenced via '$ref'?
+  --enableConstEnums
+      Prepend enums with 'const'?
+  --style.XXX=YYY
+      Prettier configuration
+  --unreachableDefinitions
+      Generates code for definitions that aren't referenced by the schema.
 `
   )
 }
