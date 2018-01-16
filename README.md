@@ -77,6 +77,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 
 | key       | type        | note               |
 |-----------|-------------|--------------------|
+| bannerComment       | string      | Disclaimer comment prepended to the top of each generated file |
 | cwd       | string      | Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s |
 | declareExternallyReferenced | boolean | Declare external schemas referenced via `$ref`? |
 | enableConstEnums | boolean | Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)? |
