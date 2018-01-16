@@ -113,7 +113,7 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 
 `npm test`
 
-## Todo
+## Features
 
 - [x] `title` => `interface`
 - [x] Primitive types:
@@ -171,3 +171,8 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - JSON-schema wiki: https://github.com/json-schema/json-schema/wiki
 - JSON-schema test suite: https://github.com/json-schema/JSON-Schema-Test-Suite/blob/node
 - TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md
+
+## Projects That Use JSON-Schema-to-TypeScript
+
+- [RAML-to-TypeScript](https://github.com/ducin/raml-to-typescript)
+- See more: https://www.npmjs.com/browse/depended/json-schema-to-typescript
