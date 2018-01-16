@@ -1,11 +1,5 @@
 # json-schema-to-typescript [![Build Status][build]](https://circleci.com/gh/bcherny/json-schema-to-typescript) [![npm]](https://www.npmjs.com/package/json-schema-to-typescript) [![mit]](https://opensource.org/licenses/MIT)
 
-[build]: https://img.shields.io/circleci/project/bcherny/json-schema-to-typescript.svg?branch=master&style=flat-square
-[npm]: https://img.shields.io/npm/v/json-schema-to-typescript.svg?style=flat-square
-[mit]: https://img.shields.io/npm/l/json-schema-to-typescript.svg?style=flat-square
-
-> Compile json schema to typescript typings
-
 ## Example
 
 Input:
@@ -105,12 +99,12 @@ json2ts --input foo.json --output foo.d.ts
 json2ts -i foo.json -o foo.d.ts
 ```
 
-You can use any of the options described above, including style options, by adding them at the end. Boolean values can be set to false using the `no-` prefix.
+You can pass any of the options described above (including style options) as CLI flags. Boolean values can be set to false using the `no-` prefix.
 
-```
+```sh
 # generate code for definitions that aren't referenced
 json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
-# use single quotes and disable trailing semi-colons
+# use single quotes and disable trailing semicolons
 json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 ```
 

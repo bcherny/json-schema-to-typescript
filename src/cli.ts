@@ -79,7 +79,7 @@ Boolean values can be set to false using the 'no-' prefix.
   --style.XXX=YYY
       Prettier configuration
   --unreachableDefinitions
-      Generates code for definitions that aren't referenced by the schema.
+      Generates code for definitions that aren't referenced by the schema
 `
   )
 }
