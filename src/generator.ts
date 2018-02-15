@@ -36,6 +36,10 @@ function declareEnums(
     case 'ENUM':
       type = generateStandaloneEnum(ast, options) + '\n'
       break
+    case 'ARRAY':
+      return declareEnums(ast.params, options, processed)
+    case 'TUPLE':
+      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
     case 'INTERFACE':
       type = getSuperTypesAndParams(ast).reduce((prev, ast) =>
         prev + declareEnums(ast, options, processed),
