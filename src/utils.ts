@@ -76,8 +76,9 @@ export function error(...messages: any[]) {
   console.error(whiteBright.bgRedBright('error'), ...messages)
 }
 
+const debugEnabled = process.env.DEBUG !== undefined && process.env.DEBUG.includes('json2ts')
 export function log(...messages: any[]) {
-  if (process.env.DEBUG) {
+  if (debugEnabled) {
     console.info(whiteBright.bgCyan('debug'), ...messages)
   }
 }
