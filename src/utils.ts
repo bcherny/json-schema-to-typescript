@@ -77,7 +77,7 @@ export function error(...messages: any[]) {
 }
 
 export function log(...messages: any[]) {
-  if (process.env.DEBUG) {
+  if (process.env.VERBOSE) {
     console.info(whiteBright.bgCyan('debug'), ...messages)
   }
 }
