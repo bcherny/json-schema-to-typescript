@@ -147,6 +147,7 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - [x] `anyOf` ("union")
 - [x] `oneOf` (treated like `anyOf`)
 - [x] `additionalProperties` of type
+- [x] `patternProperties` (partial support)
 - [x] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends)
 - [x] `required` properties on objects ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L130))
 - [ ] `validateRequired` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L124))
@@ -168,7 +169,6 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - `not`/`disallow`
 - `oneOf` ("xor", use `anyOf` instead)
 - `pattern` ([string](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L203), [regex](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L207))
-- `patternProperties` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L97))
 - `uniqueItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L172))
 
 ## Further Reading
