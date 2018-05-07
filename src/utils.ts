@@ -1,5 +1,5 @@
 import { whiteBright } from 'cli-color'
-import { camelCase, isPlainObject, mapValues, upperFirst } from 'lodash'
+import { isPlainObject, mapValues, upperFirst, deburr, words, reduce, lowerCase, upperCase } from 'lodash'
 import { basename, extname } from 'path'
 
 // TODO: pull out into a separate package
@@ -49,11 +49,16 @@ export function stripExtension(filename: string): string {
 /**
  * Convert a string that might contain spaces or special characters to one that
  * can safely be used as a TypeScript interface or enum name.
- *
- * TODO: be non-destructive for caps (eg. "fooBAR" is ok, and shouldn't be converted to "fooBar")
  */
 export function toSafeString(string: string) {
-  return upperFirst(camelCase(string))
+  // identifiers in javaScript/ts:
+  // First character: a-zA-Z | _ | $
+  // Rest: a-zA-Z | _ | $ | 0-9
+
+  const arrayOfValidWords = words(deburr(string).replace(/(^[^a-zA-Z_])|([^a-zA-Z_\d])/, ' '))
+  return reduce(arrayOfValidWords, (result, word) => {
+    return result + (upperCase(word) === word ? word : upperFirst(lowerCase(word)))
+  }, '')
 }
 
 export function generateName(from: string, usedNames: Set<string>) {
