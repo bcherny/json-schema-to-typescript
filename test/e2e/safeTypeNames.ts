@@ -1,18 +1,4 @@
 export const input = {
-  "title": "AnyOf",
-  "type": "object",
-  "properties": {
-    "foo": {
-      'type': 'object',
-      anyOf: [
-        {$ref: "#/definitions/stra'nge#name"},
-        {$ref: "#/definitions/keepUPPERCASE"},
-        {$ref: "#/definitions/under_score"},
-        {$ref: "#/definitions/camelCase"},
-        {$ref: "#/definitions/kebab-case"}
-      ]
-    }
-  },
   definitions: {
     "stra'nge#name": {
       properties: {
@@ -27,7 +13,7 @@ export const input = {
         a: { "enum": ["a", "b", "c"] },
       }
     },
-    under_score: {
+    snake_case: {
       properties: {
         "a": { "type": "boolean" },
       }
@@ -41,7 +27,91 @@ export const input = {
       properties: {
         "a": { "type": "string" },
       }
-    }
-
+    },
+    " startsWithSpace": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "contains space": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "5tartsWithDigit": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "endsWithDigi7": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "contains4digit": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    ".startsWithPeriod": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "endsWithPeriod.": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "contains...period": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    ",startsWithComma": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "endsWithComma,": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "contains,,Comma": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "$startsWithDollar": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "endsWithDollar$": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "contains$Dollar": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "UPPERCASE": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "Startsuppercase": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
   }
 }
+
+export const options = {
+  unreachableDefinitions: true
+}
+
