@@ -43,6 +43,11 @@ export const input = {
         "a": { "type": "string" },
       }
     },
+    " 5tartsWithBlankAndDigit": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
     "endsWithDigi7": {
       properties: {
         "a": { "type": "string" },
@@ -94,6 +99,11 @@ export const input = {
       }
     },
     "contains$Dollar": {
+      properties: {
+        "a": { "type": "string" },
+      }
+    },
+    "$": {
       properties: {
         "a": { "type": "string" },
       }

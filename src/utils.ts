@@ -1,5 +1,5 @@
 import { whiteBright } from 'cli-color'
-import { isPlainObject, mapValues, upperFirst, deburr, words, reduce, lowerCase, upperCase } from 'lodash'
+import { isPlainObject, mapValues, upperFirst, deburr, trim } from 'lodash'
 import { basename, extname } from 'path'
 
 // TODO: pull out into a separate package
@@ -55,10 +55,19 @@ export function toSafeString(string: string) {
   // First character: a-zA-Z | _ | $
   // Rest: a-zA-Z | _ | $ | 0-9
 
-  const arrayOfValidWords = words(deburr(string).replace(/(^[^a-zA-Z_])|([^a-zA-Z_\d])/, ' '))
-  return reduce(arrayOfValidWords, (result, word) => {
-    return result + (upperCase(word) === word ? word : upperFirst(lowerCase(word)))
-  }, '')
+  return upperFirst(
+    // remove accents, umlauts, ... by their basic latin letters
+    deburr(string)
+    // replace chars which are not valid for typescript identifiers with whitespace
+    .replace(/(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g, ' ')
+    // remove underscores followed by lowercase (convert snake_case)
+    .replace(/_[a-z]/g, match => match.substr(1, match.length).toUpperCase())
+    // uppercase letters after digits, dollars
+    .replace(/([\d$]+[a-zA-Z])/g, match => match.toUpperCase())
+    // uppercase first letter after whitespace
+    .replace(/\s+([a-zA-Z])/g, match => trim(match.toUpperCase()))
+    // remove remaining whitespace
+    .replace(/\s/g, ''));
 }
 
 export function generateName(from: string, usedNames: Set<string>) {
