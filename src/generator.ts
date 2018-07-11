@@ -158,6 +158,7 @@ function generateType(ast: AST, options: Options): string {
       + ast.params.map(_ => generateType(_, options)).join(', ')
       + ']'
     case 'UNION': return generateSetOperation(ast, options)
+    case 'CUSTOM_TYPE': return ast.param
   }
 }
 

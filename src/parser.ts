@@ -99,6 +99,14 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'BOOLEAN'
       })
+    case 'CUSTOM_TYPE':
+      return set({
+        comment: schema.description,
+        keyName,
+        param: schema.tsType!,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        type: 'CUSTOM_TYPE'
+      })
     case 'NAMED_ENUM':
       return set({
         comment: schema.description,
