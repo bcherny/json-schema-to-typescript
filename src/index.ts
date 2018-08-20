@@ -15,11 +15,29 @@ import { validate } from './validator'
 export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './types/JSONSchema'
 
 export interface Options {
+  /**
+   * Disclaimer comment prepended to the top of each generated file.
+   */
   bannerComment: string
+  /**
+   * Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s.
+   */
   cwd: string
+  /**
+   * Declare external schemas referenced via `$ref`?
+   */
   declareExternallyReferenced: boolean
+  /**
+   * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
+   */
   enableConstEnums: boolean
+  /**
+   * A [Prettier](https://prettier.io/docs/en/options.html) configuration.
+   */
   style: PrettierOptions
+  /**
+   * Generate code for `definitions` that aren't referenced by the schema?
+   */
   unreachableDefinitions: boolean
 }
 
