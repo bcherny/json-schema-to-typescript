@@ -1,8 +1,0 @@
-machine:
-  node:
-    version: 6.3.0
-test:
-  override:
-    - nvm i v4.5.0 && rm -rf node_modules && npm i
-    - nvm i v6.10.2 && rm -rf node_modules && npm i
-    - nvm i v7.9.0 && rm -rf node_modules && npm i
