@@ -68,7 +68,7 @@
     "shx": "^0.2.2",
     "tsify": "^3.0.3",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.1"
+    "typescript": "^2.8.0"
   },
   "ava": {
     "files": [
