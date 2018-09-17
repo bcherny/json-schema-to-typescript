@@ -11,6 +11,7 @@ import { parse } from './parser'
 import { dereference } from './resolver'
 import { error, stripExtension, Try } from './utils'
 import { validate } from './validator'
+import { Options as $RefOptions } from 'json-schema-ref-parser'
 
 export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema } from './types/JSONSchema'
 
@@ -39,6 +40,10 @@ export interface Options {
    * Generate code for `definitions` that aren't referenced by the schema?
    */
   unreachableDefinitions: boolean
+  /**
+   * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
+   */
+  $refOptions: $RefOptions
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -59,7 +64,8 @@ export const DEFAULT_OPTIONS: Options = {
     trailingComma: 'none',
     useTabs: false
   },
-  unreachableDefinitions: false
+  unreachableDefinitions: false,
+  $refOptions: {}
 }
 
 export function compileFromFile(
@@ -102,7 +108,7 @@ export async function compile(
 
   return format(generate(
     optimize(
-      parse(await dereference(normalize(schema, name), _options.cwd), _options)
+      parse(await dereference(normalize(schema, name), _options), _options)
     ),
     _options
   ), _options)

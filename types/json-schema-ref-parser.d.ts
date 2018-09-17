@@ -10,6 +10,8 @@ declare module 'json-schema-ref-parser' {
 
   export = $RefParser
 
+  type Options = $RefParser.Options
+
   /**
    * This is the default export of JSON Schema $Ref Parser. You can creates instances of this class using new $RefParser(), or you can just call its static methods.
    *
@@ -100,50 +102,52 @@ declare module 'json-schema-ref-parser' {
     ): Promise<$Refs>
   }
 
-  /**
-   * See https://github.com/BigstickCarpet/json-schema-ref-parser/blob/master/docs/options.md
-   */
-  type Options = object & {
-
+  namespace $RefParser{
     /**
-     * The `parse` options determine how different types of files will be parsed.
-     *
-     * JSON Schema `$Ref` Parser comes with built-in JSON, YAML, plain-text, and binary parsers, any of which you can configure or disable. You can also add your own custom parsers if you want.
+     * See https://github.com/BigstickCarpet/json-schema-ref-parser/blob/master/docs/options.md
      */
-    parse?: {
-      json?: ParserOptions | boolean
-      yaml?: ParserOptions | boolean
-      text?: (ParserOptions & { encoding?: string }) | boolean
-    }
-
-    /**
-     * The `resolve` options control how JSON Schema $Ref Parser will resolve file paths and URLs, and how those files will be read/downloaded.
-     *
-     * JSON Schema `$Ref` Parser comes with built-in support for HTTP and HTTPS, as well as support for local files (when running in Node.js). You can configure or disable either of these built-in resolvers. You can also add your own custom resolvers if you want.
-     */
-    resolve?: {
+    export type Options = object & {
 
       /**
-       * Determines whether external $ref pointers will be resolved. If this option is disabled, then external `$ref` pointers will simply be ignored.
+       * The `parse` options determine how different types of files will be parsed.
+       *
+       * JSON Schema `$Ref` Parser comes with built-in JSON, YAML, plain-text, and binary parsers, any of which you can configure or disable. You can also add your own custom parsers if you want.
        */
-      external?: boolean
-      file?: ResolverOptions | boolean
-      http?: HTTPResolverOptions | boolean
-    }
-
-    /**
-     * The `dereference` options control how JSON Schema `$Ref` Parser will dereference `$ref` pointers within the JSON schema.
-     */
-    dereference?: {
+      parse?: {
+        json?: ParserOptions | boolean
+        yaml?: ParserOptions | boolean
+        text?: (ParserOptions & { encoding?: string }) | boolean
+      }
 
       /**
-       * Determines whether circular `$ref` pointers are handled.
+       * The `resolve` options control how JSON Schema $Ref Parser will resolve file paths and URLs, and how those files will be read/downloaded.
        *
-       * If set to `false`, then a `ReferenceError` will be thrown if the schema contains any circular references.
-       *
-       * If set to `"ignore"`, then circular references will simply be ignored. No error will be thrown, but the `$Refs.circular` property will still be set to `true`.
+       * JSON Schema `$Ref` Parser comes with built-in support for HTTP and HTTPS, as well as support for local files (when running in Node.js). You can configure or disable either of these built-in resolvers. You can also add your own custom resolvers if you want.
        */
-      circular?: boolean | 'ignore'
+      resolve?: {
+
+        /**
+         * Determines whether external $ref pointers will be resolved. If this option is disabled, then external `$ref` pointers will simply be ignored.
+         */
+        external?: boolean
+        file?: ResolverOptions | boolean
+        http?: HTTPResolverOptions | boolean
+      }
+
+      /**
+       * The `dereference` options control how JSON Schema `$Ref` Parser will dereference `$ref` pointers within the JSON schema.
+       */
+      dereference?: {
+
+        /**
+         * Determines whether circular `$ref` pointers are handled.
+         *
+         * If set to `false`, then a `ReferenceError` will be thrown if the schema contains any circular references.
+         *
+         * If set to `"ignore"`, then circular references will simply be ignored. No error will be thrown, but the `$Refs.circular` property will still be set to `true`.
+         */
+        circular?: boolean | 'ignore'
+      }
     }
   }
 
