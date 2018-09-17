@@ -17,7 +17,7 @@ export function run() {
   readdirSync(normalizerDir)
     .filter(_ => /^.*\.json$/.test(_))
     .map(_ => join(normalizerDir, _))
-    .map(_ => [_, require(_) as JSONTestCase])
+    .map(_ => [_, require(_)] as [string, JSONTestCase])
     .forEach(([filename, json]: [string, JSONTestCase]) => {
       const params = { filename }
       test(json.name, t =>
