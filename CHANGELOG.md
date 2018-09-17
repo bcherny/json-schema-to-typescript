@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.6.0
+
+- 923dbfc Add declarations for tuple types (#184)
+
+## 5.4.0
+
+- fc8540f Add partial support for `patternProperties`
+- 9167902 Add declarations for enums referenced by arrays (#146)
+
 ## 5.3.0
 
 - 83e4a29 Add support for passing options in CLI
