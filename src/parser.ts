@@ -5,7 +5,8 @@ import { Options } from './'
 import { typeOfSchema } from './typeOfSchema'
 import { AST, hasStandaloneName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, TInterfaceParam, TNamedInterface } from './types/AST'
 import { JSONSchema, JSONSchemaWithDefinitions, SchemaSchema } from './types/JSONSchema'
-import { error, generateName, log } from './utils'
+import { generateName, log } from './utils'
+import { format } from 'util'
 
 export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
 
@@ -142,7 +143,7 @@ function parseNonLiteral(
         type: 'UNION'
       })
     case 'REFERENCE':
-      throw error('Refs should have been resolved by the resolver!', schema)
+      throw Error(format('Refs should have been resolved by the resolver!', schema))
     case 'STRING':
       return set({
         comment: schema.description,
@@ -261,7 +262,7 @@ function newNamedInterface(
     return namedInterface
   }
   // TODO: Generate name if it doesn't have one
-  throw error('Supertype must have standalone name!', namedInterface)
+  throw Error(format('Supertype must have standalone name!', namedInterface))
 }
 
 /**
