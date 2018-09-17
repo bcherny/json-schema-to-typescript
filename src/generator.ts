@@ -116,6 +116,7 @@ function declareNamedTypes(
       type = getSuperTypesAndParams(ast).map(ast => declareNamedTypes(ast, options, processed)).filter(Boolean).join('\n')
       break
     case 'INTERSECTION':
+    case 'TUPLE':
     case 'UNION':
       type = [
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
