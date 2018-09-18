@@ -4,7 +4,7 @@ export type AST_TYPE = AST['type']
 
 export type AST = TAny | TArray | TBoolean | TEnum | TInterface | TNamedInterface
   | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
-  | TString | TTuple | TUnion
+  | TString | TTuple | TUnion | TCustomType
 
 export interface AbstractAST {
   comment?: string
@@ -111,6 +111,11 @@ export interface TTuple extends AbstractAST {
 export interface TUnion extends AbstractAST {
   type: 'UNION'
   params: AST[]
+}
+
+export interface TCustomType extends AbstractAST {
+  type: 'CUSTOM_TYPE'
+  param: string
 }
 
 ////////////////////////////////////////////     literals
