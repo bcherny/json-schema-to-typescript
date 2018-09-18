@@ -6,6 +6,7 @@ import { readFile, writeFile } from 'mz/fs'
 import { resolve } from 'path'
 import stdin = require('stdin')
 import { compile, Options } from './index'
+import { whiteBright } from 'cli-color'
 
 main(minimist(process.argv.slice(2), {
   alias: {
@@ -30,7 +31,7 @@ async function main(argv: minimist.ParsedArgs) {
     const ts = await compile(schema, argIn, argv as Partial<Options>)
     await writeOutput(ts, argOut)
   } catch (e) {
-    process.stderr.write(e.message)
+    console.error(whiteBright.bgRedBright('error'), e)
     process.exit(1)
   }
 
