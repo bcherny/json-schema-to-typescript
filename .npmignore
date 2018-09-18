@@ -9,3 +9,4 @@ dist/test
 circle.yml
 ARCHITECTURE.md
 CONTRIBUTING.md
+.editorconfig
