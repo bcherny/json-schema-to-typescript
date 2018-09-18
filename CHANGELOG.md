@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.7.0
+
+- f1f4030 Add `tsType` schema extension to allow custom TypeScript types (#168)
+- 8599262 Add support for passing custom options when resolving `$ref`s (#180)
+- 25ef03b Improve error output for certain kinds of errors (#188)
+
 ## 5.6.0
 
 - 923dbfc Add declarations for tuple types (#184)
