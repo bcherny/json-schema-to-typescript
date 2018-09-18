@@ -89,6 +89,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | enableConstEnums | boolean | `true` | Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)? |
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
 | unreachableDefinitions | boolean | `false` | Generates code for `definitions` that aren't referenced by the schema. |
+| $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 
 A simple CLI utility is provided with this package.
