@@ -7,13 +7,12 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",
     "preserveConstEnums": true,
     "sourceMap": true,
-    "strictNullChecks": true,
+    "strict": true,
     "target": "es5"
   },
   "exclude": [
