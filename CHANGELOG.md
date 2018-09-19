@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.0.0
+
+- b7737b7 Improve generated type & interface names to take input casing into account (#159)
+
 ## 5.7.0
 
 - f1f4030 Add `tsType` schema extension to allow custom TypeScript types (#168)
