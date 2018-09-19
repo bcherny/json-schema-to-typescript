@@ -1,127 +1,151 @@
 export const input = {
   definitions: {
-    "stra'nge#name": {
+    'stra\'nge#name': {
       properties: {
-        "a": { "type": "string" },
-        "b": { "type": "integer" }
+        a: { type: 'string' },
+        b: { type: 'integer' }
       },
       additionalProperties: false,
-      required: ["a"]
+      required: ['a']
     },
     keepUPPERCASE: {
       properties: {
-        a: { "enum": ["a", "b", "c"] },
+        a: { enum: ['a', 'b', 'c'] }
       }
     },
     snake_case: {
       properties: {
-        "a": { "type": "boolean" },
+        a: { type: 'boolean' }
+      }
+    },
+    _startsWithUnderscore: {
+      properties: {
+        a: { type: 'boolean' }
+      }
+    },
+    _StartsWithUnderscoreUppercase: {
+      properties: {
+        a: { type: 'boolean' }
+      }
+    },
+    EndsWithUnderscore_: {
+      properties: {
+        a: { type: 'boolean' }
+      }
+    },
+    UPPER_CASE: {
+      properties: {
+        a: { type: 'boolean' }
+      }
+    },
+    ______________: {
+      properties: {
+        a: { type: 'boolean' }
       }
     },
     camelCase: {
       properties: {
-        "a": { "type": "float" },
+        a: { type: 'float' }
       }
     },
-    "kebab-case": {
+    'kebab-case': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    " startsWithSpace": {
+    ' startsWithSpace': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "contains space": {
+    'contains space': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "5tartsWithDigit": {
+    '5tartsWithDigit': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    " 5tartsWithBlankAndDigit": {
+    ' 5tartsWithBlankAndDigit': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "endsWithDigi7": {
+    endsWithDigi7: {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "contains4digit": {
+    contains4digit: {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    ".startsWithPeriod": {
+    '.startsWithPeriod': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "endsWithPeriod.": {
+    'endsWithPeriod.': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "contains...period": {
+    'contains...period': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    ",startsWithComma": {
+    ',startsWithComma': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "endsWithComma,": {
+    'endsWithComma,': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "contains,,Comma": {
+    'contains,,Comma': {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "$startsWithDollar": {
+    $startsWithDollar: {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "endsWithDollar$": {
+    endsWithDollar$: {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "contains$Dollar": {
+    contains$Dollar: {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "$": {
+    $: {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "UPPERCASE": {
+    UPPERCASE: {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
     },
-    "Startsuppercase": {
+    Startsuppercase: {
       properties: {
-        "a": { "type": "string" },
+        a: { type: 'string' }
       }
-    },
+    }
   }
 }
 
 export const options = {
   unreachableDefinitions: true
 }
-
