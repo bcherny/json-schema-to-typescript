@@ -14,9 +14,18 @@ export const input = {
         { type: 'any' },
         { type: 'integer' }
       ]
+    },
+    fooBar: {
+      anyOf: [
+        { tsType: 'A' },
+        { tsType: 'A' },
+        { tsType: 'B' },
+        { tsType: 'A' },
+        { tsType: 'B' }
+      ]
     }
   },
-  required: ['bar', 'foo'],
+  required: ['bar', 'foo', 'fooBar'],
   title: 'Optimizable Schema',
   type: 'object'
 }
