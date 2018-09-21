@@ -115,7 +115,7 @@ export interface TUnion extends AbstractAST {
 
 export interface TCustomType extends AbstractAST {
   type: 'CUSTOM_TYPE'
-  param: string
+  params: string
 }
 
 ////////////////////////////////////////////     literals
