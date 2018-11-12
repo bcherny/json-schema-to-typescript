@@ -1,0 +1,9 @@
+{
+  "id": "http://dummy.com/api/example-schema",
+  "title": "Example Combined Schema",
+  "type": "object",
+  "oneOf": [
+    {"type": "string"},
+    {"type": "number"}
+  ]
+}
