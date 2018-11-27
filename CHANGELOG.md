@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.1.0
+
+- 57f759f Add @tslint directive to disable linting for generated files by default (#192)
+
 ## 6.0.0
 
 - b7737b7 Improve generated type & interface names to take input casing into account (#159)
