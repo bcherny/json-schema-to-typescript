@@ -79,6 +79,7 @@ function declareNamedInterfaces(
       ].filter(Boolean).join('\n')
       break
     case 'INTERSECTION':
+    case 'TUPLE':
     case 'UNION':
       type = ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
       break
