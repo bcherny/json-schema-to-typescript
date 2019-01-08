@@ -11,7 +11,9 @@ import {
   TInterface,
   TInterfaceParam,
   TNamedInterface,
-  TTuple
+  TTuple,
+  TCustomType,
+  TSuperType
 } from './types/AST'
 import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
 import {generateName, log} from './utils'
@@ -305,7 +307,7 @@ function parseSuperTypes(
   options: Options,
   processed: Processed,
   usedNames: UsedNames
-): TNamedInterface[] {
+): TSuperType[] {
   // Type assertion needed because of dereferencing step
   // TODO: Type it upstream
   const superTypes = schema.extends as SchemaSchema | SchemaSchema[] | undefined
@@ -313,9 +315,51 @@ function parseSuperTypes(
     return []
   }
   if (Array.isArray(superTypes)) {
-    return superTypes.map(_ => newNamedInterface(_, options, _, processed, usedNames))
+    return superTypes.map(_ => getOrCreateSuperType(_, options, _, processed, usedNames))
   }
-  return [newNamedInterface(superTypes, options, superTypes, processed, usedNames)]
+  return [getOrCreateSuperType(superTypes, options, superTypes, processed, usedNames)]
+}
+
+function isSuperType(type: any): type is TSuperType {
+  return type.type === 'CUSTOM_TYPE' || type.type === 'INTERFACE'
+}
+
+function getOrCreateSuperType(
+  schema: SchemaSchema,
+  options: Options,
+  rootSchema: JSONSchema,
+  processed: Processed,
+  usedNames: UsedNames
+): TSuperType {
+  if (processed.has(schema)) {
+    const hit = processed.get(schema)
+    if (isSuperType(hit)) {
+      return hit
+    }
+  }
+
+  if (schema.tsType) {
+    const extendedType = newExtendedType(schema, usedNames)
+    processed.set(schema, extendedType)
+    return extendedType
+  }
+  const namedInterface = newNamedInterface(schema, options, rootSchema, processed, usedNames)
+  processed.set(schema, namedInterface)
+  return namedInterface
+}
+
+function newExtendedType(schema: SchemaSchema, usedNames: UsedNames): TCustomType {
+  if (schema.tsType) {
+    return {
+      comment: schema.description,
+      keyName: schema.title,
+      params: schema.tsType,
+      standaloneName: standaloneName(schema, schema.title, usedNames),
+      type: 'CUSTOM_TYPE'
+    }
+  } else {
+    throw Error(format('Customtype must have a tsType', schema))
+  }
 }
 
 function newNamedInterface(
