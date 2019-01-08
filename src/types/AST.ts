@@ -6,6 +6,8 @@ export type AST = TAny | TArray | TBoolean | TEnum | TInterface | TNamedInterfac
   | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
   | TString | TTuple | TUnion | TCustomType
 
+export type TSuperType = TNamedInterface | TCustomType
+
 export interface AbstractAST {
   comment?: string
   keyName?: string
@@ -54,14 +56,14 @@ export interface TEnumParam {
 export interface TInterface extends AbstractAST {
   type: 'INTERFACE'
   params: TInterfaceParam[]
-  superTypes: TNamedInterface[]
+  superTypes: TSuperType[]
 }
 
 export interface TNamedInterface extends AbstractAST {
   standaloneName: string
   type: 'INTERFACE'
   params: TInterfaceParam[]
-  superTypes: TNamedInterface[]
+  superTypes: TSuperType[]
 }
 
 export interface TInterfaceParam {

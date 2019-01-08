@@ -3,7 +3,7 @@ import { JSONSchema4Type, JSONSchema4TypeName } from 'json-schema'
 import { findKey, includes, isPlainObject, map } from 'lodash'
 import { Options } from './'
 import { typeOfSchema } from './typeOfSchema'
-import { AST, hasStandaloneName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, TInterfaceParam, TNamedInterface } from './types/AST'
+import { AST, hasStandaloneName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, TInterfaceParam, TNamedInterface, TCustomType, TSuperType } from './types/AST';
 import { JSONSchema, JSONSchemaWithDefinitions, SchemaSchema } from './types/JSONSchema'
 import { generateName, log } from './utils'
 import { format } from 'util'
@@ -245,7 +245,7 @@ function parseSuperTypes(
   options: Options,
   processed: Processed,
   usedNames: UsedNames
-): TNamedInterface[] {
+): TSuperType[] {
   // Type assertion needed because of dereferencing step
   // TODO: Type it upstream
   const superTypes = schema.extends as SchemaSchema | SchemaSchema[] | undefined
@@ -253,9 +253,35 @@ function parseSuperTypes(
     return []
   }
   if (Array.isArray(superTypes)) {
-    return superTypes.map(_ => newNamedInterface(_, options, _, processed, usedNames))
+    return superTypes.map(_ => newSuperType(_, options, _, processed, usedNames))
   }
-  return [newNamedInterface(superTypes, options, superTypes, processed, usedNames)]
+  return [newSuperType(superTypes, options, superTypes, processed, usedNames)]
+}
+
+function newSuperType(
+  schema: SchemaSchema,
+  options: Options,
+  rootSchema: JSONSchema,
+  processed: Processed,
+  usedNames: UsedNames
+): TSuperType {
+  if (schema.tsType) {
+    return newExtendedType(schema, usedNames)
+  }
+  return newNamedInterface(schema, options, rootSchema, processed, usedNames)
+}
+
+function newExtendedType(
+  schema: SchemaSchema,
+  usedNames: UsedNames
+): TCustomType {
+  return {
+    comment: schema.description,
+    keyName: schema.title,
+    params: schema.tsType || '',
+    standaloneName: standaloneName(schema, schema.title, usedNames),
+    type: 'CUSTOM_TYPE'
+  }
 }
 
 function newNamedInterface(
