@@ -9,7 +9,8 @@ import { normalize } from './normalizer'
 import { optimize } from './optimizer'
 import { parse } from './parser'
 import { dereference } from './resolver'
-import { error, stripExtension, Try } from './utils'
+import { error, stripExtension, Try, CustomNameFunction } from './utils'
+export { CustomNameFunction, CustomNameFunctionOptions } from './utils'
 import { validate } from './validator'
 import { Options as $RefOptions } from 'json-schema-ref-parser'
 
@@ -44,6 +45,10 @@ export interface Options {
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
   $refOptions: $RefOptions
+  /**
+   * An optional function taking various values associated with a schema node and returning a name to use for the type associated with the schema node.
+   */
+  customName?: CustomNameFunction
 }
 
 export const DEFAULT_OPTIONS: Options = {

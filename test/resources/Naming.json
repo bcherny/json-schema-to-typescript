@@ -1,0 +1,229 @@
+{
+  "title": "Naming Test Schema",
+  "id": "Naming.json",
+  "description": "This schema is for testing naming",
+  "tsTypeName": "TstnTestSchema",
+  "type": "object",
+  "definitions": {
+    "defWithID.A": {
+      "id": "defWithID.Actual",
+      "type": "object"
+    },
+    "defWithID.B": {
+      "id": "defWithID.Actual",
+      "type": "object"
+    },
+    "defWithTitle.A": {
+      "title": "defWithTitle.Actual",
+      "type": "integer"
+    },
+    "defWithTitle.B": {
+      "title": "defWithTitle.Actual",
+      "type": "integer"
+    },
+    "defWithTsTypeName.A": {
+      "tsTypeName": "defWithTsTypeName.Actual",
+      "type": "array"
+    },
+    "defWithTsTypeName.B": {
+      "tsTypeName": "defWithTsTypeName.Actual",
+      "type": "array"
+    },
+    "defWithNested.A": {
+      "type": "object",
+      "properties": {
+        "propWithID.A": {
+          "id": "propWithID.Actual",
+          "type": "array"
+        },
+        "propWithID.B": {
+          "id": "propWithID.Actual",
+          "type": "array"
+        },
+        "propWithTitle.A": {
+          "title": "propWithTitle.Actual",
+          "type": "string"
+        },
+        "propWithTitle.B": {
+          "title": "propWithTitle.Actual",
+          "type": "string"
+        },
+        "propWithTsTypeName.A": {
+          "tsTypeName": "propWithTsTypeName.Actual",
+          "type": "object"
+        },
+        "propWithTsTypeName.B": {
+          "tsTypeName": "propWithTsTypeName.Actual",
+          "type": "object"
+        },
+        "propWithNothing.A": {
+        },
+        "propWithNothing.B": {
+        },
+        "propWithMany.AA": {
+          "tsTypeName" : "propWithMany.TsTypeName",
+          "id" : "propWithMany.Id",
+          "title" : "propWithMany.Title"
+        },
+        "propWithMany.AB": {
+          "id" : "propWithMany.Id",
+          "title" : "propWithMany.Title"
+        },
+        "propWithMany.AC": {
+          "title" : "propWithMany.Title"
+        },
+        "propWithMany.AD": {
+        },
+        "propWithMany.BA": {
+          "tsTypeName" : "propWithMany.TsTypeName",
+          "id" : "propWithMany.Id",
+          "title" : "propWithMany.Title"
+        },
+        "propWithMany.BB": {
+          "tsTypeName" : "propWithMany.TsTypeName",
+          "id" : "propWithMany.Id"
+        },
+        "propWithMany.BC": {
+          "tsTypeName" : "propWithMany.TsTypeName"
+        },
+        "propWithMany.BD": {
+        },
+        "propFromDefWithID.A": { "$ref": "#/definitions/defWithID.A" },
+        "propFromDefWithID.B": { "$ref": "#/definitions/defWithID.B" },
+        "propFromDefWithTitle.A": { "$ref": "#/definitions/defWithTitle.A" },
+        "propFromDefWithTitle.B": { "$ref": "#/definitions/defWithTitle.B" },
+        "propFromDefWithTsTypeName.A": { "$ref": "#/definitions/defWithTsTypeName.A" },
+        "propFromDefWithTsTypeName.B": { "$ref": "#/definitions/defWithTsTypeName.B" },
+        "propFromDefWithNested.A": { "$ref": "#/definitions/defWithNested.A" },
+        "propFromDefWithNested.B": { "$ref": "#/definitions/defWithNested.B" },
+        "propFromDefWithNothing.A": { "$ref": "#/definitions/defWithNothing.A" },
+        "propFromDefWithNothing.B": { "$ref": "#/definitions/defWithNothing.B" },
+        "propFromDefWithMany.AA": { "$ref": "#/definitions/defWithMany.AA" },
+        "propFromDefWithMany.AB": { "$ref": "#/definitions/defWithMany.AB" },
+        "propFromDefWithMany.AC": { "$ref": "#/definitions/defWithMany.AC" },
+        "propFromDefWithMany.AD": { "$ref": "#/definitions/defWithMany.AD" },
+        "propFromDefWithMany.BA": { "$ref": "#/definitions/defWithMany.BA" },
+        "propFromDefWithMany.BB": { "$ref": "#/definitions/defWithMany.BB" },
+        "propFromDefWithMany.BC": { "$ref": "#/definitions/defWithMany.BC" },
+        "propFromDefWithMany.BD": { "$ref": "#/definitions/defWithMany.BD" },
+        "closer": { "type": "string" }
+      }
+    },
+    "defWithNested.B": {
+      "type": "object",
+      "properties": {
+      }
+    },
+    "defWithNothing.A": {
+    },
+    "defWithNothing.B": {
+    },
+    "defWithMany.AA": {
+      "tsTypeName" : "defWithMany.TsTypeName",
+      "id" : "defWithMany.Id",
+      "title" : "defWithMany.Title"
+    },
+    "defWithMany.AB": {
+      "id" : "defWithMany.Id",
+      "title" : "defWithMany.Title"
+    },
+    "defWithMany.AC": {
+      "title" : "defWithMany.Title"
+    },
+    "defWithMany.AD": {
+    },
+    "defWithMany.BA": {
+      "tsTypeName" : "defWithMany.TsTypeName",
+      "id" : "defWithMany.Id",
+      "title" : "defWithMany.Title"
+    },
+    "defWithMany.BB": {
+      "tsTypeName" : "defWithMany.TsTypeName",
+      "id" : "defWithMany.Id"
+    },
+    "defWithMany.BC": {
+      "tsTypeName" : "defWithMany.TsTypeName"
+    },
+    "defWithMany.BD": {
+    },
+    "closer": { "type": "string" }
+  },
+  "properties": {
+    "propWithID.A": {
+      "id": "propWithID.Actual",
+      "type": "array"
+    },
+    "propWithID.B": {
+      "id": "propWithID.Actual",
+      "type": "array"
+    },
+    "propWithTitle.A": {
+      "title": "propWithTitle.Actual",
+      "type": "string"
+    },
+    "propWithTitle.B": {
+      "title": "propWithTitle.Actual",
+      "type": "string"
+    },
+    "propWithTsTypeName.A": {
+      "tsTypeName": "propWithTsTypeName.Actual",
+      "type": "object"
+    },
+    "propWithTsTypeName.B": {
+      "tsTypeName": "propWithTsTypeName.Actual",
+      "type": "object"
+    },
+    "propWithNothing.A": {
+    },
+    "propWithNothing.B": {
+    },
+    "propWithMany.AA": {
+      "tsTypeName" : "propWithMany.TsTypeName",
+      "id" : "propWithMany.Id",
+      "title" : "propWithMany.Title"
+    },
+    "propWithMany.AB": {
+      "id" : "propWithMany.Id",
+      "title" : "propWithMany.Title"
+    },
+    "propWithMany.AC": {
+      "title" : "propWithMany.Title"
+    },
+    "propWithMany.AD": {
+    },
+    "propWithMany.BA": {
+      "tsTypeName" : "propWithMany.TsTypeName",
+      "id" : "propWithMany.Id",
+      "title" : "propWithMany.Title"
+    },
+    "propWithMany.BB": {
+      "tsTypeName" : "propWithMany.TsTypeName",
+      "id" : "propWithMany.Id"
+    },
+    "propWithMany.BC": {
+      "tsTypeName" : "propWithMany.TsTypeName"
+    },
+    "propWithMany.BD": {
+    },
+    "propFromDefWithID.A": { "$ref": "#/definitions/defWithID.A" },
+    "propFromDefWithID.B": { "$ref": "#/definitions/defWithID.B" },
+    "propFromDefWithTitle.A": { "$ref": "#/definitions/defWithTitle.A" },
+    "propFromDefWithTitle.B": { "$ref": "#/definitions/defWithTitle.B" },
+    "propFromDefWithTsTypeName.A": { "$ref": "#/definitions/defWithTsTypeName.A" },
+    "propFromDefWithTsTypeName.B": { "$ref": "#/definitions/defWithTsTypeName.B" },
+    "propFromDefWithNested.A": { "$ref": "#/definitions/defWithNested.A" },
+    "propFromDefWithNested.B": { "$ref": "#/definitions/defWithNested.B" },
+    "propFromDefWithNothing.A": { "$ref": "#/definitions/defWithNothing.A" },
+    "propFromDefWithNothing.B": { "$ref": "#/definitions/defWithNothing.B" },
+    "propFromDefWithMany.AA": { "$ref": "#/definitions/defWithMany.AA" },
+    "propFromDefWithMany.AB": { "$ref": "#/definitions/defWithMany.AB" },
+    "propFromDefWithMany.AC": { "$ref": "#/definitions/defWithMany.AC" },
+    "propFromDefWithMany.AD": { "$ref": "#/definitions/defWithMany.AD" },
+    "propFromDefWithMany.BA": { "$ref": "#/definitions/defWithMany.BA" },
+    "propFromDefWithMany.BB": { "$ref": "#/definitions/defWithMany.BB" },
+    "propFromDefWithMany.BC": { "$ref": "#/definitions/defWithMany.BC" },
+    "propFromDefWithMany.BD": { "$ref": "#/definitions/defWithMany.BD" },
+    "closer": { "type": "string" }
+  },
+  "last": "end"
+}

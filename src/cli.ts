@@ -7,6 +7,8 @@ import { resolve } from 'path'
 import stdin = require('stdin')
 import { compile, Options } from './index'
 import { whiteBright } from 'cli-color'
+import { CliNameSource, CliNameGenerator } from './utils'
+import { values } from 'lodash'
 
 main(minimist(process.argv.slice(2), {
   alias: {
@@ -28,7 +30,20 @@ async function main(argv: minimist.ParsedArgs) {
 
   try {
     const schema: JSONSchema4 = JSON.parse(await readInput(argIn))
-    const ts = await compile(schema, argIn, argv as Partial<Options>)
+    let customName
+    if ( 'namePriority' in argv ) {
+      const validValues = values(CliNameSource)
+      const sourceOrder = argv.namePriority.split(/,/)
+        .map((item: string)=>{
+          if ( validValues.indexOf(item) >= 0 ) {
+            return item as CliNameSource
+          } else {
+            throw Error(`Invalid namePriority value '${item}' found in '${argv.namePriority}'`)
+          }
+        })
+      customName = new CliNameGenerator({sourceOrder}).generateName
+    }
+    const ts = await compile(schema, argIn, { ...(argv as Partial<Options>), customName })
     await writeOutput(ts, argOut)
   } catch (e) {
     console.error(whiteBright.bgRedBright('error'), e)
@@ -81,6 +96,11 @@ Boolean values can be set to false using the 'no-' prefix.
       Prettier configuration
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
+  --namePriority={${values(CliNameSource).join(',')}},...
+      A commma seperated list of priorties for type naming.
+      'id', 'title' and 'tsTypeName' are properties of the schema object.
+      'keyName' is the key of the schema object from 'properties' or 'definitions' of the parent schema.
+      'definitionKeyName' is the key of the schema object from 'definitions' of the parent schema if applicable.
 `
   )
 }
