@@ -97,7 +97,7 @@ Boolean values can be set to false using the 'no-' prefix.
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
   --namePriority={${values(CliNameSource).join(',')}},...
-      A commma seperated list of priorties for type naming.
+      A comma-separated list of priorities for type naming.
       'id', 'title' and 'tsTypeName' are properties of the schema object.
       'keyName' is the key of the schema object from 'properties' or 'definitions' of the parent schema.
       'definitionKeyName' is the key of the schema object from 'definitions' of the parent schema if applicable.
