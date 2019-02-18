@@ -1,6 +1,7 @@
 import { whiteBright } from 'cli-color'
 import { deburr, isPlainObject, mapValues, trim, upperFirst } from 'lodash'
 import { basename, extname } from 'path'
+import { JSONSchema } from './types/JSONSchema'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -86,6 +87,83 @@ export function generateName(from: string, usedNames: Set<string>) {
 
   usedNames.add(name)
   return name
+}
+
+export interface CustomNameFunctionOptions {
+  /**
+   * the schema node which has to be named with things like `id`, `title`, `description`
+   */
+  schema: JSONSchema
+  /**
+   * this is the key under which this schema node was found, either value from properties or defintions
+   */
+  keyName?: string
+  /**
+   * this is the key of this schema object under definitions if applicable, this may be the same as `keyName`
+   */
+  definitionKeyName?: string
+  /**
+   * this is a set of all names that have already been used
+   */
+  usedNames: Set<string>
+}
+
+export interface CustomNameFunction {
+  /**
+   * A function taking various values associated with a schema node and returning a name to use for the type associated with the schema node.
+   * @param options.schema  the schema node which has to be named with things like `id`, `title`, `description`
+   * @param options.keyName  this is the key under which this schema node was found, either value from properties or defintions
+   * @param options.definitionKeyName  this is the key of this schema node under definitions if applicable, this may be the same as `options.keyName`
+   * @param options.usedNames  this is a set of all names that have already been used
+   * @return the type name to use or undefined if one could not be determined in which case default name generation will be used
+   */
+  (options:CustomNameFunctionOptions): string | undefined
+}
+
+export enum CliNameSource {
+  id = 'id',
+  title = 'title',
+  tsTypeName = 'tsTypeName',
+  definitionKeyName = 'definitionKeyName',
+  keyName = 'keyName',
+}
+
+export class CliNameGenerator {
+  generateName: CustomNameFunction
+  sourceOrder: CliNameSource[]
+  constructor(options: {sourceOrder: CliNameSource[]}) {
+    this.sourceOrder = options.sourceOrder
+    this.generateName = this._generateName.bind(this)
+  }
+  private getCandidate(source: CliNameSource, options: CustomNameFunctionOptions): string | undefined {
+    let result
+    switch( source ) {
+      case CliNameSource.id:
+        result = options.schema.id
+        break
+      case CliNameSource.title:
+        result = options.schema.title
+        break
+      case CliNameSource.tsTypeName:
+        result = options.schema.tsTypeName
+        break
+      case CliNameSource.keyName:
+        result = options.keyName
+        break
+      case CliNameSource.definitionKeyName:
+        result = options.definitionKeyName
+        break
+    }
+    if ( result ) result = generateName(result, options.usedNames)
+    return result
+  }
+  private _generateName(options: CustomNameFunctionOptions): string | undefined {
+    for ( const nameSource of this.sourceOrder ) {
+      const result = this.getCandidate(nameSource, options)
+      if ( result ) return result
+    }
+    return undefined
+  }
 }
 
 export function error(...messages: any[]) {

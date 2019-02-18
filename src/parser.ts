@@ -56,6 +56,26 @@ function parseLiteral(
   })
 }
 
+function customName(
+  options: Options,
+  schema: JSONSchema,
+  usedNames: UsedNames,
+  keyName: string | undefined,
+  keyNameFromDefinition: string | undefined,
+) {
+  return ( options.customName ? options.customName({schema, keyName, definitionKeyName: keyNameFromDefinition, usedNames}) : undefined )
+}
+
+function makeName(
+  options: Options,
+  schema: JSONSchema,
+  usedNames: UsedNames,
+  keyName: string | undefined,
+  keyNameFromDefinition: string | undefined,
+) {
+  return customName(options, schema, usedNames, keyName, keyNameFromDefinition) || standaloneName(schema, keyNameFromDefinition, usedNames)
+}
+
 function parseNonLiteral(
   schema: JSONSchema,
   options: Options,
@@ -68,21 +88,21 @@ function parseNonLiteral(
 ) {
 
   log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
-
+  let scopedMakeName = () => { return makeName(options, schema, usedNames, keyName, keyNameFromDefinition) }
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       return set({
         comment: schema.description,
         keyName,
         params: schema.allOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'INTERSECTION'
       })
     case 'ANY':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'ANY'
       })
     case 'ANY_OF':
@@ -90,14 +110,14 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.anyOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'UNION'
       })
     case 'BOOLEAN':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'BOOLEAN'
       })
     case 'CUSTOM_TYPE':
@@ -105,7 +125,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.tsType!,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'CUSTOM_TYPE'
       })
     case 'NAMED_ENUM':
@@ -116,30 +136,30 @@ function parseNonLiteral(
           ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
           keyName: schema.tsEnumNames![n]
         })),
-        standaloneName: standaloneName(schema, keyName, usedNames)!,
+        standaloneName: customName(options, schema, usedNames, keyName, keyNameFromDefinition) || standaloneName(schema, keyName, usedNames)!,
         type: 'ENUM'
       })
     case 'NAMED_SCHEMA':
-      return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName))
+      return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName, keyNameFromDefinition))
     case 'NULL':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'NULL'
       })
     case 'NUMBER':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'NUMBER'
       })
     case 'OBJECT':
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'OBJECT'
       })
     case 'ONE_OF':
@@ -147,7 +167,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.oneOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'UNION'
       })
     case 'REFERENCE':
@@ -156,7 +176,7 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'STRING'
       })
     case 'TYPED_ARRAY':
@@ -165,7 +185,7 @@ function parseNonLiteral(
           comment: schema.description,
           keyName,
           params: schema.items.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          standaloneName: scopedMakeName(),
           type: 'TUPLE'
         })
       } else {
@@ -173,7 +193,7 @@ function parseNonLiteral(
           comment: schema.description,
           keyName,
           params: parse(schema.items!, options, rootSchema, undefined, true, processed, usedNames),
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          standaloneName: scopedMakeName(),
           type: 'ARRAY'
         })
       }
@@ -182,7 +202,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ type: _ }, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'UNION'
       })
     case 'UNNAMED_ENUM':
@@ -190,7 +210,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.enum!.map(_ => parse(_, options, rootSchema, undefined, false, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'UNION'
       })
     case 'UNNAMED_SCHEMA':
@@ -200,7 +220,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: T_ANY,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: scopedMakeName(),
         type: 'ARRAY'
       })
   }
@@ -229,7 +249,7 @@ function newInterface(
   keyName?: string,
   keyNameFromDefinition?: string
 ): TInterface {
-  let name = standaloneName(schema, keyNameFromDefinition, usedNames)!
+  let name = makeName(options, schema, usedNames, keyName, keyNameFromDefinition)!
   return {
     comment: schema.description,
     keyName,

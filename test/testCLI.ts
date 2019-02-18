@@ -82,4 +82,22 @@ export function run() {
     unlinkSync('./ReferencedType.d.ts')
   })
 
+  test('namePriority: keyName,definitionKeyName on Naming.json', t => {
+    t.snapshot(
+      execSync('node dist/src/cli.js --namePriority=keyName,definitionKeyName -i ./test/resources/Naming.json', { encoding: 'utf-8' }).toString()
+    )
+  })
+
+  test('namePriority: definitionKeyName,keyName on Naming.json', t => {
+    t.snapshot(
+      execSync('node dist/src/cli.js --namePriority=definitionKeyName,keyName -i ./test/resources/Naming.json', { encoding: 'utf-8' }).toString()
+    )
+  })
+
+  test('namePriority: id,title,tsTypeName,definitionKeyName,keyName on Naming.json', t => {
+    t.snapshot(
+      execSync('node dist/src/cli.js --namePriority=tsTypeName,id,title,definitionKeyName,keyName -i ./test/resources/Naming.json', { encoding: 'utf-8' }).toString()
+    )
+  })
+
 }
