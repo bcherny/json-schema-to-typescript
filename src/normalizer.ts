@@ -43,6 +43,30 @@ rules.set('Default top level `id`', (schema, rootSchema, fileName) => {
   return schema
 })
 
+function escape(
+  code: string | { [key: string]: any },
+  replacer = '*\\/'
+) {
+  if (code === null || typeof code !== 'object') {
+    return
+  }
+  for (const key of Object.keys(code)) {
+    if (key === 'description' && typeof code[key] === 'string') {
+      code[key] = code[key].replace(/\*\//g, replacer)
+    } else {
+      escape(code[key])
+    }
+  }
+  return code
+}
+
+rules.set('Escape closing JSDoc Comment', (schema, rootSchema) => {
+  if (stringify(schema) === stringify(rootSchema)) {
+    escape(schema)
+  }
+  return schema
+})
+
 export function normalize(schema: JSONSchema, filename?: string): NormalizedJSONSchema {
   let _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
