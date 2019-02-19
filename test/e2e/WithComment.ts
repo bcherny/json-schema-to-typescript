@@ -2,9 +2,15 @@ export const input = {
   title: 'WithComment',
   type: 'object',
   properties: {
-    foo: {
-      type: 'string',
-      description: '/* I am a comment */'
+    a: {
+      type: 'object',
+      description: '/* comment */',
+      properties: {
+        b: {
+          type: 'string',
+          description: '/* nested comment */'
+        }
+      }
     }
   }
 }
