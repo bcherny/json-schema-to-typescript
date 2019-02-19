@@ -1,23 +1,16 @@
 export const input = {
   title: 'WithNestedComment',
   type: 'object',
-  definitions: {
-    a: { type: 'string' },
-    b: {
-      type: 'number',
-      description: '/* I am a comment */',
+  properties: {
+    a: {
+      type: 'object',
+      description: '/* comment */',
       properties: {
-        description: {
+        b: {
           type: 'string',
-          description: '/* Nested comment */'
+          description: '/* nested comment */'
         }
       }
-    }
-  },
-  properties: {
-    c: {
-      items: [{ $ref: '#/definitions/a' }, { $ref: '#/definitions/b' }],
-      type: 'array'
     }
   }
 }
