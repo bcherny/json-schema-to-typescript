@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import test from 'ava'
 import { readdirSync } from 'fs'
 import { template } from 'lodash'
 import { join } from 'path'

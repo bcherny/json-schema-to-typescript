@@ -9,9 +9,9 @@
     "clean": "rm -f index.js index.d.ts person.d.ts"
   },
   "dependencies": {
-    "@types/node": "^8.0.58",
-    "typescript": "2.6.2",
-    "json-schema-to-typescript": "5.2.0"
+    "@types/node": "^11.10.4",
+    "typescript": "3.3.3333",
+    "json-schema-to-typescript": "6.1.1"
   },
   "repository": {
     "type": "git",

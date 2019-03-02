@@ -46,36 +46,36 @@
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
     "@types/cli-color": "^0.3.29",
-    "@types/json-schema": "^7.0.1",
-    "@types/lodash": "^4.14.118",
+    "@types/json-schema": "^7.0.3",
+    "@types/lodash": "^4.14.121",
     "@types/minimist": "^1.2.0",
     "@types/mz": "0.0.32",
-    "@types/node": "^10.12.6",
-    "@types/prettier": "^1.13.2",
+    "@types/node": "^11.10.4",
+    "@types/prettier": "^1.16.1",
     "cli-color": "^1.4.0",
-    "json-schema-ref-parser": "^6.0.2",
+    "json-schema-ref-parser": "^6.1.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.11",
     "minimist": "^1.2.0",
     "mz": "^2.7.0",
-    "prettier": "^1.15.2",
+    "prettier": "^1.16.4",
     "stdin": "0.0.1"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
+    "ava": "^1.2.1",
     "browserify": "^16.2.3",
-    "concurrently": "^4.0.1",
+    "concurrently": "^4.1.0",
     "shx": "^0.3.2",
-    "tsify": "^4.0.0",
-    "tslint": "^5.11.0",
-    "typescript": "^3.1.6"
+    "tsify": "^4.0.1",
+    "tslint": "^5.13.1",
+    "typescript": "^3.3.3333"
   },
   "ava": {
     "files": [
       "./dist/test/test.js"
     ],
     "snapshotDir": "./test/__snapshots__",
-    "source": [
+    "sources": [
       "./dist/test/e2e/*.js",
       "./dist/test/normalizer/*.json",
       "./dist/src/*.js",

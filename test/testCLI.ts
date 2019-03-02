@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import test from 'ava'
 import { execSync } from 'child_process'
 import { readFileSync, unlinkSync } from 'fs'
 

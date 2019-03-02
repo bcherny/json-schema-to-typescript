@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import test from 'ava'
 import { compileFromFile } from '../src'
 
 export function run() {
