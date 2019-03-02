@@ -1,7 +1,7 @@
 import { whiteBright } from 'cli-color'
 import { cloneDeep } from 'lodash'
 import { JSONSchema, NormalizedJSONSchema } from './types/JSONSchema'
-import { justName, log, mapDeep, toSafeString } from './utils'
+import { justName, log, mapDeep, toSafeString, escapeBlockComment } from './utils'
 import stringify = require('json-stringify-safe')
 
 type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName?: string) => JSONSchema
@@ -40,6 +40,11 @@ rules.set('Default top level `id`', (schema, rootSchema, fileName) => {
   if (!schema.id && stringify(schema) === stringify(rootSchema)) {
     schema.id = toSafeString(justName(fileName))
   }
+  return schema
+})
+
+rules.set('Escape closing JSDoc Comment', schema => {
+  escapeBlockComment(schema)
   return schema
 })
 

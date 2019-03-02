@@ -1,6 +1,7 @@
 import { whiteBright } from 'cli-color'
 import { deburr, isPlainObject, mapValues, trim, upperFirst } from 'lodash'
 import { basename, extname } from 'path'
+import { JSONSchema } from './types/JSONSchema'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -95,5 +96,20 @@ export function error(...messages: any[]) {
 export function log(...messages: any[]) {
   if (process.env.VERBOSE) {
     console.info(whiteBright.bgCyan('debug'), ...messages)
+  }
+}
+
+/**
+ * escape block comments in schema descriptions so that they don't unexpectedly close JSDoc comments in generated typescript interfaces
+ */
+export function escapeBlockComment(schema: JSONSchema) {
+  const replacer = '* /'
+  if (schema === null || typeof schema !== 'object') {
+    return
+  }
+  for (const key of Object.keys(schema)) {
+    if (key === 'description' && typeof schema[key] === 'string') {
+      schema[key] = schema[key]!.replace(/\*\//g, replacer)
+    }
   }
 }
