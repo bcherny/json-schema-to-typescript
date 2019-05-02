@@ -186,6 +186,7 @@ function generateInterface(
       .map(({ isRequired, keyName, ast }) => [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string])
       .map(([isRequired, keyName, ast, type]) =>
         (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '')
+        + (options.readOnlyProperties === true ? 'readonly ' : '')
         + escapeKeyName(keyName)
         + (isRequired ? '' : '?')
         + ': '
