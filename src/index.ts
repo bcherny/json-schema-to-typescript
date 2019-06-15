@@ -44,6 +44,10 @@ export interface Options {
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
   $refOptions: $RefOptions
+  /**
+   * Generate interfaces with read-only (immutable) properties.
+   */
+  readOnlyProperties: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -66,7 +70,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  $refOptions: {}
+  $refOptions: {},
+  readOnlyProperties: false
 }
 
 export function compileFromFile(
