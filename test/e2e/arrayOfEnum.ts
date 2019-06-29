@@ -19,6 +19,34 @@ export const input = {
           tsEnumNames: ['One', 'Two', 'Three']
         }
       ]
+    },
+    tuplesWithAdditionalAny: {
+      type: 'array',
+      items: [
+        { type: 'string' },
+        {
+          enum: [1, 2, 3],
+          title: 'NamedEnum2',
+          tsEnumNames: ['One', 'Two', 'Three']
+        }
+      ],
+      additionalItems: true
+    },
+    tuplesWithAdditionalEnum: {
+      type: 'array',
+      items: [
+        { type: 'string' },
+        {
+          enum: [1, 2, 3],
+          title: 'NamedEnum2',
+          tsEnumNames: ['One', 'Two', 'Three']
+        }
+      ],
+      additionalItems: {
+        enum: [4, 5, 6],
+        title: 'NamedEnum2',
+        tsEnumNames: ['Four', 'Five', 'Six']
+      }
     }
   },
   required: ['namedEnum'],

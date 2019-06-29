@@ -1,12 +1,12 @@
 import { whiteBright } from 'cli-color'
 import { JSONSchema4Type, JSONSchema4TypeName } from 'json-schema'
 import { findKey, includes, isPlainObject, map } from 'lodash'
+import { format } from 'util'
 import { Options } from './'
 import { typeOfSchema } from './typeOfSchema'
-import { AST, hasStandaloneName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, TInterfaceParam, TNamedInterface } from './types/AST'
+import { AST, hasStandaloneName, T_ANY, T_ANY_ADDITIONAL_PROPERTIES, TInterface, TInterfaceParam, TNamedInterface, TTuple } from './types/AST'
 import { JSONSchema, JSONSchemaWithDefinitions, SchemaSchema } from './types/JSONSchema'
 import { generateName, log } from './utils'
-import { format } from 'util'
 
 export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
 
@@ -161,13 +161,21 @@ function parseNonLiteral(
       })
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
-        return set({
+        const arrayType: TTuple = {
           comment: schema.description,
           keyName,
           params: schema.items.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'TUPLE'
-        })
+        }
+        if (schema.additionalItems === true) {
+          arrayType.spreadParam = {
+            type: 'ANY'
+          }
+        } else if (schema.additionalItems) {
+          arrayType.spreadParam = parse(schema.additionalItems, options, rootSchema, undefined, true, processed, usedNames)
+        }
+        return set(arrayType)
       } else {
         return set({
           comment: schema.description,
@@ -292,7 +300,6 @@ function parseSchema(
     isUnreachableDefinition: false,
     keyName: key
   }))
-
 
   let singlePatternProperty = false
   if (schema.patternProperties) {

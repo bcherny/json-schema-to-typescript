@@ -39,7 +39,11 @@ function declareEnums(
     case 'ARRAY':
       return declareEnums(ast.params, options, processed)
     case 'TUPLE':
-      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      if (ast.spreadParam) {
+        type += declareEnums(ast.spreadParam, options, processed)
+      }
+      break
     case 'INTERFACE':
       type = getSuperTypesAndParams(ast).reduce((prev, ast) =>
         prev + declareEnums(ast, options, processed),
@@ -158,9 +162,21 @@ function generateType(ast: AST, options: Options): string {
     case 'OBJECT': return 'object'
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
-    case 'TUPLE': return '['
-      + ast.params.map(_ => generateType(_, options)).join(', ')
+    case 'TUPLE': return (() => {
+      const params = ast.params.map(_ => generateType(_, options))
+      if (ast.spreadParam) {
+        let spread = generateType(ast.spreadParam, options)
+        if (spread.endsWith('"')) {
+          spread = '(' + spread + ')'
+        }
+        spread = '...' + spread + '[]'
+        params.push(spread)
+      }
+
+      return '['
+      + params.join(', ')
       + ']'
+    })()
     case 'UNION': return generateSetOperation(ast, options)
     case 'CUSTOM_TYPE': return ast.params
   }
