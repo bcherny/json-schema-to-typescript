@@ -86,6 +86,9 @@ function declareNamedInterfaces(
     case 'TUPLE':
     case 'UNION':
       type = ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
+      if ('spreadParam' in ast && ast.spreadParam) {
+        type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed)
+      }
       break
     default:
       type = ''
@@ -128,7 +131,8 @@ function declareNamedTypes(
     case 'UNION':
       type = [
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
-        ast.params.map(ast => declareNamedTypes(ast, options, rootASTName, processed)).filter(Boolean).join('\n')
+        ast.params.map(ast => declareNamedTypes(ast, options, rootASTName, processed)).filter(Boolean).join('\n'),
+        ('spreadParam' in ast && ast.spreadParam) ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed) : undefined
       ].filter(Boolean).join('\n')
       break
     default:
