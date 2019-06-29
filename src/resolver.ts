@@ -1,5 +1,5 @@
-import $RefParser = require('json-schema-ref-parser')
 import { whiteBright } from 'cli-color'
+import $RefParser = require('json-schema-ref-parser')
 import { JSONSchema } from './types/JSONSchema'
 import { log } from './utils'
 

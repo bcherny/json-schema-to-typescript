@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
+import { whiteBright } from 'cli-color'
 import { JSONSchema4 } from 'json-schema'
 import minimist = require('minimist')
 import { readFile, writeFile } from 'mz/fs'
 import { resolve } from 'path'
 import stdin = require('stdin')
 import { compile, Options } from './index'
-import { whiteBright } from 'cli-color'
 
 main(minimist(process.argv.slice(2), {
   alias: {
