@@ -38,46 +38,5 @@ export const input = {
         }
       ]
     },
-    tupleAdditionalItemsAny: {
-      type: 'array',
-      items: [
-        {
-          type: 'object',
-          properties: {
-            foo: { type: 'string' }
-          }
-        },
-        {
-          type: 'object',
-          properties: {
-            bar: { type: 'number' }
-          }
-        }
-      ],
-      additionalItems: true,
-    },
-    tupleAdditionalItemsSchema: {
-      type: 'array',
-      items: [
-        {
-          type: 'object',
-          properties: {
-            foo: { type: 'string' }
-          }
-        },
-        {
-          type: 'object',
-          properties: {
-            bar: { type: 'number' }
-          }
-        }
-      ],
-      additionalItems: {
-        type: 'object',
-        properties: {
-          baz: { type: 'boolean' }
-        }
-      }
-    }
   }
 }

@@ -25,20 +25,6 @@ export const input = {
         {type: 'integer'},
         {type: 'string'}
       ]
-    },
-    withAdditonalItemsAny: {
-      items: [
-        {type: 'integer'},
-        {type: 'string'}
-      ],
-      additionalItems: true
-    },
-    withAdditonalItemsType: {
-      items: [
-        {type: 'integer'},
-        {type: 'string'}
-      ],
-      additionalItems: {type: 'boolean'}
     }
   }
 }
