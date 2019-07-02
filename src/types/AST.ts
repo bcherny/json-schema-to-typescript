@@ -106,7 +106,9 @@ export interface TString extends AbstractAST {
 export interface TTuple extends AbstractAST {
   type: 'TUPLE'
   params: AST[]
-  spreadParam?: AST,
+  spreadParam?: AST
+  minItems?: number
+  maxItems?: number
 }
 
 export interface TUnion extends AbstractAST {

@@ -2,7 +2,7 @@ import { whiteBright } from 'cli-color'
 import { omit } from 'lodash'
 import { DEFAULT_OPTIONS, Options } from './index'
 import {
-  AST, ASTWithStandaloneName, hasComment, hasStandaloneName, TArray, TEnum, TInterface, TIntersection,
+  AST, ASTWithStandaloneName, hasComment, hasStandaloneName, T_ANY, TArray, TEnum, TInterface, TIntersection,
   TNamedInterface, TUnion
 } from './types/AST'
 import { log, toSafeString } from './utils'
@@ -144,6 +144,10 @@ function declareNamedTypes(
   return type
 }
 
+function toNumber(value: number | undefined): number {
+  return typeof value === 'number' ? value : 0
+}
+
 function generateType(ast: AST, options: Options): string {
   log(whiteBright.bgMagenta('generator'), ast)
 
@@ -154,7 +158,7 @@ function generateType(ast: AST, options: Options): string {
   switch (ast.type) {
     case 'ANY': return 'any'
     case 'ARRAY': return (() => {
-      let type = generateType(ast.params, options)
+      const type = generateType(ast.params, options)
       return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
     })()
     case 'BOOLEAN': return 'boolean'
@@ -167,9 +171,53 @@ function generateType(ast: AST, options: Options): string {
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
     case 'TUPLE': return (() => {
-      const params = ast.params.map(_ => generateType(_, options))
-      if (ast.spreadParam) {
-        const spread = '...(' + generateType(ast.spreadParam, options) + ')[]'
+      const minItems = toNumber(ast.minItems)
+      const maxItems = toNumber(ast.maxItems)
+      let spreadParam = ast.spreadParam
+      const astParams = [...ast.params]
+      if (maxItems > 0 && maxItems < minItems) {
+        throw new Error('Encountered maxItems < minItems, which is an impossible to fill constraint')
+      }
+      if (minItems > 0 && minItems > astParams.length && ast.spreadParam === undefined) {
+        // this is a valid state, and JSONSchema doesn't care about the item type
+        if (maxItems > 0) {
+          // fill the tuple with any elements
+          for (let i = astParams.length; i < maxItems; i += 1) {
+            astParams.push(T_ANY)
+          }
+        } else {
+          // no max items and no spread param, so just spread any
+          spreadParam = T_ANY
+        }
+      }
+      if (maxItems > astParams.length && ast.spreadParam === undefined) {
+        // this is a valid state, and JSONSchema doesn't care about the item type
+        // fill the tuple with any elements
+        for (let i = astParams.length; i < maxItems; i += 1) {
+          astParams.push(T_ANY)
+        }
+      }
+
+      const params = astParams
+        .map(param => generateType(param, options))
+        .map((param, index) => {
+          if (maxItems > 0 && index >= maxItems) {
+            // it's perfectly valid to provide 5 item defs but require maxItems 1
+            // obviously we shouldn't emit a type for items that aren't expected
+            return null
+          }
+          if (minItems > 0 && index < minItems) {
+            // element is required
+            return param
+          }
+
+          // mark the tuple item as optional
+          return param + '?'
+        })
+        .filter(Boolean)
+
+      if (spreadParam) {
+        const spread = '...(' + generateType(spreadParam, options) + ')[]'
         params.push(spread)
       }
 

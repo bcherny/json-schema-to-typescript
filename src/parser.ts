@@ -69,6 +69,37 @@ function parseNonLiteral(
 
   log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
 
+  function parseArray(
+    standaloneName: string | undefined,
+    params: AST,
+    minItems: number | undefined,
+    maxItems: number | undefined
+  ): AST {
+    if ((typeof minItems === 'number' && minItems > 0) ||
+        (typeof maxItems === 'number' && maxItems > 0)) {
+      return {
+        comment: schema.description,
+        keyName,
+        maxItems,
+        minItems,
+        // create a tuple of length N
+        params: Array(maxItems || minItems).fill(params),
+        // if there is no maximum, then add a spread item to collect the rest
+        spreadParam: typeof maxItems === 'number' ? undefined : params,
+        standaloneName,
+        type: 'TUPLE'
+      }
+    }
+
+    return {
+      comment: schema.description,
+      keyName,
+      params,
+      standaloneName,
+      type: 'ARRAY'
+    }
+  }
+
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       return set({
@@ -164,6 +195,8 @@ function parseNonLiteral(
         const arrayType: TTuple = {
           comment: schema.description,
           keyName,
+          maxItems: schema.maxItems,
+          minItems: schema.minItems,
           params: schema.items.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'TUPLE'
@@ -177,13 +210,13 @@ function parseNonLiteral(
         }
         return set(arrayType)
       } else {
-        return set({
-          comment: schema.description,
-          keyName,
-          params: parse(schema.items!, options, rootSchema, undefined, true, processed, usedNames),
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-          type: 'ARRAY'
-        })
+        const params = parse(schema.items!, options, rootSchema, undefined, true, processed, usedNames)
+        return set(parseArray(
+          standaloneName(schema, keyNameFromDefinition, usedNames),
+          params,
+          schema.minItems,
+          schema.maxItems
+        ))
       }
     case 'UNION':
       return set({
@@ -204,13 +237,7 @@ function parseNonLiteral(
     case 'UNNAMED_SCHEMA':
       return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName, keyNameFromDefinition))
     case 'UNTYPED_ARRAY':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: T_ANY,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'ARRAY'
-      })
+      return set(parseArray(standaloneName(schema, keyNameFromDefinition, usedNames), T_ANY, schema.maxItems, schema.minItems))
   }
 }
 
