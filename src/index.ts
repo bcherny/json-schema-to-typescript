@@ -19,31 +19,31 @@ export interface Options {
   /**
    * Disclaimer comment prepended to the top of each generated file.
    */
-  bannerComment: string
+  bannerComment?: string
   /**
    * Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s.
    */
-  cwd: string
+  cwd?: string
   /**
    * Declare external schemas referenced via `$ref`?
    */
-  declareExternallyReferenced: boolean
+  declareExternallyReferenced?: boolean
   /**
    * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
    */
-  enableConstEnums: boolean
+  enableConstEnums?: boolean
   /**
    * A [Prettier](https://prettier.io/docs/en/options.html) configuration.
    */
-  style: PrettierOptions
+  style?: PrettierOptions
   /**
    * Generate code for `definitions` that aren't referenced by the schema?
    */
-  unreachableDefinitions: boolean
+  unreachableDefinitions?: boolean
   /**
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
-  $refOptions: $RefOptions
+  $refOptions?: $RefOptions
 }
 
 export const DEFAULT_OPTIONS: Options = {
