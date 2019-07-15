@@ -20,9 +20,11 @@ export function run() {
     .map(_ => [_, require(_)] as [string, JSONTestCase])
     .forEach(([filename, json]: [string, JSONTestCase]) => {
       const params = { filename }
-      test(json.name, t =>
-        t.snapshot(template(toString(normalize(json.in, filename)))(params))
-      )
+      test(json.name, t => {
+        const normalised = normalize(json.in, filename);
+        t.snapshot(template(toString(normalised))(params))
+        t.deepEqual(json.out, normalised);
+      })
     })
 }
 

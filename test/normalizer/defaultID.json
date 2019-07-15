@@ -37,6 +37,6 @@
     },
     "additionalProperties": true,
     "required": ["firstName"],
-    "id": "DefaultId"
+    "id": "DefaultID"
   }
 }
