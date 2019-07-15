@@ -171,7 +171,6 @@ function generateType(ast: AST, options: Options): string {
       if (ast.spreadParam) {
         const spread = '...(' + generateType(ast.spreadParam, options) + ')[]'
         params.push(spread)
-        console.log(spread)
       }
 
       return '[' + params.join(', ') + ']'
