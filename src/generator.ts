@@ -175,9 +175,6 @@ function generateType(ast: AST, options: Options): string {
       const maxItems = toNumber(ast.maxItems)
       let spreadParam = ast.spreadParam
       const astParams = [...ast.params]
-      if (maxItems > 0 && maxItems < minItems) {
-        throw new Error('Encountered maxItems < minItems, which is an impossible to fill constraint')
-      }
       if (minItems > 0 && minItems > astParams.length && ast.spreadParam === undefined) {
         // this is a valid state, and JSONSchema doesn't care about the item type
         if (maxItems > 0) {
