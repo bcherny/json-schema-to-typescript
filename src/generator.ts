@@ -177,12 +177,7 @@ function generateType(ast: AST, options: Options): string {
       const astParams = [...ast.params]
       if (minItems > 0 && minItems > astParams.length && ast.spreadParam === undefined) {
         // this is a valid state, and JSONSchema doesn't care about the item type
-        if (maxItems > 0) {
-          // fill the tuple with any elements
-          for (let i = astParams.length; i < maxItems; i += 1) {
-            astParams.push(T_ANY)
-          }
-        } else {
+        if (maxItems === 0) {
           // no max items and no spread param, so just spread any
           spreadParam = T_ANY
         }
