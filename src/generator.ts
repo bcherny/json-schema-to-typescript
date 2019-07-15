@@ -86,7 +86,7 @@ function declareNamedInterfaces(
     case 'TUPLE':
     case 'UNION':
       type = ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
-      if ('spreadParam' in ast && ast.spreadParam) {
+      if (ast.type === 'TUPLE' && ast.spreadParam) {
         type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed)
       }
       break
@@ -169,17 +169,12 @@ function generateType(ast: AST, options: Options): string {
     case 'TUPLE': return (() => {
       const params = ast.params.map(_ => generateType(_, options))
       if (ast.spreadParam) {
-        let spread = generateType(ast.spreadParam, options)
-        if (spread.endsWith('"')) {
-          spread = '(' + spread + ')'
-        }
-        spread = '...' + spread + '[]'
+        const spread = '...(' + generateType(ast.spreadParam, options) + ')[]'
         params.push(spread)
+        console.log(spread)
       }
 
-      return '['
-      + params.join(', ')
-      + ']'
+      return '[' + params.join(', ') + ']'
     })()
     case 'UNION': return generateSetOperation(ast, options)
     case 'CUSTOM_TYPE': return ast.params
