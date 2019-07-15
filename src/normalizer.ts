@@ -48,6 +48,31 @@ rules.set('Escape closing JSDoc Comment', schema => {
   return schema
 })
 
+rules.set('Normalize schema.items', schema => {
+  const {maxItems, minItems} = schema
+  const hasMaxItems = typeof maxItems === 'number' && maxItems > 0
+  const hasMinItems = typeof minItems === 'number' && minItems > 0
+
+  if (schema.items && !Array.isArray(schema.items) && (hasMaxItems || hasMinItems)) {
+    const items = schema.items
+    // create a tuple of length N
+    const newItems = Array(maxItems || minItems || 0).fill(items)
+    if (!hasMaxItems) {
+      // if there is no maximum, then add a spread item to collect the rest
+      schema.additionalItems = items
+    }
+    schema.items = newItems
+  }
+
+  if (Array.isArray(schema.items) && hasMaxItems && maxItems! < schema.items.length) {
+    // it's perfectly valid to provide 5 item defs but require maxItems 1
+    // obviously we shouldn't emit a type for items that aren't expected
+    schema.items = schema.items.slice(0, maxItems)
+  }
+
+  return schema
+})
+
 export function normalize(schema: JSONSchema, filename?: string): NormalizedJSONSchema {
   let _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {

@@ -28,9 +28,19 @@ export function mapDeep(
   fn: (value: object, key?: string) => object,
   key?: string
 ): object {
-  return fn(mapValues(object, (_, key) =>
-    isPlainObject(_) ? mapDeep(_, fn, key) : _
-  ), key)
+  return fn(mapValues(object, (_: unknown, key) => {
+    if (isPlainObject(_)) {
+      return mapDeep(_ as object, fn, key)
+    } else if (Array.isArray(_)) {
+      return _.map(item => {
+        if (isPlainObject(item)) {
+          return mapDeep(item as object, fn, key)
+        }
+        return item
+      })
+    }
+    return _
+  }), key)
 }
 
 /**

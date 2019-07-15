@@ -193,11 +193,6 @@ function generateType(ast: AST, options: Options): string {
       const params = astParams
         .map(param => generateType(param, options))
         .map((param, index) => {
-          if (maxItems > 0 && index >= maxItems) {
-            // it's perfectly valid to provide 5 item defs but require maxItems 1
-            // obviously we shouldn't emit a type for items that aren't expected
-            return null
-          }
           if (minItems > 0 && index < minItems) {
             // element is required
             return param

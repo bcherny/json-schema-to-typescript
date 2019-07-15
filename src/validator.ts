@@ -17,21 +17,21 @@ rules.set('tsEnumNames must be an array of strings', schema => {
 })
 
 rules.set('When both maxItems and minItems are present, maxItems >= minItems', schema => {
-  const {maxItems, minItems} = schema;
+  const {maxItems, minItems} = schema
   if (typeof maxItems === 'number' && typeof minItems === 'number') {
-    return maxItems >= minItems;
+    return maxItems >= minItems
   }
 })
 
 rules.set('When maxItems exists, maxItems >= 0', schema => {
-  const {maxItems} = schema;
+  const {maxItems} = schema
   if (typeof maxItems === 'number') {
     return maxItems >= 0
   }
 })
 
 rules.set('When minItems exists, minItems >= 0', schema => {
-  const {minItems} = schema;
+  const {minItems} = schema
   if (typeof minItems === 'number') {
     return minItems >= 0
   }
