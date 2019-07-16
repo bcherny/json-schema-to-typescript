@@ -190,25 +190,62 @@ function generateType(ast: AST, options: Options): string {
         }
       }
 
-      const params = astParams
-        .map(param => generateType(param, options))
-        .map((param, index) => {
-          if (minItems > 0 && index < minItems) {
-            // element is required
-            return param
-          }
-
-          // mark the tuple item as optional
-          return param + '?'
-        })
-        .filter(Boolean)
-
-      if (spreadParam) {
-        const spread = '...(' + generateType(spreadParam, options) + ')[]'
-        params.push(spread)
+      function addSpreadParam(params: string[]): string[] {
+        if (spreadParam) {
+          const spread = '...(' + generateType(spreadParam, options) + ')[]'
+          params.push(spread)
+        }
+        return params
       }
 
-      return '[' + params.join(', ') + ']'
+      function paramsToString(params: string[]): string {
+        return '[' + params.join(', ') + ']'
+      }
+
+      const paramsList = astParams
+        .map(param => generateType(param, options))
+
+      if (paramsList.length > minItems) {
+        /*
+        if there are more items than the min, we return a union of tuples instead of
+        using the optional element operator. This is done because it is more typesafe.
+
+        // optional element operator
+        type A = [string, string?, string?]
+        const a: A = ['a', undefined, 'c'] // no error
+
+        // union of tuples
+        type B = [string] | [string, string] | [string, string, string]
+        const b: B = ['a', undefined, 'c'] // TS error
+        */
+
+        const cumulativeParamsList: string[] = paramsList.slice(0, minItems)
+        const typesToUnion: string[] = []
+
+        if (cumulativeParamsList.length > 0) {
+          // actually has minItems, so add the initial state
+          typesToUnion.push(paramsToString(cumulativeParamsList))
+        } else {
+          // no minItems means it's acceptable to have an empty tuple type
+          typesToUnion.push(paramsToString([]))
+        }
+
+        for (let i = minItems; i < paramsList.length; i += 1) {
+          cumulativeParamsList.push(paramsList[i])
+
+          if (i === paramsList.length - 1) {
+            // only the last item in the union should have the spread parameter
+            addSpreadParam(cumulativeParamsList)
+          }
+
+          typesToUnion.push(paramsToString(cumulativeParamsList))
+        }
+
+        return typesToUnion.join('|')
+      }
+
+      // no max items so only need to return one type
+      return paramsToString(addSpreadParam(paramsList))
     })()
     case 'UNION': return generateSetOperation(ast, options)
     case 'CUSTOM_TYPE': return ast.params

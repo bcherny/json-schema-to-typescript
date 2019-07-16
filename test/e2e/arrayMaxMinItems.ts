@@ -1,5 +1,5 @@
 export const input = {
-  title: 'additionalItems',
+  title: 'arrayMaxMinItems',
   type: 'object',
   properties: {
     array: {
@@ -10,6 +10,7 @@ export const input = {
           items: {
             type: 'string'
           },
+          description: 'minItems = 3',
           minItems: 3,
         },
         withMaxItems: {
@@ -17,6 +18,7 @@ export const input = {
           items: {
             type: 'string'
           },
+          description: 'maxItems = 3',
           maxItems: 3,
         },
         withMinMaxItems: {
@@ -24,6 +26,7 @@ export const input = {
           items: {
             type: 'string'
           },
+          description: 'minItems = 3, maxItems = 8',
           minItems: 3,
           maxItems: 8,
         },
@@ -43,6 +46,7 @@ export const input = {
             { enum: [5] },
             { enum: [6] },
           ],
+          description: 'minItems = 2',
           minItems: 2,
         },
         withMinItemsGreaterThanItemLength: {
@@ -55,6 +59,7 @@ export const input = {
             { enum: [5] },
             { enum: [6] },
           ],
+          description: 'minItems = 8',
           minItems: 8,
         },
         withMaxItemsLessThanItemLength: {
@@ -67,6 +72,7 @@ export const input = {
             { enum: [5] },
             { enum: [6] },
           ],
+          description: 'maxItems = 2',
           maxItems: 2,
         },
         withMaxItemsGreaterThanItemLength: {
@@ -79,6 +85,7 @@ export const input = {
             { enum: [5] },
             { enum: [6] },
           ],
+          description: 'maxItems = 8',
           maxItems: 8,
         },
         withMinItemsLessThanItemLength_and_MaxItemsGreaterThanItemLength: {
@@ -91,6 +98,7 @@ export const input = {
             { enum: [5] },
             { enum: [6] },
           ],
+          description: 'minItems = 4, maxItems = 8',
           minItems: 4,
           maxItems: 8,
         },
@@ -104,6 +112,7 @@ export const input = {
             { enum: [5] },
             { enum: [6] },
           ],
+          description: 'minItems = 2, maxItems = 4',
           minItems: 2,
           maxItems: 4,
         },
@@ -117,6 +126,7 @@ export const input = {
             { enum: [5] },
             { enum: [6] },
           ],
+          description: 'minItems = 8, maxItems = 10',
           minItems: 8,
           maxItems: 10,
         },
