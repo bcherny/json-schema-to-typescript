@@ -1,8 +1,8 @@
 import { whiteBright } from 'cli-color'
+import stringify = require('json-stringify-safe')
 import { cloneDeep } from 'lodash'
 import { JSONSchema, NormalizedJSONSchema } from './types/JSONSchema'
-import { justName, log, mapDeep, toSafeString, escapeBlockComment } from './utils'
-import stringify = require('json-stringify-safe')
+import { escapeBlockComment, justName, log, mapDeep, toSafeString } from './utils'
 
 type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName?: string) => JSONSchema
 const rules = new Map<string, Rule>()

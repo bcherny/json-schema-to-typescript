@@ -39,7 +39,11 @@ function declareEnums(
     case 'ARRAY':
       return declareEnums(ast.params, options, processed)
     case 'TUPLE':
-      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      if (ast.spreadParam) {
+        type += declareEnums(ast.spreadParam, options, processed)
+      }
+      break
     case 'INTERFACE':
       type = getSuperTypesAndParams(ast).reduce((prev, ast) =>
         prev + declareEnums(ast, options, processed),
@@ -82,6 +86,9 @@ function declareNamedInterfaces(
     case 'TUPLE':
     case 'UNION':
       type = ast.params.map(_ => declareNamedInterfaces(_, options, rootASTName, processed)).filter(Boolean).join('\n')
+      if (ast.type === 'TUPLE' && ast.spreadParam) {
+        type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed)
+      }
       break
     default:
       type = ''
@@ -124,7 +131,8 @@ function declareNamedTypes(
     case 'UNION':
       type = [
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
-        ast.params.map(ast => declareNamedTypes(ast, options, rootASTName, processed)).filter(Boolean).join('\n')
+        ast.params.map(ast => declareNamedTypes(ast, options, rootASTName, processed)).filter(Boolean).join('\n'),
+        ('spreadParam' in ast && ast.spreadParam) ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed) : undefined
       ].filter(Boolean).join('\n')
       break
     default:
@@ -158,9 +166,15 @@ function generateType(ast: AST, options: Options): string {
     case 'OBJECT': return 'object'
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
-    case 'TUPLE': return '['
-      + ast.params.map(_ => generateType(_, options)).join(', ')
-      + ']'
+    case 'TUPLE': return (() => {
+      const params = ast.params.map(_ => generateType(_, options))
+      if (ast.spreadParam) {
+        const spread = '...(' + generateType(ast.spreadParam, options) + ')[]'
+        params.push(spread)
+      }
+
+      return '[' + params.join(', ') + ']'
+    })()
     case 'UNION': return generateSetOperation(ast, options)
     case 'CUSTOM_TYPE': return ast.params
   }

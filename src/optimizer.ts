@@ -1,8 +1,8 @@
 import { whiteBright } from 'cli-color'
+import stringify = require('json-stringify-safe')
 import { uniqBy } from 'lodash'
 import { AST, T_ANY } from './types/AST'
 import { log } from './utils'
-import stringify = require('json-stringify-safe')
 
 export function optimize(ast: AST, processed = new Map<AST, AST>()): AST {
 
