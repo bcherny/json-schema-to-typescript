@@ -2,7 +2,7 @@
   "name": "Normalize schema.items",
   "in": {
     "id": "foo",
-    "type": ["object"],
+    "type": "object",
     "properties": {
       "untypedUnbounded": {
         "type": "array"
@@ -51,7 +51,9 @@
             {
               "type": "number"
             }
-          ]
+          ],
+          "additionalProperties": false,
+          "required": []
         },
         "maxItems": 1
       },
@@ -69,7 +71,9 @@
             },
             "maxItems": 2
           }
-        ]
+        ],
+        "additionalProperties": false,
+        "required": []
       }
     },
     "additionalProperties": false
@@ -79,12 +83,14 @@
     "type": "object",
     "properties": {
       "untypedUnbounded": {
-        "type": "array"
+        "type": "array",
+        "minItems": 0
       },
       "typedUnbounded": {
         "items": {
           "type": "string"
-        }
+        },
+        "minItems": 0
       },
       "typedMinBounded": {
         "items": [
@@ -109,7 +115,8 @@
             "type": "string"
           }
         ],
-        "maxItems": 2
+        "maxItems": 2,
+        "minItems": 0
       },
       "typedMinMaxBounded": {
         "items": [
@@ -138,7 +145,8 @@
             "type": "string"
           }
         ],
-        "maxItems": 1
+        "maxItems": 1,
+        "minItems": 0
       },
       "itemAnyOf": {
         "items": [
@@ -150,10 +158,13 @@
               {
                 "type": "number"
               }
-            ]
+            ],
+            "additionalProperties": false,
+            "required": []
           }
         ],
-        "maxItems": 1
+        "maxItems": 1,
+        "minItems": 0
       },
       "baseAnyOf": {
         "anyOf": [
@@ -163,7 +174,8 @@
                 "type": "string"
               }
             ],
-            "maxItems": 1
+            "maxItems": 1,
+            "minItems": 0
           },
           {
             "items": [
@@ -174,9 +186,12 @@
                 "type": "number"
               }
             ],
-            "maxItems": 2
+            "maxItems": 2,
+            "minItems": 0
           }
-        ]
+        ],
+        "additionalProperties": false,
+        "required": []
       }
     },
     "additionalProperties": false,

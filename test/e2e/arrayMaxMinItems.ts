@@ -30,6 +30,69 @@ export const input = {
           minItems: 3,
           maxItems: 8,
         },
+        withMaxItems0: {
+          type: 'array',
+          items: {
+            type: 'string'
+          },
+          description: 'maxItems = 0',
+          maxItems: 0,
+        },
+        withMinItems0: {
+          type: 'array',
+          items: {
+            type: 'string'
+          },
+          description: 'minItems = 0',
+          minItems: 0,
+        },
+        withMinMaxItems0: {
+          type: 'array',
+          items: {
+            type: 'string'
+          },
+          description: 'minItems = 0, maxItems = 0',
+          minItems: 0,
+          maxItems: 0,
+        },
+      },
+      additionalProperties: false
+    },
+    untyped: {
+      type: 'object',
+      properties: {
+        withMinItems: {
+          type: 'array',
+          description: 'minItems = 3',
+          minItems: 3,
+        },
+        withMaxItems: {
+          type: 'array',
+          description: 'maxItems = 3',
+          maxItems: 3,
+        },
+        withMinMaxItems: {
+          type: 'array',
+          description: 'minItems = 3, maxItems = 8',
+          minItems: 3,
+          maxItems: 8,
+        },
+        withMaxItems0: {
+          type: 'array',
+          description: 'maxItems = 0',
+          maxItems: 0,
+        },
+        withMinItems0: {
+          type: 'array',
+          description: 'minItems = 0',
+          minItems: 0,
+        },
+        withMinMaxItems0: {
+          type: 'array',
+          description: 'minItems = 0, maxItems = 0',
+          minItems: 0,
+          maxItems: 0,
+        },
       },
       additionalProperties: false
     },
@@ -129,6 +192,46 @@ export const input = {
           description: 'minItems = 8, maxItems = 10',
           minItems: 8,
           maxItems: 10,
+        },
+        withMaxItems0: {
+          type: 'array',
+          items: [
+            { enum: [1] },
+            { enum: [2] },
+            { enum: [3] },
+            { enum: [4] },
+            { enum: [5] },
+            { enum: [6] },
+          ],
+          description: 'maxItems = 0',
+          maxItems: 0,
+        },
+        withMinItems0: {
+          type: 'array',
+          items: [
+            { enum: [1] },
+            { enum: [2] },
+            { enum: [3] },
+            { enum: [4] },
+            { enum: [5] },
+            { enum: [6] },
+          ],
+          description: 'minItems = 0',
+          minItems: 0,
+        },
+        withMinMaxItems0: {
+          type: 'array',
+          items: [
+            { enum: [1] },
+            { enum: [2] },
+            { enum: [3] },
+            { enum: [4] },
+            { enum: [5] },
+            { enum: [6] },
+          ],
+          description: 'minItems = 0, maxItems = 0',
+          minItems: 0,
+          maxItems: 0,
         },
       },
       additionalProperties: false

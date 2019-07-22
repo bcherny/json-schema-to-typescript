@@ -1,5 +1,5 @@
 {
-  "name": "Default `id` for unnamed schemas",
+  "name": "Default top level `id`",
   "in": {
     "friend": {
       "properties": {

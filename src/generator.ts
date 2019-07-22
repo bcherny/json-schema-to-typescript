@@ -144,10 +144,6 @@ function declareNamedTypes(
   return type
 }
 
-function toNumber(value: number | undefined): number {
-  return typeof value === 'number' ? value : 0
-}
-
 function generateType(ast: AST, options: Options): string {
   log(whiteBright.bgMagenta('generator'), ast)
 
@@ -171,13 +167,14 @@ function generateType(ast: AST, options: Options): string {
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
     case 'TUPLE': return (() => {
-      const minItems = toNumber(ast.minItems)
-      const maxItems = toNumber(ast.maxItems)
+      const minItems = ast.minItems
+      const maxItems = ast.maxItems || -1
+
       let spreadParam = ast.spreadParam
       const astParams = [...ast.params]
       if (minItems > 0 && minItems > astParams.length && ast.spreadParam === undefined) {
         // this is a valid state, and JSONSchema doesn't care about the item type
-        if (maxItems === 0) {
+        if (maxItems < 0) {
           // no max items and no spread param, so just spread any
           spreadParam = T_ANY
         }

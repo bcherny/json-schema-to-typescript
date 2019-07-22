@@ -107,7 +107,7 @@ export interface TTuple extends AbstractAST {
   type: 'TUPLE'
   params: AST[]
   spreadParam?: AST
-  minItems?: number
+  minItems: number
   maxItems?: number
 }
 

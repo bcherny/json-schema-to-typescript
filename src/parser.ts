@@ -161,11 +161,14 @@ function parseNonLiteral(
       })
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
+        // normalised to not be undefined
+        const minItems = schema.minItems!
+        const maxItems = schema.maxItems!
         const arrayType: TTuple = {
           comment: schema.description,
           keyName,
-          maxItems: schema.maxItems,
-          minItems: schema.minItems,
+          maxItems,
+          minItems,
           params: schema.items.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'TUPLE'
@@ -207,19 +210,20 @@ function parseNonLiteral(
     case 'UNNAMED_SCHEMA':
       return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName, keyNameFromDefinition))
     case 'UNTYPED_ARRAY':
-      const {minItems, maxItems} = schema
+      // normalised to not be undefined
+      const minItems = schema.minItems!
+      const maxItems = typeof schema.maxItems === 'number' ? schema.maxItems : -1
       const params = T_ANY
-      if ((typeof minItems === 'number' && minItems > 0) ||
-        (typeof maxItems === 'number' && maxItems > 0)) {
+      if (minItems > 0 || maxItems >= 0) {
         return set({
           comment: schema.description,
           keyName,
-          maxItems,
+          maxItems: schema.maxItems,
           minItems,
           // create a tuple of length N
-          params: Array(maxItems || minItems).fill(params),
+          params: Array(Math.max(maxItems, minItems) || 0).fill(params),
           // if there is no maximum, then add a spread item to collect the rest
-          spreadParam: typeof maxItems === 'number' ? undefined : params,
+          spreadParam: maxItems >= 0 ? undefined : params,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'TUPLE'
         })
