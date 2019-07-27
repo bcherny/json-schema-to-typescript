@@ -1,0 +1,200 @@
+{
+  "name": "Normalize schema.items",
+  "in": {
+    "id": "foo",
+    "type": "object",
+    "properties": {
+      "untypedUnbounded": {
+        "type": "array"
+      },
+      "typedUnbounded": {
+        "items": {
+          "type": "string"
+        }
+      },
+      "typedMinBounded": {
+        "items": {
+          "type": "string"
+        },
+        "minItems": 2
+      },
+      "typedMaxBounded": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 2
+      },
+      "typedMinMaxBounded": {
+        "items": {
+          "type": "string"
+        },
+        "minItems": 2,
+        "maxItems": 5
+      },
+      "moreItemsThanMax": {
+        "items": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "maxItems": 1
+      },
+      "itemAnyOf": {
+        "items": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "additionalProperties": false,
+          "required": []
+        },
+        "maxItems": 1
+      },
+      "baseAnyOf": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1
+          },
+          {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 2
+          }
+        ],
+        "additionalProperties": false,
+        "required": []
+      }
+    },
+    "additionalProperties": false
+  },
+  "out": {
+    "id": "foo",
+    "type": "object",
+    "properties": {
+      "untypedUnbounded": {
+        "type": "array",
+        "minItems": 0
+      },
+      "typedUnbounded": {
+        "items": {
+          "type": "string"
+        },
+        "minItems": 0
+      },
+      "typedMinBounded": {
+        "items": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "additionalItems": {
+          "type": "string"
+        },
+        "minItems": 2
+      },
+      "typedMaxBounded": {
+        "items": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "maxItems": 2,
+        "minItems": 0
+      },
+      "typedMinMaxBounded": {
+        "items": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 5
+      },
+      "moreItemsThanMax": {
+        "items": [
+          {
+            "type": "string"
+          }
+        ],
+        "maxItems": 1,
+        "minItems": 0
+      },
+      "itemAnyOf": {
+        "items": [
+          {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "additionalProperties": false,
+            "required": []
+          }
+        ],
+        "maxItems": 1,
+        "minItems": 0
+      },
+      "baseAnyOf": {
+        "anyOf": [
+          {
+            "items": [
+              {
+                "type": "string"
+              }
+            ],
+            "maxItems": 1,
+            "minItems": 0
+          },
+          {
+            "items": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "maxItems": 2,
+            "minItems": 0
+          }
+        ],
+        "additionalProperties": false,
+        "required": []
+      }
+    },
+    "additionalProperties": false,
+    "required": []
+  }
+}

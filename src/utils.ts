@@ -28,9 +28,118 @@ export function mapDeep(
   fn: (value: object, key?: string) => object,
   key?: string
 ): object {
-  return fn(mapValues(object, (_, key) =>
-    isPlainObject(_) ? mapDeep(_, fn, key) : _
-  ), key)
+  return fn(mapValues(object, (_: unknown, key) => {
+    if (isPlainObject(_)) {
+      return mapDeep(_ as object, fn, key)
+    } else if (Array.isArray(_)) {
+      return _.map(item => {
+        if (isPlainObject(item)) {
+          return mapDeep(item as object, fn, key)
+        }
+        return item
+      })
+    }
+    return _
+  }), key)
+}
+
+// keys that shouldn't be traversed by the catchall step
+const BLACKLISTED_KEYS = new Set([
+  'id',
+  '$schema',
+  'title',
+  'description',
+  'default',
+  'multipleOf',
+  'maximum',
+  'exclusiveMaximum',
+  'minimum',
+  'exclusiveMinimum',
+  'maxLength',
+  'minLength',
+  'pattern',
+  'additionalItems',
+  'items',
+  'maxItems',
+  'minItems',
+  'uniqueItems',
+  'maxProperties',
+  'minProperties',
+  'required',
+  'additionalProperties',
+  'definitions',
+  'properties',
+  'patternProperties',
+  'dependencies',
+  'enum',
+  'type',
+  'allOf',
+  'anyOf',
+  'oneOf',
+  'not'
+])
+function traverseObjectKeys(
+  obj: Record<string, JSONSchema>,
+  callback: (schema: JSONSchema) => void
+) {
+  Object.keys(obj).forEach(k => {
+    if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
+      traverse(obj[k], callback)
+    }
+  })
+}
+function traverseArray(arr: JSONSchema[], callback: (schema: JSONSchema) => void) {
+  arr.forEach(i => traverse(i, callback))
+}
+export function traverse(schema: JSONSchema, callback: (schema: JSONSchema) => void): void {
+  callback(schema)
+
+  if (schema.anyOf) {
+    traverseArray(schema.anyOf, callback)
+  }
+  if (schema.allOf) {
+    traverseArray(schema.allOf, callback)
+  }
+  if (schema.oneOf) {
+    traverseArray(schema.oneOf, callback)
+  }
+  if (schema.properties) {
+    traverseObjectKeys(schema.properties, callback)
+  }
+  if (schema.patternProperties) {
+    traverseObjectKeys(schema.patternProperties, callback)
+  }
+  if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
+    traverse(schema.additionalProperties, callback)
+  }
+  if (schema.items) {
+    const {items} = schema
+    if (Array.isArray(items)) {
+      traverseArray(items, callback)
+    } else {
+      traverse(items, callback)
+    }
+  }
+  if (schema.additionalItems && typeof schema.additionalItems === 'object') {
+    traverse(schema.additionalItems, callback)
+  }
+  if (schema.dependencies) {
+    traverseObjectKeys(schema.dependencies, callback)
+  }
+  if (schema.definitions) {
+    traverseObjectKeys(schema.definitions, callback)
+  }
+  if (schema.not) {
+    traverse(schema.not, callback)
+  }
+
+  // technically you can put definitions on any key
+  Object.keys(schema).filter(key => !BLACKLISTED_KEYS.has(key)).forEach(key => {
+    const child = schema[key]
+    if (child && typeof child === 'object') {
+      traverseObjectKeys(child, callback)
+    }
+  })
 }
 
 /**

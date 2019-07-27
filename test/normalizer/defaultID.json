@@ -1,5 +1,5 @@
 {
-  "name": "Default `id` for unnamed schemas",
+  "name": "Default top level `id`",
   "in": {
     "friend": {
       "properties": {
@@ -37,6 +37,6 @@
     },
     "additionalProperties": true,
     "required": ["firstName"],
-    "id": "DefaultId"
+    "id": "DefaultID"
   }
 }

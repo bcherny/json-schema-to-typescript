@@ -1,9 +1,11 @@
-import { JSONSchema4 } from 'json-schema'
+import { JSONSchema4, JSONSchema4TypeName } from 'json-schema'
 
 export type SCHEMA_TYPE = 'ALL_OF' | 'UNNAMED_SCHEMA' | 'ANY' | 'ANY_OF'
   | 'BOOLEAN' | 'NAMED_ENUM' | 'NAMED_SCHEMA' | 'NULL' | 'NUMBER' | 'STRING'
   | 'OBJECT' | 'ONE_OF' | 'TYPED_ARRAY' | 'REFERENCE' | 'UNION' | 'UNNAMED_ENUM'
   | 'UNTYPED_ARRAY' | 'CUSTOM_TYPE'
+
+export type JSONSchemaTypeName = JSONSchema4TypeName
 
 export interface JSONSchema extends JSONSchema4 {
   /**

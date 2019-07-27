@@ -161,9 +161,14 @@ function parseNonLiteral(
       })
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
+        // normalised to not be undefined
+        const minItems = schema.minItems!
+        const maxItems = schema.maxItems!
         const arrayType: TTuple = {
           comment: schema.description,
           keyName,
+          maxItems,
+          minItems,
           params: schema.items.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'TUPLE'
@@ -177,10 +182,11 @@ function parseNonLiteral(
         }
         return set(arrayType)
       } else {
+        const params = parse(schema.items!, options, rootSchema, undefined, true, processed, usedNames)
         return set({
           comment: schema.description,
           keyName,
-          params: parse(schema.items!, options, rootSchema, undefined, true, processed, usedNames),
+          params,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'ARRAY'
         })
@@ -204,10 +210,29 @@ function parseNonLiteral(
     case 'UNNAMED_SCHEMA':
       return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName, keyNameFromDefinition))
     case 'UNTYPED_ARRAY':
+      // normalised to not be undefined
+      const minItems = schema.minItems!
+      const maxItems = typeof schema.maxItems === 'number' ? schema.maxItems : -1
+      const params = T_ANY
+      if (minItems > 0 || maxItems >= 0) {
+        return set({
+          comment: schema.description,
+          keyName,
+          maxItems: schema.maxItems,
+          minItems,
+          // create a tuple of length N
+          params: Array(Math.max(maxItems, minItems) || 0).fill(params),
+          // if there is no maximum, then add a spread item to collect the rest
+          spreadParam: maxItems >= 0 ? undefined : params,
+          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          type: 'TUPLE'
+        })
+      }
+
       return set({
         comment: schema.description,
         keyName,
-        params: T_ANY,
+        params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'ARRAY'
       })

@@ -4,9 +4,9 @@ import { hasOnly, run as runE2ETests } from './testE2E'
 import { run as runNormalizerTests } from './testNormalizer'
 
 runE2ETests()
-runCompileFromFileTests()
 
 if (!hasOnly()) {
+  runCompileFromFileTests()
   runCLITests()
   runNormalizerTests()
 }
