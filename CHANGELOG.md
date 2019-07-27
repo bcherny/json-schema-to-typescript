@@ -1,5 +1,10 @@
 # Changelog
 
+## 7.0.0
+
+- b9c4bcb Add support for `additionalItems` for tuple types
+- c5f4f03 Add support for `minItems` and `maxItems`
+
 ## 6.1.0
 
 - 57f759f Add @tslint directive to disable linting for generated files by default (#192)
