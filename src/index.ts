@@ -33,6 +33,12 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
+   * Append all index signatures with `| undefined` so that they are strictly typed.
+   *
+   * This is required to be compatible with `strictNullChecks`.
+   */
+  strictIndexSignatures: boolean
+  /**
    * A [Prettier](https://prettier.io/docs/en/options.html) configuration.
    */
   style: PrettierOptions
@@ -57,6 +63,7 @@ export const DEFAULT_OPTIONS: Options = {
   cwd: process.cwd(),
   declareExternallyReferenced: true,
   enableConstEnums: true, // by default, avoid generating code
+  strictIndexSignatures: false,
   style: {
     bracketSpacing: false,
     printWidth: 120,
