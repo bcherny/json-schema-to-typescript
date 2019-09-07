@@ -145,6 +145,16 @@ function declareNamedTypes(
 }
 
 function generateType(ast: AST, options: Options): string {
+  const type = generateRawType(ast, options)
+
+  if (options.strictIndexSignatures && ast.keyName === '[k: string]') {
+    return `${type} | undefined`
+  }
+
+  return type
+}
+
+function generateRawType(ast: AST, options: Options): string {
   log(whiteBright.bgMagenta('generator'), ast)
 
   if (hasStandaloneName(ast)) {
