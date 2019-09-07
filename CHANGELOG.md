@@ -1,5 +1,9 @@
 # Changelog
 
+## 7.1.0
+
+- ddbd627 Add `strictIndexSignatures` CLI option, defaulting to false (#252)
+
 ## 7.0.0
 
 - b9c4bcb Add support for `additionalItems` for tuple types
