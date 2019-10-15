@@ -200,6 +200,18 @@ function parseNonLiteral(
         type: 'UNION'
       })
     case 'UNNAMED_ENUM':
+      if (options.enableStringEnums) {
+        return set({
+          comment: schema.description,
+          keyName,
+          params: schema.enum!.map((_) => ({
+            ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
+            keyName: _ as string
+          })),
+          standaloneName: standaloneName(schema, keyName, usedNames)!,
+          type: 'ENUM'
+        })
+      }
       return set({
         comment: schema.description,
         keyName,
