@@ -33,6 +33,10 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
+   * Generate string enums instead of string union types?
+   */
+  enableStringEnums: boolean
+  /**
    * Append all index signatures with `| undefined` so that they are strictly typed.
    *
    * This is required to be compatible with `strictNullChecks`.
@@ -63,6 +67,7 @@ export const DEFAULT_OPTIONS: Options = {
   cwd: process.cwd(),
   declareExternallyReferenced: true,
   enableConstEnums: true, // by default, avoid generating code
+  enableStringEnums: false,
   strictIndexSignatures: false,
   style: {
     bracketSpacing: false,
