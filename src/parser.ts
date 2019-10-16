@@ -200,7 +200,7 @@ function parseNonLiteral(
         type: 'UNION'
       })
     case 'UNNAMED_ENUM':
-      if (options.enableStringEnums) {
+      if (options.enableStringEnums && schema.type === "string") {
         return set({
           comment: schema.description,
           keyName,
