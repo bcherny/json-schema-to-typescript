@@ -118,6 +118,7 @@ function declareNamedTypes(
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined
       ].filter(Boolean).join('\n')
       break
+    case 'CONST':
     case 'ENUM':
       type = ''
       break
@@ -176,6 +177,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'OBJECT': return 'object'
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
+    case 'CONST': return JSON.stringify(ast.params)
     case 'TUPLE': return (() => {
       const minItems = ast.minItems
       const maxItems = ast.maxItems || -1

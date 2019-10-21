@@ -119,6 +119,14 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyName, usedNames)!,
         type: 'ENUM'
       })
+    case 'CONST':
+      return set({
+        comment: schema.description,
+        keyName,
+        params: schema.const,
+        // standaloneName: standaloneName(schema, keyName, usedNames)!,
+        type: 'CONST'
+      })
     case 'NAMED_SCHEMA':
       return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName))
     case 'NULL':
