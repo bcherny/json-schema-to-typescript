@@ -14,7 +14,7 @@ export function typeOfSchema(schema: JSONSchema): SCHEMA_TYPE {
   if (schema.enum) return 'UNNAMED_ENUM'
   if (schema.$ref) return 'REFERENCE'
   if (Array.isArray(schema.type)) return 'UNION'
-  if (schema.const) return 'CONST'
+  if (schema.const !== undefined) return 'CONST'
   switch (schema.type) {
     case 'string': return 'STRING'
     case 'number': return 'NUMBER'
