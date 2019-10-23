@@ -13,7 +13,19 @@ export const input = {
     aBoolean: {
       type: 'boolean',
       const: true
+    },
+    bString: {
+      const: ''
+    },
+    bNumber: {
+      const: 0
+    },
+    bBoolean: {
+      const: false
+    },
+    aNull: {
+      const: null
     }
   },
-  required: ['aString', 'aNumber', 'aBoolean']
+  required: ['aString', 'aNumber', 'aBoolean', 'bString', 'bNumber', 'bBoolean', 'aNull']
 }
