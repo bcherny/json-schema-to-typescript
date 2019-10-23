@@ -5,17 +5,8 @@
         "type": "node",
         "request": "launch",
         "name": "Launch Program",
-        "program": "${workspaceFolder}/node_modules/ava/profile.js",
-        "cwd": "${workspaceRoot}",
-        "args": [
-          "${workspaceFolder}/dist/test/test.js"
-        ],
-        "outFiles": [
-          "dist/**/*.js"
-        ],
-        "skipFiles": [
-          "<node_internals>/**/*.js"
-        ]
+        "program": "${workspaceRoot}/node_modules/.bin/ava ./dist/test/test.js",
+        "cwd": "${workspaceRoot}"
     },
     {
       "type": "node",
@@ -23,7 +14,7 @@
       "name": "Attach to Process",
       "processId": "${command:PickProcess}",
       "port": 5858,
-      "sourceMaps": true,
+      "sourceMaps": true
     }
   ]
 }
