@@ -17,6 +17,13 @@ function isArrayType(schema: JSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
 
+rules.set('Remove `type=["null"]` if `enum=[null]`', schema => {
+  if (Array.isArray(schema.enum) && schema.enum.some(e => e === null) &&
+      Array.isArray(schema.type) && schema.type.includes('null')) {
+    schema.type = schema.type.filter(type => type !== 'null')
+  }
+})
+
 rules.set('Destructure unary types', schema => {
   if (schema.type && Array.isArray(schema.type) && schema.type.length === 1) {
     schema.type = schema.type[0]

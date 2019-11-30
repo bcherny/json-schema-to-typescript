@@ -1,0 +1,44 @@
+{
+  "name": "Remove `enum=[null]` if `type=['null']`",
+  "in": {
+    "type": "object",
+    "properties": {
+      "noopMissingType": {
+        "enum": ["foo", "bar"]
+      },
+      "noopMissingEnum": {
+        "type": ["null", "string"]
+      },
+      "noopNonNullableEnum": {
+        "type": "string",
+        "enum": ["foo", "bar", null]
+      },
+      "dedupeNulls": {
+        "type": ["null", "string"],
+        "enum": ["foo", "bar", null]
+      }
+    }
+  },
+  "out": {
+    "additionalProperties": true,
+    "id": "RedundantNull",
+    "required": [],
+    "type": "object",
+    "properties": {
+      "noopMissingType": {
+        "enum": ["foo", "bar"]
+      },
+      "noopMissingEnum": {
+        "type": ["null", "string"]
+      },
+      "noopNonNullableEnum": {
+        "type": "string",
+        "enum": ["foo", "bar", null]
+      },
+      "dedupeNulls": {
+        "type": "string",
+        "enum": ["foo", "bar", null]
+      }
+    }
+  }
+}

@@ -195,7 +195,7 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
-        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ type: _ }, options, rootSchema, undefined, true, processed, usedNames)),
+        params: (schema.type as JSONSchema4TypeName[]).map(_ => parse({ ...schema, type: _ }, options, rootSchema, undefined, true, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'UNION'
       })
