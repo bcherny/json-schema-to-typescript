@@ -1,9 +1,9 @@
 import test from 'ava'
-import { readdirSync } from 'fs'
-import { template } from 'lodash'
-import { join } from 'path'
-import { JSONSchema } from '../src'
-import { normalize } from '../src/normalizer'
+import {readdirSync} from 'fs'
+import {template} from 'lodash'
+import {join} from 'path'
+import {JSONSchema} from '../src'
+import {normalize} from '../src/normalizer'
 
 interface JSONTestCase {
   name: string
@@ -19,15 +19,15 @@ export function run() {
     .map(_ => join(normalizerDir, _))
     .map(_ => [_, require(_)] as [string, JSONTestCase])
     .forEach(([filename, json]: [string, JSONTestCase]) => {
-      const params = { filename }
+      const params = {filename}
       test(json.name, t => {
-        const normalised = normalize(json.in, filename);
+        const normalised = normalize(json.in, filename)
         t.snapshot(template(toString(normalised))(params))
-        t.deepEqual(json.out, normalised);
+        t.deepEqual(json.out, normalised)
       })
     })
 }
 
-function toString(json: Object): string {
+function toString(json: Record<string, any>): string {
   return JSON.stringify(json, null, 2)
 }

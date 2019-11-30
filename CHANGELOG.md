@@ -1,5 +1,9 @@
 # Changelog
 
+## 8.0.0
+
+- e144890 Improve generated output when mixing nulls and unions (#261)
+
 ## 7.1.0
 
 - ddbd627 Add `strictIndexSignatures` CLI option, defaulting to false (#252)

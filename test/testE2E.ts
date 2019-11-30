@@ -1,9 +1,9 @@
 import test from 'ava'
-import { readdirSync } from 'fs'
-import { find } from 'lodash'
-import { join } from 'path'
-import { compile, JSONSchema, Options } from '../src'
-import { log, stripExtension } from '../src/utils'
+import {readdirSync} from 'fs'
+import {find} from 'lodash'
+import {join} from 'path'
+import {compile, JSONSchema, Options} from '../src'
+import {log, stripExtension} from '../src/utils'
 
 const dir = __dirname + '/e2e'
 
@@ -23,7 +23,6 @@ export function hasOnly() {
 }
 
 export function run() {
-
   // [filename, absolute dirname, contents][]
   const modules = readdirSync(dir)
     .filter(_ => /^.*\.js$/.test(_))
@@ -35,9 +34,7 @@ export function run() {
   if (only) {
     runOne(only[1], only[0])
   } else {
-    modules
-      .filter(_ => !_[1].exclude)
-      .forEach(_ => runOne(_[1], _[0]))
+    modules.filter(_ => !_[1].exclude).forEach(_ => runOne(_[1], _[0]))
   }
 }
 
