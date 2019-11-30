@@ -1,7 +1,7 @@
-import { whiteBright } from 'cli-color'
-import { deburr, isPlainObject, mapValues, trim, upperFirst } from 'lodash'
-import { basename, extname } from 'path'
-import { JSONSchema } from './types/JSONSchema'
+import {whiteBright} from 'cli-color'
+import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
+import {basename, extname} from 'path'
+import {JSONSchema} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -15,32 +15,31 @@ export function Try<T>(fn: () => T, err: (e: Error) => any): T {
 /**
  * Depth-first traversal
  */
-export function dft<T, U>(object: { [k: string]: any }, cb: (value: U, key: string) => T): void {
-  for (let key in object) {
+export function dft<T, U>(object: {[k: string]: any}, cb: (value: U, key: string) => T): void {
+  for (const key in object) {
     if (!object.hasOwnProperty(key)) continue
     if (isPlainObject(object[key])) dft(object[key], cb)
     cb(object[key], key)
   }
 }
 
-export function mapDeep(
-  object: object,
-  fn: (value: object, key?: string) => object,
-  key?: string
-): object {
-  return fn(mapValues(object, (_: unknown, key) => {
-    if (isPlainObject(_)) {
-      return mapDeep(_ as object, fn, key)
-    } else if (Array.isArray(_)) {
-      return _.map(item => {
-        if (isPlainObject(item)) {
-          return mapDeep(item as object, fn, key)
-        }
-        return item
-      })
-    }
-    return _
-  }), key)
+export function mapDeep(object: object, fn: (value: object, key?: string) => object, key?: string): object {
+  return fn(
+    mapValues(object, (_: unknown, key) => {
+      if (isPlainObject(_)) {
+        return mapDeep(_ as object, fn, key)
+      } else if (Array.isArray(_)) {
+        return _.map(item => {
+          if (isPlainObject(item)) {
+            return mapDeep(item as object, fn, key)
+          }
+          return item
+        })
+      }
+      return _
+    }),
+    key
+  )
 }
 
 // keys that shouldn't be traversed by the catchall step
@@ -78,10 +77,7 @@ const BLACKLISTED_KEYS = new Set([
   'oneOf',
   'not'
 ])
-function traverseObjectKeys(
-  obj: Record<string, JSONSchema>,
-  callback: (schema: JSONSchema) => void
-) {
+function traverseObjectKeys(obj: Record<string, JSONSchema>, callback: (schema: JSONSchema) => void) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
       traverse(obj[k], callback)
@@ -134,12 +130,14 @@ export function traverse(schema: JSONSchema, callback: (schema: JSONSchema) => v
   }
 
   // technically you can put definitions on any key
-  Object.keys(schema).filter(key => !BLACKLISTED_KEYS.has(key)).forEach(key => {
-    const child = schema[key]
-    if (child && typeof child === 'object') {
-      traverseObjectKeys(child, callback)
-    }
-  })
+  Object.keys(schema)
+    .filter(key => !BLACKLISTED_KEYS.has(key))
+    .forEach(key => {
+      const child = schema[key]
+      if (child && typeof child === 'object') {
+        traverseObjectKeys(child, callback)
+      }
+    })
 }
 
 /**
@@ -168,18 +166,19 @@ export function toSafeString(string: string) {
   return upperFirst(
     // remove accents, umlauts, ... by their basic latin letters
     deburr(string)
-    // replace chars which are not valid for typescript identifiers with whitespace
-    .replace(/(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g, ' ')
-    // uppercase leading underscores followed by lowercase
-    .replace(/^_[a-z]/g, match => match.toUpperCase())
-    // remove non-leading underscores followed by lowercase (convert snake_case)
-    .replace(/_[a-z]/g, match => match.substr(1, match.length).toUpperCase())
-    // uppercase letters after digits, dollars
-    .replace(/([\d$]+[a-zA-Z])/g, match => match.toUpperCase())
-    // uppercase first letter after whitespace
-    .replace(/\s+([a-zA-Z])/g, match => trim(match.toUpperCase()))
-    // remove remaining whitespace
-    .replace(/\s/g, ''))
+      // replace chars which are not valid for typescript identifiers with whitespace
+      .replace(/(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g, ' ')
+      // uppercase leading underscores followed by lowercase
+      .replace(/^_[a-z]/g, match => match.toUpperCase())
+      // remove non-leading underscores followed by lowercase (convert snake_case)
+      .replace(/_[a-z]/g, match => match.substr(1, match.length).toUpperCase())
+      // uppercase letters after digits, dollars
+      .replace(/([\d$]+[a-zA-Z])/g, match => match.toUpperCase())
+      // uppercase first letter after whitespace
+      .replace(/\s+([a-zA-Z])/g, match => trim(match.toUpperCase()))
+      // remove remaining whitespace
+      .replace(/\s/g, '')
+  )
 }
 
 export function generateName(from: string, usedNames: Set<string>) {
