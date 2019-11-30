@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 
-import { whiteBright } from 'cli-color'
-import { JSONSchema4 } from 'json-schema'
+import {whiteBright} from 'cli-color'
+import {JSONSchema4} from 'json-schema'
 import minimist = require('minimist')
-import { readFile, writeFile } from 'mz/fs'
-import { resolve } from 'path'
+import {readFile, writeFile} from 'mz/fs'
+import {resolve} from 'path'
 import stdin = require('stdin')
-import { compile, Options } from './index'
+import {compile, Options} from './index'
 
-main(minimist(process.argv.slice(2), {
-  alias: {
-    help: ['h'],
-    input: ['i'],
-    output: ['o']
-  }
-}))
+main(
+  minimist(process.argv.slice(2), {
+    alias: {
+      help: ['h'],
+      input: ['i'],
+      output: ['o']
+    }
+  })
+)
 
 async function main(argv: minimist.ParsedArgs) {
-
   if (argv.help) {
     printHelp()
     process.exit(0)
@@ -34,7 +35,6 @@ async function main(argv: minimist.ParsedArgs) {
     console.error(whiteBright.bgRedBright('error'), e)
     process.exit(1)
   }
-
 }
 
 function readInput(argIn?: string) {
@@ -60,7 +60,7 @@ function printHelp() {
   const pkg = require('../../package.json')
 
   process.stdout.write(
-`
+    `
 ${pkg.name} ${pkg.version}
 Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE] [OPTIONS]
 

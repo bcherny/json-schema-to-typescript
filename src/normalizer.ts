@@ -1,8 +1,8 @@
-import { whiteBright } from 'cli-color'
+import {whiteBright} from 'cli-color'
 import stringify = require('json-stringify-safe')
-import { cloneDeep } from 'lodash'
-import { JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema } from './types/JSONSchema'
-import { escapeBlockComment, justName, log, toSafeString, traverse } from './utils'
+import {cloneDeep} from 'lodash'
+import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
+import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
 
 type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName?: string) => void
 const rules = new Map<string, Rule>()
@@ -18,8 +18,12 @@ function isArrayType(schema: JSONSchema) {
 }
 
 rules.set('Remove `type=["null"]` if `enum=[null]`', schema => {
-  if (Array.isArray(schema.enum) && schema.enum.some(e => e === null) &&
-      Array.isArray(schema.type) && schema.type.includes('null')) {
+  if (
+    Array.isArray(schema.enum) &&
+    schema.enum.some(e => e === null) &&
+    Array.isArray(schema.type) &&
+    schema.type.includes('null')
+  ) {
     schema.type = schema.type.filter(type => type !== 'null')
   }
 })
@@ -30,23 +34,21 @@ rules.set('Destructure unary types', schema => {
   }
 })
 
-rules.set('Add empty `required` property if none is defined', (schema) => {
+rules.set('Add empty `required` property if none is defined', schema => {
   if (!('required' in schema) && isObjectType(schema)) {
     schema.required = []
   }
 })
 
-rules.set('Transform `required`=false to `required`=[]', (schema) => {
+rules.set('Transform `required`=false to `required`=[]', schema => {
   if (schema.required === false) {
     schema.required = []
   }
 })
 
 // TODO: default to empty schema (as per spec) instead
-rules.set('Default additionalProperties to true', (schema) => {
-  if (!('additionalProperties' in schema) &&
-    isObjectType(schema) &&
-    schema.patternProperties === undefined) {
+rules.set('Default additionalProperties to true', schema => {
+  if (!('additionalProperties' in schema) && isObjectType(schema) && schema.patternProperties === undefined) {
     schema.additionalProperties = true
   }
 })
@@ -61,7 +63,7 @@ rules.set('Escape closing JSDoc Comment', schema => {
   escapeBlockComment(schema)
 })
 
-rules.set('Normalise schema.minItems', (schema) => {
+rules.set('Normalise schema.minItems', schema => {
   // make sure we only add the props onto array types
   if (isArrayType(schema)) {
     const {minItems} = schema
@@ -98,7 +100,7 @@ rules.set('Normalize schema.items', schema => {
 export function normalize(schema: JSONSchema, filename?: string): NormalizedJSONSchema {
   const _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
-    traverse(_schema, (schema) => rule(schema, _schema, filename))
+    traverse(_schema, schema => rule(schema, _schema, filename))
     log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema

@@ -1,19 +1,19 @@
-import { readFileSync } from 'fs'
-import { JSONSchema4 } from 'json-schema'
-import { Options as $RefOptions } from 'json-schema-ref-parser'
-import { endsWith, merge } from 'lodash'
-import { dirname } from 'path'
-import { Options as PrettierOptions } from 'prettier'
-import { format } from './formatter'
-import { generate } from './generator'
-import { normalize } from './normalizer'
-import { optimize } from './optimizer'
-import { parse } from './parser'
-import { dereference } from './resolver'
-import { error, stripExtension, Try } from './utils'
-import { validate } from './validator'
+import {readFileSync} from 'fs'
+import {JSONSchema4} from 'json-schema'
+import {Options as $RefOptions} from 'json-schema-ref-parser'
+import {endsWith, merge} from 'lodash'
+import {dirname} from 'path'
+import {Options as PrettierOptions} from 'prettier'
+import {format} from './formatter'
+import {generate} from './generator'
+import {normalize} from './normalizer'
+import {optimize} from './optimizer'
+import {parse} from './parser'
+import {dereference} from './resolver'
+import {error, stripExtension, Try} from './utils'
+import {validate} from './validator'
 
-export { EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema } from './types/JSONSchema'
+export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
 export interface Options {
   /**
@@ -76,37 +76,29 @@ export const DEFAULT_OPTIONS: Options = {
   unreachableDefinitions: false
 }
 
-export function compileFromFile(
-  filename: string,
-  options: Partial<Options> = DEFAULT_OPTIONS
-): Promise<string> {
+export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
   const contents = Try(
     () => readFileSync(filename),
-    () => { throw new ReferenceError(`Unable to read file "${filename}"`) }
+    () => {
+      throw new ReferenceError(`Unable to read file "${filename}"`)
+    }
   )
   const schema = Try<JSONSchema4>(
     () => JSON.parse(contents.toString()),
-    () => { throw new TypeError(`Error parsing JSON in file "${filename}"`) }
+    () => {
+      throw new TypeError(`Error parsing JSON in file "${filename}"`)
+    }
   )
-  return compile(
-    schema,
-    stripExtension(filename),
-    { cwd: dirname(filename), ...options }
-  )
+  return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
-export async function compile(
-  schema: JSONSchema4,
-  name: string,
-  options: Partial<Options> = {}
-): Promise<string> {
-
+export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
   const errors = validate(schema, name)
   if (errors.length) {
     errors.forEach(_ => error(_))
-    throw new ValidationError
+    throw new ValidationError()
   }
 
   // normalize options
@@ -114,12 +106,10 @@ export async function compile(
     _options.cwd += '/'
   }
 
-  return format(generate(
-    optimize(
-      parse(await dereference(normalize(schema, name), _options), _options)
-    ),
+  return format(
+    generate(optimize(parse(await dereference(normalize(schema, name), _options), _options)), _options),
     _options
-  ), _options)
+  )
 }
 
-export class ValidationError extends Error { }
+export class ValidationError extends Error {}

@@ -1,5 +1,5 @@
-import { JSONSchema } from './types/JSONSchema'
-import { mapDeep } from './utils'
+import {JSONSchema} from './types/JSONSchema'
+import {mapDeep} from './utils'
 
 type Rule = (schema: JSONSchema) => boolean | void
 const rules = new Map<string, Rule>()
