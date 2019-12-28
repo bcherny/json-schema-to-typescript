@@ -1,5 +1,19 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "typescript.tsdk": "node_modules/typescript/lib",
+<<<<<<< HEAD
+    "editor.tabSize": 2,
+    "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#b483d5",
+        "titleBar.inactiveBackground": "#b483d599",
+        "titleBar.activeForeground": "#15202b",
+        "titleBar.inactiveForeground": "#15202b99",
+        "statusBar.background": "#b483d5",
+        "statusBarItem.hoverBackground": "#9d5dc8",
+        "statusBar.foreground": "#15202b"
+    },
+    "peacock.color": "#b483d5"
+=======
     "editor.tabSize": 2
+>>>>>>> f506531... fix revisions
 }

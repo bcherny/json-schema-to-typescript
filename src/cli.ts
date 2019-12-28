@@ -1,22 +1,34 @@
 #!/usr/bin/env node
 
-import {whiteBright} from 'cli-color'
-import {JSONSchema4} from 'json-schema'
+import { whiteBright } from 'cli-color'
 import minimist = require('minimist')
-import {readFile, writeFile} from 'mz/fs'
-import {resolve} from 'path'
+import { readFile, writeFile, existsSync } from 'mz/fs'
+import * as _mkdirp from 'mkdirp'
+import * as _glob from 'glob'
+import isGlob = require('is-glob')
+import { promisify } from 'util'
+import { join, resolve, basename } from 'path'
 import stdin = require('stdin')
 import {compile, Options} from './index'
 
-main(
-  minimist(process.argv.slice(2), {
-    alias: {
-      help: ['h'],
-      input: ['i'],
-      output: ['o']
-    }
+// Promisify mkdirp
+const mkdirp = (path: string) => new Promise((res, rej) => {
+  _mkdirp(path, (err, made) => {
+    if (err) rej(err)
+    else res(made === null ? undefined : made)
   })
-)
+})
+
+const glob = promisify(_glob)
+
+main(minimist(process.argv.slice(2), {
+  alias: {
+    help: ['h'],
+    input: ['i'],
+    output: ['o'],
+    recursive: ['r']
+  }
+}))
 
 async function main(argv: minimist.ParsedArgs) {
   if (argv.help) {
@@ -28,13 +40,54 @@ async function main(argv: minimist.ParsedArgs) {
   const argOut: string = argv._[1] || argv.output
 
   try {
-    const schema: JSONSchema4 = JSON.parse(await readInput(argIn))
-    const ts = await compile(schema, argIn, argv as Partial<Options>)
-    await writeOutput(ts, argOut)
+    let files = await getFilesToProcess(argIn, argOut, argv as Partial<Options>)
+    await Promise.all(files)
   } catch (e) {
     console.error(whiteBright.bgRedBright('error'), e)
     process.exit(1)
   }
+}
+
+function getFilesToProcess(argIn: string, argOut: string, argv: Partial<Options>): Promise<Promise<void>[]> {
+  return new Promise(async (res, rej) => {
+    try {
+      if (isGlob(argIn)) {
+        let files = await glob(join(process.cwd(), argIn))
+  
+        if (files.length === 0) {
+          rej('No files match glob pattern')
+        }
+  
+        if (argOut && !existsSync(argOut)) {
+          await mkdirp(argOut)
+        }
+  
+        res(files.map(file => processFile(file, { dir: argOut }, argv)))
+        return
+      } else {
+        res([processFile(argIn, { file: argOut }, argv)])
+      }
+    } catch (e) {
+      console.error(whiteBright.bgRedBright('error'), e)
+      process.exit(1)
+    }
+  })
+}
+
+function processFile(file: string, out: {dir?: string, file?: string}, argv: Partial<Options>): Promise<void> {
+  return new Promise(async (res, rej) => {
+    try {
+      const schema = JSON.parse(await readInput(file))
+      const ts = await compile(schema, file, argv)
+      await writeOutput(
+        ts,
+        out.dir ? join(process.cwd(), out.dir, `${basename(file, '.json')}.d.ts`) : out.file || ''
+      )
+      res()
+    } catch (err) {
+      rej(err)
+    }
+  })
 }
 
 function readInput(argIn?: string) {
