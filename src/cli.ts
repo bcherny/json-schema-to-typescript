@@ -2,12 +2,12 @@
 
 import {whiteBright} from 'cli-color'
 import minimist = require('minimist')
-import {readFile, writeFile, existsSync} from 'mz/fs'
+import {readFile, writeFile, existsSync, lstatSync} from 'mz/fs'
 import * as _mkdirp from 'mkdirp'
 import * as _glob from 'glob'
 import isGlob = require('is-glob')
 import {promisify} from 'util'
-import {join, resolve, basename} from 'path'
+import {join, resolve, basename, extname} from 'path'
 import stdin = require('stdin')
 import {compile, Options} from './index'
 
@@ -40,54 +40,40 @@ async function main(argv: minimist.ParsedArgs) {
   }
 
   const argIn: string = argv._[0] || argv.input
-  const argOut: string = argv._[1] || argv.output
+  const argOut: string | undefined = argv._[1] || argv.output
 
   try {
-    const files = await getFilesToProcess(argIn, argOut, argv as Partial<Options>)
-    await Promise.all(files)
+    await processFiles(argIn, argOut, argv as Partial<Options>)
   } catch (e) {
     console.error(whiteBright.bgRedBright('error'), e)
     process.exit(1)
   }
 }
 
-function getFilesToProcess(argIn: string, argOut: string, argv: Partial<Options>): Promise<Promise<void>[]> {
-  return new Promise(async (res, rej) => {
-    try {
-      if (isGlob(argIn)) {
-        const files = await glob(join(process.cwd(), argIn))
+async function processFiles(argIn: string, argOut: string | undefined, argv: Partial<Options>): Promise<void[]> {
+  const files = isGlob(argIn) ? await glob(join(process.cwd(), argIn)) : [argIn]
 
-        if (files.length === 0) {
-          rej('No files match glob pattern')
-        }
+  if (files.length === 0) {
+    throw ReferenceError(
+      `You passed a glob pattern "${argIn}", but there are no files that match that pattern in ${process.cwd()}`
+    )
+  }
 
-        if (argOut && !existsSync(argOut)) {
-          await mkdirp(argOut)
-        }
+  if (argOut && extname(argOut) === '' && !existsSync(argOut)) {
+    await mkdirp(argOut)
+  }
 
-        res(files.map(file => processFile(file, {dir: argOut}, argv)))
-        return
-      } else {
-        res([processFile(argIn, {file: argOut}, argv)])
-      }
-    } catch (e) {
-      console.error(whiteBright.bgRedBright('error'), e)
-      process.exit(1)
-    }
-  })
+  return Promise.all(files.map(file => processFile(file, argOut, argv)))
 }
 
-function processFile(file: string, out: {dir?: string; file?: string}, argv: Partial<Options>): Promise<void> {
-  return new Promise(async (res, rej) => {
-    try {
-      const schema = JSON.parse(await readInput(file))
-      const ts = await compile(schema, file, argv)
-      await writeOutput(ts, out.dir ? join(process.cwd(), out.dir, `${basename(file, '.json')}.d.ts`) : out.file || '')
-      res()
-    } catch (err) {
-      rej(err)
-    }
-  })
+async function processFile(file: string, out: string | undefined, argv: Partial<Options>): Promise<void> {
+  out = out ? join(process.cwd(), out) : ''
+  const schema = JSON.parse(await readInput(file))
+  const ts = await compile(schema, file, argv)
+  return await writeOutput(
+    ts,
+    existsSync(out) && lstatSync(out).isDirectory() ? join(out, `${basename(file, '.json')}.d.ts`) : out
+  )
 }
 
 function readInput(argIn?: string) {
@@ -97,7 +83,7 @@ function readInput(argIn?: string) {
   return readFile(resolve(process.cwd(), argIn), 'utf-8')
 }
 
-function writeOutput(ts: string, argOut: string): Promise<void> {
+function writeOutput(ts: string, argOut: string | undefined): Promise<void> {
   if (!argOut) {
     try {
       process.stdout.write(ts)

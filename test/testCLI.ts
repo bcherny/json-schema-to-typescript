@@ -1,4 +1,4 @@
-import test from 'ava'
+import {serial as test} from 'ava'
 import {execSync} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, rmdirSync} from 'fs'
 
@@ -46,43 +46,37 @@ export function run() {
   })
 
   test('pipe in, file out (--output)', t => {
-    execSync(
-      'shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js --output ./ReferencedType.d.ts'
-    ).toString()
+    execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js --output ./ReferencedType.d.ts')
     t.snapshot(readFileSync('./ReferencedType.d.ts', 'utf-8'))
     unlinkSync('./ReferencedType.d.ts')
   })
 
   test('pipe in, file out (-o)', t => {
-    execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js -o ./ReferencedType.d.ts').toString()
+    execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js -o ./ReferencedType.d.ts')
     t.snapshot(readFileSync('./ReferencedType.d.ts', 'utf-8'))
     unlinkSync('./ReferencedType.d.ts')
   })
 
   test('file in (no flags), file out (no flags)', t => {
-    execSync('node dist/src/cli.js ./test/resources/ReferencedType.json ./ReferencedType.d.ts').toString()
+    execSync('node dist/src/cli.js ./test/resources/ReferencedType.json ./ReferencedType.d.ts')
     t.snapshot(readFileSync('./ReferencedType.d.ts', 'utf-8'))
     unlinkSync('./ReferencedType.d.ts')
   })
 
   test('file in (-i), file out (-o)', t => {
-    execSync('node dist/src/cli.js -i ./test/resources/ReferencedType.json -o ./ReferencedType.d.ts').toString()
+    execSync('node dist/src/cli.js -i ./test/resources/ReferencedType.json -o ./ReferencedType.d.ts')
     t.snapshot(readFileSync('./ReferencedType.d.ts', 'utf-8'))
     unlinkSync('./ReferencedType.d.ts')
   })
 
   test('file in (--input), file out (--output)', t => {
-    execSync(
-      'node dist/src/cli.js --input ./test/resources/ReferencedType.json --output ./ReferencedType.d.ts'
-    ).toString()
+    execSync('node dist/src/cli.js --input ./test/resources/ReferencedType.json --output ./ReferencedType.d.ts')
     t.snapshot(readFileSync('./ReferencedType.d.ts', 'utf-8'))
     unlinkSync('./ReferencedType.d.ts')
   })
 
   test('files in (-i), files out (-o)', t => {
-    execSync(
-      'node dist/src/cli.js -i ./test/resources/MultiSchema/**/*.json -o ./test/resources/MultiSchema/out'
-    ).toString()
+    execSync("node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json' -o ./test/resources/MultiSchema/out")
 
     readdirSync('./test/resources/MultiSchema/out').forEach(f => {
       const path = `./test/resources/MultiSchema/out/${f}`
@@ -93,19 +87,19 @@ export function run() {
   })
 
   test('files in (-i), pipe out', t => {
-    t.snapshot(execSync('node dist/src/cli.js -i ./test/resources/MultiSchema/**/*.json').toString())
+    t.snapshot(execSync("node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json'").toString())
   })
 
   test('files in (-i), files out (-o) nested dir does not exist', t => {
     execSync(
-      'node dist/src/cli.js -i ./test/resources/MultiSchema/**/*.json -o ./test/resources/MultiSchema/foo/bar/out'
-    ).toString()
+      "node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json' -o ./test/resources/MultiSchema/foo/bar/out"
+    )
 
     readdirSync('./test/resources/MultiSchema/foo/bar/out').forEach(f => {
       const path = `./test/resources/MultiSchema/foo/bar/out/${f}`
       t.snapshot(readFileSync(path, 'utf-8'))
       unlinkSync(path)
     })
-    rmdirSync('./test/resources/MultiSchema/foo/bar/out')
+    rmdirSync('./test/resources/MultiSchema/foo', {recursive: true})
   })
 }
