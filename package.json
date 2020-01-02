@@ -48,7 +48,7 @@
     "@types/is-glob": "^4.0.1",
     "@types/json-schema": "^7.0.3",
     "@types/mkdirp": "^0.5.2",
-    "@types/node": ">=4.5.0",
+    "@types/node": "^13.1.2",
     "@types/prettier": "^1.16.1",
     "cli-color": "^1.4.0",
     "glob": "^7.1.4",
