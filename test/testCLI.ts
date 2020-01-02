@@ -101,7 +101,8 @@ export function run() {
       t.snapshot(readFileSync(path, 'utf-8'))
       unlinkSync(path)
     })
-    rmdirSync('./test/resources/MultiSchema/foo', {recursive: true})
+    execSync('rm -r ./test/resources/MultiSchema/foo')
+    // rmdirSync('./test/resources/MultiSchema/foo', {recursive: true})
   })
 
   test('files in (-i), files out (-o) matching nested dir', t => {
@@ -111,7 +112,8 @@ export function run() {
       t.snapshot(readFileSync(file, 'utf-8'))
       unlinkSync(file)
     })
-    rmdirSync('./test/resources/MultiSchema2/out', {recursive: true})
+    execSync('rm -r ./test/resources/MultiSchema2/out')
+    // rmdirSync('./test/resources/MultiSchema2/out', {recursive: true})
   })
 }
 
