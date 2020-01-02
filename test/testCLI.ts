@@ -1,6 +1,7 @@
 import {serial as test} from 'ava'
 import {execSync} from 'child_process'
-import {readFileSync, unlinkSync, readdirSync, rmdirSync} from 'fs'
+import {readFileSync, unlinkSync, readdirSync, rmdirSync, existsSync, lstatSync} from 'fs'
+import {resolve, join} from 'path'
 
 export function run() {
   test('pipe in, pipe out', t => {
@@ -102,4 +103,24 @@ export function run() {
     })
     rmdirSync('./test/resources/MultiSchema/foo', {recursive: true})
   })
+
+  test('files in (-i), files out (-o) matching nested dir', t => {
+    execSync("node dist/src/cli.js -i './test/resources/MultiSchema2/' -o ./test/resources/MultiSchema2/out")
+    const files = getPaths('./test/resources/MultiSchema2/out')
+    files.forEach(file => {
+      t.snapshot(readFileSync(file, 'utf-8'))
+      unlinkSync(file)
+    })
+    rmdirSync('./test/resources/MultiSchema2/out', {recursive: true})
+  })
+}
+
+function getPaths(path: string, paths: string[] = []) {
+  if (existsSync(path) && lstatSync(path).isDirectory()) {
+    readdirSync(resolve(path)).forEach(item => getPaths(join(path, item), paths))
+  } else {
+    paths.push(path)
+  }
+
+  return paths
 }

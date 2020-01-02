@@ -2,16 +2,16 @@
 
 import {whiteBright} from 'cli-color'
 import minimist = require('minimist')
-import {readFile, writeFile, existsSync, lstatSync} from 'mz/fs'
+import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
 import * as _mkdirp from 'mkdirp'
 import * as _glob from 'glob'
 import isGlob = require('is-glob')
 import {promisify} from 'util'
-import {join, resolve, basename, extname} from 'path'
+import {join, resolve, dirname, basename} from 'path'
 import stdin = require('stdin')
 import {compile, Options} from './index'
 
-// Promisify mkdirp
+// Promisify mkdirp & glob
 const mkdirp = (path: string) =>
   new Promise((res, rej) => {
     _mkdirp(path, (err, made) => {
@@ -27,8 +27,7 @@ main(
     alias: {
       help: ['h'],
       input: ['i'],
-      output: ['o'],
-      recursive: ['r']
+      output: ['o']
     }
   })
 )
@@ -40,40 +39,104 @@ async function main(argv: minimist.ParsedArgs) {
   }
 
   const argIn: string = argv._[0] || argv.input
-  const argOut: string | undefined = argv._[1] || argv.output
+  const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
   try {
-    await processFiles(argIn, argOut, argv as Partial<Options>)
+    // Process input as either glob, directory, or single file
+    if (isGlob(argIn)) {
+      await processGlob(argIn, argOut, argv as Partial<Options>)
+    } else if (isDir(argIn)) {
+      await processDir(argIn, argOut, argv as Partial<Options>)
+    } else {
+      await processFile(argIn, argOut, argv as Partial<Options>)
+    }
   } catch (e) {
     console.error(whiteBright.bgRedBright('error'), e)
     process.exit(1)
   }
 }
 
-async function processFiles(argIn: string, argOut: string | undefined, argv: Partial<Options>): Promise<void[]> {
-  const files = isGlob(argIn) ? await glob(join(process.cwd(), argIn)) : [argIn]
+// check if path is an existing directory
+function isDir(path: string): boolean {
+  return existsSync(path) && lstatSync(path).isDirectory()
+}
+
+async function processGlob(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
+  const files = await glob(argIn) // execute glob pattern match
 
   if (files.length === 0) {
     throw ReferenceError(
       `You passed a glob pattern "${argIn}", but there are no files that match that pattern in ${process.cwd()}`
     )
   }
-
-  if (argOut && extname(argOut) === '' && !existsSync(argOut)) {
+  // create output directory if it does not exist
+  if (argOut && !existsSync(argOut)) {
     await mkdirp(argOut)
   }
 
-  return Promise.all(files.map(file => processFile(file, argOut, argv)))
+  return Promise.all(
+    files.map(file => {
+      const outPath = `${argOut}/${basename(file, '.json')}.d.ts`
+      processFile(file, outPath, argv)
+    })
+  )
 }
 
-async function processFile(file: string, out: string | undefined, argv: Partial<Options>): Promise<void> {
-  out = out ? join(process.cwd(), out) : ''
-  const schema = JSON.parse(await readInput(file))
-  const ts = await compile(schema, file, argv)
-  return await writeOutput(
-    ts,
-    existsSync(out) && lstatSync(out).isDirectory() ? join(out, `${basename(file, '.json')}.d.ts`) : out
+async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>): Promise<void[]> {
+  const files = getPaths(argIn)
+
+  return Promise.all(
+    files.map(file => {
+      if (!argOut) {
+        processFile(file, argOut, argv)
+      } else {
+        /*
+        the following logic determines the out path by comparing the in path to the users specified out path.
+        For example, if input directory MultiSchema looks like:
+        MultiSchema/foo/a.json
+        MultiSchema/bar/fuzz/c.json
+        MultiSchema/bar/d.json
+        And the user wants the outputs to be in MultiSchema/Out, then this code will be able to map the inner directories foo, bar, and fuzz into the intended Out directory.
+        */
+        const outPathList = argOut.split('/')
+        const inPathList = file.split('/')
+
+        const intersection = outPathList.filter(x => inPathList.includes(x))
+        const difference = outPathList
+          .filter(x => !inPathList.includes(x))
+          .concat(inPathList.filter(x => !outPathList.includes(x)))
+
+        let outPath = join(...intersection, ...difference)
+        if (!isDir(dirname(outPath))) {
+          _mkdirp.sync(dirname(outPath))
+        }
+        outPath = outPath.replace('.json', '.d.ts')
+        processFile(file, outPath, argv)
+      }
+    })
   )
+}
+
+async function processFile(argIn: string, argOut: string | undefined, argv: Partial<Options>): Promise<void> {
+  const schema = JSON.parse(await readInput(argIn))
+  const ts = await compile(schema, argIn, argv)
+
+  if (!argOut) {
+    process.stdout.write(ts)
+    return
+  } else {
+    return await writeFile(argOut, ts)
+  }
+}
+
+function getPaths(path: string, paths: string[] = []) {
+  if (existsSync(path) && lstatSync(path).isDirectory()) {
+    readdirSync(resolve(path)).forEach(item => getPaths(join(path, item), paths))
+  } else {
+    paths.push(path)
+  }
+
+  return paths
 }
 
 function readInput(argIn?: string) {
@@ -81,18 +144,6 @@ function readInput(argIn?: string) {
     return new Promise(stdin)
   }
   return readFile(resolve(process.cwd(), argIn), 'utf-8')
-}
-
-function writeOutput(ts: string, argOut: string | undefined): Promise<void> {
-  if (!argOut) {
-    try {
-      process.stdout.write(ts)
-      return Promise.resolve()
-    } catch (err) {
-      return Promise.reject(err)
-    }
-  }
-  return writeFile(argOut, ts)
 }
 
 function printHelp() {
