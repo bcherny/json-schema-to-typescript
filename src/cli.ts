@@ -41,11 +41,20 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
+  const ISGLOB = isGlob(argIn)
+  const ISDIR = isDir(argIn)
+
+  if ((ISGLOB || ISDIR) && argOut?.includes('.d.ts')) {
+    throw new ReferenceError(
+      `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`
+    )
+  }
+
   try {
     // Process input as either glob, directory, or single file
-    if (isGlob(argIn)) {
+    if (ISGLOB) {
       await processGlob(argIn, argOut, argv as Partial<Options>)
-    } else if (isDir(argIn)) {
+    } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
     } else {
       await processFile(argIn, argOut, argv as Partial<Options>)
@@ -76,7 +85,7 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
 
   return Promise.all(
     files.map(file => {
-      const outPath = `${argOut}/${basename(file, '.json')}.d.ts`
+      const outPath = argOut ? `${argOut}/${basename(file, '.json')}.d.ts` : argOut
       processFile(file, outPath, argv)
     })
   )
