@@ -3,12 +3,13 @@ import {readdirSync} from 'fs'
 import {template} from 'lodash'
 import {join} from 'path'
 import {JSONSchema} from '../src'
-import {normalize} from '../src/normalizer'
+import {normalize, NormalizeOptions} from '../src/normalizer'
 
 interface JSONTestCase {
   name: string
   in: JSONSchema
   out: JSONSchema
+  options?: NormalizeOptions
 }
 
 const normalizerDir = __dirname + '/../../test/normalizer'
@@ -21,7 +22,7 @@ export function run() {
     .forEach(([filename, json]: [string, JSONTestCase]) => {
       const params = {filename}
       test(json.name, t => {
-        const normalised = normalize(json.in, filename)
+        const normalised = normalize(json.in, filename, json.options)
         t.snapshot(template(toString(normalised))(params))
         t.deepEqual(json.out, normalised)
       })

@@ -4,7 +4,11 @@ import {cloneDeep} from 'lodash'
 import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
 import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
 
-type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName?: string) => void
+export interface NormalizeOptions {
+  ignoreMinAndMaxItems: boolean
+}
+
+type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName?: string, options?: NormalizeOptions) => void
 const rules = new Map<string, Rule>()
 
 function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
@@ -63,7 +67,21 @@ rules.set('Escape closing JSDoc Comment', schema => {
   escapeBlockComment(schema)
 })
 
-rules.set('Normalise schema.minItems', schema => {
+rules.set('Optionally remove maxItems and minItems', (schema, _rootSchema, _fileName, options) => {
+  if (options && options.ignoreMinAndMaxItems) {
+    if (schema.maxItems !== undefined) {
+      delete schema.maxItems
+    }
+    if (schema.minItems !== undefined) {
+      delete schema.minItems
+    }
+  }
+})
+
+rules.set('Normalise schema.minItems', (schema, _rootSchema, _fileName, options) => {
+  if (options && options.ignoreMinAndMaxItems) {
+    return
+  }
   // make sure we only add the props onto array types
   if (isArrayType(schema)) {
     const {minItems} = schema
@@ -72,10 +90,14 @@ rules.set('Normalise schema.minItems', schema => {
   // cannot normalise maxItems because maxItems = 0 has an actual meaning
 })
 
-rules.set('Normalize schema.items', schema => {
+rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) => {
   const {maxItems, minItems} = schema
   const hasMaxItems = typeof maxItems === 'number' && maxItems >= 0
   const hasMinItems = typeof minItems === 'number' && minItems > 0
+
+  if (options && options.ignoreMinAndMaxItems) {
+    return
+  }
 
   if (schema.items && !Array.isArray(schema.items) && (hasMaxItems || hasMinItems)) {
     const items = schema.items
@@ -97,10 +119,10 @@ rules.set('Normalize schema.items', schema => {
   return schema
 })
 
-export function normalize(schema: JSONSchema, filename?: string): NormalizedJSONSchema {
+export function normalize(schema: JSONSchema, filename?: string, options?: NormalizeOptions): NormalizedJSONSchema {
   const _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
-    traverse(_schema, schema => rule(schema, _schema, filename))
+    traverse(_schema, schema => rule(schema, _schema, filename, options))
     log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema

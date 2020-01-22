@@ -33,6 +33,10 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
+   * Ignore maxItems and minItems for `array` types, preventing tuples being generated.
+   */
+  ignoreMinAndMaxItems: boolean
+  /**
    * Append all index signatures with `| undefined` so that they are strictly typed.
    *
    * This is required to be compatible with `strictNullChecks`.
@@ -63,6 +67,7 @@ export const DEFAULT_OPTIONS: Options = {
   cwd: process.cwd(),
   declareExternallyReferenced: true,
   enableConstEnums: true, // by default, avoid generating code
+  ignoreMinAndMaxItems: false,
   strictIndexSignatures: false,
   style: {
     bracketSpacing: false,
@@ -107,7 +112,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   }
 
   return format(
-    generate(optimize(parse(await dereference(normalize(schema, name), _options), _options)), _options),
+    generate(optimize(parse(await dereference(normalize(schema, name, _options), _options), _options)), _options),
     _options
   )
 }
