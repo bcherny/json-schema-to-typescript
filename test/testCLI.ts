@@ -78,4 +78,16 @@ export function run() {
     t.snapshot(readFileSync('./ReferencedType.d.ts', 'utf-8'))
     unlinkSync('./ReferencedType.d.ts')
   })
+
+  test('Prettier > file in (--input), file out (--output)', t => {
+    execSync('node dist/src/cli.js --input ./test/resources/prettier/Enum.json --output ./Enum.d.ts').toString()
+    t.snapshot(readFileSync('./Enum.d.ts', 'utf-8'))
+    unlinkSync('./Enum.d.ts')
+  })
+
+  test('Prettier > pipe in, pipe out', t => {
+    t.snapshot(
+      execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js', {encoding: 'utf-8'}).toString()
+    )
+  })
 }

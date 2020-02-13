@@ -3,7 +3,7 @@ import {JSONSchema4} from 'json-schema'
 import {Options as $RefOptions} from 'json-schema-ref-parser'
 import {endsWith, merge} from 'lodash'
 import {dirname} from 'path'
-import {Options as PrettierOptions} from 'prettier'
+import {Options as PrettierOptions, resolveConfig} from 'prettier'
 import {format} from './formatter'
 import {generate} from './generator'
 import {normalize} from './normalizer'
@@ -93,7 +93,8 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
 }
 
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
-  const _options = merge({}, DEFAULT_OPTIONS, options)
+  const prettierConfig = (await resolveConfig(name)) || {}
+  const _options = merge({}, DEFAULT_OPTIONS, options, {style: prettierConfig})
 
   const errors = validate(schema, name)
   if (errors.length) {
