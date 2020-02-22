@@ -1,5 +1,9 @@
 # Changelog
 
+## 8.1.0
+
+- 1d24618 Add `ignoreMinAndMaxItems` CLI option, defaulting to false (#274)
+
 ## 8.0.0
 
 - e144890 Improve generated output when mixing nulls and unions (#261)
