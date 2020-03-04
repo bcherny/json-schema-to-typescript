@@ -12,7 +12,7 @@ import stdin = require('stdin')
 import {compile, Options} from './index'
 
 // Promisify mkdirp & glob
-const mkdirp = (path: string) =>
+const mkdirp = (path: string): Promise<_mkdirp.Made> =>
   new Promise((res, rej) => {
     _mkdirp(path, (err, made) => {
       if (err) rej(err)
@@ -83,12 +83,35 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
     await mkdirp(argOut)
   }
 
-  return Promise.all(
+  Promise.all(
     files.map(file => {
-      const outPath = argOut ? `${argOut}/${basename(file, '.json')}.d.ts` : argOut
+      const outPath = argOut && `${argOut}/${basename(file, '.json')}.d.ts`
       processFile(file, outPath, argv)
     })
   )
+}
+
+/*
+the following logic determines the out path by comparing the in path to the users specified out path.
+For example, if input directory MultiSchema looks like:
+  MultiSchema/foo/a.json
+  MultiSchema/bar/fuzz/c.json
+  MultiSchema/bar/d.json
+And the user wants the outputs to be in MultiSchema/Out, then this code will be able to map the inner directories foo, bar, and fuzz into the intended Out directory like so:
+  MultiSchema/Out/foo/a.json
+  MultiSchema/Out/bar/fuzz/c.json
+  MultiSchema/Out/bar/d.json
+*/
+function pathTransform(o: string, i: string): string {
+  const outPathList = o.split('/')
+  const inPathList = i.split('/')
+
+  const intersection = outPathList.filter(x => inPathList.includes(x))
+  const difference = outPathList
+    .filter(x => !inPathList.includes(x))
+    .concat(inPathList.filter(x => !outPathList.includes(x)))
+
+  return join(...intersection, ...difference)
 }
 
 async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>): Promise<void[]> {
@@ -99,23 +122,16 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
       if (!argOut) {
         processFile(file, argOut, argv)
       } else {
-        /*
-        the following logic determines the out path by comparing the in path to the users specified out path.
-        For example, if input directory MultiSchema looks like:
-        MultiSchema/foo/a.json
-        MultiSchema/bar/fuzz/c.json
-        MultiSchema/bar/d.json
-        And the user wants the outputs to be in MultiSchema/Out, then this code will be able to map the inner directories foo, bar, and fuzz into the intended Out directory.
-        */
-        const outPathList = argOut.split('/')
-        const inPathList = file.split('/')
+        let outPath = pathTransform(argOut, file)
+        // const outPathList = argOut.split('/')
+        // const inPathList = file.split('/')
 
-        const intersection = outPathList.filter(x => inPathList.includes(x))
-        const difference = outPathList
-          .filter(x => !inPathList.includes(x))
-          .concat(inPathList.filter(x => !outPathList.includes(x)))
+        // const intersection = outPathList.filter(x => inPathList.includes(x))
+        // const difference = outPathList
+        //   .filter(x => !inPathList.includes(x))
+        //   .concat(inPathList.filter(x => !outPathList.includes(x)))
 
-        let outPath = join(...intersection, ...difference)
+        // let outPath = join(...intersection, ...difference)
         if (!isDir(dirname(outPath))) {
           _mkdirp.sync(dirname(outPath))
         }
@@ -132,7 +148,6 @@ async function processFile(argIn: string, argOut: string | undefined, argv: Part
 
   if (!argOut) {
     process.stdout.write(ts)
-    return
   } else {
     return await writeFile(argOut, ts)
   }
