@@ -10,6 +10,7 @@ import {promisify} from 'util'
 import {join, resolve, dirname, basename} from 'path'
 import stdin = require('stdin')
 import {compile, Options} from './index'
+import {pathTransform} from './utils'
 
 // Promisify mkdirp & glob
 const mkdirp = (path: string): Promise<_mkdirp.Made> =>
@@ -89,29 +90,6 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
       processFile(file, outPath, argv)
     })
   )
-}
-
-/*
-the following logic determines the out path by comparing the in path to the users specified out path.
-For example, if input directory MultiSchema looks like:
-  MultiSchema/foo/a.json
-  MultiSchema/bar/fuzz/c.json
-  MultiSchema/bar/d.json
-And the user wants the outputs to be in MultiSchema/Out, then this code will be able to map the inner directories foo, bar, and fuzz into the intended Out directory like so:
-  MultiSchema/Out/foo/a.json
-  MultiSchema/Out/bar/fuzz/c.json
-  MultiSchema/Out/bar/d.json
-*/
-export function pathTransform(o: string, i: string): string {
-  const outPathList = o.split('/')
-  const inPathList = i.split('/')
-
-  const intersection = outPathList.filter(x => inPathList.includes(x))
-  const difference = outPathList
-    .filter(x => !inPathList.includes(x))
-    .concat(inPathList.filter(x => !outPathList.includes(x)))
-
-  return join(...intersection, ...difference)
 }
 
 async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>): Promise<void[]> {

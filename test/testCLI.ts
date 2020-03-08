@@ -2,7 +2,6 @@ import {serial as test} from 'ava'
 import {execSync} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, rmdirSync, existsSync, lstatSync} from 'fs'
 import {resolve, join} from 'path'
-import {pathTransform} from '../src/cli'
 
 export function run() {
   test('pipe in, pipe out', t => {
@@ -113,15 +112,6 @@ export function run() {
       unlinkSync(file)
     })
     rmdirSync('./test/resources/MultiSchema2/out', {recursive: true})
-  })
-
-  test('validate pathTransform function', t => {
-    const inputPaths = ['MultiSchema/foo/a.json', 'MultiSchema/bar/fuzz/c.json', 'MultiSchema/bar/d.json']
-    const outputPath = 'MultiSchema/Out'
-
-    t.is(pathTransform(outputPath, inputPaths[0]), 'MultiSchema/Out/foo/a.json')
-    t.is(pathTransform(outputPath, inputPaths[1]), 'MultiSchema/Out/bar/d.json')
-    t.is(pathTransform(outputPath, inputPaths[2]), 'MultiSchema/Out/bar/fuzz/c.json')
   })
 }
 
