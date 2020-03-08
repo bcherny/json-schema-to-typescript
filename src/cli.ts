@@ -102,7 +102,7 @@ And the user wants the outputs to be in MultiSchema/Out, then this code will be 
   MultiSchema/Out/bar/fuzz/c.json
   MultiSchema/Out/bar/d.json
 */
-function pathTransform(o: string, i: string): string {
+export function pathTransform(o: string, i: string): string {
   const outPathList = o.split('/')
   const inPathList = i.split('/')
 
@@ -123,15 +123,6 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
         processFile(file, argOut, argv)
       } else {
         let outPath = pathTransform(argOut, file)
-        // const outPathList = argOut.split('/')
-        // const inPathList = file.split('/')
-
-        // const intersection = outPathList.filter(x => inPathList.includes(x))
-        // const difference = outPathList
-        //   .filter(x => !inPathList.includes(x))
-        //   .concat(inPathList.filter(x => !outPathList.includes(x)))
-
-        // let outPath = join(...intersection, ...difference)
         if (!isDir(dirname(outPath))) {
           _mkdirp.sync(dirname(outPath))
         }
