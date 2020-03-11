@@ -92,10 +92,10 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
   )
 }
 
-async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>): Promise<void[]> {
+async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
   const files = getPaths(argIn)
 
-  return Promise.all(
+  Promise.all(
     files.map(file => {
       if (!argOut) {
         processFile(file, argOut, argv)
