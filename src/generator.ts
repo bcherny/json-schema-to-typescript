@@ -179,7 +179,7 @@ function generateRawType(ast: AST, options: Options): string {
 
   switch (ast.type) {
     case 'ANY':
-      return 'any'
+      return options.unknownAny ? 'unknown' : 'any'
     case 'ARRAY':
       return (() => {
         const type = generateType(ast.params, options)

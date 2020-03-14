@@ -78,4 +78,8 @@ export function run() {
     t.snapshot(readFileSync('./ReferencedType.d.ts', 'utf-8'))
     unlinkSync('./ReferencedType.d.ts')
   })
+
+  test('--unknownAny', t => {
+    t.snapshot(execSync('node dist/src/cli.js --unknownAny --input ./test/resources/ReferencedType.json').toString())
+  })
 }
