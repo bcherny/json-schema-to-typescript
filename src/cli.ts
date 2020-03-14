@@ -84,10 +84,10 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
     await mkdirp(argOut)
   }
 
-  Promise.all(
+  await Promise.all(
     files.map(file => {
       const outPath = argOut && `${argOut}/${basename(file, '.json')}.d.ts`
-      processFile(file, outPath, argv)
+      return processFile(file, outPath, argv)
     })
   )
 }
@@ -95,17 +95,17 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
 async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
   const files = getPaths(argIn)
 
-  Promise.all(
+  await Promise.all(
     files.map(file => {
       if (!argOut) {
-        processFile(file, argOut, argv)
+        return processFile(file, argOut, argv)
       } else {
         let outPath = pathTransform(argOut, file)
         if (!isDir(dirname(outPath))) {
           _mkdirp.sync(dirname(outPath))
         }
         outPath = outPath.replace('.json', '.d.ts')
-        processFile(file, outPath, argv)
+        return processFile(file, outPath, argv)
       }
     })
   )
