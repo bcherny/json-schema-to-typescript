@@ -1,0 +1,10 @@
+{
+  "title": "C schema",
+  "type": "object",
+  "properties": {
+    "f": {"type": "string"},
+    "g": {"type": "integer"}
+  },
+  "additionalProperties": false,
+  "required": ["f"]
+}
