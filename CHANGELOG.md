@@ -1,5 +1,9 @@
 # Changelog
 
+## 8.2.0
+
+- a0257d8 Add support for directories and globs as inputs (#238)
+
 ## 8.1.0
 
 - 1d24618 Add `ignoreMinAndMaxItems` CLI option, defaulting to false (#274)
