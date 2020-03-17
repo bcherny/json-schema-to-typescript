@@ -94,7 +94,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 
-A simple CLI utility is provided with this package.
+A CLI utility is provided with this package.
 
 ```sh
 cat foo.json | json2ts > foo.d.ts
@@ -115,6 +115,71 @@ You can pass any of the options described above (including style options) as CLI
 json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
 # use single quotes and disable trailing semicolons
 json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
+```
+
+The CLI supports directory of definitions as well. It supports directory paths, glob patterns, and output directories.
+
+Example 1: Directory of type definitions to an output directory
+
+Input Directory
+```
+schemas /
+ | a.json
+ | b.json
+```
+
+```sh
+json2ts -i schemas/ -o types/
+```
+
+Output Directory
+```
+types /
+ | a.d.ts
+ | b.d.ts
+```
+
+Example 2: Directory to pipe out
+Input Directory
+```
+schemas /
+ | a.json
+ | b.json
+```
+
+```sh
+json2ts -i schemas/
+```
+
+Example 3: Nested input directory mapped to nested output
+Input Directory
+```
+schemas /
+  foo /
+    | a.json
+  bar /
+    | b.json
+  fuzz /
+    c.json
+    buzz /
+      d.json
+```
+
+```sh
+json2ts -i schemas/ -o types/
+```
+
+Output Directory
+```
+types /
+  foo /
+    | a.d.ts
+  bar /
+    | b.d.ts
+  fuzz /
+    c.d.ts
+    buzz /
+      d.d.ts
 ```
 
 ## Tests
