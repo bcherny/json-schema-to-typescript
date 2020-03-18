@@ -17,7 +17,7 @@
     "clean": "shx rm -rf dist",
     "lint": "eslint src/*.ts test/*.ts",
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
-    "test": "ava --serial --timeout=100s --verbose",
+    "test": "ava --timeout=300s --verbose",
     "prepublishOnly": "npm test",
     "pretest": "npm run build && npm run lint",
     "watch": "tsc -w",
