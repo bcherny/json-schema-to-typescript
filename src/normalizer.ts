@@ -36,7 +36,7 @@ rules.set('Destructure unary types', schema => {
 })
 
 rules.set('Add empty `required` property if none is defined', schema => {
-  if (!('required' in schema) && isObjectType(schema)) {
+  if (isObjectType(schema) && !('required' in schema)) {
     schema.required = []
   }
 })
@@ -49,7 +49,7 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
 
 // TODO: default to empty schema (as per spec) instead
 rules.set('Default additionalProperties to true', schema => {
-  if (!('additionalProperties' in schema) && isObjectType(schema) && schema.patternProperties === undefined) {
+  if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
     schema.additionalProperties = true
   }
 })
