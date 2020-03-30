@@ -3,7 +3,7 @@
 import {whiteBright} from 'cli-color'
 import minimist = require('minimist')
 import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
-import * as _mkdirp from 'mkdirp'
+import * as mkdirp from 'mkdirp'
 import * as _glob from 'glob'
 import isGlob = require('is-glob')
 import {promisify} from 'util'
@@ -12,15 +12,7 @@ import stdin = require('stdin')
 import {compile, Options} from './index'
 import {pathTransform} from './utils'
 
-// Promisify mkdirp & glob
-const mkdirp = (path: string): Promise<_mkdirp.Made> =>
-  new Promise((res, rej) => {
-    _mkdirp(path, (err, made) => {
-      if (err) rej(err)
-      else res(made === null ? undefined : made)
-    })
-  })
-
+// Promisify glob
 const glob = promisify(_glob)
 
 main(
@@ -102,7 +94,7 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
       } else {
         let outPath = pathTransform(argOut, file)
         if (!isDir(dirname(outPath))) {
-          _mkdirp.sync(dirname(outPath))
+          mkdirp.sync(dirname(outPath))
         }
         outPath = outPath.replace('.json', '.d.ts')
         return processFile(file, outPath, argv)
