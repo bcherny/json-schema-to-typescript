@@ -6,5 +6,6 @@
   "semi": false,
   "singleQuote": true,
   "trailingComma": "none",
-  "useTabs": false
+  "useTabs": false,
+  "arrowParens": "avoid"
 }
