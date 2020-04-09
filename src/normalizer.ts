@@ -131,6 +131,20 @@ rules.set('Make extends always an array, if it is defined', schema => {
   }
 })
 
+rules.set('Transform $defs to definitions', schema => {
+  if (schema.$defs) {
+    schema.definitions = schema.$defs
+    delete schema.$defs
+  }
+})
+
+rules.set('Transform const to singleton enum', schema => {
+  if (schema.const) {
+    schema.enum = [schema.const]
+    delete schema.const
+  }
+})
+
 export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   rules.forEach(rule => traverse(rootSchema, schema => rule(schema, filename, options)))
   return rootSchema as NormalizedJSONSchema
