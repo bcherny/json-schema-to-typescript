@@ -1,10 +1,24 @@
-import { JSONSchema4Type } from 'json-schema'
+import {JSONSchema4Type} from 'json-schema'
 
 export type AST_TYPE = AST['type']
 
-export type AST = TAny | TArray | TBoolean | TEnum | TInterface | TNamedInterface
-  | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
-  | TString | TTuple | TUnion | TCustomType
+export type AST =
+  | TAny
+  | TArray
+  | TBoolean
+  | TEnum
+  | TInterface
+  | TNamedInterface
+  | TIntersection
+  | TLiteral
+  | TNumber
+  | TNull
+  | TObject
+  | TReference
+  | TString
+  | TTuple
+  | TUnion
+  | TCustomType
 
 export interface AbstractAST {
   comment?: string
@@ -13,9 +27,9 @@ export interface AbstractAST {
   type: AST_TYPE
 }
 
-export type ASTWithComment = AST & { comment: string }
-export type ASTWithName = AST & { keyName: string }
-export type ASTWithStandaloneName = AST & { standaloneName: string }
+export type ASTWithComment = AST & {comment: string}
+export type ASTWithName = AST & {keyName: string}
+export type ASTWithStandaloneName = AST & {standaloneName: string}
 
 export function hasComment(ast: AST): ast is ASTWithComment {
   return 'comment' in ast && ast.comment != null && ast.comment !== ''
