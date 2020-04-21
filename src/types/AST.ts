@@ -18,6 +18,7 @@ export type AST =
   | TString
   | TTuple
   | TUnion
+  | TUnknown
   | TCustomType
 
 export interface AbstractAST {
@@ -130,6 +131,10 @@ export interface TUnion extends AbstractAST {
   params: AST[]
 }
 
+export interface TUnknown extends AbstractAST {
+  type: 'UNKNOWN'
+}
+
 export interface TCustomType extends AbstractAST {
   type: 'CUSTOM_TYPE'
   params: string
@@ -141,7 +146,16 @@ export const T_ANY: TAny = {
   type: 'ANY'
 }
 
+export const T_UNKNOWN: TUnknown = {
+  type: 'UNKNOWN'
+}
+
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   keyName: '[k: string]',
   type: 'ANY'
+}
+
+export const T_UNKNOWN_ADDITIONAL_PROPERTIES: TUnknown & ASTWithName = {
+  keyName: '[k: string]',
+  type: 'UNKNOWN'
 }

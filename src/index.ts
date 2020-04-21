@@ -43,6 +43,10 @@ export interface Options {
    */
   strictIndexSignatures: boolean
   /**
+   * Use `unknown` instead of `any` where types are unknown.
+   */
+  strictUnknownTypes: boolean
+  /**
    * A [Prettier](https://prettier.io/docs/en/options.html) configuration.
    */
   style: PrettierOptions
@@ -69,6 +73,7 @@ export const DEFAULT_OPTIONS: Options = {
   enableConstEnums: true, // by default, avoid generating code
   ignoreMinAndMaxItems: false,
   strictIndexSignatures: false,
+  strictUnknownTypes: false,
   style: {
     bracketSpacing: false,
     printWidth: 120,

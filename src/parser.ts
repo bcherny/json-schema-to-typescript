@@ -12,7 +12,9 @@ import {
   TInterface,
   TInterfaceParam,
   TNamedInterface,
-  TTuple
+  TTuple,
+  T_UNKNOWN,
+  T_UNKNOWN_ADDITIONAL_PROPERTIES
 } from './types/AST'
 import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
 import {generateName, log} from './utils'
@@ -241,7 +243,7 @@ function parseNonLiteral(
       // normalised to not be undefined
       const minItems = schema.minItems!
       const maxItems = typeof schema.maxItems === 'number' ? schema.maxItems : -1
-      const params = T_ANY
+      const params = options.strictUnknownTypes ? T_UNKNOWN : T_ANY
       if (minItems > 0 || maxItems >= 0) {
         return set({
           comment: schema.description,
@@ -399,7 +401,7 @@ via the \`definition\` "${key}".`
         return asts
       }
       return asts.concat({
-        ast: T_ANY_ADDITIONAL_PROPERTIES,
+        ast: options.strictUnknownTypes ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
