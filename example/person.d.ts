@@ -13,5 +13,5 @@ export interface Person {
    */
   age?: number;
   hairColor?: "black" | "brown" | "blue";
-  [k: string]: any;
+  [k: string]: unknown;
 }
