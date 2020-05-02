@@ -76,6 +76,10 @@ export function run() {
     unlinkSync('./ReferencedType.d.ts')
   })
 
+  test('--unknownAny', t => {
+    t.snapshot(execSync('node dist/src/cli.js --unknownAny --input ./test/resources/ReferencedType.json').toString())
+  })
+
   test('files in (-i), files out (-o)', t => {
     execSync("node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json' -o ./test/resources/MultiSchema/out")
 

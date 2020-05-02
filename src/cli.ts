@@ -156,6 +156,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Prettier configuration
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
+  --unknownAny
+      Output unknown type instead of any type
 `
   )
 }
