@@ -6,4 +6,5 @@ node_modules
 *.map
 dist/
 dist_tests/
+package-lock.json
 yarn-error.log
