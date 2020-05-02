@@ -107,6 +107,10 @@ json2ts foo.json foo.d.ts
 json2ts --input foo.json --output foo.d.ts
 # or
 json2ts -i foo.json -o foo.d.ts
+# or
+json2ts -i schemas/**/*.json
+# or
+json2ts -i schemas/ -o types/
 ```
 
 You can pass any of the options described above (including style options) as CLI flags. Boolean values can be set to false using the `no-` prefix.
@@ -116,71 +120,6 @@ You can pass any of the options described above (including style options) as CLI
 json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
 # use single quotes and disable trailing semicolons
 json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
-```
-
-The CLI supports directory of definitions as well. It supports directory paths, glob patterns, and output directories.
-
-Example 1: Directory of type definitions to an output directory
-
-Input Directory
-```
-schemas /
- | a.json
- | b.json
-```
-
-```sh
-json2ts -i schemas/ -o types/
-```
-
-Output Directory
-```
-types /
- | a.d.ts
- | b.d.ts
-```
-
-Example 2: Directory to pipe out
-Input Directory
-```
-schemas /
- | a.json
- | b.json
-```
-
-```sh
-json2ts -i schemas/
-```
-
-Example 3: Nested input directory mapped to nested output
-Input Directory
-```
-schemas /
-  foo /
-    | a.json
-  bar /
-    | b.json
-  fuzz /
-    c.json
-    buzz /
-      d.json
-```
-
-```sh
-json2ts -i schemas/ -o types/
-```
-
-Output Directory
-```
-types /
-  foo /
-    | a.d.ts
-  bar /
-    | b.d.ts
-  fuzz /
-    c.d.ts
-    buzz /
-      d.d.ts
 ```
 
 ## Tests
@@ -247,7 +186,12 @@ types /
 - JSON-schema test suite: https://github.com/json-schema/JSON-Schema-Test-Suite/blob/node
 - TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md
 
-## Projects That Use JSON-Schema-to-TypeScript
+## Who uses JSON-Schema-to-TypeScript?
 
-- [RAML-to-TypeScript](https://github.com/ducin/raml-to-typescript)
-- See more: https://www.npmjs.com/browse/depended/json-schema-to-typescript
+- [AWS](https://github.com/aws/aws-toolkit-vscode), [AWSLabs](https://github.com/awslabs/cdk8s)
+- [FormatJS](https://github.com/formatjs/formatjs)
+- [Microsoft](https://github.com/microsoft/mixed-reality-extension-sdk)
+- [Sourcegraph](https://github.com/sourcegraph/sourcegraph)
+- [Stryker](https://github.com/stryker-mutator/stryker)
+- [Webpack](https://github.com/webpack/webpack)
+- [See more](https://github.com/bcherny/json-schema-to-typescript/network/dependents?package_id=UGFja2FnZS0xNjUxOTM5Mg%3D%3D)
