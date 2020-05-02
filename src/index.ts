@@ -83,7 +83,7 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  unknownAny: false
+  unknownAny: true
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {

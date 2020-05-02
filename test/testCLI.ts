@@ -78,7 +78,9 @@ export function run() {
   })
 
   test('--unknownAny', t => {
-    t.snapshot(execSync('node dist/src/cli.js --unknownAny --input ./test/resources/ReferencedType.json').toString())
+    t.snapshot(
+      execSync('node dist/src/cli.js --unknownAny=false --input ./test/resources/ReferencedType.json').toString()
+    )
   })
 
   test('files in (-i), files out (-o)', t => {
