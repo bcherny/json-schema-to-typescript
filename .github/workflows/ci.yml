@@ -13,6 +13,7 @@ jobs:
     strategy:
       matrix:
         node-version: [4.5.0, 6.x, 8.x, 10.x, 12.x, 13.x]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -21,9 +22,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies
-      run: yarn install
-      env:
-        CI: true 
+      run: yarn install --ignore-engines 
     - name: Run tests
       run: yarn test
       env:
