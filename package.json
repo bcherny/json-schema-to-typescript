@@ -69,6 +69,7 @@
     "@types/minimist": "^1.2.0",
     "@types/mz": "^2.7.0",
     "@types/node": "^13.9.1",
+    "@types/rimraf": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "ava": "^3.5.0",
