@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.0.0
+
+This release brings improved typesafety, thorough testing of all supported NodeJS version and operating systems on CI, and bugfixes.
+
+- 105d239 Emit `unknown` instead of `any` by default
+- 8f0b1bc Add `unknownAny` CLI option (#281)
+- 7f52f98 Drop support for NodeJS <10
+- 375dfd2 Fix generated type names to increment counters, instead of appending when we're unable to infer a type's name
+
 ## 8.2.0
 
 - a0257d8 Add support for directories and globs as inputs (#238)
