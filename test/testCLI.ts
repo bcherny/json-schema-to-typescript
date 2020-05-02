@@ -1,7 +1,8 @@
 import {serial as test} from 'ava'
 import {execSync} from 'child_process'
-import {readFileSync, unlinkSync, readdirSync, rmdirSync, existsSync, lstatSync} from 'fs'
+import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
 import {resolve, join} from 'path'
+import rimraf = require('rimraf')
 
 export function run() {
   test('pipe in, pipe out', t => {
@@ -88,7 +89,7 @@ export function run() {
       t.snapshot(readFileSync(path, 'utf-8'))
       unlinkSync(path)
     })
-    rmdirSync('./test/resources/MultiSchema/out')
+    rimraf.sync('./test/resources/MultiSchema/out')
   })
 
   test('files in (-i), pipe out', t => {
@@ -99,23 +100,21 @@ export function run() {
     execSync(
       "node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json' -o ./test/resources/MultiSchema/foo/bar/out"
     )
-
     readdirSync('./test/resources/MultiSchema/foo/bar/out').forEach(f => {
       const path = `./test/resources/MultiSchema/foo/bar/out/${f}`
       t.snapshot(readFileSync(path, 'utf-8'))
       unlinkSync(path)
     })
-    rmdirSync('./test/resources/MultiSchema/foo', {recursive: true})
+    rimraf.sync('./test/resources/MultiSchema/foo')
   })
 
   test('files in (-i), files out (-o) matching nested dir', t => {
     execSync("node dist/src/cli.js -i './test/resources/MultiSchema2/' -o ./test/resources/MultiSchema2/out")
-    const files = getPaths('./test/resources/MultiSchema2/out')
-    files.forEach(file => {
+    getPaths('./test/resources/MultiSchema2/out').forEach(file => {
       t.snapshot(readFileSync(file, 'utf-8'))
       unlinkSync(file)
     })
-    rmdirSync('./test/resources/MultiSchema2/out', {recursive: true})
+    rimraf.sync('./test/resources/MultiSchema2/out')
   })
 }
 

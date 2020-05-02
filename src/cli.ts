@@ -50,7 +50,8 @@ async function main(argv: minimist.ParsedArgs) {
     } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
     } else {
-      await processFile(argIn, argOut, argv as Partial<Options>)
+      const result = await processFile(argIn, argv as Partial<Options>)
+      outputResult(result, argOut)
     }
   } catch (e) {
     console.error(whiteBright.bgRedBright('error'), e)
@@ -71,47 +72,56 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
       `You passed a glob pattern "${argIn}", but there are no files that match that pattern in ${process.cwd()}`
     )
   }
-  // create output directory if it does not exist
-  if (argOut && !existsSync(argOut)) {
-    await mkdirp(argOut)
-  }
 
-  await Promise.all(
-    files.map(file => {
-      const outPath = argOut && `${argOut}/${basename(file, '.json')}.d.ts`
-      return processFile(file, outPath, argv)
+  // we can do this concurrently for perf
+  const results = await Promise.all(
+    files.map(async file => {
+      return [file, await processFile(file, argv)] as const
     })
   )
+
+  // careful to do this serially
+  results.forEach(([file, result]) => {
+    const outputPath = argOut && `${argOut}/${basename(file, '.json')}.d.ts`
+    outputResult(result, outputPath)
+  })
 }
 
 async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
   const files = getPaths(argIn)
 
-  await Promise.all(
-    files.map(file => {
+  // we can do this concurrently for perf
+  const results = await Promise.all(
+    files.map(async file => {
       if (!argOut) {
-        return processFile(file, argOut, argv)
+        return [file, await processFile(file, argv)] as const
       } else {
-        let outPath = pathTransform(argOut, file)
-        if (!isDir(dirname(outPath))) {
-          mkdirp.sync(dirname(outPath))
-        }
-        outPath = outPath.replace('.json', '.d.ts')
-        return processFile(file, outPath, argv)
+        const outputPath = pathTransform(argOut, file).replace('.json', '.d.ts')
+        return [file, await processFile(file, argv), outputPath] as const
       }
     })
   )
+
+  // careful to do this serially
+  results.forEach(([file, result, outputPath]) =>
+    outputResult(result, outputPath ? `${outputPath}/${basename(file, '.json')}.d.ts` : undefined)
+  )
 }
 
-async function processFile(argIn: string, argOut: string | undefined, argv: Partial<Options>): Promise<void> {
-  const schema = JSON.parse(await readInput(argIn))
-  const ts = await compile(schema, argIn, argv)
-
-  if (!argOut) {
-    process.stdout.write(ts)
+async function outputResult(result: string, outputPath: string | undefined): Promise<void> {
+  if (!outputPath) {
+    process.stdout.write(result)
   } else {
-    return await writeFile(argOut, ts)
+    if (!isDir(dirname(outputPath))) {
+      mkdirp.sync(dirname(outputPath))
+    }
+    return await writeFile(outputPath, result)
   }
+}
+
+async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
+  const schema = JSON.parse(await readInput(argIn))
+  return compile(schema, argIn, argv)
 }
 
 function getPaths(path: string, paths: string[] = []) {
