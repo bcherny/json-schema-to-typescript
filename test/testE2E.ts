@@ -25,6 +25,7 @@ export function hasOnly() {
 export function run() {
   // [filename, absolute dirname, contents][]
   const modules = readdirSync(dir)
+    .filter(_ => !_.includes('.ignore.'))
     .filter(_ => /^.*\.js$/.test(_))
     .map(_ => [_, require(join(dir, _))]) as [string, TestCase][]
 
