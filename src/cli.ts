@@ -96,7 +96,7 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
       if (!argOut) {
         return [file, await processFile(file, argv)] as const
       } else {
-        const outputPath = pathTransform(argOut, file).replace('.json', '.d.ts')
+        const outputPath = pathTransform(argOut, argIn, file)
         return [file, await processFile(file, argv), outputPath] as const
       }
     })
