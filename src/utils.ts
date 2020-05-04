@@ -238,10 +238,10 @@ And the user wants the outputs to be in MultiSchema/Out, then this code will be 
   MultiSchema/Out/bar/fuzz/c.json
   MultiSchema/Out/bar/d.json
 */
-export function pathTransform(o: string, i: string, f: string): string {
-  const inPathList = normalize(i).split(sep)
-  const filePathList = dirname(normalize(f)).split(sep)
+export function pathTransform(outputPath: string, inputPath: string, filePath: string): string {
+  const inPathList = normalize(inputPath).split(sep)
+  const filePathList = dirname(normalize(filePath)).split(sep)
   const filePathRel = filePathList.filter((f, i) => f !== inPathList[i])
 
-  return join(normalize(o), ...filePathRel)
+  return join(normalize(outputPath), ...filePathRel)
 }
