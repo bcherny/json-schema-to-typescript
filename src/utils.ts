@@ -87,8 +87,12 @@ function traverseObjectKeys(obj: Record<string, JSONSchema>, callback: (schema: 
 function traverseArray(arr: JSONSchema[], callback: (schema: JSONSchema) => void) {
   arr.forEach(i => traverse(i, callback))
 }
-export function traverse(schema: JSONSchema, callback: (schema: JSONSchema) => void): void {
-  callback(schema)
+export function traverse(
+  schema: JSONSchema,
+  callback: (schema: JSONSchema, isRoot?: boolean) => void,
+  isRoot?: boolean
+): void {
+  callback(schema, isRoot)
 
   if (schema.anyOf) {
     traverseArray(schema.anyOf, callback)
