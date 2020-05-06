@@ -116,9 +116,8 @@ rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) =>
 
 export function normalize(schema: JSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   const _schema = cloneDeep(schema) as NormalizedJSONSchema
-  const isRoot = true
   rules.forEach((rule, key) => {
-    traverse(_schema, (schema, isRoot) => rule(schema, _schema, filename, options, isRoot), isRoot)
+    traverse(_schema, (schema, isRoot) => rule(schema, _schema, filename, options, isRoot), true)
     log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema

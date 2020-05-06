@@ -80,17 +80,17 @@ const BLACKLISTED_KEYS = new Set([
 function traverseObjectKeys(obj: Record<string, JSONSchema>, callback: (schema: JSONSchema, isRoot: boolean) => void) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, false)
+      traverse(obj[k], callback)
     }
   })
 }
 function traverseArray(arr: JSONSchema[], callback: (schema: JSONSchema, isRoot: boolean) => void) {
-  arr.forEach(i => traverse(i, callback, false))
+  arr.forEach(i => traverse(i, callback))
 }
 export function traverse(
   schema: JSONSchema,
   callback: (schema: JSONSchema, isRoot: boolean) => void,
-  isRoot: boolean
+  isRoot = false
 ): void {
   callback(schema, isRoot)
 
@@ -110,18 +110,18 @@ export function traverse(
     traverseObjectKeys(schema.patternProperties, callback)
   }
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-    traverse(schema.additionalProperties, callback, false)
+    traverse(schema.additionalProperties, callback)
   }
   if (schema.items) {
     const {items} = schema
     if (Array.isArray(items)) {
       traverseArray(items, callback)
     } else {
-      traverse(items, callback, false)
+      traverse(items, callback)
     }
   }
   if (schema.additionalItems && typeof schema.additionalItems === 'object') {
-    traverse(schema.additionalItems, callback, false)
+    traverse(schema.additionalItems, callback)
   }
   if (schema.dependencies) {
     traverseObjectKeys(schema.dependencies, callback)
@@ -130,7 +130,7 @@ export function traverse(
     traverseObjectKeys(schema.definitions, callback)
   }
   if (schema.not) {
-    traverse(schema.not, callback, false)
+    traverse(schema.not, callback)
   }
 
   // technically you can put definitions on any key
