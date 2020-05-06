@@ -4,7 +4,7 @@ import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSON
 import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
 import {Options} from './'
 
-type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string, options: Options, isRoot?: boolean) => void
+type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string, options: Options, isRoot: boolean) => void
 const rules = new Map<string, Rule>()
 
 function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
