@@ -88,6 +88,7 @@ export function run() {
 
     readdirSync('./test/resources/MultiSchema/out').forEach(f => {
       const path = `./test/resources/MultiSchema/out/${f}`
+      t.snapshot(path)
       t.snapshot(readFileSync(path, 'utf-8'))
       unlinkSync(path)
     })
@@ -104,6 +105,7 @@ export function run() {
     )
     readdirSync('./test/resources/MultiSchema/foo/bar/out').forEach(f => {
       const path = `./test/resources/MultiSchema/foo/bar/out/${f}`
+      t.snapshot(path)
       t.snapshot(readFileSync(path, 'utf-8'))
       unlinkSync(path)
     })
@@ -111,8 +113,11 @@ export function run() {
   })
 
   test('files in (-i), files out (-o) matching nested dir', t => {
-    execSync("node dist/src/cli.js -i './test/resources/MultiSchema2/' -o ./test/resources/MultiSchema2/out")
+    execSync(
+      "node dist/src/cli.js -i './test/resources/../../test/resources/MultiSchema2/' -o ./test/resources/MultiSchema2/out"
+    )
     getPaths('./test/resources/MultiSchema2/out').forEach(file => {
+      t.snapshot(file)
       t.snapshot(readFileSync(file, 'utf-8'))
       unlinkSync(file)
     })

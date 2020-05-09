@@ -1,6 +1,6 @@
 import {whiteBright} from 'cli-color'
 import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
-import {basename, extname, join} from 'path'
+import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
@@ -242,14 +242,10 @@ And the user wants the outputs to be in MultiSchema/Out, then this code will be 
   MultiSchema/Out/bar/fuzz/c.json
   MultiSchema/Out/bar/d.json
 */
-export function pathTransform(o: string, i: string): string {
-  const outPathList = o.split('/')
-  const inPathList = i.split('/')
+export function pathTransform(outputPath: string, inputPath: string, filePath: string): string {
+  const inPathList = normalize(inputPath).split(sep)
+  const filePathList = dirname(normalize(filePath)).split(sep)
+  const filePathRel = filePathList.filter((f, i) => f !== inPathList[i])
 
-  const intersection = outPathList.filter(x => inPathList.includes(x))
-  const symmetricDifference = outPathList
-    .filter(x => !inPathList.includes(x))
-    .concat(inPathList.filter(x => !outPathList.includes(x)))
-
-  return join(...intersection, ...symmetricDifference)
+  return join(normalize(outputPath), ...filePathRel)
 }

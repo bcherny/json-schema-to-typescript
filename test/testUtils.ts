@@ -3,12 +3,9 @@ import {pathTransform, generateName} from '../src/utils'
 
 export function run() {
   test('pathTransform', t => {
-    const inputPaths = ['MultiSchema/foo/a.json', 'MultiSchema/bar/fuzz/c.json', 'MultiSchema/bar/d.json']
-    const outputPath = 'MultiSchema/Out'
-
-    t.is(pathTransform(outputPath, inputPaths[0]), 'MultiSchema/Out/foo/a.json')
-    t.is(pathTransform(outputPath, inputPaths[1]), 'MultiSchema/Out/bar/fuzz/c.json')
-    t.is(pathTransform(outputPath, inputPaths[2]), 'MultiSchema/Out/bar/d.json')
+    t.is(pathTransform('types', 'schemas', 'schemas/foo/a.json'), 'types/foo')
+    t.is(pathTransform('./schemas/types', './schemas', 'schemas/foo/bar/a.json'), 'schemas/types/foo/bar')
+    t.is(pathTransform('types', './src/../types/../schemas', 'schemas/foo/a.json'), 'types/foo')
   })
   test('generateName', t => {
     const usedNames = new Set<string>()
