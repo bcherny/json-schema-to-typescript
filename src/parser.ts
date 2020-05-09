@@ -270,7 +270,11 @@ function parseNonLiteral(
 /**
  * Compute a schema name using a series of fallbacks
  */
-function standaloneName(schema: JSONSchema, keyNameFromDefinition: string | undefined, usedNames: UsedNames) {
+function standaloneName(
+  schema: JSONSchema,
+  keyNameFromDefinition: string | undefined,
+  usedNames: UsedNames
+): string | undefined {
   const name = schema.title || schema.id || keyNameFromDefinition
   if (name) {
     return generateName(name, usedNames)

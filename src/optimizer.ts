@@ -27,7 +27,15 @@ export function optimize(ast: AST, processed = new Map<AST, AST>()): AST {
       }
 
       // [A, B, B] -> [A, B]
-      ast.params = uniqBy(ast.params, _ => `${_.type}------${stringify((_ as any).params)}`)
+      const shouldTakeStandaloneNameIntoAccount = ast.params.filter(_ => _.standaloneName).length > 1
+      ast.params = uniqBy(
+        ast.params,
+        _ => `
+          ${_.type}-
+          ${shouldTakeStandaloneNameIntoAccount ? _.standaloneName : ''}-
+          ${stringify((_ as any).params)}
+        `
+      )
 
       return Object.assign(ast, {
         params: ast.params.map(_ => optimize(_, processed))
