@@ -1,11 +1,10 @@
 import {whiteBright} from 'cli-color'
-import stringify = require('json-stringify-safe')
 import {cloneDeep} from 'lodash'
 import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
 import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
 import {Options} from './'
 
-type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string, options: Options) => void
+type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string, options: Options, isRoot: boolean) => void
 const rules = new Map<string, Rule>()
 
 function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
@@ -54,8 +53,8 @@ rules.set('Default additionalProperties to true', schema => {
   }
 })
 
-rules.set('Default top level `id`', (schema, rootSchema, fileName) => {
-  if (!schema.id && stringify(schema) === stringify(rootSchema)) {
+rules.set('Default top level `id`', (schema, _rootSchema, fileName, _options, isRoot) => {
+  if (isRoot && !schema.id) {
     schema.id = toSafeString(justName(fileName))
   }
 })
@@ -118,7 +117,7 @@ rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) =>
 export function normalize(schema: JSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   const _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
-    traverse(_schema, schema => rule(schema, _schema, filename, options))
+    traverse(_schema, (schema, isRoot) => rule(schema, _schema, filename, options, isRoot), true)
     log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
   })
   return _schema

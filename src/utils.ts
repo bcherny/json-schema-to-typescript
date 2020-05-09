@@ -77,18 +77,22 @@ const BLACKLISTED_KEYS = new Set([
   'oneOf',
   'not'
 ])
-function traverseObjectKeys(obj: Record<string, JSONSchema>, callback: (schema: JSONSchema) => void) {
+function traverseObjectKeys(obj: Record<string, JSONSchema>, callback: (schema: JSONSchema, isRoot: boolean) => void) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
       traverse(obj[k], callback)
     }
   })
 }
-function traverseArray(arr: JSONSchema[], callback: (schema: JSONSchema) => void) {
+function traverseArray(arr: JSONSchema[], callback: (schema: JSONSchema, isRoot: boolean) => void) {
   arr.forEach(i => traverse(i, callback))
 }
-export function traverse(schema: JSONSchema, callback: (schema: JSONSchema) => void): void {
-  callback(schema)
+export function traverse(
+  schema: JSONSchema,
+  callback: (schema: JSONSchema, isRoot: boolean) => void,
+  isRoot = false
+): void {
+  callback(schema, isRoot)
 
   if (schema.anyOf) {
     traverseArray(schema.anyOf, callback)
