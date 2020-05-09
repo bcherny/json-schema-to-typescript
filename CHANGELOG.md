@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.1.0
+
+- d88a514 Improve deduping logic for `anyOf` (#273)
+- 8f3f101 Bugfixes for CLI
+- d0ad44b Improve normalizer performance (#286)
+
 ## 9.0.0
 
 This release brings improved typesafety, thorough testing of all supported NodeJS version and operating systems on CI, and bugfixes.
