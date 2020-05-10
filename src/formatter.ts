@@ -1,6 +1,8 @@
-import {format as prettify} from 'prettier'
 import {Options} from './'
 
 export function format(code: string, options: Options): string {
-  return prettify(code, {parser: 'typescript', ...options.style})
+  if (!options.format) {
+    return code
+  }
+  return require('prettier').format(code, {parser: 'typescript', ...options.style})
 }
