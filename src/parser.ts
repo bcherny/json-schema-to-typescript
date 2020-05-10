@@ -1,4 +1,3 @@
-import {whiteBright} from 'cli-color'
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map} from 'lodash'
 import {format} from 'util'
@@ -15,7 +14,7 @@ import {
   TTuple
 } from './types/AST'
 import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
-import {generateName, log} from './utils'
+import {generateName} from './utils'
 
 export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
 
@@ -83,8 +82,6 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames
 ) {
-  log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
-
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       return set({

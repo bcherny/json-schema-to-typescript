@@ -1,4 +1,3 @@
-import {whiteBright} from 'cli-color'
 import {omit} from 'lodash'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -14,7 +13,7 @@ import {
   TNamedInterface,
   TUnion
 } from './types/AST'
-import {log, toSafeString} from './utils'
+import {toSafeString} from './utils'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (
@@ -171,8 +170,6 @@ function generateType(ast: AST, options: Options): string {
 }
 
 function generateRawType(ast: AST, options: Options): string {
-  log(whiteBright.bgMagenta('generator'), ast)
-
   if (hasStandaloneName(ast)) {
     return toSafeString(ast.standaloneName)
   }

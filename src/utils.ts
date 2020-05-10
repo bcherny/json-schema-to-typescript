@@ -1,4 +1,3 @@
-import {whiteBright} from 'cli-color'
 import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema} from './types/JSONSchema'
@@ -207,13 +206,7 @@ export function generateName(from: string, usedNames: Set<string>) {
 }
 
 export function error(...messages: any[]) {
-  console.error(whiteBright.bgRedBright('error'), ...messages)
-}
-
-export function log(...messages: any[]) {
-  if (process.env.VERBOSE) {
-    console.info(whiteBright.bgCyan('debug'), ...messages)
-  }
+  console.error(require('cli-color').whiteBright.bgRedBright('error'), ...messages)
 }
 
 /**

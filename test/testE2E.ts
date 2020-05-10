@@ -3,7 +3,7 @@ import {readdirSync} from 'fs'
 import {find} from 'lodash'
 import {join} from 'path'
 import {compile, JSONSchema, Options} from '../src'
-import {log, stripExtension} from '../src/utils'
+import {stripExtension} from '../src/utils'
 
 const dir = __dirname + '/e2e'
 
@@ -40,7 +40,6 @@ export function run() {
 }
 
 function runOne(exports: TestCase, name: string) {
-  log(`Running test: "${name}"`)
   test(name, async t => {
     if (exports.error) {
       try {
