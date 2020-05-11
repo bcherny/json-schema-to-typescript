@@ -1,5 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map} from 'lodash'
+import {findKey, includes, map} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {typeOfSchema} from './typeOfSchema'
@@ -14,7 +14,7 @@ import {
   TTuple
 } from './types/AST'
 import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
-import {generateName} from './utils'
+import {generateName, traverse} from './utils'
 
 export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
 
@@ -425,36 +425,14 @@ via the \`definition\` "${key}".`
 
 type Definitions = {[k: string]: JSONSchema}
 
-/**
- * TODO: Memoize
- */
-function getDefinitions(schema: JSONSchema, isSchema = true, processed = new Set<JSONSchema>()): Definitions {
-  if (processed.has(schema)) {
-    return {}
-  }
-  processed.add(schema)
-  if (Array.isArray(schema)) {
-    return schema.reduce(
-      (prev, cur) => ({
-        ...prev,
-        ...getDefinitions(cur, false, processed)
-      }),
-      {}
-    )
-  }
-  if (isPlainObject(schema)) {
-    return {
-      ...(isSchema && hasDefinitions(schema) ? schema.definitions : {}),
-      ...Object.keys(schema).reduce<Definitions>(
-        (prev, cur) => ({
-          ...prev,
-          ...getDefinitions(schema[cur], false, processed)
-        }),
-        {}
-      )
+function getDefinitions(schema: JSONSchema): Definitions {
+  const definitions = {}
+  traverse(schema, s => {
+    if (hasDefinitions(s)) {
+      Object.assign(definitions, s.definitions)
     }
-  }
-  return {}
+  })
+  return definitions
 }
 
 /**

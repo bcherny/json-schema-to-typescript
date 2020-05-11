@@ -114,7 +114,7 @@ rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) =>
 
 export function normalize(schema: JSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   rules.forEach(rule => {
-    traverse(schema, (s, isRoot) => rule(s, schema, filename, options, isRoot), true)
+    traverse(schema, (s, isRoot) => rule(s, schema, filename, options, isRoot))
   })
   return schema as NormalizedJSONSchema
 }

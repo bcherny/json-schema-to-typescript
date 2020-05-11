@@ -1,4 +1,4 @@
-import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
+import {deburr, trim, upperFirst, isPlainObject} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema} from './types/JSONSchema'
 
@@ -9,25 +9,6 @@ export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   } catch (e) {
     return err(e as Error)
   }
-}
-
-export function mapDeep(object: object, fn: (value: object, key?: string) => object, key?: string): object {
-  return fn(
-    mapValues(object, (_: unknown, key) => {
-      if (isPlainObject(_)) {
-        return mapDeep(_ as object, fn, key)
-      } else if (Array.isArray(_)) {
-        return _.map(item => {
-          if (isPlainObject(item)) {
-            return mapDeep(item as object, fn, key)
-          }
-          return item
-        })
-      }
-      return _
-    }),
-    key
-  )
 }
 
 // keys that shouldn't be traversed by the catchall step
@@ -65,60 +46,77 @@ const BLACKLISTED_KEYS = new Set([
   'oneOf',
   'not'
 ])
-function traverseObjectKeys(obj: Record<string, JSONSchema>, callback: (schema: JSONSchema, isRoot: boolean) => void) {
+
+type TraversalState = {isRoot: boolean; traversed: WeakSet<JSONSchema>}
+
+function traverseObjectKeys(
+  obj: Record<string, JSONSchema>,
+  callback: (schema: JSONSchema, isRoot: boolean) => void,
+  state: TraversalState
+) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, false)
+      traverse(obj[k], callback, state)
     }
   })
 }
-function traverseArray(arr: JSONSchema[], callback: (schema: JSONSchema, isRoot: boolean) => void) {
-  arr.forEach(i => traverse(i, callback, false))
+
+function traverseArray(
+  arr: JSONSchema[],
+  callback: (schema: JSONSchema, isRoot: boolean) => void,
+  state: TraversalState
+) {
+  arr.forEach(i => traverse(i, callback, state))
 }
+
 export function traverse(
   schema: JSONSchema,
   callback: (schema: JSONSchema, isRoot: boolean) => void,
-  isRoot: boolean
+  {isRoot, traversed}: TraversalState = {isRoot: true, traversed: new WeakSet()}
 ): void {
+  if (traversed.has(schema)) {
+    return
+  }
+  traversed.add(schema)
   callback(schema, isRoot)
 
   if (schema.anyOf) {
-    traverseArray(schema.anyOf, callback)
+    traverseArray(schema.anyOf, callback, {isRoot: false, traversed})
   }
   if (schema.allOf) {
-    traverseArray(schema.allOf, callback)
+    traverseArray(schema.allOf, callback, {isRoot: false, traversed})
   }
   if (schema.oneOf) {
-    traverseArray(schema.oneOf, callback)
+    traverseArray(schema.oneOf, callback, {isRoot: false, traversed})
   }
   if (schema.properties) {
-    traverseObjectKeys(schema.properties, callback)
+    traverseObjectKeys(schema.properties, callback, {isRoot: false, traversed})
   }
   if (schema.patternProperties) {
-    traverseObjectKeys(schema.patternProperties, callback)
+    traverseObjectKeys(schema.patternProperties, callback, {isRoot: false, traversed})
   }
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-    traverse(schema.additionalProperties, callback, false)
+    traverse(schema.additionalProperties, callback, {isRoot: false, traversed})
   }
   if (schema.items) {
     const {items} = schema
     if (Array.isArray(items)) {
-      traverseArray(items, callback)
+      traverseArray(items, callback, {isRoot: false, traversed})
     } else {
-      traverse(items, callback, false)
+      traverse(items, callback, {isRoot: false, traversed})
     }
   }
   if (schema.additionalItems && typeof schema.additionalItems === 'object') {
-    traverse(schema.additionalItems, callback, false)
+    traverse(schema.additionalItems, callback, {isRoot: false, traversed})
   }
   if (schema.dependencies) {
-    traverseObjectKeys(schema.dependencies, callback)
+    traverseObjectKeys(schema.dependencies, callback, {isRoot: false, traversed})
   }
   if (schema.definitions) {
-    traverseObjectKeys(schema.definitions, callback)
+    traverseObjectKeys(schema.definitions, callback, {isRoot: false, traversed})
   }
   if (schema.not) {
-    traverse(schema.not, callback, false)
+    traverse(schema.not, callback, {isRoot: false, traversed})
   }
 
   // technically you can put definitions on any key
@@ -126,8 +124,8 @@ export function traverse(
     .filter(key => !BLACKLISTED_KEYS.has(key))
     .forEach(key => {
       const child = schema[key]
-      if (child && typeof child === 'object') {
-        traverseObjectKeys(child, callback)
+      if (isPlainObject(child)) {
+        traverseObjectKeys(child, callback, {isRoot: false, traversed})
       }
     })
 }
