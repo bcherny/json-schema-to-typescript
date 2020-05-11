@@ -1,3 +1,7 @@
+export const options = {
+  format: false
+}
+
 export let input =
 {
     "id":"#",

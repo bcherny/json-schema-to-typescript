@@ -1,3 +1,7 @@
+export const options = {
+  format: false
+}
+
 /**
  * @see https://api.heroku.com/schema
  *      (Accept=application/vnd.heroku+json; version=3)
