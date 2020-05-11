@@ -4,16 +4,12 @@ import {whiteBright} from 'cli-color'
 import minimist = require('minimist')
 import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
 import * as mkdirp from 'mkdirp'
-import * as _glob from 'glob'
+import glob from 'glob-promise'
 import isGlob = require('is-glob')
-import {promisify} from 'util'
 import {join, resolve, dirname, basename} from 'path'
 import stdin = require('stdin')
 import {compile, Options} from './index'
 import {pathTransform} from './utils'
-
-// Promisify glob
-const glob = promisify(_glob)
 
 main(
   minimist(process.argv.slice(2), {

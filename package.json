@@ -49,6 +49,7 @@
     "@types/json-schema": "^7.0.4",
     "cli-color": "^2.0.0",
     "glob": "^7.1.6",
+    "glob-promise": "^3.4.0",
     "is-glob": "^4.0.1",
     "json-schema-ref-parser": "^9.0.1",
     "json-stringify-safe": "^5.0.1",
