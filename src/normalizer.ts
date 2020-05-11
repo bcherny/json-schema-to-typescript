@@ -1,4 +1,3 @@
-import {cloneDeep} from 'lodash'
 import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
 import {escapeBlockComment, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
@@ -114,9 +113,8 @@ rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) =>
 })
 
 export function normalize(schema: JSONSchema, filename: string, options: Options): NormalizedJSONSchema {
-  const _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach(rule => {
-    traverse(_schema, (schema, isRoot) => rule(schema, _schema, filename, options, isRoot), true)
+    traverse(schema, (s, isRoot) => rule(s, schema, filename, options, isRoot), true)
   })
-  return _schema
+  return schema as NormalizedJSONSchema
 }
