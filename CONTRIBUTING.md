@@ -11,3 +11,6 @@
 - To debug a test, with breakpoints:
   1. Install [node-inspector](https://www.npmjs.com/package/node-inspector)
   2. Run `node-debug ./node_modules/ava/profile.js ./dist/test/test.js`
+- When updating the e2e tests:
+  1. Run `yarn test`
+  2. If the snapshot changed and the changes are as expected: run `ava --update-snapshots`
