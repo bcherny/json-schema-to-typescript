@@ -298,6 +298,23 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
 }
 
 function generateInterface(ast: TInterface, options: Options): string {
+  if (ast.params.length && ast.params.every(_ => _.isPatternProperty)) {
+    const property = escapeKeyName('[k: string]')
+    const types = [] as string[]
+
+    for (const k in ast.params) {
+      const prop = ast.params[k]
+
+      const type = generateType(prop.ast, options)
+
+      types.push(hasStandaloneName(ast) ? toSafeString(type) : type)
+    }
+
+    types.push('undefined')
+
+    return `{` + '\n' + property + ': ' + types.join(' | ') + '\n' + '}'
+  }
+
   return (
     `{` +
     '\n' +
