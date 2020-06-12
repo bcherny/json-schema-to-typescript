@@ -37,6 +37,7 @@ export interface TArray extends AbstractAST {
 }
 
 export interface TBoolean extends AbstractAST {
+  isNullable: boolean
   type: 'BOOLEAN'
 }
 
@@ -83,6 +84,7 @@ export interface TLiteral extends AbstractAST {
 }
 
 export interface TNumber extends AbstractAST {
+  isNullable: boolean
   type: 'NUMBER'
 }
 
@@ -91,6 +93,7 @@ export interface TNull extends AbstractAST {
 }
 
 export interface TObject extends AbstractAST {
+  isNullable: boolean
   type: 'OBJECT'
 }
 
@@ -100,6 +103,7 @@ export interface TReference extends AbstractAST {
 }
 
 export interface TString extends AbstractAST {
+  isNullable: boolean
   type: 'STRING'
 }
 
@@ -112,11 +116,13 @@ export interface TTuple extends AbstractAST {
 }
 
 export interface TUnion extends AbstractAST {
+  isNullable: boolean
   type: 'UNION'
   params: AST[]
 }
 
 export interface TCustomType extends AbstractAST {
+  isNullable: boolean
   type: 'CUSTOM_TYPE'
   params: string
 }

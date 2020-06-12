@@ -186,7 +186,7 @@ function generateRawType(ast: AST, options: Options): string {
         return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
       })()
     case 'BOOLEAN':
-      return 'boolean'
+      return 'boolean' + (ast.isNullable? ' | null' : '')
     case 'INTERFACE':
       return generateInterface(ast, options)
     case 'INTERSECTION':
@@ -194,15 +194,15 @@ function generateRawType(ast: AST, options: Options): string {
     case 'LITERAL':
       return JSON.stringify(ast.params)
     case 'NUMBER':
-      return 'number'
+      return 'number' + (ast.isNullable? ' | null' : '')
     case 'NULL':
       return 'null'
     case 'OBJECT':
-      return 'object'
+      return 'object' + (ast.isNullable? ' | null' : '')
     case 'REFERENCE':
       return ast.params
     case 'STRING':
-      return 'string'
+      return 'string' + (ast.isNullable? ' | null' : '')
     case 'TUPLE':
       return (() => {
         const minItems = ast.minItems
@@ -284,7 +284,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'UNION':
       return generateSetOperation(ast, options)
     case 'CUSTOM_TYPE':
-      return ast.params
+      return ast.params + (ast.isNullable? ' | null' : '')
   }
 }
 
@@ -293,6 +293,9 @@ function generateRawType(ast: AST, options: Options): string {
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
   const members = (ast as TUnion).params.map(_ => generateType(_, options))
+  if (ast.type === 'UNION' && ast.isNullable) {
+    members.push('null')
+  }
   const separator = ast.type === 'UNION' ? '|' : '&'
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
