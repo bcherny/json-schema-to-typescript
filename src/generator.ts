@@ -186,7 +186,7 @@ function generateRawType(ast: AST, options: Options): string {
         return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
       })()
     case 'BOOLEAN':
-      return 'boolean' + (ast.isNullable? ' | null' : '')
+      return 'boolean' + (ast.isNullable ? ' | null' : '')
     case 'INTERFACE':
       return generateInterface(ast, options)
     case 'INTERSECTION':
@@ -194,15 +194,15 @@ function generateRawType(ast: AST, options: Options): string {
     case 'LITERAL':
       return JSON.stringify(ast.params)
     case 'NUMBER':
-      return 'number' + (ast.isNullable? ' | null' : '')
+      return 'number' + (ast.isNullable ? ' | null' : '')
     case 'NULL':
       return 'null'
     case 'OBJECT':
-      return 'object' + (ast.isNullable? ' | null' : '')
+      return 'object' + (ast.isNullable ? ' | null' : '')
     case 'REFERENCE':
       return ast.params
     case 'STRING':
-      return 'string' + (ast.isNullable? ' | null' : '')
+      return 'string' + (ast.isNullable ? ' | null' : '')
     case 'TUPLE':
       return (() => {
         const minItems = ast.minItems
@@ -284,7 +284,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'UNION':
       return generateSetOperation(ast, options)
     case 'CUSTOM_TYPE':
-      return ast.params + (ast.isNullable? ' | null' : '')
+      return ast.params + (ast.isNullable ? ' | null' : '')
   }
 }
 
