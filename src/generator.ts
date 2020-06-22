@@ -1,5 +1,5 @@
 import {whiteBright} from 'cli-color'
-import {omit} from 'lodash'
+import {omit, uniq} from 'lodash'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
   AST,
@@ -20,6 +20,7 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (
     [
       options.bannerComment,
+      uniq<string>(declareImports(ast, options, ast.standaloneName!).split('\n')).join('\n'),
       declareNamedTypes(ast, options, ast.standaloneName!),
       declareNamedInterfaces(ast, options, ast.standaloneName!),
       declareEnums(ast, options)
@@ -27,6 +28,49 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
       .filter(Boolean)
       .join('\n\n') + '\n'
   ) // trailing newline
+}
+
+function declareImports(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+  if (processed.has(ast)) {
+    return ''
+  }
+
+  processed.add(ast)
+  let imports = ''
+
+  switch (ast.type) {
+    case 'CUSTOM_MODULE':
+      imports = `import {${ast.params}} from '${ast.module}'`
+      break
+    case 'ARRAY':
+      imports = declareImports((ast as TArray).params, options, rootASTName, processed)
+      break
+    case 'INTERFACE':
+      imports = [
+        getSuperTypesAndParams(ast)
+          .map(ast => declareImports(ast, options, rootASTName, processed))
+          .filter(Boolean)
+          .join('\n')
+      ]
+        .filter(Boolean)
+        .join('\n')
+      break
+    case 'INTERSECTION':
+    case 'TUPLE':
+    case 'UNION':
+      imports = ast.params
+        .map(_ => declareImports(_, options, rootASTName, processed))
+        .filter(Boolean)
+        .join('\n')
+      if (ast.type === 'TUPLE' && ast.spreadParam) {
+        imports += declareImports(ast.spreadParam, options, rootASTName, processed)
+      }
+      break
+    default:
+      imports = ''
+  }
+
+  return imports
 }
 
 function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
@@ -283,6 +327,8 @@ function generateRawType(ast: AST, options: Options): string {
       })()
     case 'UNION':
       return generateSetOperation(ast, options)
+    case 'CUSTOM_MODULE':
+      return ast.params
     case 'CUSTOM_TYPE':
       return ast.params
   }

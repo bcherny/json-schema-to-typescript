@@ -116,6 +116,12 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'BOOLEAN'
       })
+    case 'CUSTOM_MODULE':
+      return set({
+        params: schema.tsType!,
+        module: schema.tsModule!,
+        type: 'CUSTOM_MODULE'
+      })
     case 'CUSTOM_TYPE':
       return set({
         comment: schema.description,
