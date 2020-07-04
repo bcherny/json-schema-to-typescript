@@ -8,17 +8,23 @@ export type AST = TAny | TArray | TBoolean | TEnum | TInterface | TNamedInterfac
 
 export interface AbstractAST {
   comment?: string
+  refComment?: string
   keyName?: string
   standaloneName?: string
   type: AST_TYPE
 }
 
 export type ASTWithComment = AST & { comment: string }
+export type ASTWithRefComment = AST & { refComment: string }
 export type ASTWithName = AST & { keyName: string }
 export type ASTWithStandaloneName = AST & { standaloneName: string }
 
 export function hasComment(ast: AST): ast is ASTWithComment {
   return 'comment' in ast && ast.comment != null && ast.comment !== ''
+}
+
+export function hasRefComment(ast: AST): ast is ASTWithRefComment {
+  return 'refComment' in ast && ast.refComment != null && ast.refComment !== ''
 }
 
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
