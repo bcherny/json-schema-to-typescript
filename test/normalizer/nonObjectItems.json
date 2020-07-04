@@ -1,0 +1,27 @@
+{
+  "name": "Non object items.items",
+  "in": {
+    "id": "foo",
+    "type": "object",
+    "properties": {
+      "myProperty": {
+        "type": "array",
+        "items": "string"
+      }
+    },
+    "additionalProperties": false
+  },
+  "out": {
+    "id": "foo",
+    "type": "object",
+    "properties": {
+      "myProperty": {
+        "items": "string",
+        "minItems": 0,
+        "type": "array"
+      }
+    },
+    "additionalProperties": false,
+    "required": []
+  }
+}
