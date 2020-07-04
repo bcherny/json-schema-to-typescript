@@ -55,12 +55,17 @@ export interface Options {
    */
   unknownAny: boolean
   /**
+   * Resolve `$ref`s using [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser)
+   */
+  resolve: boolean
+  /**
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
   $refOptions: $RefOptions
 }
 
 export const DEFAULT_OPTIONS: Options = {
+  resolve: true,
   $refOptions: {},
   bannerComment: `/* tslint:disable */
 /**

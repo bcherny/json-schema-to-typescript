@@ -167,6 +167,20 @@ function parseNonLiteral(
         type: 'UNION'
       })
     case 'REFERENCE':
+      const prefix = '#/definitions/'
+      if (schema.$ref && schema.$ref.startsWith(prefix)) {
+        const ref = schema.$ref.substr(prefix.length)
+        const definitions = getDefinitions(rootSchema)
+        const def = definitions[ref]
+        if (def) {
+          return set(
+            Object.assign(
+              {refComment: schema.description},
+              parse(def, options, rootSchema, undefined, true, processed, usedNames)
+            )
+          )
+        }
+      }
       throw Error(format('Refs should have been resolved by the resolver!', schema))
     case 'STRING':
       return set({
