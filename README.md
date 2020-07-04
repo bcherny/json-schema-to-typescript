@@ -91,7 +91,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `definitions` that aren't referenced by the schema. |
-| strictIndexSignatures | boolean | `false` | Append all index signatures with `| undefined` so that they are strictly typed. |
+| strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 
