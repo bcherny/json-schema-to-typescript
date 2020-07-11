@@ -20,7 +20,7 @@
     "test": "ava --timeout=300s --verbose",
     "stresstest": "seq 1 10 | xargs -I{} npm test",
     "prepublishOnly": "npm test",
-    "pretest": "npm run build && npm run lint",
+    "pretest": "npm run build",
     "watch": "tsc -w",
     "watch:test": "ava -w"
   },
