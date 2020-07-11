@@ -24,8 +24,8 @@ export function typeOfSchema(schema: JSONSchema): SchemaType {
     case 'boolean':
       return 'BOOLEAN'
     case 'object':
-      if (!schema.properties && !isPlainObject(schema)) {
-        return 'OBJECT'
+      if (!isPlainObject(schema.additionalProperties) && !schema.patternProperties && !schema.properties) {
+        return 'UNNAMED_SCHEMA'
       }
       break
     case 'array':
