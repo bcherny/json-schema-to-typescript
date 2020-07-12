@@ -1,8 +1,8 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map} from 'lodash'
+import {includes, isPlainObject, map} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
-import {typeOfSchema} from './typeOfSchema'
+import {typesOfSchema} from './typeOfSchema'
 import {
   AST,
   hasStandaloneName,
@@ -11,10 +11,22 @@ import {
   TInterface,
   TInterfaceParam,
   TNamedInterface,
-  TTuple
+  TTuple,
+  TArray,
+  TUnion,
+  TString,
+  TObject,
+  TNumber,
+  TNull,
+  TEnum,
+  TCustomType,
+  TBoolean,
+  TAny,
+  TIntersection
 } from './types/AST'
-import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
+import {JSONSchema, SchemaSchema} from './types/JSONSchema'
 import {generateName, log} from './utils'
+import {ORIGINAL_REF_SYMBOL} from '@apidevtools/json-schema-ref-parser'
 
 export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
 
@@ -34,9 +46,6 @@ export function parse(
     return processed.get(schema)!
   }
 
-  const definitions = getDefinitions(rootSchema)
-  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
-
   // Cache processed ASTs before they are actually computed, then update
   // them in place using set(). This is to avoid cycles.
   // TODO: Investigate alternative approaches (lazy-computing nodes, etc.)
@@ -45,29 +54,34 @@ export function parse(
   const set = (_ast: AST) => Object.assign(ast, _ast)
 
   return isSchema
-    ? parseNonLiteral(
-        schema as SchemaSchema,
-        options,
-        rootSchema,
-        keyName,
-        keyNameFromDefinition,
-        set,
-        processed,
-        usedNames
-      )
-    : parseLiteral(schema, keyName, keyNameFromDefinition, set)
+    ? parseNonLiteral(schema as SchemaSchema, options, rootSchema, keyName, set, processed, usedNames)
+    : parseLiteral(schema, keyName, set)
 }
 
-function parseLiteral(
-  schema: JSONSchema4Type,
-  keyName: string | undefined,
-  keyNameFromDefinition: string | undefined,
-  set: (ast: AST) => AST
-) {
+/**
+ * Compute a schema name using a series of fallbacks
+ */
+function getStandaloneName(schema: JSONSchema, keyName: string | undefined, usedNames: UsedNames): string | undefined {
+  if (schema.title) {
+    return generateName(schema.title, usedNames)
+  }
+  if (schema.id) {
+    return generateName(schema.id, usedNames)
+  }
+  const keyNameFromRef = isPlainObject(schema) ? (schema as any)[ORIGINAL_REF_SYMBOL as any] : null
+  if (keyNameFromRef) {
+    return generateName(keyNameFromRef.slice(keyNameFromRef.lastIndexOf('/')), usedNames)
+  }
+  if (schema.tsEnumNames && keyName) {
+    return generateName(keyName, usedNames)
+  }
+  return undefined
+}
+
+function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined, set: (ast: AST) => AST): AST {
   return set({
     keyName,
     params: schema,
-    standaloneName: keyNameFromDefinition,
     type: 'LITERAL'
   })
 }
@@ -77,207 +91,219 @@ function parseNonLiteral(
   options: Options,
   rootSchema: JSONSchema,
   keyName: string | undefined,
-  keyNameFromDefinition: string | undefined,
   set: (ast: AST) => AST,
   processed: Processed,
   usedNames: UsedNames
-) {
-  log('blue', 'parser', schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
+): AST {
+  const standaloneName = getStandaloneName(schema, keyName, usedNames)
 
-  switch (typeOfSchema(schema)) {
-    case 'ALL_OF':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: schema.allOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'INTERSECTION'
-      })
-    case 'ANY':
-      return set({
-        comment: schema.description,
-        keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'ANY'
-      })
-    case 'ANY_OF':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: schema.anyOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'UNION'
-      })
-    case 'BOOLEAN':
-      return set({
-        comment: schema.description,
-        keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'BOOLEAN'
-      })
-    case 'CUSTOM_TYPE':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: schema.tsType!,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'CUSTOM_TYPE'
-      })
-    case 'NAMED_ENUM':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: schema.enum!.map((_, n) => ({
-          ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
-          keyName: schema.tsEnumNames![n]
-        })),
-        standaloneName: standaloneName(schema, keyName, usedNames)!,
-        type: 'ENUM'
-      })
-    case 'NAMED_SCHEMA':
-      return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName))
-    case 'NULL':
-      return set({
-        comment: schema.description,
-        keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'NULL'
-      })
-    case 'NUMBER':
-      return set({
-        comment: schema.description,
-        keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'NUMBER'
-      })
-    case 'OBJECT':
-      return set({
-        comment: schema.description,
-        keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'OBJECT'
-      })
-    case 'ONE_OF':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: schema.oneOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'UNION'
-      })
-    case 'REFERENCE':
-      throw Error(format('Refs should have been resolved by the resolver!', schema))
-    case 'STRING':
-      return set({
-        comment: schema.description,
-        keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'STRING'
-      })
-    case 'TYPED_ARRAY':
-      if (Array.isArray(schema.items)) {
-        // normalised to not be undefined
-        const minItems = schema.minItems!
-        const maxItems = schema.maxItems!
-        const arrayType: TTuple = {
+  log(
+    'blue',
+    'parser',
+    schema,
+    '<-',
+    typesOfSchema(schema),
+    standaloneName ? '"' + standaloneName + '"' : '',
+    processed.has(schema) ? '(FROM CACHE)' : ''
+  )
+
+  const asts = typesOfSchema(schema).map(type => {
+    switch (type) {
+      case 'ALL_OF':
+        return set({
           comment: schema.description,
           keyName,
-          maxItems,
-          minItems,
-          params: schema.items.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-          type: 'TUPLE'
-        }
-        if (schema.additionalItems === true) {
-          arrayType.spreadParam = {
-            type: 'ANY'
+          params: schema.allOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+          standaloneName,
+          type: 'INTERSECTION'
+        }) as TIntersection
+      case 'ANY':
+        return set({
+          comment: schema.description,
+          keyName,
+          standaloneName,
+          type: 'ANY'
+        }) as TAny
+      case 'ANY_OF':
+        return set({
+          comment: schema.description,
+          keyName,
+          params: schema.anyOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+          standaloneName,
+          type: 'UNION'
+        }) as TUnion
+      case 'BOOLEAN':
+        return set({
+          comment: schema.description,
+          keyName,
+          standaloneName,
+          type: 'BOOLEAN'
+        }) as TBoolean
+      case 'CUSTOM_TYPE':
+        return set({
+          comment: schema.description,
+          keyName,
+          params: schema.tsType!,
+          standaloneName,
+          type: 'CUSTOM_TYPE'
+        }) as TCustomType
+      case 'NAMED_ENUM':
+        return set({
+          comment: schema.description,
+          keyName,
+          params: schema.enum!.map((_, n) => ({
+            ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
+            keyName: schema.tsEnumNames![n]
+          })),
+          standaloneName: standaloneName!,
+          type: 'ENUM'
+        }) as TEnum
+      case 'NAMED_SCHEMA':
+        return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName))
+      case 'NULL':
+        return set({
+          comment: schema.description,
+          keyName,
+          standaloneName,
+          type: 'NULL'
+        }) as TNull
+      case 'NUMBER':
+        return set({
+          comment: schema.description,
+          keyName,
+          standaloneName,
+          type: 'NUMBER'
+        }) as TNumber
+      case 'OBJECT':
+        return set({
+          comment: schema.description,
+          keyName,
+          standaloneName,
+          type: 'OBJECT'
+        }) as TObject
+      case 'ONE_OF':
+        return set({
+          comment: schema.description,
+          keyName,
+          params: schema.oneOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+          standaloneName,
+          type: 'UNION'
+        }) as TUnion
+      case 'REFERENCE':
+        throw Error(format('Refs should have been resolved by the resolver!', schema))
+      case 'STRING':
+        return set({
+          comment: schema.description,
+          keyName,
+          standaloneName,
+          type: 'STRING'
+        }) as TString
+      case 'TYPED_ARRAY': {
+        if (Array.isArray(schema.items)) {
+          // normalised to not be undefined
+          const minItems = schema.minItems!
+          const maxItems = schema.maxItems!
+          const arrayType: TTuple = {
+            comment: schema.description,
+            keyName,
+            maxItems,
+            minItems,
+            params: schema.items.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+            standaloneName,
+            type: 'TUPLE'
           }
-        } else if (schema.additionalItems) {
-          arrayType.spreadParam = parse(
-            schema.additionalItems,
-            options,
-            rootSchema,
-            undefined,
-            true,
-            processed,
-            usedNames
-          )
+          if (schema.additionalItems === true) {
+            arrayType.spreadParam = {
+              type: 'ANY'
+            }
+          } else if (schema.additionalItems) {
+            arrayType.spreadParam = parse(
+              schema.additionalItems,
+              options,
+              rootSchema,
+              undefined,
+              true,
+              processed,
+              usedNames
+            )
+          }
+          return set(arrayType)
         }
-        return set(arrayType)
-      } else {
         const params = parse(schema.items!, options, rootSchema, undefined, true, processed, usedNames)
         return set({
           comment: schema.description,
           keyName,
           params,
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          standaloneName,
           type: 'ARRAY'
-        })
+        }) as TArray
       }
-    case 'UNION':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: (schema.type as JSONSchema4TypeName[]).map(_ =>
-          parse({...schema, type: _}, options, rootSchema, undefined, true, processed, usedNames)
-        ),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'UNION'
-      })
-    case 'UNNAMED_ENUM':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: schema.enum!.map(_ => parse(_, options, rootSchema, undefined, false, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'UNION'
-      })
-    case 'UNNAMED_SCHEMA':
-      return set(
-        newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName, keyNameFromDefinition)
-      )
-    case 'UNTYPED_ARRAY':
-      // normalised to not be undefined
-      const minItems = schema.minItems!
-      const maxItems = typeof schema.maxItems === 'number' ? schema.maxItems : -1
-      const params = T_ANY
-      if (minItems > 0 || maxItems >= 0) {
+      case 'UNION':
         return set({
           comment: schema.description,
           keyName,
-          maxItems: schema.maxItems,
-          minItems,
-          // create a tuple of length N
-          params: Array(Math.max(maxItems, minItems) || 0).fill(params),
-          // if there is no maximum, then add a spread item to collect the rest
-          spreadParam: maxItems >= 0 ? undefined : params,
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-          type: 'TUPLE'
-        })
-      }
+          params: (schema.type as JSONSchema4TypeName[]).map(_ =>
+            parse({...schema, type: _}, options, rootSchema, undefined, true, processed, usedNames)
+          ),
+          standaloneName,
+          type: 'UNION'
+        }) as TUnion
+      case 'UNNAMED_ENUM':
+        return set({
+          comment: schema.description,
+          keyName,
+          params: schema.enum!.map(_ => parse(_, options, rootSchema, undefined, false, processed, usedNames)),
+          standaloneName,
+          type: 'UNION'
+        }) as TUnion
+      case 'UNNAMED_SCHEMA':
+        return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName))
 
-      return set({
-        comment: schema.description,
-        keyName,
-        params,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'ARRAY'
-      })
-  }
-}
+      case 'UNTYPED_ARRAY':
+        // normalised to not be undefined
+        const minItems = schema.minItems!
+        const maxItems = typeof schema.maxItems === 'number' ? schema.maxItems : -1
+        const params = T_ANY
+        if (minItems > 0 || maxItems >= 0) {
+          return set({
+            comment: schema.description,
+            keyName,
+            maxItems: schema.maxItems,
+            minItems,
+            // create a tuple of length N
+            params: Array(Math.max(maxItems, minItems) || 0).fill(params),
+            // if there is no maximum, then add a spread item to collect the rest
+            spreadParam: maxItems >= 0 ? undefined : params,
+            standaloneName,
+            type: 'TUPLE'
+          }) as TTuple
+        }
+        return set({
+          comment: schema.description,
+          keyName,
+          params,
+          standaloneName,
+          type: 'ARRAY'
+        }) as TArray
+    }
+  })
 
-/**
- * Compute a schema name using a series of fallbacks
- */
-function standaloneName(
-  schema: JSONSchema,
-  keyNameFromDefinition: string | undefined,
-  usedNames: UsedNames
-): string | undefined {
-  const name = schema.title || schema.id || keyNameFromDefinition
-  if (name) {
-    return generateName(name, usedNames)
+  if (asts.length === 1) {
+    // Special case for enums
+    // if ('standaloneName' in asts[0]) {
+    return asts[0]
+    // }
+    // const name = standaloneName(schema, usedNames)
+    // return set(Object.assign(asts[0], {standaloneName: name}))
   }
+
+  return set({
+    comment: schema.description,
+    keyName,
+    params: asts,
+    standaloneName: getStandaloneName(schema, keyName, usedNames),
+    type: 'INTERSECTION'
+  })
 }
 
 function newInterface(
@@ -286,10 +312,9 @@ function newInterface(
   rootSchema: JSONSchema,
   processed: Processed,
   usedNames: UsedNames,
-  keyName?: string,
-  keyNameFromDefinition?: string
+  keyName?: string
 ): TInterface {
-  const name = standaloneName(schema, keyNameFromDefinition, usedNames)!
+  const name = getStandaloneName(schema, keyName, usedNames)!
   return {
     comment: schema.description,
     keyName,
@@ -423,45 +448,4 @@ via the \`definition\` "${key}".`
         keyName: '[k: string]'
       })
   }
-}
-
-type Definitions = {[k: string]: JSONSchema}
-
-/**
- * TODO: Memoize
- */
-function getDefinitions(schema: JSONSchema, isSchema = true, processed = new Set<JSONSchema>()): Definitions {
-  if (processed.has(schema)) {
-    return {}
-  }
-  processed.add(schema)
-  if (Array.isArray(schema)) {
-    return schema.reduce(
-      (prev, cur) => ({
-        ...prev,
-        ...getDefinitions(cur, false, processed)
-      }),
-      {}
-    )
-  }
-  if (isPlainObject(schema)) {
-    return {
-      ...(isSchema && hasDefinitions(schema) ? schema.definitions : {}),
-      ...Object.keys(schema).reduce<Definitions>(
-        (prev, cur) => ({
-          ...prev,
-          ...getDefinitions(schema[cur], false, processed)
-        }),
-        {}
-      )
-    }
-  }
-  return {}
-}
-
-/**
- * TODO: Reduce rate of false positives
- */
-function hasDefinitions(schema: JSONSchema): schema is JSONSchemaWithDefinitions {
-  return 'definitions' in schema
 }

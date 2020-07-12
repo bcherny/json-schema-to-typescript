@@ -49,7 +49,10 @@ function runOne(exports: TestCase, name: string) {
         t.true(e instanceof Error)
       }
     } else {
-      t.snapshot(await compile(exports.input, stripExtension(name), exports.options))
+      t.snapshot(
+        await compile(exports.input, stripExtension(name), exports.options),
+        `${name} did not match its snapshot`
+      )
     }
   })
 }
