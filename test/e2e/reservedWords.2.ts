@@ -23,3 +23,5 @@ export const input = {
     }
   }
 }
+
+export const only = true

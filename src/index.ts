@@ -120,11 +120,8 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   if (!endsWith(_options.cwd, '/')) {
     _options.cwd += '/'
   }
-
-  return format(
-    generate(optimize(parse(await dereference(normalize(schema, name, _options), _options), _options)), _options),
-    _options
-  )
+  const [dereferenced, refPaths] = await dereference(normalize(schema, name, _options), _options)
+  return format(generate(optimize(parse(dereferenced, refPaths, _options)), _options), _options)
 }
 
 export class ValidationError extends Error {}
