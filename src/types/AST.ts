@@ -1,34 +1,53 @@
-import { JSONSchema4Type } from 'json-schema'
+import {JSONSchema4Type} from 'json-schema'
 
 export type AST_TYPE = AST['type']
 
-export type AST = TAny | TArray | TBoolean | TEnum | TInterface | TNamedInterface
-  | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
-  | TString | TTuple | TUnion | TCustomType
+export type AST =
+  | TAny
+  | TArray
+  | TBoolean
+  | TEnum
+  | TInterface
+  | TNamedInterface
+  | TIntersection
+  | TLiteral
+  | TNumber
+  | TNull
+  | TObject
+  | TReference
+  | TString
+  | TTuple
+  | TUnion
+  | TUnknown
+  | TCustomType
 
 export interface AbstractAST {
   comment?: string
   keyName?: string
-  standaloneName?: string
+  standaloneName(): string | undefined
   type: AST_TYPE
 }
 
-export type ASTWithComment = AST & { comment: string }
-export type ASTWithName = AST & { keyName: string }
-export type ASTWithStandaloneName = AST & { standaloneName: string }
+export type ASTWithComment = AST & {comment: string}
+export type ASTWithName = AST & {keyName: string}
+export type ASTWithStandaloneName = AST & {standaloneName(): string}
 
 export function hasComment(ast: AST): ast is ASTWithComment {
   return 'comment' in ast && ast.comment != null && ast.comment !== ''
 }
 
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
-  return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
+  return 'standaloneName' in ast && Boolean(ast.standaloneName())
 }
 
 ////////////////////////////////////////////     types
 
 export interface TAny extends AbstractAST {
   type: 'ANY'
+}
+
+export interface TUnknown extends AbstractAST {
+  type: 'UNKNOWN'
 }
 
 export interface TArray extends AbstractAST {
@@ -41,7 +60,7 @@ export interface TBoolean extends AbstractAST {
 }
 
 export interface TEnum extends AbstractAST {
-  standaloneName: string
+  standaloneName(): string
   type: 'ENUM'
   params: TEnumParam[]
 }
@@ -58,7 +77,7 @@ export interface TInterface extends AbstractAST {
 }
 
 export interface TNamedInterface extends AbstractAST {
-  standaloneName: string
+  standaloneName(): string
   type: 'INTERFACE'
   params: TInterfaceParam[]
   superTypes: TNamedInterface[]
@@ -124,10 +143,23 @@ export interface TCustomType extends AbstractAST {
 ////////////////////////////////////////////     literals
 
 export const T_ANY: TAny = {
+  standaloneName: () => undefined,
   type: 'ANY'
+}
+
+export const T_UNKNOWN: TUnknown = {
+  standaloneName: () => undefined,
+  type: 'UNKNOWN'
 }
 
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   keyName: '[k: string]',
+  standaloneName: () => undefined,
   type: 'ANY'
+}
+
+export const T_UNKNOWN_ADDITIONAL_PROPERTIES: TUnknown & ASTWithName = {
+  keyName: '[k: string]',
+  standaloneName: () => undefined,
+  type: 'UNKNOWN'
 }

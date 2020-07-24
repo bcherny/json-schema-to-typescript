@@ -2,6 +2,7 @@ import {cloneDeep} from 'lodash'
 import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
 import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
 import {Options} from './'
+import {typesOfSchema} from './typesOfSchema'
 
 type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string, options: Options, isRoot: boolean) => void
 const rules = new Map<string, Rule>()
@@ -10,7 +11,9 @@ function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
 function isObjectType(schema: JSONSchema) {
-  return schema.properties !== undefined || hasType(schema, 'object') || hasType(schema, 'any')
+  const types = new Set(typesOfSchema(schema))
+  // TODO: Don't return true for `properties` and other known keys (need references to parent nodes?)
+  return types.has('NAMED_SCHEMA') || types.has('UNNAMED_SCHEMA')
 }
 function isArrayType(schema: JSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')

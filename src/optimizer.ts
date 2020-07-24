@@ -1,16 +1,14 @@
 import stringify = require('json-stringify-safe')
 import {uniqBy} from 'lodash'
 import {AST, T_ANY} from './types/AST'
-import {log} from './utils'
+import {log, joinStrings} from './utils'
 
-export function optimize(ast: AST, processed = new Map<AST, AST>()): AST {
-  log('cyan', 'optimizer', ast, processed.has(ast) ? '(FROM CACHE)' : '')
-
+export function optimize(ast: AST, processed = new Set<AST>()): AST {
   if (processed.has(ast)) {
-    return processed.get(ast)!
+    return ast
   }
 
-  processed.set(ast, ast)
+  processed.add(ast)
 
   switch (ast.type) {
     case 'INTERFACE':
@@ -19,15 +17,23 @@ export function optimize(ast: AST, processed = new Map<AST, AST>()): AST {
       })
     case 'INTERSECTION':
     case 'UNION':
+      // [A] -> A
+      if (ast.params.length === 1) {
+        log('cyan', 'optimizer', '[A] -> A', ast)
+        ast.params[0].comment = joinStrings(ast.comment, ast.params[0].comment)
+        return optimize(ast.params[0], processed)
+      }
+
       // [A, B, C, Any] -> Any
-      if (ast.params.some(_ => _.type === 'ANY')) {
-        log('cyan', 'optimizer', ast, '<- T_ANY')
+      if (ast.params.map(_ => optimize(_, processed)).some(_ => _.type === 'ANY')) {
+        log('cyan', 'optimizer', '[A, B, C, Any] -> Any', ast)
         return T_ANY
       }
 
       // [A, B, B] -> [A, B]
-      const shouldTakeStandaloneNameIntoAccount = ast.params.filter(_ => _.standaloneName).length > 1
-      ast.params = uniqBy(
+      const shouldTakeStandaloneNameIntoAccount =
+        ast.params.map(_ => optimize(_, processed)).filter(_ => _.standaloneName).length > 1
+      const params = uniqBy(
         ast.params,
         _ => `
           ${_.type}-
@@ -35,6 +41,10 @@ export function optimize(ast: AST, processed = new Map<AST, AST>()): AST {
           ${stringify((_ as any).params)}
         `
       )
+      if (ast.params.length !== params.length) {
+        log('cyan', 'optimizer', '[A, B, B] -> [A, B]', ast)
+        ast.params = params
+      }
 
       return Object.assign(ast, {
         params: ast.params.map(_ => optimize(_, processed))

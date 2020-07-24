@@ -10,8 +10,9 @@ import {normalize} from './normalizer'
 import {optimize} from './optimizer'
 import {parse} from './parser'
 import {dereference} from './resolver'
-import {error, stripExtension, Try} from './utils'
+import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
+import {isDeepStrictEqual} from 'util'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -121,10 +122,43 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     _options.cwd += '/'
   }
 
-  return format(
-    generate(optimize(parse(await dereference(normalize(schema, name, _options), _options), _options)), _options),
-    _options
-  )
+  const dereferenced = await dereference(schema, _options)
+  if (process.env.VERBOSE) {
+    if (isDeepStrictEqual(schema, dereferenced)) {
+      log('green', 'resolver', '✅ No change')
+    } else {
+      log('green', 'resolver', '✅ Result:', dereferenced)
+    }
+  }
+
+  const normalized = normalize(dereferenced, name, _options)
+  if (process.env.VERBOSE) {
+    if (isDeepStrictEqual(dereferenced, normalized)) {
+      log('yellow', 'normalizer', '✅ No change')
+    } else {
+      log('yellow', 'normalizer', '✅ Result:', normalized)
+    }
+  }
+
+  const parsed = parse(normalized, _options)
+  log('blue', 'parser', '✅ Result:', parsed)
+
+  const optimized = optimize(parsed)
+  if (process.env.VERBOSE) {
+    if (isDeepStrictEqual(parsed, optimized)) {
+      log('cyan', 'optimizer', '✅ No change')
+    } else {
+      log('cyan', 'optimizer', '✅ Result:', optimized)
+    }
+  }
+
+  const generated = generate(optimized, _options)
+  log('magenta', 'generator', '✅ Result:', generated)
+
+  const formatted = format(generated, _options)
+  log('white', 'formatter', '✅ Result:', formatted)
+
+  return formatted
 }
 
 export class ValidationError extends Error {}

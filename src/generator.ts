@@ -13,19 +13,18 @@ import {
   TNamedInterface,
   TUnion
 } from './types/AST'
-import {log, toSafeString} from './utils'
+import {log, toSafeString, joinStrings} from './utils'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
+  const standaloneName = ast.standaloneName()! // TODO: Can we guarantee this is non-null using the types?
   return (
-    [
+    joinStrings(
       options.bannerComment,
-      declareNamedTypes(ast, options, ast.standaloneName!),
-      declareNamedInterfaces(ast, options, ast.standaloneName!),
+      declareNamedTypes(ast, options, standaloneName),
+      declareNamedInterfaces(ast, options, standaloneName),
       declareEnums(ast, options)
-    ]
-      .filter(Boolean)
-      .join('\n\n') + '\n'
-  ) // trailing newline
+    ) + '\n' // trailing newline
+  )
 }
 
 function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
@@ -34,31 +33,26 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
   }
 
   processed.add(ast)
-  let type = ''
 
   switch (ast.type) {
     case 'ENUM':
-      type = generateStandaloneEnum(ast, options) + '\n'
-      break
+      return generateStandaloneEnum(ast, options) + '\n'
     case 'ARRAY':
       return declareEnums(ast.params, options, processed)
     case 'UNION':
     case 'INTERSECTION':
       return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
     case 'TUPLE':
-      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      let type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
       if (ast.spreadParam) {
         type += declareEnums(ast.spreadParam, options, processed)
       }
-      break
+      return type
     case 'INTERFACE':
-      type = getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-      break
+      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
     default:
       return ''
   }
-
-  return type
 }
 
 function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
@@ -76,7 +70,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
     case 'INTERFACE':
       type = [
         hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+          (ast.standaloneName() === rootASTName || options.declareExternallyReferenced) &&
           generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
@@ -128,7 +122,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       type = getSuperTypesAndParams(ast)
         .map(
           ast =>
-            (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+            (ast.standaloneName() === rootASTName || options.declareExternallyReferenced) &&
             declareNamedTypes(ast, options, rootASTName, processed)
         )
         .filter(Boolean)
@@ -173,12 +167,12 @@ function generateRawType(ast: AST, options: Options): string {
   log('magenta', 'generator', ast)
 
   if (hasStandaloneName(ast)) {
-    return toSafeString(ast.standaloneName)
+    return toSafeString(ast.standaloneName())
   }
 
   switch (ast.type) {
     case 'ANY':
-      return options.unknownAny ? 'unknown' : 'any'
+      return 'any'
     case 'ARRAY':
       return (() => {
         const type = generateType(ast.params, options)
@@ -282,6 +276,8 @@ function generateRawType(ast: AST, options: Options): string {
       })()
     case 'UNION':
       return generateSetOperation(ast, options)
+    case 'UNKNOWN':
+      return 'unknown'
     case 'CUSTOM_TYPE':
       return ast.params
   }
@@ -329,7 +325,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
     'export ' +
     (options.enableConstEnums ? 'const ' : '') +
-    `enum ${toSafeString(ast.standaloneName)} {` +
+    `enum ${toSafeString(ast.standaloneName())} {` +
     '\n' +
     ast.params.map(({ast, keyName}) => keyName + ' = ' + generateType(ast, options)).join(',\n') +
     '\n' +
@@ -340,9 +336,9 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
-    `export interface ${toSafeString(ast.standaloneName)} ` +
+    `export interface ${toSafeString(ast.standaloneName())} ` +
     (ast.superTypes.length > 0
-      ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
+      ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName())).join(', ')} `
       : '') +
     generateInterface(ast, options)
   )
@@ -351,7 +347,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
-    `export type ${toSafeString(ast.standaloneName)} = ${generateType(
+    `export type ${toSafeString(ast.standaloneName()!)} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
       options
     )}`

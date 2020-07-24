@@ -6,7 +6,7 @@ export async function dereference(
   schema: JSONSchema,
   {cwd, $refOptions}: {cwd: string; $refOptions: $RefParser.Options}
 ): Promise<JSONSchema> {
-  log('green', 'resolver', schema, cwd)
+  log('green', 'resolver', 'Resolving input schema:', cwd, schema)
   const parser = new $RefParser()
   return parser.dereference(cwd, schema, $refOptions)
 }
