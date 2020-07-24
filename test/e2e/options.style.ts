@@ -1,6 +1,6 @@
-import { Options } from '../../src/'
+import {Options} from '../../src'
 
-export let input = {
+export const input = {
   title: 'Example Schema',
   type: 'object',
   properties: {
@@ -15,7 +15,7 @@ export let input = {
   required: ['firstName', 'lastName']
 }
 
-export let options: Partial<Options> = {
+export const options: Partial<Options> = {
   style: {
     semi: false,
     trailingComma: 'all',
