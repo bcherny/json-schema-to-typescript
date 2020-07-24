@@ -21,8 +21,7 @@ export const input = {
           type: 'boolean'
         }
       }
-    },
-    required: ['firstName', 'lastName']
+    }
   }
 }
 
