@@ -6,7 +6,7 @@ export const input = {
     type: 'object',
     required: ['description', 'schema', 'tests'],
     properties: {
-      description: { type: 'string' },
+      description: {type: 'string'},
       schema: {},
       tests: {
         type: 'array',
@@ -14,9 +14,9 @@ export const input = {
           type: 'object',
           required: ['description', 'data', 'valid'],
           properties: {
-            description: { type: 'string' },
+            description: {type: 'string'},
             data: {},
-            valid: { type: 'boolean' }
+            valid: {type: 'boolean'}
           },
           additionalProperties: false
         },

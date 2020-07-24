@@ -1,30 +1,27 @@
 export const input = {
-  "title": "Array of type",
-  "type": "object",
-  'properties': {
+  title: 'Array of type',
+  type: 'object',
+  properties: {
     foo: {
       items: {
-        "type": "string"
+        type: 'string'
       },
-      type: "array"
+      type: 'array'
     },
     bar: {
       items: {
-        "type": "string"
+        type: 'string'
       },
-      type: ["array"]
+      type: ['array']
     },
     baz: {
       items: {
-        "type": ["string", "number"]
+        type: ['string', 'number']
       },
       type: ['array']
     },
     moo: {
-      items: [
-        {type: 'integer'},
-        {type: 'string'}
-      ]
+      items: [{type: 'integer'}, {type: 'string'}]
     }
   }
 }

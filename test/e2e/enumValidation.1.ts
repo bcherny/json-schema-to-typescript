@@ -1,15 +1,15 @@
 export const input = {
-  "title": "Enum",
-  "type": "object",
-  "properties": {
-    "bar": {
-      "type": "integer",
-      "enum": [1, 2, 3],
-      "tsEnumNames": ["One", "Three"]
+  title: 'Enum',
+  type: 'object',
+  properties: {
+    bar: {
+      type: 'integer',
+      enum: [1, 2, 3],
+      tsEnumNames: ['One', 'Three']
     }
   },
-  "required": ["bar"],
-  "additionalProperties": false
+  required: ['bar'],
+  additionalProperties: false
 }
 
 export const options = {

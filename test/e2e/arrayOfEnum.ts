@@ -12,7 +12,7 @@ export const input = {
     tuples: {
       type: 'array',
       items: [
-        { type: 'string' },
+        {type: 'string'},
         {
           enum: [1, 2, 3],
           title: 'NamedEnum2',

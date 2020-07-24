@@ -1,27 +1,23 @@
 export const input = {
-  "title": "RootAnyOf",
-  "anyOf": [
-    {"$ref": '#/definitions/foo'},
-    {$ref: "#/definitions/bar"},
-    {$ref: "#/definitions/baz"}
-  ],
+  title: 'RootAnyOf',
+  anyOf: [{$ref: '#/definitions/foo'}, {$ref: '#/definitions/bar'}, {$ref: '#/definitions/baz'}],
   definitions: {
     foo: {
       properties: {
-        "a": { "type": "string" },
-        "b": { "type": "integer" }
+        a: {type: 'string'},
+        b: {type: 'integer'}
       },
       additionalProperties: false,
-      required: ["a"]
+      required: ['a']
     },
     bar: {
       properties: {
-        a: { enum: ['a', 'b', 'c'] }
+        a: {enum: ['a', 'b', 'c']}
       }
     },
     baz: {
       properties: {
-        baz: { $ref: '#/definitions/bar' }
+        baz: {$ref: '#/definitions/bar'}
       }
     }
   }

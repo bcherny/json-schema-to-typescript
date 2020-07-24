@@ -27,16 +27,16 @@ export const input = {
         {
           type: 'object',
           properties: {
-            foo: { type: 'string' }
+            foo: {type: 'string'}
           }
         },
         {
           type: 'object',
           properties: {
-            bar: { type: 'number' }
+            bar: {type: 'number'}
           }
         }
       ]
-    },
+    }
   }
 }

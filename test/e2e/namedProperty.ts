@@ -1,5 +1,5 @@
 export const input = {
-  title: "Example Schema",
+  title: 'Example Schema',
   description: 'My cool schema',
   type: 'object',
   properties: {
