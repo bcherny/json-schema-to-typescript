@@ -12,17 +12,6 @@ export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   }
 }
 
-/**
- * Depth-first traversal
- */
-export function dft<T, U>(object: {[k: string]: any}, cb: (value: U, key: string) => T): void {
-  for (const key in object) {
-    if (!object.hasOwnProperty(key)) continue
-    if (isPlainObject(object[key])) dft(object[key], cb)
-    cb(object[key], key)
-  }
-}
-
 export function mapDeep(object: object, fn: (value: object, key?: string) => object, key?: string): object {
   return fn(
     mapValues(object, (_: unknown, key) => {
