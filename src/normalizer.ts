@@ -1,4 +1,3 @@
-import {whiteBright} from 'cli-color'
 import {cloneDeep} from 'lodash'
 import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
 import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
@@ -118,7 +117,7 @@ export function normalize(schema: JSONSchema, filename: string, options: Options
   const _schema = cloneDeep(schema) as NormalizedJSONSchema
   rules.forEach((rule, key) => {
     traverse(_schema, (schema, isRoot) => rule(schema, _schema, filename, options, isRoot), true)
-    log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
+    log('yellow', 'normalizer', `Applied rule: "${key}"`)
   })
   return _schema
 }

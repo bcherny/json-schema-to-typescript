@@ -1,4 +1,3 @@
-import {whiteBright} from 'cli-color'
 import {omit} from 'lodash'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -171,7 +170,7 @@ function generateType(ast: AST, options: Options): string {
 }
 
 function generateRawType(ast: AST, options: Options): string {
-  log(whiteBright.bgMagenta('generator'), ast)
+  log('magenta', 'generator', ast)
 
   if (hasStandaloneName(ast)) {
     return toSafeString(ast.standaloneName)

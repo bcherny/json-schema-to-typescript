@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import {whiteBright} from 'cli-color'
 import minimist = require('minimist')
 import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
 import * as mkdirp from 'mkdirp'
@@ -9,7 +8,7 @@ import isGlob = require('is-glob')
 import {join, resolve, dirname, basename} from 'path'
 import stdin = require('stdin')
 import {compile, Options} from './index'
-import {pathTransform} from './utils'
+import {pathTransform, error} from './utils'
 
 main(
   minimist(process.argv.slice(2), {
@@ -50,7 +49,7 @@ async function main(argv: minimist.ParsedArgs) {
       outputResult(result, argOut)
     }
   } catch (e) {
-    console.error(whiteBright.bgRedBright('error'), e)
+    error(e)
     process.exit(1)
   }
 }

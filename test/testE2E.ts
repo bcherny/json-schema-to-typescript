@@ -40,7 +40,7 @@ export function run() {
 }
 
 function runOne(exports: TestCase, name: string) {
-  log(`Running test: "${name}"`)
+  log('blue', 'Running test', name)
   test(name, async t => {
     if (exports.error) {
       try {

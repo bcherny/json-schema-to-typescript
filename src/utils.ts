@@ -1,4 +1,3 @@
-import {whiteBright} from 'cli-color'
 import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema} from './types/JSONSchema'
@@ -195,13 +194,39 @@ export function generateName(from: string, usedNames: Set<string>) {
   return name
 }
 
-export function error(...messages: any[]) {
-  console.error(whiteBright.bgRedBright('error'), ...messages)
+export function error(...messages: any[]): void {
+  if (!process.env.VERBOSE) {
+    return console.error(messages)
+  }
+  console.error(getStyledTextForLogging('red')?.('error'), ...messages)
 }
 
-export function log(...messages: any[]) {
-  if (process.env.VERBOSE) {
-    console.info(whiteBright.bgCyan('debug'), ...messages)
+type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'yellow'
+
+export function log(style: LogStyle, title: string, ...messages: unknown[]): void {
+  if (!process.env.VERBOSE) {
+    return
+  }
+  console.info(require('cli-color').whiteBright.bgCyan('debug'), getStyledTextForLogging(style)?.(title), ...messages)
+}
+
+function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | undefined {
+  if (!process.env.VERBOSE) {
+    return
+  }
+  switch (style) {
+    case 'blue':
+      return require('cli-color').whiteBright.bgBlue
+    case 'cyan':
+      return require('cli-color').whiteBright.bgCyan
+    case 'green':
+      return require('cli-color').whiteBright.bgGreen
+    case 'magenta':
+      return require('cli-color').whiteBright.bgMagenta
+    case 'red':
+      return require('cli-color').whiteBright.bgRedBright
+    case 'yellow':
+      return require('cli-color').whiteBright.bgYellow
   }
 }
 
