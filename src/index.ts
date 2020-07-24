@@ -33,6 +33,10 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
+   * Format code? Set this to `false` to improve performance.
+   */
+  format: boolean
+  /**
    * Ignore maxItems and minItems for `array` types, preventing tuples being generated.
    */
   ignoreMinAndMaxItems: boolean
@@ -70,7 +74,8 @@ export const DEFAULT_OPTIONS: Options = {
 */`,
   cwd: process.cwd(),
   declareExternallyReferenced: true,
-  enableConstEnums: true, // by default, avoid generating code
+  enableConstEnums: true,
+  format: true,
   ignoreMinAndMaxItems: false,
   strictIndexSignatures: false,
   style: {
