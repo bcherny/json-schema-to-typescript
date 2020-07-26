@@ -37,7 +37,7 @@ export function hasComment(ast: AST): ast is ASTWithComment {
 }
 
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
-  return 'standaloneName' in ast && Boolean(ast.standaloneName())
+  return 'standaloneName' in ast && ast.standaloneName() !== undefined
 }
 
 ////////////////////////////////////////////     types

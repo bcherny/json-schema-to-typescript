@@ -1,9 +1,24 @@
-import { JSONSchema4, JSONSchema4TypeName } from 'json-schema'
+import {JSONSchema4, JSONSchema4TypeName} from 'json-schema'
 
-export type SchemaType = 'ALL_OF' | 'UNNAMED_SCHEMA' | 'ANY' | 'ANY_OF'
-  | 'BOOLEAN' | 'NAMED_ENUM' | 'NAMED_SCHEMA' | 'NULL' | 'NUMBER' | 'STRING'
-  | 'OBJECT' | 'ONE_OF' | 'TYPED_ARRAY' | 'REFERENCE' | 'UNION' | 'UNNAMED_ENUM'
-  | 'UNTYPED_ARRAY' | 'CUSTOM_TYPE'
+export type SchemaType =
+  | 'ALL_OF'
+  | 'UNNAMED_SCHEMA'
+  | 'ANY'
+  | 'ANY_OF'
+  | 'BOOLEAN'
+  | 'NAMED_ENUM'
+  | 'NAMED_SCHEMA'
+  | 'NULL'
+  | 'NUMBER'
+  | 'STRING'
+  | 'OBJECT'
+  | 'ONE_OF'
+  | 'TYPED_ARRAY'
+  | 'REFERENCE'
+  | 'UNION'
+  | 'UNNAMED_ENUM'
+  | 'UNTYPED_ARRAY'
+  | 'CUSTOM_TYPE'
 
 export type JSONSchemaTypeName = JSONSchema4TypeName
 
@@ -18,6 +33,35 @@ export interface JSONSchema extends JSONSchema4 {
   tsType?: string
 }
 
+export const Parent = Symbol('Parent')
+
+export interface LinkedJSONSchema extends JSONSchema {
+  /**
+   * A reference to this schema's parent node, for convenience
+   */
+  [Parent]: LinkedJSONSchema | null
+
+  additionalItems?: boolean | LinkedJSONSchema
+  additionalProperties: boolean | LinkedJSONSchema
+  items?: LinkedJSONSchema | LinkedJSONSchema[]
+  definitions?: {
+    [k: string]: LinkedJSONSchema
+  }
+  properties?: {
+    [k: string]: LinkedJSONSchema
+  }
+  patternProperties?: {
+    [k: string]: LinkedJSONSchema
+  }
+  dependencies?: {
+    [k: string]: LinkedJSONSchema | string[]
+  }
+  allOf?: LinkedJSONSchema[]
+  anyOf?: LinkedJSONSchema[]
+  oneOf?: LinkedJSONSchema[]
+  not?: LinkedJSONSchema
+}
+
 // const SCHEMA_PROPERTIES = [
 //   'additionalItems', 'additionalProperties', 'items', 'definitions',
 //   'properties', 'patternProperties', 'dependencies', 'allOf', 'anyOf',
@@ -28,7 +72,7 @@ export interface JSONSchema extends JSONSchema4 {
 //   return []
 // }
 
-export interface NormalizedJSONSchema extends JSONSchema {
+export interface NormalizedJSONSchema extends LinkedJSONSchema {
   additionalItems?: boolean | NormalizedJSONSchema
   additionalProperties: boolean | NormalizedJSONSchema
   items?: NormalizedJSONSchema | NormalizedJSONSchema[]

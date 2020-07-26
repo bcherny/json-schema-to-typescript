@@ -6,7 +6,9 @@
     "properties": {
       "myProperty": {
         "type": "array",
-        "items": "string"
+        "items": {
+          "type": "string"
+        }
       }
     },
     "additionalProperties": false
@@ -16,7 +18,9 @@
     "type": "object",
     "properties": {
       "myProperty": {
-        "items": "string",
+        "items": {
+          "type": "string"
+        },
         "minItems": 0,
         "type": "array"
       }

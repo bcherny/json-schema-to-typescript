@@ -4,7 +4,11 @@
     "friend": {
       "properties": {
         "knowsFrom": {
-          "enum": ["work", "school", "other"]
+          "enum": [
+            "work",
+            "school",
+            "other"
+          ]
         }
       },
       "additionalProperties": true,
@@ -17,13 +21,19 @@
       }
     },
     "additionalProperties": true,
-    "required": ["firstName"]
+    "required": [
+      "firstName"
+    ]
   },
   "out": {
     "friend": {
       "properties": {
         "knowsFrom": {
-          "enum": ["work", "school", "other"]
+          "enum": [
+            "work",
+            "school",
+            "other"
+          ]
         }
       },
       "additionalProperties": true,
@@ -36,7 +46,9 @@
       }
     },
     "additionalProperties": true,
-    "required": ["firstName"],
+    "required": [
+      "firstName"
+    ],
     "id": "DefaultID"
   }
 }

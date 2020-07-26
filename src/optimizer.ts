@@ -32,12 +32,12 @@ export function optimize(ast: AST, processed = new Set<AST>()): AST {
 
       // [A, B, B] -> [A, B]
       const shouldTakeStandaloneNameIntoAccount =
-        ast.params.map(_ => optimize(_, processed)).filter(_ => _.standaloneName).length > 1
+        ast.params.map(_ => optimize(_, processed)).filter(_ => _.standaloneName()).length > 1
       const params = uniqBy(
         ast.params,
         _ => `
           ${_.type}-
-          ${shouldTakeStandaloneNameIntoAccount ? _.standaloneName : ''}-
+          ${shouldTakeStandaloneNameIntoAccount ? _.standaloneName() : ''}-
           ${stringify((_ as any).params)}
         `
       )

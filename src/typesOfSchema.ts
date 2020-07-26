@@ -1,10 +1,43 @@
-import {isPlainObject} from 'lodash'
-import {JSONSchema, SchemaType} from './types/JSONSchema'
+import {isPlainObject, memoize} from 'lodash'
+import {SchemaType, LinkedJSONSchema, Parent} from './types/JSONSchema'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
  */
-export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...SchemaType[]] {
+export function typesOfSchema(schema: LinkedJSONSchema): readonly SchemaType[] {
+  const matchedTypes = typesOfSchemaFromMatchers(schema)
+
+  if (matchedTypes.length) {
+    return matchedTypes
+  }
+
+  if (!SCHEMAISH_FIELDS.some(_ => is(schema, _))) {
+    return []
+  }
+
+  // Default to an unnamed schema
+  return ['UNNAMED_SCHEMA']
+}
+
+/**
+ * Fields whose properties can be JSON Schemas
+ */
+const SCHEMAISH_FIELDS: readonly (keyof LinkedJSONSchema)[] = [
+  'pattern',
+  'additionalItems',
+  'items',
+  'uniqueItems',
+  'required',
+  'additionalProperties',
+  'definitions',
+  'properties',
+  'patternProperties',
+  'dependencies',
+  'enum',
+  'not'
+]
+
+const typesOfSchemaFromMatchers = memoize((schema: LinkedJSONSchema): readonly SchemaType[] => {
   // tsType is an escape hatch that supercedes all other directives
   if (schema.tsType) {
     return ['CUSTOM_TYPE']
@@ -18,19 +51,26 @@ export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...Sche
     }
   }
 
-  // Default to an unnamed schema
-  if (!matchedTypes.length) {
-    return ['UNNAMED_SCHEMA']
-  }
+  return matchedTypes
+})
 
-  return matchedTypes as [SchemaType, ...SchemaType[]]
+function is(schema: LinkedJSONSchema, key: keyof LinkedJSONSchema): boolean {
+  const matchedTypes = typesOfSchemaFromMatchers(schema)
+  if (matchedTypes.length) {
+    return false
+  }
+  return schema[Parent]?.[key] === schema
 }
 
-const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
+const matchers: Record<SchemaType, (schema: LinkedJSONSchema) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
   },
   ANY(schema) {
+    if (!schema[Parent]) {
+      // If this is the root schema, generate an empty object rather than `unknown`
+      return false
+    }
     if (Object.keys(schema).length === 0) {
       // The empty schema {} validates any value
       // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1

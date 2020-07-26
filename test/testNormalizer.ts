@@ -4,6 +4,7 @@ import {template} from 'lodash'
 import {join} from 'path'
 import {JSONSchema, Options, DEFAULT_OPTIONS} from '../src'
 import {normalize} from '../src/normalizer'
+import {link} from '../src/linker'
 
 interface JSONTestCase {
   name: string
@@ -22,7 +23,7 @@ export function run() {
     .forEach(([filename, json]: [string, JSONTestCase]) => {
       const params = {filename}
       test(json.name, t => {
-        const normalised = normalize(json.in, filename, json.options || DEFAULT_OPTIONS)
+        const normalised = normalize(link(json.in), filename, json.options || DEFAULT_OPTIONS)
         t.snapshot(template(toString(normalised))(params))
         t.deepEqual(json.out, normalised)
       })

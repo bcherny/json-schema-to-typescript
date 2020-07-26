@@ -1,21 +1,25 @@
-import {cloneDeep} from 'lodash'
-import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
+import {JSONSchemaTypeName, NormalizedJSONSchema, LinkedJSONSchema} from './types/JSONSchema'
 import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
 import {Options} from './'
 import {typesOfSchema} from './typesOfSchema'
 
-type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string, options: Options, isRoot: boolean) => void
+type Rule = (
+  schema: LinkedJSONSchema,
+  rootSchema: LinkedJSONSchema,
+  fileName: string,
+  options: Options,
+  isRoot: boolean
+) => void
 const rules = new Map<string, Rule>()
 
-function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
+function hasType(schema: LinkedJSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
-function isObjectType(schema: JSONSchema) {
+function isObjectType(schema: LinkedJSONSchema) {
   const types = new Set(typesOfSchema(schema))
-  // TODO: Don't return true for `properties` and other known keys (need references to parent nodes?)
   return types.has('NAMED_SCHEMA') || types.has('UNNAMED_SCHEMA')
 }
-function isArrayType(schema: JSONSchema) {
+function isArrayType(schema: LinkedJSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
 
@@ -116,8 +120,8 @@ rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) =>
   return schema
 })
 
-export function normalize(schema: JSONSchema, filename: string, options: Options): NormalizedJSONSchema {
-  const _schema = cloneDeep(schema) as NormalizedJSONSchema
+export function normalize(schema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
+  const _schema = schema as NormalizedJSONSchema
   rules.forEach((rule, key) => {
     traverse(_schema, (schema, isRoot) => rule(schema, _schema, filename, options, isRoot), true)
     log('yellow', 'normalizer', `Applied rule: "${key}"`)

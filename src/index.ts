@@ -13,6 +13,7 @@ import {dereference} from './resolver'
 import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
+import {link} from './linker'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -122,41 +123,49 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     _options.cwd += '/'
   }
 
+  const start = Date.now()
+  function time() {
+    return `(${Date.now() - start}ms)`
+  }
+
   const dereferenced = await dereference(schema, _options)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(schema, dereferenced)) {
-      log('green', 'resolver', '✅ No change')
+      log('green', 'resolver', time(), '✅ No change')
     } else {
-      log('green', 'resolver', '✅ Result:', dereferenced)
+      log('green', 'resolver', time(), '✅ Result:', dereferenced)
     }
   }
 
-  const normalized = normalize(dereferenced, name, _options)
+  const linked = link(schema)
+  log('green', 'linker', time(), '✅ Result:', linked)
+
+  const normalized = normalize(linked, name, _options)
   if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(dereferenced, normalized)) {
-      log('yellow', 'normalizer', '✅ No change')
+    if (isDeepStrictEqual(linked, normalized)) {
+      log('yellow', 'normalizer', time(), '✅ No change')
     } else {
-      log('yellow', 'normalizer', '✅ Result:', normalized)
+      log('yellow', 'normalizer', time(), '✅ Result:', normalized)
     }
   }
 
   const parsed = parse(normalized, _options)
-  log('blue', 'parser', '✅ Result:', parsed)
+  log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(parsed, optimized)) {
-      log('cyan', 'optimizer', '✅ No change')
+      log('cyan', 'optimizer', time(), '✅ No change')
     } else {
-      log('cyan', 'optimizer', '✅ Result:', optimized)
+      log('cyan', 'optimizer', time(), '✅ Result:', optimized)
     }
   }
 
   const generated = generate(optimized, _options)
-  log('magenta', 'generator', '✅ Result:', generated)
+  log('magenta', 'generator', time(), '✅ Result:', generated)
 
   const formatted = format(generated, _options)
-  log('white', 'formatter', '✅ Result:', formatted)
+  log('white', 'formatter', time(), '✅ Result:', formatted)
 
   return formatted
 }

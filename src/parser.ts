@@ -14,19 +14,20 @@ import {
   TTuple,
   TIntersection,
   T_UNKNOWN,
-  T_UNKNOWN_ADDITIONAL_PROPERTIES
+  T_UNKNOWN_ADDITIONAL_PROPERTIES,
+  TUnknown
 } from './types/AST'
-import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema, SchemaType} from './types/JSONSchema'
+import {JSONSchemaWithDefinitions, SchemaSchema, SchemaType, LinkedJSONSchema} from './types/JSONSchema'
 import {generateName, log, joinStrings} from './utils'
 
-export type Processed = Map<JSONSchema | JSONSchema4Type, Map<SchemaType, AST>>
+export type Processed = Map<LinkedJSONSchema | JSONSchema4Type, Map<SchemaType, AST>>
 
 export type UsedNames = Set<string>
 
 export function parse(
-  schema: JSONSchema | JSONSchema4Type,
+  schema: LinkedJSONSchema | JSONSchema4Type,
   options: Options,
-  rootSchema = schema as JSONSchema,
+  rootSchema = schema as LinkedJSONSchema, // TODO: Is this always the right assumption?
   keyName?: string,
   isSchema = true,
   processed: Processed = new Map(),
@@ -54,15 +55,17 @@ function parseLiteral(
 }
 
 function parseNonLiteral(
-  schema: JSONSchema,
+  schema: LinkedJSONSchema,
   options: Options,
-  rootSchema: JSONSchema,
+  rootSchema: LinkedJSONSchema,
   keyName: string | undefined,
   keyNameFromDefinition: string | undefined,
   processed: Processed,
   usedNames: UsedNames
 ): AST {
-  log('blue', 'parser', typesOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '', 'Input:', schema)
+  if (!processed.has(schema)) {
+    log('blue', 'parser', typesOfSchema(schema), 'Input:', schema)
+  }
 
   const asts = typesOfSchema(schema).map(
     (type): AST => {
@@ -281,11 +284,10 @@ function parseNonLiteral(
   )
 
   if (asts.length === 1) {
-    log('blue', 'parser', 'Parsed to:', asts[0])
     return asts[0]!
   }
 
-  const ast = {
+  return {
     keyName,
     params: asts.map(_ => {
       _.standaloneName = () => undefined
@@ -294,26 +296,24 @@ function parseNonLiteral(
     standaloneName: () => standaloneName(schema, keyNameFromDefinition, usedNames),
     type: 'INTERSECTION'
   } as TIntersection
-  log('blue', 'parser', 'Parsed to:', ast)
-  return ast
 }
 
 /**
  * Compute a schema name using a series of fallbacks
  */
-const standaloneName = memoize((schema: JSONSchema, keyNameFromDefinition: string | undefined, usedNames: UsedNames):
-  | string
-  | undefined => {
-  const name = schema.title || schema.id || keyNameFromDefinition
-  if (name) {
-    return generateName(name, usedNames)
+const standaloneName = memoize(
+  (schema: LinkedJSONSchema, keyNameFromDefinition: string | undefined, usedNames: UsedNames): string | undefined => {
+    const name = schema.title || schema.id || keyNameFromDefinition
+    if (name) {
+      return generateName(name, usedNames)
+    }
   }
-})
+)
 
 function newInterface(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
+  rootSchema: LinkedJSONSchema,
   processed: Processed,
   usedNames: UsedNames,
   keyName?: string,
@@ -329,25 +329,28 @@ function newInterface(
     type: 'INTERFACE'
   } as TInterface
 
-  if (!('required' in schema)) {
-    console.log('NOREQQQQQ')
-    console.dir(schema)
-  }
-
   // For any required properties that aren't yet included, intersect generated types
   // with {keyName: unknown} to make those properties required.
   const requiredPropertiesThatAreNotYetCaptured = schema.required.filter(
     _ => !ast.params.some(({keyName}) => keyName === _)
   )
   if (requiredPropertiesThatAreNotYetCaptured.length) {
+    // Move the standalone name from the type to its new parent intersection type
+    const {standaloneName} = ast
+    ast.standaloneName = () => undefined
     return {
       params: [
         ast,
-        ...requiredPropertiesThatAreNotYetCaptured.map(_ => ({
-          keyName,
-          type: 'UNKNOWN'
-        }))
+        ...requiredPropertiesThatAreNotYetCaptured.map(
+          keyName =>
+            ({
+              keyName,
+              standaloneName: () => undefined,
+              type: 'UNKNOWN'
+            } as TUnknown)
+        )
       ],
+      standaloneName,
       type: 'INTERSECTION'
     } as TIntersection
   }
@@ -376,7 +379,7 @@ function parseSuperTypes(
 function newNamedInterface(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
+  rootSchema: LinkedJSONSchema,
   processed: Processed,
   usedNames: UsedNames
 ): TNamedInterface | TIntersection {
@@ -394,7 +397,7 @@ function newNamedInterface(
 function parseParams(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
+  rootSchema: LinkedJSONSchema,
   processed: Processed,
   usedNames: UsedNames,
   parentSchemaName: string
@@ -485,12 +488,16 @@ via the \`definition\` "${key}".`
   }
 }
 
-type Definitions = {[k: string]: JSONSchema}
+type Definitions = {[k: string]: LinkedJSONSchema}
 
 /**
  * TODO: Memoize
  */
-function getDefinitions(schema: JSONSchema, isSchema = true, processed = new Set<JSONSchema>()): Definitions {
+function getDefinitions(
+  schema: LinkedJSONSchema,
+  isSchema = true,
+  processed = new Set<LinkedJSONSchema>()
+): Definitions {
   if (processed.has(schema)) {
     return {}
   }
@@ -522,6 +529,6 @@ function getDefinitions(schema: JSONSchema, isSchema = true, processed = new Set
 /**
  * TODO: Reduce rate of false positives
  */
-function hasDefinitions(schema: JSONSchema): schema is JSONSchemaWithDefinitions {
+function hasDefinitions(schema: LinkedJSONSchema): schema is JSONSchemaWithDefinitions {
   return 'definitions' in schema
 }

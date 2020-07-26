@@ -167,7 +167,7 @@ function generateRawType(ast: AST, options: Options): string {
   log('magenta', 'generator', ast)
 
   if (hasStandaloneName(ast)) {
-    return toSafeString(ast.standaloneName())
+    return ast.standaloneName()
   }
 
   switch (ast.type) {
@@ -304,7 +304,7 @@ function generateInterface(ast: TInterface, options: Options): string {
       )
       .map(
         ([isRequired, keyName, ast, type]) =>
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
+          (hasComment(ast) && !ast.standaloneName() ? generateComment(ast.comment) + '\n' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
@@ -325,7 +325,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
     'export ' +
     (options.enableConstEnums ? 'const ' : '') +
-    `enum ${toSafeString(ast.standaloneName())} {` +
+    `enum ${ast.standaloneName()} {` +
     '\n' +
     ast.params.map(({ast, keyName}) => keyName + ' = ' + generateType(ast, options)).join(',\n') +
     '\n' +
@@ -336,9 +336,9 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
-    `export interface ${toSafeString(ast.standaloneName())} ` +
+    `export interface ${ast.standaloneName()} ` +
     (ast.superTypes.length > 0
-      ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName())).join(', ')} `
+      ? `extends ${ast.superTypes.map(superType => superType.standaloneName()).join(', ')} `
       : '') +
     generateInterface(ast, options)
   )
@@ -347,7 +347,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
-    `export type ${toSafeString(ast.standaloneName()!)} = ${generateType(
+    `export type ${ast.standaloneName()!} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
       options
     )}`
