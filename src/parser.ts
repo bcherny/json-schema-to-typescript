@@ -84,6 +84,46 @@ function parseNonLiteral(
 ) {
   log('blue', 'parser', schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
 
+  function parseUnionType(params: JSONSchema[]) {
+    const rootProps = {
+      comment: schema.description,
+      keyName,
+      standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames)
+    }
+    const union: AST = {
+      params: params.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+      type: 'UNION'
+    }
+    const interfaceParams = parseSchema(
+      schema as SchemaSchema,
+      options,
+      rootSchema,
+      processed,
+      usedNames,
+      rootProps.standaloneName!
+    )
+    const hasProperties =
+      interfaceParams.length &&
+      // make sure that we don't say "oh yeah there's properties", even if it's just { [k: string]: unknown }
+      (interfaceParams.length > 1 || interfaceParams[0].ast != T_ANY_ADDITIONAL_PROPERTIES)
+    if (hasProperties) {
+      const object: AST = {
+        params: interfaceParams,
+        superTypes: [],
+        type: 'INTERFACE'
+      }
+      return set({
+        ...rootProps,
+        params: [union, object],
+        type: 'INTERSECTION'
+      })
+    }
+    return set({
+      ...rootProps,
+      ...union
+    })
+  }
+
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
       return set({
@@ -101,13 +141,7 @@ function parseNonLiteral(
         type: 'ANY'
       })
     case 'ANY_OF':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: schema.anyOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'UNION'
-      })
+      return parseUnionType(schema.anyOf!)
     case 'BOOLEAN':
       return set({
         comment: schema.description,
@@ -158,13 +192,7 @@ function parseNonLiteral(
         type: 'OBJECT'
       })
     case 'ONE_OF':
-      return set({
-        comment: schema.description,
-        keyName,
-        params: schema.oneOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'UNION'
-      })
+      return parseUnionType(schema.oneOf!)
     case 'REFERENCE':
       throw Error(format('Refs should have been resolved by the resolver!', schema))
     case 'STRING':
