@@ -218,10 +218,10 @@ function parseNonLiteral(
       return set({
         comment: schema.description,
         keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: (schema.type as JSONSchema4TypeName[]).map(_ =>
           parse({...schema, type: _}, options, rootSchema, undefined, true, processed, usedNames)
         ),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'UNION'
       })
     case 'UNNAMED_ENUM':
