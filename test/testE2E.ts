@@ -9,6 +9,7 @@ const dir = __dirname + '/e2e'
 
 type TestCase = {
   input: JSONSchema
+  output?: string
   error?: true
   exclude?: boolean
   only?: boolean
@@ -48,6 +49,8 @@ function runOne(exports: TestCase, name: string) {
       } catch (e) {
         t.true(e instanceof Error)
       }
+    } else if (exports.output) {
+      t.deepEqual(await compile(exports.input, stripExtension(name), exports.options), exports.output)
     } else {
       t.snapshot(await compile(exports.input, stripExtension(name), exports.options))
     }
