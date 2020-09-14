@@ -1,0 +1,13 @@
+{
+  "title": "B schema",
+  "type": "object",
+  "definitions": {
+    "value": {"type": "integer"}
+  },
+  "properties": {
+    "x": {"type": "string"},
+    "y": {"$ref": "#/definitions/value"}
+  },
+  "additionalProperties": true,
+  "required": ["y"]
+}

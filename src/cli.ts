@@ -11,7 +11,7 @@ import {compile, Options} from './index'
 import {pathTransform, error} from './utils'
 
 main(
-  minimist(process.argv.slice(2), {
+  minimist<Partial<Options>>(process.argv.slice(2), {
     alias: {
       help: ['h'],
       input: ['i'],
@@ -20,7 +20,7 @@ main(
   })
 )
 
-async function main(argv: minimist.ParsedArgs) {
+async function main(argv: minimist.ParsedArgs & Partial<Options>) {
   if (argv.help) {
     printHelp()
     process.exit(0)
@@ -32,20 +32,24 @@ async function main(argv: minimist.ParsedArgs) {
   const ISGLOB = isGlob(argIn)
   const ISDIR = isDir(argIn)
 
-  if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
-    throw new ReferenceError(
-      `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`
-    )
-  }
-
   try {
+    if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
+      const files = ISGLOB ? await glob(argIn) : getPaths(argIn)
+      await processAllToOne(files, argOut, argv)
+      return
+    }
+    if ((ISGLOB || ISDIR) && argOut === undefined) {
+      // writing to stdout, set usedName so piping it to a file doesn't have duplicate names.
+      // will leave duplicate banner comment to user though, we now support output to file where banner is taken care of.
+      argv.usedNames = new Set<string>()
+    }
     // Process input as either glob, directory, or single file
     if (ISGLOB) {
-      await processGlob(argIn, argOut, argv as Partial<Options>)
+      await processGlob(argIn, argOut, argv)
     } else if (ISDIR) {
-      await processDir(argIn, argOut, argv as Partial<Options>)
+      await processDir(argIn, argOut, argv)
     } else {
-      const result = await processFile(argIn, argv as Partial<Options>)
+      const result = await processFile(argIn, argv)
       outputResult(result, argOut)
     }
   } catch (e) {
@@ -101,6 +105,24 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
   results.forEach(([file, result, outputPath]) =>
     outputResult(result, outputPath ? `${outputPath}/${basename(file, '.json')}.d.ts` : undefined)
   )
+}
+
+async function processAllToOne(files: string[], outputFile: string, argv: Partial<Options>) {
+  // we will read all files in parallel but will do the processing in series
+  // because we need to ensure no race conditions with usedNames.
+  const usedNames = new Set<string>()
+  const schemas = await Promise.all(files.map(async file => [file, JSON.parse(await readInput(file))] as const))
+  let first = true
+  let wholeText = ''
+  for (const [filename, schema] of schemas) {
+    // override banner for each subsequent files so the banner only appears at the top.
+    const omitBanner = first ? {} : {bannerComment: `////////////`}
+    // again, we don't parallelize this to ensure no race conditions with usedNames.
+    const text = await compile(schema, filename, {usedNames, ...argv, ...omitBanner})
+    wholeText += (first ? '' : '\n') + text
+    first = false
+  }
+  outputResult(wholeText, outputFile)
 }
 
 async function outputResult(result: string, outputPath: string | undefined): Promise<void> {
@@ -165,6 +187,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Output unknown type instead of any type
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
+  --onlyExportMain
+      exports only the main schema(s), any definitions are kept internal.
 `
   )
 }

@@ -27,7 +27,7 @@ export function parse(
   keyName?: string,
   isSchema = true,
   processed: Processed = new Map<JSONSchema | JSONSchema4Type, AST>(),
-  usedNames = new Set<string>()
+  usedNames = options.usedNames ?? new Set<string>()
 ): AST {
   // If we've seen this node before, return it.
   if (processed.has(schema)) {
