@@ -123,6 +123,13 @@ export function run() {
     })
     rimraf.sync('./test/resources/MultiSchema2/out')
   })
+
+  test('files in (-i), single file out', t => {
+    const file = './test/resources/MultiSchema3/out.d.ts'
+    execSync(`node dist/src/cli.js -i './test/resources/MultiSchema3/' -o ${file} --onlyExportMain=true`)
+    t.snapshot(readFileSync(file, 'utf-8'))
+    unlinkSync(file)
+  })
 }
 
 function getPaths(path: string, paths: string[] = []) {

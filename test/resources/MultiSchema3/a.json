@@ -1,0 +1,30 @@
+{
+  "title": "A schema",
+  "type": "object",
+  "definitions": {
+    "value": {
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "string"
+        },
+        "b": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "f": {
+      "$ref": "#/definitions/value"
+    },
+    "g": {
+      "$ref": "#/definitions/value"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "f"
+  ]
+}
