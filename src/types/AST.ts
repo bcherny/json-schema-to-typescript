@@ -6,7 +6,7 @@ export type AST = TAny | TArray | TBoolean | TEnum | TInterface | TNamedInterfac
   | TIntersection | TLiteral | TNumber | TNull | TObject | TReference
   | TString | TTuple | TUnion | TCustomType
 
-export type TSuperType = TNamedInterface | TCustomType
+export type TSuperType = ASTWithStandaloneName & (TNamedInterface | TCustomType)
 
 export interface AbstractAST {
   comment?: string

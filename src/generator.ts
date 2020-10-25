@@ -337,12 +337,8 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
   )
 }
 
-function notUndefined<T>(x: T | undefined): x is T {
-  return x !== undefined
-}
-
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
-  const superTypeNames = ast.superTypes.map(x => x.standaloneName).filter(notUndefined)
+  const superTypeNames = ast.superTypes.map(x => x.standaloneName)
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
     `export interface ${toSafeString(ast.standaloneName)} ` +

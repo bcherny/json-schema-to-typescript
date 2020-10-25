@@ -12,10 +12,9 @@ import {
   TInterfaceParam,
   TNamedInterface,
   TTuple,
-  TCustomType,
   TSuperType
 } from './types/AST'
-import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
+import {CustomTypeJSONSchema, JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
 import {generateName, log} from './utils'
 
 export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
@@ -333,13 +332,16 @@ function getOrCreateSuperType(
 ): TSuperType {
   if (processed.has(schema)) {
     const hit = processed.get(schema)
+    // Protect against programming mistakes
     if (isSuperType(hit)) {
       return hit
+    } else {
+      throw Error(format('type is not a supertype', hit))
     }
   }
 
   if (schema.tsType) {
-    const extendedType = newExtendedType(schema, usedNames)
+    const extendedType = newExtendedType(schema as CustomTypeJSONSchema, usedNames)
     processed.set(schema, extendedType)
     return extendedType
   }
@@ -348,17 +350,18 @@ function getOrCreateSuperType(
   return namedInterface
 }
 
-function newExtendedType(schema: SchemaSchema, usedNames: UsedNames): TCustomType {
-  if (schema.tsType) {
-    return {
-      comment: schema.description,
-      keyName: schema.title,
-      params: schema.tsType,
-      standaloneName: standaloneName(schema, schema.title, usedNames),
-      type: 'CUSTOM_TYPE'
-    }
-  } else {
-    throw Error(format('Customtype must have a tsType', schema))
+function newExtendedType(schema: CustomTypeJSONSchema, usedNames: UsedNames): TSuperType {
+  const name = standaloneName(schema, schema.title, usedNames)
+  if (!name || name.length == 0) {
+    // TODO: Generate name if it doesn't have one
+    throw Error(format('Extended type must have standalone name!', schema))
+  }
+  return {
+    comment: schema.description,
+    keyName: schema.title,
+    params: schema.tsType,
+    standaloneName: name,
+    type: 'CUSTOM_TYPE'
   }
 }
 
