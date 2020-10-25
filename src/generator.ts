@@ -338,11 +338,12 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 }
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
+  const superTypeNames = ast.superTypes.map(x => x.standaloneName)
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
     `export interface ${toSafeString(ast.standaloneName)} ` +
-    (ast.superTypes.length > 0
-      ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
+    (superTypeNames.length > 0
+      ? `extends ${superTypeNames.map(superTypeName => toSafeString(superTypeName)).join(', ')} `
       : '') +
     generateInterface(ast, options)
   )
