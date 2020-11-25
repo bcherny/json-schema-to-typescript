@@ -33,6 +33,7 @@ export function mapDeep(object: object, fn: (value: object, key?: string) => obj
 // keys that shouldn't be traversed by the catchall step
 const BLACKLISTED_KEYS = new Set([
   'id',
+  '$id',
   '$schema',
   'title',
   'description',
@@ -201,13 +202,20 @@ export function error(...messages: any[]): void {
   console.error(getStyledTextForLogging('red')?.('error'), ...messages)
 }
 
-type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'yellow'
+type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'white' | 'yellow'
 
 export function log(style: LogStyle, title: string, ...messages: unknown[]): void {
   if (!process.env.VERBOSE) {
     return
   }
+  let lastMessage = null
+  if (messages.length > 1 && typeof messages[messages.length - 1] !== 'string') {
+    lastMessage = messages.splice(messages.length - 1, 1)
+  }
   console.info(require('cli-color').whiteBright.bgCyan('debug'), getStyledTextForLogging(style)?.(title), ...messages)
+  if (lastMessage) {
+    console.dir(lastMessage, {depth: 6, maxArrayLength: 6})
+  }
 }
 
 function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | undefined {
@@ -225,6 +233,8 @@ function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | 
       return require('cli-color').whiteBright.bgMagenta
     case 'red':
       return require('cli-color').whiteBright.bgRedBright
+    case 'white':
+      return require('cli-color').black.bgWhite
     case 'yellow':
       return require('cli-color').whiteBright.bgYellow
   }

@@ -21,13 +21,13 @@ export function optimize(ast: AST, processed = new Set<AST>()): AST {
     case 'UNION':
       // [A, B, C, Any] -> Any
       if (ast.params.some(_ => _.type === 'ANY')) {
-        log('cyan', 'optimizer', ast, '<- T_ANY')
+        log('cyan', 'optimizer', '[A, B, C, Any] -> Any', ast)
         return T_ANY
       }
 
       // [A, B, B] -> [A, B]
       const shouldTakeStandaloneNameIntoAccount = ast.params.filter(_ => _.standaloneName).length > 1
-      ast.params = uniqBy(
+      const params = uniqBy(
         ast.params,
         _ => `
           ${_.type}-
@@ -35,6 +35,10 @@ export function optimize(ast: AST, processed = new Set<AST>()): AST {
           ${stringify((_ as any).params)}
         `
       )
+      if (params.length !== ast.params.length) {
+        log('cyan', 'optimizer', '[A, B, B] -> [A, B]', ast)
+        ast.params = params
+      }
 
       return Object.assign(ast, {
         params: ast.params.map(_ => optimize(_, processed))
