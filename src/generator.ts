@@ -38,8 +38,7 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
 
   switch (ast.type) {
     case 'ENUM':
-      type = generateStandaloneEnum(ast, options) + '\n'
-      break
+      return generateStandaloneEnum(ast, options) + '\n'
     case 'ARRAY':
       return declareEnums(ast.params, options, processed)
     case 'UNION':
@@ -50,15 +49,12 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
       if (ast.spreadParam) {
         type += declareEnums(ast.spreadParam, options, processed)
       }
-      break
+      return type
     case 'INTERFACE':
-      type = getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-      break
+      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
     default:
       return ''
   }
-
-  return type
 }
 
 function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
