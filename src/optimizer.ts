@@ -3,14 +3,14 @@ import {uniqBy} from 'lodash'
 import {AST, T_ANY} from './types/AST'
 import {log} from './utils'
 
-export function optimize(ast: AST, processed = new Map<AST, AST>()): AST {
+export function optimize(ast: AST, processed = new Set<AST>()): AST {
   log('cyan', 'optimizer', ast, processed.has(ast) ? '(FROM CACHE)' : '')
 
   if (processed.has(ast)) {
-    return processed.get(ast)!
+    return ast
   }
 
-  processed.set(ast, ast)
+  processed.add(ast)
 
   switch (ast.type) {
     case 'INTERFACE':
