@@ -3,6 +3,7 @@ import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
+// eslint-disable-next-line
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   try {
     return fn()
