@@ -1,6 +1,6 @@
 import stringify = require('json-stringify-safe')
 import {uniqBy} from 'lodash'
-import {AST, T_ANY} from './types/AST'
+import {AST, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'
 
 export function optimize(ast: AST, processed = new Set<AST>()): AST {
@@ -23,6 +23,12 @@ export function optimize(ast: AST, processed = new Set<AST>()): AST {
       if (ast.params.some(_ => _.type === 'ANY')) {
         log('cyan', 'optimizer', '[A, B, C, Any] -> Any', ast)
         return T_ANY
+      }
+
+      // [A, B, C, Unknown] -> Unknown
+      if (ast.params.some(_ => _.type === 'UNKNOWN')) {
+        log('cyan', 'optimizer', '[A, B, C, Unknown] -> Unknown', ast)
+        return T_UNKNOWN
       }
 
       // [A, B, B] -> [A, B]

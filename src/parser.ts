@@ -11,7 +11,9 @@ import {
   TInterface,
   TInterfaceParam,
   TNamedInterface,
-  TTuple
+  TTuple,
+  T_UNKNOWN,
+  T_UNKNOWN_ADDITIONAL_PROPERTIES
 } from './types/AST'
 import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
 import {generateName, log} from './utils'
@@ -95,10 +97,10 @@ function parseNonLiteral(
       })
     case 'ANY':
       return set({
+        ...(options.unknownAny ? T_UNKNOWN : T_ANY),
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'ANY'
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames)
       })
     case 'ANY_OF':
       return set({
@@ -189,9 +191,7 @@ function parseNonLiteral(
           type: 'TUPLE'
         }
         if (schema.additionalItems === true) {
-          arrayType.spreadParam = {
-            type: 'ANY'
-          }
+          arrayType.spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
         } else if (schema.additionalItems) {
           arrayType.spreadParam = parse(
             schema.additionalItems,
@@ -240,7 +240,7 @@ function parseNonLiteral(
       // normalised to not be undefined
       const minItems = schema.minItems!
       const maxItems = typeof schema.maxItems === 'number' ? schema.maxItems : -1
-      const params = T_ANY
+      const params = options.unknownAny ? T_UNKNOWN : T_ANY
       if (minItems > 0 || maxItems >= 0) {
         return set({
           comment: schema.description,
@@ -402,7 +402,7 @@ via the \`definition\` "${key}".`
         return asts
       }
       return asts.concat({
-        ast: T_ANY_ADDITIONAL_PROPERTIES,
+        ast: options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
