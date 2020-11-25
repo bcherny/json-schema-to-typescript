@@ -122,25 +122,25 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     _options.cwd += '/'
   }
 
-  const normalized = normalize(schema, name, _options)
+  const dereferenced = await dereference(schema, _options)
   if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(schema, normalized)) {
+    if (isDeepStrictEqual(schema, dereferenced)) {
+      log('green', 'dereferencer', '✅ No change')
+    } else {
+      log('green', 'dereferencer', '✅ Result:', dereferenced)
+    }
+  }
+
+  const normalized = normalize(dereferenced, name, _options)
+  if (process.env.VERBOSE) {
+    if (isDeepStrictEqual(dereferenced, normalized)) {
       log('yellow', 'normalizer', '✅ No change')
     } else {
       log('yellow', 'normalizer', '✅ Result:', normalized)
     }
   }
 
-  const dereferenced = await dereference(normalized, _options)
-  if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(normalized, dereferenced)) {
-      log('green', 'resolver', '✅ No change')
-    } else {
-      log('green', 'resolver', '✅ Result:', dereferenced)
-    }
-  }
-
-  const parsed = parse(dereferenced, _options)
+  const parsed = parse(normalized, _options)
   log('blue', 'parser', '✅ Result:', parsed)
 
   const optimized = optimize(parsed)

@@ -66,60 +66,76 @@ const BLACKLISTED_KEYS = new Set([
   'oneOf',
   'not'
 ])
-function traverseObjectKeys(obj: Record<string, JSONSchema>, callback: (schema: JSONSchema, isRoot: boolean) => void) {
+
+function traverseObjectKeys(
+  obj: Record<string, JSONSchema>,
+  callback: (schema: JSONSchema, isRoot: boolean) => void,
+  processed: Set<JSONSchema>
+) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, false)
+      traverse(obj[k], callback, false, processed)
     }
   })
 }
-function traverseArray(arr: JSONSchema[], callback: (schema: JSONSchema, isRoot: boolean) => void) {
-  arr.forEach(i => traverse(i, callback, false))
+function traverseArray(
+  arr: JSONSchema[],
+  callback: (schema: JSONSchema, isRoot: boolean) => void,
+  processed: Set<JSONSchema>
+) {
+  arr.forEach(i => traverse(i, callback, false, processed))
 }
 export function traverse(
   schema: JSONSchema,
   callback: (schema: JSONSchema, isRoot: boolean) => void,
-  isRoot: boolean
+  isRoot: boolean,
+  processed = new Set<JSONSchema>()
 ): void {
+  // Handle recursive schemas
+  if (processed.has(schema)) {
+    return
+  }
+
+  processed.add(schema)
   callback(schema, isRoot)
 
   if (schema.anyOf) {
-    traverseArray(schema.anyOf, callback)
+    traverseArray(schema.anyOf, callback, processed)
   }
   if (schema.allOf) {
-    traverseArray(schema.allOf, callback)
+    traverseArray(schema.allOf, callback, processed)
   }
   if (schema.oneOf) {
-    traverseArray(schema.oneOf, callback)
+    traverseArray(schema.oneOf, callback, processed)
   }
   if (schema.properties) {
-    traverseObjectKeys(schema.properties, callback)
+    traverseObjectKeys(schema.properties, callback, processed)
   }
   if (schema.patternProperties) {
-    traverseObjectKeys(schema.patternProperties, callback)
+    traverseObjectKeys(schema.patternProperties, callback, processed)
   }
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-    traverse(schema.additionalProperties, callback, false)
+    traverse(schema.additionalProperties, callback, false, processed)
   }
   if (schema.items) {
     const {items} = schema
     if (Array.isArray(items)) {
-      traverseArray(items, callback)
+      traverseArray(items, callback, processed)
     } else {
-      traverse(items, callback, false)
+      traverse(items, callback, false, processed)
     }
   }
   if (schema.additionalItems && typeof schema.additionalItems === 'object') {
-    traverse(schema.additionalItems, callback, false)
+    traverse(schema.additionalItems, callback, false, processed)
   }
   if (schema.dependencies) {
-    traverseObjectKeys(schema.dependencies, callback)
+    traverseObjectKeys(schema.dependencies, callback, processed)
   }
   if (schema.definitions) {
-    traverseObjectKeys(schema.definitions, callback)
+    traverseObjectKeys(schema.definitions, callback, processed)
   }
   if (schema.not) {
-    traverse(schema.not, callback, false)
+    traverse(schema.not, callback, false, processed)
   }
 
   // technically you can put definitions on any key
@@ -128,7 +144,7 @@ export function traverse(
     .forEach(key => {
       const child = schema[key]
       if (child && typeof child === 'object') {
-        traverseObjectKeys(child, callback)
+        traverseObjectKeys(child, callback, processed)
       }
     })
 }
