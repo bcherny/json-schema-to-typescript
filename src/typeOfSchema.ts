@@ -1,10 +1,10 @@
 import {isPlainObject} from 'lodash'
-import {JSONSchema, SchemaType} from './types/JSONSchema'
+import {JSONSchema as LinkedJSONSchema, SchemaType} from './types/JSONSchema'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
  */
-export function typeOfSchema(schema: JSONSchema): SchemaType {
+export function typeOfSchema(schema: LinkedJSONSchema): SchemaType {
   if (schema.tsType) return 'CUSTOM_TYPE'
   if (schema.allOf) return 'ALL_OF'
   if (schema.anyOf) return 'ANY_OF'

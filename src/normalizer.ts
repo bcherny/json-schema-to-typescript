@@ -1,17 +1,17 @@
-import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
+import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
 import {Options} from './'
 
-type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string, options: Options, isRoot: boolean) => void
+type Rule = (schema: LinkedJSONSchema, fileName: string, options: Options) => void
 const rules = new Map<string, Rule>()
 
-function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
+function hasType(schema: LinkedJSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
-function isObjectType(schema: JSONSchema) {
+function isObjectType(schema: LinkedJSONSchema) {
   return schema.properties !== undefined || hasType(schema, 'object') || hasType(schema, 'any')
 }
-function isArrayType(schema: JSONSchema) {
+function isArrayType(schema: LinkedJSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
 
@@ -51,7 +51,8 @@ rules.set('Default additionalProperties to true', schema => {
   }
 })
 
-rules.set('Default top level `id`', (schema, _rootSchema, fileName, _options, isRoot) => {
+rules.set('Default top level `id`', (schema, fileName) => {
+  const isRoot = schema[Parent] === null
   if (isRoot && !schema.id) {
     schema.id = toSafeString(justName(fileName))
   }
@@ -61,7 +62,7 @@ rules.set('Escape closing JSDoc Comment', schema => {
   escapeBlockComment(schema)
 })
 
-rules.set('Optionally remove maxItems and minItems', (schema, _rootSchema, _fileName, options) => {
+rules.set('Optionally remove maxItems and minItems', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     if ('maxItems' in schema) {
       delete schema.maxItems
@@ -72,7 +73,7 @@ rules.set('Optionally remove maxItems and minItems', (schema, _rootSchema, _file
   }
 })
 
-rules.set('Normalise schema.minItems', (schema, _rootSchema, _fileName, options) => {
+rules.set('Normalise schema.minItems', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     return
   }
@@ -84,7 +85,7 @@ rules.set('Normalise schema.minItems', (schema, _rootSchema, _fileName, options)
   // cannot normalise maxItems because maxItems = 0 has an actual meaning
 })
 
-rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) => {
+rules.set('Normalize schema.items', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     return
   }
@@ -112,9 +113,9 @@ rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) =>
   return schema
 })
 
-export function normalize(rootSchema: JSONSchema, filename: string, options: Options): NormalizedJSONSchema {
+export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   rules.forEach((rule, key) => {
-    traverse(rootSchema, (schema, isRoot) => rule(schema, rootSchema, filename, options, isRoot), true)
+    traverse(rootSchema, schema => rule(schema, filename, options))
     log('yellow', 'normalizer', `Applied rule: "${key}"`)
   })
   return rootSchema as NormalizedJSONSchema

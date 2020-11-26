@@ -15,20 +15,20 @@ import {
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES
 } from './types/AST'
-import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
+import {JSONSchema as LinkedJSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
 import {generateName, log} from './utils'
 
-export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
+export type Processed = Map<LinkedJSONSchema | JSONSchema4Type, AST>
 
 export type UsedNames = Set<string>
 
 export function parse(
-  schema: JSONSchema | JSONSchema4Type,
+  schema: LinkedJSONSchema | JSONSchema4Type,
   options: Options,
-  rootSchema = schema as JSONSchema,
+  rootSchema = schema as LinkedJSONSchema,
   keyName?: string,
   isSchema = true,
-  processed: Processed = new Map<JSONSchema | JSONSchema4Type, AST>(),
+  processed: Processed = new Map<LinkedJSONSchema | JSONSchema4Type, AST>(),
   usedNames = new Set<string>()
 ): AST {
   // If we've seen this node before, return it.
@@ -75,9 +75,9 @@ function parseLiteral(
 }
 
 function parseNonLiteral(
-  schema: JSONSchema,
+  schema: LinkedJSONSchema,
   options: Options,
-  rootSchema: JSONSchema,
+  rootSchema: LinkedJSONSchema,
   keyName: string | undefined,
   keyNameFromDefinition: string | undefined,
   set: (ast: AST) => AST,
@@ -270,7 +270,7 @@ function parseNonLiteral(
  * Compute a schema name using a series of fallbacks
  */
 function standaloneName(
-  schema: JSONSchema,
+  schema: LinkedJSONSchema,
   keyNameFromDefinition: string | undefined,
   usedNames: UsedNames
 ): string | undefined {
@@ -283,7 +283,7 @@ function standaloneName(
 function newInterface(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
+  rootSchema: LinkedJSONSchema,
   processed: Processed,
   usedNames: UsedNames,
   keyName?: string,
@@ -321,7 +321,7 @@ function parseSuperTypes(
 function newNamedInterface(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
+  rootSchema: LinkedJSONSchema,
   processed: Processed,
   usedNames: UsedNames
 ): TNamedInterface {
@@ -339,7 +339,7 @@ function newNamedInterface(
 function parseSchema(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
+  rootSchema: LinkedJSONSchema,
   processed: Processed,
   usedNames: UsedNames,
   parentSchemaName: string
@@ -425,12 +425,16 @@ via the \`definition\` "${key}".`
   }
 }
 
-type Definitions = {[k: string]: JSONSchema}
+type Definitions = {[k: string]: LinkedJSONSchema}
 
 /**
  * TODO: Memoize
  */
-function getDefinitions(schema: JSONSchema, isSchema = true, processed = new Set<JSONSchema>()): Definitions {
+function getDefinitions(
+  schema: LinkedJSONSchema,
+  isSchema = true,
+  processed = new Set<LinkedJSONSchema>()
+): Definitions {
   if (processed.has(schema)) {
     return {}
   }
@@ -462,6 +466,6 @@ function getDefinitions(schema: JSONSchema, isSchema = true, processed = new Set
 /**
  * TODO: Reduce rate of false positives
  */
-function hasDefinitions(schema: JSONSchema): schema is JSONSchemaWithDefinitions {
+function hasDefinitions(schema: LinkedJSONSchema): schema is JSONSchemaWithDefinitions {
   return 'definitions' in schema
 }
