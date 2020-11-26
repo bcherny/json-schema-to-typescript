@@ -3,7 +3,9 @@
   "type": "object",
   "properties": {
     "b": {
-      "items": "number",
+      "items": {
+        "type": "number"
+      },
       "maxItems": 5
     }
   }
