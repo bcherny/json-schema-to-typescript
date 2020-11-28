@@ -40,6 +40,76 @@ export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
   return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
 }
 
+export function reduce<A>(ast: AST, f: (accumulator: A, ast: AST) => A, init: A): A {
+  let accumulator = init
+  traverse(
+    ast,
+    _ => {
+      accumulator = f(accumulator, _)
+    },
+    () => {}
+  )
+  return accumulator
+}
+
+export function reduceRight<A>(ast: AST, f: (accumulator: A, ast: AST) => A, init: A): A {
+  let accumulator = init
+  traverse(
+    ast,
+    () => {},
+    _ => {
+      accumulator = f(accumulator, _)
+    }
+  )
+  return accumulator
+}
+
+/**
+ * Traverse a JSON-Schema AST. Cycle-safe.
+ */
+function traverse(
+  ast: AST,
+  before: (ast: AST) => void,
+  after: (ast: AST) => void,
+  processed = new WeakSet<AST>()
+): void {
+  // Handle cycles
+  if (processed.has(ast)) {
+    return
+  }
+  processed.add(ast)
+
+  // Process (DFS)
+  before(ast)
+
+  // Traverse
+  switch (ast.type) {
+    case 'ARRAY':
+      traverse(ast.params, before, after, processed)
+      break
+    case 'ENUM':
+      ast.params.forEach(_ => traverse(_.ast, before, after, processed))
+      break
+    case 'INTERSECTION':
+    case 'UNION':
+      ast.params.forEach(_ => traverse(_, before, after, processed))
+      break
+    case 'INTERFACE':
+      ast.params.forEach(_ => traverse(_.ast, before, after, processed))
+      ast.superTypes.forEach(_ => traverse(_, before, after, processed))
+      break
+    case 'TUPLE':
+      ast.params.forEach(_ => traverse(_, before, after, processed))
+      if (ast.spreadParam) {
+        traverse(ast.spreadParam, before, after, processed)
+      }
+      break
+  }
+
+  // Process (reverse order DFS)
+  after(ast)
+}
+
 ////////////////////////////////////////////     types
 
 export interface TAny extends AbstractAST {
