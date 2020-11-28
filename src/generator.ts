@@ -1,12 +1,9 @@
-import {omit} from 'lodash'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
   AST,
   ASTWithStandaloneName,
   hasComment,
-  hasStandaloneName,
   T_ANY,
-  TArray,
   TEnum,
   TInterface,
   TIntersection,
@@ -16,145 +13,122 @@ import {
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
+export function generate(partitionedAST: ASTWithStandaloneName[], options = DEFAULT_OPTIONS): string {
   return (
-    [
-      options.bannerComment,
-      declareNamedTypes(ast, options, ast.standaloneName!),
-      declareNamedInterfaces(ast, options, ast.standaloneName!),
-      declareEnums(ast, options)
-    ]
-      .filter(Boolean)
-      .join('\n\n') + '\n'
+    [options.bannerComment, ...partitionedAST.map(_ => generateStandalone(_, options))].filter(Boolean).join('\n\n') +
+    '\n'
   ) // trailing newline
 }
 
-function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
-  }
+// function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
+//   if (processed.has(ast)) {
+//     return ''
+//   }
 
-  processed.add(ast)
-  let type = ''
+//   processed.add(ast)
+//   let type = ''
 
-  switch (ast.type) {
-    case 'ENUM':
-      return generateStandaloneEnum(ast, options) + '\n'
-    case 'ARRAY':
-      return declareEnums(ast.params, options, processed)
-    case 'UNION':
-    case 'INTERSECTION':
-      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-    case 'TUPLE':
-      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-      if (ast.spreadParam) {
-        type += declareEnums(ast.spreadParam, options, processed)
-      }
-      return type
-    case 'INTERFACE':
-      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-    default:
-      return ''
-  }
-}
+//   switch (ast.type) {
+//     case 'ENUM':
+//       return generateStandaloneEnum(ast, options) + '\n'
+//     case 'ARRAY':
+//       return declareEnums(ast.params, options, processed)
+//     case 'UNION':
+//     case 'INTERSECTION':
+//       return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+//     case 'TUPLE':
+//       type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+//       if (ast.spreadParam) {
+//         type += declareEnums(ast.spreadParam, options, processed)
+//       }
+//       return type
+//     case 'INTERFACE':
+//       return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+//     default:
+//       return ''
+//   }
+// }
 
-function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
-  }
+// function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+//   if (processed.has(ast)) {
+//     return ''
+//   }
 
-  processed.add(ast)
-  let type = ''
+//   processed.add(ast)
+//   let type = ''
 
-  switch (ast.type) {
-    case 'ARRAY':
-      type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
-      break
-    case 'INTERFACE':
-      type = [
-        hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-          generateStandaloneInterface(ast, options),
-        getSuperTypesAndParams(ast)
-          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n')
-      ]
-        .filter(Boolean)
-        .join('\n')
-      break
-    case 'INTERSECTION':
-    case 'TUPLE':
-    case 'UNION':
-      type = ast.params
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, processed))
-        .filter(Boolean)
-        .join('\n')
-      if (ast.type === 'TUPLE' && ast.spreadParam) {
-        type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed)
-      }
-      break
-    default:
-      type = ''
-  }
+//   switch (ast.type) {
+//     case 'ARRAY':
+//       type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
+//       break
+//     case 'INTERFACE':
+//       type = [
+//         hasStandaloneName(ast) &&
+//           (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+//           generateStandaloneInterface(ast, options),
+//         getSuperTypesAndParams(ast)
+//           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
+//           .filter(Boolean)
+//           .join('\n')
+//       ]
+//         .filter(Boolean)
+//         .join('\n')
+//       break
+//     case 'INTERSECTION':
+//     case 'TUPLE':
+//     case 'UNION':
+//       type = ast.params
+//         .map(_ => declareNamedInterfaces(_, options, rootASTName, processed))
+//         .filter(Boolean)
+//         .join('\n')
+//       if (ast.type === 'TUPLE' && ast.spreadParam) {
+//         type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed)
+//       }
+//       break
+//     default:
+//       type = ''
+//   }
 
-  return type
-}
+//   return type
+// }
 
-function declareNamedTypes(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
-  }
+// function declareNamedTypes(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+//   if (processed.has(ast)) {
+//     return ''
+//   }
 
-  processed.add(ast)
-  let type = ''
+//   processed.add(ast)
 
-  switch (ast.type) {
-    case 'ARRAY':
-      type = [
-        declareNamedTypes(ast.params, options, rootASTName, processed),
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined
-      ]
-        .filter(Boolean)
-        .join('\n')
-      break
-    case 'ENUM':
-      type = ''
-      break
-    case 'INTERFACE':
-      type = getSuperTypesAndParams(ast)
-        .map(
-          ast =>
-            (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-            declareNamedTypes(ast, options, rootASTName, processed)
-        )
-        .filter(Boolean)
-        .join('\n')
-      break
-    case 'INTERSECTION':
-    case 'TUPLE':
-    case 'UNION':
-      type = [
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
-        ast.params
-          .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n'),
-        'spreadParam' in ast && ast.spreadParam
-          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
-          : undefined
-      ]
-        .filter(Boolean)
-        .join('\n')
-      break
-    default:
-      if (hasStandaloneName(ast)) {
-        type = generateStandaloneType(ast, options)
-      }
-  }
-
-  return type
-}
+//   switch (ast.type) {
+//     case 'ARRAY':
+//       return declareNamedTypes(ast.params, options, rootASTName, processed)
+//     case 'INTERFACE':
+//       return getSuperTypesAndParams(ast)
+//         .map(
+//           ast =>
+//             (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+//             declareNamedTypes(ast, options, rootASTName, processed)
+//         )
+//         .filter(Boolean)
+//         .join('\n')
+//     case 'INTERSECTION':
+//     case 'TUPLE':
+//     case 'UNION':
+//       return [
+//         ast.params
+//           .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
+//           .filter(Boolean)
+//           .join('\n'),
+//         'spreadParam' in ast && ast.spreadParam
+//           ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
+//           : undefined
+//       ]
+//         .filter(Boolean)
+//         .join('\n')
+//     default:
+//       return ''
+//   }
+// }
 
 function generateType(ast: AST, options: Options): string {
   const type = generateRawType(ast, options)
@@ -169,22 +143,21 @@ function generateType(ast: AST, options: Options): string {
 function generateRawType(ast: AST, options: Options): string {
   log('magenta', 'generator', ast)
 
-  if (hasStandaloneName(ast)) {
-    return toSafeString(ast.standaloneName)
-  }
+  // if (hasStandaloneName(ast)) {
+  //   return toSafeString(ast.standaloneName)
+  // }
 
   switch (ast.type) {
     case 'ANY':
       return 'any'
-    case 'ARRAY':
-      return (() => {
-        const type = generateType(ast.params, options)
-        return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
-      })()
+    case 'ARRAY': {
+      const type = generateType(ast.params, options)
+      return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+    }
     case 'BOOLEAN':
       return 'boolean'
     case 'INTERFACE':
-      return generateInterface(ast, options)
+      return generateShape(ast, options)
     case 'INTERSECTION':
       return generateSetOperation(ast, options)
     case 'LITERAL':
@@ -195,6 +168,7 @@ function generateRawType(ast: AST, options: Options): string {
       return 'null'
     case 'OBJECT':
       return 'object'
+    case 'POINTER':
     case 'REFERENCE':
       return ast.params
     case 'STRING':
@@ -283,6 +257,8 @@ function generateRawType(ast: AST, options: Options): string {
       return 'unknown'
     case 'CUSTOM_TYPE':
       return ast.params
+    default:
+      return ''
   }
 }
 
@@ -295,7 +271,10 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
 
-function generateInterface(ast: TInterface, options: Options): string {
+/**
+ * Generate a shape type (`{a: b}`), used either inline or as a standalone type.
+ */
+function generateShape(ast: TInterface, options: Options): string {
   return (
     `{` +
     '\n' +
@@ -311,7 +290,7 @@ function generateInterface(ast: TInterface, options: Options): string {
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
-          (hasStandaloneName(ast) ? toSafeString(type) : type)
+          type
       )
       .join('\n') +
     '\n' +
@@ -321,6 +300,17 @@ function generateInterface(ast: TInterface, options: Options): string {
 
 function generateComment(comment: string): string {
   return ['/**', ...comment.split('\n').map(_ => ' * ' + _), ' */'].join('\n')
+}
+
+function generateStandalone(ast: ASTWithStandaloneName, options: Options): string {
+  switch (ast.type) {
+    case 'ENUM':
+      return generateStandaloneEnum(ast, options)
+    case 'INTERFACE':
+      return generateStandaloneInterface(ast, options)
+    default:
+      return generateStandaloneType(ast, options)
+  }
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
@@ -343,17 +333,14 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
     (ast.superTypes.length > 0
       ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
       : '') +
-    generateInterface(ast, options)
+    generateShape(ast, options)
   )
 }
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
-    `export type ${toSafeString(ast.standaloneName)} = ${generateType(
-      omit<AST>(ast, 'standaloneName') as AST /* TODO */,
-      options
-    )}`
+    `export type ${toSafeString(ast.standaloneName)} = ${generateType(ast, options)}`
   )
 }
 
@@ -367,6 +354,6 @@ function escapeKeyName(keyName: string): string {
   return JSON.stringify(keyName)
 }
 
-function getSuperTypesAndParams(ast: TInterface): AST[] {
-  return ast.params.map(param => param.ast).concat(ast.superTypes)
-}
+// function getSuperTypesAndParams(ast: TInterface): AST[] {
+//   return ast.params.map(param => param.ast).concat(ast.superTypes)
+// }

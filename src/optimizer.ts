@@ -4,8 +4,6 @@ import {AST, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'
 
 export function optimize(ast: AST, processed = new Set<AST>()): AST {
-  log('cyan', 'optimizer', ast, processed.has(ast) ? '(FROM CACHE)' : '')
-
   if (processed.has(ast)) {
     return ast
   }

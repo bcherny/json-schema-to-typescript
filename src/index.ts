@@ -14,6 +14,7 @@ import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
+import {partition} from './partitioner'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -154,7 +155,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     }
   }
 
-  const parsed = parse(normalized, _options)
+  const parsed = parse(normalized, _options, new WeakMap())
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed)
@@ -166,7 +167,10 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     }
   }
 
-  const generated = generate(optimized, _options)
+  const partitioned = partition(optimized)
+  log('magenta', 'partitioner', time(), '✅ Result:', partitioned)
+
+  const generated = generate(partitioned, _options)
   log('magenta', 'generator', time(), '✅ Result:', generated)
 
   const formatted = format(generated, _options)

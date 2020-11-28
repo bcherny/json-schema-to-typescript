@@ -14,6 +14,7 @@ export type AST =
   | TNumber
   | TNull
   | TObject
+  | TPointer
   | TReference
   | TString
   | TTuple
@@ -38,6 +39,44 @@ export function hasComment(ast: AST): ast is ASTWithComment {
 
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
   return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
+}
+
+export function assertHasStandaloneName(ast: AST): asserts ast is ASTWithStandaloneName {
+  if (!hasStandaloneName(ast)) {
+    throw TypeError('Expected AST to have a standaloneName, but none was found. This is a bug -- please report it.')
+  }
+}
+
+export function traverse(ast: AST, f: (ast: AST) => void, processed = new WeakSet<AST>()): void {
+  // Handle cycles
+  if (processed.has(ast)) {
+    return
+  }
+  processed.add(ast)
+
+  // Process
+  f(ast)
+
+  // Traverse
+  switch (ast.type) {
+    case 'ARRAY':
+      return traverse(ast.params, f, processed)
+    case 'ENUM':
+      return ast.params.forEach(_ => traverse(_.ast, f, processed))
+    case 'INTERSECTION':
+    case 'UNION':
+      return ast.params.forEach(_ => traverse(_, f, processed))
+    case 'INTERFACE':
+      ast.params.forEach(_ => traverse(_.ast, f, processed))
+      ast.superTypes.forEach(_ => traverse(_, f, processed))
+      return
+    case 'TUPLE':
+      ast.params.forEach(_ => traverse(_, f, processed))
+      if (ast.spreadParam) {
+        traverse(ast.spreadParam, f, processed)
+      }
+      return
+  }
 }
 
 ////////////////////////////////////////////     types
@@ -107,6 +146,11 @@ export interface TNull extends AbstractAST {
 
 export interface TObject extends AbstractAST {
   type: 'OBJECT'
+}
+
+export interface TPointer extends AbstractAST {
+  type: 'POINTER'
+  params: string
 }
 
 export interface TReference extends AbstractAST {
