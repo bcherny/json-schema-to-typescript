@@ -1,4 +1,5 @@
-import {JSONSchema4, JSONSchema4TypeName} from 'json-schema'
+import {JSONSchema4, JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
+import {isPlainObject, memoize} from 'lodash'
 
 export type SchemaType =
   | 'ALL_OF'
@@ -21,6 +22,7 @@ export type SchemaType =
   | 'CUSTOM_TYPE'
 
 export type JSONSchemaTypeName = JSONSchema4TypeName
+export type JSONSchemaType = JSONSchema4Type
 
 export interface JSONSchema extends JSONSchema4 {
   /**
@@ -109,4 +111,18 @@ export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {
 
 export interface CustomTypeJSONSchema extends NormalizedJSONSchema {
   tsType: string
+}
+
+export const getRootSchema = memoize(
+  (schema: LinkedJSONSchema): LinkedJSONSchema => {
+    const parent = schema[Parent]
+    if (!parent) {
+      return schema
+    }
+    return getRootSchema(parent)
+  }
+)
+
+export function isPrimitive(schema: LinkedJSONSchema | JSONSchemaType): schema is JSONSchemaType {
+  return !isPlainObject(schema)
 }
