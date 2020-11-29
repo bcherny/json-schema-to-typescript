@@ -73,7 +73,7 @@ rules.set('Optionally remove maxItems and minItems', (schema, _fileName, options
   }
 })
 
-rules.set('Normalise schema.minItems', (schema, _fileName, options) => {
+rules.set('Normalize schema.minItems', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     return
   }
@@ -82,7 +82,7 @@ rules.set('Normalise schema.minItems', (schema, _fileName, options) => {
     const {minItems} = schema
     schema.minItems = typeof minItems === 'number' ? minItems : 0
   }
-  // cannot normalise maxItems because maxItems = 0 has an actual meaning
+  // cannot normalize maxItems because maxItems = 0 has an actual meaning
 })
 
 rules.set('Normalize schema.items', (schema, _fileName, options) => {
@@ -111,6 +111,24 @@ rules.set('Normalize schema.items', (schema, _fileName, options) => {
   }
 
   return schema
+})
+
+rules.set('Remove extends, if it is empty', schema => {
+  if (!schema.hasOwnProperty('extends')) {
+    return
+  }
+  if (schema.extends == null || (Array.isArray(schema.extends) && schema.extends.length === 0)) {
+    delete schema.extends
+  }
+})
+
+rules.set('Make extends always an array, if it is defined', schema => {
+  if (schema.extends == null) {
+    return
+  }
+  if (!Array.isArray(schema.extends)) {
+    schema.extends = [schema.extends]
+  }
 })
 
 export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {

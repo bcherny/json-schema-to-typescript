@@ -68,6 +68,7 @@ export interface LinkedJSONSchema extends JSONSchema {
 export interface NormalizedJSONSchema extends LinkedJSONSchema {
   additionalItems?: boolean | NormalizedJSONSchema
   additionalProperties: boolean | NormalizedJSONSchema
+  extends?: string[]
   items?: NormalizedJSONSchema | NormalizedJSONSchema[]
   definitions?: {
     [k: string]: NormalizedJSONSchema

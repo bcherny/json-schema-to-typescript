@@ -5,7 +5,6 @@ import {Options} from './'
 import {typesOfSchema} from './typesOfSchema'
 import {
   AST,
-  hasStandaloneName,
   T_ANY,
   T_ANY_ADDITIONAL_PROPERTIES,
   TInterface,
@@ -333,28 +332,11 @@ function parseSuperTypes(
 ): TNamedInterface[] {
   // Type assertion needed because of dereferencing step
   // TODO: Type it upstream
-  const superTypes = schema.extends as SchemaSchema | SchemaSchema[] | undefined
+  const superTypes = schema.extends as SchemaSchema[] | undefined
   if (!superTypes) {
     return []
   }
-  if (Array.isArray(superTypes)) {
-    return superTypes.map(_ => newNamedInterface(_, options, processed, usedNames))
-  }
-  return [newNamedInterface(superTypes, options, processed, usedNames)]
-}
-
-function newNamedInterface(
-  schema: SchemaSchema,
-  options: Options,
-  processed: Processed,
-  usedNames: UsedNames
-): TNamedInterface {
-  const namedInterface = newInterface(schema, options, processed, usedNames)
-  if (hasStandaloneName(namedInterface)) {
-    return namedInterface
-  }
-  // TODO: Generate name if it doesn't have one
-  throw Error(format('Supertype must have standalone name!', namedInterface))
+  return superTypes.map(_ => parse(_, options, undefined, processed, usedNames) as TNamedInterface)
 }
 
 /**
