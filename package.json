@@ -11,6 +11,7 @@
     "node": ">=10.0.0"
   },
   "scripts": {
+    "prepare": "npm run build",
     "build": "npm run clean && mkdir dist && npm run build:browser && npm run build:server",
     "build:browser": "browserify src/index.ts -s jstt -p tsify > dist/bundle.js",
     "build:server": "tsc -d",
