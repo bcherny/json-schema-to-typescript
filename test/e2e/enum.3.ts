@@ -1,3 +1,4 @@
+// Reported in #327
 export const input = {
   title: 'InterfaceWithTsEnumNames',
   anyOf: [{$ref: '#/definitions/InterfaceWithTsEnumNames'}],
