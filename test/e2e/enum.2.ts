@@ -39,5 +39,3 @@ export const input = {
     }
   }
 }
-
-export let only = true
