@@ -1,5 +1,5 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
+import {escapeBlockComment, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
 
 type Rule = (schema: LinkedJSONSchema, fileName: string, options: Options) => void
@@ -114,9 +114,6 @@ rules.set('Normalize schema.items', (schema, _fileName, options) => {
 })
 
 export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
-  rules.forEach((rule, key) => {
-    traverse(rootSchema, schema => rule(schema, filename, options))
-    log('yellow', 'normalizer', `Applied rule: "${key}"`)
-  })
+  rules.forEach(rule => traverse(rootSchema, schema => rule(schema, filename, options)))
   return rootSchema as NormalizedJSONSchema
 }

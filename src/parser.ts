@@ -1,8 +1,8 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map} from 'lodash'
+import {findKey, includes, isPlainObject, map, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
-import {typeOfSchema} from './typeOfSchema'
+import {typesOfSchema} from './typesOfSchema'
 import {
   AST,
   hasStandaloneName,
@@ -13,18 +13,20 @@ import {
   TNamedInterface,
   TTuple,
   T_UNKNOWN,
-  T_UNKNOWN_ADDITIONAL_PROPERTIES
+  T_UNKNOWN_ADDITIONAL_PROPERTIES,
+  TIntersection
 } from './types/AST'
 import {
   getRootSchema,
   isPrimitive,
   JSONSchema as LinkedJSONSchema,
   JSONSchemaWithDefinitions,
-  SchemaSchema
+  SchemaSchema,
+  SchemaType
 } from './types/JSONSchema'
 import {generateName, log} from './utils'
 
-export type Processed = Map<LinkedJSONSchema | JSONSchema4Type, AST>
+export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
 
 export type UsedNames = Set<string>
 
@@ -32,30 +34,74 @@ export function parse(
   schema: LinkedJSONSchema | JSONSchema4Type,
   options: Options,
   keyName?: string,
-  processed: Processed = new Map<LinkedJSONSchema | JSONSchema4Type, AST>(),
+  processed: Processed = new Map(),
   usedNames = new Set<string>()
 ): AST {
   if (isPrimitive(schema)) {
     return parseLiteral(schema, keyName)
   }
 
+  const types = typesOfSchema(schema)
+  if (types.length === 1) {
+    const ast = parseAsTypeWithCache(schema, types[0], options, keyName, processed, usedNames)
+    log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
+    return ast
+  }
+
+  // Be careful to first process the intersection before processing its params,
+  // so that it gets first pick for standalone name.
+  const ast = parseAsTypeWithCache(
+    {
+      allOf: [],
+      description: schema.description,
+      id: schema.id,
+      title: schema.title
+    },
+    'ALL_OF',
+    options,
+    keyName,
+    processed,
+    usedNames
+  ) as TIntersection
+
+  ast.params = types.map(type =>
+    // We hoist description (for comment) and id/title (for standaloneName)
+    // to the parent intersection type, so we remove it from the children.
+    parseAsTypeWithCache(omit(schema, 'description', 'id', 'title'), type, options, keyName, processed, usedNames)
+  )
+
+  log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
+  return ast
+}
+
+function parseAsTypeWithCache(
+  schema: LinkedJSONSchema,
+  type: SchemaType,
+  options: Options,
+  keyName?: string,
+  processed: Processed = new Map(),
+  usedNames = new Set<string>()
+): AST {
   // If we've seen this node before, return it.
-  if (processed.has(schema)) {
-    return processed.get(schema)!
+  let cachedTypeMap = processed.get(schema)
+  if (!cachedTypeMap) {
+    cachedTypeMap = new Map()
+    processed.set(schema, cachedTypeMap)
+  }
+  const cachedAST = cachedTypeMap.get(type)
+  if (cachedAST) {
+    return cachedAST
   }
 
   // Cache processed ASTs before they are actually computed, then update
   // them in place using set(). This is to avoid cycles.
   // TODO: Investigate alternative approaches (lazy-computing nodes, etc.)
   const ast = {} as AST
-  processed.set(schema, ast)
-
-  const definitions = getDefinitions(getRootSchema(schema as any)) // TODO
-  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
+  cachedTypeMap.set(type, ast)
 
   // Update the AST in place. This updates the `processed` cache, as well
   // as any nodes that directly reference the node.
-  return Object.assign(ast, parseNonLiteral(schema, options, keyName, keyNameFromDefinition, processed, usedNames))
+  return Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames))
 }
 
 function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined): AST {
@@ -68,15 +114,16 @@ function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined): AST
 
 function parseNonLiteral(
   schema: LinkedJSONSchema,
+  type: SchemaType,
   options: Options,
   keyName: string | undefined,
-  keyNameFromDefinition: string | undefined,
   processed: Processed,
   usedNames: UsedNames
 ): AST {
-  log('blue', 'parser', schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
+  const definitions = getDefinitions(getRootSchema(schema as any)) // TODO
+  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
 
-  switch (typeOfSchema(schema)) {
+  switch (type) {
     case 'ALL_OF':
       return {
         comment: schema.description,
