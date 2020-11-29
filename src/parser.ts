@@ -128,8 +128,8 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'INTERSECTION'
       }
     case 'ANY':
@@ -143,8 +143,8 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'UNION'
       }
     case 'BOOLEAN':
@@ -166,11 +166,11 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         params: schema.enum!.map((_, n) => ({
           ast: parse(_, options, undefined, processed, usedNames),
           keyName: schema.tsEnumNames![n]
         })),
-        standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         type: 'ENUM'
       }
     case 'NAMED_SCHEMA':
@@ -200,8 +200,8 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'UNION'
       }
     case 'REFERENCE':
@@ -223,8 +223,8 @@ function parseNonLiteral(
           keyName,
           maxItems,
           minItems,
-          params: schema.items.map(_ => parse(_, options, undefined, processed, usedNames)),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          params: schema.items.map(_ => parse(_, options, undefined, processed, usedNames)),
           type: 'TUPLE'
         }
         if (schema.additionalItems === true) {
@@ -234,12 +234,11 @@ function parseNonLiteral(
         }
         return arrayType
       } else {
-        const params = parse(schema.items!, options, undefined, processed, usedNames)
         return {
           comment: schema.description,
           keyName,
-          params,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          params: parse(schema.items!, options, undefined, processed, usedNames),
           type: 'ARRAY'
         }
       }
@@ -247,18 +246,18 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        params: (schema.type as JSONSchema4TypeName[]).map(_ =>
-          parse({...schema, type: _}, options, undefined, processed, usedNames)
-        ),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        params: (schema.type as JSONSchema4TypeName[]).map(type =>
+          parse({...omit(schema, 'description', 'id', 'title'), type}, options, undefined, processed, usedNames)
+        ),
         type: 'UNION'
       }
     case 'UNNAMED_ENUM':
       return {
         comment: schema.description,
         keyName,
-        params: schema.enum!.map(_ => parse(_, options, undefined, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        params: schema.enum!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'UNION'
       }
     case 'UNNAMED_SCHEMA':
