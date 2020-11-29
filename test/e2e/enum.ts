@@ -1,6 +1,12 @@
 export const input = {
   title: 'Enum',
   type: 'object',
+  definitions: {
+    enumFromDefinition: {
+      type: 'string',
+      enum: ['a', 'b', 'c']
+    }
+  },
   properties: {
     stringEnum: {
       type: 'string',
@@ -49,6 +55,17 @@ export const input = {
       enum: [4, 5, 6],
       title: 'ImpliedNamedInteger',
       tsEnumNames: ['Four', 'Five', 'Six']
+    },
+    enumThatComesFromADefinition: {
+      $ref: '#/definitions/enumFromDefinition'
+    },
+    propertyWithAnEnum: {
+      type: 'object',
+      properties: {
+        enumThatComesFromADefinition: {
+          $ref: '#/definitions/enumFromDefinition'
+        }
+      }
     }
   },
   required: [

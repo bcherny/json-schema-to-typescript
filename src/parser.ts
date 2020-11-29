@@ -170,7 +170,7 @@ function parseNonLiteral(
           ast: parse(_, options, undefined, processed, usedNames),
           keyName: schema.tsEnumNames![n]
         })),
-        standaloneName: standaloneName(schema, keyName, usedNames)!,
+        standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         type: 'ENUM'
       }
     case 'NAMED_SCHEMA':
