@@ -1,8 +1,8 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map} from 'lodash'
+import {findKey, includes, isPlainObject, map, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
-import {typeOfSchema} from './typeOfSchema'
+import {typesOfSchema} from './typesOfSchema'
 import {
   AST,
   hasStandaloneName,
@@ -13,169 +13,206 @@ import {
   TNamedInterface,
   TTuple,
   T_UNKNOWN,
-  T_UNKNOWN_ADDITIONAL_PROPERTIES
+  T_UNKNOWN_ADDITIONAL_PROPERTIES,
+  TIntersection
 } from './types/AST'
-import {JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
+import {
+  getRootSchema,
+  isPrimitive,
+  JSONSchema as LinkedJSONSchema,
+  JSONSchemaWithDefinitions,
+  SchemaSchema,
+  SchemaType
+} from './types/JSONSchema'
 import {generateName, log} from './utils'
 
-export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
+export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
 
 export type UsedNames = Set<string>
 
 export function parse(
-  schema: JSONSchema | JSONSchema4Type,
+  schema: LinkedJSONSchema | JSONSchema4Type,
   options: Options,
-  rootSchema = schema as JSONSchema,
   keyName?: string,
-  isSchema = true,
-  processed: Processed = new Map<JSONSchema | JSONSchema4Type, AST>(),
+  processed: Processed = new Map(),
+  usedNames = new Set<string>()
+): AST {
+  if (isPrimitive(schema)) {
+    return parseLiteral(schema, keyName)
+  }
+
+  const types = typesOfSchema(schema)
+  if (types.length === 1) {
+    const ast = parseAsTypeWithCache(schema, types[0], options, keyName, processed, usedNames)
+    log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
+    return ast
+  }
+
+  // Be careful to first process the intersection before processing its params,
+  // so that it gets first pick for standalone name.
+  const ast = parseAsTypeWithCache(
+    {
+      allOf: [],
+      description: schema.description,
+      id: schema.id,
+      title: schema.title
+    },
+    'ALL_OF',
+    options,
+    keyName,
+    processed,
+    usedNames
+  ) as TIntersection
+
+  ast.params = types.map(type =>
+    // We hoist description (for comment) and id/title (for standaloneName)
+    // to the parent intersection type, so we remove it from the children.
+    parseAsTypeWithCache(omit(schema, 'description', 'id', 'title'), type, options, keyName, processed, usedNames)
+  )
+
+  log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
+  return ast
+}
+
+function parseAsTypeWithCache(
+  schema: LinkedJSONSchema,
+  type: SchemaType,
+  options: Options,
+  keyName?: string,
+  processed: Processed = new Map(),
   usedNames = new Set<string>()
 ): AST {
   // If we've seen this node before, return it.
-  if (processed.has(schema)) {
-    return processed.get(schema)!
+  let cachedTypeMap = processed.get(schema)
+  if (!cachedTypeMap) {
+    cachedTypeMap = new Map()
+    processed.set(schema, cachedTypeMap)
   }
-
-  const definitions = getDefinitions(rootSchema)
-  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
+  const cachedAST = cachedTypeMap.get(type)
+  if (cachedAST) {
+    return cachedAST
+  }
 
   // Cache processed ASTs before they are actually computed, then update
   // them in place using set(). This is to avoid cycles.
   // TODO: Investigate alternative approaches (lazy-computing nodes, etc.)
   const ast = {} as AST
-  processed.set(schema, ast)
-  const set = (_ast: AST) => Object.assign(ast, _ast)
+  cachedTypeMap.set(type, ast)
 
-  return isSchema
-    ? parseNonLiteral(
-        schema as SchemaSchema,
-        options,
-        rootSchema,
-        keyName,
-        keyNameFromDefinition,
-        set,
-        processed,
-        usedNames
-      )
-    : parseLiteral(schema, keyName, keyNameFromDefinition, set)
+  // Update the AST in place. This updates the `processed` cache, as well
+  // as any nodes that directly reference the node.
+  return Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames))
 }
 
-function parseLiteral(
-  schema: JSONSchema4Type,
-  keyName: string | undefined,
-  keyNameFromDefinition: string | undefined,
-  set: (ast: AST) => AST
-) {
-  return set({
+function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined): AST {
+  return {
     keyName,
     params: schema,
-    standaloneName: keyNameFromDefinition,
     type: 'LITERAL'
-  })
+  }
 }
 
 function parseNonLiteral(
-  schema: JSONSchema,
+  schema: LinkedJSONSchema,
+  type: SchemaType,
   options: Options,
-  rootSchema: JSONSchema,
   keyName: string | undefined,
-  keyNameFromDefinition: string | undefined,
-  set: (ast: AST) => AST,
   processed: Processed,
   usedNames: UsedNames
-) {
-  log('blue', 'parser', schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
+): AST {
+  const definitions = getDefinitions(getRootSchema(schema as any)) // TODO
+  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
 
-  switch (typeOfSchema(schema)) {
+  switch (type) {
     case 'ALL_OF':
-      return set({
+      return {
         comment: schema.description,
         keyName,
-        params: schema.allOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+        params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'INTERSECTION'
-      })
+      }
     case 'ANY':
-      return set({
+      return {
         ...(options.unknownAny ? T_UNKNOWN : T_ANY),
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames)
-      })
+      }
     case 'ANY_OF':
-      return set({
+      return {
         comment: schema.description,
         keyName,
-        params: schema.anyOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+        params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'UNION'
-      })
+      }
     case 'BOOLEAN':
-      return set({
+      return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'BOOLEAN'
-      })
+      }
     case 'CUSTOM_TYPE':
-      return set({
+      return {
         comment: schema.description,
         keyName,
         params: schema.tsType!,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'CUSTOM_TYPE'
-      })
+      }
     case 'NAMED_ENUM':
-      return set({
+      return {
         comment: schema.description,
         keyName,
         params: schema.enum!.map((_, n) => ({
-          ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
+          ast: parse(_, options, undefined, processed, usedNames),
           keyName: schema.tsEnumNames![n]
         })),
         standaloneName: standaloneName(schema, keyName, usedNames)!,
         type: 'ENUM'
-      })
+      }
     case 'NAMED_SCHEMA':
-      return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName))
+      return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName)
     case 'NULL':
-      return set({
+      return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NULL'
-      })
+      }
     case 'NUMBER':
-      return set({
+      return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NUMBER'
-      })
+      }
     case 'OBJECT':
-      return set({
+      return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'OBJECT'
-      })
+      }
     case 'ONE_OF':
-      return set({
+      return {
         comment: schema.description,
         keyName,
-        params: schema.oneOf!.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+        params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'UNION'
-      })
+      }
     case 'REFERENCE':
       throw Error(format('Refs should have been resolved by the resolver!', schema))
     case 'STRING':
-      return set({
+      return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'STRING'
-      })
+      }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
         // normalised to not be undefined
@@ -186,63 +223,53 @@ function parseNonLiteral(
           keyName,
           maxItems,
           minItems,
-          params: schema.items.map(_ => parse(_, options, rootSchema, undefined, true, processed, usedNames)),
+          params: schema.items.map(_ => parse(_, options, undefined, processed, usedNames)),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'TUPLE'
         }
         if (schema.additionalItems === true) {
           arrayType.spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
         } else if (schema.additionalItems) {
-          arrayType.spreadParam = parse(
-            schema.additionalItems,
-            options,
-            rootSchema,
-            undefined,
-            true,
-            processed,
-            usedNames
-          )
+          arrayType.spreadParam = parse(schema.additionalItems, options, undefined, processed, usedNames)
         }
-        return set(arrayType)
+        return arrayType
       } else {
-        const params = parse(schema.items!, options, rootSchema, undefined, true, processed, usedNames)
-        return set({
+        const params = parse(schema.items!, options, undefined, processed, usedNames)
+        return {
           comment: schema.description,
           keyName,
           params,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'ARRAY'
-        })
+        }
       }
     case 'UNION':
-      return set({
+      return {
         comment: schema.description,
         keyName,
         params: (schema.type as JSONSchema4TypeName[]).map(_ =>
-          parse({...schema, type: _}, options, rootSchema, undefined, true, processed, usedNames)
+          parse({...schema, type: _}, options, undefined, processed, usedNames)
         ),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'UNION'
-      })
+      }
     case 'UNNAMED_ENUM':
-      return set({
+      return {
         comment: schema.description,
         keyName,
-        params: schema.enum!.map(_ => parse(_, options, rootSchema, undefined, false, processed, usedNames)),
+        params: schema.enum!.map(_ => parse(_, options, undefined, processed, usedNames)),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'UNION'
-      })
+      }
     case 'UNNAMED_SCHEMA':
-      return set(
-        newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName, keyNameFromDefinition)
-      )
+      return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName, keyNameFromDefinition)
     case 'UNTYPED_ARRAY':
       // normalised to not be undefined
       const minItems = schema.minItems!
       const maxItems = typeof schema.maxItems === 'number' ? schema.maxItems : -1
       const params = options.unknownAny ? T_UNKNOWN : T_ANY
       if (minItems > 0 || maxItems >= 0) {
-        return set({
+        return {
           comment: schema.description,
           keyName,
           maxItems: schema.maxItems,
@@ -253,16 +280,16 @@ function parseNonLiteral(
           spreadParam: maxItems >= 0 ? undefined : params,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'TUPLE'
-        })
+        }
       }
 
-      return set({
+      return {
         comment: schema.description,
         keyName,
         params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'ARRAY'
-      })
+      }
   }
 }
 
@@ -270,7 +297,7 @@ function parseNonLiteral(
  * Compute a schema name using a series of fallbacks
  */
 function standaloneName(
-  schema: JSONSchema,
+  schema: LinkedJSONSchema,
   keyNameFromDefinition: string | undefined,
   usedNames: UsedNames
 ): string | undefined {
@@ -283,7 +310,6 @@ function standaloneName(
 function newInterface(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
   processed: Processed,
   usedNames: UsedNames,
   keyName?: string,
@@ -293,7 +319,7 @@ function newInterface(
   return {
     comment: schema.description,
     keyName,
-    params: parseSchema(schema, options, rootSchema, processed, usedNames, name),
+    params: parseSchema(schema, options, processed, usedNames, name),
     standaloneName: name,
     superTypes: parseSuperTypes(schema, options, processed, usedNames),
     type: 'INTERFACE'
@@ -313,19 +339,18 @@ function parseSuperTypes(
     return []
   }
   if (Array.isArray(superTypes)) {
-    return superTypes.map(_ => newNamedInterface(_, options, _, processed, usedNames))
+    return superTypes.map(_ => newNamedInterface(_, options, processed, usedNames))
   }
-  return [newNamedInterface(superTypes, options, superTypes, processed, usedNames)]
+  return [newNamedInterface(superTypes, options, processed, usedNames)]
 }
 
 function newNamedInterface(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
   processed: Processed,
   usedNames: UsedNames
 ): TNamedInterface {
-  const namedInterface = newInterface(schema, options, rootSchema, processed, usedNames)
+  const namedInterface = newInterface(schema, options, processed, usedNames)
   if (hasStandaloneName(namedInterface)) {
     return namedInterface
   }
@@ -339,13 +364,12 @@ function newNamedInterface(
 function parseSchema(
   schema: SchemaSchema,
   options: Options,
-  rootSchema: JSONSchema,
   processed: Processed,
   usedNames: UsedNames,
   parentSchemaName: string
 ): TInterfaceParam[] {
   let asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
-    ast: parse(value, options, rootSchema, key, true, processed, usedNames),
+    ast: parse(value, options, key, processed, usedNames),
     isPatternProperty: false,
     isRequired: includes(schema.required || [], key),
     isUnreachableDefinition: false,
@@ -361,7 +385,7 @@ function parseSchema(
 
     asts = asts.concat(
       map(schema.patternProperties, (value, key: string) => {
-        const ast = parse(value, options, rootSchema, key, true, processed, usedNames)
+        const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
 via the \`patternProperty\` "${key}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
@@ -379,7 +403,7 @@ via the \`patternProperty\` "${key}".`
   if (options.unreachableDefinitions) {
     asts = asts.concat(
       map(schema.definitions, (value, key: string) => {
-        const ast = parse(value, options, rootSchema, key, true, processed, usedNames)
+        const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
 via the \`definition\` "${key}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
@@ -416,7 +440,7 @@ via the \`definition\` "${key}".`
     // defined via index signatures are already optional
     default:
       return asts.concat({
-        ast: parse(schema.additionalProperties, options, rootSchema, '[k: string]', true, processed, usedNames),
+        ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
@@ -425,12 +449,16 @@ via the \`definition\` "${key}".`
   }
 }
 
-type Definitions = {[k: string]: JSONSchema}
+type Definitions = {[k: string]: LinkedJSONSchema}
 
 /**
  * TODO: Memoize
  */
-function getDefinitions(schema: JSONSchema, isSchema = true, processed = new Set<JSONSchema>()): Definitions {
+function getDefinitions(
+  schema: LinkedJSONSchema,
+  isSchema = true,
+  processed = new Set<LinkedJSONSchema>()
+): Definitions {
   if (processed.has(schema)) {
     return {}
   }
@@ -462,6 +490,6 @@ function getDefinitions(schema: JSONSchema, isSchema = true, processed = new Set
 /**
  * TODO: Reduce rate of false positives
  */
-function hasDefinitions(schema: JSONSchema): schema is JSONSchemaWithDefinitions {
+function hasDefinitions(schema: LinkedJSONSchema): schema is JSONSchemaWithDefinitions {
   return 'definitions' in schema
 }

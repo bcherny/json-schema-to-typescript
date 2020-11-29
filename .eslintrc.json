@@ -19,7 +19,7 @@
       "error",
       { "multiline": { "delimiter": "none" } }
     ],
-    "@typescript-eslint/naming-convention": "error",
+    "@typescript-eslint/naming-convention": "off",
     "no-array-constructor": "off",
     "@typescript-eslint/no-array-constructor": "error",
     "no-empty-function": "off",

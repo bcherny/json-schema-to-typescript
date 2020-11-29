@@ -3,6 +3,7 @@ import {readdirSync} from 'fs'
 import {template} from 'lodash'
 import {join} from 'path'
 import {JSONSchema, Options, DEFAULT_OPTIONS} from '../src'
+import {link} from '../src/linker'
 import {normalize} from '../src/normalizer'
 
 interface JSONTestCase {
@@ -22,9 +23,9 @@ export function run() {
     .forEach(([filename, json]: [string, JSONTestCase]) => {
       const params = {filename}
       test(json.name, t => {
-        const normalised = normalize(json.in, filename, json.options || DEFAULT_OPTIONS)
-        t.snapshot(template(toString(normalised))(params))
-        t.deepEqual(json.out, normalised)
+        const normalized = normalize(link(json.in), filename, json.options || DEFAULT_OPTIONS)
+        t.snapshot(template(toString(normalized))(params))
+        t.deepEqual(json.out, normalized)
       })
     })
 }

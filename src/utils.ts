@@ -1,6 +1,6 @@
 import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
-import {JSONSchema} from './types/JSONSchema'
+import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
 // eslint-disable-next-line
@@ -69,28 +69,27 @@ const BLACKLISTED_KEYS = new Set([
 ])
 
 function traverseObjectKeys(
-  obj: Record<string, JSONSchema>,
-  callback: (schema: JSONSchema, isRoot: boolean) => void,
-  processed: Set<JSONSchema>
+  obj: Record<string, LinkedJSONSchema>,
+  callback: (schema: LinkedJSONSchema) => void,
+  processed: Set<LinkedJSONSchema>
 ) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, false, processed)
+      traverse(obj[k], callback, processed)
     }
   })
 }
 function traverseArray(
-  arr: JSONSchema[],
-  callback: (schema: JSONSchema, isRoot: boolean) => void,
-  processed: Set<JSONSchema>
+  arr: LinkedJSONSchema[],
+  callback: (schema: LinkedJSONSchema) => void,
+  processed: Set<LinkedJSONSchema>
 ) {
-  arr.forEach(i => traverse(i, callback, false, processed))
+  arr.forEach(i => traverse(i, callback, processed))
 }
 export function traverse(
-  schema: JSONSchema,
-  callback: (schema: JSONSchema, isRoot: boolean) => void,
-  isRoot: boolean,
-  processed = new Set<JSONSchema>()
+  schema: LinkedJSONSchema,
+  callback: (schema: LinkedJSONSchema) => void,
+  processed = new Set<LinkedJSONSchema>()
 ): void {
   // Handle recursive schemas
   if (processed.has(schema)) {
@@ -98,7 +97,7 @@ export function traverse(
   }
 
   processed.add(schema)
-  callback(schema, isRoot)
+  callback(schema)
 
   if (schema.anyOf) {
     traverseArray(schema.anyOf, callback, processed)
@@ -116,27 +115,31 @@ export function traverse(
     traverseObjectKeys(schema.patternProperties, callback, processed)
   }
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-    traverse(schema.additionalProperties, callback, false, processed)
+    traverse(schema.additionalProperties, callback, processed)
   }
   if (schema.items) {
     const {items} = schema
     if (Array.isArray(items)) {
       traverseArray(items, callback, processed)
     } else {
-      traverse(items, callback, false, processed)
+      traverse(items, callback, processed)
     }
   }
   if (schema.additionalItems && typeof schema.additionalItems === 'object') {
-    traverse(schema.additionalItems, callback, false, processed)
+    traverse(schema.additionalItems, callback, processed)
   }
   if (schema.dependencies) {
-    traverseObjectKeys(schema.dependencies, callback, processed)
+    if (Array.isArray(schema.dependencies)) {
+      traverseArray(schema.dependencies, callback, processed)
+    } else {
+      traverseObjectKeys(schema.dependencies as LinkedJSONSchema, callback, processed)
+    }
   }
   if (schema.definitions) {
     traverseObjectKeys(schema.definitions, callback, processed)
   }
   if (schema.not) {
-    traverse(schema.not, callback, false, processed)
+    traverse(schema.not, callback, processed)
   }
 
   // technically you can put definitions on any key

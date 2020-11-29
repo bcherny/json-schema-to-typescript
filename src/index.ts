@@ -13,6 +13,7 @@ import {dereference} from './resolver'
 import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
+import {link} from './linker'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -139,9 +140,14 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     }
   }
 
-  const normalized = normalize(dereferenced, name, _options)
+  const linked = link(dereferenced)
   if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(dereferenced, normalized)) {
+    log('green', 'linker', time(), '✅ No change')
+  }
+
+  const normalized = normalize(linked, name, _options)
+  if (process.env.VERBOSE) {
+    if (isDeepStrictEqual(linked, normalized)) {
       log('yellow', 'normalizer', time(), '✅ No change')
     } else {
       log('yellow', 'normalizer', time(), '✅ Result:', normalized)
