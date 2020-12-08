@@ -353,6 +353,7 @@ function parseSchema(
     ast: parse(value, options, key, processed, usedNames),
     isPatternProperty: false,
     isRequired: includes(schema.required || [], key),
+    isReadOnly: !!value.readOnly,
     isUnreachableDefinition: false,
     keyName: key
   }))
@@ -374,6 +375,7 @@ via the \`patternProperty\` "${key}".`
           ast,
           isPatternProperty: !singlePatternProperty,
           isRequired: singlePatternProperty || includes(schema.required || [], key),
+          isReadOnly: !!value.readOnly,
           isUnreachableDefinition: false,
           keyName: singlePatternProperty ? '[k: string]' : key
         }
@@ -392,6 +394,7 @@ via the \`definition\` "${key}".`
           ast,
           isPatternProperty: false,
           isRequired: includes(schema.required || [], key),
+          isReadOnly: !!value.readOnly,
           isUnreachableDefinition: true,
           keyName: key
         }
@@ -410,6 +413,7 @@ via the \`definition\` "${key}".`
         ast: options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
         isPatternProperty: false,
         isRequired: true,
+        isReadOnly: false,
         isUnreachableDefinition: false,
         keyName: '[k: string]'
       })
@@ -424,6 +428,7 @@ via the \`definition\` "${key}".`
         ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
         isPatternProperty: false,
         isRequired: true,
+        isReadOnly: false,
         isUnreachableDefinition: false,
         keyName: '[k: string]'
       })
