@@ -50,7 +50,13 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if ('enum' in schema) {
       return false
     }
-    return schema.type === 'boolean' || typeof schema.default === 'boolean'
+    if (schema.type === 'boolean') {
+      return true
+    }
+    if (!Array.isArray(schema.type) && typeof schema.default === 'boolean') {
+      return true
+    }
+    return false
   },
   CUSTOM_TYPE() {
     return false // Explicitly handled before we try to match
@@ -68,7 +74,13 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if ('enum' in schema) {
       return false
     }
-    return schema.type === 'integer' || schema.type === 'number' || typeof schema.default === 'number'
+    if (schema.type === 'integer' || schema.type === 'number') {
+      return true
+    }
+    if (!Array.isArray(schema.type) && typeof schema.default === 'number') {
+      return true
+    }
+    return false
   },
   OBJECT(schema) {
     return (
@@ -92,7 +104,13 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if ('enum' in schema) {
       return false
     }
-    return schema.type === 'string' || typeof schema.default === 'string'
+    if (schema.type === 'string') {
+      return true
+    }
+    if (!Array.isArray(schema.type) && typeof schema.default === 'string') {
+      return true
+    }
+    return false
   },
   TYPED_ARRAY(schema) {
     if (schema.type && schema.type !== 'array') {

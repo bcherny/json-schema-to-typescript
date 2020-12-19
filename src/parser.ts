@@ -23,7 +23,7 @@ import {
   SchemaSchema,
   SchemaType
 } from './types/JSONSchema'
-import {generateName, log} from './utils'
+import {generateName, log, maybeStripDefault} from './utils'
 
 export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
 
@@ -246,9 +246,10 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        params: (schema.type as JSONSchema4TypeName[]).map(type =>
-          parse({...omit(schema, 'description', 'id', 'title'), type}, options, undefined, processed, usedNames)
-        ),
+        params: (schema.type as JSONSchema4TypeName[]).map(type => {
+          const member: LinkedJSONSchema = {...omit(schema, 'description', 'id', 'title'), type}
+          return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
+        }),
         type: 'UNION'
       }
     case 'UNNAMED_ENUM':
