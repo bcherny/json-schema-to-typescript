@@ -127,3 +127,7 @@ export const getRootSchema = memoize(
 export function isPrimitive(schema: LinkedJSONSchema | JSONSchemaType): schema is JSONSchemaType {
   return !isPlainObject(schema)
 }
+
+export function isCompound(schema: JSONSchema): boolean {
+  return Array.isArray(schema.type) || 'anyOf' in schema || 'oneOf' in schema
+}

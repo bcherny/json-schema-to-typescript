@@ -1,5 +1,5 @@
 import {isPlainObject} from 'lodash'
-import {JSONSchema, SchemaType} from './types/JSONSchema'
+import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
@@ -53,7 +53,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'boolean') {
       return true
     }
-    if (!Array.isArray(schema.type) && typeof schema.default === 'boolean') {
+    if (!isCompound(schema) && typeof schema.default === 'boolean') {
       return true
     }
     return false
@@ -77,7 +77,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'integer' || schema.type === 'number') {
       return true
     }
-    if (!Array.isArray(schema.type) && typeof schema.default === 'number') {
+    if (!isCompound(schema) && typeof schema.default === 'number') {
       return true
     }
     return false
@@ -107,7 +107,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'string') {
       return true
     }
-    if (!Array.isArray(schema.type) && typeof schema.default === 'string') {
+    if (!isCompound(schema) && typeof schema.default === 'string') {
       return true
     }
     return false
