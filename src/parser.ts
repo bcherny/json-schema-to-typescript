@@ -23,7 +23,7 @@ import {
   SchemaSchema,
   SchemaType
 } from './types/JSONSchema'
-import {generateName, log, maybeStripDefault} from './utils'
+import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
 
 export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
 
@@ -66,7 +66,7 @@ export function parse(
   ast.params = types.map(type =>
     // We hoist description (for comment) and id/title (for standaloneName)
     // to the parent intersection type, so we remove it from the children.
-    parseAsTypeWithCache(omit(schema, 'description', 'id', 'title'), type, options, keyName, processed, usedNames)
+    parseAsTypeWithCache(maybeStripNameHints(schema), type, options, keyName, processed, usedNames)
   )
 
   log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)

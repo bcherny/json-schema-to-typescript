@@ -341,3 +341,23 @@ export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
   delete schema.default
   return schema
 }
+
+/**
+ * Removes the schema's `id`, `name`, and `description` properties
+ * if they exist.
+ * Useful when parsing intersections.
+ *
+ * Mutates `schema`.
+ */
+export function maybeStripNameHints(schema: JSONSchema): JSONSchema {
+  if ('description' in schema) {
+    delete schema.description
+  }
+  if ('id' in schema) {
+    delete schema.id
+  }
+  if ('name' in schema) {
+    delete schema.name
+  }
+  return schema
+}
