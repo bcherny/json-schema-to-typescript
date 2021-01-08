@@ -1,5 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map, omit} from 'lodash'
+import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {typesOfSchema} from './typesOfSchema'
@@ -119,7 +119,7 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames
 ): AST {
-  const definitions = getDefinitions(getRootSchema(schema as any)) // TODO
+  const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
   const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
 
   switch (type) {
@@ -433,9 +433,6 @@ via the \`definition\` "${key}".`
 
 type Definitions = {[k: string]: LinkedJSONSchema}
 
-/**
- * TODO: Memoize
- */
 function getDefinitions(
   schema: LinkedJSONSchema,
   isSchema = true,
@@ -468,6 +465,8 @@ function getDefinitions(
   }
   return {}
 }
+
+const getDefinitionsMemoized = memoize(getDefinitions)
 
 /**
  * TODO: Reduce rate of false positives
