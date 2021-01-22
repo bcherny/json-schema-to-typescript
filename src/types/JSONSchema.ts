@@ -75,3 +75,7 @@ export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {
 export interface CustomTypeJSONSchema extends NormalizedJSONSchema {
   tsType: string
 }
+
+export function isCustomType(schema: JSONSchema): schema is CustomTypeJSONSchema {
+  return 'tsType' in schema
+}

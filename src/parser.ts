@@ -12,9 +12,10 @@ import {
   TInterfaceParam,
   TNamedInterface,
   TTuple,
-  TSuperType
+  TSuperType,
+  isSuperType
 } from './types/AST'
-import {CustomTypeJSONSchema, JSONSchema, JSONSchemaWithDefinitions, SchemaSchema} from './types/JSONSchema'
+import { CustomTypeJSONSchema, JSONSchema, JSONSchemaWithDefinitions, SchemaSchema, isCustomType } from './types/JSONSchema';
 import {generateName, log} from './utils'
 
 export type Processed = Map<JSONSchema | JSONSchema4Type, AST>
@@ -314,16 +315,12 @@ function parseSuperTypes(
     return []
   }
   if (Array.isArray(superTypes)) {
-    return superTypes.map(_ => getOrCreateSuperType(_, options, _, processed, usedNames))
+    return superTypes.map(_ => newSuperType(_, options, _, processed, usedNames))
   }
-  return [getOrCreateSuperType(superTypes, options, superTypes, processed, usedNames)]
+  return [newSuperType(superTypes, options, superTypes, processed, usedNames)]
 }
 
-function isSuperType(type: any): type is TSuperType {
-  return type.type === 'CUSTOM_TYPE' || type.type === 'INTERFACE'
-}
-
-function getOrCreateSuperType(
+function newSuperType(
   schema: SchemaSchema,
   options: Options,
   rootSchema: JSONSchema,
@@ -340,19 +337,16 @@ function getOrCreateSuperType(
     }
   }
 
-  if (schema.tsType) {
-    const extendedType = newExtendedType(schema as CustomTypeJSONSchema, usedNames)
-    processed.set(schema, extendedType)
-    return extendedType
-  }
-  const namedInterface = newNamedInterface(schema, options, rootSchema, processed, usedNames)
-  processed.set(schema, namedInterface)
-  return namedInterface
+  const supertype = isCustomType(schema)
+  ? newExtendedType(schema, usedNames)
+  : newNamedInterface(schema, options, rootSchema, processed, usedNames)
+  processed.set(schema, supertype)
+  return supertype
 }
 
 function newExtendedType(schema: CustomTypeJSONSchema, usedNames: UsedNames): TSuperType {
   const name = standaloneName(schema, schema.title, usedNames)
-  if (!name || name.length == 0) {
+  if (!name) {
     // TODO: Generate name if it doesn't have one
     throw Error(format('Extended type must have standalone name!', schema))
   }

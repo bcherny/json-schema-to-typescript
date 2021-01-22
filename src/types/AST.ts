@@ -133,3 +133,8 @@ export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   keyName: '[k: string]',
   type: 'ANY'
 }
+
+export function isSuperType(type: AST | undefined): type is TSuperType {
+  if (!type) return false;
+  return type.type === 'CUSTOM_TYPE' || type.type === 'INTERFACE'
+}
