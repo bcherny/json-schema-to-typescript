@@ -21,6 +21,7 @@
     "stresstest": "seq 1 10 | xargs -I{} npm test",
     "prepublishOnly": "npm test",
     "pretest": "npm run clean && npm run build:server",
+    "prepare": "npm run clean && npm run build:server",
     "watch": "tsc -w",
     "watch:test": "ava -w"
   },
