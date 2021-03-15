@@ -108,8 +108,8 @@ json2ts foo.json foo.d.ts
 json2ts --input foo.json --output foo.d.ts
 # or
 json2ts -i foo.json -o foo.d.ts
-# or
-json2ts -i schemas/**/*.json
+# or (quote globs so that your shell doesn't expand them)
+json2ts -i 'schemas/**/*.json'
 # or
 json2ts -i schemas/ -o types/
 ```
