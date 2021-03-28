@@ -50,6 +50,7 @@
     "@types/lodash": "^4.14.168",
     "@types/prettier": "^2.1.5",
     "cli-color": "^2.0.0",
+    "get-stdin": "^8.0.0",
     "glob": "^7.1.6",
     "glob-promise": "^3.4.0",
     "is-glob": "^4.0.1",
@@ -59,8 +60,7 @@
     "minimist": "^1.2.5",
     "mkdirp": "^1.0.4",
     "mz": "^2.7.0",
-    "prettier": "^2.2.0",
-    "stdin": "0.0.1"
+    "prettier": "^2.2.0"
   },
   "devDependencies": {
     "@types/cli-color": "^2.0.0",
