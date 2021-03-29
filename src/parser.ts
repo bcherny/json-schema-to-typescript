@@ -124,11 +124,26 @@ function parseNonLiteral(
 
   switch (type) {
     case 'ALL_OF':
+      const closed = schema.allOf!.some(item => item.additionalProperties === false)
       return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        params: schema.allOf!.map(item => {
+          const definitions = getDefinitionsMemoized(getRootSchema(item as any)) // TODO
+          const keyNameFromDefinition = findKey(definitions, _ => _ === item)
+          return parse(
+            closed &&
+              (item.additionalProperties === undefined || item.additionalProperties === true) &&
+              !standaloneName(item, keyNameFromDefinition, new Set<string>())
+              ? {...item, additionalProperties: false}
+              : item,
+            options,
+            undefined,
+            processed,
+            usedNames
+          )
+        }),
         type: 'INTERSECTION'
       }
     case 'ANY':
