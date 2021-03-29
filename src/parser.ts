@@ -141,6 +141,7 @@ function parseNonLiteral(
     case 'ANY_OF':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -149,6 +150,7 @@ function parseNonLiteral(
     case 'BOOLEAN':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'BOOLEAN'
@@ -156,6 +158,7 @@ function parseNonLiteral(
     case 'CUSTOM_TYPE':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         params: schema.tsType!,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
@@ -184,6 +187,7 @@ function parseNonLiteral(
     case 'NUMBER':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NUMBER'
@@ -191,6 +195,7 @@ function parseNonLiteral(
     case 'OBJECT':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'OBJECT'
@@ -198,6 +203,7 @@ function parseNonLiteral(
     case 'ONE_OF':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -208,6 +214,7 @@ function parseNonLiteral(
     case 'STRING':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'STRING'
@@ -244,6 +251,7 @@ function parseNonLiteral(
     case 'UNION':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
@@ -255,6 +263,7 @@ function parseNonLiteral(
     case 'UNNAMED_ENUM':
       return {
         comment: schema.description,
+        isNullable: !!schema.nullable,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.enum!.map(_ => parse(_, options, undefined, processed, usedNames)),
