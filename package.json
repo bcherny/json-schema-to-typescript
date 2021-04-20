@@ -16,7 +16,7 @@
     "build:server": "tsc -d",
     "clean": "shx rm -rf dist && mkdir dist",
     "lint": "eslint src/*.ts test/*.ts",
-    "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
+    "tdd": "concurrently -r -p \"\" -k \"npm run watch\" \"npm run watch:test\"",
     "test": "ava --timeout=300s --verbose",
     "stresstest": "seq 1 10 | xargs -I{} npm test",
     "prepublishOnly": "npm test",
