@@ -31,7 +31,7 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
-  const ISURL = isUrl(argIn, {protocols: ['http', 'https']})
+  const ISURL = typeof argIn === 'string' && isUrl(argIn, {protocols: ['http', 'https']})
   const ISGLOB = isGlob(argIn)
   const ISDIR = isDir(argIn)
 
