@@ -9,6 +9,8 @@ import isGlob = require('is-glob')
 import {join, resolve, dirname, basename} from 'path'
 import {compile, Options} from './index'
 import {pathTransform, error} from './utils'
+import isUrl from 'validator/lib/isURL'
+import axios from 'axios'
 
 main(
   minimist(process.argv.slice(2), {
@@ -29,6 +31,7 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
+  const ISURL = isUrl(argIn, {protocols: ['http', 'https']})
   const ISGLOB = isGlob(argIn)
   const ISDIR = isDir(argIn)
 
@@ -44,6 +47,9 @@ async function main(argv: minimist.ParsedArgs) {
       await processGlob(argIn, argOut, argv as Partial<Options>)
     } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
+    } else if (ISURL) {
+      const result = await processUrl(argIn, argv as Partial<Options>)
+      outputResult(result, argOut)
     } else {
       const result = await processFile(argIn, argv as Partial<Options>)
       outputResult(result, argOut)
@@ -116,6 +122,11 @@ async function outputResult(result: string, outputPath: string | undefined): Pro
 
 async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
   const schema = JSON.parse(await readInput(argIn))
+  return compile(schema, argIn, argv)
+}
+
+async function processUrl(argIn: string, argv: Partial<Options>): Promise<string> {
+  const schema = (await axios.get(argIn)).data
   return compile(schema, argIn, argv)
 }
 
