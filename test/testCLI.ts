@@ -132,5 +132,6 @@ function getPaths(path: string, paths: string[] = []) {
     paths.push(path)
   }
 
-  return paths
+  // sort paths to ensure a stable order across environments
+  return paths.sort((a, b) => a.localeCompare(b))
 }
