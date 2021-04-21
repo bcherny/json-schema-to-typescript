@@ -9,6 +9,7 @@
 ## Example
 
 Input:
+
 ```json
 {
   "title": "Example Schema",
@@ -36,6 +37,7 @@ Input:
 ```
 
 Output:
+
 ```ts
 export interface ExampleSchema {
   firstName: string;
@@ -94,6 +96,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | unreachableDefinitions | boolean | `false` | Generates code for `definitions` that aren't referenced by the schema. |
 | strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
+
 ## CLI
 
 A CLI utility is provided with this package.
@@ -112,6 +115,8 @@ json2ts -i foo.json -o foo.d.ts
 json2ts -i 'schemas/**/*.json'
 # or
 json2ts -i schemas/ -o types/
+# or 
+json2ts -i https://json.schemastore.org/package.json -o package.d.ts
 ```
 
 You can pass any of the options described above (including style options) as CLI flags. Boolean values can be set to false using the `no-` prefix.
@@ -131,16 +136,16 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 
 - [x] `title` => `interface`
 - [x] Primitive types:
-  - [x] array
-  - [x] homogeneous array
-  - [x] boolean
-  - [x] integer
-  - [x] number
-  - [x] null
-  - [x] object
-  - [x] string
-  - [x] homogeneous enum
-  - [x] heterogeneous enum
+    - [x] array
+    - [x] homogeneous array
+    - [x] boolean
+    - [x] integer
+    - [x] number
+    - [x] null
+    - [x] object
+    - [x] string
+    - [x] homogeneous enum
+    - [x] heterogeneous enum
 - [x] Non/extensible interfaces
 - [ ] Custom JSON-schema extensions
 - [x] Nested properties
@@ -165,12 +170,12 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - [x] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
 - [x] custom typescript types via `tsType`
 
-## Custom schema properties:
+## Custom schema properties
 
 - `tsType`: Overrides the type that's generated from the schema. Useful for forcing a type to `any` or when using non-standard JSON schema extensions ([eg](https://github.com/sokra/json-schema-to-typescript/blob/f1f40307cf5efa328522bb1c9ae0b0d9e5f367aa/test/e2e/customType.ts)).
 - `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)).
 
-## Not expressible in TypeScript:
+## Not expressible in TypeScript
 
 - `dependencies` ([single](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L261), [multiple](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L282))
 - `divisibleBy` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L185))
@@ -193,10 +198,10 @@ Prettier is known to run slowly on really big files. To skip formatting and impr
 
 ## Further Reading
 
-- JSON-schema spec: https://tools.ietf.org/html/draft-zyp-json-schema-04
-- JSON-schema wiki: https://github.com/json-schema/json-schema/wiki
-- JSON-schema test suite: https://github.com/json-schema/JSON-Schema-Test-Suite/blob/node
-- TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md
+- JSON-schema spec: <https://tools.ietf.org/html/draft-zyp-json-schema-04>
+- JSON-schema wiki: <https://github.com/json-schema/json-schema/wiki>
+- JSON-schema test suite: <https://github.com/json-schema/JSON-Schema-Test-Suite/blob/node>
+- TypeScript spec: <https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md>
 
 ## Who uses JSON-Schema-to-TypeScript?
 
