@@ -123,6 +123,16 @@ export function run() {
     })
     rimraf.sync('./test/resources/MultiSchema2/out')
   })
+
+  test('url in, pipe out', t => {
+    t.snapshot(execSync(`node dist/src/cli.js https://json.schemastore.org/package.json`).toString())
+  })
+
+  test('url in, file out (-o)', t => {
+    execSync('node dist/src/cli.js https://json.schemastore.org/package.json -o ./Package.d.ts')
+    t.snapshot(readFileSync('./Package.d.ts', 'utf-8'))
+    unlinkSync('./Package.d.ts')
+  })
 }
 
 function getPaths(path: string, paths: string[] = []) {
