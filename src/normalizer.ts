@@ -45,9 +45,9 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
 })
 
 // TODO: default to empty schema (as per spec) instead
-rules.set('Default additionalProperties according to defaultAdditionalProperties setting', (schema, _, options) => {
+rules.set('Default additionalProperties to true', schema => {
   if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
-    schema.additionalProperties = options.defaultAdditionalProperties
+    schema.additionalProperties = true
   }
 })
 

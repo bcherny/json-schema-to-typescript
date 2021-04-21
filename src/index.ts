@@ -35,10 +35,6 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
-   * Assume 'additionalProperties' to be false for all schema objects that do not explicitly set it. Useful for generating more restrictive interfaces, but should not be used for validation purposes.
-   */
-  defaultAdditionalProperties: boolean
-  /**
    * Format code? Set this to `false` to improve performance.
    */
   format: boolean
@@ -80,7 +76,6 @@ export const DEFAULT_OPTIONS: Options = {
 */`,
   cwd: process.cwd(),
   declareExternallyReferenced: true,
-  defaultAdditionalProperties: true,
   enableConstEnums: true,
   format: true,
   ignoreMinAndMaxItems: false,
@@ -94,7 +89,6 @@ export const DEFAULT_OPTIONS: Options = {
     trailingComma: 'none',
     useTabs: false
   },
-
   unreachableDefinitions: false,
   unknownAny: true
 }
