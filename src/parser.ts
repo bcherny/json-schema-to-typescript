@@ -20,6 +20,7 @@ import {
   isPrimitive,
   JSONSchema as LinkedJSONSchema,
   JSONSchemaWithDefinitions,
+  NormalizedJSONSchema,
   SchemaSchema,
   SchemaType
 } from './types/JSONSchema'
@@ -313,15 +314,62 @@ function newInterface(
   usedNames: UsedNames,
   keyName?: string,
   keyNameFromDefinition?: string
-): TInterface {
+): TInterface | TIntersection {
+  let complexAdditionalProperties: false | NormalizedJSONSchema
+
+  if (schema.additionalProperties !== undefined && typeof schema.additionalProperties !== 'boolean') {
+    complexAdditionalProperties = schema.additionalProperties
+    schema.additionalProperties = false
+  } else {
+    complexAdditionalProperties = false
+  }
+
   const name = standaloneName(schema, keyNameFromDefinition, usedNames)!
-  return {
+
+  const parsedInterface: TInterface = {
     comment: schema.description,
     keyName,
     params: parseSchema(schema, options, processed, usedNames, name),
     standaloneName: name,
     superTypes: parseSuperTypes(schema, options, processed, usedNames),
     type: 'INTERFACE'
+  }
+
+  if (complexAdditionalProperties === false) {
+    return parsedInterface
+  } else {
+    const parsedAdditionalProperties: TInterface = {
+      params: [
+        {
+          ast: parse(complexAdditionalProperties, options, '[k: string]', processed, usedNames),
+          isPatternProperty: false,
+          isRequired: true,
+          isUnreachableDefinition: false,
+          keyName: '[k: string]'
+        }
+      ],
+      superTypes: [],
+      type: 'INTERFACE'
+    }
+
+    if (parsedInterface.params.length > 0) {
+      delete parsedInterface.standaloneName
+      return {
+        comment: schema.description,
+        keyName,
+        standaloneName: name,
+        params: [parsedInterface, parsedAdditionalProperties],
+        type: 'INTERSECTION'
+      }
+    } else {
+      // there were only additionalProperties
+      return {
+        ...parsedAdditionalProperties,
+        comment: schema.description,
+        keyName,
+        standaloneName: name
+      }
+    }
   }
 }
 
