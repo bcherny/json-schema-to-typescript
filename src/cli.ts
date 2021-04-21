@@ -168,6 +168,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Declare external schemas referenced via '$ref'?
   --enableConstEnums
       Prepend enums with 'const'?
+  --defaultAdditionalProperties
+      Set to false to generate more restrictive interfaces by assuming additionalProperties to be false for any schema objects that do not explicitly define it
   --format
       Format code? Set this to false to improve performance.
   --style.XXX=YYY
