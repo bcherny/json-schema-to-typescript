@@ -31,6 +31,16 @@ export function mapDeep(object: object, fn: (value: object, key?: string) => obj
   )
 }
 
+const RESERVED_NAMES = new Set([
+  // Names reserved by the typescript-eslint ban-types rule
+  'String',
+  'Boolean',
+  'Number',
+  'Symbol',
+  'Function',
+  'Object',
+])
+
 // keys that shouldn't be traversed by the catchall step
 const BLACKLISTED_KEYS = new Set([
   'id',
@@ -201,7 +211,7 @@ export function generateName(from: string, usedNames: Set<string>) {
   }
 
   // increment counter until we find a free name
-  if (usedNames.has(name)) {
+  if (usedNames.has(name) || RESERVED_NAMES.has(name)) {
     let counter = 1
     let nameWithCounter = `${name}${counter}`
     while (usedNames.has(nameWithCounter)) {
