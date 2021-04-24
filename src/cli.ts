@@ -9,6 +9,8 @@ import isGlob = require('is-glob')
 import {join, resolve, dirname, basename} from 'path'
 import {compile, Options} from './index'
 import {pathTransform, error} from './utils'
+import isUrl from 'validator/lib/isURL'
+import axios from 'axios'
 
 main(
   minimist(process.argv.slice(2), {
@@ -29,6 +31,7 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
+  const ISURL = typeof argIn === 'string' && isUrl(argIn, {protocols: ['http', 'https']})
   const ISGLOB = isGlob(argIn)
   const ISDIR = isDir(argIn)
 
@@ -44,6 +47,9 @@ async function main(argv: minimist.ParsedArgs) {
       await processGlob(argIn, argOut, argv as Partial<Options>)
     } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
+    } else if (ISURL) {
+      const result = await processUrl(argIn, argv as Partial<Options>)
+      outputResult(result, argOut)
     } else {
       const result = await processFile(argIn, argv as Partial<Options>)
       outputResult(result, argOut)
@@ -119,6 +125,11 @@ async function processFile(argIn: string, argv: Partial<Options>): Promise<strin
   return compile(schema, argIn, argv)
 }
 
+async function processUrl(argIn: string, argv: Partial<Options>): Promise<string> {
+  const schema = (await axios.get(argIn)).data
+  return compile(schema, argIn, argv)
+}
+
 function getPaths(path: string, paths: string[] = []) {
   if (existsSync(path) && lstatSync(path).isDirectory()) {
     readdirSync(resolve(path)).forEach(item => getPaths(join(path, item), paths))
@@ -157,6 +168,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Declare external schemas referenced via '$ref'?
   --enableConstEnums
       Prepend enums with 'const'?
+  --defaultAdditionalProperties
+      Set to false to generate more restrictive interfaces by assuming additionalProperties to be false for any schema objects that do not explicitly define it
   --format
       Format code? Set this to false to improve performance.
   --style.XXX=YYY

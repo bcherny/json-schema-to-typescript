@@ -1,11 +1,15 @@
 import {serial as test} from 'ava'
 import {pathTransform, generateName} from '../src/utils'
+import {join} from 'path'
 
 export function run() {
   test('pathTransform', t => {
-    t.is(pathTransform('types', 'schemas', 'schemas/foo/a.json'), 'types/foo')
-    t.is(pathTransform('./schemas/types', './schemas', 'schemas/foo/bar/a.json'), 'schemas/types/foo/bar')
-    t.is(pathTransform('types', './src/../types/../schemas', 'schemas/foo/a.json'), 'types/foo')
+    t.is(pathTransform('types', 'schemas', 'schemas/foo/a.json'), join('types', 'foo'))
+    t.is(
+      pathTransform('./schemas/types', './schemas', 'schemas/foo/bar/a.json'),
+      join('schemas', 'types', 'foo', 'bar')
+    )
+    t.is(pathTransform('types', './src/../types/../schemas', 'schemas/foo/a.json'), join('types', 'foo'))
   })
   test('generateName', t => {
     const usedNames = new Set<string>()

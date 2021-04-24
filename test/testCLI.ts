@@ -84,7 +84,7 @@ export function run() {
   })
 
   test('files in (-i), files out (-o)', t => {
-    execSync("node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json' -o ./test/resources/MultiSchema/out")
+    execSync(`node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.json" -o ./test/resources/MultiSchema/out`)
 
     readdirSync('./test/resources/MultiSchema/out').forEach(f => {
       const path = `./test/resources/MultiSchema/out/${f}`
@@ -96,12 +96,12 @@ export function run() {
   })
 
   test('files in (-i), pipe out', t => {
-    t.snapshot(execSync("node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json'").toString())
+    t.snapshot(execSync(`node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.json"`).toString())
   })
 
   test('files in (-i), files out (-o) nested dir does not exist', t => {
     execSync(
-      "node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json' -o ./test/resources/MultiSchema/foo/bar/out"
+      `node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.json" -o ./test/resources/MultiSchema/foo/bar/out`
     )
     readdirSync('./test/resources/MultiSchema/foo/bar/out').forEach(f => {
       const path = `./test/resources/MultiSchema/foo/bar/out/${f}`
@@ -114,7 +114,7 @@ export function run() {
 
   test('files in (-i), files out (-o) matching nested dir', t => {
     execSync(
-      "node dist/src/cli.js -i './test/resources/../../test/resources/MultiSchema2/' -o ./test/resources/MultiSchema2/out"
+      `node dist/src/cli.js -i "./test/resources/../../test/resources/MultiSchema2/" -o ./test/resources/MultiSchema2/out`
     )
     getPaths('./test/resources/MultiSchema2/out').forEach(file => {
       t.snapshot(file)
@@ -122,6 +122,16 @@ export function run() {
       unlinkSync(file)
     })
     rimraf.sync('./test/resources/MultiSchema2/out')
+  })
+
+  test('url in, pipe out', t => {
+    t.snapshot(execSync(`node dist/src/cli.js https://json.schemastore.org/package.json`).toString())
+  })
+
+  test('url in, file out (-o)', t => {
+    execSync('node dist/src/cli.js https://json.schemastore.org/package.json -o ./Package.d.ts')
+    t.snapshot(readFileSync('./Package.d.ts', 'utf-8'))
+    unlinkSync('./Package.d.ts')
   })
 }
 
@@ -132,5 +142,6 @@ function getPaths(path: string, paths: string[] = []) {
     paths.push(path)
   }
 
-  return paths
+  // sort paths to ensure a stable order across environments
+  return paths.sort((a, b) => a.localeCompare(b))
 }
