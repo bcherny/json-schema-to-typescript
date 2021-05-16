@@ -1,4 +1,4 @@
-import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
+import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
 
@@ -12,23 +12,30 @@ export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   }
 }
 
-export function mapDeep(object: object, fn: (value: object, key?: string) => object, key?: string): object {
-  return fn(
-    mapValues(object, (_: unknown, key) => {
-      if (isPlainObject(_)) {
-        return mapDeep(_ as object, fn, key)
-      } else if (Array.isArray(_)) {
-        return _.map(item => {
-          if (isPlainObject(item)) {
-            return mapDeep(item as object, fn, key)
-          }
-          return item
-        })
+/**
+ * Recursively crawls the given obj, and invokes fn for every plain object,
+ * starting with the deep values. Circular references are skipped.
+ */
+export function crawl(
+  obj: any,
+  fn: (value: object, key?: string) => void,
+  key?: string, // internal
+  seen = new WeakMap<object, number>() // internal
+): void {
+  if (!seen.has(obj)) {
+    if (isPlainObject(obj)) {
+      seen.set(obj, 1)
+      for (const key of Object.keys(obj)) {
+        crawl(obj[key], fn, key, seen)
       }
-      return _
-    }),
-    key
-  )
+      fn(obj, key)
+    } else if (Array.isArray(obj)) {
+      seen.set(obj, 1)
+      for (const el of obj) {
+        crawl(el, fn, key, seen)
+      }
+    }
+  }
 }
 
 // keys that shouldn't be traversed by the catchall step
