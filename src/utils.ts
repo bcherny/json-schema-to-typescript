@@ -20,17 +20,17 @@ export function crawl(
   obj: any,
   fn: (value: object, key?: string) => void,
   key?: string, // internal
-  seen = new WeakMap<object, number>() // internal
+  seen = new Set<object>() // internal
 ): void {
   if (!seen.has(obj)) {
     if (isPlainObject(obj)) {
-      seen.set(obj, 1)
+      seen.add(obj)
       for (const key of Object.keys(obj)) {
         crawl(obj[key], fn, key, seen)
       }
       fn(obj, key)
     } else if (Array.isArray(obj)) {
-      seen.set(obj, 1)
+      seen.add(obj)
       for (const el of obj) {
         crawl(el, fn, key, seen)
       }
