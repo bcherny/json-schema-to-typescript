@@ -1,5 +1,5 @@
 import {JSONSchema} from './types/JSONSchema'
-import {mapDeep} from './utils'
+import {crawl} from './utils'
 
 type Rule = (schema: JSONSchema) => boolean | void
 const rules = new Map<string, Rule>()
@@ -40,11 +40,10 @@ rules.set('When minItems exists, minItems >= 0', schema => {
 export function validate(schema: JSONSchema, filename: string): string[] {
   const errors: string[] = []
   rules.forEach((rule, ruleName) => {
-    mapDeep(schema, (schema, key) => {
+    crawl(schema, (schema, key) => {
       if (rule(schema) === false) {
         errors.push(`Error at key "${key}" in file "${filename}": ${ruleName}`)
       }
-      return schema
     })
   })
   return errors
