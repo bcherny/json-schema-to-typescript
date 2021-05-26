@@ -2,6 +2,10 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 10.1.0
+
+- ec78099 Feat: Add support for JSON Schema `const` and `$defs` keywords (#263)
+
 ## 10.0.0
 
 Lots of bugfixes, some of which may be breaking changes.

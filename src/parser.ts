@@ -1,5 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map, omit} from 'lodash'
+import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {typesOfSchema} from './typesOfSchema'
@@ -23,7 +23,7 @@ import {
   SchemaSchema,
   SchemaType
 } from './types/JSONSchema'
-import {generateName, log} from './utils'
+import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
 
 export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
 
@@ -66,7 +66,7 @@ export function parse(
   ast.params = types.map(type =>
     // We hoist description (for comment) and id/title (for standaloneName)
     // to the parent intersection type, so we remove it from the children.
-    parseAsTypeWithCache(omit(schema, 'description', 'id', 'title'), type, options, keyName, processed, usedNames)
+    parseAsTypeWithCache(maybeStripNameHints(schema), type, options, keyName, processed, usedNames)
   )
 
   log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
@@ -119,7 +119,7 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames
 ): AST {
-  const definitions = getDefinitions(getRootSchema(schema as any)) // TODO
+  const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
   const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
 
   switch (type) {
@@ -246,9 +246,10 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        params: (schema.type as JSONSchema4TypeName[]).map(type =>
-          parse({...omit(schema, 'description', 'id', 'title'), type}, options, undefined, processed, usedNames)
-        ),
+        params: (schema.type as JSONSchema4TypeName[]).map(type => {
+          const member: LinkedJSONSchema = {...omit(schema, 'description', 'id', 'title'), type}
+          return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
+        }),
         type: 'UNION'
       }
     case 'UNNAMED_ENUM':
@@ -437,9 +438,6 @@ via the \`definition\` "${key}".`
 
 type Definitions = {[k: string]: LinkedJSONSchema}
 
-/**
- * TODO: Memoize
- */
 function getDefinitions(
   schema: LinkedJSONSchema,
   isSchema = true,
@@ -472,6 +470,8 @@ function getDefinitions(
   }
   return {}
 }
+
+const getDefinitionsMemoized = memoize(getDefinitions)
 
 /**
  * TODO: Reduce rate of false positives

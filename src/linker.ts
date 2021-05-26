@@ -6,20 +6,15 @@ import {JSONSchema4Type} from 'json-schema'
  * Traverses over the schema, giving each node a reference to its
  * parent node. We need this for downstream operations.
  */
-export function link(
-  schema: JSONSchema4Type | JSONSchema,
-  parent: JSONSchema4Type | null = null,
-  processed = new Set<JSONSchema4Type | JSONSchema>()
-): LinkedJSONSchema {
+export function link(schema: JSONSchema4Type | JSONSchema, parent: JSONSchema4Type | null = null): LinkedJSONSchema {
   if (!Array.isArray(schema) && !isPlainObject(schema)) {
     return schema as LinkedJSONSchema
   }
 
   // Handle cycles
-  if (processed.has(schema)) {
+  if ((schema as JSONSchema).hasOwnProperty(Parent)) {
     return schema as LinkedJSONSchema
   }
-  processed.add(schema)
 
   // Add a reference to this schema's parent
   Object.defineProperty(schema, Parent, {
@@ -30,12 +25,12 @@ export function link(
 
   // Arrays
   if (Array.isArray(schema)) {
-    schema.forEach(child => link(child, schema, processed))
+    schema.forEach(child => link(child, schema))
   }
 
   // Objects
   for (const key in schema as JSONSchema) {
-    link((schema as JSONSchema)[key], schema, processed)
+    link((schema as JSONSchema)[key], schema)
   }
 
   return schema as LinkedJSONSchema
