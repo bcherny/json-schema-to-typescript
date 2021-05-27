@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 import minimist = require('minimist')
+import getStdin from 'get-stdin'
 import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
 import * as mkdirp from 'mkdirp'
 import glob from 'glob-promise'
 import isGlob = require('is-glob')
 import {join, resolve, dirname, basename} from 'path'
-import stdin = require('stdin')
 import {compile, Options} from './index'
 import {pathTransform, error} from './utils'
 
@@ -131,7 +131,7 @@ function getPaths(path: string, paths: string[] = []) {
 
 function readInput(argIn?: string) {
   if (!argIn) {
-    return new Promise(stdin)
+    return getStdin()
   }
   return readFile(resolve(process.cwd(), argIn), 'utf-8')
 }
