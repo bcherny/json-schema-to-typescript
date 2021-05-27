@@ -83,6 +83,7 @@ export interface TInterfaceParam {
   ast: AST
   keyName: string
   isRequired: boolean
+  isReadOnly: boolean
   isPatternProperty: boolean
   isUnreachableDefinition: boolean
 }
