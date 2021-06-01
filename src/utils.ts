@@ -194,8 +194,18 @@ export function toSafeString(string: string) {
   )
 }
 
-export function generateName(from: string, usedNames: Set<string>) {
-  let name = toSafeString(from)
+export function generateName(sources: string[], usedNames: Set<string>) {
+  let name
+
+  for (const source of sources) {
+    const safeSource = toSafeString(source)
+
+    if (safeSource) {
+      name = safeSource
+      break
+    }
+  }
+
   if (!name) {
     name = 'NoName'
   }
