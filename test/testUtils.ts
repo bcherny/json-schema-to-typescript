@@ -9,15 +9,17 @@ export function run() {
   })
   test('generateName', t => {
     const usedNames = new Set<string>()
-    t.is(generateName('a', usedNames), 'A')
-    t.is(generateName('abc', usedNames), 'Abc')
-    t.is(generateName('ABcd', usedNames), 'ABcd')
-    t.is(generateName('$Abc_123', usedNames), '$Abc_123')
-    t.is(generateName('Abc-de-f', usedNames), 'AbcDeF')
+    t.is(generateName(['a'], usedNames), 'A')
+    t.is(generateName(['abc'], usedNames), 'Abc')
+    t.is(generateName(['ABcd'], usedNames), 'ABcd')
+    t.is(generateName(['$Abc_123'], usedNames), '$Abc_123')
+    t.is(generateName(['Abc-de-f'], usedNames), 'AbcDeF')
+
+    t.is(generateName(['---', 'AB'], usedNames), 'AB')
 
     // Index should increment:
-    t.is(generateName('a', usedNames), 'A1')
-    t.is(generateName('a', usedNames), 'A2')
-    t.is(generateName('a', usedNames), 'A3')
+    t.is(generateName(['a'], usedNames), 'A1')
+    t.is(generateName(['a'], usedNames), 'A2')
+    t.is(generateName(['a'], usedNames), 'A3')
   })
 }

@@ -300,9 +300,12 @@ function standaloneName(
   keyNameFromDefinition: string | undefined,
   usedNames: UsedNames
 ): string | undefined {
-  const name = schema.title || schema.id || keyNameFromDefinition
-  if (name) {
-    return generateName(name, usedNames)
+  const nameSources = [schema.title, schema.id, keyNameFromDefinition].filter(
+    source => typeof source !== 'undefined'
+  ) as string[]
+
+  if (nameSources.length) {
+    return generateName(nameSources, usedNames)
   }
 }
 
