@@ -139,7 +139,7 @@ rules.set('Transform $defs to definitions', schema => {
 })
 
 rules.set('Transform const to singleton enum', schema => {
-  if (schema.const) {
+  if (schema.const !== undefined) {
     schema.enum = [schema.const]
     delete schema.const
   }
