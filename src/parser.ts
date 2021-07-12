@@ -157,7 +157,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        params: schema.tsType!,
+        params: schema.tsType || schema['x-tsType']!,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'CUSTOM_TYPE'
       }
@@ -168,7 +168,7 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         params: schema.enum!.map((_, n) => ({
           ast: parse(_, options, undefined, processed, usedNames),
-          keyName: schema.tsEnumNames![n]
+          keyName: schema.tsEnumNames ? schema.tsEnumNames![n] : schema['x-tsEnumNames']![n]
         })),
         type: 'ENUM'
       }

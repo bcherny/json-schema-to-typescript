@@ -145,6 +145,20 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
+rules.set('Normalize tsType -> x-tsType', schema => {
+  if (schema['tsType']) {
+    schema['x-tsType'] = schema['tsType']
+    delete schema['tsType']
+  }
+})
+
+rules.set('Normalize tsEnumNames -> x-tsEnumNames', schema => {
+  if (schema['tsEnumNames']) {
+    schema['x-tsEnumNames'] = schema['tsEnumNames']
+    delete schema['tsEnumNames']
+  }
+})
+
 export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   rules.forEach(rule => traverse(rootSchema, schema => rule(schema, filename, options)))
   return rootSchema as NormalizedJSONSchema

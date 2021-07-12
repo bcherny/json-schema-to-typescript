@@ -4,6 +4,12 @@ import {mapDeep} from './utils'
 type Rule = (schema: JSONSchema) => boolean | void
 const rules = new Map<string, Rule>()
 
+rules.set('Enum members and x-tsEnumNames must be of the same length', schema => {
+  if (schema.enum && schema['x-tsEnumNames'] && schema.enum.length !== schema['x-tsEnumNames'].length) {
+    return false
+  }
+})
+
 rules.set('Enum members and tsEnumNames must be of the same length', schema => {
   if (schema.enum && schema.tsEnumNames && schema.enum.length !== schema.tsEnumNames.length) {
     return false
@@ -12,6 +18,12 @@ rules.set('Enum members and tsEnumNames must be of the same length', schema => {
 
 rules.set('tsEnumNames must be an array of strings', schema => {
   if (schema.tsEnumNames && schema.tsEnumNames.some(_ => typeof _ !== 'string')) {
+    return false
+  }
+})
+
+rules.set('x-tsEnumNames must be an array of strings', schema => {
+  if (schema['x-tsEnumNames'] && schema['x-tsEnumNames'].some(_ => typeof _ !== 'string')) {
     return false
   }
 })
