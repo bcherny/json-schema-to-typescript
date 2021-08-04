@@ -76,6 +76,10 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Use `bigint` for unbounded (i.e. no 'maximum') `integer` in the schema.
+   */
+  enableBigInt: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -104,7 +108,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  unknownAny: true
+  unknownAny: true,
+  enableBigInt: false // True would be more sensible, but also a breaking change from older versions.
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {

@@ -12,6 +12,7 @@ export type SchemaType =
   | 'NEVER'
   | 'NULL'
   | 'NUMBER'
+  | 'BIGINT'
   | 'STRING'
   | 'OBJECT'
   | 'ONE_OF'
