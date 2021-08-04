@@ -12,6 +12,7 @@ export type AST =
   | TIntersection
   | TLiteral
   | TNumber
+  | TBigInt
   | TNull
   | TObject
   | TReference
@@ -99,6 +100,10 @@ export interface TLiteral extends AbstractAST {
 
 export interface TNumber extends AbstractAST {
   type: 'NUMBER'
+}
+
+export interface TBigInt extends AbstractAST {
+  type: 'BIGINT'
 }
 
 export interface TNull extends AbstractAST {

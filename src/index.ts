@@ -64,6 +64,10 @@ export interface Options {
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
   $refOptions: $RefOptions
+  /**
+   * Use `bigint` for unbounded (i.e. no 'maximum') `integer` in the schema.
+   */
+  enableBigInt: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -90,7 +94,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  unknownAny: true
+  unknownAny: true,
+  enableBigInt: false // True would be more sensible, but also a breaking change from older versions.
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {

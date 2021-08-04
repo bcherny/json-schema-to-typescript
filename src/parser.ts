@@ -40,7 +40,7 @@ export function parse(
     return parseLiteral(schema, keyName)
   }
 
-  const types = typesOfSchema(schema)
+  const types = typesOfSchema(schema, options)
   if (types.length === 1) {
     const ast = parseAsTypeWithCache(schema, types[0], options, keyName, processed, usedNames)
     log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
@@ -187,6 +187,13 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NUMBER'
+      }
+    case 'BIGINT':
+      return {
+        comment: schema.description,
+        keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        type: 'BIGINT'
       }
     case 'OBJECT':
       return {

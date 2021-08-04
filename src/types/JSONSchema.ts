@@ -11,6 +11,7 @@ export type SchemaType =
   | 'NAMED_SCHEMA'
   | 'NULL'
   | 'NUMBER'
+  | 'BIGINT'
   | 'STRING'
   | 'OBJECT'
   | 'ONE_OF'

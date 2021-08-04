@@ -1,5 +1,6 @@
 import {isPlainObject} from 'lodash'
 import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
+import {Options} from './'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
@@ -9,7 +10,7 @@ import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
  * types). The spec leaves it up to implementations to decide what to do with this
  * loosely-defined behavior.
  */
-export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...SchemaType[]] {
+export function typesOfSchema(schema: JSONSchema, options: Options): readonly [SchemaType, ...SchemaType[]] {
   // tsType is an escape hatch that supercedes all other directives
   if (schema.tsType) {
     return ['CUSTOM_TYPE']
@@ -18,7 +19,7 @@ export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...Sche
   // Collect matched types
   const matchedTypes: SchemaType[] = []
   for (const [schemaType, f] of Object.entries(matchers)) {
-    if (f(schema)) {
+    if (f(schema, options)) {
       matchedTypes.push(schemaType as SchemaType)
     }
   }
@@ -31,7 +32,7 @@ export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...Sche
   return matchedTypes as [SchemaType, ...SchemaType[]]
 }
 
-const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
+const matchers: Record<SchemaType, (schema: JSONSchema, options: Options) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
   },
@@ -70,14 +71,26 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   NULL(schema) {
     return schema.type === 'null'
   },
-  NUMBER(schema) {
+  NUMBER(schema, options) {
     if ('enum' in schema) {
       return false
     }
-    if (schema.type === 'integer' || schema.type === 'number') {
+    if (schema.type === 'number') {
+      return true
+    }
+    if (schema.type === 'integer' && (!options.enableBigInt || schema.maximum !== undefined)) {
       return true
     }
     if (!isCompound(schema) && typeof schema.default === 'number') {
+      return true
+    }
+    return false
+  },
+  BIGINT(schema, options) {
+    if ('enum' in schema) {
+      return false
+    }
+    if (schema.type === 'integer' && options.enableBigInt && schema.maximum === undefined) {
       return true
     }
     return false

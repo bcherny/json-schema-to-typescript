@@ -191,6 +191,8 @@ function generateRawType(ast: AST, options: Options): string {
       return JSON.stringify(ast.params)
     case 'NUMBER':
       return 'number'
+    case 'BIGINT':
+      return 'bigint'
     case 'NULL':
       return 'null'
     case 'OBJECT':

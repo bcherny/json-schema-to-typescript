@@ -93,6 +93,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `definitions` that aren't referenced by the schema. |
 | strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
+| enableBigInt | boolean | `false` | Use `bigint` for unbounded (i.e. no 'maximum') `integer` in the schema. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 
