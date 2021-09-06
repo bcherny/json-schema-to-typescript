@@ -26,7 +26,7 @@ export const input = {
       },
       additionalProperties: {
         enum: [10, 20, 30],
-        tsEnumNames: ['red', 'green', 'blue']
+        'x-enum-varnames': ['red', 'green', 'blue']
       }
     }
   },

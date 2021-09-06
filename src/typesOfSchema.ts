@@ -62,7 +62,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     return false // Explicitly handled before we try to match
   },
   NAMED_ENUM(schema) {
-    return 'enum' in schema && 'tsEnumNames' in schema
+    return 'enum' in schema && ('x-enum-varnames' in schema || 'tsEnumNames' in schema)
   },
   NAMED_SCHEMA(schema) {
     return 'id' in schema && ('patternProperties' in schema || 'properties' in schema)
@@ -122,7 +122,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     return Array.isArray(schema.type)
   },
   UNNAMED_ENUM(schema) {
-    if ('tsEnumNames' in schema) {
+    if ('x-enum-varnames' in schema || 'tsEnumNames' in schema) {
       return false
     }
     if (

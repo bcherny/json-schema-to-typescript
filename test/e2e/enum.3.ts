@@ -1,18 +1,18 @@
 // Reported in #327
 export const input = {
-  title: 'InterfaceWithTsEnumNames',
-  anyOf: [{$ref: '#/definitions/InterfaceWithTsEnumNames'}],
+  title: 'InterfaceWithEnumNames',
+  anyOf: [{$ref: '#/definitions/InterfaceWithEnumNames'}],
   definitions: {
-    InterfaceWithTsEnumNames: {
+    InterfaceWithEnumNames: {
       type: 'object',
       properties: {
-        TsEnumNames: {$ref: '#/definitions/TsEnums'}
+        EnumNames: {$ref: '#/definitions/Enums'}
       },
       additionalProperties: false
     },
-    TsEnums: {
+    Enums: {
       type: 'string',
-      tsEnumNames: ['publish', 'draft'],
+      'x-enum-varnames': ['publish', 'draft'],
       enum: ['publish', 'draft']
     }
   }

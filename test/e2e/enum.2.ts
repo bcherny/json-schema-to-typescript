@@ -35,7 +35,7 @@ export const input = {
     EntityDataCategory: {
       type: 'string',
       enum: ['TABLE', 'OBJ', 'FUNC'],
-      tsEnumNames: ['Table', 'Field', 'Func']
+      'x-enum-varnames': ['Table', 'Field', 'Func']
     }
   }
 }

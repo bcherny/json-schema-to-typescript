@@ -30,11 +30,11 @@ export const input = {
     namedIntegerEnum: {
       type: 'integer',
       enum: [1, 2, 3],
-      tsEnumNames: ['One', 'Two', 'Three']
+      'x-enum-varnames': ['One', 'Two', 'Three']
     },
     impliedNamedIntegerEnum: {
       enum: [4, 5, 6],
-      tsEnumNames: ['Four', 'Five', 'Six']
+      'x-enum-varnames': ['Four', 'Five', 'Six']
     },
     impliedHeterogeneousEnum: {
       enum: [-20.1, null, 'foo', false]
@@ -43,12 +43,12 @@ export const input = {
       type: 'integer',
       enum: [1, 2, 3],
       title: 'NamedInteger',
-      tsEnumNames: ['One', 'Two', 'Three']
+      'x-enum-varnames': ['One', 'Two', 'Three']
     },
     impliedNamedIntegerEnumTitle: {
       enum: [4, 5, 6],
       title: 'ImpliedNamedInteger',
-      tsEnumNames: ['Four', 'Five', 'Six']
+      'x-enum-varnames': ['Four', 'Five', 'Six']
     },
     oneOfNamedEnum: {
       oneOf: [
@@ -56,13 +56,13 @@ export const input = {
           type: 'integer',
           enum: [1, 2, 3],
           title: 'IntegerOneOfNamedEnum',
-          tsEnumNames: ['One', 'Two', 'Three']
+          'x-enum-varnames': ['One', 'Two', 'Three']
         },
         {
           type: 'string',
           enum: ['four', 'five', 'six'],
           title: 'StringOneOfNamedEnum',
-          tsEnumNames: ['Four', 'Five', 'Six']
+          'x-enum-varnames': ['Four', 'Five', 'Six']
         }
       ]
     },
@@ -72,13 +72,13 @@ export const input = {
           type: 'integer',
           enum: [1, 2, 3],
           title: 'IntegerAnyOfNamedEnum',
-          tsEnumNames: ['One', 'Two', 'Three']
+          'x-enum-varnames': ['One', 'Two', 'Three']
         },
         {
           type: 'string',
           enum: ['four', 'five', 'six'],
           title: 'StringAnyOfNamedEnum',
-          tsEnumNames: ['Four', 'Five', 'Six']
+          'x-enum-varnames': ['Four', 'Five', 'Six']
         }
       ]
     },
@@ -88,13 +88,13 @@ export const input = {
           type: 'integer',
           enum: [1, 2, 3],
           title: 'IntegerAllOfNamedEnum',
-          tsEnumNames: ['One', 'Two', 'Three']
+          'x-enum-varnames': ['One', 'Two', 'Three']
         },
         {
           type: 'string',
           enum: ['four', 'five', 'six'],
           title: 'StringAllOfNamedEnum',
-          tsEnumNames: ['Four', 'Five', 'Six']
+          'x-enum-varnames': ['Four', 'Five', 'Six']
         }
       ]
     }

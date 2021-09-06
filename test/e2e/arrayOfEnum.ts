@@ -6,7 +6,7 @@ export const input = {
       items: {
         enum: [1, 2, 3],
         title: 'NamedEnum',
-        tsEnumNames: ['One', 'Two', 'Three']
+        'x-enum-varnames': ['One', 'Two', 'Three']
       }
     },
     tuples: {
@@ -16,7 +16,7 @@ export const input = {
         {
           enum: [1, 2, 3],
           title: 'NamedEnum2',
-          tsEnumNames: ['One', 'Two', 'Three']
+          'x-enum-varnames': ['One', 'Two', 'Three']
         }
       ]
     }

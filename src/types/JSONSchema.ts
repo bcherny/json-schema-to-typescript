@@ -30,6 +30,10 @@ export interface JSONSchema extends JSONSchema4 {
    */
   tsEnumNames?: string[]
   /**
+   * schema extension to support numeric enums
+   */
+  'x-enum-varnames'?: string[]
+  /**
    * schema extension to support custom types
    */
   tsType?: string
@@ -93,9 +97,17 @@ export interface EnumJSONSchema extends NormalizedJSONSchema {
   enum: any[]
 }
 
-export interface NamedEnumJSONSchema extends NormalizedJSONSchema {
+interface DeprecatedNamedEnumJSONSchema extends NormalizedJSONSchema {
+  'x-enum-varnames'?: never
   tsEnumNames: string[]
 }
+
+interface _NamedEnumJSONSchema extends NormalizedJSONSchema {
+  'x-enum-varnames': string[]
+  tsEnumNames?: never
+}
+
+export type NamedEnumJSONSchema = _NamedEnumJSONSchema | DeprecatedNamedEnumJSONSchema
 
 export interface SchemaSchema extends NormalizedJSONSchema {
   properties: {

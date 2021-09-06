@@ -5,7 +5,7 @@ export const input = {
     bar: {
       type: 'integer',
       enum: [1, 2, 3],
-      tsEnumNames: ['One', 'Three']
+      'x-enum-varnames': ['One', 'Three']
     }
   },
   required: ['bar'],

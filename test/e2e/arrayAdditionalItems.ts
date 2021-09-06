@@ -1,4 +1,4 @@
-const namedEums = {
+const namedEnums = {
   type: 'object',
   properties: {
     additionalItemsAny: {
@@ -7,7 +7,7 @@ const namedEums = {
         {
           enum: [1, 2, 3],
           title: 'NamedEnum2',
-          tsEnumNames: ['One', 'Two', 'Three']
+          'x-enum-varnames': ['One', 'Two', 'Three']
         }
       ],
       additionalItems: true
@@ -18,13 +18,13 @@ const namedEums = {
         {
           enum: [1, 2, 3],
           title: 'NamedEnum2',
-          tsEnumNames: ['One', 'Two', 'Three']
+          'x-enum-varnames': ['One', 'Two', 'Three']
         }
       ],
       additionalItems: {
         enum: [4, 5, 6],
         title: 'NamedEnum2',
-        tsEnumNames: ['Four', 'Five', 'Six']
+        'x-enum-varnames': ['Four', 'Five', 'Six']
       }
     }
   },
@@ -266,7 +266,7 @@ export const input = {
   type: 'object',
   definitions,
   properties: {
-    namedEums,
+    namedEnums,
     unnamedEmums,
     namedSchema,
     schema,
