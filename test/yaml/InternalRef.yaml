@@ -1,0 +1,13 @@
+$schema: https://json-schema.org/draft/2020-12/schema#
+$id: https://dummy.api/BaseSchema
+title: BaseSchema
+type: object
+allOf:
+  - $ref: '#/definitions/Base'
+
+definitions:
+  Base:
+    type: object
+    properties:
+      someProp:
+        type: string

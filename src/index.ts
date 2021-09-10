@@ -13,7 +13,8 @@ import {dereference} from './resolver'
 import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
-import {link} from './linker'
+import { link } from './linker'
+import yaml from 'js-yaml'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -101,7 +102,7 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
     }
   )
   const schema = Try<JSONSchema4>(
-    () => JSON.parse(contents.toString()),
+    () => yaml.load(contents.toString()) as any,
     () => {
       throw new TypeError(`Error parsing JSON in file "${filename}"`)
     }
