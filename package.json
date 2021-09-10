@@ -1,5 +1,5 @@
 {
-  "name": "json-schema-to-typescript",
+  "name": "@techbuddyab/json-schema-to-typescript",
   "version": "10.1.4",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
@@ -19,14 +19,15 @@
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
     "test": "ava --timeout=300s --verbose",
     "stresstest": "seq 1 10 | xargs -I{} npm test",
-    "prepublishOnly": "npm test",
-    "pretest": "npm run clean && npm run build:server",
+    "prepublishOnly": "npm test && npm run lint",
+    "prepare": "npm run clean && npm run build:server",
+    "preversion": "npm run lint",
     "watch": "tsc -w",
     "watch:test": "ava -w"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bcherny/json-schema-to-typescript.git"
+    "url": "git+https://github.com/techbuddyab/json-schema-to-typescript.git"
   },
   "keywords": [
     "json",
@@ -44,9 +45,9 @@
   "author": "Boris Cherny <boris@performancejs.com> (http://performancejs.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bcherny/json-schema-to-typescript/issues"
+    "url": "https://github.com/techbuddyab/json-schema-to-typescript/issues"
   },
-  "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
+  "homepage": "https://github.com/techbuddyab/json-schema-to-typescript#readme",
   "dependencies": {
     "@types/json-schema": "^7.0.6",
     "@types/lodash": "^4.14.168",
@@ -106,5 +107,9 @@
   },
   "browserify-shim": {
     "prettier": "global:prettier"
+  },
+  "directories": {
+    "example": "example",
+    "test": "test"
   }
 }

@@ -13,7 +13,7 @@ import {dereference} from './resolver'
 import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
-import { link } from './linker'
+import {link} from './linker'
 import yaml from 'js-yaml'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
