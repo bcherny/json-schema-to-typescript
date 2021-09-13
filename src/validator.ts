@@ -10,6 +10,10 @@ rules.set('Enum members and x-enum-varnames must be of the same length', schema 
   }
 })
 
+/**
+ * `tsEnumNames` is being replaced by `x-enum-varnames`, but we'll leave this
+ * validator until `tsEnumNames` is removed.
+ */
 rules.set('Enum members and tsEnumNames must be of the same length', schema => {
   if (schema.enum && schema.tsEnumNames && schema.enum.length !== schema.tsEnumNames.length) {
     return false
@@ -22,6 +26,10 @@ rules.set('x-enum-varnames must be an array of strings', schema => {
   }
 })
 
+/**
+ * `tsEnumNames` is being replaced by `x-enum-varnames`, but we'll leave this
+ * validator until `tsEnumNames` is removed.
+ */
 rules.set('tsEnumNames must be an array of strings', schema => {
   if (schema.tsEnumNames && schema.tsEnumNames.some(_ => typeof _ !== 'string')) {
     return false

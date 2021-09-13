@@ -145,6 +145,22 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
+/**
+ * `tsEnumNames` is being replaced by `x-enum-varnames`. Since we don't want to
+ * break existing usage of `tsEnumNames`, we'll convert `tsEnumNames` properties
+ * to `x-enum-varnames`.
+ */
+rules.set('Convert tsEnumNames -> x-enum-varnames', schema => {
+  if (schema.tsEnumNames) {
+    if ('x-enum-varnames' in schema) {
+      throw new Error('Cannot set both x-enum-varnames and tsEnumNames in the same schema. Only use x-enum-varnames.')
+    }
+
+    schema['x-enum-varnames'] = schema.tsEnumNames
+    delete schema.tsEnumNames
+  }
+})
+
 export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   rules.forEach(rule => traverse(rootSchema, schema => rule(schema, filename, options)))
   return rootSchema as NormalizedJSONSchema

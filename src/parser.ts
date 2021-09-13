@@ -168,7 +168,7 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         params: schema.enum!.map((_, n) => ({
           ast: parse(_, options, undefined, processed, usedNames),
-          keyName: (schema['x-enum-varnames'] ?? schema.tsEnumNames)![n]
+          keyName: schema['x-enum-varnames']![n]
         })),
         type: 'ENUM'
       }
