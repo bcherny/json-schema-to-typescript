@@ -19,5 +19,10 @@ export function run() {
     t.is(generateName('a', usedNames), 'A1')
     t.is(generateName('a', usedNames), 'A2')
     t.is(generateName('a', usedNames), 'A3')
+
+    // Reserved names:
+    t.is(generateName('Symbol', usedNames), 'Symbol1')
+    t.is(generateName('Symbol', usedNames), 'Symbol2')
+    t.is(generateName('Symbol', usedNames), 'Symbol3')
   })
 }
