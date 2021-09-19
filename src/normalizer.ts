@@ -146,9 +146,10 @@ rules.set('Transform const to singleton enum', schema => {
 })
 
 rules.set('Spread required on allOf into its subSchema', schema => {
-  if (schema.allOf && schema.required && schema.required.length) {
+  if (schema.allOf && schema.required) {
+    const schemaRequired = schema.required
     schema.allOf.forEach(subSchema => {
-      Object.assign(subSchema, {required: schema.required})
+      subSchema.required = [...(subSchema.required || []), ...schemaRequired]
     })
   }
 })
