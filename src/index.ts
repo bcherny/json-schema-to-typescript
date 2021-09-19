@@ -93,7 +93,12 @@ export const DEFAULT_OPTIONS: Options = {
   unknownAny: true
 }
 
-export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+export type PartialNonEmptyObject<T, O = {[K in keyof T]: Pick<T, K>}> = Partial<T> & O[keyof O]
+
+export function compileFromFile(
+  filename: string,
+  options: PartialNonEmptyObject<Options> = DEFAULT_OPTIONS
+): Promise<string> {
   const contents = Try(
     () => readFileSync(filename),
     () => {
