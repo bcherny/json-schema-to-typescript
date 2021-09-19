@@ -145,6 +145,14 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
+rules.set('Spread required on allOf into its subSchema', schema => {
+  if (schema.allOf && schema.required && schema.required.length) {
+    schema.allOf.forEach(subSchema => {
+      Object.assign(subSchema, {required: schema.required})
+    })
+  }
+})
+
 export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   rules.forEach(rule => traverse(rootSchema, schema => rule(schema, filename, options)))
   return rootSchema as NormalizedJSONSchema

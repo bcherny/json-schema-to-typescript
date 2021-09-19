@@ -1,0 +1,62 @@
+{
+  "name": "Spread required on AllOf into its sub-schema",
+  "in": {
+    "type": "object",
+    "properties": {
+      "reference": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/defined"
+          }
+        ],
+        "required": [
+          "subproperty"
+        ]
+      }
+    },
+    "definitions": {
+      "defined": {
+        "type": "object",
+        "properties": {
+          "subproperty": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "out": {
+    "id": "RequiredOnAllOf",
+    "type": "object",
+    "properties": {
+      "reference": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/defined",
+            "required": [
+              "subproperty"
+            ]
+          }
+        ],
+        "required": [
+          "subproperty"
+        ]
+      }
+    },
+    "definitions": {
+      "defined": {
+        "additionalProperties": true,
+        "type": "object",
+        "properties": {
+          "subproperty": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}
