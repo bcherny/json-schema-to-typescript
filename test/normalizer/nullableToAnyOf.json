@@ -1,0 +1,21 @@
+{
+  "name": "Normalize nullable to anyOf",
+  "in": {
+    "id": "foo",
+    "type": "integer",
+    "format": "int32",
+    "nullable": true
+  },
+  "out": {
+    "id": "foo",
+    "anyOf": [
+      {
+        "type": "integer",
+        "format": "int32"
+      },
+      {
+        "type": "null"
+      }
+    ]
+  }
+}

@@ -145,6 +145,30 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
+rules.set('Transform nullable -> anyOf', schema => {
+  if (schema.nullable === true) {
+    delete schema.nullable
+
+    const copiedSchema = {...schema}
+
+    // This stuff should not be in `anyOf`.
+    delete copiedSchema.id
+    delete copiedSchema.nullable
+
+    // This stuff will be in `anyOf` instead.
+    delete schema.format
+    delete schema.type
+
+    schema.anyOf = [
+      copiedSchema,
+      // @ts-expect-error
+      {
+        type: 'null'
+      }
+    ]
+  }
+})
+
 export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   rules.forEach(rule => traverse(rootSchema, schema => rule(schema, filename, options)))
   return rootSchema as NormalizedJSONSchema
