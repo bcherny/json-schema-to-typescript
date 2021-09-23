@@ -174,7 +174,7 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)).
 - `tsReadonly`: Sets whether an array or object property is `readonly` in TypeScript.
 
-  ```json
+  ```jsonc
   // readonlyByDefault: false
   {
     "anyOf": [
@@ -206,7 +206,7 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 
   When used on a schema with `"type": "object"`, sets the default `tsReadonly` state for all of its properties.
 
-  ```json
+  ```jsonc
   {
     "type": "object",
     "tsReadonly": true,
