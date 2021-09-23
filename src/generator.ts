@@ -12,7 +12,8 @@ import {
   TIntersection,
   TNamedInterface,
   TUnion,
-  T_UNKNOWN
+  T_UNKNOWN,
+  TTuple
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
@@ -238,7 +239,14 @@ function generateRawType(ast: AST, options: Options): string {
         }
 
         function paramsToString(params: string[]): string {
-          return '[' + params.join(', ') + ']'
+          let type = '[' + params.join(', ') + ']'
+          // `Readonly<T>` where T is a tuple type is unsupported in versions of TypeScript prior to the introduction
+          // of the `readonly` keyword for array/tuple types, so don't bother adding it if options.readonlyKeyword is
+          // false
+          // Sources:
+          // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#a-new-syntax-for-readonlyarray
+          // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#readonly-tuples
+          return (ast as TTuple).isReadonly && options.readonlyKeyword ? 'readonly ' + type : type
         }
 
         const paramsList = astParams.map(param => generateType(param, options))
@@ -283,14 +291,7 @@ function generateRawType(ast: AST, options: Options): string {
         }
 
         // no max items so only need to return one type
-        const type = paramsToString(addSpreadParam(paramsList))
-        // `Readonly<T>` where T is a tuple type is unsupported in versions of TypeScript prior to the introduction
-        // of the `readonly` keyword for array/tuple types, so don't bother adding it if options.readonlyKeyword is
-        // false
-        // Sources:
-        // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#a-new-syntax-for-readonlyarray
-        // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#readonly-tuples
-        return ast.isReadonly && options.readonlyKeyword ? 'readonly ' + type : type
+        return paramsToString(addSpreadParam(paramsList))
       })()
     case 'UNION':
       return generateSetOperation(ast, options)
