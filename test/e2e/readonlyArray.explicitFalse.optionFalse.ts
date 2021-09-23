@@ -4,5 +4,9 @@ export const input = {
   items: {
     type: 'string'
   },
-  tsReadonly: true
+  tsReadonly: false
+}
+
+export const options = {
+  readonlyKeyword: false
 }

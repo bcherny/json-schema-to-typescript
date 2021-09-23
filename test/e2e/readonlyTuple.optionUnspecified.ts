@@ -1,6 +1,6 @@
 export const input = {
-  title: 'MyArray',
   type: 'array',
+  minItems: 1,
   items: {
     type: 'string'
   },

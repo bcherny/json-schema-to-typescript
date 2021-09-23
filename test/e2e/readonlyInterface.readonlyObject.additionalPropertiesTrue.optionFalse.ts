@@ -6,23 +6,21 @@ export const input = {
   ],
   properties: {
     a: {
-      type: 'string',
-      tsReadonly: true
+      type: 'string'
     },
     b: {
       type: 'string',
       tsReadonly: false
     },
     c: {
-      type: 'string',
-      tsReadonly: true
+      type: 'string'
     },
     d: {
       type: 'string',
       tsReadonly: false
     }
   },
-  additionalProperties: false,
+  additionalProperties: true,
   tsReadonly: true
 }
 

@@ -20,5 +20,10 @@ export const input = {
       type: 'string'
     }
   },
-  additionalProperties: false
+  additionalProperties: true,
+  tsReadonly: false
+}
+
+export const options = {
+  readonlyKeyword: false
 }

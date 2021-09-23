@@ -436,7 +436,7 @@ via the \`definition\` "${key}".`
         isRequired: true,
         isUnreachableDefinition: false,
         // Explicit additionalProperties readonly state supercedes generic readonly state
-        isReadonly: schema.tsReadonly ?? schema.tsReadonly,
+        isReadonly: schema.additionalProperties.tsReadonly ?? schema.tsReadonly,
         keyName: '[k: string]'
       })
   }

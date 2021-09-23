@@ -31,12 +31,16 @@ export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...Sche
   return matchedTypes as [SchemaType, ...SchemaType[]]
 }
 
+function nonCustonKeys (obj: JSONSchema): string[] {
+  return Object.keys(obj).filter(key => key !== 'tsEnumNames' && key !== 'tsType' && key !== 'tsReadonly')
+}
+
 const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
   },
   ANY(schema) {
-    if (Object.keys(schema).length === 0) {
+    if (nonCustonKeys(schema).length === 0) {
       // The empty schema {} validates any value
       // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1
       return true

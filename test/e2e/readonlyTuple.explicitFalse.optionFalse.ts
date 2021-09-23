@@ -1,12 +1,12 @@
 export const input = {
-  title: 'MyArray',
   type: 'array',
+  minItems: 1,
   items: {
     type: 'string'
   },
-  tsReadonly: true
+  tsReadonly: false
 }
 
 export const options = {
-  readonlyKeyword: true
+  readonlyKeyword: false
 }

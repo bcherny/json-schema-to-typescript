@@ -20,5 +20,6 @@ export const input = {
       type: 'string'
     }
   },
-  additionalProperties: false
+  additionalProperties: true,
+  tsReadonly: false
 }

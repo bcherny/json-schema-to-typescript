@@ -180,7 +180,7 @@ function generateRawType(ast: AST, options: Options): string {
       return (() => {
         let type = generateType(ast.params, options)
         if (ast.isReadonly && !options.readonlyKeyword) {
-          type = 'Readonly<'+ type + '>'
+          type = 'ReadonlyArray<'+ type + '>'
         } else {
           type = type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
           if (ast.isReadonly) {

@@ -4,5 +4,5 @@ export const input = {
   items: {
     type: 'string'
   },
-  tsReadonly: true
+  tsReadonly: false
 }

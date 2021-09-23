@@ -10,15 +10,18 @@ export const input = {
       tsReadonly: true
     },
     b: {
-      type: 'string'
+      type: 'string',
+      tsReadonly: false
     },
     c: {
       type: 'string',
       tsReadonly: true
     },
     d: {
-      type: 'string'
+      type: 'string',
+      tsReadonly: false
     }
   },
-  additionalProperties: false
+  additionalProperties: true,
+  tsReadonly: false
 }
