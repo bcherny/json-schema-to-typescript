@@ -278,7 +278,7 @@ export function escapeBlockComment(schema: JSONSchema) {
 /**
  * Makes Windows paths look like POSIX paths, ignoring drive letter prefixes (if present).
  */
-export function forcePosixLikePath (path: string): string {
+export function forcePosixLikePath(path: string): string {
   return path.replace(/\\/gu, '/')
 }
 

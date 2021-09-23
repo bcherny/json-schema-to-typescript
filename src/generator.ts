@@ -180,7 +180,7 @@ function generateRawType(ast: AST, options: Options): string {
       return (() => {
         let type = generateType(ast.params, options)
         if (ast.isReadonly && !options.readonlyKeyword) {
-          type = 'ReadonlyArray<'+ type + '>'
+          type = 'ReadonlyArray<' + type + '>'
         } else {
           type = type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
           if (ast.isReadonly) {
@@ -318,7 +318,7 @@ function generateInterface(ast: TInterface, options: Options): string {
       .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
       .map(
         ({isRequired, isReadonly, keyName, ast}) =>
-          [isRequired, isReadonly, keyName, ast, generateType(ast, options)] as [boolean, boolean | undefined, string, AST, string]
+          [isRequired, isReadonly, keyName, ast, generateType(ast, options)] as [boolean, boolean, string, AST, string]
       )
       .map(
         ([isRequired, isReadonly, keyName, ast, type]) =>

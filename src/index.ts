@@ -43,7 +43,13 @@ export interface Options {
    */
   ignoreMinAndMaxItems: boolean
   /**
+   * Types must be explicitly marked as mutable using `"tsReadonly": false`.
+   */
+  readonlyByDefault: boolean
+  /**
    * Use the `readonly` keyword instead of `Readonly<T>` for array types?
+   *
+   * Setting this to `false` will disable readonly tuple support.
    */
   readonlyKeyword: boolean
   /**
@@ -83,6 +89,7 @@ export const DEFAULT_OPTIONS: Options = {
   enableConstEnums: true,
   format: true,
   ignoreMinAndMaxItems: false,
+  readonlyByDefault: false,
   readonlyKeyword: true,
   strictIndexSignatures: false,
   style: {

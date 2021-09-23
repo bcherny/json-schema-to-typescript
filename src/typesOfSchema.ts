@@ -31,7 +31,7 @@ export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...Sche
   return matchedTypes as [SchemaType, ...SchemaType[]]
 }
 
-function nonCustonKeys (obj: JSONSchema): string[] {
+function nonCustonKeys(obj: JSONSchema): string[] {
   return Object.keys(obj).filter(key => key !== 'tsEnumNames' && key !== 'tsType' && key !== 'tsReadonly')
 }
 
