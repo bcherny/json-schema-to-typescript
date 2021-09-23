@@ -230,7 +230,7 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
   <!-- For clearance -->
   <p></p>
 
-- `tsReadonlyPropertyDefaultValue`: Sets the default value of `tsReadonlyProperty` for an object schema's properties.
+- `tsReadonlyPropertyDefaultValue`: Sets the default value of `tsReadonlyProperty` for an object schema's properties. This is the same as passing the object type to `Readonly`, except that properties can be explicitly marked as non-readonly.
 
   ```jsonc
   {
@@ -238,8 +238,8 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
     "tsReadonlyPropertyDefaultValue": true,
     "properties": {
       // This property is readonly
-      "foo": { },
-      // This property is mutable because we explicitly override the object's default
+      "foo": {},
+      // This property is NOT readonly because we explicitly override the object's default
       "bar": {
         "tsReadonlyProperty": false
       }
@@ -249,7 +249,7 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
   }
   ```
 
-  Note that this has no effect on sub-objects.
+  Note that this property has no effect on sub-objects.
 
   ```jsonc
   // readonlyByDefault: false

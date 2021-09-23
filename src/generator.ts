@@ -318,7 +318,13 @@ function generateInterface(ast: TInterface, options: Options): string {
       .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
       .map(
         ({isRequired, isReadonlyParam, keyName, ast}) =>
-          [isRequired, isReadonlyParam, keyName, ast, generateType(ast, options)] as [boolean, boolean, string, AST, string]
+          [isRequired, isReadonlyParam, keyName, ast, generateType(ast, options)] as [
+            boolean,
+            boolean,
+            string,
+            AST,
+            string
+          ]
       )
       .map(
         ([isRequired, isReadonlyParam, keyName, ast, type]) =>

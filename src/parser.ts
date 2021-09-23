@@ -382,7 +382,8 @@ via the \`patternProperty\` "${key}".`
           isPatternProperty: !singlePatternProperty,
           isRequired: singlePatternProperty || includes(schema.required || [], key),
           isUnreachableDefinition: false,
-          isReadonlyParam: value.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
+          isReadonlyParam:
+            value.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
           keyName: singlePatternProperty ? '[k: string]' : key
         }
       })
@@ -401,7 +402,8 @@ via the \`definition\` "${key}".`
           isPatternProperty: false,
           isRequired: includes(schema.required || [], key),
           isUnreachableDefinition: true,
-          isReadonlyParam: value.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
+          isReadonlyParam:
+            value.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
           keyName: key
         }
       })
@@ -436,7 +438,10 @@ via the \`definition\` "${key}".`
         isRequired: true,
         isUnreachableDefinition: false,
         // Explicit additionalProperties readonly state supercedes generic readonly state
-        isReadonlyParam: schema.additionalProperties.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
+        isReadonlyParam:
+          schema.additionalProperties.tsReadonlyProperty ??
+          schema.tsReadonlyPropertyDefaultValue ??
+          options.readonlyByDefault,
         keyName: '[k: string]'
       })
   }
