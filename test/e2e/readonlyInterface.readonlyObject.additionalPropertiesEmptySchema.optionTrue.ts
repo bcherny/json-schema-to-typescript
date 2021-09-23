@@ -1,9 +1,6 @@
 export const input = {
   type: 'object',
-  required: [
-    'a',
-    'b'
-  ],
+  required: ['a', 'b'],
   properties: {
     a: {
       type: 'string'
