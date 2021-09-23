@@ -3,6 +3,7 @@ import {execSync} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
 import {resolve, join} from 'path'
 import rimraf = require('rimraf')
+import { forcePosixLikePath } from '../src/utils'
 
 export function run() {
   test('pipe in, pipe out', t => {
@@ -84,7 +85,7 @@ export function run() {
   })
 
   test('files in (-i), files out (-o)', t => {
-    execSync("node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json' -o ./test/resources/MultiSchema/out")
+    execSync("node dist/src/cli.js -i ./test/resources/MultiSchema/**/*.json -o ./test/resources/MultiSchema/out")
 
     readdirSync('./test/resources/MultiSchema/out').forEach(f => {
       const path = `./test/resources/MultiSchema/out/${f}`
@@ -96,12 +97,12 @@ export function run() {
   })
 
   test('files in (-i), pipe out', t => {
-    t.snapshot(execSync("node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json'").toString())
+    t.snapshot(execSync("node dist/src/cli.js -i ./test/resources/MultiSchema/**/*.json").toString())
   })
 
   test('files in (-i), files out (-o) nested dir does not exist', t => {
     execSync(
-      "node dist/src/cli.js -i './test/resources/MultiSchema/**/*.json' -o ./test/resources/MultiSchema/foo/bar/out"
+      "node dist/src/cli.js -i ./test/resources/MultiSchema/**/*.json -o ./test/resources/MultiSchema/foo/bar/out"
     )
     readdirSync('./test/resources/MultiSchema/foo/bar/out').forEach(f => {
       const path = `./test/resources/MultiSchema/foo/bar/out/${f}`
@@ -114,9 +115,10 @@ export function run() {
 
   test('files in (-i), files out (-o) matching nested dir', t => {
     execSync(
-      "node dist/src/cli.js -i './test/resources/../../test/resources/MultiSchema2/' -o ./test/resources/MultiSchema2/out"
+      "node dist/src/cli.js -i ./test/resources/../../test/resources/MultiSchema2/ -o ./test/resources/MultiSchema2/out"
     )
-    getPaths('./test/resources/MultiSchema2/out').forEach(file => {
+    // Need to make sure file ordering is the same on Windows and Unix-like OSs
+    getPaths('./test/resources/MultiSchema2/out').sort(compareByCodePoint).forEach(file => {
       t.snapshot(file)
       t.snapshot(readFileSync(file, 'utf-8'))
       unlinkSync(file)
@@ -129,8 +131,25 @@ function getPaths(path: string, paths: string[] = []) {
   if (existsSync(path) && lstatSync(path).isDirectory()) {
     readdirSync(resolve(path)).forEach(item => getPaths(join(path, item), paths))
   } else {
-    paths.push(path)
+    // Need to make sure path strings are the same on Windows and Unix-like OSs
+    paths.push(forcePosixLikePath(path))
   }
 
   return paths
+}
+
+function compareByCodePoint (a: string, b: string) {
+  const minLength = Math.min(a.length, b.length)
+  for (let i = 0; i < minLength; i++) {
+    const cmp = (a?.codePointAt(i) ?? a.charCodeAt(i)) - (b.codePointAt(i) ?? b.charCodeAt(i))
+    if (cmp !== 0) {
+      return cmp
+    }
+  }
+  if (a.length < b.length) {
+    return -1
+  } else if (a.length > b.length) {
+    return 1
+  }
+  return 0
 }

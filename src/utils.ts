@@ -275,6 +275,13 @@ export function escapeBlockComment(schema: JSONSchema) {
   }
 }
 
+/**
+ * Makes Windows paths look like POSIX paths, ignoring drive letter prefixes (if present).
+ */
+export function forcePosixLikePath (path: string): string {
+  return path.replace(/\\/gu, '/')
+}
+
 /*
 the following logic determines the out path by comparing the in path to the users specified out path.
 For example, if input directory MultiSchema looks like:
@@ -291,7 +298,7 @@ export function pathTransform(outputPath: string, inputPath: string, filePath: s
   const filePathList = dirname(normalize(filePath)).split(sep)
   const filePathRel = filePathList.filter((f, i) => f !== inPathList[i])
 
-  return join(normalize(outputPath), ...filePathRel)
+  return forcePosixLikePath(join(normalize(outputPath), ...filePathRel))
 }
 
 /**

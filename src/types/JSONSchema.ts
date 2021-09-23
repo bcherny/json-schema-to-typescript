@@ -37,6 +37,14 @@ export interface JSONSchema extends JSONSchema4 {
    * schema extension to support readonly types
    */
   tsReadonly?: boolean
+
+  // NOTE: When adding a new custom property, you MUST ALSO add that custom property as an exclusion in the
+  // nonCustomKeys function in src/typesOfSchema.ts
+  // If you do not do this weird things happen with otherwise empty schemas:
+  // {"title": "X", "additionalProperties": {"myCustomProperty": null}}
+  // Outputs: interface X {[k: string]: {[k: string]: unknown}}
+  // Instead of the expected: interface X {[k: string]: unknown}
+  // (or [k: string]: any depending on options)
 }
 
 export const Parent = Symbol('Parent')
