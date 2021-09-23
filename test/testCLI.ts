@@ -3,7 +3,7 @@ import {execSync} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
 import {resolve, join} from 'path'
 import rimraf = require('rimraf')
-import { forcePosixLikePath } from '../src/utils'
+import {forcePosixLikePath} from '../src/utils'
 
 export function run() {
   test('pipe in, pipe out', t => {
