@@ -43,13 +43,13 @@ export interface Options {
    */
   ignoreMinAndMaxItems: boolean
   /**
-   * Types must be explicitly marked as mutable using `"tsReadonly": false`.
+   * This is the implied value for unspecified `"tsReadonly"` properties.
    */
   readonlyByDefault: boolean
   /**
-   * Use the `readonly` keyword instead of `Readonly<T>` for array types?
+   * Use the `readonly` keyword instead of `ReadonlyArray<T>` for array types.
    *
-   * Setting this to `false` will disable readonly tuple support.
+   * **WARNING:** Setting this to `false` will disable readonly tuple support.
    */
   readonlyKeyword: boolean
   /**

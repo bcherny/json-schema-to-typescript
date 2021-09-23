@@ -93,6 +93,8 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `definitions` that aren't referenced by the schema. |
 | strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
+| readonlyByDefault | boolean | `false` | This is the implied value for unspecified `"tsReadonly"` properties. |
+| readonlyKeyword | boolean | `true` | Use the `readonly` keyword instead of `ReadonlyArray` for `array` types. **WARNING:** Setting this to `false` will disable readonly tuple support. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 
@@ -164,11 +166,63 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - [x] literal objects in enum ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L236))
 - [x] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
 - [x] custom typescript types via `tsType`
+- [x] support for `readonly` types via `tsReadonly`
 
 ## Custom schema properties:
 
 - `tsType`: Overrides the type that's generated from the schema. Useful for forcing a type to `any` or when using non-standard JSON schema extensions ([eg](https://github.com/sokra/json-schema-to-typescript/blob/f1f40307cf5efa328522bb1c9ae0b0d9e5f367aa/test/e2e/customType.ts)).
 - `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)).
+- `tsReadonly`: Sets whether an array or object property is `readonly` in TypeScript.
+
+  ```json
+  // readonlyByDefault: false
+  {
+    "anyOf": [
+      {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "tsReadonly": true
+        // Compiles to `readonly string[]`
+      },
+      {
+        "type": "object",
+        "properties": {
+          "foo": {
+            "type": "string",
+            "tsReadonly": true
+          }
+        },
+        "additionalProperties": {
+          "type": "number",
+          "tsReadonly": true
+        }
+        // Compiles to `{ readonly foo: string, readonly [k: string]: number }`
+      }
+    ]
+  }
+  ```
+
+  When used on a schema with `"type": "object"`, sets the default `tsReadonly` state for all of its properties.
+
+  ```json
+  {
+    "type": "object",
+    "tsReadonly": true,
+    "properties": {
+      "foo": {
+        // This property is readonly
+      },
+      "bar": {
+        // This property is mutable because we explicitly override the object's default
+        "tsReadonly": false
+      }
+    }
+  }
+  ```
+
+  If unspecified, defaults to the value of the *readonlyByDefault* option.
 
 ## Not expressible in TypeScript:
 
