@@ -43,6 +43,10 @@ export interface Options {
    */
   ignoreMinAndMaxItems: boolean
   /**
+   * Use the `readonly` keyword instead of `Readonly<T>` for array types?
+   */
+  readonlyKeyword: boolean
+  /**
    * Append all index signatures with `| undefined` so that they are strictly typed.
    *
    * This is required to be compatible with `strictNullChecks`.
@@ -79,6 +83,7 @@ export const DEFAULT_OPTIONS: Options = {
   enableConstEnums: true,
   format: true,
   ignoreMinAndMaxItems: false,
+  readonlyKeyword: true,
   strictIndexSignatures: false,
   style: {
     bracketSpacing: false,

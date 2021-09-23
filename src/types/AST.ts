@@ -49,6 +49,7 @@ export interface TAny extends AbstractAST {
 export interface TArray extends AbstractAST {
   type: 'ARRAY'
   params: AST
+  isReadonly: boolean | undefined
 }
 
 export interface TBoolean extends AbstractAST {
@@ -85,6 +86,7 @@ export interface TInterfaceParam {
   isRequired: boolean
   isPatternProperty: boolean
   isUnreachableDefinition: boolean
+  isReadonly: boolean | undefined
 }
 
 export interface TIntersection extends AbstractAST {
@@ -124,6 +126,7 @@ export interface TTuple extends AbstractAST {
   spreadParam?: AST
   minItems: number
   maxItems?: number
+  isReadonly: boolean | undefined
 }
 
 export interface TUnion extends AbstractAST {

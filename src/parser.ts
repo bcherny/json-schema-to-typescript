@@ -224,6 +224,7 @@ function parseNonLiteral(
           minItems,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           params: schema.items.map(_ => parse(_, options, undefined, processed, usedNames)),
+          isReadonly: schema.tsReadonly,
           type: 'TUPLE'
         }
         if (schema.additionalItems === true) {
@@ -238,6 +239,7 @@ function parseNonLiteral(
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           params: parse(schema.items!, options, undefined, processed, usedNames),
+          isReadonly: schema.tsReadonly,
           type: 'ARRAY'
         }
       }
@@ -278,6 +280,7 @@ function parseNonLiteral(
           // if there is no maximum, then add a spread item to collect the rest
           spreadParam: maxItems >= 0 ? undefined : params,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          isReadonly: schema.tsReadonly,
           type: 'TUPLE'
         }
       }
@@ -287,6 +290,7 @@ function parseNonLiteral(
         keyName,
         params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        isReadonly: schema.tsReadonly,
         type: 'ARRAY'
       }
   }
@@ -355,6 +359,8 @@ function parseSchema(
     isPatternProperty: false,
     isRequired: includes(schema.required || [], key),
     isUnreachableDefinition: false,
+    // Readonly state specified on property supercedes readonly state specified on the object
+    isReadonly: value.tsReadonly ?? schema.tsReadonly,
     keyName: key
   }))
 
@@ -376,6 +382,7 @@ via the \`patternProperty\` "${key}".`
           isPatternProperty: !singlePatternProperty,
           isRequired: singlePatternProperty || includes(schema.required || [], key),
           isUnreachableDefinition: false,
+          isReadonly: value.tsReadonly,
           keyName: singlePatternProperty ? '[k: string]' : key
         }
       })
@@ -394,6 +401,7 @@ via the \`definition\` "${key}".`
           isPatternProperty: false,
           isRequired: includes(schema.required || [], key),
           isUnreachableDefinition: true,
+          isReadonly: value.tsReadonly,
           keyName: key
         }
       })
@@ -412,6 +420,7 @@ via the \`definition\` "${key}".`
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
+        isReadonly: schema.tsReadonly,
         keyName: '[k: string]'
       })
 
@@ -426,6 +435,8 @@ via the \`definition\` "${key}".`
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
+        // Explicit additionalProperties readonly state supercedes generic readonly state
+        isReadonly: schema.tsReadonly ?? schema.tsReadonly,
         keyName: '[k: string]'
       })
   }

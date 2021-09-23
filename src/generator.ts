@@ -178,8 +178,16 @@ function generateRawType(ast: AST, options: Options): string {
       return 'any'
     case 'ARRAY':
       return (() => {
-        const type = generateType(ast.params, options)
-        return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+        let type = generateType(ast.params, options)
+        if (ast.isReadonly && !options.readonlyKeyword) {
+          type = 'Readonly<'+ type + '>'
+        } else {
+          type = type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+          if (ast.isReadonly) {
+            type = 'readonly ' + type
+          }
+        }
+        return type
       })()
     case 'BOOLEAN':
       return 'boolean'
@@ -275,7 +283,14 @@ function generateRawType(ast: AST, options: Options): string {
         }
 
         // no max items so only need to return one type
-        return paramsToString(addSpreadParam(paramsList))
+        const type = paramsToString(addSpreadParam(paramsList))
+        // `Readonly<T>` where T is a tuple type is unsupported in versions of TypeScript prior to the introduction
+        // of the `readonly` keyword for array/tuple types, so don't bother adding it if options.readonlyKeyword is
+        // false
+        // Sources:
+        // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#a-new-syntax-for-readonlyarray
+        // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#readonly-tuples
+        return ast.isReadonly && options.readonlyKeyword ? 'readonly ' + type : type
       })()
     case 'UNION':
       return generateSetOperation(ast, options)
@@ -302,12 +317,13 @@ function generateInterface(ast: TInterface, options: Options): string {
     ast.params
       .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
       .map(
-        ({isRequired, keyName, ast}) =>
-          [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string]
+        ({isRequired, isReadonly, keyName, ast}) =>
+          [isRequired, isReadonly, keyName, ast, generateType(ast, options)] as [boolean, boolean | undefined, string, AST, string]
       )
       .map(
-        ([isRequired, keyName, ast, type]) =>
+        ([isRequired, isReadonly, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
+          (isReadonly ? 'readonly ' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
