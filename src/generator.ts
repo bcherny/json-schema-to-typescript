@@ -317,13 +317,13 @@ function generateInterface(ast: TInterface, options: Options): string {
     ast.params
       .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
       .map(
-        ({isRequired, isReadonly, keyName, ast}) =>
-          [isRequired, isReadonly, keyName, ast, generateType(ast, options)] as [boolean, boolean, string, AST, string]
+        ({isRequired, isReadonlyParam, keyName, ast}) =>
+          [isRequired, isReadonlyParam, keyName, ast, generateType(ast, options)] as [boolean, boolean, string, AST, string]
       )
       .map(
-        ([isRequired, isReadonly, keyName, ast, type]) =>
+        ([isRequired, isReadonlyParam, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
-          (isReadonly ? 'readonly ' : '') +
+          (isReadonlyParam ? 'readonly ' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +

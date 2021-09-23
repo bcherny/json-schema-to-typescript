@@ -4,21 +4,21 @@ export const input = {
   properties: {
     a: {
       type: 'string',
-      tsReadonly: true
+      tsReadonlyProperty: true
     },
     b: {
       type: 'string',
-      tsReadonly: false
+      tsReadonlyProperty: false
     },
     c: {
       type: 'string',
-      tsReadonly: true
+      tsReadonlyProperty: true
     },
     d: {
       type: 'string',
-      tsReadonly: false
+      tsReadonlyProperty: false
     }
   },
   additionalProperties: {},
-  tsReadonly: false
+  tsReadonlyPropertyDefaultValue: false
 }

@@ -93,7 +93,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `definitions` that aren't referenced by the schema. |
 | strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
-| readonlyByDefault | boolean | `false` | This is the implied value for unspecified `"tsReadonly"` properties. |
+| readonlyByDefault | boolean | `false` | This is the implied value for unspecified `"tsReadonly"` and `"tsReadonlyProperty"` properties. |
 | readonlyKeyword | boolean | `true` | Use the `readonly` keyword instead of `ReadonlyArray` for `array` types. **WARNING:** Setting this to `false` will disable readonly tuple support. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
@@ -167,12 +167,13 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - [x] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
 - [x] custom typescript types via `tsType`
 - [x] support for `readonly` types via `tsReadonly`
+- [x] support for `readonly` properties via `tsReadonlyProperty`
 
 ## Custom schema properties:
 
 - `tsType`: Overrides the type that's generated from the schema. Useful for forcing a type to `any` or when using non-standard JSON schema extensions ([eg](https://github.com/sokra/json-schema-to-typescript/blob/f1f40307cf5efa328522bb1c9ae0b0d9e5f367aa/test/e2e/customType.ts)).
 - `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)).
-- `tsReadonly`: Sets whether an array or object property is `readonly` in TypeScript.
+- `tsReadonly`: Sets whether an array is `readonly` in TypeScript.
 
   ```jsonc
   // readonlyByDefault: false
@@ -187,42 +188,90 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
         // Compiles to `readonly string[]`
       },
       {
-        "type": "object",
-        "properties": {
-          "foo": {
-            "type": "string",
-            "tsReadonly": true
-          }
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string"
         },
-        "additionalProperties": {
-          "type": "number",
-          "tsReadonly": true
-        }
-        // Compiles to `{ readonly foo: string, readonly [k: string]: number }`
+        "tsReadonly": true
+        // Compiles to `readonly [string, ...string[]]`
       }
     ]
   }
   ```
 
-  When used on a schema with `"type": "object"`, sets the default `tsReadonly` state for all of its properties.
+  If unspecified, defaults to the value of the *readonlyByDefault* option.
+
+- `tsReadonlyProperty`: Sets whether an object property is `readonly` in TypeScript.
+
+  ```jsonc
+  // readonlyByDefault: false
+  {
+    "type": "object",
+    "properties": {
+      "foo": {
+        "type": "string",
+        "tsReadonlyProperty": true
+      }
+    },
+    "additionalProperties": {
+      "type": "number",
+      "tsReadonlyProperty": true
+    }
+    // Compiles to `{ readonly foo: string, readonly [k: string]: number }`
+  }
+  ```
+
+  If unspecified, defaults to:
+
+  1. The value of the containing object schema's `tsReadonlyPropertyDefaultValue` property, if it is specified.
+  2. The value of the *readonlyByDefault* option.
+
+  <!-- For clearance -->
+  <p></p>
+
+- `tsReadonlyPropertyDefaultValue`: Sets the default value of `tsReadonlyProperty` for an object schema's properties.
 
   ```jsonc
   {
     "type": "object",
-    "tsReadonly": true,
+    "tsReadonlyPropertyDefaultValue": true,
     "properties": {
-      "foo": {
-        // This property is readonly
-      },
+      // This property is readonly
+      "foo": { },
+      // This property is mutable because we explicitly override the object's default
       "bar": {
-        // This property is mutable because we explicitly override the object's default
-        "tsReadonly": false
+        "tsReadonlyProperty": false
+      }
+    },
+    // Additional properties are readonly
+    "additionalProperties": true
+  }
+  ```
+
+  Note that this has no effect on sub-objects.
+
+  ```jsonc
+  // readonlyByDefault: false
+  {
+    "type": "object",
+    "tsReadonlyPropertyDefaultValue": true,
+    "properties": {
+      // This property is readonly
+      "foo": {
+        "type": "object",
+        "properties": {
+          // This property is NOT readonly
+          "bar": {
+            "type": "string"
+          }
+        },
+        // Additional properties are NOT readonly
+        "additionalProperties": true
       }
     }
   }
   ```
-
-  If unspecified, defaults to the value of the *readonlyByDefault* option.
 
 ## Not expressible in TypeScript:
 

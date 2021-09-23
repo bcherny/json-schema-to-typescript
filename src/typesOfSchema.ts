@@ -32,7 +32,7 @@ export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...Sche
 }
 
 function nonCustonKeys(obj: JSONSchema): string[] {
-  return Object.keys(obj).filter(key => key !== 'tsEnumNames' && key !== 'tsType' && key !== 'tsReadonly')
+  return Object.keys(obj).filter(key => key !== 'tsEnumNames' && key !== 'tsType' && key !== 'tsReadonly' && key !== 'tsReadonlyProperty' && key !== 'tsReadonlyPropertyDefaultValue')
 }
 
 const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {

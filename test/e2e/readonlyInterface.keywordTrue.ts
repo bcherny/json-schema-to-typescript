@@ -4,14 +4,14 @@ export const input = {
   properties: {
     a: {
       type: 'string',
-      tsReadonly: true
+      tsReadonlyProperty: true
     },
     b: {
       type: 'string'
     },
     c: {
       type: 'string',
-      tsReadonly: true
+      tsReadonlyProperty: true
     },
     d: {
       type: 'string'

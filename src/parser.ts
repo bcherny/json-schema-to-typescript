@@ -360,7 +360,7 @@ function parseSchema(
     isRequired: includes(schema.required || [], key),
     isUnreachableDefinition: false,
     // Readonly state specified on property supercedes readonly state specified on the object
-    isReadonly: value.tsReadonly ?? schema.tsReadonly ?? options.readonlyByDefault,
+    isReadonlyParam: value.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
     keyName: key
   }))
 
@@ -382,7 +382,7 @@ via the \`patternProperty\` "${key}".`
           isPatternProperty: !singlePatternProperty,
           isRequired: singlePatternProperty || includes(schema.required || [], key),
           isUnreachableDefinition: false,
-          isReadonly: value.tsReadonly ?? schema.tsReadonly ?? options.readonlyByDefault,
+          isReadonlyParam: value.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
           keyName: singlePatternProperty ? '[k: string]' : key
         }
       })
@@ -401,7 +401,7 @@ via the \`definition\` "${key}".`
           isPatternProperty: false,
           isRequired: includes(schema.required || [], key),
           isUnreachableDefinition: true,
-          isReadonly: value.tsReadonly ?? schema.tsReadonly ?? options.readonlyByDefault,
+          isReadonlyParam: value.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
           keyName: key
         }
       })
@@ -420,7 +420,7 @@ via the \`definition\` "${key}".`
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
-        isReadonly: schema.tsReadonly ?? options.readonlyByDefault,
+        isReadonlyParam: schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
         keyName: '[k: string]'
       })
 
@@ -436,7 +436,7 @@ via the \`definition\` "${key}".`
         isRequired: true,
         isUnreachableDefinition: false,
         // Explicit additionalProperties readonly state supercedes generic readonly state
-        isReadonly: schema.additionalProperties.tsReadonly ?? schema.tsReadonly ?? options.readonlyByDefault,
+        isReadonlyParam: schema.additionalProperties.tsReadonlyProperty ?? schema.tsReadonlyPropertyDefaultValue ?? options.readonlyByDefault,
         keyName: '[k: string]'
       })
   }

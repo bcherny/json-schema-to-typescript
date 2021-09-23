@@ -7,18 +7,18 @@ export const input = {
     },
     b: {
       type: 'string',
-      tsReadonly: false
+      tsReadonlyProperty: false
     },
     c: {
       type: 'string'
     },
     d: {
       type: 'string',
-      tsReadonly: false
+      tsReadonlyProperty: false
     }
   },
   additionalProperties: true,
-  tsReadonly: true
+  tsReadonlyPropertyDefaultValue: true
 }
 
 export const options = {

@@ -37,6 +37,14 @@ export interface JSONSchema extends JSONSchema4 {
    * schema extension to support readonly types
    */
   tsReadonly?: boolean
+  /**
+   * schema extension to support readonly properties
+   */
+  tsReadonlyProperty?: boolean
+  /**
+   * schema extension to support changing the default value of tsReadonlyProperty on this schema's properties
+   */
+  tsReadonlyPropertyDefaultValue?: boolean
 
   // NOTE: When adding a new custom property, you MUST ALSO add that custom property as an exclusion in the
   // nonCustomKeys function in src/typesOfSchema.ts

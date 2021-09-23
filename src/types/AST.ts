@@ -86,7 +86,7 @@ export interface TInterfaceParam {
   isRequired: boolean
   isPatternProperty: boolean
   isUnreachableDefinition: boolean
-  isReadonly: boolean
+  isReadonlyParam: boolean
 }
 
 export interface TIntersection extends AbstractAST {

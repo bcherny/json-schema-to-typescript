@@ -7,16 +7,16 @@ export const input = {
     },
     b: {
       type: 'string',
-      tsReadonly: false
+      tsReadonlyProperty: false
     },
     c: {
       type: 'string'
     },
     d: {
       type: 'string',
-      tsReadonly: false
+      tsReadonlyProperty: false
     }
   },
   additionalProperties: false,
-  tsReadonly: true
+  tsReadonlyPropertyDefaultValue: true
 }

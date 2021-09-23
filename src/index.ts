@@ -43,7 +43,7 @@ export interface Options {
    */
   ignoreMinAndMaxItems: boolean
   /**
-   * This is the implied value for unspecified `"tsReadonly"` properties.
+   * This is the implied value for unspecified `"tsReadonly"` and `"tsReadonlyProperty"` properties.
    */
   readonlyByDefault: boolean
   /**
