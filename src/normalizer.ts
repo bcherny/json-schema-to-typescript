@@ -152,7 +152,7 @@ rules.set('Transform const to singleton enum', schema => {
  */
 rules.set('Convert tsEnumNames -> x-enum-varnames', schema => {
   if (schema.tsEnumNames) {
-    if ('x-enum-varnames' in schema) {
+    if (Object.keys(schema).includes('x-enum-varnames')) {
       throw new Error('Cannot set both x-enum-varnames and tsEnumNames in the same schema. Only use x-enum-varnames.')
     }
 
