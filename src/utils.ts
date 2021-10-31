@@ -1,25 +1,14 @@
-import {whiteBright} from 'cli-color'
 import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
-import {JSONSchema} from './types/JSONSchema'
+import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
+// eslint-disable-next-line
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   try {
     return fn()
   } catch (e) {
     return err(e as Error)
-  }
-}
-
-/**
- * Depth-first traversal
- */
-export function dft<T, U>(object: {[k: string]: any}, cb: (value: U, key: string) => T): void {
-  for (const key in object) {
-    if (!object.hasOwnProperty(key)) continue
-    if (isPlainObject(object[key])) dft(object[key], cb)
-    cb(object[key], key)
   }
 }
 
@@ -45,6 +34,7 @@ export function mapDeep(object: object, fn: (value: object, key?: string) => obj
 // keys that shouldn't be traversed by the catchall step
 const BLACKLISTED_KEYS = new Set([
   'id',
+  '$id',
   '$schema',
   'title',
   'description',
@@ -77,60 +67,79 @@ const BLACKLISTED_KEYS = new Set([
   'oneOf',
   'not'
 ])
-function traverseObjectKeys(obj: Record<string, JSONSchema>, callback: (schema: JSONSchema, isRoot: boolean) => void) {
+
+function traverseObjectKeys(
+  obj: Record<string, LinkedJSONSchema>,
+  callback: (schema: LinkedJSONSchema) => void,
+  processed: Set<LinkedJSONSchema>
+) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, false)
+      traverse(obj[k], callback, processed)
     }
   })
 }
-function traverseArray(arr: JSONSchema[], callback: (schema: JSONSchema, isRoot: boolean) => void) {
-  arr.forEach(i => traverse(i, callback, false))
+function traverseArray(
+  arr: LinkedJSONSchema[],
+  callback: (schema: LinkedJSONSchema) => void,
+  processed: Set<LinkedJSONSchema>
+) {
+  arr.forEach(i => traverse(i, callback, processed))
 }
 export function traverse(
-  schema: JSONSchema,
-  callback: (schema: JSONSchema, isRoot: boolean) => void,
-  isRoot: boolean
+  schema: LinkedJSONSchema,
+  callback: (schema: LinkedJSONSchema) => void,
+  processed = new Set<LinkedJSONSchema>()
 ): void {
-  callback(schema, isRoot)
+  // Handle recursive schemas
+  if (processed.has(schema)) {
+    return
+  }
+
+  processed.add(schema)
+  callback(schema)
 
   if (schema.anyOf) {
-    traverseArray(schema.anyOf, callback)
+    traverseArray(schema.anyOf, callback, processed)
   }
   if (schema.allOf) {
-    traverseArray(schema.allOf, callback)
+    traverseArray(schema.allOf, callback, processed)
   }
   if (schema.oneOf) {
-    traverseArray(schema.oneOf, callback)
+    traverseArray(schema.oneOf, callback, processed)
   }
   if (schema.properties) {
-    traverseObjectKeys(schema.properties, callback)
+    traverseObjectKeys(schema.properties, callback, processed)
   }
   if (schema.patternProperties) {
-    traverseObjectKeys(schema.patternProperties, callback)
+    traverseObjectKeys(schema.patternProperties, callback, processed)
   }
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-    traverse(schema.additionalProperties, callback, false)
+    traverse(schema.additionalProperties, callback, processed)
   }
   if (schema.items) {
     const {items} = schema
     if (Array.isArray(items)) {
-      traverseArray(items, callback)
+      traverseArray(items, callback, processed)
     } else {
-      traverse(items, callback, false)
+      traverse(items, callback, processed)
     }
   }
   if (schema.additionalItems && typeof schema.additionalItems === 'object') {
-    traverse(schema.additionalItems, callback, false)
+    traverse(schema.additionalItems, callback, processed)
   }
   if (schema.dependencies) {
-    traverseObjectKeys(schema.dependencies, callback)
+    if (Array.isArray(schema.dependencies)) {
+      traverseArray(schema.dependencies, callback, processed)
+    } else {
+      traverseObjectKeys(schema.dependencies as LinkedJSONSchema, callback, processed)
+    }
   }
   if (schema.definitions) {
-    traverseObjectKeys(schema.definitions, callback)
+    traverseObjectKeys(schema.definitions, callback, processed)
   }
   if (schema.not) {
-    traverse(schema.not, callback, false)
+    traverse(schema.not, callback, processed)
   }
 
   // technically you can put definitions on any key
@@ -139,7 +148,7 @@ export function traverse(
     .forEach(key => {
       const child = schema[key]
       if (child && typeof child === 'object') {
-        traverseObjectKeys(child, callback)
+        traverseObjectKeys(child, callback, processed)
       }
     })
 }
@@ -206,13 +215,48 @@ export function generateName(from: string, usedNames: Set<string>) {
   return name
 }
 
-export function error(...messages: any[]) {
-  console.error(whiteBright.bgRedBright('error'), ...messages)
+export function error(...messages: any[]): void {
+  if (!process.env.VERBOSE) {
+    return console.error(messages)
+  }
+  console.error(getStyledTextForLogging('red')?.('error'), ...messages)
 }
 
-export function log(...messages: any[]) {
-  if (process.env.VERBOSE) {
-    console.info(whiteBright.bgCyan('debug'), ...messages)
+type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'white' | 'yellow'
+
+export function log(style: LogStyle, title: string, ...messages: unknown[]): void {
+  if (!process.env.VERBOSE) {
+    return
+  }
+  let lastMessage = null
+  if (messages.length > 1 && typeof messages[messages.length - 1] !== 'string') {
+    lastMessage = messages.splice(messages.length - 1, 1)
+  }
+  console.info(require('cli-color').whiteBright.bgCyan('debug'), getStyledTextForLogging(style)?.(title), ...messages)
+  if (lastMessage) {
+    console.dir(lastMessage, {depth: 6, maxArrayLength: 6})
+  }
+}
+
+function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | undefined {
+  if (!process.env.VERBOSE) {
+    return
+  }
+  switch (style) {
+    case 'blue':
+      return require('cli-color').whiteBright.bgBlue
+    case 'cyan':
+      return require('cli-color').whiteBright.bgCyan
+    case 'green':
+      return require('cli-color').whiteBright.bgGreen
+    case 'magenta':
+      return require('cli-color').whiteBright.bgMagenta
+    case 'red':
+      return require('cli-color').whiteBright.bgRedBright
+    case 'white':
+      return require('cli-color').black.bgWhite
+    case 'yellow':
+      return require('cli-color').whiteBright.bgYellow
   }
 }
 
@@ -248,4 +292,72 @@ export function pathTransform(outputPath: string, inputPath: string, filePath: s
   const filePathRel = filePathList.filter((f, i) => f !== inPathList[i])
 
   return join(normalize(outputPath), ...filePathRel)
+}
+
+/**
+ * Removes the schema's `default` property if it doesn't match the schema's `type` property.
+ * Useful when parsing unions.
+ *
+ * Mutates `schema`.
+ */
+export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
+  if (!('default' in schema)) {
+    return schema
+  }
+
+  switch (schema.type) {
+    case 'array':
+      if (Array.isArray(schema.default)) {
+        return schema
+      }
+      break
+    case 'boolean':
+      if (typeof schema.default === 'boolean') {
+        return schema
+      }
+      break
+    case 'integer':
+    case 'number':
+      if (typeof schema.default === 'number') {
+        return schema
+      }
+      break
+    case 'string':
+      if (typeof schema.default === 'string') {
+        return schema
+      }
+      break
+    case 'null':
+      if (schema.default === null) {
+        return schema
+      }
+      break
+    case 'object':
+      if (isPlainObject(schema.default)) {
+        return schema
+      }
+      break
+  }
+  delete schema.default
+  return schema
+}
+
+/**
+ * Removes the schema's `id`, `name`, and `description` properties
+ * if they exist.
+ * Useful when parsing intersections.
+ *
+ * Mutates `schema`.
+ */
+export function maybeStripNameHints(schema: JSONSchema): JSONSchema {
+  if ('description' in schema) {
+    delete schema.description
+  }
+  if ('id' in schema) {
+    delete schema.id
+  }
+  if ('name' in schema) {
+    delete schema.name
+  }
+  return schema
 }

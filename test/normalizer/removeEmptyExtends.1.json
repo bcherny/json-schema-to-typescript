@@ -1,0 +1,16 @@
+{
+  "name": "Remove empty extends (1)",
+  "in": {
+    "id": "foo",
+    "extends": [],
+    "type": "object",
+    "required": [],
+    "additionalProperties": true
+  },
+  "out": {
+    "id": "foo",
+    "type": "object",
+    "required": [],
+    "additionalProperties": true
+  }
+}

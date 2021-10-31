@@ -87,11 +87,12 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | cwd | string | `process.cwd()` | Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s |
 | declareExternallyReferenced | boolean | `true` | Declare external schemas referenced via `$ref`? |
 | enableConstEnums | boolean | `true` | Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)? |
+| format | boolean | `true` | Format code? Set this to `false` to improve performance. |
 | ignoreMinAndMaxItems | boolean | `false` | Ignore maxItems and minItems for `array` types, preventing tuples being generated. |
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `definitions` that aren't referenced by the schema. |
-| strictIndexSignatures | boolean | `false` | Append all index signatures with `| undefined` so that they are strictly typed. |
+| strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 
@@ -107,8 +108,8 @@ json2ts foo.json foo.d.ts
 json2ts --input foo.json --output foo.d.ts
 # or
 json2ts -i foo.json -o foo.d.ts
-# or
-json2ts -i schemas/**/*.json
+# or (quote globs so that your shell doesn't expand them)
+json2ts -i 'schemas/**/*.json'
 # or
 json2ts -i schemas/ -o types/
 ```
@@ -157,12 +158,17 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - [x] `minItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L165))
 - [x] `additionalProperties` of type
 - [x] `patternProperties` (partial support)
-- [x] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends)
+- [x] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends/014e3cd8692250baad70c361dd81f6119ad0f696)
 - [x] `required` properties on objects ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L130))
 - [ ] `validateRequired` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L124))
 - [x] literal objects in enum ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L236))
 - [x] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
 - [x] custom typescript types via `tsType`
+
+## Custom schema properties:
+
+- `tsType`: Overrides the type that's generated from the schema. Useful for forcing a type to `any` or when using non-standard JSON schema extensions ([eg](https://github.com/sokra/json-schema-to-typescript/blob/f1f40307cf5efa328522bb1c9ae0b0d9e5f367aa/test/e2e/customType.ts)).
+- `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)).
 
 ## Not expressible in TypeScript:
 
@@ -178,6 +184,12 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - `oneOf` ("xor", use `anyOf` instead)
 - `pattern` ([string](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L203), [regex](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L207))
 - `uniqueItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L172))
+
+## FAQ
+
+### JSON-Schema-to-TypeScript is crashing on my giant file. What can I do?
+
+Prettier is known to run slowly on really big files. To skip formatting and improve performance, set the `format` option to `false`.
 
 ## Further Reading
 

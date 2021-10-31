@@ -1,19 +1,17 @@
-import {whiteBright} from 'cli-color'
-import {cloneDeep} from 'lodash'
-import {JSONSchema, JSONSchemaTypeName, NormalizedJSONSchema} from './types/JSONSchema'
-import {escapeBlockComment, justName, log, toSafeString, traverse} from './utils'
+import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {escapeBlockComment, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
 
-type Rule = (schema: JSONSchema, rootSchema: JSONSchema, fileName: string, options: Options, isRoot: boolean) => void
+type Rule = (schema: LinkedJSONSchema, fileName: string, options: Options) => void
 const rules = new Map<string, Rule>()
 
-function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
+function hasType(schema: LinkedJSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
-function isObjectType(schema: JSONSchema) {
+function isObjectType(schema: LinkedJSONSchema) {
   return schema.properties !== undefined || hasType(schema, 'object') || hasType(schema, 'any')
 }
-function isArrayType(schema: JSONSchema) {
+function isArrayType(schema: LinkedJSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
 
@@ -35,7 +33,7 @@ rules.set('Destructure unary types', schema => {
 })
 
 rules.set('Add empty `required` property if none is defined', schema => {
-  if (!('required' in schema) && isObjectType(schema)) {
+  if (isObjectType(schema) && !('required' in schema)) {
     schema.required = []
   }
 })
@@ -48,12 +46,13 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
 
 // TODO: default to empty schema (as per spec) instead
 rules.set('Default additionalProperties to true', schema => {
-  if (!('additionalProperties' in schema) && isObjectType(schema) && schema.patternProperties === undefined) {
+  if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
     schema.additionalProperties = true
   }
 })
 
-rules.set('Default top level `id`', (schema, _rootSchema, fileName, _options, isRoot) => {
+rules.set('Default top level `id`', (schema, fileName) => {
+  const isRoot = schema[Parent] === null
   if (isRoot && !schema.id) {
     schema.id = toSafeString(justName(fileName))
   }
@@ -63,7 +62,7 @@ rules.set('Escape closing JSDoc Comment', schema => {
   escapeBlockComment(schema)
 })
 
-rules.set('Optionally remove maxItems and minItems', (schema, _rootSchema, _fileName, options) => {
+rules.set('Optionally remove maxItems and minItems', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     if ('maxItems' in schema) {
       delete schema.maxItems
@@ -74,7 +73,7 @@ rules.set('Optionally remove maxItems and minItems', (schema, _rootSchema, _file
   }
 })
 
-rules.set('Normalise schema.minItems', (schema, _rootSchema, _fileName, options) => {
+rules.set('Normalize schema.minItems', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     return
   }
@@ -83,10 +82,10 @@ rules.set('Normalise schema.minItems', (schema, _rootSchema, _fileName, options)
     const {minItems} = schema
     schema.minItems = typeof minItems === 'number' ? minItems : 0
   }
-  // cannot normalise maxItems because maxItems = 0 has an actual meaning
+  // cannot normalize maxItems because maxItems = 0 has an actual meaning
 })
 
-rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) => {
+rules.set('Normalize schema.items', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     return
   }
@@ -114,11 +113,39 @@ rules.set('Normalize schema.items', (schema, _rootSchema, _fileName, options) =>
   return schema
 })
 
-export function normalize(schema: JSONSchema, filename: string, options: Options): NormalizedJSONSchema {
-  const _schema = cloneDeep(schema) as NormalizedJSONSchema
-  rules.forEach((rule, key) => {
-    traverse(_schema, (schema, isRoot) => rule(schema, _schema, filename, options, isRoot), true)
-    log(whiteBright.bgYellow('normalizer'), `Applied rule: "${key}"`)
-  })
-  return _schema
+rules.set('Remove extends, if it is empty', schema => {
+  if (!schema.hasOwnProperty('extends')) {
+    return
+  }
+  if (schema.extends == null || (Array.isArray(schema.extends) && schema.extends.length === 0)) {
+    delete schema.extends
+  }
+})
+
+rules.set('Make extends always an array, if it is defined', schema => {
+  if (schema.extends == null) {
+    return
+  }
+  if (!Array.isArray(schema.extends)) {
+    schema.extends = [schema.extends]
+  }
+})
+
+rules.set('Transform $defs to definitions', schema => {
+  if (schema.$defs) {
+    schema.definitions = schema.$defs
+    delete schema.$defs
+  }
+})
+
+rules.set('Transform const to singleton enum', schema => {
+  if (schema.const !== undefined) {
+    schema.enum = [schema.const]
+    delete schema.const
+  }
+})
+
+export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
+  rules.forEach(rule => traverse(rootSchema, schema => rule(schema, filename, options)))
+  return rootSchema as NormalizedJSONSchema
 }

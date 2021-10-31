@@ -1,0 +1,19 @@
+{
+  "name": "Normalize extends to an array",
+  "in": {
+    "id": "foo",
+    "extends": "foo",
+    "type": "object",
+    "required": [],
+    "additionalProperties": true
+  },
+  "out": {
+    "id": "foo",
+    "extends": [
+      "foo"
+    ],
+    "type": "object",
+    "required": [],
+    "additionalProperties": true
+  }
+}

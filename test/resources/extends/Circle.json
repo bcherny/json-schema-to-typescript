@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "title": "Circle",
+  "description": "A Circle",
+  "additionalProperties": false,
+  "extends": {
+    "$ref": "Shape.json"
+  },
+  "properties": {
+    "type": {
+      "enum": [
+        "circle"
+      ]
+    },
+    "radius": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "type",
+    "radius"
+  ]
+}

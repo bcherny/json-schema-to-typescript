@@ -45,6 +45,10 @@ export const input = {
       description: 'A string with title and enum defined does produce a duplicate Interface',
       type: 'string',
       enum: ['one', 'two', 'three']
+    },
+    sixthDefinition: {
+      id: 'six',
+      type: 'number'
     }
   },
   properties: {
@@ -68,6 +72,9 @@ export const input = {
     },
     fifth: {
       $ref: '#/definitions/fifthDefinition'
+    },
+    sixth: {
+      $ref: '#/definitions/sixthDefinition'
     }
   }
 }

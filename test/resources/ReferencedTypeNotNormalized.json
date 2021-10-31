@@ -1,0 +1,12 @@
+{
+  "title": "Example Schema",
+  "type": "object",
+  "properties": {
+    "b": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 5
+    }
+  }
+}

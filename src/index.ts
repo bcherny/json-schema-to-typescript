@@ -10,8 +10,10 @@ import {normalize} from './normalizer'
 import {optimize} from './optimizer'
 import {parse} from './parser'
 import {dereference} from './resolver'
-import {error, stripExtension, Try} from './utils'
+import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
+import {isDeepStrictEqual} from 'util'
+import {link} from './linker'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -32,6 +34,10 @@ export interface Options {
    * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
    */
   enableConstEnums: boolean
+  /**
+   * Format code? Set this to `false` to improve performance.
+   */
+  format: boolean
   /**
    * Ignore maxItems and minItems for `array` types, preventing tuples being generated.
    */
@@ -75,7 +81,8 @@ export const DEFAULT_OPTIONS: Options = {
 */`,
   cwd: process.cwd(),
   declareExternallyReferenced: true,
-  enableConstEnums: true, // by default, avoid generating code
+  enableConstEnums: true,
+  format: true,
   ignoreMinAndMaxItems: false,
   strictIndexSignatures: false,
   style: {
@@ -110,10 +117,18 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
+  const start = Date.now()
+  function time() {
+    return `(${Date.now() - start}ms)`
+  }
+
   const errors = validate(schema, name)
   if (errors.length) {
     errors.forEach(_ => error(_))
     throw new ValidationError()
+  }
+  if (process.env.VERBOSE) {
+    log('green', 'validator', time(), '✅ No change')
   }
 
   // normalize options
@@ -121,10 +136,48 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     _options.cwd += '/'
   }
 
-  return format(
-    generate(optimize(parse(await dereference(normalize(schema, name, _options), _options), _options)), _options),
-    _options
-  )
+  const dereferenced = await dereference(schema, _options)
+  if (process.env.VERBOSE) {
+    if (isDeepStrictEqual(schema, dereferenced)) {
+      log('green', 'dereferencer', time(), '✅ No change')
+    } else {
+      log('green', 'dereferencer', time(), '✅ Result:', dereferenced)
+    }
+  }
+
+  const linked = link(dereferenced)
+  if (process.env.VERBOSE) {
+    log('green', 'linker', time(), '✅ No change')
+  }
+
+  const normalized = normalize(linked, name, _options)
+  if (process.env.VERBOSE) {
+    if (isDeepStrictEqual(linked, normalized)) {
+      log('yellow', 'normalizer', time(), '✅ No change')
+    } else {
+      log('yellow', 'normalizer', time(), '✅ Result:', normalized)
+    }
+  }
+
+  const parsed = parse(normalized, _options)
+  log('blue', 'parser', time(), '✅ Result:', parsed)
+
+  const optimized = optimize(parsed)
+  if (process.env.VERBOSE) {
+    if (isDeepStrictEqual(parsed, optimized)) {
+      log('cyan', 'optimizer', time(), '✅ No change')
+    } else {
+      log('cyan', 'optimizer', time(), '✅ Result:', optimized)
+    }
+  }
+
+  const generated = generate(optimized, _options)
+  log('magenta', 'generator', time(), '✅ Result:', generated)
+
+  const formatted = format(generated, _options)
+  log('white', 'formatter', time(), '✅ Result:', formatted)
+
+  return formatted
 }
 
 export class ValidationError extends Error {}

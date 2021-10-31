@@ -5,7 +5,7 @@ export const input = {
     '`foo`': {
       type: 'string'
     },
-    '\'bar\'': {
+    "'bar'": {
       type: 'string'
     },
     '"baz"': {
@@ -18,5 +18,5 @@ export const input = {
       type: 'number'
     }
   },
-  required: ['`foo`', '\'bar\'', '\"baz\"']
+  required: ['`foo`', "'bar'", '"baz"']
 }

@@ -1,10 +1,10 @@
 export const input = {
-  "title": "Example Schema",
-  "description": 'My cool schema',
-  type: "object",
+  title: 'Example Schema',
+  description: 'My cool schema',
+  type: 'object',
   properties: {
     value: {
-      "type": ["number", "string"]
+      type: ['number', 'string']
     },
     anotherValue: {
       type: ['null', 'string']

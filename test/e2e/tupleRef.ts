@@ -1,15 +1,12 @@
 export const input = {
   additionalProperties: false,
   definitions: {
-    a: { type: 'string' },
-    b: { type: 'number' }
+    a: {type: 'string'},
+    b: {type: 'number'}
   },
   properties: {
     c: {
-      items: [
-        { $ref: '#/definitions/a' },
-        { $ref: '#/definitions/b' }
-      ],
+      items: [{$ref: '#/definitions/a'}, {$ref: '#/definitions/b'}],
       type: 'array'
     }
   },
