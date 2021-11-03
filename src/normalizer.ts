@@ -1,6 +1,7 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {escapeBlockComment, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
+import {isPlainObject} from 'lodash'
 
 type Rule = (schema: LinkedJSONSchema, fileName: string, options: Options) => void
 const rules = new Map<string, Rule>()
@@ -64,10 +65,10 @@ rules.set('Escape closing JSDoc Comment', schema => {
 
 rules.set('Optionally remove maxItems and minItems', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
-    if ('maxItems' in schema) {
+    if (isPlainObject(schema) && 'maxItems' in schema) {
       delete schema.maxItems
     }
-    if ('minItems' in schema) {
+    if (isPlainObject(schema) && 'minItems' in schema) {
       delete schema.minItems
     }
   }
