@@ -1,6 +1,6 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "10.1.5",
+  "version": "10.1.6",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {

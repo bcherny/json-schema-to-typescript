@@ -10,6 +10,19 @@
     },
     {
       "type": "node",
+      "request": "launch",
+      "name": "Launch My Test",
+      "program": "${workspaceRoot}/src/cli.ts",
+      "args": [
+        "-i",
+        "/home/chris/coding_local/projects/plantcon/documentation/json-schemas/schemas/plantcon/plantcon.production-asset-job.json"
+      ],
+      "env": {
+        "VERBOSE": "true"
+      }
+    },
+    {
+      "type": "node",
       "request": "attach",
       "name": "Attach to Process",
       "processId": "${command:PickProcess}",

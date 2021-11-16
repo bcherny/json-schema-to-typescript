@@ -13,6 +13,7 @@ import {pathTransform, error} from './utils'
 main(
   minimist(process.argv.slice(2), {
     alias: {
+      _: ['i'],
       help: ['h'],
       input: ['i'],
       output: ['o']
@@ -115,8 +116,12 @@ async function outputResult(result: string, outputPath: string | undefined): Pro
 }
 
 async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
-  const schema = JSON.parse(await readInput(argIn))
-  return compile(schema, argIn, argv)
+  try {
+    const schema = JSON.parse(await readInput(argIn))
+    return compile(schema, argIn, argv)
+  } catch (err) {
+    throw err
+  }
 }
 
 function getPaths(path: string, paths: string[] = []) {
