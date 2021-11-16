@@ -22,7 +22,8 @@
     "prepublishOnly": "npm test",
     "pretest": "npm run clean && npm run build:server",
     "watch": "tsc -w",
-    "watch:test": "ava -w"
+    "watch:test": "ava -w",
+    "cli": "node ./dist/src/cli.js"
   },
   "repository": {
     "type": "git",

@@ -1,3 +1,5 @@
+export const only = true
+
 export const input = {
   title: 'Referencing',
   type: 'object',
@@ -14,5 +16,5 @@ export const input = {
 }
 
 export const options = {
-  cwd: 'test/resources/'
+  cwd: 'test/resources'
 }
