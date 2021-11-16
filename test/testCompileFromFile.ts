@@ -1,5 +1,3 @@
-export const only = true
-
 import test from 'ava'
 import {compileFromFile} from '../src'
 

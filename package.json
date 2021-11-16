@@ -98,7 +98,12 @@
       "rewritePaths": {
         "source/": "build/"
       }
-    }
+    },
+    "verbose": true,
+    "snapshotDir": "./test/__snapshots__",
+    "ignoredByWatcher": [
+      "./src"
+    ]
   },
   "browserify": {
     "transform": [

@@ -14,5 +14,5 @@ export const input = {
 }
 
 export const options = {
-  cwd: 'test/resources'
+  cwd: 'test/resources/'
 }

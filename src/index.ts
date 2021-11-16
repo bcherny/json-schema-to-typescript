@@ -14,7 +14,6 @@ import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
-import {JSONSchema} from './types/JSONSchema'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -131,12 +130,8 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   if (_options.cwd && !endsWith(_options.cwd, '/')) {
     _options.cwd += '/'
   }
-  let dereferenced: JSONSchema
-  try {
-    dereferenced = await dereference(schema, _options, name)
-  } catch (err) {
-    throw err
-  }
+
+  const dereferenced = await dereference(schema, _options, name)
 
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(schema, dereferenced)) {
