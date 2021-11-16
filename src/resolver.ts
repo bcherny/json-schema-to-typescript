@@ -1,4 +1,4 @@
-import $RefParser = require('json-schema-ref-parser')
+import $RefParser from 'json-schema-ref-parser'
 import {dirname} from 'path'
 import {JSONSchema} from './types/JSONSchema'
 import {log} from './utils'

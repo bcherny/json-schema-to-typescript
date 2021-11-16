@@ -1,6 +1,7 @@
 import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
+import cliColor from 'cli-color'
 
 // TODO: pull out into a separate package
 // eslint-disable-next-line
@@ -232,7 +233,7 @@ export function log(style: LogStyle, title: string, ...messages: unknown[]): voi
   if (messages.length > 1 && typeof messages[messages.length - 1] !== 'string') {
     lastMessage = messages.splice(messages.length - 1, 1)
   }
-  console.info(require('cli-color').whiteBright.bgCyan('debug'), getStyledTextForLogging(style)?.(title), ...messages)
+  console.info(cliColor.whiteBright.bgCyan('debug'), getStyledTextForLogging(style)?.(title), ...messages)
   if (lastMessage) {
     console.dir(lastMessage, {depth: 6, maxArrayLength: 6})
   }
@@ -244,19 +245,19 @@ function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | 
   }
   switch (style) {
     case 'blue':
-      return require('cli-color').whiteBright.bgBlue
+      return cliColor.whiteBright.bgBlue
     case 'cyan':
-      return require('cli-color').whiteBright.bgCyan
+      return cliColor.whiteBright.bgCyan
     case 'green':
-      return require('cli-color').whiteBright.bgGreen
+      return cliColor.whiteBright.bgGreen
     case 'magenta':
-      return require('cli-color').whiteBright.bgMagenta
+      return cliColor.whiteBright.bgMagenta
     case 'red':
-      return require('cli-color').whiteBright.bgRedBright
+      return cliColor.whiteBright.bgRedBright
     case 'white':
-      return require('cli-color').black.bgWhite
+      return cliColor.black.bgWhite
     case 'yellow':
-      return require('cli-color').whiteBright.bgYellow
+      return cliColor.whiteBright.bgYellow
   }
 }
 

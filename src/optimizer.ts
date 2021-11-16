@@ -1,4 +1,4 @@
-import stringify = require('json-stringify-safe')
+import stringify from 'json-stringify-safe'
 import {uniqBy} from 'lodash'
 import {AST, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'

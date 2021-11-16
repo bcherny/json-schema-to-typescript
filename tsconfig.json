@@ -5,7 +5,7 @@
     "lib": [
       "es2015"
     ],
-    "module": "commonjs",
+    "module": "es2020",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
@@ -14,10 +14,11 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es5"
+    "target": "es5",
   },
   "exclude": [
     "example",
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }
