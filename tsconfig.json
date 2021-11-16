@@ -5,7 +5,7 @@
     "lib": [
       "es2015"
     ],
-    "module": "es2020",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,

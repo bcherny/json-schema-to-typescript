@@ -44,7 +44,7 @@ function runOne(exports: TestCase, name: string) {
   test(name, async t => {
     if (exports.error) {
       try {
-        await compile(exports.input, stripExtension(name), exports.options)
+        await compile(exports.input, stripExtension(`exports.options.cwd name`), exports.options)
       } catch (e) {
         t.true(e instanceof Error)
       }

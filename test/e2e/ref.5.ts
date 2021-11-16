@@ -1,5 +1,3 @@
-export const only = true
-
 export const input = {
   title: 'Referencing',
   type: 'object',

@@ -2,7 +2,7 @@ import {readFileSync} from 'fs'
 import {JSONSchema4} from 'json-schema'
 import {Options as $RefOptions} from 'json-schema-ref-parser'
 import {endsWith, merge} from 'lodash'
-import {dirname} from 'path'
+import {dirname, join} from 'path'
 import {Options as PrettierOptions} from 'prettier'
 import {format} from './formatter'
 import {generate} from './generator'
@@ -75,7 +75,7 @@ export const DEFAULT_OPTIONS: Options = {
 * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
 * and run json-schema-to-typescript to regenerate this file.
 */`,
-  cwd: process.cwd(),
+  cwd: '',
   declareExternallyReferenced: true,
   enableConstEnums: true,
   format: true,
@@ -96,7 +96,7 @@ export const DEFAULT_OPTIONS: Options = {
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
   const contents = Try(
-    () => readFileSync(filename),
+    () => readFileSync(join(options.cwd || '', filename)),
     () => {
       throw new ReferenceError(`Unable to read file "${filename}"`)
     }
@@ -128,7 +128,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   }
 
   // normalize options
-  if (!endsWith(_options.cwd, '/')) {
+  if (_options.cwd && !endsWith(_options.cwd, '/')) {
     _options.cwd += '/'
   }
   let dereferenced: JSONSchema

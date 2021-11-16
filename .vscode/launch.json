@@ -24,10 +24,10 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug AVA test file",
+      "name": "E2E-Tests",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ava",
       "runtimeArgs": [
-        "./test/test.ts"
+        "./dist/test/test.js"
       ],
       "outputCapture": "std",
       "skipFiles": [

@@ -11,5 +11,5 @@ export async function dereference(
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const parser = new $RefParser()
 
-  return parser.dereference(filepath ? `${dirname(filepath)}/.` : cwd, schema, $refOptions)
+  return parser.dereference(filepath ? `${cwd}${dirname(filepath)}/.` : cwd, schema, $refOptions)
 }
