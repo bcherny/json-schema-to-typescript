@@ -18,5 +18,3 @@ export const input = {
 export const options = {
   disableUnionDeduplication: true
 }
-
-export const only = true
