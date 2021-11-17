@@ -64,6 +64,10 @@ export interface Options {
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
   $refOptions: $RefOptions
+  /**
+   * Performance optimization to disable union type de-duplication.
+   */
+  disableUnionDeduplication: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -90,7 +94,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  unknownAny: true
+  unknownAny: true,
+  disableUnionDeduplication: false,
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
@@ -157,7 +162,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const parsed = parse(normalized, _options)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
-  const optimized = optimize(parsed)
+  const optimized = optimize(parsed, _options)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(parsed, optimized)) {
       log('cyan', 'optimizer', time(), '✅ No change')
