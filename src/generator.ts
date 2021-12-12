@@ -4,6 +4,7 @@ import {
   AST,
   ASTWithStandaloneName,
   hasComment,
+  hasJsdoc,
   hasStandaloneName,
   T_ANY,
   TArray,
@@ -308,6 +309,7 @@ function generateInterface(ast: TInterface, options: Options): string {
       .map(
         ([isRequired, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
+          (hasJsdoc(ast) && !ast.standaloneName ? generateJSDoc(ast.jsdoc) + '\n' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
@@ -322,10 +324,14 @@ function generateInterface(ast: TInterface, options: Options): string {
 function generateComment(comment: string): string {
   return ['/**', ...comment.split('\n').map(_ => ' * ' + _), ' */'].join('\n')
 }
+function generateJSDoc(jsdoc: Record<string, any>): string {
+  return ['/**', ...Object.entries(jsdoc).map(([k, v])=> `* @${k} ${v}`), ' */'].join('\n')
+}
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasJsdoc(ast) ? generateJSDoc(ast.jsdoc) + '\n' : '') +
     'export ' +
     (options.enableConstEnums ? 'const ' : '') +
     `enum ${toSafeString(ast.standaloneName)} {` +
@@ -339,6 +345,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasJsdoc(ast) ? generateJSDoc(ast.jsdoc) + '\n' : '') +
     `export interface ${toSafeString(ast.standaloneName)} ` +
     (ast.superTypes.length > 0
       ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
@@ -350,6 +357,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasJsdoc(ast) ? generateJSDoc(ast.jsdoc) + '\n' : '') +
     `export type ${toSafeString(ast.standaloneName)} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
       options

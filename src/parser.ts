@@ -1,5 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
+import {findKey, includes, isEmpty, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {typesOfSchema} from './typesOfSchema'
@@ -121,11 +121,13 @@ function parseNonLiteral(
 ): AST {
   const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
   const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
+  const jsdoc: Record<string, any> = options.jsdocTags.map(prop => [prop, schema[prop]]).reduce((acc, [key, val]) => (val !== undefined ? { ...acc, [key]: val } : acc), {});
+  const jsdocOrComment = isEmpty(jsdoc) ? { comment: schema.description } : { jsdoc: jsdoc };
 
   switch (type) {
     case 'ALL_OF':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -134,13 +136,13 @@ function parseNonLiteral(
     case 'ANY':
       return {
         ...(options.unknownAny ? T_UNKNOWN : T_ANY),
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames)
       }
     case 'ANY_OF':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -148,14 +150,14 @@ function parseNonLiteral(
       }
     case 'BOOLEAN':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'BOOLEAN'
       }
     case 'CUSTOM_TYPE':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         params: schema.tsType!,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
@@ -163,7 +165,7 @@ function parseNonLiteral(
       }
     case 'NAMED_ENUM':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         params: schema.enum!.map((_, n) => ({
@@ -176,28 +178,28 @@ function parseNonLiteral(
       return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName)
     case 'NULL':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NULL'
       }
     case 'NUMBER':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NUMBER'
       }
     case 'OBJECT':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'OBJECT'
       }
     case 'ONE_OF':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -207,7 +209,7 @@ function parseNonLiteral(
       throw Error(format('Refs should have been resolved by the resolver!', schema))
     case 'STRING':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'STRING'
@@ -218,7 +220,7 @@ function parseNonLiteral(
         const minItems = schema.minItems!
         const maxItems = schema.maxItems!
         const arrayType: TTuple = {
-          comment: schema.description,
+          ...jsdocOrComment,
           keyName,
           maxItems,
           minItems,
@@ -234,7 +236,7 @@ function parseNonLiteral(
         return arrayType
       } else {
         return {
-          comment: schema.description,
+          ...jsdocOrComment,
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           params: parse(schema.items!, options, undefined, processed, usedNames),
@@ -243,7 +245,7 @@ function parseNonLiteral(
       }
     case 'UNION':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
@@ -254,7 +256,7 @@ function parseNonLiteral(
       }
     case 'UNNAMED_ENUM':
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.enum!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -269,7 +271,7 @@ function parseNonLiteral(
       const params = options.unknownAny ? T_UNKNOWN : T_ANY
       if (minItems > 0 || maxItems >= 0) {
         return {
-          comment: schema.description,
+          ...jsdocOrComment,
           keyName,
           maxItems: schema.maxItems,
           minItems,
@@ -283,7 +285,7 @@ function parseNonLiteral(
       }
 
       return {
-        comment: schema.description,
+        ...jsdocOrComment,
         keyName,
         params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),

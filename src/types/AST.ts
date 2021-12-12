@@ -1,4 +1,5 @@
 import {JSONSchema4Type} from 'json-schema'
+import {isEmpty} from 'lodash'
 
 export type AST_TYPE = AST['type']
 
@@ -23,14 +24,20 @@ export type AST =
 
 export interface AbstractAST {
   comment?: string
+  jsdoc?: Record<string, any>
   keyName?: string
   standaloneName?: string
   type: AST_TYPE
 }
 
 export type ASTWithComment = AST & {comment: string}
+export type ASTWithJSdoc = AST & { jsdoc: Record<string, any> }
 export type ASTWithName = AST & {keyName: string}
 export type ASTWithStandaloneName = AST & {standaloneName: string}
+
+export function hasJsdoc(ast: AST): ast is ASTWithJSdoc {
+  return 'jsdoc' in ast && ast.jsdoc != null && !isEmpty(ast.jsdoc)
+}
 
 export function hasComment(ast: AST): ast is ASTWithComment {
   return 'comment' in ast && ast.comment != null && ast.comment !== ''

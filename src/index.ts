@@ -61,6 +61,10 @@ export interface Options {
    */
   unknownAny: boolean
   /**
+   * JSDoc tags to parse from the schema. Will be prepended to each generated type in the comment block (as `@tag [tagValue]`).
+   */ 
+  jsdocTags: string[]
+  /**
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
   $refOptions: $RefOptions
@@ -90,7 +94,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  unknownAny: true
+  unknownAny: true,
+  jsdocTags: [],
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
