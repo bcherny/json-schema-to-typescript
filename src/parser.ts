@@ -317,8 +317,10 @@ function newInterface(
   keyNameFromDefinition?: string
 ): TInterface {
   const name = standaloneName(schema, keyNameFromDefinition, usedNames)!
+  const jsdoc: Record<string, any> = options.jsdocTags.map(prop => [prop, schema[prop]]).reduce((acc, [key, val]) => (val !== undefined ? { ...acc, [key]: val } : acc), {});
+  const jsdocOrComment = isEmpty(jsdoc) ? { comment: schema.description } : { jsdoc: jsdoc };
   return {
-    comment: schema.description,
+    ...jsdocOrComment,
     keyName,
     params: parseSchema(schema, options, processed, usedNames, name),
     standaloneName: name,
