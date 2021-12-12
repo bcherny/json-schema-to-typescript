@@ -325,7 +325,7 @@ function generateComment(comment: string): string {
   return ['/**', ...comment.split('\n').map(_ => ' * ' + _), ' */'].join('\n')
 }
 function generateJSDoc(jsdoc: Record<string, any>): string {
-  return ['/**', ...Object.entries(jsdoc).map(([k, v])=> `* @${k} ${v}`), ' */'].join('\n')
+  return ['/**', ...Object.entries(jsdoc).map(([k, v])=> `* @${k} ${JSON.stringify(v)}`), ' */'].join('\n')
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
