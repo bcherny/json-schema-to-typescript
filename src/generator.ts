@@ -311,7 +311,7 @@ function generateInterface(ast: TInterface, options: Options): string {
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
-          (hasStandaloneName(ast) ? toSafeString(type) : type)
+          (hasStandaloneName(ast) ? type.replace(ast.standaloneName, toSafeString(ast.standaloneName)) : type)
       )
       .join('\n') +
     '\n' +
