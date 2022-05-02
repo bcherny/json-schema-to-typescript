@@ -12,7 +12,8 @@ import {
   TIntersection,
   TNamedInterface,
   TUnion,
-  T_UNKNOWN
+  T_UNKNOWN,
+  TInterfaceParam
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
@@ -156,7 +157,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   return type
 }
 
-function generateType(ast: AST, options: Options): string {
+export function generateType(ast: AST, options: Options): string {
   const type = generateRawType(ast, options)
 
   if (options.strictIndexSignatures && ast.keyName === '[k: string]') {
@@ -176,15 +177,16 @@ function generateRawType(ast: AST, options: Options): string {
   switch (ast.type) {
     case 'ANY':
       return 'any'
-    case 'ARRAY':
-      return (() => {
-        const type = generateType(ast.params, options)
-        return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
-      })()
+    case 'ARRAY': {
+      const type = generateType(ast.params, options)
+      return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+    }
     case 'BOOLEAN':
       return 'boolean'
     case 'INTERFACE':
       return generateInterface(ast, options)
+    case 'INTERFACE_PARAM':
+      return '' // handled by INTERFACE. TODO: thro
     case 'INTERSECTION':
       return generateSetOperation(ast, options)
     case 'LITERAL':
@@ -210,6 +212,7 @@ function generateRawType(ast: AST, options: Options): string {
           // this is a valid state, and JSONSchema doesn't care about the item type
           if (maxItems < 0) {
             // no max items and no spread param, so just spread any
+            // @ts-ignore
             spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
           }
         }
@@ -217,6 +220,7 @@ function generateRawType(ast: AST, options: Options): string {
           // this is a valid state, and JSONSchema doesn't care about the item type
           // fill the tuple with any elements
           for (let i = astParams.length; i < maxItems; i += 1) {
+            // @ts-ignore
             astParams.push(options.unknownAny ? T_UNKNOWN : T_ANY)
           }
         }
@@ -301,21 +305,21 @@ function generateInterface(ast: TInterface, options: Options): string {
     '\n' +
     ast.params
       .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
-      .map(
-        ({isRequired, keyName, ast}) =>
-          [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string]
-      )
-      .map(
-        ([isRequired, keyName, ast, type]) =>
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
-          escapeKeyName(keyName) +
-          (isRequired ? '' : '?') +
-          ': ' +
-          (hasStandaloneName(ast) ? toSafeString(type) : type)
-      )
+      .map(_ => generateInterfaceParam(_, options))
       .join('\n') +
     '\n' +
     '}'
+  )
+}
+
+export function generateInterfaceParam({isRequired, keyName, ast}: TInterfaceParam, options: Options): string {
+  const type = generateType(ast, options)
+  return (
+    (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
+    escapeKeyName(keyName) +
+    (isRequired ? '' : '?') +
+    ': ' +
+    (hasStandaloneName(ast) ? toSafeString(type) : type)
   )
 }
 
@@ -349,6 +353,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (
+    // @ts-ignore
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
     `export type ${toSafeString(ast.standaloneName)} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
@@ -368,5 +373,6 @@ function escapeKeyName(keyName: string): string {
 }
 
 function getSuperTypesAndParams(ast: TInterface): AST[] {
+  // @ts-ignore
   return ast.params.map(param => param.ast).concat(ast.superTypes)
 }

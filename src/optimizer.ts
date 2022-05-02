@@ -1,4 +1,3 @@
-import stringify = require('json-stringify-safe')
 import {uniqBy} from 'lodash'
 import {AST, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'
@@ -31,16 +30,17 @@ export function optimize(ast: AST, processed = new Set<AST>()): AST {
         return T_UNKNOWN
       }
 
+      // [A (named), A] -> [A (named)]
+      if (
+        ast.params.every(_ => _.hashCode === ast.params[0].hashCode) &&
+        ast.params.some(_ => _.standaloneName !== undefined)
+      ) {
+        log('cyan', 'optimizer', '[A, B, B] -> [A, B]', ast)
+        ast.params = ast.params.filter(_ => _.standaloneName !== undefined)
+      }
+
       // [A, B, B] -> [A, B]
-      const shouldTakeStandaloneNameIntoAccount = ast.params.filter(_ => _.standaloneName).length > 1
-      const params = uniqBy(
-        ast.params,
-        _ => `
-          ${_.type}-
-          ${shouldTakeStandaloneNameIntoAccount ? _.standaloneName : ''}-
-          ${stringify((_ as any).params)}
-        `
-      )
+      const params = uniqBy(ast.params, _ => `${_.standaloneName}:${_.hashCode}`)
       if (params.length !== ast.params.length) {
         log('cyan', 'optimizer', '[A, B, B] -> [A, B]', ast)
         ast.params = params

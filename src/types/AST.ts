@@ -8,6 +8,7 @@ export type AST =
   | TBoolean
   | TEnum
   | TInterface
+  | TInterfaceParam
   | TNamedInterface
   | TIntersection
   | TLiteral
@@ -21,8 +22,12 @@ export type AST =
   | TUnknown
   | TCustomType
 
+export type ASTWithoutHashcode = Omit<AST, 'hashCode'>
+
 export interface AbstractAST {
   comment?: string
+  // Performance optimization, for quick de-duplication by value
+  hashCode: string
   keyName?: string
   standaloneName?: string
   type: AST_TYPE
@@ -79,12 +84,15 @@ export interface TNamedInterface extends AbstractAST {
   superTypes: TNamedInterface[]
 }
 
-export interface TInterfaceParam {
+export interface TInterfaceParam extends AbstractAST {
   ast: AST
+  comment: undefined
   keyName: string
   isRequired: boolean
   isPatternProperty: boolean
   isUnreachableDefinition: boolean
+  standaloneName: undefined
+  type: 'INTERFACE_PARAM'
 }
 
 export interface TIntersection extends AbstractAST {
@@ -143,19 +151,23 @@ export interface TCustomType extends AbstractAST {
 ////////////////////////////////////////////     literals
 
 export const T_ANY: TAny = {
+  hashCode: 'ANY',
   type: 'ANY'
 }
 
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
+  hashCode: 'ANY_ADDITIONAL_PROPERTIES',
   keyName: '[k: string]',
   type: 'ANY'
 }
 
 export const T_UNKNOWN: TUnknown = {
+  hashCode: 'UNKNOWN',
   type: 'UNKNOWN'
 }
 
 export const T_UNKNOWN_ADDITIONAL_PROPERTIES: TUnknown & ASTWithName = {
+  hashCode: 'UNKNOWN_ADDITIONAL_PROPERTIES',
   keyName: '[k: string]',
   type: 'UNKNOWN'
 }
