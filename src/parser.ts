@@ -404,6 +404,9 @@ via the \`definition\` "${key}".`
   switch (schema.additionalProperties) {
     case undefined:
     case true:
+      if (!options.additionalPropertiesSignature) {
+        return asts
+      }
       if (singlePatternProperty) {
         return asts
       }
