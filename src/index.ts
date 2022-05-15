@@ -157,7 +157,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const parsed = parse(normalized, _options)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
-  const optimized = optimize(parsed)
+  const optimized = optimize(parsed, _options)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(parsed, optimized)) {
       log('cyan', 'optimizer', time(), '✅ No change')

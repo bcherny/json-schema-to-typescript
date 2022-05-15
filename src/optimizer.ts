@@ -1,11 +1,10 @@
-import stringify = require('json-stringify-safe')
 import {uniqBy} from 'lodash'
+import {Options} from '.'
+import {generateType} from './generator'
 import {AST, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'
 
-export function optimize(ast: AST, processed = new Set<AST>()): AST {
-  log('cyan', 'optimizer', ast, processed.has(ast) ? '(FROM CACHE)' : '')
-
+export function optimize(ast: AST, options: Options, processed = new Set<AST>()): AST {
   if (processed.has(ast)) {
     return ast
   }
@@ -15,41 +14,61 @@ export function optimize(ast: AST, processed = new Set<AST>()): AST {
   switch (ast.type) {
     case 'INTERFACE':
       return Object.assign(ast, {
-        params: ast.params.map(_ => Object.assign(_, {ast: optimize(_.ast, processed)}))
+        params: ast.params.map(_ => Object.assign(_, {ast: optimize(_.ast, options, processed)}))
       })
     case 'INTERSECTION':
     case 'UNION':
+      // Start with the leaves...
+      const optimizedAST = Object.assign(ast, {
+        params: ast.params.map(_ => optimize(_, options, processed))
+      })
+
       // [A, B, C, Any] -> Any
-      if (ast.params.some(_ => _.type === 'ANY')) {
-        log('cyan', 'optimizer', '[A, B, C, Any] -> Any', ast)
+      if (optimizedAST.params.some(_ => _.type === 'ANY')) {
+        log('cyan', 'optimizer', '[A, B, C, Any] -> Any', optimizedAST)
         return T_ANY
       }
 
       // [A, B, C, Unknown] -> Unknown
-      if (ast.params.some(_ => _.type === 'UNKNOWN')) {
-        log('cyan', 'optimizer', '[A, B, C, Unknown] -> Unknown', ast)
+      if (optimizedAST.params.some(_ => _.type === 'UNKNOWN')) {
+        log('cyan', 'optimizer', '[A, B, C, Unknown] -> Unknown', optimizedAST)
         return T_UNKNOWN
       }
 
-      // [A, B, B] -> [A, B]
-      const shouldTakeStandaloneNameIntoAccount = ast.params.filter(_ => _.standaloneName).length > 1
-      const params = uniqBy(
-        ast.params,
-        _ => `
-          ${_.type}-
-          ${shouldTakeStandaloneNameIntoAccount ? _.standaloneName : ''}-
-          ${stringify((_ as any).params)}
-        `
-      )
-      if (params.length !== ast.params.length) {
-        log('cyan', 'optimizer', '[A, B, B] -> [A, B]', ast)
-        ast.params = params
+      // [A (named), A] -> [A (named)]
+      if (
+        optimizedAST.params.every(_ => {
+          const a = generateType(omitStandaloneName(_), options)
+          const b = generateType(omitStandaloneName(optimizedAST.params[0]), options)
+          return a === b
+        }) &&
+        optimizedAST.params.some(_ => _.standaloneName !== undefined)
+      ) {
+        log('cyan', 'optimizer', '[A (named), A] -> [A (named)]', optimizedAST)
+        optimizedAST.params = optimizedAST.params.filter(_ => _.standaloneName !== undefined)
       }
 
-      return Object.assign(ast, {
-        params: ast.params.map(_ => optimize(_, processed))
+      // [A, B, B] -> [A, B]
+      const params = uniqBy(optimizedAST.params, _ => generateType(_, options))
+      if (params.length !== optimizedAST.params.length) {
+        log('cyan', 'optimizer', '[A, B, B] -> [A, B]', optimizedAST)
+        optimizedAST.params = params
+      }
+
+      return Object.assign(optimizedAST, {
+        params: optimizedAST.params.map(_ => optimize(_, options, processed))
       })
     default:
       return ast
+  }
+}
+
+// TODO: More clearly disambiguate standalone names vs. aliased names instead.
+function omitStandaloneName<A extends AST>(ast: A): A {
+  switch (ast.type) {
+    case 'ENUM':
+      return ast
+    default:
+      return {...ast, standaloneName: undefined}
   }
 }

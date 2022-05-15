@@ -1,4 +1,4 @@
-import {omit} from 'lodash'
+import {memoize, omit} from 'lodash'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
   AST,
@@ -156,7 +156,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   return type
 }
 
-function generateType(ast: AST, options: Options): string {
+function generateTypeUnmemoized(ast: AST, options: Options): string {
   const type = generateRawType(ast, options)
 
   if (options.strictIndexSignatures && ast.keyName === '[k: string]') {
@@ -165,6 +165,7 @@ function generateType(ast: AST, options: Options): string {
 
   return type
 }
+export const generateType = memoize(generateTypeUnmemoized)
 
 function generateRawType(ast: AST, options: Options): string {
   log('magenta', 'generator', ast)
