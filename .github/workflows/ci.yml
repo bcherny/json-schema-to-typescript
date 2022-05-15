@@ -5,11 +5,11 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     strategy:
       fail-fast: false
       matrix:
-        node-version: [10.x, 12.x, 13.x]
+        node-version: [12.x, 14.x, 16.x, 17.x, 18.x]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
@@ -19,7 +19,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies
-      run: yarn install --ignore-engines --verbose 
+      run: yarn install --ignore-engines --verbose
     - name: Run tests
       run: yarn test
       env:
