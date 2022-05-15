@@ -1,4 +1,4 @@
-import {serial as test} from 'ava'
+import test from 'ava'
 import {pathTransform, generateName} from '../src/utils'
 
 export function run() {
