@@ -151,6 +151,8 @@ With no OUT_FILE nor IN_FILE, write to standard output.
 You can use any of the following options by adding them at the end.
 Boolean values can be set to false using the 'no-' prefix.
 
+  --additionalProperties
+      Default value for additionalProperties, when it is not explicitly set
   --cwd=XXX
       Root directory for resolving $ref
   --declareExternallyReferenced
