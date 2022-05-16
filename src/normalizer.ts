@@ -1,5 +1,5 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {escapeBlockComment, justName, toSafeString, traverse} from './utils'
+import {appendToDescription, escapeBlockComment, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
 
 type Rule = (schema: LinkedJSONSchema, fileName: string, options: Options) => void
@@ -57,18 +57,32 @@ rules.set('Default top level `id`', (schema, fileName) => {
   }
 })
 
-rules.set('Escape closing JSDoc Comment', schema => {
+rules.set('Escape closing JSDoc comment', schema => {
   escapeBlockComment(schema)
 })
 
+rules.set('Add JSDoc comments for minItems and maxItems', schema => {
+  if (!isArrayType(schema)) {
+    return
+  }
+  const commentsToAppend = [
+    'minItems' in schema ? `@minItems ${schema.minItems}` : '',
+    'maxItems' in schema ? `@maxItems ${schema.maxItems}` : ''
+  ].filter(Boolean)
+  if (commentsToAppend.length) {
+    schema.description = appendToDescription(schema.description, ...commentsToAppend)
+  }
+})
+
 rules.set('Optionally remove maxItems and minItems', (schema, _fileName, options) => {
-  if (options.ignoreMinAndMaxItems) {
-    if ('maxItems' in schema) {
-      delete schema.maxItems
-    }
-    if ('minItems' in schema) {
-      delete schema.minItems
-    }
+  if (!isArrayType(schema)) {
+    return
+  }
+  if ('minItems' in schema && options.ignoreMinAndMaxItems) {
+    delete schema.minItems
+  }
+  if ('maxItems' in schema && (options.ignoreMinAndMaxItems || options.maxItems === -1)) {
+    delete schema.maxItems
   }
 })
 
@@ -77,11 +91,26 @@ rules.set('Normalize schema.minItems', (schema, _fileName, options) => {
     return
   }
   // make sure we only add the props onto array types
-  if (isArrayType(schema)) {
-    const {minItems} = schema
-    schema.minItems = typeof minItems === 'number' ? minItems : 0
+  if (!isArrayType(schema)) {
+    return
   }
+  const {minItems} = schema
+  schema.minItems = typeof minItems === 'number' ? minItems : 0
   // cannot normalize maxItems because maxItems = 0 has an actual meaning
+})
+
+rules.set('Remove maxItems if it is big enough to likely cause OOMs', (schema, _fileName, options) => {
+  if (options.ignoreMinAndMaxItems || options.maxItems === -1) {
+    return
+  }
+  if (!isArrayType(schema)) {
+    return
+  }
+  const {maxItems, minItems} = schema
+  // minItems is guaranteed to be a number after the previous rule runs
+  if (maxItems !== undefined && maxItems - (minItems as number) > options.maxItems) {
+    delete schema.maxItems
+  }
 })
 
 rules.set('Normalize schema.items', (schema, _fileName, options) => {

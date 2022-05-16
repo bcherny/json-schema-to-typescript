@@ -14,6 +14,7 @@ import {error, stripExtension, Try, log} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
+import {validateOptions} from './optionValidator'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -51,6 +52,13 @@ export interface Options {
    */
   ignoreMinAndMaxItems: boolean
   /**
+   * Maximum number of unioned tuples to emit when representing bounded-size array types,
+   * before falling back to emitting unbounded arrays. Increase this to improve precision
+   * of emitted types, decrease it to improve performance, or set it to `-1` to ignore
+   * `minItems` and `maxItems`.
+   */
+  maxItems: number
+  /**
    * Append all index signatures with `| undefined` so that they are strictly typed.
    *
    * This is required to be compatible with `strictNullChecks`.
@@ -84,6 +92,7 @@ export const DEFAULT_OPTIONS: Options = {
   enableConstEnums: true,
   format: true,
   ignoreMinAndMaxItems: false,
+  maxItems: 20,
   strictIndexSignatures: false,
   style: {
     bracketSpacing: false,
@@ -115,6 +124,8 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
 }
 
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
+  validateOptions(options)
+
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
   const start = Date.now()

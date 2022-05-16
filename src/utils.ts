@@ -346,3 +346,10 @@ export function maybeStripNameHints(schema: JSONSchema): JSONSchema {
   }
   return schema
 }
+
+export function appendToDescription(existingDescription: string | undefined, ...values: string[]): string {
+  if (existingDescription) {
+    return `${existingDescription}\n\n${values.join('\n')}`
+  }
+  return values.join('\n')
+}
