@@ -1,34 +1,14 @@
-import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
+import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
-// eslint-disable-next-line
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   try {
     return fn()
   } catch (e) {
     return err(e as Error)
   }
-}
-
-export function mapDeep(object: object, fn: (value: object, key?: string) => object, key?: string): object {
-  return fn(
-    mapValues(object, (_: unknown, key) => {
-      if (isPlainObject(_)) {
-        return mapDeep(_ as object, fn, key)
-      } else if (Array.isArray(_)) {
-        return _.map(item => {
-          if (isPlainObject(item)) {
-            return mapDeep(item as object, fn, key)
-          }
-          return item
-        })
-      }
-      return _
-    }),
-    key
-  )
 }
 
 // keys that shouldn't be traversed by the catchall step
@@ -70,34 +50,39 @@ const BLACKLISTED_KEYS = new Set([
 
 function traverseObjectKeys(
   obj: Record<string, LinkedJSONSchema>,
-  callback: (schema: LinkedJSONSchema) => void,
+  callback: (schema: LinkedJSONSchema, key: string | null) => void,
   processed: Set<LinkedJSONSchema>
 ) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, processed)
+      traverse(obj[k], callback, processed, k)
     }
   })
 }
+
 function traverseArray(
   arr: LinkedJSONSchema[],
-  callback: (schema: LinkedJSONSchema) => void,
+  callback: (schema: LinkedJSONSchema, key: string | null) => void,
   processed: Set<LinkedJSONSchema>
 ) {
-  arr.forEach(i => traverse(i, callback, processed))
+  arr.forEach((s, k) => traverse(s, callback, processed, k.toString()))
 }
+
 export function traverse(
   schema: LinkedJSONSchema,
-  callback: (schema: LinkedJSONSchema) => void,
-  processed = new Set<LinkedJSONSchema>()
+  callback: (schema: LinkedJSONSchema, key: string | null) => void,
+  processed = new Set<LinkedJSONSchema>(),
+  key?: string
 ): void {
   // Handle recursive schemas
   if (processed.has(schema)) {
     return
   }
 
+  // console.log('key', key + '\n')
+
   processed.add(schema)
-  callback(schema)
+  callback(schema, key ?? null)
 
   if (schema.anyOf) {
     traverseArray(schema.anyOf, callback, processed)

@@ -1,5 +1,5 @@
-import {JSONSchema} from './types/JSONSchema'
-import {mapDeep} from './utils'
+import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
+import {traverse} from './utils'
 
 type Rule = (schema: JSONSchema) => boolean | void
 const rules = new Map<string, Rule>()
@@ -37,10 +37,10 @@ rules.set('When minItems exists, minItems >= 0', schema => {
   }
 })
 
-export function validate(schema: JSONSchema, filename: string): string[] {
+export function validate(schema: LinkedJSONSchema, filename: string): string[] {
   const errors: string[] = []
   rules.forEach((rule, ruleName) => {
-    mapDeep(schema, (schema, key) => {
+    traverse(schema, (schema, key) => {
       if (rule(schema) === false) {
         errors.push(`Error at key "${key}" in file "${filename}": ${ruleName}`)
       }

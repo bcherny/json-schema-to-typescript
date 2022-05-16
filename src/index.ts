@@ -122,15 +122,6 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     return `(${Date.now() - start}ms)`
   }
 
-  const errors = validate(schema, name)
-  if (errors.length) {
-    errors.forEach(_ => error(_))
-    throw new ValidationError()
-  }
-  if (process.env.VERBOSE) {
-    log('green', 'validator', time(), '✅ No change')
-  }
-
   // normalize options
   if (!endsWith(_options.cwd, '/')) {
     _options.cwd += '/'
@@ -148,6 +139,15 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const linked = link(dereferenced)
   if (process.env.VERBOSE) {
     log('green', 'linker', time(), '✅ No change')
+  }
+
+  const errors = validate(linked, name)
+  if (errors.length) {
+    errors.forEach(_ => error(_))
+    throw new ValidationError()
+  }
+  if (process.env.VERBOSE) {
+    log('green', 'validator', time(), '✅ No change')
   }
 
   const normalized = normalize(linked, name, _options)
