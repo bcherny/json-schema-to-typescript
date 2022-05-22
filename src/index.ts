@@ -1,7 +1,7 @@
 import {readFileSync} from 'fs'
 import {JSONSchema4} from 'json-schema'
 import {Options as $RefOptions} from 'json-schema-ref-parser'
-import {endsWith, merge} from 'lodash'
+import {cloneDeep, endsWith, merge} from 'lodash'
 import {dirname} from 'path'
 import {Options as PrettierOptions} from 'prettier'
 import {format} from './formatter'
@@ -138,9 +138,12 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     _options.cwd += '/'
   }
 
-  const dereferenced = await dereference(schema, _options)
+  // Initial clone to avoid mutating the input
+  const _schema = cloneDeep(schema)
+
+  const dereferenced = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(schema, dereferenced)) {
+    if (isDeepStrictEqual(_schema, dereferenced)) {
       log('green', 'dereferencer', time(), '✅ No change')
     } else {
       log('green', 'dereferencer', time(), '✅ Result:', dereferenced)
