@@ -1,6 +1,6 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, join, normalize, sep} from 'path'
-import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
+import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -78,8 +78,6 @@ export function traverse(
   if (processed.has(schema)) {
     return
   }
-
-  // console.log('key', key + '\n')
 
   processed.add(schema)
   callback(schema, key ?? null)
@@ -328,18 +326,18 @@ export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
 }
 
 /**
- * Removes the schema's `id`, `name`, and `description` properties
+ * Removes the schema's `$id`, `name`, and `description` properties
  * if they exist.
  * Useful when parsing intersections.
  *
  * Mutates `schema`.
  */
 export function maybeStripNameHints(schema: JSONSchema): JSONSchema {
+  if ('$id' in schema) {
+    delete schema.$id
+  }
   if ('description' in schema) {
     delete schema.description
-  }
-  if ('id' in schema) {
-    delete schema.id
   }
   if ('name' in schema) {
     delete schema.name
@@ -352,4 +350,32 @@ export function appendToDescription(existingDescription: string | undefined, ...
     return `${existingDescription}\n\n${values.join('\n')}`
   }
   return values.join('\n')
+}
+
+export function isSchemaLike(schema: LinkedJSONSchema) {
+  if (!isPlainObject(schema)) {
+    return false
+  }
+  const parent = schema[Parent]
+  if (parent === null) {
+    return true
+  }
+
+  const JSON_SCHEMA_KEYWORDS = [
+    'allOf',
+    'anyOf',
+    'dependencies',
+    'enum',
+    'oneOf',
+    'definitions',
+    'not',
+    'patternProperties',
+    'properties',
+    'required'
+  ]
+  if (JSON_SCHEMA_KEYWORDS.some(_ => parent[_] === schema)) {
+    return false
+  }
+
+  return true
 }

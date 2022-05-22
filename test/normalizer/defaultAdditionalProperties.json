@@ -1,23 +1,25 @@
 {
   "name": "Default additionalProperties to true",
   "in": {
-    "id": "foo",
-    "type": ["object"],
+    "$id": "foo",
+    "type": [
+      "object"
+    ],
     "properties": {
       "a": {
         "type": "integer",
-        "id": "a"
+        "$id": "a"
       }
     },
     "required": []
   },
   "out": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "a": {
         "type": "integer",
-        "id": "a"
+        "$id": "a"
       }
     },
     "required": [],

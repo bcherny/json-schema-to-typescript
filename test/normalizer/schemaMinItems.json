@@ -1,7 +1,7 @@
 {
   "name": "Normalise schema.minItems",
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untyped": {
@@ -159,7 +159,7 @@
     "required": []
   },
   "out": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untyped": {

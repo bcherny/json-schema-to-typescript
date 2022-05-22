@@ -1,11 +1,13 @@
 {
   "name": "Normalize const to singleton enum",
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "const": "foobar"
   },
   "out": {
-    "id": "foo",
-    "enum": ["foobar"]
+    "$id": "foo",
+    "enum": [
+      "foobar"
+    ]
   }
 }

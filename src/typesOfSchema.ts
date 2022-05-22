@@ -65,7 +65,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     return 'enum' in schema && 'tsEnumNames' in schema
   },
   NAMED_SCHEMA(schema) {
-    return 'id' in schema && ('patternProperties' in schema || 'properties' in schema)
+    return '$id' in schema && ('patternProperties' in schema || 'properties' in schema)
   },
   NULL(schema) {
     return schema.type === 'null'

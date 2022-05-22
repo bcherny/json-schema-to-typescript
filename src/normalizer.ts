@@ -1,5 +1,5 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, justName, toSafeString, traverse} from './utils'
+import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
 
 type Rule = (schema: LinkedJSONSchema, fileName: string, options: Options) => void
@@ -50,10 +50,25 @@ rules.set('Default additionalProperties', (schema, _, options) => {
   }
 })
 
-rules.set('Default top level `id`', (schema, fileName) => {
+rules.set('Transform id to $id', (schema, fileName) => {
+  if (!isSchemaLike(schema)) {
+    return
+  }
+  if (schema.id && schema.$id && schema.id !== schema.$id) {
+    throw ReferenceError(
+      `Schema must define either id or $id, not both. Given id=${schema.id}, $id=${schema.$id} in ${fileName}`
+    )
+  }
+  if (schema.id) {
+    schema.$id = schema.id
+    delete schema.id
+  }
+})
+
+rules.set('Default top level $id', (schema, fileName) => {
   const isRoot = schema[Parent] === null
-  if (isRoot && !schema.id) {
-    schema.id = toSafeString(justName(fileName))
+  if (isRoot && !schema.$id) {
+    schema.$id = toSafeString(justName(fileName))
   }
 })
 

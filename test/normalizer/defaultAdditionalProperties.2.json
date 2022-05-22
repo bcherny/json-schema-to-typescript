@@ -1,14 +1,14 @@
 {
   "name": "Default additionalProperties to false",
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "type": [
       "object"
     ],
     "properties": {
       "a": {
         "type": "integer",
-        "id": "a"
+        "$id": "a"
       },
       "b": {
         "type": "object"
@@ -20,12 +20,12 @@
     "additionalProperties": false
   },
   "out": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "a": {
         "type": "integer",
-        "id": "a"
+        "$id": "a"
       },
       "b": {
         "additionalProperties": false,

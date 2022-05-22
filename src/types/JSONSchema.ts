@@ -87,6 +87,9 @@ export interface NormalizedJSONSchema extends LinkedJSONSchema {
   oneOf?: NormalizedJSONSchema[]
   not?: NormalizedJSONSchema
   required: string[]
+
+  // Removed by normalizer
+  id: never
 }
 
 export interface EnumJSONSchema extends NormalizedJSONSchema {
@@ -114,15 +117,13 @@ export interface CustomTypeJSONSchema extends NormalizedJSONSchema {
   tsType: string
 }
 
-export const getRootSchema = memoize(
-  (schema: LinkedJSONSchema): LinkedJSONSchema => {
-    const parent = schema[Parent]
-    if (!parent) {
-      return schema
-    }
-    return getRootSchema(parent)
+export const getRootSchema = memoize((schema: LinkedJSONSchema): LinkedJSONSchema => {
+  const parent = schema[Parent]
+  if (!parent) {
+    return schema
   }
-)
+  return getRootSchema(parent)
+})
 
 export function isPrimitive(schema: LinkedJSONSchema | JSONSchemaType): schema is JSONSchemaType {
   return !isPlainObject(schema)
