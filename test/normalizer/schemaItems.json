@@ -1,7 +1,7 @@
 {
   "name": "Normalize schema.items",
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untypedUnbounded": {
@@ -79,7 +79,7 @@
     "additionalProperties": false
   },
   "out": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untypedUnbounded": {

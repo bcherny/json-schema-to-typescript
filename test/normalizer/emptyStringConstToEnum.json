@@ -1,11 +1,13 @@
 {
   "name": "Normalize empty const to singleton enum",
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "const": ""
   },
   "out": {
-    "id": "foo",
-    "enum": [""]
+    "$id": "foo",
+    "enum": [
+      ""
+    ]
   }
 }

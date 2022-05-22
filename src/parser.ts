@@ -51,9 +51,9 @@ export function parse(
   // so that it gets first pick for standalone name.
   const ast = parseAsTypeWithCache(
     {
+      $id: schema.$id,
       allOf: [],
       description: schema.description,
-      id: schema.id,
       title: schema.title
     },
     'ALL_OF',
@@ -247,7 +247,7 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
-          const member: LinkedJSONSchema = {...omit(schema, 'description', 'id', 'title'), type}
+          const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
           return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
         }),
         type: 'UNION'
@@ -300,7 +300,7 @@ function standaloneName(
   keyNameFromDefinition: string | undefined,
   usedNames: UsedNames
 ): string | undefined {
-  const name = schema.title || schema.id || keyNameFromDefinition
+  const name = schema.title || schema.$id || keyNameFromDefinition
   if (name) {
     return generateName(name, usedNames)
   }

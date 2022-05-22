@@ -107,22 +107,19 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   }
 
   processed.add(ast)
-  let type = ''
 
   switch (ast.type) {
     case 'ARRAY':
-      type = [
+      return [
         declareNamedTypes(ast.params, options, rootASTName, processed),
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined
       ]
         .filter(Boolean)
         .join('\n')
-      break
     case 'ENUM':
-      type = ''
-      break
+      return ''
     case 'INTERFACE':
-      type = getSuperTypesAndParams(ast)
+      return getSuperTypesAndParams(ast)
         .map(
           ast =>
             (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
@@ -130,11 +127,10 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         )
         .filter(Boolean)
         .join('\n')
-      break
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
-      type = [
+      return [
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
         ast.params
           .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
@@ -146,14 +142,12 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       ]
         .filter(Boolean)
         .join('\n')
-      break
     default:
       if (hasStandaloneName(ast)) {
-        type = generateStandaloneType(ast, options)
+        return generateStandaloneType(ast, options)
       }
+      return ''
   }
-
-  return type
 }
 
 function generateTypeUnmemoized(ast: AST, options: Options): string {

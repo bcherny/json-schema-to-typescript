@@ -4,40 +4,71 @@
     "type": "object",
     "properties": {
       "noopMissingType": {
-        "enum": ["foo", "bar"]
+        "enum": [
+          "foo",
+          "bar"
+        ]
       },
       "noopMissingEnum": {
-        "type": ["null", "string"]
+        "type": [
+          "null",
+          "string"
+        ]
       },
       "noopNonNullableEnum": {
         "type": "string",
-        "enum": ["foo", "bar", null]
+        "enum": [
+          "foo",
+          "bar",
+          null
+        ]
       },
       "dedupeNulls": {
-        "type": ["null", "string"],
-        "enum": ["foo", "bar", null]
+        "type": [
+          "null",
+          "string"
+        ],
+        "enum": [
+          "foo",
+          "bar",
+          null
+        ]
       }
     }
   },
   "out": {
     "additionalProperties": true,
-    "id": "RedundantNull",
+    "$id": "RedundantNull",
     "required": [],
     "type": "object",
     "properties": {
       "noopMissingType": {
-        "enum": ["foo", "bar"]
+        "enum": [
+          "foo",
+          "bar"
+        ]
       },
       "noopMissingEnum": {
-        "type": ["null", "string"]
+        "type": [
+          "null",
+          "string"
+        ]
       },
       "noopNonNullableEnum": {
         "type": "string",
-        "enum": ["foo", "bar", null]
+        "enum": [
+          "foo",
+          "bar",
+          null
+        ]
       },
       "dedupeNulls": {
         "type": "string",
-        "enum": ["foo", "bar", null]
+        "enum": [
+          "foo",
+          "bar",
+          null
+        ]
       }
     }
   }

@@ -2,7 +2,7 @@
   "name": "Remove maxItems if it is big enough to likely cause OOMs (3)",
   "in": {
     "additionalProperties": false,
-    "id": "RemoveMaxItems",
+    "$id": "RemoveMaxItems",
     "properties": {
       "a": {
         "description": "Test",
@@ -33,7 +33,7 @@
   },
   "out": {
     "additionalProperties": false,
-    "id": "RemoveMaxItems",
+    "$id": "RemoveMaxItems",
     "properties": {
       "a": {
         "description": "Test\n\n@minItems 5",

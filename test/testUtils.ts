@@ -1,5 +1,7 @@
 import test from 'ava'
-import {pathTransform, generateName} from '../src/utils'
+import {link} from '../src/linker'
+import {LinkedJSONSchema} from '../src/types/JSONSchema'
+import {pathTransform, generateName, isSchemaLike} from '../src/utils'
 
 export function run() {
   test('pathTransform', t => {
@@ -19,5 +21,28 @@ export function run() {
     t.is(generateName('a', usedNames), 'A1')
     t.is(generateName('a', usedNames), 'A2')
     t.is(generateName('a', usedNames), 'A3')
+  })
+  test('isSchemaLike', t => {
+    const schema = link({
+      title: 'Example Schema',
+      type: 'object',
+      properties: {
+        firstName: {
+          type: 'string'
+        },
+        lastName: {
+          id: 'lastName',
+          type: 'string'
+        }
+      },
+      required: ['firstName', 'lastName']
+    })
+    t.is(isSchemaLike(schema), true)
+    t.is(isSchemaLike([] as any as LinkedJSONSchema), false)
+    t.is(isSchemaLike(schema.properties as LinkedJSONSchema), false)
+    t.is(isSchemaLike(schema.required as any as LinkedJSONSchema), false)
+    t.is(isSchemaLike(schema.title as any as LinkedJSONSchema), false)
+    t.is(isSchemaLike(schema.properties!.firstName), true)
+    t.is(isSchemaLike(schema.properties!.lastName), true)
   })
 }

@@ -165,25 +165,13 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   }
 
   const normalized = normalize(linked, name, _options)
-  if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(linked, normalized)) {
-      log('yellow', 'normalizer', time(), '✅ No change')
-    } else {
-      log('yellow', 'normalizer', time(), '✅ Result:', normalized)
-    }
-  }
+  log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
   const parsed = parse(normalized, _options)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed, _options)
-  if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(parsed, optimized)) {
-      log('cyan', 'optimizer', time(), '✅ No change')
-    } else {
-      log('cyan', 'optimizer', time(), '✅ Result:', optimized)
-    }
-  }
+  log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
   const generated = generate(optimized, _options)
   log('magenta', 'generator', time(), '✅ Result:', generated)

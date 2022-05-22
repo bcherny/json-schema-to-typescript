@@ -1,0 +1,29 @@
+{
+  "name": "Transform id to $id",
+  "in": {
+    "properties": {
+      "b": {
+        "id": "b",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      }
+    },
+    "additionalProperties": false,
+    "required": [],
+    "id": "a"
+  },
+  "out": {
+    "properties": {
+      "b": {
+        "$id": "b",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      }
+    },
+    "additionalProperties": false,
+    "required": [],
+    "$id": "a"
+  }
+}
