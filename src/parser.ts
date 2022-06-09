@@ -161,6 +161,23 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'CUSTOM_TYPE'
       }
+    case 'FUNCTION':
+      const args = (schema.arguments as any[]).map((_, ind) => parse(_, options, _.title || `param${ind+1}`, processed, usedNames))
+      const returns = schema.returns ? parse(schema.returns, options, undefined, processed, usedNames): undefined
+
+      const comments = args.filter(a => a.comment).map(a => `@param ${a.keyName} ${a.comment}`)
+      const returnComment = returns?.comment ? `@returns ${returns.comment}`: undefined;
+
+      return {
+          comment: [schema.description, ...comments, returnComment].filter(Boolean).join('\n'),
+          keyName,
+          requiredCount: schema.requiredCount ?? args.length,
+          arguments: args,
+          // isRequired,
+          returns,
+          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          type: 'FUNCTION'
+        }
     case 'NAMED_ENUM':
       return {
         comment: schema.description,
@@ -300,6 +317,7 @@ function standaloneName(
   keyNameFromDefinition: string | undefined,
   usedNames: UsedNames
 ): string | undefined {
+  return undefined
   const name = schema.title || schema.$id || keyNameFromDefinition
   if (name) {
     return generateName(name, usedNames)
@@ -353,6 +371,7 @@ function parseSchema(
   let asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
     ast: parse(value, options, key, processed, usedNames),
     isPatternProperty: false,
+    isMethod: value.type as string === 'function',
     isRequired: includes(schema.required || [], key),
     isUnreachableDefinition: false,
     keyName: key
@@ -374,6 +393,7 @@ via the \`patternProperty\` "${key}".`
         return {
           ast,
           isPatternProperty: !singlePatternProperty,
+        isMethod: false,
           isRequired: singlePatternProperty || includes(schema.required || [], key),
           isUnreachableDefinition: false,
           keyName: singlePatternProperty ? '[k: string]' : key
@@ -392,6 +412,7 @@ via the \`definition\` "${key}".`
         return {
           ast,
           isPatternProperty: false,
+        isMethod: false,
           isRequired: includes(schema.required || [], key),
           isUnreachableDefinition: true,
           keyName: key
@@ -411,6 +432,7 @@ via the \`definition\` "${key}".`
         ast: options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
         isPatternProperty: false,
         isRequired: true,
+        isMethod: false,
         isUnreachableDefinition: false,
         keyName: '[k: string]'
       })
@@ -425,6 +447,7 @@ via the \`definition\` "${key}".`
         ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
         isPatternProperty: false,
         isRequired: true,
+        isMethod: false,
         isUnreachableDefinition: false,
         keyName: '[k: string]'
       })

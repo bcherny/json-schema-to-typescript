@@ -12,21 +12,26 @@ import {
   TIntersection,
   TNamedInterface,
   TUnion,
-  T_UNKNOWN
+  T_UNKNOWN,
+  TFunctionType
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
+type StringLike = string | {toString(data?: {isMethod: boolean}): string}
+
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
-  return (
-    [
-      options.bannerComment,
-      declareNamedTypes(ast, options, ast.standaloneName!),
-      declareNamedInterfaces(ast, options, ast.standaloneName!),
-      declareEnums(ast, options)
-    ]
-      .filter(Boolean)
-      .join('\n\n') + '\n'
-  ) // trailing newline
+  return generateTypeUnmemoized(ast, options).toString()
+  // console.log(a)
+  // return (
+  //   [
+  //     options.bannerComment,
+  //     declareNamedTypes(ast, options, ast.standaloneName!),
+  //     declareNamedInterfaces(ast, options, ast.standaloneName!),
+  //     declareEnums(ast, options)
+  //   ]
+  //     .filter(Boolean)
+  //     .join('\n\n') + '\n'
+  // ) // trailing newline
 }
 
 function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
@@ -150,7 +155,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   }
 }
 
-function generateTypeUnmemoized(ast: AST, options: Options): string {
+function generateTypeUnmemoized(ast: AST, options: Options): StringLike {
   const type = generateRawType(ast, options)
 
   if (options.strictIndexSignatures && ast.keyName === '[k: string]') {
@@ -161,7 +166,7 @@ function generateTypeUnmemoized(ast: AST, options: Options): string {
 }
 export const generateType = memoize(generateTypeUnmemoized)
 
-function generateRawType(ast: AST, options: Options): string {
+function generateRawType(ast: AST, options: Options): StringLike {
   log('magenta', 'generator', ast)
 
   if (hasStandaloneName(ast)) {
@@ -174,7 +179,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'ARRAY':
       return (() => {
         const type = generateType(ast.params, options)
-        return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+        return type.toString().endsWith('"') ? '(' + type + ')[]' : type + '[]'
       })()
     case 'BOOLEAN':
       return 'boolean'
@@ -192,6 +197,8 @@ function generateRawType(ast: AST, options: Options): string {
       return 'object'
     case 'REFERENCE':
       return ast.params
+    case 'FUNCTION':
+      return generateFunction(ast, options)
     case 'STRING':
       return 'string'
     case 'TUPLE':
@@ -216,7 +223,7 @@ function generateRawType(ast: AST, options: Options): string {
           }
         }
 
-        function addSpreadParam(params: string[]): string[] {
+        function addSpreadParam(params: StringLike[]): StringLike[] {
           if (spreadParam) {
             const spread = '...(' + generateType(spreadParam, options) + ')[]'
             params.push(spread)
@@ -224,7 +231,7 @@ function generateRawType(ast: AST, options: Options): string {
           return params
         }
 
-        function paramsToString(params: string[]): string {
+        function paramsToString(params: StringLike[]): string {
           return '[' + params.join(', ') + ']'
         }
 
@@ -244,7 +251,7 @@ function generateRawType(ast: AST, options: Options): string {
         const b: B = ['a', undefined, 'c'] // TS error
         */
 
-          const cumulativeParamsList: string[] = paramsList.slice(0, minItems)
+          const cumulativeParamsList: StringLike[] = paramsList.slice(0, minItems)
           const typesToUnion: string[] = []
 
           if (cumulativeParamsList.length > 0) {
@@ -284,34 +291,58 @@ function generateRawType(ast: AST, options: Options): string {
 /**
  * Generate a Union or Intersection
  */
-function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
+function generateSetOperation(ast: TIntersection | TUnion, options: Options): StringLike {
   const members = (ast as TUnion).params.map(_ => generateType(_, options))
   const separator = ast.type === 'UNION' ? '|' : '&'
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
 
 function generateInterface(ast: TInterface, options: Options): string {
-  return (
+  let res =
     `{` +
     '\n' +
     ast.params
       .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
       .map(
-        ({isRequired, keyName, ast}) =>
-          [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string]
+        ({isRequired, isMethod, keyName, ast}) =>
+          [isRequired, isMethod, keyName, ast, generateType(ast, options)] as [boolean, boolean, string, AST, StringLike]
       )
       .map(
-        ([isRequired, keyName, ast, type]) =>
+        ([isRequired, isMethod, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
-          ': ' +
-          (hasStandaloneName(ast) ? toSafeString(type) : type)
+          (isMethod ? '' : ': ') +
+          (hasStandaloneName(ast) ? toSafeString(type.toString()) : type.toString({isMethod}))
       )
       .join('\n') +
     '\n' +
     '}'
-  )
+
+  return res
+}
+
+function generateFunction(ast: TFunctionType, options: Options): StringLike {
+  const args = ast.arguments
+    .map((t, ind) => {
+      const paramName = t.keyName!
+      const type = generateType(t, options)
+      const optionalPart = ind >= ast.requiredCount ? '?' : ''
+
+      return `${paramName}${optionalPart}: ${type}`
+    })
+    .join(', ')
+
+  const returnType = ast.returns ? generateType(ast.returns, options) : 'void'
+
+  const res: StringLike = {
+    toString(data) {
+      const isMethod = data?.isMethod;
+      const sep = isMethod ? ': ' : ' => '
+      return `(${args})${sep}${returnType}`
+    }
+  }
+  return res
 }
 
 function generateComment(comment: string): string {

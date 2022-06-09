@@ -20,6 +20,7 @@ export type SchemaType =
   | 'UNNAMED_ENUM'
   | 'UNTYPED_ARRAY'
   | 'CUSTOM_TYPE'
+  | 'FUNCTION'
 
 export type JSONSchemaTypeName = JSONSchema4TypeName
 export type JSONSchemaType = JSONSchema4Type

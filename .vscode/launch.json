@@ -2,6 +2,20 @@
   "version": "0.2.5",
   "configurations": [
     {
+      "name": "run debug",
+      "program": "${workspaceFolder}/run.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node",
+      "outFiles": [
+        "${workspaceFolder}/dist/src/**/*.js",
+        "!**/node_modules/**"
+      ]
+    },
+
+    {
         "type": "node",
         "request": "launch",
         "name": "Launch Program",

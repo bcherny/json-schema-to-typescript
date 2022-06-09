@@ -61,6 +61,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   CUSTOM_TYPE() {
     return false // Explicitly handled before we try to match
   },
+  
   NAMED_ENUM(schema) {
     return 'enum' in schema && 'tsEnumNames' in schema
   },
@@ -111,6 +112,9 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
       return true
     }
     return false
+  },
+  FUNCTION(schema) {
+    return schema.type as string === 'function'
   },
   TYPED_ARRAY(schema) {
     if (schema.type && schema.type !== 'array') {

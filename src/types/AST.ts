@@ -20,6 +20,7 @@ export type AST =
   | TUnion
   | TUnknown
   | TCustomType
+  | TFunctionType
 
 export interface AbstractAST {
   comment?: string
@@ -84,6 +85,7 @@ export interface TInterfaceParam {
   keyName: string
   isRequired: boolean
   isPatternProperty: boolean
+  isMethod: boolean
   isUnreachableDefinition: boolean
 }
 
@@ -137,7 +139,14 @@ export interface TUnknown extends AbstractAST {
 
 export interface TCustomType extends AbstractAST {
   type: 'CUSTOM_TYPE'
-  params: string
+  params: string,
+}
+
+export interface TFunctionType extends AbstractAST {
+  type: 'FUNCTION',
+  arguments: AST[],
+  returns: AST | undefined,
+  requiredCount: number
 }
 
 ////////////////////////////////////////////     literals
