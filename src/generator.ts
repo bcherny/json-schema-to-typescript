@@ -17,16 +17,18 @@ import {
 import {log, toSafeString} from './utils'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
-  return (
-    [
-      options.bannerComment,
-      declareNamedTypes(ast, options, ast.standaloneName!),
-      declareNamedInterfaces(ast, options, ast.standaloneName!),
-      declareEnums(ast, options)
-    ]
-      .filter(Boolean)
-      .join('\n\n') + '\n'
-  ) // trailing newline
+  return generateTypeUnmemoized(ast, options).toString()
+  // console.log(a)
+  // return (
+  //   [
+  //     options.bannerComment,
+  //     declareNamedTypes(ast, options, ast.standaloneName!),
+  //     declareNamedInterfaces(ast, options, ast.standaloneName!),
+  //     declareEnums(ast, options)
+  //   ]
+  //     .filter(Boolean)
+  //     .join('\n\n') + '\n'
+  // ) // trailing newline
 }
 
 function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
