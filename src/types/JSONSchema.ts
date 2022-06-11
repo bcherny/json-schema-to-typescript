@@ -36,7 +36,7 @@ export interface JSONSchema extends JSONSchema4 {
   /**
    * schema extension to support custom names
    */
-  tsName?: string
+  ['x-name']?: string
 }
 
 export const Parent = Symbol('Parent')

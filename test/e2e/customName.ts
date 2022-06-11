@@ -12,5 +12,5 @@ export const input = {
     grocery: {$ref: '#/definitions/grocery'}
   },
   additionalProperties: false,
-  tsName: 'GroceryList'
+  'x-name': 'GroceryList'
 }
