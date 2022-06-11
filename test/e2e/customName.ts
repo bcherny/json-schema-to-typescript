@@ -1,6 +1,5 @@
 export const input = {
   $schema: 'http://json-schema.org/schema#',
-
   definitions: {
     grocery: {
       type: 'object',
@@ -8,7 +7,6 @@ export const input = {
       maxProperties: 1
     }
   },
-
   type: 'object',
   properties: {
     grocery: {$ref: '#/definitions/grocery'}
