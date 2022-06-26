@@ -1,7 +1,7 @@
 import test from 'ava'
 import {execSync} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
-import {resolve, join} from 'path'
+import {resolve, posix} from 'path'
 import rimraf = require('rimraf')
 
 export function run() {
@@ -127,7 +127,7 @@ export function run() {
 
 function getPaths(path: string, paths: string[] = []) {
   if (existsSync(path) && lstatSync(path).isDirectory()) {
-    readdirSync(resolve(path)).forEach(item => getPaths(join(path, item), paths))
+    readdirSync(resolve(path)).forEach(item => getPaths(posix.join(posix.normalize(path), item), paths))
   } else {
     paths.push(path)
   }
