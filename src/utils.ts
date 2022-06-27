@@ -1,5 +1,5 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
-import {basename, dirname, extname, join, normalize, sep} from 'path'
+import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
@@ -274,7 +274,7 @@ export function pathTransform(outputPath: string, inputPath: string, filePath: s
   const filePathList = dirname(normalize(filePath)).split(sep)
   const filePathRel = filePathList.filter((f, i) => f !== inPathList[i])
 
-  return join(normalize(outputPath), ...filePathRel)
+  return posix.join(posix.normalize(outputPath), ...filePathRel)
 }
 
 /**
