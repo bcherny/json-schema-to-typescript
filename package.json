@@ -91,8 +91,7 @@
     "ignoredByWatcher": [
       "./src"
     ],
-    "snapshotDir": "./test/__snapshots__",
-    "vebose": true
+    "snapshotDir": "./test/__snapshots__"
   },
   "browserify": {
     "transform": [
