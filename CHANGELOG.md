@@ -2,6 +2,20 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 11.0.0
+
+This is a major release with lots of bugfixes, some of which may change emitted types.
+
+- 2ca6e50 Bugfix: Fix crash that may happen when emitting types for cyclical schemas (#323, #376)
+- 8fa728e Bugfix: Fix tests on Windows, make snapshot ordering consistent
+- b78a616 Bugfix: Make `compile()` non-mutating (#370, #443)
+- a89ffe1 Bugfix: Add maximum size heuristic for tuple types (#438)
+- 6fbcbc8 Bugfix: Improve performance & stability issue caused by JSON serialization (#422)
+- 7aa353d Feat: Add support for `$id` (#436)
+- 59747b1 Feat: Add support for specifying a default for `additionalProperties` (#335)
+- 966cca5 Cleanup: Drop support for Node 10
+
+
 ## 10.1.0
 
 - ec78099 Feat: Add support for JSON Schema `const` and `$defs` keywords (#263)
