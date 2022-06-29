@@ -141,16 +141,16 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   // Initial clone to avoid mutating the input
   const _schema = cloneDeep(schema)
 
-  const dereferenced = await dereference(_schema, _options)
+  const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(_schema, dereferenced)) {
+    if (isDeepStrictEqual(_schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
     } else {
-      log('green', 'dereferencer', time(), '✅ Result:', dereferenced)
+      log('green', 'dereferencer', time(), '✅ Result:', dereferencedSchema)
     }
   }
 
-  const linked = link(dereferenced)
+  const linked = link(dereferencedSchema)
   if (process.env.VERBOSE) {
     log('green', 'linker', time(), '✅ No change')
   }
@@ -164,7 +164,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     log('green', 'validator', time(), '✅ No change')
   }
 
-  const normalized = normalize(linked, name, _options)
+  const normalized = normalize(linked, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
   const parsed = parse(normalized, _options)
