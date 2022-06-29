@@ -52,7 +52,7 @@
     "@types/prettier": "^2.6.1",
     "cli-color": "^2.0.2",
     "get-stdin": "^8.0.0",
-    "glob": "^8.0.3",
+    "glob": "^7.1.6",
     "glob-promise": "^4.2.2",
     "is-glob": "^4.0.3",
     "lodash": "^4.17.21",
