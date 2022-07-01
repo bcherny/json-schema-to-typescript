@@ -202,9 +202,14 @@ Prettier is known to run slowly on really big files. To skip formatting and impr
 
 ## Who uses JSON-Schema-to-TypeScript?
 
-- [AWS](https://github.com/aws/aws-toolkit-vscode), [AWSLabs](https://github.com/awslabs/cdk8s)
+- [Alibaba](https://github.com/alibaba/lowcode-engine)
+- [Amazon](https://github.com/aws/aws-toolkit-vscode), [AWSLabs](https://github.com/awslabs/cdk8s)
+- [Expo](https://github.com/expo/expo)
 - [FormatJS](https://github.com/formatjs/formatjs)
 - [Microsoft](https://github.com/microsoft/mixed-reality-extension-sdk)
+- [Mozilla](https://github.com/mdn/browser-compat-data)
+- [Nx](https://github.com/nrwl/nx)
+- [RStudio](https://github.com/rstudio/rstudio)
 - [Sourcegraph](https://github.com/sourcegraph/sourcegraph)
 - [Stryker](https://github.com/stryker-mutator/stryker)
 - [Webpack](https://github.com/webpack/webpack)
