@@ -120,7 +120,7 @@ function parseNonLiteral(
   usedNames: UsedNames
 ): AST {
   const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
-  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
+  const keyNameFromDefinition = findKey(definitions, definition => definitionMatchesSchema(definition, schema))
 
   switch (type) {
     case 'ALL_OF':
@@ -473,4 +473,11 @@ const getDefinitionsMemoized = memoize(getDefinitions)
  */
 function hasDefinitions(schema: LinkedJSONSchema): schema is JSONSchemaWithDefinitions {
   return 'definitions' in schema
+}
+
+function definitionMatchesSchema(definition: LinkedJSONSchema, schema: LinkedJSONSchema): unknown {
+  if ('enum' in definition && 'enum' in schema) {
+    return definition.enum === schema.enum
+  }
+  return definition === schema
 }
