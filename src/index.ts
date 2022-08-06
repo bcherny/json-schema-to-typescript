@@ -1,6 +1,6 @@
 import {readFileSync} from 'fs'
 import {JSONSchema4} from 'json-schema'
-import {Options as $RefOptions} from '@apidevtools/json-schema-ref-parser'
+import {Options as $RefOptions} from '@bcherny/json-schema-ref-parser'
 import {cloneDeep, endsWith, merge} from 'lodash'
 import {dirname} from 'path'
 import {Options as PrettierOptions} from 'prettier'

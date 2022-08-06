@@ -46,7 +46,7 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "https://github.com/bcherny/json-schema-ref-parser.git#984282d34a2993e5243aa35100fe32a63699164d",
+    "@bcherny/json-schema-ref-parser": "9.0.9",
     "@types/json-schema": "^7.0.11",
     "@types/lodash": "^4.14.182",
     "@types/prettier": "^2.6.1",

@@ -1,4 +1,4 @@
-import $RefParser = require('@apidevtools/json-schema-ref-parser')
+import $RefParser = require('@bcherny/json-schema-ref-parser')
 import {JSONSchema} from './types/JSONSchema'
 import {log} from './utils'
 
@@ -11,7 +11,7 @@ export async function dereference(
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const parser = new $RefParser()
   const dereferencedPaths: DereferencedPaths = new WeakMap()
-  const dereferencedSchema = await parser.dereference(cwd, schema as any, {
+  const dereferencedSchema = (await parser.dereference(cwd, schema as any, {
     ...$refOptions,
     dereference: {
       ...$refOptions.dereference,
@@ -19,6 +19,6 @@ export async function dereference(
         dereferencedPaths.set(schema, $ref)
       }
     }
-  }) as any // TODO: fix types
+  })) as any // TODO: fix types
   return {dereferencedPaths, dereferencedSchema}
 }
