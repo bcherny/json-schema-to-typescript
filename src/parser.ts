@@ -23,7 +23,7 @@ import {
   SchemaSchema,
   SchemaType
 } from './types/JSONSchema'
-import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
+import {generateName, joinComments, log, maybeStripDefault, maybeStripNameHints} from './utils'
 
 export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
 
@@ -370,7 +370,7 @@ function parseSchema(
         const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
 via the \`patternProperty\` "${key}".`
-        ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+        ast.comment = joinComments(ast.comment, comment)
         return {
           ast,
           isPatternProperty: !singlePatternProperty,
@@ -388,7 +388,7 @@ via the \`patternProperty\` "${key}".`
         const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
 via the \`definition\` "${key}".`
-        ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+        ast.comment = joinComments(ast.comment, comment)
         return {
           ast,
           isPatternProperty: false,

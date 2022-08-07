@@ -55,6 +55,12 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
         optimizedAST.params = params
       }
 
+      // [A] -> A
+      if (optimizedAST.params.length === 1 && !optimizedAST.comment && !optimizedAST.standaloneName) {
+        log('cyan', 'optimizer', '[A] -> A', optimizedAST)
+        return optimizedAST.params[0]
+      }
+
       return Object.assign(optimizedAST, {
         params: optimizedAST.params.map(_ => optimize(_, options, processed))
       })

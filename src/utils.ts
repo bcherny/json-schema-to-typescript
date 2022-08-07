@@ -262,6 +262,10 @@ export function escapeBlockComment(schema: JSONSchema) {
   }
 }
 
+export function joinComments(...comments: (string | undefined)[]): string {
+  return comments.filter(Boolean).join('\n\n')
+}
+
 /*
 the following logic determines the out path by comparing the in path to the users specified out path.
 For example, if input directory MultiSchema looks like:
