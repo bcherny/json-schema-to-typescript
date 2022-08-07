@@ -1,14 +1,14 @@
 {
-  "name": "Normalize $defs to definitions",
+  "name": "Normalize definitions to $defs",
   "in": {
     "$id": "foo",
-    "$defs": {
+    "definitions": {
       "bar": "baz"
     }
   },
   "out": {
     "$id": "foo",
-    "definitions": {
+    "$defs": {
       "bar": "baz"
     }
   }

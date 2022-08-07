@@ -14,6 +14,7 @@ export function Try<T>(fn: () => T, err: (e: Error) => any): T {
 // keys that shouldn't be traversed by the catchall step
 const BLACKLISTED_KEYS = new Set([
   'id',
+  '$defs',
   '$id',
   '$schema',
   'title',
@@ -120,6 +121,9 @@ export function traverse(
   }
   if (schema.definitions) {
     traverseObjectKeys(schema.definitions, callback, processed)
+  }
+  if (schema.$defs) {
+    traverseObjectKeys(schema.$defs, callback, processed)
   }
   if (schema.not) {
     traverse(schema.not, callback, processed)
@@ -362,13 +366,14 @@ export function isSchemaLike(schema: LinkedJSONSchema) {
   }
 
   const JSON_SCHEMA_KEYWORDS = [
+    '$defs',
     'allOf',
     'anyOf',
+    'definitions',
     'dependencies',
     'enum',
-    'oneOf',
-    'definitions',
     'not',
+    'oneOf',
     'patternProperties',
     'properties',
     'required'
