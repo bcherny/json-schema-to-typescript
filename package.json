@@ -17,10 +17,10 @@
     "clean": "shx rm -rf dist && mkdir dist",
     "lint": "eslint src/*.ts test/*.ts",
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
-    "test": "ava --timeout=300s --verbose",
+    "test": "npm run pre-test && ava --timeout=300s --verbose",
     "stresstest": "seq 1 10 | xargs -I{} npm test",
     "prepublishOnly": "npm test",
-    "pretest": "npm run clean && npm run build:server",
+    "pre-test": "npm run clean && npm run build:server",
     "watch": "tsc -w",
     "watch:test": "ava -w"
   },

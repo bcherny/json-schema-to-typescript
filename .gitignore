@@ -1,5 +1,12 @@
 .DS_Store
 .idea/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 npm-debug.log
 node_modules
 *.js
