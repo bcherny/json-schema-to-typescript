@@ -2,6 +2,7 @@ import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from
 import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
 import {DereferencedPaths} from './resolver'
+import {isDeepStrictEqual} from 'util'
 
 type Rule = (
   schema: LinkedJSONSchema,
@@ -202,10 +203,15 @@ rules.set('Make extends always an array, if it is defined', schema => {
   }
 })
 
-rules.set('Transform $defs to definitions', schema => {
-  if (schema.$defs) {
-    schema.definitions = schema.$defs
-    delete schema.$defs
+rules.set('Transform definitions to $defs', (schema, fileName) => {
+  if (schema.definitions && schema.$defs && !isDeepStrictEqual(schema.definitions, schema.$defs)) {
+    throw ReferenceError(
+      `Schema must define either definitions or $defs, not both. Given id=${schema.id} in ${fileName}`
+    )
+  }
+  if (schema.definitions) {
+    schema.$defs = schema.definitions
+    delete schema.definitions
   }
 })
 

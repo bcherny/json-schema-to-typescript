@@ -384,7 +384,7 @@ via the \`patternProperty\` "${key}".`
 
   if (options.unreachableDefinitions) {
     asts = asts.concat(
-      map(schema.definitions, (value, key: string) => {
+      map(schema.$defs, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
 via the \`definition\` "${key}".`
@@ -453,7 +453,7 @@ function getDefinitions(
   }
   if (isPlainObject(schema)) {
     return {
-      ...(isSchema && hasDefinitions(schema) ? schema.definitions : {}),
+      ...(isSchema && hasDefinitions(schema) ? schema.$defs : {}),
       ...Object.keys(schema).reduce<Definitions>(
         (prev, cur) => ({
           ...prev,
@@ -472,5 +472,5 @@ const getDefinitionsMemoized = memoize(getDefinitions)
  * TODO: Reduce rate of false positives
  */
 function hasDefinitions(schema: LinkedJSONSchema): schema is JSONSchemaWithDefinitions {
-  return 'definitions' in schema
+  return '$defs' in schema
 }

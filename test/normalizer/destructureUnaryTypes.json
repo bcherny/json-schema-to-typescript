@@ -26,8 +26,7 @@
   },
   "out": {
     "$id": "foo",
-    "type": "object",
-    "definitions": {
+    "$defs": {
       "a": {
         "type": "integer",
         "$id": "a"
@@ -39,6 +38,7 @@
         "$id": "b"
       }
     },
+    "type": "object",
     "additionalProperties": true,
     "required": []
   }

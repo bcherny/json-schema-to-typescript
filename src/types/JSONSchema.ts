@@ -70,7 +70,7 @@ export interface NormalizedJSONSchema extends LinkedJSONSchema {
   additionalProperties: boolean | NormalizedJSONSchema
   extends?: string[]
   items?: NormalizedJSONSchema | NormalizedJSONSchema[]
-  definitions?: {
+  $defs?: {
     [k: string]: NormalizedJSONSchema
   }
   properties?: {
@@ -89,6 +89,7 @@ export interface NormalizedJSONSchema extends LinkedJSONSchema {
   required: string[]
 
   // Removed by normalizer
+  definitions: never
   id: never
 }
 
@@ -108,7 +109,7 @@ export interface SchemaSchema extends NormalizedJSONSchema {
 }
 
 export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {
-  definitions: {
+  $defs: {
     [k: string]: NormalizedJSONSchema
   }
 }
