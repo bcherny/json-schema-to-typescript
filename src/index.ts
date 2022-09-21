@@ -115,7 +115,7 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
     }
   )
   const schema = Try<JSONSchema4>(
-    () => JSON.parse(contents.toString()),
+    () => JSON.parse(contents.toString().trim()),
     () => {
       throw new TypeError(`Error parsing JSON in file "${filename}"`)
     }
