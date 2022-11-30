@@ -13,6 +13,7 @@ export type AST =
   | TLiteral
   | TNumber
   | TNull
+  | TUndefined
   | TObject
   | TReference
   | TString
@@ -103,6 +104,10 @@ export interface TNumber extends AbstractAST {
 
 export interface TNull extends AbstractAST {
   type: 'NULL'
+}
+
+export interface TUndefined extends AbstractAST {
+  type: 'UNDEFINED'
 }
 
 export interface TObject extends AbstractAST {
