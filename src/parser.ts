@@ -364,6 +364,7 @@ function parseSchema(
     // additionalProperties is not set, and there is only a single
     // value definition, we can validate against that.
     singlePatternProperty = !schema.additionalProperties && Object.keys(schema.patternProperties).length === 1
+
     asts = asts.concat(
       map(schema.patternProperties, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
