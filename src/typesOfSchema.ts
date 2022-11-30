@@ -119,6 +119,9 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     }
     return 'items' in schema
   },
+  UNDEFINED(schema) {
+    return schema.type === 'undefined'
+  },
   UNION(schema) {
     return Array.isArray(schema.type)
   },
