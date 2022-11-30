@@ -364,10 +364,10 @@ function parseSchema(
     // additionalProperties is not set, and there is only a single
     // value definition, we can validate against that.
     singlePatternProperty = !schema.additionalProperties && Object.keys(schema.patternProperties).length === 1
-
     asts = asts.concat(
       map(schema.patternProperties, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
+        //TODO: Modify ast here to add union with undefined, or add undefined to union
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
 via the \`patternProperty\` "${key}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
