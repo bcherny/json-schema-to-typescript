@@ -53,8 +53,12 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
 })
 
 rules.set('Default additionalProperties', (schema, _, options) => {
-  if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
-    schema.additionalProperties = options.additionalProperties
+  if (
+    isObjectType(schema) &&
+    !('additionalProperties' in schema) &&
+    (schema as LinkedJSONSchema).patternProperties === undefined
+  ) {
+    ;(schema as LinkedJSONSchema).additionalProperties = options.additionalProperties
   }
 })
 

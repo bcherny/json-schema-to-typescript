@@ -294,8 +294,9 @@ function generateInterface(ast: TInterface, options: Options): string {
   return (
     `{` +
     '\n' +
+    '  contructor(private configService: ConfigService, private objectId: string) {}\n\n' +
     ast.params
-      .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
+      .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition && !(_.keyName === '[k: string]'))
       .map(
         ({isRequired, keyName, ast}) =>
           [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string]
@@ -304,9 +305,12 @@ function generateInterface(ast: TInterface, options: Options): string {
         ([isRequired, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
           escapeKeyName(keyName) +
-          (isRequired ? '' : '?') +
-          ': ' +
-          (hasStandaloneName(ast) ? toSafeString(type) : type)
+          '(): ' +
+          (hasStandaloneName(ast) ? toSafeString(type) : type) +
+          (isRequired ? '' : '| undefined') +
+          ' {\n' +
+          `    this.configService.get(this.objectId, '${keyName}')\n` +
+          '  }\n'
       )
       .join('\n') +
     '\n' +
@@ -334,7 +338,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
-    `export interface ${toSafeString(ast.standaloneName)} ` +
+    `export class ${toSafeString(ast.standaloneName)} ` +
     (ast.superTypes.length > 0
       ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
       : '') +
