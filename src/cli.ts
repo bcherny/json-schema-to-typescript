@@ -77,7 +77,8 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
 
   // careful to do this serially
   results.forEach(([file, result]) => {
-    const outputPath = argOut && `${argOut}/${basename(file, '.json')}.d.ts`
+    const outputDir = argOut || dirname(file)
+    const outputPath = `${outputDir}/${basename(file, '.json')}.d.ts`
     outputResult(result, outputPath)
   })
 }
