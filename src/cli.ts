@@ -155,10 +155,11 @@ function printHelp() {
   process.stdout.write(
     `
 ${pkg.name} ${pkg.version}
-Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE] [OPTIONS]
+Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE] [--multi, -m] [OPTIONS]
 
 With no IN_FILE, or when IN_FILE is -, read standard input.
-With no OUT_FILE and when IN_FILE is specified, create .d.ts file in the same directory.
+With no OUT_FILE and when IN_FILE is specified, write to standard output.
+With no OUT_FILE and when IN_FILE and is specified and --multi is set, create .d.ts file in the same directory of .json file.
 With no OUT_FILE nor IN_FILE, write to standard output.
 
 You can use any of the following options by adding them at the end.
