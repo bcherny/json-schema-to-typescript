@@ -15,7 +15,8 @@ main(
     alias: {
       help: ['h'],
       input: ['i'],
-      output: ['o']
+      output: ['o'],
+      multi: ['m']
     }
   })
 )
@@ -28,6 +29,7 @@ async function main(argv: minimist.ParsedArgs) {
 
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
+  const argMulti = !!argv.multi
 
   const ISGLOB = isGlob(argIn)
   const ISDIR = isDir(argIn)
@@ -38,10 +40,16 @@ async function main(argv: minimist.ParsedArgs) {
     )
   }
 
+  if (argOut && argMulti) {
+    throw new ReferenceError(
+      `You have specified a single file ${argOut} output and a multi file output simultaneously.`
+    )
+  }
+
   try {
     // Process input as either glob, directory, or single file
     if (ISGLOB) {
-      await processGlob(argIn, argOut, argv as Partial<Options>)
+      await processGlob(argIn, argOut, argMulti, argv as Partial<Options>)
     } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
     } else {
@@ -59,7 +67,7 @@ function isDir(path: string): boolean {
   return existsSync(path) && lstatSync(path).isDirectory()
 }
 
-async function processGlob(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
+async function processGlob(argIn: string, argOut: string | undefined, argMulti: boolean, argv: Partial<Options>) {
   const files = await glob(argIn) // execute glob pattern match
 
   if (files.length === 0) {
@@ -77,8 +85,12 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
 
   // careful to do this serially
   results.forEach(([file, result]) => {
-    const outputDir = argOut || dirname(file)
-    const outputPath = `${outputDir}/${basename(file, '.json')}.d.ts`
+    let outputPath
+    if (argMulti) {
+      outputPath = `${dirname(file)}/${basename(file, '.json')}.d.ts`
+    } else {
+      outputPath = argOut && `${argOut}/${basename(file, '.json')}.d.ts`
+    }
     outputResult(result, outputPath)
   })
 }
