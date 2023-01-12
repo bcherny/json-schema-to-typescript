@@ -169,6 +169,8 @@ function generateRawType(ast: AST, options: Options): string {
   }
 
   switch (ast.type) {
+    case 'NEVER':
+      return 'never'
     case 'ANY':
       return 'any'
     case 'ARRAY':

@@ -76,6 +76,10 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Generate respectively `any` and `never` types for boolean schema values `true` and `false`
+   */
+  booleanSchemas: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -104,7 +108,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  unknownAny: true
+  unknownAny: true,
+  booleanSchemas: false
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {

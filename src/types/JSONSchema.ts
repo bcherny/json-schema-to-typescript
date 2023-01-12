@@ -4,6 +4,7 @@ import {isPlainObject, memoize} from 'lodash'
 export type SchemaType =
   | 'ALL_OF'
   | 'UNNAMED_SCHEMA'
+  | 'NEVER'
   | 'ANY'
   | 'ANY_OF'
   | 'BOOLEAN'

@@ -3,6 +3,7 @@ import {JSONSchema4Type} from 'json-schema'
 export type AST_TYPE = AST['type']
 
 export type AST =
+  | TNever
   | TAny
   | TArray
   | TBoolean
@@ -41,6 +42,10 @@ export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
 }
 
 ////////////////////////////////////////////     types
+
+export interface TNever extends AbstractAST {
+  type: 'NEVER'
+}
 
 export interface TAny extends AbstractAST {
   type: 'ANY'

@@ -37,6 +37,20 @@ export function parse(
   usedNames = new Set<string>()
 ): AST {
   if (isPrimitive(schema)) {
+    if (options.booleanSchemas) {
+      if (schema === true) {
+        return {
+          keyName,
+          type: 'ANY'
+        }
+      }
+      if (schema === false) {
+        return {
+          keyName,
+          type: 'NEVER'
+        }
+      }
+    }
     return parseLiteral(schema, keyName)
   }
 
@@ -130,6 +144,13 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'INTERSECTION'
+      }
+    case 'NEVER':
+      return {
+        comment: schema.description,
+        keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        type: 'NEVER'
       }
     case 'ANY':
       return {
