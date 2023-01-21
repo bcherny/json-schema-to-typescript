@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@bcherny/json-schema-ref-parser@9.0.9":
-  version "9.0.9"
-  resolved "https://registry.yarnpkg.com/@bcherny/json-schema-ref-parser/-/json-schema-ref-parser-9.0.9.tgz#09899d405bc708c0acac0066ae8db5b94d465ca4"
-  integrity sha512-vmEmnJCfpkLdas++9OYg6riIezTYqTHpqUTODJzHLzs5UnXujbOJW9VwcVCnyo1mVRt32FRr23iXBx/sX8YbeQ==
+"@apidevtools/json-schema-ref-parser@^10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-10.0.0.tgz#0fd8ab9d72ebc9ca31719bc14355c57c802e1314"
+  integrity sha512-63r/JBpz4hle4VOCHXuHOif21QTeU0sUiCZ6HUDvrlnoxD/XkujxxZayvZAOsfQ7bVFICa4y0D/3Y2W4Jle4rQ==
   dependencies:
     "@jsdevtools/ono" "^7.1.3"
     "@types/json-schema" "^7.0.6"
