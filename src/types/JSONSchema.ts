@@ -45,7 +45,7 @@ export interface LinkedJSONSchema extends JSONSchema {
   [Parent]: LinkedJSONSchema | null
 
   additionalItems?: boolean | LinkedJSONSchema
-  additionalProperties: boolean | LinkedJSONSchema
+  additionalProperties?: boolean | LinkedJSONSchema
   items?: LinkedJSONSchema | LinkedJSONSchema[]
   definitions?: {
     [k: string]: LinkedJSONSchema
