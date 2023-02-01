@@ -20,6 +20,13 @@ export function run() {
     t.deepEqual(before, SCHEMA)
   })
 
+  test('compile() should mutate its input if defererenceInputSchema option is true', async t => {
+    const after = cloneDeep(SCHEMA)
+    const before = cloneDeep(after)
+    await compile(after, 'A', { defererenceInputSchema: true })
+    t.notDeepEqual(before, after)
+  })
+
   test('compile() should be idempotent', async t => {
     const a = await compile(SCHEMA, 'A')
     const b = await compile(SCHEMA, 'A')

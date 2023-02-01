@@ -75,7 +75,11 @@ export interface Options {
   /**
    * Generate unknown type instead of any
    */
-  unknownAny: boolean
+  unknownAny: boolean,
+  /**
+   * Mutate the input schema by dereferencing JSON schema refs (this restores old behavior of altering the input object)
+   */
+  defererenceInputSchema: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -104,7 +108,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  unknownAny: true
+  unknownAny: true,
+  defererenceInputSchema: false
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
@@ -139,7 +144,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   }
 
   // Initial clone to avoid mutating the input
-  const _schema = cloneDeep(schema)
+  const _schema = _options.defererenceInputSchema ? schema : cloneDeep(schema)
 
   const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
