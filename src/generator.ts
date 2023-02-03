@@ -303,9 +303,9 @@ function generateInterface(ast: TInterface, options: Options): string {
       
     // Join all of the comments as a single comment.
     const comment = pp.filter(
-      ([ast, _]) => hasComment(ast)
+      ([ast]) => hasComment(ast)
     ).map(
-      ([ast, _]) => ast.comment
+      ([ast]) => ast.comment
     ).join('\n')
 
     // Add the string key and union the types.
@@ -317,7 +317,7 @@ function generateInterface(ast: TInterface, options: Options): string {
         .join('|') + '\n'
   }
 
-  let properties = ast.params
+  const properties = ast.params
     .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
     .map(
       ({ isRequired, keyName, ast }) =>

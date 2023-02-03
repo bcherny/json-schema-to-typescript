@@ -1,4 +1,4 @@
-import $RefParser = require('@apidevtools/json-schema-ref-parser')
+import $RefParser = require('@bcherny/json-schema-ref-parser')
 import {JSONSchema} from './types/JSONSchema'
 import {log} from './utils'
 
