@@ -358,13 +358,10 @@ function parseSchema(
     keyName: key
   }))
 
-  let singlePatternProperty = false
-  if (schema.patternProperties) {
+  if (schema.patternProperties && !schema.additionalProperties) {
     // partially support patternProperties. in the case that
-    // additionalProperties is not set, and there is only a single
-    // value definition, we can validate against that.
-    singlePatternProperty = !schema.additionalProperties && Object.keys(schema.patternProperties).length === 1
-
+    // additionalProperties is not set, we can add the patterns as comments
+    // so that they may be validated against.
     asts = asts.concat(
       map(schema.patternProperties, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
@@ -373,10 +370,10 @@ via the \`patternProperty\` "${key}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
         return {
           ast,
-          isPatternProperty: !singlePatternProperty,
-          isRequired: singlePatternProperty || includes(schema.required || [], key),
+          isPatternProperty: true,
+          isRequired: includes(schema.required || [], key),
           isUnreachableDefinition: false,
-          keyName: singlePatternProperty ? '[k: string]' : key
+          keyName: '[k: string]'
         }
       })
     )
@@ -404,7 +401,7 @@ via the \`definition\` "${key}".`
   switch (schema.additionalProperties) {
     case undefined:
     case true:
-      if (singlePatternProperty) {
+      if (schema.patternProperties) {
         return asts
       }
       return asts.concat({
