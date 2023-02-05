@@ -9,6 +9,7 @@ export type SchemaType =
   | 'BOOLEAN'
   | 'NAMED_ENUM'
   | 'NAMED_SCHEMA'
+  | 'NEVER'
   | 'NULL'
   | 'NUMBER'
   | 'STRING'

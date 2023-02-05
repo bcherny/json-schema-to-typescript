@@ -174,6 +174,13 @@ function parseNonLiteral(
       }
     case 'NAMED_SCHEMA':
       return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName)
+    case 'NEVER':
+      return {
+        comment: schema.description,
+        keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        type: 'NEVER'
+      }
     case 'NULL':
       return {
         comment: schema.description,
