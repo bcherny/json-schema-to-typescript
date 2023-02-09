@@ -285,7 +285,11 @@ function generateRawType(ast: AST, options: Options): string {
  * Generate a Union or Intersection
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
-  const members = (ast as TUnion).params.map(_ => generateType(_, options))
+  const members = (ast as TUnion).params.map(_ =>
+    [_.comment && !_.standaloneName ? generateComment(_.comment) : null, generateType(_, options)]
+      .filter(Boolean)
+      .join('\n')
+  )
   const separator = ast.type === 'UNION' ? '|' : '&'
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
