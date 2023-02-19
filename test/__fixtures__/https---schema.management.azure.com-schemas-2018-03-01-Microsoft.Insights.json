@@ -1,0 +1,1110 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-03-01/Microsoft.Insights.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Insights",
+  "description": "Microsoft Insights Resource Types",
+  "resourceDefinitions": {
+    "actionGroups": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-03-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the action group."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ActionGroup"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An Azure action group."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/actionGroups"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.insights/actionGroups"
+    },
+    "metricAlerts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-03-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MetricAlertProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An alert rule."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/metricAlerts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/metricAlerts"
+    }
+  },
+  "definitions": {
+    "ActionGroup": {
+      "type": "object",
+      "properties": {
+        "automationRunbookReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AutomationRunbookReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of AutomationRunbook receivers that are part of this action group."
+        },
+        "azureAppPushReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AzureAppPushReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of AzureAppPush receivers that are part of this action group."
+        },
+        "azureFunctionReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AzureFunctionReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of azure function receivers that are part of this action group."
+        },
+        "emailReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EmailReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of email receivers that are part of this action group."
+        },
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether this action group is enabled. If an action group is not enabled, then none of its receivers will receive communications."
+        },
+        "groupShortName": {
+          "type": "string",
+          "maxLength": 12,
+          "description": "The short name of the action group. This will be used in SMS messages."
+        },
+        "itsmReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ItsmReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of ITSM receivers that are part of this action group."
+        },
+        "logicAppReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LogicAppReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of logic app receivers that are part of this action group."
+        },
+        "smsReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SmsReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of SMS receivers that are part of this action group."
+        },
+        "voiceReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VoiceReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of voice receivers that are part of this action group."
+        },
+        "webhookReceivers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WebhookReceiver"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of webhook receivers that are part of this action group."
+        }
+      },
+      "required": [
+        "enabled",
+        "groupShortName"
+      ],
+      "description": "An Azure action group."
+    },
+    "AutomationRunbookReceiver": {
+      "type": "object",
+      "properties": {
+        "automationAccountId": {
+          "type": "string",
+          "description": "The Azure automation account Id which holds this runbook and authenticate to Azure resource."
+        },
+        "isGlobalRunbook": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether this instance is global runbook."
+        },
+        "name": {
+          "type": "string",
+          "description": "Indicates name of the webhook."
+        },
+        "runbookName": {
+          "type": "string",
+          "description": "The name for this runbook."
+        },
+        "serviceUri": {
+          "type": "string",
+          "description": "The URI where webhooks should be sent."
+        },
+        "webhookResourceId": {
+          "type": "string",
+          "description": "The resource id for webhook linked to this runbook."
+        }
+      },
+      "required": [
+        "automationAccountId",
+        "isGlobalRunbook",
+        "runbookName",
+        "webhookResourceId"
+      ],
+      "description": "The Azure Automation Runbook notification receiver."
+    },
+    "AzureAppPushReceiver": {
+      "type": "object",
+      "properties": {
+        "emailAddress": {
+          "type": "string",
+          "description": "The email address registered for the Azure mobile app."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Azure mobile app push receiver. Names must be unique across all receivers within an action group."
+        }
+      },
+      "required": [
+        "emailAddress",
+        "name"
+      ],
+      "description": "The Azure mobile App push notification receiver."
+    },
+    "AzureFunctionReceiver": {
+      "type": "object",
+      "properties": {
+        "functionAppResourceId": {
+          "type": "string",
+          "description": "The azure resource id of the function app."
+        },
+        "functionName": {
+          "type": "string",
+          "description": "The function name in the function app."
+        },
+        "httpTriggerUrl": {
+          "type": "string",
+          "description": "The http trigger url where http request sent to."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the azure function receiver. Names must be unique across all receivers within an action group."
+        }
+      },
+      "required": [
+        "functionAppResourceId",
+        "functionName",
+        "httpTriggerUrl",
+        "name"
+      ],
+      "description": "An azure function receiver."
+    },
+    "DynamicMetricCriteria": {
+      "type": "object",
+      "properties": {
+        "alertSensitivity": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Low",
+                "Medium",
+                "High"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The extent of deviation required to trigger an alert. This will affect how tight the threshold is to the metric series pattern."
+        },
+        "criterionType": {
+          "type": "string",
+          "enum": [
+            "DynamicThresholdCriterion"
+          ]
+        },
+        "failingPeriods": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DynamicThresholdFailingPeriods"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The minimum number of violations required within the selected lookback time window required to raise an alert."
+        },
+        "ignoreDataBefore": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Use this option to set the date from which to start learning the metric historical data and calculate the dynamic thresholds (in ISO8601 format)"
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "GreaterThan",
+                "LessThan",
+                "GreaterOrLessThan"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The operator used to compare the metric value against the threshold."
+        }
+      },
+      "required": [
+        "alertSensitivity",
+        "criterionType",
+        "failingPeriods",
+        "operator"
+      ],
+      "description": "Criterion for dynamic threshold."
+    },
+    "DynamicThresholdFailingPeriods": {
+      "type": "object",
+      "properties": {
+        "minFailingPeriodsToAlert": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of violations to trigger an alert. Should be smaller or equal to numberOfEvaluationPeriods."
+        },
+        "numberOfEvaluationPeriods": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of aggregated lookback points. The lookback time window is calculated based on the aggregation granularity (windowSize) and the selected number of aggregated points."
+        }
+      },
+      "required": [
+        "minFailingPeriodsToAlert",
+        "numberOfEvaluationPeriods"
+      ],
+      "description": "The minimum number of violations required within the selected lookback time window required to raise an alert."
+    },
+    "EmailReceiver": {
+      "type": "object",
+      "properties": {
+        "emailAddress": {
+          "type": "string",
+          "description": "The email address of this receiver."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the email receiver. Names must be unique across all receivers within an action group."
+        }
+      },
+      "required": [
+        "emailAddress",
+        "name"
+      ],
+      "description": "An email receiver."
+    },
+    "ItsmReceiver": {
+      "type": "object",
+      "properties": {
+        "connectionId": {
+          "type": "string",
+          "description": "Unique identification of ITSM connection among multiple defined in above workspace."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Itsm receiver. Names must be unique across all receivers within an action group."
+        },
+        "region": {
+          "type": "string",
+          "description": "Region in which workspace resides. Supported values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'"
+        },
+        "ticketConfiguration": {
+          "type": "string",
+          "description": "JSON blob for the configurations of the ITSM action. CreateMultipleWorkItems option will be part of this blob as well."
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "OMS LA instance identifier."
+        }
+      },
+      "required": [
+        "connectionId",
+        "name",
+        "region",
+        "ticketConfiguration",
+        "workspaceId"
+      ],
+      "description": "An Itsm receiver."
+    },
+    "LogicAppReceiver": {
+      "type": "object",
+      "properties": {
+        "callbackUrl": {
+          "type": "string",
+          "description": "The callback url where http request sent to."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the logic app receiver. Names must be unique across all receivers within an action group."
+        },
+        "resourceId": {
+          "type": "string",
+          "description": "The azure resource id of the logic app receiver."
+        }
+      },
+      "required": [
+        "callbackUrl",
+        "name",
+        "resourceId"
+      ],
+      "description": "A logic app receiver."
+    },
+    "MetricAlertAction": {
+      "type": "object",
+      "properties": {
+        "actionGroupId": {
+          "type": "string",
+          "description": "the id of the action group to use."
+        },
+        "webHookProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "This field allows specifying custom properties, which would be appended to the alert payload sent as input to the webhook."
+        }
+      },
+      "description": "An alert action."
+    },
+    "MetricAlertCriteria": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/MetricAlertSingleResourceMultipleMetricCriteria"
+        },
+        {
+          "$ref": "#/definitions/WebtestLocationAvailabilityCriteria"
+        },
+        {
+          "$ref": "#/definitions/MetricAlertMultipleResourceMultipleMetricCriteria"
+        }
+      ],
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        }
+      },
+      "description": "The rule criteria that defines the conditions of the alert rule."
+    },
+    "MetricAlertMultipleResourceMultipleMetricCriteria": {
+      "type": "object",
+      "properties": {
+        "allOf": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MultiMetricCriteria"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the list of multiple metric criteria for this 'all of' operation. "
+        },
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+          ]
+        }
+      },
+      "required": [
+        "odata.type"
+      ],
+      "description": "Specifies the metric alert criteria for multiple resource that has multiple metric criteria."
+    },
+    "MetricAlertProperties": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MetricAlertAction"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the array of actions that are performed when the alert rule becomes active, and when an alert condition is resolved."
+        },
+        "autoMitigate": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the flag that indicates whether the alert should be auto resolved or not. The default is true."
+        },
+        "criteria": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MetricAlertCriteria"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rule criteria that defines the conditions of the alert rule."
+        },
+        "description": {
+          "type": "string",
+          "description": "the description of the metric alert that will be included in the alert email."
+        },
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the flag that indicates whether the metric alert is enabled."
+        },
+        "evaluationFrequency": {
+          "type": "string",
+          "format": "duration",
+          "description": "how often the metric alert is evaluated represented in ISO 8601 duration format."
+        },
+        "scopes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the list of resource id's that this metric alert is scoped to."
+        },
+        "severity": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Alert severity {0, 1, 2, 3, 4}"
+        },
+        "targetResourceRegion": {
+          "type": "string",
+          "description": "the region of the target resource(s) on which the alert is created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource."
+        },
+        "targetResourceType": {
+          "type": "string",
+          "description": "the resource type of the target resource(s) on which the alert is created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource."
+        },
+        "windowSize": {
+          "type": "string",
+          "format": "duration",
+          "description": "the period of time (in ISO 8601 duration format) that is used to monitor alert activity based on the threshold."
+        }
+      },
+      "required": [
+        "criteria",
+        "enabled",
+        "evaluationFrequency",
+        "scopes",
+        "severity",
+        "windowSize"
+      ],
+      "description": "An alert rule."
+    },
+    "MetricAlertSingleResourceMultipleMetricCriteria": {
+      "type": "object",
+      "properties": {
+        "allOf": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MetricCriteria"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of metric criteria for this 'all of' operation. "
+        },
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+          ]
+        }
+      },
+      "required": [
+        "odata.type"
+      ],
+      "description": "Specifies the metric alert criteria for a single resource that has multiple metric criteria."
+    },
+    "MetricCriteria": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "criterionType": {
+          "type": "string",
+          "enum": [
+            "StaticThresholdCriterion"
+          ]
+        },
+        "dimensions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MetricDimension"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of dimension conditions."
+        },
+        "metricName": {
+          "type": "string",
+          "description": "Name of the metric."
+        },
+        "metricNamespace": {
+          "type": "string",
+          "description": "Namespace of the metric."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the criteria."
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Equals",
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the criteria operator."
+        },
+        "skipMetricValidation": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Allows creating an alert rule on a custom metric that isn't yet emitted, by causing the metric validation to be skipped."
+        },
+        "threshold": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the criteria threshold value that activates the alert."
+        },
+        "timeAggregation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Average",
+                "Count",
+                "Minimum",
+                "Maximum",
+                "Total"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the criteria time aggregation types."
+        }
+      },
+      "required": [
+        "criterionType",
+        "metricName",
+        "name",
+        "operator",
+        "threshold",
+        "timeAggregation"
+      ],
+      "description": "Criterion to filter metrics."
+    },
+    "MetricDimension": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the dimension."
+        },
+        "operator": {
+          "type": "string",
+          "description": "the dimension operator. Only 'Include' and 'Exclude' are supported"
+        },
+        "values": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "list of dimension values."
+        }
+      },
+      "required": [
+        "name",
+        "operator",
+        "values"
+      ],
+      "description": "Specifies a metric dimension."
+    },
+    "MultiMetricCriteria": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/MetricCriteria"
+        },
+        {
+          "$ref": "#/definitions/DynamicMetricCriteria"
+        }
+      ],
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "dimensions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MetricDimension"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of dimension conditions."
+        },
+        "metricName": {
+          "type": "string",
+          "description": "Name of the metric."
+        },
+        "metricNamespace": {
+          "type": "string",
+          "description": "Namespace of the metric."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the criteria."
+        },
+        "skipMetricValidation": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Allows creating an alert rule on a custom metric that isn't yet emitted, by causing the metric validation to be skipped."
+        },
+        "timeAggregation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Average",
+                "Count",
+                "Minimum",
+                "Maximum",
+                "Total"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the criteria time aggregation types."
+        }
+      },
+      "required": [
+        "metricName",
+        "name",
+        "timeAggregation"
+      ],
+      "description": "The types of conditions for a multi resource alert."
+    },
+    "SmsReceiver": {
+      "type": "object",
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "description": "The country code of the SMS receiver."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the SMS receiver. Names must be unique across all receivers within an action group."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the SMS receiver."
+        }
+      },
+      "required": [
+        "countryCode",
+        "name",
+        "phoneNumber"
+      ],
+      "description": "An SMS receiver."
+    },
+    "VoiceReceiver": {
+      "type": "object",
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "description": "The country code of the voice receiver."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the voice receiver. Names must be unique across all receivers within an action group."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the voice receiver."
+        }
+      },
+      "required": [
+        "countryCode",
+        "name",
+        "phoneNumber"
+      ],
+      "description": "A voice receiver."
+    },
+    "WebhookReceiver": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the webhook receiver. Names must be unique across all receivers within an action group."
+        },
+        "serviceUri": {
+          "type": "string",
+          "description": "The URI where webhooks should be sent."
+        }
+      },
+      "required": [
+        "name",
+        "serviceUri"
+      ],
+      "description": "A webhook receiver."
+    },
+    "WebtestLocationAvailabilityCriteria": {
+      "type": "object",
+      "properties": {
+        "componentId": {
+          "type": "string",
+          "description": "The Application Insights resource Id."
+        },
+        "failedLocationCount": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of failed locations."
+        },
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
+          ]
+        },
+        "webTestId": {
+          "type": "string",
+          "description": "The Application Insights web test Id."
+        }
+      },
+      "required": [
+        "componentId",
+        "failedLocationCount",
+        "odata.type",
+        "webTestId"
+      ],
+      "description": "Specifies the metric alert rule criteria for a web test resource."
+    }
+  }
+}

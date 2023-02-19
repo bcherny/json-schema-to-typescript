@@ -1,0 +1,89 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-09-01-preview/Microsoft.ResourceGraph.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.ResourceGraph",
+  "description": "Microsoft ResourceGraph Resource Types",
+  "resourceDefinitions": {
+    "queries": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-09-01-preview"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "This will be used to handle Optimistic Concurrency. If not present, it will always overwrite the existing resource without checking conflict."
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the resource"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Graph Query resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/GraphQueryProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties that contain a graph query."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.ResourceGraph/queries"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.ResourceGraph/queries"
+    }
+  },
+  "definitions": {
+    "GraphQueryProperties": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The description of a graph query."
+        },
+        "query": {
+          "type": "string",
+          "description": "KQL query that will be graph."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "description": "Properties that contain a graph query."
+    }
+  }
+}

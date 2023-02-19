@@ -1,0 +1,199 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2016-05-16/Microsoft.AnalysisServices.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.AnalysisServices",
+  "description": "Microsoft AnalysisServices Resource Types",
+  "resourceDefinitions": {
+    "servers": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-05-16"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the Analysis Services resource."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9]*$",
+              "minLength": 3,
+              "maxLength": 63
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the Analysis Services server. It must be a minimum of 3 characters, and a maximum of 63."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AnalysisServicesServerProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of Analysis Services resource."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ResourceSku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Represents the SKU name and Azure pricing tier for Analysis Services resource."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key-value pairs of additional resource provisioning properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.AnalysisServices/servers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "sku",
+        "type"
+      ],
+      "description": "Microsoft.AnalysisServices/servers"
+    }
+  },
+  "definitions": {
+    "AnalysisServicesServerProperties": {
+      "type": "object",
+      "properties": {
+        "asAdministrators": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerAdministrators"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An array of administrator user identities"
+        },
+        "backupBlobContainerUri": {
+          "type": "string",
+          "description": "The container URI of backup blob."
+        },
+        "managedMode": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "1"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The managed mode of the server (0 = not managed, 1 = managed)."
+        },
+        "serverMonitorMode": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "1"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The server monitor mode for AS server"
+        }
+      },
+      "description": "Properties of Analysis Services resource."
+    },
+    "ResourceSku": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8,
+              "default": "1"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of instances in the read only query pool."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the SKU level."
+        },
+        "tier": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Development",
+                "Basic",
+                "Standard"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the Azure pricing tier to which the SKU applies."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "Represents the SKU name and Azure pricing tier for Analysis Services resource."
+    },
+    "ServerAdministrators": {
+      "type": "object",
+      "properties": {
+        "members": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An array of administrator user identities."
+        }
+      },
+      "description": "An array of administrator user identities"
+    }
+  }
+}

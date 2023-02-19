@@ -1,0 +1,116 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-10-01/Microsoft.MachineLearning.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.MachineLearning",
+  "description": "Microsoft MachineLearning Resource Types",
+  "resourceDefinitions": {
+    "workspaces": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-10-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the resource. This cannot be changed after the resource is created."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the machine learning workspace."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkspaceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a machine learning workspace."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Sku of the resource"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The tags of the resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.MachineLearning/workspaces"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.MachineLearning/workspaces"
+    }
+  },
+  "definitions": {
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the sku"
+        },
+        "tier": {
+          "type": "string",
+          "description": "Tier of the sku like Basic or Enterprise"
+        }
+      },
+      "description": "Sku of the resource"
+    },
+    "WorkspaceProperties": {
+      "type": "object",
+      "properties": {
+        "keyVaultIdentifierId": {
+          "type": "string",
+          "description": "The key vault identifier used for encrypted workspaces."
+        },
+        "ownerEmail": {
+          "type": "string",
+          "description": "The email id of the owner for this workspace."
+        },
+        "userStorageAccountId": {
+          "type": "string",
+          "description": "The fully qualified arm id of the storage account associated with this workspace."
+        }
+      },
+      "required": [
+        "ownerEmail",
+        "userStorageAccountId"
+      ],
+      "description": "The properties of a machine learning workspace."
+    }
+  }
+}

@@ -1,9 +1,11 @@
+import {FileInfo} from '@apidevtools/json-schema-ref-parser'
 import test from 'ava'
 import {readdirSync} from 'fs'
-import {find} from 'lodash'
+import {find, merge} from 'lodash'
 import {join} from 'path'
 import {compile, JSONSchema, Options} from '../src'
 import {log, stripExtension} from '../src/utils'
+import {getWithCache} from './http'
 
 const dir = __dirname + '/e2e'
 
@@ -15,14 +17,14 @@ type TestCase = {
   options?: Options
 }
 
-export function hasOnly() {
+export function hasOnly () {
   return readdirSync(dir)
     .filter(_ => /^.*\.js$/.test(_))
     .map(_ => require(join(dir, _)))
     .some(_ => _.only)
 }
 
-export function run() {
+export function run () {
   // [filename, absolute dirname, contents][]
   const modules = readdirSync(dir)
     .filter(_ => !_.includes('.ignore.'))
@@ -39,18 +41,29 @@ export function run() {
   }
 }
 
-function runOne(exports: TestCase, name: string) {
+const httpWithCacheResolver = {
+  order: 1,
+  canRead: /^https?:/i,
+  async read ({url}: FileInfo) {
+    return await getWithCache(url)
+  }
+}
+
+function runOne (exports: TestCase, name: string) {
   log('blue', 'Running test', name)
+
+  const options = merge(exports.options, {$refOptions: {resolve: {http: httpWithCacheResolver}}})
+
   test(name, async t => {
     if (exports.error) {
       try {
-        await compile(exports.input, stripExtension(name), exports.options)
+        await compile(exports.input, stripExtension(name), options)
       } catch (e) {
         t.true(e instanceof Error)
       }
     } else {
       t.snapshot(
-        await compile(exports.input, stripExtension(name), exports.options),
+        await compile(exports.input, stripExtension(name), options),
         `Expected output to match snapshot for e2e test: ${name}`
       )
     }

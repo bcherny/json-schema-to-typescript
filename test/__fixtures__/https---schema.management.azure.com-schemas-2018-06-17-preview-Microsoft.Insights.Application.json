@@ -1,0 +1,129 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-06-17-preview/Microsoft.Insights.Application.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "microsoft.insights",
+  "description": "microsoft insights Resource Types",
+  "resourceDefinitions": {
+    "workbooks": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-17-preview"
+          ]
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "user",
+                "shared"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The kind of workbook. Choices are user and shared."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Application Insights component resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkbookProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties that contain a workbook."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/workbooks"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.insights/workbooks"
+    }
+  },
+  "definitions": {
+    "WorkbookProperties": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Workbook category, as defined by the user at creation time."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user-defined name (display name) of the workbook."
+        },
+        "serializedData": {
+          "type": "string",
+          "description": "Configuration of this particular workbook. Configuration data is a string containing valid JSON"
+        },
+        "sourceId": {
+          "type": "string",
+          "description": "ResourceId for a source resource."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of 0 or more tags that are associated with this workbook definition"
+        },
+        "version": {
+          "type": "string",
+          "description": "Workbook version"
+        }
+      },
+      "required": [
+        "category",
+        "displayName",
+        "serializedData"
+      ],
+      "description": "Properties that contain a workbook."
+    }
+  }
+}

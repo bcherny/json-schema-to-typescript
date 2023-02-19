@@ -1,0 +1,170 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-11-04-preview/Microsoft.Quantum.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Quantum",
+  "description": "Microsoft Quantum Resource Types",
+  "resourceDefinitions": {
+    "workspaces": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-11-04-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/QuantumWorkspaceIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Managed Identity information."
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the quantum workspace resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkspaceResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Workspace"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Quantum/workspaces"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Quantum/workspaces"
+    }
+  },
+  "definitions": {
+    "Provider": {
+      "type": "object",
+      "properties": {
+        "applicationName": {
+          "type": "string",
+          "description": "The provider's marketplace application display name."
+        },
+        "instanceUri": {
+          "type": "string",
+          "description": "A Uri identifying the specific instance of this provider."
+        },
+        "providerId": {
+          "type": "string",
+          "description": "Unique id of this provider."
+        },
+        "providerSku": {
+          "type": "string",
+          "description": "The sku associated with pricing information for this provider."
+        },
+        "provisioningState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Succeeded",
+                "Launching",
+                "Updating",
+                "Deleting",
+                "Deleted",
+                "Failed"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Provisioning status field."
+        },
+        "resourceUsageId": {
+          "type": "string",
+          "description": "Id to track resource usage for the provider."
+        }
+      },
+      "description": "Information about a Provider. A Provider is an entity that offers Targets to run Azure Quantum Jobs."
+    },
+    "QuantumWorkspaceIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SystemAssigned",
+                "None"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The identity type."
+        }
+      },
+      "description": "Managed Identity information."
+    },
+    "WorkspaceResourceProperties": {
+      "type": "object",
+      "properties": {
+        "providers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Provider"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of Providers selected for this Workspace"
+        },
+        "storageAccount": {
+          "type": "string",
+          "description": "ARM Resource Id of the storage account associated with this workspace."
+        }
+      },
+      "description": "Properties of a Workspace"
+    }
+  }
+}

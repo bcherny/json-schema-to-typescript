@@ -1,0 +1,168 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2016-03-30/Microsoft.DataCatalog.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.DataCatalog",
+  "description": "Microsoft DataCatalog Resource Types",
+  "resourceDefinitions": {
+    "catalogs": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-03-30"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "Resource etag"
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the data catalog in the specified subscription and resource group."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ADCCatalogProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the data catalog."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataCatalog/catalogs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataCatalog/catalogs"
+    }
+  },
+  "definitions": {
+    "ADCCatalogProperties": {
+      "type": "object",
+      "properties": {
+        "admins": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Principals"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure data catalog admin list."
+        },
+        "enableAutomaticUnitAdjustment": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Automatic unit adjustment enabled or not."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Free",
+                "Standard"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure data catalog SKU."
+        },
+        "successfullyProvisioned": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure data catalog provision status."
+        },
+        "units": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure data catalog units."
+        },
+        "users": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Principals"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure data catalog user list."
+        }
+      },
+      "description": "Properties of the data catalog."
+    },
+    "Principals": {
+      "type": "object",
+      "properties": {
+        "objectId": {
+          "type": "string",
+          "description": "Object Id for the user"
+        },
+        "upn": {
+          "type": "string",
+          "description": "UPN of the user."
+        }
+      },
+      "description": "User principals."
+    }
+  }
+}

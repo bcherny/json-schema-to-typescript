@@ -1,0 +1,81 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2020-08-20-preview/Microsoft.Communication.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Communication",
+  "description": "Microsoft Communication Resource Types",
+  "resourceDefinitions": {
+    "communicationServices": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2020-08-20-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The Azure location where the CommunicationService is running."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the CommunicationService resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CommunicationServiceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A class that describes the properties of the CommunicationService."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Tags of the service which is a list of key value pairs that describe the resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Communication/communicationServices"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Communication/communicationServices"
+    }
+  },
+  "definitions": {
+    "CommunicationServiceProperties": {
+      "type": "object",
+      "properties": {
+        "dataLocation": {
+          "type": "string",
+          "description": "The location where the communication service stores its data at rest."
+        }
+      },
+      "required": [
+        "dataLocation"
+      ],
+      "description": "A class that describes the properties of the CommunicationService."
+    }
+  }
+}

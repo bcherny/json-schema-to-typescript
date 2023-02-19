@@ -1,0 +1,272 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-06-01-preview/Microsoft.Authorization.Resources.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Authorization",
+  "description": "Microsoft Authorization Resource Types",
+  "resourceDefinitions": {},
+  "subscription_resourceDefinitions": {
+    "policySetDefinitions": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the policy set definition to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PolicySetDefinitionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy set definition properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/policySetDefinitions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/policySetDefinitions"
+    }
+  },
+  "managementGroup_resourceDefinitions": {
+    "policySetDefinitions": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the policy set definition to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PolicySetDefinitionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy set definition properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/policySetDefinitions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/policySetDefinitions"
+    }
+  },
+  "unknown_resourceDefinitions": {
+    "policyAssignments": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the policy assignment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PolicyAssignmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy assignment properties."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PolicySku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy sku."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/policyAssignments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/policyAssignments"
+    }
+  },
+  "definitions": {
+    "PolicyAssignmentProperties": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "This message will be part of response in case of policy violation."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the policy assignment."
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {},
+          "description": "The policy assignment metadata."
+        },
+        "notScopes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy's excluded scopes."
+        },
+        "parameters": {
+          "description": "Required if a parameter is used in policy rule."
+        },
+        "policyDefinitionId": {
+          "type": "string",
+          "description": "The ID of the policy definition."
+        },
+        "scope": {
+          "type": "string",
+          "description": "The scope for the policy assignment."
+        }
+      },
+      "description": "The policy assignment properties."
+    },
+    "PolicyDefinitionReference": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "description": "Required if a parameter is used in policy rule."
+        },
+        "policyDefinitionId": {
+          "type": "string",
+          "description": "The ID of the policy definition or policy set definition."
+        }
+      },
+      "description": "The policy definition reference."
+    },
+    "PolicySetDefinitionProperties": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The policy set definition description."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the policy set definition."
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {},
+          "description": "The policy set definition metadata."
+        },
+        "parameters": {
+          "description": "The policy set definition parameters that can be used in policy definition references."
+        },
+        "policyDefinitions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PolicyDefinitionReference"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An array of policy definition references."
+        },
+        "policyType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "NotSpecified",
+                "BuiltIn",
+                "Custom"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom."
+        }
+      },
+      "required": [
+        "policyDefinitions"
+      ],
+      "description": "The policy set definition properties."
+    },
+    "PolicySku": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the policy sku. Possible values are A0 and A1."
+        },
+        "tier": {
+          "type": "string",
+          "description": "The policy sku tier. Possible values are Free and Standard."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "The policy sku."
+    }
+  }
+}

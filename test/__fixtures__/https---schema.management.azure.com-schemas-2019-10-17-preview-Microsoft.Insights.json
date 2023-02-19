@@ -1,0 +1,309 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-10-17-preview/Microsoft.Insights.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "microsoft.insights",
+  "description": "microsoft insights Resource Types",
+  "resourceDefinitions": {
+    "privateLinkScopes": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-10-17-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Azure Monitor PrivateLinkScope resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AzureMonitorPrivateLinkScopeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties that define a Azure Monitor PrivateLinkScope resource."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/privateLinkScopes_privateEndpointConnections_childResource"
+              },
+              {
+                "$ref": "#/definitions/privateLinkScopes_scopedResources_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/privateLinkScopes"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.insights/privateLinkScopes"
+    },
+    "privateLinkScopes_privateEndpointConnections": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-10-17-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the private endpoint connection."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a private endpoint connection."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/privateLinkScopes/privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/privateLinkScopes/privateEndpointConnections"
+    },
+    "privateLinkScopes_scopedResources": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-10-17-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the scoped resource object."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ScopedResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a private link scoped resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/privateLinkScopes/scopedResources"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/privateLinkScopes/scopedResources"
+    }
+  },
+  "definitions": {
+    "AzureMonitorPrivateLinkScopeProperties": {
+      "type": "object",
+      "properties": {},
+      "description": "Properties that define a Azure Monitor PrivateLinkScope resource."
+    },
+    "PrivateEndpointConnectionProperties": {
+      "type": "object",
+      "properties": {
+        "privateEndpoint": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointProperty"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Private endpoint which the connection belongs to."
+        },
+        "privateLinkServiceConnectionState": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateLinkServiceConnectionStateProperty"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "State of the private endpoint connection."
+        }
+      },
+      "description": "Properties of a private endpoint connection."
+    },
+    "PrivateEndpointProperty": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource id of the private endpoint."
+        }
+      },
+      "description": "Private endpoint which the connection belongs to."
+    },
+    "privateLinkScopes_privateEndpointConnections_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-10-17-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the private endpoint connection."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a private endpoint connection."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/privateLinkScopes/privateEndpointConnections"
+    },
+    "privateLinkScopes_scopedResources_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-10-17-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the scoped resource object."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ScopedResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a private link scoped resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "scopedResources"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/privateLinkScopes/scopedResources"
+    },
+    "PrivateLinkServiceConnectionStateProperty": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The private link service connection description."
+        },
+        "status": {
+          "type": "string",
+          "description": "The private link service connection status."
+        }
+      },
+      "required": [
+        "description",
+        "status"
+      ],
+      "description": "State of the private endpoint connection."
+    },
+    "ScopedResourceProperties": {
+      "type": "object",
+      "properties": {
+        "linkedResourceId": {
+          "type": "string",
+          "description": "The resource id of the scoped Azure monitor resource."
+        }
+      },
+      "description": "Properties of a private link scoped resource."
+    }
+  }
+}

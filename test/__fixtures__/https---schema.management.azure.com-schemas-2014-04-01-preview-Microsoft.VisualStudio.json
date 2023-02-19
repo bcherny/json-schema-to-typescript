@@ -1,0 +1,390 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2014-04-01-preview/Microsoft.VisualStudio.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "microsoft.visualstudio",
+  "description": "microsoft visualstudio Resource Types",
+  "resourceDefinitions": {
+    "account": {
+      "type": "object",
+      "properties": {
+        "accountName": {
+          "type": "string",
+          "description": "The account name."
+        },
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2014-04-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The Azure instance location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the resource."
+        },
+        "operationType": {
+          "type": "object",
+          "properties": {},
+          "description": "The type of the operation."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The custom properties of the resource."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/account_extension_childResource"
+              },
+              {
+                "$ref": "#/definitions/account_project_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The custom tags of the resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.visualstudio/account"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.visualstudio/account"
+    },
+    "account_extension": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2014-04-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The Azure region of the Visual Studio account associated with this request (i.e 'southcentralus'.)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the extension."
+        },
+        "plan": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ExtensionResourcePlan"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Plan data for an extension resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A dictionary of extended properties. This property is currently unused."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A dictionary of user-defined tags to be stored with the extension resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.visualstudio/account/extension"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.visualstudio/account/extension"
+    },
+    "account_project": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2014-04-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Team Services project."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key/value pair of resource properties."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.visualstudio/account/project"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.visualstudio/account/project"
+    }
+  },
+  "definitions": {
+    "account_extension_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2014-04-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The Azure region of the Visual Studio account associated with this request (i.e 'southcentralus'.)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the extension."
+        },
+        "plan": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ExtensionResourcePlan"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Plan data for an extension resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A dictionary of extended properties. This property is currently unused."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A dictionary of user-defined tags to be stored with the extension resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "extension"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.visualstudio/account/extension"
+    },
+    "account_project_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2014-04-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Team Services project."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key/value pair of resource properties."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "project"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.visualstudio/account/project"
+    },
+    "ExtensionResourcePlan": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the plan."
+        },
+        "product": {
+          "type": "string",
+          "description": "Product name."
+        },
+        "promotionCode": {
+          "type": "string",
+          "description": "Optional: the promotion code associated with the plan."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Name of the extension publisher."
+        },
+        "version": {
+          "type": "string",
+          "description": "A string that uniquely identifies the plan version."
+        }
+      },
+      "description": "Plan data for an extension resource."
+    }
+  }
+}

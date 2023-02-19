@@ -1,0 +1,301 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-10-01-preview/Microsoft.DataLakeStore.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.DataLakeStore",
+  "description": "Microsoft DataLakeStore Resource Types",
+  "resourceDefinitions": {
+    "accounts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EncryptionIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "the account regional location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Data Lake Store account to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataLakeStoreAccountProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Data Lake Store account properties information"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/accounts_firewallRules_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the value of custom properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeStore/accounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts"
+    },
+    "accounts_firewallRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "description": "the firewall rule's subscription ID."
+        },
+        "location": {
+          "type": "string",
+          "description": "the firewall rule's regional location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the firewall rule to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/FirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Data Lake Store firewall rule properties information"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeStore/accounts/firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts/firewallRules"
+    }
+  },
+  "definitions": {
+    "accounts_firewallRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "description": "the firewall rule's subscription ID."
+        },
+        "location": {
+          "type": "string",
+          "description": "the firewall rule's regional location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the firewall rule to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/FirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Data Lake Store firewall rule properties information"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts/firewallRules"
+    },
+    "DataLakeStoreAccountProperties": {
+      "type": "object",
+      "properties": {
+        "defaultGroup": {
+          "type": "string",
+          "description": "the default owner group for all new folders and files created in the Data Lake Store account."
+        },
+        "encryptionConfig": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EncryptionConfig"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "encryptionState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current state of encryption for this Data Lake store account."
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "the gateway host."
+        }
+      },
+      "description": "Data Lake Store account properties information"
+    },
+    "EncryptionConfig": {
+      "type": "object",
+      "properties": {
+        "keyVaultMetaInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyVaultMetaInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "UserManaged",
+                "ServiceManaged"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of encryption configuration being used. Currently the only supported types are 'UserManaged' and 'ServiceManaged'."
+        }
+      }
+    },
+    "EncryptionIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SystemAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of encryption being used. Currently the only supported type is 'SystemAssigned'."
+        }
+      }
+    },
+    "FirewallRuleProperties": {
+      "type": "object",
+      "properties": {
+        "endIpAddress": {
+          "type": "string",
+          "description": "the end IP address for the firewall rule."
+        },
+        "startIpAddress": {
+          "type": "string",
+          "description": "the start IP address for the firewall rule."
+        }
+      },
+      "description": "Data Lake Store firewall rule properties information"
+    },
+    "KeyVaultMetaInfo": {
+      "type": "object",
+      "properties": {
+        "encryptionKeyName": {
+          "type": "string",
+          "description": "The name of the user managed encryption key."
+        },
+        "encryptionKeyVersion": {
+          "type": "string",
+          "description": "The version of the user managed encryption key."
+        },
+        "keyVaultResourceId": {
+          "type": "string",
+          "description": "The resource identifier for the user managed Key Vault being used to encrypt."
+        }
+      }
+    }
+  }
+}

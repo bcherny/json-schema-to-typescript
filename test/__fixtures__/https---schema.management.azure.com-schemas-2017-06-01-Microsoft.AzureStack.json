@@ -1,0 +1,183 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-06-01/Microsoft.AzureStack.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.AzureStack",
+  "description": "Microsoft AzureStack Resource Types",
+  "resourceDefinitions": {
+    "registrations": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01"
+          ]
+        },
+        "location": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "global"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Location of the resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Azure Stack registration."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RegistrationParameterProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the Azure Stack registration resource"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/registrations_customerSubscriptions_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.AzureStack/registrations"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.AzureStack/registrations"
+    },
+    "registrations_customerSubscriptions": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "The entity tag used for optimistic concurrency when modifying the resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the product."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CustomerSubscriptionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Customer subscription properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.AzureStack/registrations/customerSubscriptions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.AzureStack/registrations/customerSubscriptions"
+    }
+  },
+  "definitions": {
+    "CustomerSubscriptionProperties": {
+      "type": "object",
+      "properties": {
+        "tenantId": {
+          "type": "string",
+          "description": "Tenant Id."
+        }
+      },
+      "description": "Customer subscription properties."
+    },
+    "RegistrationParameterProperties": {
+      "type": "object",
+      "properties": {
+        "registrationToken": {
+          "type": "string",
+          "description": "The token identifying registered Azure Stack"
+        }
+      },
+      "required": [
+        "registrationToken"
+      ],
+      "description": "Properties of the Azure Stack registration resource"
+    },
+    "registrations_customerSubscriptions_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "The entity tag used for optimistic concurrency when modifying the resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the product."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CustomerSubscriptionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Customer subscription properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "customerSubscriptions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.AzureStack/registrations/customerSubscriptions"
+    }
+  }
+}

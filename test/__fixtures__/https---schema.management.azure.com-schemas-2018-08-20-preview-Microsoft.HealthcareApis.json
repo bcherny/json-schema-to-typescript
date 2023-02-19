@@ -1,0 +1,314 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-08-20-preview/Microsoft.HealthcareApis.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.HealthcareApis",
+  "description": "Microsoft HealthcareApis Resource Types",
+  "resourceDefinitions": {
+    "services": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-08-20-preview"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "An etag associated with the resource, used for optimistic concurrency when editing it."
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ResourceIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Setting indicating whether the service has a managed identity associated with it."
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "fhir",
+                "fhir-Stu3",
+                "fhir-R4"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The kind of the service. Valid values are: fhir, fhir-Stu3 and fhir-R4."
+        },
+        "location": {
+          "type": "string",
+          "description": "The resource location."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 24,
+          "description": "The name of the service instance."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServicesProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a service instance."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.HealthcareApis/services"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "kind",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.HealthcareApis/services"
+    }
+  },
+  "definitions": {
+    "ResourceIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SystemAssigned",
+                "None"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of identity being specified, currently SystemAssigned and None are allowed."
+        }
+      },
+      "description": "Setting indicating whether the service has a managed identity associated with it."
+    },
+    "ServiceAccessPolicyEntry": {
+      "type": "object",
+      "properties": {
+        "objectId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(([0-9A-Fa-f]{8}[-]?(?:[0-9A-Fa-f]{4}[-]?){3}[0-9A-Fa-f]{12}){1})+$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An object ID that is allowed access to the FHIR service."
+        }
+      },
+      "required": [
+        "objectId"
+      ],
+      "description": "An access policy entry."
+    },
+    "ServiceAuthenticationConfigurationInfo": {
+      "type": "object",
+      "properties": {
+        "audience": {
+          "type": "string",
+          "description": "The audience url for the service"
+        },
+        "authority": {
+          "type": "string",
+          "description": "The authority url for the service"
+        },
+        "smartProxyEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "If the SMART on FHIR proxy is enabled"
+        }
+      },
+      "description": "Authentication configuration information"
+    },
+    "ServiceCorsConfigurationInfo": {
+      "type": "object",
+      "properties": {
+        "allowCredentials": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "If credentials are allowed via CORS."
+        },
+        "headers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The headers to be allowed via CORS."
+        },
+        "maxAge": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 99999
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The max age to be allowed via CORS."
+        },
+        "methods": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The methods to be allowed via CORS."
+        },
+        "origins": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The origins to be allowed via CORS."
+        }
+      },
+      "description": "The settings for the CORS configuration of the service instance."
+    },
+    "ServiceCosmosDbConfigurationInfo": {
+      "type": "object",
+      "properties": {
+        "offerThroughput": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 400,
+              "maximum": 10000
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The provisioned throughput for the backing database."
+        }
+      },
+      "description": "The settings for the Cosmos DB database backing the service."
+    },
+    "ServicesProperties": {
+      "type": "object",
+      "properties": {
+        "accessPolicies": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ServiceAccessPolicyEntry"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The access policies of the service instance."
+        },
+        "authenticationConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServiceAuthenticationConfigurationInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Authentication configuration information"
+        },
+        "corsConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServiceCorsConfigurationInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The settings for the CORS configuration of the service instance."
+        },
+        "cosmosDbConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServiceCosmosDbConfigurationInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The settings for the Cosmos DB database backing the service."
+        }
+      },
+      "description": "The properties of a service instance."
+    }
+  }
+}
