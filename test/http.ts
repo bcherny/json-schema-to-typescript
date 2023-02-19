@@ -20,7 +20,6 @@ export async function getWithCache (url: string): Promise<object> {
 
 function getFromFilesystem (url: string): object | undefined {
   const filepath = getFilepath(url)
-  console.info(`Attempting to read "${filepath} from filesystem...`)
   if (!existsSync(filepath)) {
     return
   }
@@ -38,7 +37,6 @@ function writeToFilesystem (url: string, data: object): void {
 }
 
 function getFromNetwork (url: string): Promise<object> {
-  console.info(`Attempting to read "${url} from network...`)
   const f = url.startsWith('https://') ? httpsGet : httpGet
   return new Promise((resolve, reject) => {
     f(url, res => {
