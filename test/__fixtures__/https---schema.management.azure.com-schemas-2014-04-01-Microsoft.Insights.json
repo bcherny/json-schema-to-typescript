@@ -1,0 +1,1247 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2014-04-01/Microsoft.Insights.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Insights",
+  "description": "Microsoft Insights Resource Types",
+  "resourceDefinitions": {
+    "alertrules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2014-04-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AlertRule"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An alert rule."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/alertrules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/alertrules"
+    },
+    "autoscalesettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2014-04-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The autoscale setting name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AutoscaleSetting"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A setting that contains all of the configuration for the automatic scaling of a resource."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/autoscalesettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/autoscalesettings"
+    }
+  },
+  "definitions": {
+    "AlertRule": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RuleAction"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The action that is performed when the alert rule becomes active, and when an alert condition is resolved."
+        },
+        "actions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RuleAction"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the array of actions that are performed when the alert rule becomes active, and when an alert condition is resolved."
+        },
+        "condition": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RuleCondition"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The condition that results in the alert rule being activated."
+        },
+        "description": {
+          "type": "string",
+          "description": "the description of the alert rule that will be included in the alert email."
+        },
+        "isEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the flag that indicates whether the alert rule is enabled."
+        },
+        "name": {
+          "type": "string",
+          "description": "the name of the alert rule."
+        },
+        "provisioningState": {
+          "type": "string",
+          "description": "the provisioning state."
+        }
+      },
+      "required": [
+        "condition",
+        "isEnabled",
+        "name"
+      ],
+      "description": "An alert rule."
+    },
+    "AutoscaleNotification": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EmailNotification"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Email notification of an autoscale event."
+        },
+        "operation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Scale"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the operation associated with the notification and its value must be \"scale\""
+        },
+        "webhooks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WebhookNotification"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the collection of webhook notifications."
+        }
+      },
+      "required": [
+        "operation"
+      ],
+      "description": "Autoscale notification."
+    },
+    "AutoscaleProfile": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ScaleCapacity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of instances that can be used during this profile."
+        },
+        "fixedDate": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TimeWindow"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A specific date-time for the profile."
+        },
+        "name": {
+          "type": "string",
+          "description": "the name of the profile."
+        },
+        "recurrence": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Recurrence"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The repeating times at which this profile begins. This element is not used if the FixedDate element is used."
+        },
+        "rules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ScaleRule"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the collection of rules that provide the triggers and parameters for the scaling action. A maximum of 10 rules can be specified."
+        }
+      },
+      "required": [
+        "capacity",
+        "name",
+        "rules"
+      ],
+      "description": "Autoscale profile."
+    },
+    "AutoscaleSetting": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the enabled flag. Specifies whether automatic scaling is enabled for the resource. The default value is 'true'."
+        },
+        "name": {
+          "type": "string",
+          "description": "the name of the autoscale setting."
+        },
+        "notifications": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AutoscaleNotification"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the collection of notifications."
+        },
+        "profiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AutoscaleProfile"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the collection of automatic scaling profiles that specify different scaling parameters for different time periods. A maximum of 20 profiles can be specified."
+        },
+        "targetResourceLocation": {
+          "type": "string",
+          "description": "the location of the resource that the autoscale setting should be added to."
+        },
+        "targetResourceUri": {
+          "type": "string",
+          "description": "the resource identifier of the resource that the autoscale setting should be added to."
+        }
+      },
+      "required": [
+        "profiles"
+      ],
+      "description": "A setting that contains all of the configuration for the automatic scaling of a resource."
+    },
+    "EmailNotification": {
+      "type": "object",
+      "properties": {
+        "customEmails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the custom e-mails list. This value can be null or empty, in which case this attribute will be ignored."
+        },
+        "sendToSubscriptionAdministrator": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "a value indicating whether to send email to subscription administrator."
+        },
+        "sendToSubscriptionCoAdministrators": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "a value indicating whether to send email to subscription co-administrators."
+        }
+      },
+      "description": "Email notification of an autoscale event."
+    },
+    "LocationThresholdRuleCondition": {
+      "type": "object",
+      "properties": {
+        "failedLocationCount": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the number of locations that must fail to activate the alert."
+        },
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition"
+          ]
+        },
+        "windowSize": {
+          "type": "string",
+          "format": "duration",
+          "description": "the period of time (in ISO 8601 duration format) that is used to monitor alert activity based on the threshold. If specified then it must be between 5 minutes and 1 day."
+        }
+      },
+      "required": [
+        "failedLocationCount",
+        "odata.type"
+      ],
+      "description": "A rule condition based on a certain number of locations failing."
+    },
+    "ManagementEventAggregationCondition": {
+      "type": "object",
+      "properties": {
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the condition operator."
+        },
+        "threshold": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The threshold value that activates the alert."
+        },
+        "windowSize": {
+          "type": "string",
+          "format": "duration",
+          "description": "the period of time (in ISO 8601 duration format) that is used to monitor alert activity based on the threshold. If specified then it must be between 5 minutes and 1 day."
+        }
+      },
+      "description": "How the data that is collected should be combined over time."
+    },
+    "ManagementEventRuleCondition": {
+      "type": "object",
+      "properties": {
+        "aggregation": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagementEventAggregationCondition"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "How the data that is collected should be combined over time."
+        },
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition"
+          ]
+        }
+      },
+      "required": [
+        "odata.type"
+      ],
+      "description": "A management event rule condition."
+    },
+    "MetricTrigger": {
+      "type": "object",
+      "properties": {
+        "dimensions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ScaleRuleMetricDimension"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of dimension conditions. For example: [{\"DimensionName\":\"AppName\",\"Operator\":\"Equals\",\"Values\":[\"App1\"]},{\"DimensionName\":\"Deployment\",\"Operator\":\"Equals\",\"Values\":[\"default\"]}]."
+        },
+        "dividePerInstance": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "a value indicating whether metric should divide per instance."
+        },
+        "metricName": {
+          "type": "string",
+          "description": "the name of the metric that defines what the rule monitors."
+        },
+        "metricNamespace": {
+          "type": "string",
+          "description": "the namespace of the metric that defines what the rule monitors."
+        },
+        "metricResourceLocation": {
+          "type": "string",
+          "description": "the location of the resource the rule monitors."
+        },
+        "metricResourceUri": {
+          "type": "string",
+          "description": "the resource identifier of the resource the rule monitors."
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Equals",
+                "NotEquals",
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the operator that is used to compare the metric data and the threshold."
+        },
+        "statistic": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Average",
+                "Min",
+                "Max",
+                "Sum",
+                "Count"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the metric statistic type. How the metrics from multiple instances are combined."
+        },
+        "threshold": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the threshold of the metric that triggers the scale action."
+        },
+        "timeAggregation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Average",
+                "Minimum",
+                "Maximum",
+                "Total",
+                "Count",
+                "Last"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "time aggregation type. How the data that is collected should be combined over time. The default value is Average."
+        },
+        "timeGrain": {
+          "type": "string",
+          "format": "duration",
+          "description": "the granularity of metrics the rule monitors. Must be one of the predefined values returned from metric definitions for the metric. Must be between 12 hours and 1 minute."
+        },
+        "timeWindow": {
+          "type": "string",
+          "format": "duration",
+          "description": "the range of time in which instance data is collected. This value must be greater than the delay in metric collection, which can vary from resource-to-resource. Must be between 12 hours and 5 minutes."
+        }
+      },
+      "required": [
+        "metricName",
+        "metricResourceUri",
+        "operator",
+        "statistic",
+        "threshold",
+        "timeAggregation",
+        "timeGrain",
+        "timeWindow"
+      ],
+      "description": "The trigger that results in a scaling action."
+    },
+    "Recurrence": {
+      "type": "object",
+      "properties": {
+        "frequency": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "Second",
+                "Minute",
+                "Hour",
+                "Day",
+                "Week",
+                "Month",
+                "Year"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the recurrence frequency. How often the schedule profile should take effect. This value must be Week, meaning each week will have the same set of profiles. For example, to set a daily schedule, set **schedule** to every day of the week. The frequency property specifies that the schedule is repeated weekly."
+        },
+        "schedule": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RecurrentSchedule"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The scheduling constraints for when the profile begins."
+        }
+      },
+      "required": [
+        "frequency",
+        "schedule"
+      ],
+      "description": "The repeating times at which this profile begins. This element is not used if the FixedDate element is used."
+    },
+    "RecurrentSchedule": {
+      "type": "object",
+      "properties": {
+        "days": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the collection of days that the profile takes effect on. Possible values are Sunday through Saturday."
+        },
+        "hours": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A collection of hours that the profile takes effect on. Values supported are 0 to 23 on the 24-hour clock (AM/PM times are not supported)."
+        },
+        "minutes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A collection of minutes at which the profile takes effect at."
+        },
+        "timeZone": {
+          "type": "string",
+          "description": "the timezone for the hours of the profile. Some examples of valid time zones are: Dateline Standard Time, UTC-11, Hawaiian Standard Time, Alaskan Standard Time, Pacific Standard Time (Mexico), Pacific Standard Time, US Mountain Standard Time, Mountain Standard Time (Mexico), Mountain Standard Time, Central America Standard Time, Central Standard Time, Central Standard Time (Mexico), Canada Central Standard Time, SA Pacific Standard Time, Eastern Standard Time, US Eastern Standard Time, Venezuela Standard Time, Paraguay Standard Time, Atlantic Standard Time, Central Brazilian Standard Time, SA Western Standard Time, Pacific SA Standard Time, Newfoundland Standard Time, E. South America Standard Time, Argentina Standard Time, SA Eastern Standard Time, Greenland Standard Time, Montevideo Standard Time, Bahia Standard Time, UTC-02, Mid-Atlantic Standard Time, Azores Standard Time, Cape Verde Standard Time, Morocco Standard Time, UTC, GMT Standard Time, Greenwich Standard Time, W. Europe Standard Time, Central Europe Standard Time, Romance Standard Time, Central European Standard Time, W. Central Africa Standard Time, Namibia Standard Time, Jordan Standard Time, GTB Standard Time, Middle East Standard Time, Egypt Standard Time, Syria Standard Time, E. Europe Standard Time, South Africa Standard Time, FLE Standard Time, Turkey Standard Time, Israel Standard Time, Kaliningrad Standard Time, Libya Standard Time, Arabic Standard Time, Arab Standard Time, Belarus Standard Time, Russian Standard Time, E. Africa Standard Time, Iran Standard Time, Arabian Standard Time, Azerbaijan Standard Time, Russia Time Zone 3, Mauritius Standard Time, Georgian Standard Time, Caucasus Standard Time, Afghanistan Standard Time, West Asia Standard Time, Ekaterinburg Standard Time, Pakistan Standard Time, India Standard Time, Sri Lanka Standard Time, Nepal Standard Time, Central Asia Standard Time, Bangladesh Standard Time, N. Central Asia Standard Time, Myanmar Standard Time, SE Asia Standard Time, North Asia Standard Time, China Standard Time, North Asia East Standard Time, Singapore Standard Time, W. Australia Standard Time, Taipei Standard Time, Ulaanbaatar Standard Time, Tokyo Standard Time, Korea Standard Time, Yakutsk Standard Time, Cen. Australia Standard Time, AUS Central Standard Time, E. Australia Standard Time, AUS Eastern Standard Time, West Pacific Standard Time, Tasmania Standard Time, Magadan Standard Time, Vladivostok Standard Time, Russia Time Zone 10, Central Pacific Standard Time, Russia Time Zone 11, New Zealand Standard Time, UTC+12, Fiji Standard Time, Kamchatka Standard Time, Tonga Standard Time, Samoa Standard Time, Line Islands Standard Time"
+        }
+      },
+      "required": [
+        "days",
+        "hours",
+        "minutes",
+        "timeZone"
+      ],
+      "description": "The scheduling constraints for when the profile begins."
+    },
+    "RuleAction": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/RuleEmailAction"
+        },
+        {
+          "$ref": "#/definitions/RuleWebhookAction"
+        }
+      ],
+      "properties": {},
+      "description": "The action that is performed when the alert rule becomes active, and when an alert condition is resolved."
+    },
+    "RuleCondition": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ThresholdRuleCondition"
+        },
+        {
+          "$ref": "#/definitions/LocationThresholdRuleCondition"
+        },
+        {
+          "$ref": "#/definitions/ManagementEventRuleCondition"
+        }
+      ],
+      "properties": {
+        "dataSource": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RuleDataSource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resource from which the rule collects its data."
+        }
+      },
+      "description": "The condition that results in the alert rule being activated."
+    },
+    "RuleDataSource": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/RuleMetricDataSource"
+        },
+        {
+          "$ref": "#/definitions/RuleManagementEventDataSource"
+        }
+      ],
+      "properties": {
+        "legacyResourceId": {
+          "type": "string",
+          "description": "the legacy resource identifier of the resource the rule monitors. **NOTE**: this property cannot be updated for an existing rule."
+        },
+        "metricNamespace": {
+          "type": "string",
+          "description": "the namespace of the metric."
+        },
+        "resourceLocation": {
+          "type": "string",
+          "description": "the location of the resource."
+        },
+        "resourceUri": {
+          "type": "string",
+          "description": "the resource identifier of the resource the rule monitors. **NOTE**: this property cannot be updated for an existing rule."
+        }
+      },
+      "description": "The resource from which the rule collects its data."
+    },
+    "RuleEmailAction": {
+      "type": "object",
+      "properties": {
+        "customEmails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the list of administrator's custom email addresses to notify of the activation of the alert."
+        },
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Management.Insights.Models.RuleEmailAction"
+          ]
+        },
+        "sendToServiceOwners": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether the administrators (service and co-administrators) of the service should be notified when the alert is activated."
+        }
+      },
+      "required": [
+        "odata.type"
+      ],
+      "description": "Specifies the action to send email when the rule condition is evaluated. The discriminator is always RuleEmailAction in this case."
+    },
+    "RuleManagementEventClaimsDataSource": {
+      "type": "object",
+      "properties": {
+        "emailAddress": {
+          "type": "string",
+          "description": "the email address."
+        }
+      },
+      "description": "The claims for a rule management event data source."
+    },
+    "RuleManagementEventDataSource": {
+      "type": "object",
+      "properties": {
+        "claims": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RuleManagementEventClaimsDataSource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The claims for a rule management event data source."
+        },
+        "eventName": {
+          "type": "string",
+          "description": "the event name."
+        },
+        "eventSource": {
+          "type": "string",
+          "description": "the event source."
+        },
+        "level": {
+          "type": "string",
+          "description": "the level."
+        },
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource"
+          ]
+        },
+        "operationName": {
+          "type": "string",
+          "description": "The name of the operation that should be checked for. If no name is provided, any operation will match."
+        },
+        "resourceGroupName": {
+          "type": "string",
+          "description": "the resource group name."
+        },
+        "resourceProviderName": {
+          "type": "string",
+          "description": "the resource provider name."
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the operation that should be checked for. If no status is provided, any status will match."
+        },
+        "subStatus": {
+          "type": "string",
+          "description": "the substatus."
+        }
+      },
+      "required": [
+        "odata.type"
+      ],
+      "description": "A rule management event data source. The discriminator fields is always RuleManagementEventDataSource in this case."
+    },
+    "RuleMetricDataSource": {
+      "type": "object",
+      "properties": {
+        "metricName": {
+          "type": "string",
+          "description": "the name of the metric that defines what the rule monitors."
+        },
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource"
+          ]
+        }
+      },
+      "required": [
+        "odata.type"
+      ],
+      "description": "A rule metric data source. The discriminator value is always RuleMetricDataSource in this case."
+    },
+    "RuleWebhookAction": {
+      "type": "object",
+      "properties": {
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Management.Insights.Models.RuleWebhookAction"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the dictionary of custom properties to include with the post operation. These data are appended to the webhook payload."
+        },
+        "serviceUri": {
+          "type": "string",
+          "description": "the service uri to Post the notification when the alert activates or resolves."
+        }
+      },
+      "required": [
+        "odata.type"
+      ],
+      "description": "Specifies the action to post to service when the rule condition is evaluated. The discriminator is always RuleWebhookAction in this case."
+    },
+    "ScaleAction": {
+      "type": "object",
+      "properties": {
+        "cooldown": {
+          "type": "string",
+          "format": "duration",
+          "description": "the amount of time to wait since the last scaling action before this action occurs. It must be between 1 week and 1 minute in ISO 8601 format."
+        },
+        "direction": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "Increase",
+                "Decrease"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the scale direction. Whether the scaling action increases or decreases the number of instances."
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ChangeCount",
+                "PercentChangeCount",
+                "ExactCount",
+                "ServiceAllowedNextValue"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the type of action that should occur when the scale rule fires."
+        },
+        "value": {
+          "type": "string",
+          "default": "1",
+          "description": "the number of instances that are involved in the scaling action. This value must be 1 or greater. The default value is 1."
+        }
+      },
+      "required": [
+        "cooldown",
+        "direction",
+        "type"
+      ],
+      "description": "The parameters for the scaling action."
+    },
+    "ScaleCapacity": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "type": "string",
+          "description": "the number of instances that will be set if metrics are not available for evaluation. The default is only used if the current instance count is lower than the default."
+        },
+        "maximum": {
+          "type": "string",
+          "description": "the maximum number of instances for the resource. The actual maximum number of instances is limited by the cores that are available in the subscription."
+        },
+        "minimum": {
+          "type": "string",
+          "description": "the minimum number of instances for the resource."
+        }
+      },
+      "required": [
+        "default",
+        "maximum",
+        "minimum"
+      ],
+      "description": "The number of instances that can be used during this profile."
+    },
+    "ScaleRule": {
+      "type": "object",
+      "properties": {
+        "metricTrigger": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MetricTrigger"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The trigger that results in a scaling action."
+        },
+        "scaleAction": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ScaleAction"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The parameters for the scaling action."
+        }
+      },
+      "required": [
+        "metricTrigger",
+        "scaleAction"
+      ],
+      "description": "A rule that provide the triggers and parameters for the scaling action."
+    },
+    "ScaleRuleMetricDimension": {
+      "type": "object",
+      "properties": {
+        "DimensionName": {
+          "type": "string",
+          "description": "Name of the dimension."
+        },
+        "Operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Equals",
+                "NotEquals"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the dimension operator. Only 'Equals' and 'NotEquals' are supported. 'Equals' being equal to any of the values. 'NotEquals' being not equal to all of the values."
+        },
+        "Values": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "list of dimension values. For example: [\"App1\",\"App2\"]."
+        }
+      },
+      "required": [
+        "DimensionName",
+        "Operator",
+        "Values"
+      ],
+      "description": "Specifies an auto scale rule metric dimension."
+    },
+    "ThresholdRuleCondition": {
+      "type": "object",
+      "properties": {
+        "odata.type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition"
+          ]
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the operator used to compare the data and the threshold."
+        },
+        "threshold": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the threshold value that activates the alert."
+        },
+        "timeAggregation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Average",
+                "Minimum",
+                "Maximum",
+                "Total",
+                "Last"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the time aggregation operator. How the data that are collected should be combined over time. The default value is the PrimaryAggregationType of the Metric."
+        },
+        "windowSize": {
+          "type": "string",
+          "format": "duration",
+          "description": "the period of time (in ISO 8601 duration format) that is used to monitor alert activity based on the threshold. If specified then it must be between 5 minutes and 1 day."
+        }
+      },
+      "required": [
+        "odata.type",
+        "operator",
+        "threshold"
+      ],
+      "description": "A rule condition based on a metric crossing a threshold."
+    },
+    "TimeWindow": {
+      "type": "object",
+      "properties": {
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the end time for the profile in ISO 8601 format."
+        },
+        "start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the start time for the profile in ISO 8601 format."
+        },
+        "timeZone": {
+          "type": "string",
+          "description": "the timezone of the start and end times for the profile. Some examples of valid time zones are: Dateline Standard Time, UTC-11, Hawaiian Standard Time, Alaskan Standard Time, Pacific Standard Time (Mexico), Pacific Standard Time, US Mountain Standard Time, Mountain Standard Time (Mexico), Mountain Standard Time, Central America Standard Time, Central Standard Time, Central Standard Time (Mexico), Canada Central Standard Time, SA Pacific Standard Time, Eastern Standard Time, US Eastern Standard Time, Venezuela Standard Time, Paraguay Standard Time, Atlantic Standard Time, Central Brazilian Standard Time, SA Western Standard Time, Pacific SA Standard Time, Newfoundland Standard Time, E. South America Standard Time, Argentina Standard Time, SA Eastern Standard Time, Greenland Standard Time, Montevideo Standard Time, Bahia Standard Time, UTC-02, Mid-Atlantic Standard Time, Azores Standard Time, Cape Verde Standard Time, Morocco Standard Time, UTC, GMT Standard Time, Greenwich Standard Time, W. Europe Standard Time, Central Europe Standard Time, Romance Standard Time, Central European Standard Time, W. Central Africa Standard Time, Namibia Standard Time, Jordan Standard Time, GTB Standard Time, Middle East Standard Time, Egypt Standard Time, Syria Standard Time, E. Europe Standard Time, South Africa Standard Time, FLE Standard Time, Turkey Standard Time, Israel Standard Time, Kaliningrad Standard Time, Libya Standard Time, Arabic Standard Time, Arab Standard Time, Belarus Standard Time, Russian Standard Time, E. Africa Standard Time, Iran Standard Time, Arabian Standard Time, Azerbaijan Standard Time, Russia Time Zone 3, Mauritius Standard Time, Georgian Standard Time, Caucasus Standard Time, Afghanistan Standard Time, West Asia Standard Time, Ekaterinburg Standard Time, Pakistan Standard Time, India Standard Time, Sri Lanka Standard Time, Nepal Standard Time, Central Asia Standard Time, Bangladesh Standard Time, N. Central Asia Standard Time, Myanmar Standard Time, SE Asia Standard Time, North Asia Standard Time, China Standard Time, North Asia East Standard Time, Singapore Standard Time, W. Australia Standard Time, Taipei Standard Time, Ulaanbaatar Standard Time, Tokyo Standard Time, Korea Standard Time, Yakutsk Standard Time, Cen. Australia Standard Time, AUS Central Standard Time, E. Australia Standard Time, AUS Eastern Standard Time, West Pacific Standard Time, Tasmania Standard Time, Magadan Standard Time, Vladivostok Standard Time, Russia Time Zone 10, Central Pacific Standard Time, Russia Time Zone 11, New Zealand Standard Time, UTC+12, Fiji Standard Time, Kamchatka Standard Time, Tonga Standard Time, Samoa Standard Time, Line Islands Standard Time"
+        }
+      },
+      "required": [
+        "end",
+        "start"
+      ],
+      "description": "A specific date-time for the profile."
+    },
+    "WebhookNotification": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "a property bag of settings. This value can be empty."
+        },
+        "serviceUri": {
+          "type": "string",
+          "description": "the service address to receive the notification."
+        }
+      },
+      "description": "Webhook notification of an autoscale event."
+    }
+  }
+}

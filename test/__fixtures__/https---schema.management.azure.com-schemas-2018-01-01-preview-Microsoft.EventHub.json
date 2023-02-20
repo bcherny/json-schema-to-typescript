@@ -1,0 +1,1652 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-01-01-preview/Microsoft.EventHub.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.EventHub",
+  "description": "Microsoft EventHub Resource Types",
+  "resourceDefinitions": {
+    "clusters": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 50,
+          "description": "The name of the Event Hubs Cluster."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ClusterProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Event Hubs Cluster properties supplied in responses in List or Get operations."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ClusterSku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "SKU parameters particular to a cluster instance."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/clusters"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/clusters"
+    },
+    "namespaces": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Identity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties to configure Identity for Bring your Own Keys"
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 50,
+          "description": "The Namespace name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EHNamespaceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Namespace properties supplied for create namespace operation."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/namespaces_ipfilterrules_childResource"
+              },
+              {
+                "$ref": "#/definitions/namespaces_virtualnetworkrules_childResource"
+              },
+              {
+                "$ref": "#/definitions/namespaces_networkRuleSets_childResource"
+              },
+              {
+                "$ref": "#/definitions/namespaces_authorizationRules_childResource"
+              },
+              {
+                "$ref": "#/definitions/namespaces_privateEndpointConnections_childResource"
+              },
+              {
+                "$ref": "#/definitions/namespaces_disasterRecoveryConfigs_childResource"
+              },
+              {
+                "$ref": "#/definitions/namespaces_eventhubs_childResource"
+              }
+            ]
+          }
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "SKU parameters supplied to the create namespace operation"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces"
+    },
+    "namespaces_authorizationRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The authorization rule name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AuthorizationRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to create or update AuthorizationRule"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/authorizationRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/authorizationRules"
+    },
+    "namespaces_disasterRecoveryConfigs": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "The Disaster Recovery configuration name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ArmDisasterRecoveryProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties required to the Create Or Update Alias(Disaster Recovery configurations)"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/disasterRecoveryConfigs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/disasterRecoveryConfigs"
+    },
+    "namespaces_eventhubs": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "The Event Hub name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EventhubProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to the Create Or Update Event Hub operation."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/namespaces_eventhubs_authorizationRules_childResource"
+              },
+              {
+                "$ref": "#/definitions/namespaces_eventhubs_consumergroups_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/eventhubs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/eventhubs"
+    },
+    "namespaces_eventhubs_authorizationRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The authorization rule name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AuthorizationRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to create or update AuthorizationRule"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/eventhubs/authorizationRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules"
+    },
+    "namespaces_eventhubs_consumergroups": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "The consumer group name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ConsumerGroupProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Single item in List or Get Consumer group operation"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/eventhubs/consumergroups"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/eventhubs/consumergroups"
+    },
+    "namespaces_ipfilterrules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The IP Filter Rule name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IpFilterRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to create or update IpFilterRules"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/ipfilterrules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/ipfilterrules"
+    },
+    "namespaces_networkRuleSets": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/NetworkRuleSetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "NetworkRuleSet properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/networkRuleSets"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/networkRuleSets"
+    },
+    "namespaces_privateEndpointConnections": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The PrivateEndpointConnection name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the private endpoint connection resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/privateEndpointConnections"
+    },
+    "namespaces_virtualnetworkrules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The Virtual Network Rule name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualNetworkRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to create or update VirtualNetworkRules"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.EventHub/namespaces/virtualnetworkrules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/virtualnetworkrules"
+    }
+  },
+  "definitions": {
+    "ArmDisasterRecoveryProperties": {
+      "type": "object",
+      "properties": {
+        "alternateName": {
+          "type": "string",
+          "description": "Alternate name specified when alias and namespace names are same."
+        },
+        "partnerNamespace": {
+          "type": "string",
+          "description": "ARM Id of the Primary/Secondary eventhub namespace name, which is part of GEO DR pairing"
+        }
+      },
+      "description": "Properties required to the Create Or Update Alias(Disaster Recovery configurations)"
+    },
+    "AuthorizationRuleProperties": {
+      "type": "object",
+      "properties": {
+        "rights": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Manage",
+                  "Send",
+                  "Listen"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rights associated with the rule."
+        }
+      },
+      "required": [
+        "rights"
+      ],
+      "description": "Properties supplied to create or update AuthorizationRule"
+    },
+    "CaptureDescription": {
+      "type": "object",
+      "properties": {
+        "destination": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Destination"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Capture storage details for capture description"
+        },
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A value that indicates whether capture description is enabled. "
+        },
+        "encoding": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Avro",
+                "AvroDeflate"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enumerates the possible values for the encoding format of capture description. Note: 'AvroDeflate' will be deprecated in New API Version."
+        },
+        "intervalInSeconds": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 60,
+              "maximum": 900
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The time window allows you to set the frequency with which the capture to Azure Blobs will happen, value should between 60 to 900 seconds"
+        },
+        "sizeLimitInBytes": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 10485760,
+              "maximum": 524288000
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The size window defines the amount of data built up in your Event Hub before an capture operation, value should be between 10485760 to 524288000 bytes"
+        },
+        "skipEmptyArchives": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A value that indicates whether to Skip Empty Archives"
+        }
+      },
+      "description": "Properties to configure capture description for eventhub"
+    },
+    "ClusterProperties": {
+      "type": "object",
+      "properties": {},
+      "description": "Event Hubs Cluster properties supplied in responses in List or Get operations."
+    },
+    "ClusterSku": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The quantity of Event Hubs Cluster Capacity Units contained in this cluster."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Dedicated"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Name of this SKU."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "SKU parameters particular to a cluster instance."
+    },
+    "ConnectionState": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Description of the connection state."
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Pending",
+                "Approved",
+                "Rejected",
+                "Disconnected"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Status of the connection."
+        }
+      },
+      "description": "ConnectionState information."
+    },
+    "ConsumerGroupProperties": {
+      "type": "object",
+      "properties": {
+        "userMetadata": {
+          "type": "string",
+          "description": "User Metadata is a placeholder to store user-defined string data with maximum length 1024. e.g. it can be used to store descriptive data, such as list of teams and their contact information also user-defined configuration settings can be stored."
+        }
+      },
+      "description": "Single item in List or Get Consumer group operation"
+    },
+    "Destination": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name for capture destination"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DestinationProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties describing the storage account, blob container and archive name format for capture destination"
+        }
+      },
+      "description": "Capture storage details for capture description"
+    },
+    "DestinationProperties": {
+      "type": "object",
+      "properties": {
+        "archiveNameFormat": {
+          "type": "string",
+          "description": "Blob naming convention for archive, e.g. {Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}. Here all the parameters (Namespace,EventHub .. etc) are mandatory irrespective of order"
+        },
+        "blobContainer": {
+          "type": "string",
+          "description": "Blob container Name"
+        },
+        "storageAccountResourceId": {
+          "type": "string",
+          "description": "Resource id of the storage account to be used to create the blobs"
+        }
+      },
+      "description": "Properties describing the storage account, blob container and archive name format for capture destination"
+    },
+    "EHNamespaceProperties": {
+      "type": "object",
+      "properties": {
+        "clusterArmId": {
+          "type": "string",
+          "description": "Cluster ARM ID of the Namespace."
+        },
+        "encryption": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Encryption"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties to configure Encryption"
+        },
+        "isAutoInflateEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Value that indicates whether AutoInflate is enabled for eventhub namespace."
+        },
+        "kafkaEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Value that indicates whether Kafka is enabled for eventhub namespace."
+        },
+        "maximumThroughputUnits": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Upper limit of throughput units when AutoInflate is enabled, value should be within 0 to 20 throughput units. ( '0' if AutoInflateEnabled = true)"
+        },
+        "zoneRedundant": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enabling this property creates a Standard Event Hubs Namespace in regions supported availability zones."
+        }
+      },
+      "description": "Namespace properties supplied for create namespace operation."
+    },
+    "Encryption": {
+      "type": "object",
+      "properties": {
+        "keySource": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Microsoft.KeyVault"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enumerates the possible value of keySource for Encryption."
+        },
+        "keyVaultProperties": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/KeyVaultProperties"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of KeyVault"
+        }
+      },
+      "description": "Properties to configure Encryption"
+    },
+    "EventhubProperties": {
+      "type": "object",
+      "properties": {
+        "captureDescription": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CaptureDescription"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties to configure capture description for eventhub"
+        },
+        "messageRetentionInDays": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of days to retain the events for this Event Hub, value should be 1 to 7 days"
+        },
+        "partitionCount": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of partitions created for the Event Hub, allowed values are from 1 to 32 partitions."
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Active",
+                "Disabled",
+                "Restoring",
+                "SendDisabled",
+                "ReceiveDisabled",
+                "Creating",
+                "Deleting",
+                "Renaming",
+                "Unknown"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enumerates the possible values for the status of the Event Hub."
+        }
+      },
+      "description": "Properties supplied to the Create Or Update Event Hub operation."
+    },
+    "Identity": {
+      "type": "object",
+      "properties": {
+        "principalId": {
+          "type": "string",
+          "description": "ObjectId from the KeyVault"
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "TenantId from the KeyVault"
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SystemAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enumerates the possible value Identity type, which currently supports only 'SystemAssigned'."
+        }
+      },
+      "description": "Properties to configure Identity for Bring your Own Keys"
+    },
+    "IpFilterRuleProperties": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Accept",
+                "Reject"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The IP Filter Action."
+        },
+        "filterName": {
+          "type": "string",
+          "description": "IP Filter name"
+        },
+        "ipMask": {
+          "type": "string",
+          "description": "IP Mask"
+        }
+      },
+      "description": "Properties supplied to create or update IpFilterRules"
+    },
+    "KeyVaultProperties": {
+      "type": "object",
+      "properties": {
+        "keyName": {
+          "type": "string",
+          "description": "Name of the Key from KeyVault"
+        },
+        "keyVaultUri": {
+          "type": "string",
+          "description": "Uri of KeyVault"
+        },
+        "keyVersion": {
+          "type": "string",
+          "description": "Key Version"
+        }
+      },
+      "description": "Properties to configure keyVault Properties"
+    },
+    "namespaces_authorizationRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The authorization rule name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AuthorizationRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to create or update AuthorizationRule"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "authorizationRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/authorizationRules"
+    },
+    "namespaces_disasterRecoveryConfigs_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "The Disaster Recovery configuration name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ArmDisasterRecoveryProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties required to the Create Or Update Alias(Disaster Recovery configurations)"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "disasterRecoveryConfigs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/disasterRecoveryConfigs"
+    },
+    "namespaces_eventhubs_authorizationRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The authorization rule name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AuthorizationRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to create or update AuthorizationRule"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "authorizationRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules"
+    },
+    "namespaces_eventhubs_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "The Event Hub name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EventhubProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to the Create Or Update Event Hub operation."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "eventhubs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/eventhubs"
+    },
+    "namespaces_eventhubs_consumergroups_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "The consumer group name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ConsumerGroupProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Single item in List or Get Consumer group operation"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "consumergroups"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/eventhubs/consumergroups"
+    },
+    "namespaces_ipfilterrules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The IP Filter Rule name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IpFilterRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to create or update IpFilterRules"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "ipfilterrules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/ipfilterrules"
+    },
+    "namespaces_networkRuleSets_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/NetworkRuleSetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "NetworkRuleSet properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "networkRuleSets"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/networkRuleSets"
+    },
+    "namespaces_privateEndpointConnections_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The PrivateEndpointConnection name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the private endpoint connection resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/privateEndpointConnections"
+    },
+    "namespaces_virtualnetworkrules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The Virtual Network Rule name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualNetworkRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied to create or update VirtualNetworkRules"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "virtualnetworkrules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.EventHub/namespaces/virtualnetworkrules"
+    },
+    "NetworkRuleSetProperties": {
+      "type": "object",
+      "properties": {
+        "defaultAction": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Allow",
+                "Deny"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Default Action for Network Rule Set."
+        },
+        "ipRules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NWRuleSetIpRules"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of IpRules"
+        },
+        "trustedServiceAccessEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Value that indicates whether Trusted Service Access is Enabled or not."
+        },
+        "virtualNetworkRules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NWRuleSetVirtualNetworkRules"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List VirtualNetwork Rules"
+        }
+      },
+      "description": "NetworkRuleSet properties"
+    },
+    "NWRuleSetIpRules": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Allow"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The IP Filter Action."
+        },
+        "ipMask": {
+          "type": "string",
+          "description": "IP Mask"
+        }
+      },
+      "description": "The response from the List namespace operation."
+    },
+    "NWRuleSetVirtualNetworkRules": {
+      "type": "object",
+      "properties": {
+        "ignoreMissingVnetServiceEndpoint": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Value that indicates whether to ignore missing Vnet Service Endpoint"
+        },
+        "subnet": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Subnet"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties supplied for Subnet"
+        }
+      },
+      "description": "The response from the List namespace operation."
+    },
+    "PrivateEndpoint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ARM identifier for Private Endpoint."
+        }
+      },
+      "description": "PrivateEndpoint information."
+    },
+    "PrivateEndpointConnectionProperties": {
+      "type": "object",
+      "properties": {
+        "privateEndpoint": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpoint"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "PrivateEndpoint information."
+        },
+        "privateLinkServiceConnectionState": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ConnectionState"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "ConnectionState information."
+        },
+        "provisioningState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Creating",
+                "Updating",
+                "Deleting",
+                "Succeeded",
+                "Canceled",
+                "Failed"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Provisioning state of the Private Endpoint Connection."
+        }
+      },
+      "description": "Properties of the private endpoint connection resource."
+    },
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Event Hubs throughput units, value should be 0 to 20 throughput units."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Basic",
+                "Standard"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Name of this SKU."
+        },
+        "tier": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Basic",
+                "Standard"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The billing tier of this particular SKU."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "SKU parameters supplied to the create namespace operation"
+    },
+    "Subnet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource ID of Virtual Network Subnet"
+        }
+      },
+      "description": "Properties supplied for Subnet"
+    },
+    "VirtualNetworkRuleProperties": {
+      "type": "object",
+      "properties": {
+        "virtualNetworkSubnetId": {
+          "type": "string",
+          "description": "ARM ID of Virtual Network Subnet"
+        }
+      },
+      "description": "Properties supplied to create or update VirtualNetworkRules"
+    }
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-10-01-preview/Microsoft.Authorization.Resources.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Authorization",
+  "description": "Microsoft Authorization Resource Types",
+  "resourceDefinitions": {},
+  "subscription_resourceDefinitions": {
+    "policydefinitions": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the policy definition to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PolicyDefinitionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy definition properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/policydefinitions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/policydefinitions"
+    }
+  },
+  "unknown_resourceDefinitions": {
+    "policyassignments": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "description": "The ID of the policy assignment."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the policy assignment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PolicyAssignmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy assignment properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/policyassignments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/policyassignments"
+    }
+  },
+  "definitions": {
+    "PolicyAssignmentProperties": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the policy assignment."
+        },
+        "policyDefinitionId": {
+          "type": "string",
+          "description": "The ID of the policy definition."
+        },
+        "scope": {
+          "type": "string",
+          "description": "The scope for the policy assignment."
+        }
+      },
+      "description": "The policy assignment properties."
+    },
+    "PolicyDefinitionProperties": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The policy definition description."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the policy definition."
+        },
+        "policyRule": {
+          "type": "object",
+          "properties": {},
+          "description": "The policy rule."
+        },
+        "policyType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "NotSpecified",
+                "BuiltIn",
+                "Custom"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom."
+        }
+      },
+      "description": "The policy definition properties."
+    }
+  }
+}

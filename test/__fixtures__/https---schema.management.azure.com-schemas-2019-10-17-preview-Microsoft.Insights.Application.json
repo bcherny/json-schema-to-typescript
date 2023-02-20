@@ -1,0 +1,189 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-10-17-preview/Microsoft.Insights.Application.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "microsoft.insights",
+  "description": "microsoft insights Resource Types",
+  "resourceDefinitions": {
+    "workbooktemplates": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-10-17-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Application Insights component resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkbookTemplateProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties that contain a workbook template."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/workbooktemplates"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.insights/workbooktemplates"
+    }
+  },
+  "definitions": {
+    "WorkbookTemplateGallery": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Category for the gallery."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the workbook template in the gallery."
+        },
+        "order": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Order of the template within the gallery."
+        },
+        "resourceType": {
+          "type": "string",
+          "description": "Azure resource type supported by the gallery."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of workbook supported by the workbook template."
+        }
+      },
+      "description": "Gallery information for a workbook template."
+    },
+    "WorkbookTemplateLocalizedGallery": {
+      "type": "object",
+      "properties": {
+        "galleries": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WorkbookTemplateGallery"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workbook galleries supported by the template."
+        },
+        "templateData": {
+          "type": "object",
+          "properties": {},
+          "description": "Valid JSON object containing workbook template payload."
+        }
+      },
+      "description": "Localized template data and gallery information."
+    },
+    "WorkbookTemplateProperties": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Information about the author of the workbook template."
+        },
+        "galleries": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WorkbookTemplateGallery"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workbook galleries supported by the template."
+        },
+        "localized": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/WorkbookTemplateLocalizedGallery"
+                }
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key value pair of localized gallery. Each key is the locale code of languages supported by the Azure portal."
+        },
+        "priority": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Priority of the template. Determines which template to open when a workbook gallery is opened in viewer mode."
+        },
+        "templateData": {
+          "type": "object",
+          "properties": {},
+          "description": "Valid JSON object containing workbook template payload."
+        }
+      },
+      "required": [
+        "galleries",
+        "templateData"
+      ],
+      "description": "Properties that contain a workbook template."
+    }
+  }
+}

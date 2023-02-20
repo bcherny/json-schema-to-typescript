@@ -1,0 +1,308 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-08-01/Microsoft.CertificateRegistration.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.CertificateRegistration",
+  "description": "Microsoft CertificateRegistration Resource Types",
+  "resourceDefinitions": {
+    "certificateOrders": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-08-01"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource Location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the certificate order."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AppServiceCertificateOrderProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "AppServiceCertificateOrder resource specific properties"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/certificateOrders_certificates_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.CertificateRegistration/certificateOrders"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.CertificateRegistration/certificateOrders"
+    },
+    "certificateOrders_certificates": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-08-01"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource Location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the certificate."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AppServiceCertificate"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key Vault container for a certificate that is purchased through Azure."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.CertificateRegistration/certificateOrders/certificates"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.CertificateRegistration/certificateOrders/certificates"
+    }
+  },
+  "definitions": {
+    "AppServiceCertificate": {
+      "type": "object",
+      "properties": {
+        "keyVaultId": {
+          "type": "string",
+          "description": "Key Vault resource Id."
+        },
+        "keyVaultSecretName": {
+          "type": "string",
+          "description": "Key Vault secret name."
+        }
+      },
+      "description": "Key Vault container for a certificate that is purchased through Azure."
+    },
+    "AppServiceCertificateOrderProperties": {
+      "type": "object",
+      "properties": {
+        "autoRenew": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "<code>true</code> if the certificate should be automatically renewed when it expires; otherwise, <code>false</code>."
+        },
+        "certificates": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/AppServiceCertificate"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "State of the Key Vault secret."
+        },
+        "csr": {
+          "type": "string",
+          "description": "Last CSR that was created for this order."
+        },
+        "distinguishedName": {
+          "type": "string",
+          "description": "Certificate distinguished name."
+        },
+        "keySize": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "2048"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Certificate key size."
+        },
+        "productType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "StandardDomainValidatedSsl",
+                "StandardDomainValidatedWildCardSsl"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Certificate product type."
+        },
+        "validityInYears": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3,
+              "default": "1"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Duration in years (must be between 1 and 3)."
+        }
+      },
+      "required": [
+        "productType"
+      ],
+      "description": "AppServiceCertificateOrder resource specific properties"
+    },
+    "certificateOrders_certificates_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-08-01"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource Location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the certificate."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AppServiceCertificate"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key Vault container for a certificate that is purchased through Azure."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "certificates"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.CertificateRegistration/certificateOrders/certificates"
+    }
+  }
+}

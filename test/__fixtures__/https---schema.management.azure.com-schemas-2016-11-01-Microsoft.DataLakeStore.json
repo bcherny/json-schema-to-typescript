@@ -1,0 +1,671 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2016-11-01/Microsoft.DataLakeStore.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.DataLakeStore",
+  "description": "Microsoft DataLakeStore Resource Types",
+  "resourceDefinitions": {
+    "accounts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-11-01"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EncryptionIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The encryption identity properties."
+        },
+        "location": {
+          "type": "string",
+          "description": "The resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Data Lake Store account."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateDataLakeStoreAccountProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/accounts_firewallRules_childResource"
+              },
+              {
+                "$ref": "#/definitions/accounts_virtualNetworkRules_childResource"
+              },
+              {
+                "$ref": "#/definitions/accounts_trustedIdProviders_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeStore/accounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts"
+    },
+    "accounts_firewallRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-11-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the firewall rule to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The firewall rule properties to use when creating a new firewall rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeStore/accounts/firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts/firewallRules"
+    },
+    "accounts_trustedIdProviders": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-11-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the trusted identity provider. This is used for differentiation of providers in the account."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateTrustedIdProviderProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The trusted identity provider properties to use when creating a new trusted identity provider."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeStore/accounts/trustedIdProviders"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts/trustedIdProviders"
+    },
+    "accounts_virtualNetworkRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-11-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the virtual network rule to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateVirtualNetworkRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The virtual network rule properties to use when creating a new virtual network rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeStore/accounts/virtualNetworkRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts/virtualNetworkRules"
+    }
+  },
+  "definitions": {
+    "accounts_firewallRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-11-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the firewall rule to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The firewall rule properties to use when creating a new firewall rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts/firewallRules"
+    },
+    "accounts_trustedIdProviders_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-11-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the trusted identity provider. This is used for differentiation of providers in the account."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateTrustedIdProviderProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The trusted identity provider properties to use when creating a new trusted identity provider."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "trustedIdProviders"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts/trustedIdProviders"
+    },
+    "accounts_virtualNetworkRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-11-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the virtual network rule to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateVirtualNetworkRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The virtual network rule properties to use when creating a new virtual network rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "virtualNetworkRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeStore/accounts/virtualNetworkRules"
+    },
+    "CreateDataLakeStoreAccountProperties": {
+      "type": "object",
+      "properties": {
+        "defaultGroup": {
+          "type": "string",
+          "description": "The default owner group for all new folders and files created in the Data Lake Store account."
+        },
+        "encryptionConfig": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EncryptionConfig"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The encryption configuration for the account."
+        },
+        "encryptionState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current state of encryption for this Data Lake Store account."
+        },
+        "firewallAllowAzureIps": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current state of allowing or disallowing IPs originating within Azure through the firewall. If the firewall is disabled, this is not enforced."
+        },
+        "firewallRules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CreateFirewallRuleWithAccountParameters"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of firewall rules associated with this Data Lake Store account."
+        },
+        "firewallState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current state of the IP address firewall for this Data Lake Store account."
+        },
+        "newTier": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Consumption",
+                "Commitment_1TB",
+                "Commitment_10TB",
+                "Commitment_100TB",
+                "Commitment_500TB",
+                "Commitment_1PB",
+                "Commitment_5PB"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The commitment tier to use for next month."
+        },
+        "trustedIdProviders": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CreateTrustedIdProviderWithAccountParameters"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of trusted identity providers associated with this Data Lake Store account."
+        },
+        "trustedIdProviderState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current state of the trusted identity provider feature for this Data Lake Store account."
+        },
+        "virtualNetworkRules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CreateVirtualNetworkRuleWithAccountParameters"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of virtual network rules associated with this Data Lake Store account."
+        }
+      }
+    },
+    "CreateFirewallRuleWithAccountParameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the firewall rule to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The firewall rule properties to use when creating a new firewall rule."
+        }
+      },
+      "required": [
+        "name",
+        "properties"
+      ],
+      "description": "The parameters used to create a new firewall rule while creating a new Data Lake Store account."
+    },
+    "CreateOrUpdateFirewallRuleProperties": {
+      "type": "object",
+      "properties": {
+        "endIpAddress": {
+          "type": "string",
+          "description": "The end IP address for the firewall rule. This can be either ipv4 or ipv6. Start and End should be in the same protocol."
+        },
+        "startIpAddress": {
+          "type": "string",
+          "description": "The start IP address for the firewall rule. This can be either ipv4 or ipv6. Start and End should be in the same protocol."
+        }
+      },
+      "required": [
+        "endIpAddress",
+        "startIpAddress"
+      ],
+      "description": "The firewall rule properties to use when creating a new firewall rule."
+    },
+    "CreateOrUpdateTrustedIdProviderProperties": {
+      "type": "object",
+      "properties": {
+        "idProvider": {
+          "type": "string",
+          "description": "The URL of this trusted identity provider."
+        }
+      },
+      "required": [
+        "idProvider"
+      ],
+      "description": "The trusted identity provider properties to use when creating a new trusted identity provider."
+    },
+    "CreateOrUpdateVirtualNetworkRuleProperties": {
+      "type": "object",
+      "properties": {
+        "subnetId": {
+          "type": "string",
+          "description": "The resource identifier for the subnet."
+        }
+      },
+      "required": [
+        "subnetId"
+      ],
+      "description": "The virtual network rule properties to use when creating a new virtual network rule."
+    },
+    "CreateTrustedIdProviderWithAccountParameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the trusted identity provider to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateTrustedIdProviderProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The trusted identity provider properties to use when creating a new trusted identity provider."
+        }
+      },
+      "required": [
+        "name",
+        "properties"
+      ],
+      "description": "The parameters used to create a new trusted identity provider while creating a new Data Lake Store account."
+    },
+    "CreateVirtualNetworkRuleWithAccountParameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the virtual network rule to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateVirtualNetworkRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The virtual network rule properties to use when creating a new virtual network rule."
+        }
+      },
+      "required": [
+        "name",
+        "properties"
+      ],
+      "description": "The parameters used to create a new virtual network rule while creating a new Data Lake Store account."
+    },
+    "EncryptionConfig": {
+      "type": "object",
+      "properties": {
+        "keyVaultMetaInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyVaultMetaInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Metadata information used by account encryption."
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "UserManaged",
+                "ServiceManaged"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of encryption configuration being used. Currently the only supported types are 'UserManaged' and 'ServiceManaged'."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "description": "The encryption configuration for the account."
+    },
+    "EncryptionIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SystemAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of encryption being used. Currently the only supported type is 'SystemAssigned'."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "description": "The encryption identity properties."
+    },
+    "KeyVaultMetaInfo": {
+      "type": "object",
+      "properties": {
+        "encryptionKeyName": {
+          "type": "string",
+          "description": "The name of the user managed encryption key."
+        },
+        "encryptionKeyVersion": {
+          "type": "string",
+          "description": "The version of the user managed encryption key."
+        },
+        "keyVaultResourceId": {
+          "type": "string",
+          "description": "The resource identifier for the user managed Key Vault being used to encrypt."
+        }
+      },
+      "required": [
+        "encryptionKeyName",
+        "encryptionKeyVersion",
+        "keyVaultResourceId"
+      ],
+      "description": "Metadata information used by account encryption."
+    }
+  }
+}

@@ -1,0 +1,383 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-06-01-preview/Microsoft.Insights.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "microsoft.insights",
+  "description": "microsoft insights Resource Types",
+  "resourceDefinitions": {
+    "guestDiagnosticSettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the diagnostic setting."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/GuestDiagnosticSettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Virtual machine diagnostic settings"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/guestDiagnosticSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.insights/guestDiagnosticSettings"
+    }
+  },
+  "unknown_resourceDefinitions": {
+    "guestDiagnosticSettingsAssociation": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the diagnostic settings association."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/GuestDiagnosticSettingsAssociation"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A guest diagnostic settings association."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/guestDiagnosticSettingsAssociation"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.insights/guestDiagnosticSettingsAssociation"
+    }
+  },
+  "definitions": {
+    "DataSource": {
+      "type": "object",
+      "properties": {
+        "configuration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataSourceConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "PerformanceCounter",
+                "ETWProviders",
+                "WindowsEventLogs"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Datasource kind."
+        },
+        "sinks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SinkConfiguration"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "configuration",
+        "kind",
+        "sinks"
+      ],
+      "description": "Data source object contains configuration to collect telemetry and one or more sinks to send that telemetry data to"
+    },
+    "DataSourceConfiguration": {
+      "type": "object",
+      "properties": {
+        "eventLogs": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EventLogConfiguration"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Windows event logs configuration."
+        },
+        "perfCounters": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PerformanceCounterConfiguration"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Performance counter configuration"
+        },
+        "providers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EtwProviderConfiguration"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "ETW providers configuration"
+        }
+      }
+    },
+    "EtwEventConfiguration": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "string"
+        },
+        "id": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "EtwProviderConfiguration": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EtwEventConfiguration"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "events",
+        "id"
+      ]
+    },
+    "EventLogConfiguration": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "string"
+        },
+        "logName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "logName"
+      ]
+    },
+    "GuestDiagnosticSettings": {
+      "type": "object",
+      "properties": {
+        "dataSources": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DataSource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the array of data source object which are configured to collect and send data"
+        },
+        "osType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Windows",
+                "Linux"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Operating system type for the configuration."
+        },
+        "proxySetting": {
+          "type": "string"
+        }
+      },
+      "description": "Virtual machine diagnostic settings"
+    },
+    "GuestDiagnosticSettingsAssociation": {
+      "type": "object",
+      "properties": {
+        "guestDiagnosticSettingsName": {
+          "type": "string",
+          "description": "The guest diagnostic settings name."
+        }
+      },
+      "required": [
+        "guestDiagnosticSettingsName"
+      ],
+      "description": "A guest diagnostic settings association."
+    },
+    "PerformanceCounterConfiguration": {
+      "type": "object",
+      "properties": {
+        "instance": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "samplingPeriod": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "samplingPeriod"
+      ]
+    },
+    "SinkConfiguration": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "EventHub",
+                "ApplicationInsights",
+                "LogAnalytics"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    }
+  }
+}

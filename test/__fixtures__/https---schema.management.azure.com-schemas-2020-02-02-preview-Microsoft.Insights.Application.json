@@ -1,0 +1,239 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2020-02-02-preview/Microsoft.Insights.Application.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Insights",
+  "description": "Microsoft Insights Resource Types",
+  "resourceDefinitions": {
+    "components": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2020-02-02-preview"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "Resource etag"
+        },
+        "kind": {
+          "type": "string",
+          "description": "The kind of application that this component refers to, used to customize UI. This value is a freeform string, values should typically be one of the following: web, ios, other, store, java, phone."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Application Insights component resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties that define an Application Insights component resource."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/components"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "kind",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components"
+    }
+  },
+  "definitions": {
+    "ApplicationInsightsComponentProperties": {
+      "type": "object",
+      "properties": {
+        "Application_Type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "web",
+                "other"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of application being monitored."
+        },
+        "DisableIpMasking": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Disable IP masking."
+        },
+        "DisableLocalAuth": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Disable Non-AAD based Auth."
+        },
+        "Flow_Type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Bluefield"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Used by the Application Insights system to determine what kind of flow this component was created by. This is to be set to 'Bluefield' when creating/updating a component via the REST API."
+        },
+        "ForceCustomerStorageForProfiler": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Force users to create their own storage account for profiler and debugger."
+        },
+        "HockeyAppId": {
+          "type": "string",
+          "description": "The unique application ID created when a new application is added to HockeyApp, used for communications with HockeyApp."
+        },
+        "ImmediatePurgeDataOn30Days": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Purge data immediately after 30 days."
+        },
+        "IngestionMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ApplicationInsights",
+                "ApplicationInsightsWithDiagnosticSettings",
+                "LogAnalytics"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates the flow of the ingestion."
+        },
+        "publicNetworkAccessForIngestion": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The network access type for accessing Application Insights ingestion."
+        },
+        "publicNetworkAccessForQuery": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The network access type for accessing Application Insights query."
+        },
+        "Request_Source": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "rest"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes what tool created this Application Insights component. Customers using this API should set this to the default 'rest'."
+        },
+        "SamplingPercentage": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Percentage of the data produced by the application being monitored that is being sampled for Application Insights telemetry."
+        },
+        "WorkspaceResourceId": {
+          "type": "string",
+          "description": "Resource Id of the log analytics workspace which the data will be ingested to. This property is required to create an application with this API version. Applications from older versions will not have this property."
+        }
+      },
+      "required": [
+        "Application_Type"
+      ],
+      "description": "Properties that define an Application Insights component resource."
+    }
+  }
+}

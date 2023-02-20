@@ -1,0 +1,428 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-04-01/Microsoft.DomainRegistration.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.DomainRegistration",
+  "description": "Microsoft DomainRegistration Resource Types",
+  "resourceDefinitions": {
+    "domains": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-04-01"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource Location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the domain."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DomainProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Domain resource specific properties"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/domains_domainOwnershipIdentifiers_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DomainRegistration/domains"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DomainRegistration/domains"
+    },
+    "domains_domainOwnershipIdentifiers": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-04-01"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of identifier."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DomainOwnershipIdentifierProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "DomainOwnershipIdentifier resource specific properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DomainRegistration/domains/domainOwnershipIdentifiers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DomainRegistration/domains/domainOwnershipIdentifiers"
+    }
+  },
+  "definitions": {
+    "Address": {
+      "type": "object",
+      "properties": {
+        "address1": {
+          "type": "string",
+          "description": "First line of an Address."
+        },
+        "address2": {
+          "type": "string",
+          "description": "First line of an Address."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city for the address."
+        },
+        "country": {
+          "type": "string",
+          "description": "The country for the address."
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "The postal code for the address."
+        },
+        "state": {
+          "type": "string",
+          "description": "The state or province for the address."
+        }
+      },
+      "required": [
+        "address1",
+        "city",
+        "country",
+        "postalCode",
+        "state"
+      ],
+      "description": "Address information for domain registration."
+    },
+    "Contact": {
+      "type": "object",
+      "properties": {
+        "addressMailing": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Address"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Address information for domain registration."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address."
+        },
+        "fax": {
+          "type": "string",
+          "description": "Fax number."
+        },
+        "jobTitle": {
+          "type": "string",
+          "description": "Job title."
+        },
+        "nameFirst": {
+          "type": "string",
+          "description": "First name."
+        },
+        "nameLast": {
+          "type": "string",
+          "description": "Last name."
+        },
+        "nameMiddle": {
+          "type": "string",
+          "description": "Middle name."
+        },
+        "organization": {
+          "type": "string",
+          "description": "Organization contact belongs to."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number."
+        }
+      },
+      "required": [
+        "email",
+        "nameFirst",
+        "nameLast",
+        "phone"
+      ],
+      "description": "Contact information for domain registration. If 'Domain Privacy' option is not selected then the contact information is made publicly available through the Whois \ndirectories as per ICANN requirements."
+    },
+    "DomainOwnershipIdentifierProperties": {
+      "type": "object",
+      "properties": {
+        "ownershipId": {
+          "type": "string",
+          "description": "Ownership Id."
+        }
+      },
+      "description": "DomainOwnershipIdentifier resource specific properties"
+    },
+    "DomainProperties": {
+      "type": "object",
+      "properties": {
+        "authCode": {
+          "type": "string"
+        },
+        "autoRenew": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "<code>true</code> if the domain should be automatically renewed; otherwise, <code>false</code>."
+        },
+        "consent": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DomainPurchaseConsent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Domain purchase consent object, representing acceptance of applicable legal agreements."
+        },
+        "contactAdmin": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Contact"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contact information for domain registration. If 'Domain Privacy' option is not selected then the contact information is made publicly available through the Whois \ndirectories as per ICANN requirements."
+        },
+        "contactBilling": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Contact"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contact information for domain registration. If 'Domain Privacy' option is not selected then the contact information is made publicly available through the Whois \ndirectories as per ICANN requirements."
+        },
+        "contactRegistrant": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Contact"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contact information for domain registration. If 'Domain Privacy' option is not selected then the contact information is made publicly available through the Whois \ndirectories as per ICANN requirements."
+        },
+        "contactTech": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Contact"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contact information for domain registration. If 'Domain Privacy' option is not selected then the contact information is made publicly available through the Whois \ndirectories as per ICANN requirements."
+        },
+        "dnsType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AzureDns",
+                "DefaultDomainRegistrarDns"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Current DNS type."
+        },
+        "dnsZoneId": {
+          "type": "string",
+          "description": "Azure DNS Zone to use"
+        },
+        "privacy": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "<code>true</code> if domain privacy is enabled for this domain; otherwise, <code>false</code>."
+        },
+        "targetDnsType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AzureDns",
+                "DefaultDomainRegistrarDns"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Target DNS type (would be used for migration)."
+        }
+      },
+      "required": [
+        "consent",
+        "contactAdmin",
+        "contactBilling",
+        "contactRegistrant",
+        "contactTech"
+      ],
+      "description": "Domain resource specific properties"
+    },
+    "DomainPurchaseConsent": {
+      "type": "object",
+      "properties": {
+        "agreedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the agreements were accepted."
+        },
+        "agreedBy": {
+          "type": "string",
+          "description": "Client IP address."
+        },
+        "agreementKeys": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of applicable legal agreement keys. This list can be retrieved using ListLegalAgreements API under <code>TopLevelDomain</code> resource."
+        }
+      },
+      "description": "Domain purchase consent object, representing acceptance of applicable legal agreements."
+    },
+    "domains_domainOwnershipIdentifiers_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-04-01"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of identifier."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DomainOwnershipIdentifierProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "DomainOwnershipIdentifier resource specific properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "domainOwnershipIdentifiers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DomainRegistration/domains/domainOwnershipIdentifiers"
+    }
+  }
+}

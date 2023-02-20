@@ -1,0 +1,110 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-10-01/Microsoft.Insights.Application.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "microsoft.insights",
+  "description": "microsoft insights Resource Types",
+  "resourceDefinitions": {
+    "components_pricingPlans": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-10-01"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/current$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PricingPlanProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An Application Insights component daily data volume cap"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/components/pricingPlans"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.insights/components/pricingPlans"
+    }
+  },
+  "definitions": {
+    "PricingPlanProperties": {
+      "type": "object",
+      "properties": {
+        "cap": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Daily data volume cap in GB."
+        },
+        "planType": {
+          "type": "string",
+          "description": "Pricing Plan Type Name."
+        },
+        "stopSendNotificationWhenHitCap": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Do not send a notification email when the daily data volume cap is met."
+        },
+        "stopSendNotificationWhenHitThreshold": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Reserved, not used for now."
+        },
+        "warningThreshold": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Reserved, not used for now."
+        }
+      },
+      "description": "An Application Insights component daily data volume cap"
+    }
+  }
+}

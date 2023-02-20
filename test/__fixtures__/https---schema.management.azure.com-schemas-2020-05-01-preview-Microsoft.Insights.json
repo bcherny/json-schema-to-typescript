@@ -1,0 +1,391 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2020-05-01-preview/Microsoft.Insights.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Insights",
+  "description": "Microsoft Insights Resource Types",
+  "resourceDefinitions": {
+    "scheduledQueryRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2020-05-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ScheduledQueryRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "scheduled query rule Definition"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/scheduledQueryRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/scheduledQueryRules"
+    }
+  },
+  "definitions": {
+    "Action": {
+      "type": "object",
+      "properties": {
+        "actionGroupId": {
+          "type": "string",
+          "description": "Action Group resource Id to invoke when the alert fires."
+        },
+        "webHookProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a webhook object."
+        }
+      },
+      "description": "Actions to invoke when the alert fires."
+    },
+    "Condition": {
+      "type": "object",
+      "properties": {
+        "dimensions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Dimension"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of Dimensions conditions"
+        },
+        "failingPeriods": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ConditionFailingPeriods"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The minimum number of violations required within the selected lookback time window required to raise an alert."
+        },
+        "metricMeasureColumn": {
+          "type": "string",
+          "description": "The column containing the metric measure number."
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Equals",
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The criteria operator."
+        },
+        "query": {
+          "type": "string",
+          "description": "Log query alert"
+        },
+        "resourceIdColumn": {
+          "type": "string",
+          "description": "The column containing the resource id. The content of the column must be a uri formatted as resource id"
+        },
+        "threshold": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the criteria threshold value that activates the alert."
+        },
+        "timeAggregation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Count",
+                "Average",
+                "Minimum",
+                "Maximum",
+                "Total"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Aggregation type."
+        }
+      },
+      "required": [
+        "operator",
+        "threshold",
+        "timeAggregation"
+      ],
+      "description": "A condition of the scheduled query rule."
+    },
+    "ConditionFailingPeriods": {
+      "type": "object",
+      "properties": {
+        "minFailingPeriodsToAlert": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "1"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of violations to trigger an alert. Should be smaller or equal to numberOfEvaluationPeriods. Default value is 1"
+        },
+        "numberOfEvaluationPeriods": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "1"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of aggregated lookback points. The lookback time window is calculated based on the aggregation granularity (windowSize) and the selected number of aggregated points. Default value is 1"
+        }
+      },
+      "description": "The minimum number of violations required within the selected lookback time window required to raise an alert."
+    },
+    "Dimension": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the dimension"
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Include",
+                "Exclude"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Operator for dimension values."
+        },
+        "values": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of dimension values"
+        }
+      },
+      "required": [
+        "name",
+        "operator",
+        "values"
+      ],
+      "description": "Dimension splitting and filtering definition"
+    },
+    "ScheduledQueryRuleCriteria": {
+      "type": "object",
+      "properties": {
+        "allOf": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Condition"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of conditions to evaluate against the specified scopes"
+        }
+      },
+      "description": "The rule criteria that defines the conditions of the scheduled query rule."
+    },
+    "ScheduledQueryRuleProperties": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Action"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "criteria": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ScheduledQueryRuleCriteria"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rule criteria that defines the conditions of the scheduled query rule."
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the scheduled query rule."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the alert rule"
+        },
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The flag which indicates whether this scheduled query rule is enabled. Value should be true or false"
+        },
+        "evaluationFrequency": {
+          "type": "string",
+          "format": "duration",
+          "description": "How often the scheduled query rule is evaluated represented in ISO 8601 duration format."
+        },
+        "muteActionsDuration": {
+          "type": "string",
+          "format": "duration",
+          "description": "Mute actions for the chosen period of time (in ISO 8601 duration format) after the alert is fired."
+        },
+        "overrideQueryTimeRange": {
+          "type": "string",
+          "format": "duration",
+          "description": "If specified then overrides the query time range (default is WindowSize*NumberOfEvaluationPeriods)"
+        },
+        "scopes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of resource id's that this scheduled query rule is scoped to."
+        },
+        "severity": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Severity of the alert. Should be an integer between [0-4]. Value of 0 is severest"
+        },
+        "targetResourceTypes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of resource type of the target resource(s) on which the alert is created/updated. For example if the scope is a resource group and targetResourceTypes is Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual machine in the resource group which meet the alert criteria"
+        },
+        "windowSize": {
+          "type": "string",
+          "format": "duration",
+          "description": "The period of time (in ISO 8601 duration format) on which the Alert query will be executed (bin size)."
+        }
+      },
+      "description": "scheduled query rule Definition"
+    }
+  }
+}

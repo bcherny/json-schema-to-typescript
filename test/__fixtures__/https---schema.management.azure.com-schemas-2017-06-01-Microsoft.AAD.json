@@ -1,0 +1,466 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-06-01/Microsoft.AAD.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.AAD",
+  "description": "Microsoft AAD Resource Types",
+  "resourceDefinitions": {
+    "domainServices": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "Resource etag"
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the domain service."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DomainServiceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the Domain Service."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/domainServices_ouContainer_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.AAD/domainServices"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.AAD/domainServices"
+    },
+    "domainServices_ouContainer": {
+      "type": "object",
+      "properties": {
+        "accountName": {
+          "type": "string",
+          "description": "The account name"
+        },
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the OuContainer."
+        },
+        "password": {
+          "type": "string",
+          "description": "The account password"
+        },
+        "spn": {
+          "type": "string",
+          "description": "The account spn"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Aad/domainServices/ouContainer"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Aad/domainServices/ouContainer"
+    }
+  },
+  "definitions": {
+    "DomainSecuritySettings": {
+      "type": "object",
+      "properties": {
+        "ntlmV1": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag to determine whether or not NtlmV1 is enabled or disabled."
+        },
+        "syncKerberosPasswords": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag to determine whether or not SyncKerberosPasswords is enabled or disabled."
+        },
+        "syncNtlmPasswords": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag to determine whether or not SyncNtlmPasswords is enabled or disabled."
+        },
+        "syncOnPremPasswords": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag to determine whether or not SyncOnPremPasswords is enabled or disabled."
+        },
+        "tlsV1": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag to determine whether or not TlsV1 is enabled or disabled."
+        }
+      },
+      "description": "Domain Security Settings"
+    },
+    "DomainServiceProperties": {
+      "type": "object",
+      "properties": {
+        "domainConfigurationType": {
+          "type": "string",
+          "description": "Domain Configuration Type"
+        },
+        "domainName": {
+          "type": "string",
+          "description": "The name of the Azure domain that the user would like to deploy Domain Services to."
+        },
+        "domainSecuritySettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DomainSecuritySettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Domain Security Settings"
+        },
+        "filteredSync": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enabled or Disabled flag to turn on Group-based filtered sync."
+        },
+        "ldapsSettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LdapsSettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Secure LDAP Settings"
+        },
+        "notificationSettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/NotificationSettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Settings for notification"
+        },
+        "resourceForestSettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ResourceForestSettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Settings for Resource Forest"
+        },
+        "sku": {
+          "type": "string",
+          "description": "Sku Type"
+        },
+        "subnetId": {
+          "type": "string",
+          "description": "The name of the virtual network that Domain Services will be deployed on. The id of the subnet that Domain Services will be deployed on. /virtualNetwork/vnetName/subnets/subnetName."
+        }
+      },
+      "description": "Properties of the Domain Service."
+    },
+    "domainServices_ouContainer_childResource": {
+      "type": "object",
+      "properties": {
+        "accountName": {
+          "type": "string",
+          "description": "The account name"
+        },
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-06-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the OuContainer."
+        },
+        "password": {
+          "type": "string",
+          "description": "The account password"
+        },
+        "spn": {
+          "type": "string",
+          "description": "The account spn"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "ouContainer"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Aad/domainServices/ouContainer"
+    },
+    "ForestTrust": {
+      "type": "object",
+      "properties": {
+        "friendlyName": {
+          "type": "string",
+          "description": "Friendly Name"
+        },
+        "remoteDnsIps": {
+          "type": "string",
+          "description": "Remote Dns ips"
+        },
+        "trustDirection": {
+          "type": "string",
+          "description": "Trust Direction"
+        },
+        "trustedDomainFqdn": {
+          "type": "string",
+          "description": "Trusted Domain FQDN"
+        },
+        "trustPassword": {
+          "type": "string",
+          "description": "Trust Password"
+        }
+      },
+      "description": "Forest Trust Setting"
+    },
+    "LdapsSettings": {
+      "type": "object",
+      "properties": {
+        "externalAccess": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag to determine whether or not Secure LDAP access over the internet is enabled or disabled."
+        },
+        "ldaps": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag to determine whether or not Secure LDAP is enabled or disabled."
+        },
+        "pfxCertificate": {
+          "type": "string",
+          "description": "The certificate required to configure Secure LDAP. The parameter passed here should be a base64encoded representation of the certificate pfx file."
+        },
+        "pfxCertificatePassword": {
+          "type": "string",
+          "description": "The password to decrypt the provided Secure LDAP certificate pfx file."
+        }
+      },
+      "description": "Secure LDAP Settings"
+    },
+    "NotificationSettings": {
+      "type": "object",
+      "properties": {
+        "additionalRecipients": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of additional recipients"
+        },
+        "notifyDcAdmins": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Should domain controller admins be notified."
+        },
+        "notifyGlobalAdmins": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Should global admins be notified."
+        }
+      },
+      "description": "Settings for notification"
+    },
+    "ResourceForestSettings": {
+      "type": "object",
+      "properties": {
+        "resourceForest": {
+          "type": "string",
+          "description": "Resource Forest"
+        },
+        "settings": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ForestTrust"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of settings for Resource Forest"
+        }
+      },
+      "description": "Settings for Resource Forest"
+    }
+  }
+}

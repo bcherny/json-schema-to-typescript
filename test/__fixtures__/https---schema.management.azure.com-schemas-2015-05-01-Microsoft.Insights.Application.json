@@ -1,0 +1,1817 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-05-01/Microsoft.Insights.Application.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Insights",
+  "description": "Microsoft Insights Resource Types",
+  "resourceDefinitions": {
+    "components": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "The kind of application that this component refers to, used to customize UI. This value is a freeform string, values should typically be one of the following: web, ios, other, store, java, phone."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Application Insights component resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties that define an Application Insights component resource."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/components_Annotations_childResource"
+              },
+              {
+                "$ref": "#/definitions/components_exportconfiguration_childResource"
+              },
+              {
+                "$ref": "#/definitions/components_currentbillingfeatures_childResource"
+              },
+              {
+                "$ref": "#/definitions/components_ProactiveDetectionConfigs_childResource"
+              },
+              {
+                "$ref": "#/definitions/components_favorites_childResource"
+              },
+              {
+                "$ref": "#/definitions/components_analyticsItems_childResource"
+              },
+              {
+                "$ref": "#/definitions/components_myanalyticsItems_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/components"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "kind",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components"
+    },
+    "components_analyticsItems": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "Content": {
+          "type": "string",
+          "description": "The content of this item"
+        },
+        "Id": {
+          "type": "string",
+          "description": "Internally assigned unique id of the item definition."
+        },
+        "Name": {
+          "type": "string",
+          "description": "The user-defined name of the item."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/item$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "Properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentAnalyticsItemProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A set of properties that can be defined in the context of a specific item type. Each type may have its own properties."
+        },
+        "Scope": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "shared",
+                "user"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating if this item definition is owned by a specific user or is shared between all users with access to the Application Insights component."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/components/analyticsItems"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "microsoft.insights/components/analyticsItems"
+    },
+    "components_Annotations": {
+      "type": "object",
+      "properties": {
+        "AnnotationName": {
+          "type": "string",
+          "description": "Name of annotation"
+        },
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "Category": {
+          "type": "string",
+          "description": "Category of annotation, free form"
+        },
+        "EventTime": {
+          "type": "string",
+          "description": "Time when event occurred"
+        },
+        "Id": {
+          "type": "string",
+          "description": "Unique Id for annotation"
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/Annotations$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "Properties": {
+          "type": "string",
+          "description": "Serialized JSON object for detailed properties"
+        },
+        "RelatedAnnotation": {
+          "type": "string",
+          "default": "null",
+          "description": "Related parent annotation if any"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/components/Annotations"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/Annotations"
+    },
+    "components_currentbillingfeatures": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "CurrentBillingFeatures": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Current enabled pricing plan. When the component is in the Enterprise plan, this will list both 'Basic' and 'Application Insights Enterprise'."
+        },
+        "DataVolumeCap": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentDataVolumeCap"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An Application Insights component daily data volume cap"
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/currentbillingfeatures$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/components/currentbillingfeatures"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/currentbillingfeatures"
+    },
+    "components_exportconfiguration": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "DestinationAccountId": {
+          "type": "string",
+          "description": "The name of destination storage account."
+        },
+        "DestinationAddress": {
+          "type": "string",
+          "description": "The SAS URL for the destination storage container. It must grant write permission."
+        },
+        "DestinationStorageLocationId": {
+          "type": "string",
+          "description": "The location ID of the destination storage container."
+        },
+        "DestinationStorageSubscriptionId": {
+          "type": "string",
+          "description": "The subscription ID of the destination storage container."
+        },
+        "DestinationType": {
+          "type": "string",
+          "description": "The Continuous Export destination type. This has to be 'Blob'."
+        },
+        "IsEnabled": {
+          "type": "string",
+          "description": "Set to 'true' to create a Continuous Export configuration as enabled, otherwise set it to 'false'."
+        },
+        "name": {
+          "type": "string",
+          "description": "The Continuous Export configuration ID. This is unique within a Application Insights component."
+        },
+        "NotificationQueueEnabled": {
+          "type": "string",
+          "description": "Deprecated"
+        },
+        "NotificationQueueUri": {
+          "type": "string",
+          "description": "Deprecated"
+        },
+        "RecordTypes": {
+          "type": "string",
+          "description": "The document types to be exported, as comma separated values. Allowed values include 'Requests', 'Event', 'Exceptions', 'Metrics', 'PageViews', 'PageViewPerformance', 'Rdd', 'PerformanceCounters', 'Availability', 'Messages'."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/components/exportconfiguration"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/exportconfiguration"
+    },
+    "components_favorites": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "Category": {
+          "type": "string",
+          "description": "Favorite category, as defined by the user at creation time."
+        },
+        "Config": {
+          "type": "string",
+          "description": "Configuration of this particular favorite, which are driven by the Azure portal UX. Configuration data is a string containing valid JSON"
+        },
+        "FavoriteType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "shared",
+                "user"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating if this favorite definition is owned by a specific user or is shared between all users with access to the Application Insights component."
+        },
+        "IsGeneratedFromTemplate": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Flag denoting wether or not this favorite was generated from a template."
+        },
+        "Name": {
+          "type": "string",
+          "description": "The user-defined name of the favorite."
+        },
+        "name": {
+          "type": "string",
+          "description": "The Id of a specific favorite defined in the Application Insights component"
+        },
+        "SourceType": {
+          "type": "string",
+          "description": "The source of the favorite definition."
+        },
+        "Tags": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of 0 or more tags that are associated with this favorite definition"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/components/favorites"
+          ]
+        },
+        "Version": {
+          "type": "string",
+          "description": "This instance's version of the data model. This can change as new features are added that can be marked favorite. Current examples include MetricsExplorer (ME) and Search."
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/favorites"
+    },
+    "components_myanalyticsItems": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "Content": {
+          "type": "string",
+          "description": "The content of this item"
+        },
+        "Id": {
+          "type": "string",
+          "description": "Internally assigned unique id of the item definition."
+        },
+        "Name": {
+          "type": "string",
+          "description": "The user-defined name of the item."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/item$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "Properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentAnalyticsItemProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A set of properties that can be defined in the context of a specific item type. Each type may have its own properties."
+        },
+        "Scope": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "shared",
+                "user"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating if this item definition is owned by a specific user or is shared between all users with access to the Application Insights component."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/components/myanalyticsItems"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "microsoft.insights/components/myanalyticsItems"
+    },
+    "components_ProactiveDetectionConfigs": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "CustomEmails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Custom email addresses for this rule notifications"
+        },
+        "Enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag that indicates whether this rule is enabled by the user"
+        },
+        "LastUpdatedTime": {
+          "type": "string",
+          "description": "The last time this rule was updated"
+        },
+        "Name": {
+          "type": "string",
+          "description": "The rule name"
+        },
+        "name": {
+          "type": "string",
+          "description": "The ProactiveDetection configuration ID. This is unique within a Application Insights component."
+        },
+        "RuleDefinitions": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Static definitions of the ProactiveDetection configuration rule (same values for all components)."
+        },
+        "SendEmailsToSubscriptionOwners": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag that indicated whether notifications on this rule should be sent to subscription owners"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/components/ProactiveDetectionConfigs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/ProactiveDetectionConfigs"
+    },
+    "myWorkbooks": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "description": "Azure resource Id"
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "user",
+                "shared"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The kind of workbook. Choices are user and shared."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Application Insights component resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MyWorkbookProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties that contain a private workbook."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/myWorkbooks"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/myWorkbooks"
+    },
+    "webtests": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ping",
+                "multistep"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The kind of web test that this web test watches. Choices are ping and multistep."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Application Insights webtest resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WebTestProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Metadata describing a web test for an Azure resource."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/webtests"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/webtests"
+    },
+    "workbooks": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "user",
+                "shared"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The kind of workbook. Choices are user and shared."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Application Insights component resource."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkbookProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties that contain a workbook."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "microsoft.insights/workbooks"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "microsoft.insights/workbooks"
+    }
+  },
+  "definitions": {
+    "ApplicationInsightsComponentAnalyticsItemProperties": {
+      "type": "object",
+      "properties": {
+        "functionAlias": {
+          "type": "string",
+          "description": "A function alias, used when the type of the item is Function"
+        }
+      },
+      "description": "A set of properties that can be defined in the context of a specific item type. Each type may have its own properties."
+    },
+    "ApplicationInsightsComponentDataVolumeCap": {
+      "type": "object",
+      "properties": {
+        "Cap": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Daily data volume cap in GB."
+        },
+        "StopSendNotificationWhenHitCap": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Do not send a notification email when the daily data volume cap is met."
+        },
+        "StopSendNotificationWhenHitThreshold": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Reserved, not used for now."
+        },
+        "WarningThreshold": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Reserved, not used for now."
+        }
+      },
+      "description": "An Application Insights component daily data volume cap"
+    },
+    "ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions": {
+      "type": "object",
+      "properties": {
+        "Description": {
+          "type": "string",
+          "description": "The rule description"
+        },
+        "DisplayName": {
+          "type": "string",
+          "description": "The rule name as it is displayed in UI"
+        },
+        "HelpUrl": {
+          "type": "string",
+          "description": "URL which displays additional info about the proactive detection rule"
+        },
+        "IsEnabledByDefault": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag indicating whether the rule is enabled by default"
+        },
+        "IsHidden": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag indicating whether the rule is hidden (from the UI)"
+        },
+        "IsInPreview": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag indicating whether the rule is in preview"
+        },
+        "Name": {
+          "type": "string",
+          "description": "The rule name"
+        },
+        "SupportsEmailNotifications": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag indicating whether email notifications are supported for detections for this rule"
+        }
+      },
+      "description": "Static definitions of the ProactiveDetection configuration rule (same values for all components)."
+    },
+    "ApplicationInsightsComponentProperties": {
+      "type": "object",
+      "properties": {
+        "Application_Type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "web",
+                "other"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of application being monitored."
+        },
+        "DisableIpMasking": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Disable IP masking."
+        },
+        "Flow_Type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Bluefield"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Used by the Application Insights system to determine what kind of flow this component was created by. This is to be set to 'Bluefield' when creating/updating a component via the REST API."
+        },
+        "HockeyAppId": {
+          "type": "string",
+          "description": "The unique application ID created when a new application is added to HockeyApp, used for communications with HockeyApp."
+        },
+        "ImmediatePurgeDataOn30Days": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Purge data immediately after 30 days."
+        },
+        "IngestionMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ApplicationInsights",
+                "ApplicationInsightsWithDiagnosticSettings",
+                "LogAnalytics"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates the flow of the ingestion."
+        },
+        "Request_Source": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "rest"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes what tool created this Application Insights component. Customers using this API should set this to the default 'rest'."
+        },
+        "RetentionInDays": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "90"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Retention period in days."
+        },
+        "SamplingPercentage": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Percentage of the data produced by the application being monitored that is being sampled for Application Insights telemetry."
+        }
+      },
+      "required": [
+        "Application_Type"
+      ],
+      "description": "Properties that define an Application Insights component resource."
+    },
+    "components_analyticsItems_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "Content": {
+          "type": "string",
+          "description": "The content of this item"
+        },
+        "Id": {
+          "type": "string",
+          "description": "Internally assigned unique id of the item definition."
+        },
+        "Name": {
+          "type": "string",
+          "description": "The user-defined name of the item."
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "item"
+          ]
+        },
+        "Properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentAnalyticsItemProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A set of properties that can be defined in the context of a specific item type. Each type may have its own properties."
+        },
+        "Scope": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "shared",
+                "user"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating if this item definition is owned by a specific user or is shared between all users with access to the Application Insights component."
+        },
+        "Type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "none",
+                "query",
+                "recent",
+                "function"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating the type of the Analytics item."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "analyticsItems"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "microsoft.insights/components/analyticsItems"
+    },
+    "components_Annotations_childResource": {
+      "type": "object",
+      "properties": {
+        "AnnotationName": {
+          "type": "string",
+          "description": "Name of annotation"
+        },
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "Category": {
+          "type": "string",
+          "description": "Category of annotation, free form"
+        },
+        "EventTime": {
+          "type": "string",
+          "description": "Time when event occurred"
+        },
+        "Id": {
+          "type": "string",
+          "description": "Unique Id for annotation"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "Annotations"
+          ]
+        },
+        "Properties": {
+          "type": "string",
+          "description": "Serialized JSON object for detailed properties"
+        },
+        "RelatedAnnotation": {
+          "type": "string",
+          "default": "null",
+          "description": "Related parent annotation if any"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Annotations"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/Annotations"
+    },
+    "components_currentbillingfeatures_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "CurrentBillingFeatures": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Current enabled pricing plan. When the component is in the Enterprise plan, this will list both 'Basic' and 'Application Insights Enterprise'."
+        },
+        "DataVolumeCap": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentDataVolumeCap"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An Application Insights component daily data volume cap"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "currentbillingfeatures"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "currentbillingfeatures"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/currentbillingfeatures"
+    },
+    "components_exportconfiguration_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "DestinationAccountId": {
+          "type": "string",
+          "description": "The name of destination storage account."
+        },
+        "DestinationAddress": {
+          "type": "string",
+          "description": "The SAS URL for the destination storage container. It must grant write permission."
+        },
+        "DestinationStorageLocationId": {
+          "type": "string",
+          "description": "The location ID of the destination storage container."
+        },
+        "DestinationStorageSubscriptionId": {
+          "type": "string",
+          "description": "The subscription ID of the destination storage container."
+        },
+        "DestinationType": {
+          "type": "string",
+          "description": "The Continuous Export destination type. This has to be 'Blob'."
+        },
+        "IsEnabled": {
+          "type": "string",
+          "description": "Set to 'true' to create a Continuous Export configuration as enabled, otherwise set it to 'false'."
+        },
+        "name": {
+          "type": "string",
+          "description": "The Continuous Export configuration ID. This is unique within a Application Insights component."
+        },
+        "NotificationQueueEnabled": {
+          "type": "string",
+          "description": "Deprecated"
+        },
+        "NotificationQueueUri": {
+          "type": "string",
+          "description": "Deprecated"
+        },
+        "RecordTypes": {
+          "type": "string",
+          "description": "The document types to be exported, as comma separated values. Allowed values include 'Requests', 'Event', 'Exceptions', 'Metrics', 'PageViews', 'PageViewPerformance', 'Rdd', 'PerformanceCounters', 'Availability', 'Messages'."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "exportconfiguration"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/exportconfiguration"
+    },
+    "components_favorites_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "Category": {
+          "type": "string",
+          "description": "Favorite category, as defined by the user at creation time."
+        },
+        "Config": {
+          "type": "string",
+          "description": "Configuration of this particular favorite, which are driven by the Azure portal UX. Configuration data is a string containing valid JSON"
+        },
+        "FavoriteType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "shared",
+                "user"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating if this favorite definition is owned by a specific user or is shared between all users with access to the Application Insights component."
+        },
+        "IsGeneratedFromTemplate": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Flag denoting wether or not this favorite was generated from a template."
+        },
+        "Name": {
+          "type": "string",
+          "description": "The user-defined name of the favorite."
+        },
+        "name": {
+          "type": "string",
+          "description": "The Id of a specific favorite defined in the Application Insights component"
+        },
+        "SourceType": {
+          "type": "string",
+          "description": "The source of the favorite definition."
+        },
+        "Tags": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of 0 or more tags that are associated with this favorite definition"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "favorites"
+          ]
+        },
+        "Version": {
+          "type": "string",
+          "description": "This instance's version of the data model. This can change as new features are added that can be marked favorite. Current examples include MetricsExplorer (ME) and Search."
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/favorites"
+    },
+    "components_myanalyticsItems_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "Content": {
+          "type": "string",
+          "description": "The content of this item"
+        },
+        "Id": {
+          "type": "string",
+          "description": "Internally assigned unique id of the item definition."
+        },
+        "Name": {
+          "type": "string",
+          "description": "The user-defined name of the item."
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "item"
+          ]
+        },
+        "Properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentAnalyticsItemProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A set of properties that can be defined in the context of a specific item type. Each type may have its own properties."
+        },
+        "Scope": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "shared",
+                "user"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating if this item definition is owned by a specific user or is shared between all users with access to the Application Insights component."
+        },
+        "Type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "none",
+                "query",
+                "recent",
+                "function"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating the type of the Analytics item."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "myanalyticsItems"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "microsoft.insights/components/myanalyticsItems"
+    },
+    "components_ProactiveDetectionConfigs_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01"
+          ]
+        },
+        "CustomEmails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Custom email addresses for this rule notifications"
+        },
+        "Enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag that indicates whether this rule is enabled by the user"
+        },
+        "LastUpdatedTime": {
+          "type": "string",
+          "description": "The last time this rule was updated"
+        },
+        "Name": {
+          "type": "string",
+          "description": "The rule name"
+        },
+        "name": {
+          "type": "string",
+          "description": "The ProactiveDetection configuration ID. This is unique within a Application Insights component."
+        },
+        "RuleDefinitions": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Static definitions of the ProactiveDetection configuration rule (same values for all components)."
+        },
+        "SendEmailsToSubscriptionOwners": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag that indicated whether notifications on this rule should be sent to subscription owners"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "ProactiveDetectionConfigs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Insights/components/ProactiveDetectionConfigs"
+    },
+    "MyWorkbookProperties": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Workbook category, as defined by the user at creation time."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user-defined name of the private workbook."
+        },
+        "serializedData": {
+          "type": "string",
+          "description": "Configuration of this particular private workbook. Configuration data is a string containing valid JSON"
+        },
+        "sourceId": {
+          "type": "string",
+          "description": "Optional resourceId for a source resource."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of 0 or more tags that are associated with this private workbook definition"
+        },
+        "version": {
+          "type": "string",
+          "description": "This instance's version of the data model. This can change as new features are added that can be marked private workbook."
+        }
+      },
+      "required": [
+        "category",
+        "displayName",
+        "serializedData"
+      ],
+      "description": "Properties that contain a private workbook."
+    },
+    "WebTestGeolocation": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string",
+          "description": "Location ID for the webtest to run from."
+        }
+      },
+      "description": "Geo-physical location to run a web test from. You must specify one or more locations for the test to run from."
+    },
+    "WebTestProperties": {
+      "type": "object",
+      "properties": {
+        "Configuration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WebTestPropertiesConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An XML configuration specification for a WebTest."
+        },
+        "Description": {
+          "type": "string",
+          "description": "Purpose/user defined descriptive test for this WebTest."
+        },
+        "Enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Is the test actively being monitored."
+        },
+        "Frequency": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "300"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Interval in seconds between test runs for this WebTest. Default value is 300."
+        },
+        "Kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ping",
+                "multistep"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The kind of web test this is, valid choices are ping and multistep."
+        },
+        "Locations": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WebTestGeolocation"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of where to physically run the tests from to give global coverage for accessibility of your application."
+        },
+        "Name": {
+          "type": "string",
+          "description": "User defined name if this WebTest."
+        },
+        "RetryEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Allow for retries should this WebTest fail."
+        },
+        "SyntheticMonitorId": {
+          "type": "string",
+          "description": "Unique ID of this WebTest. This is typically the same value as the Name field."
+        },
+        "Timeout": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "30"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Seconds until this WebTest will timeout and fail. Default value is 30."
+        }
+      },
+      "required": [
+        "Kind",
+        "Locations",
+        "Name",
+        "SyntheticMonitorId"
+      ],
+      "description": "Metadata describing a web test for an Azure resource."
+    },
+    "WebTestPropertiesConfiguration": {
+      "type": "object",
+      "properties": {
+        "WebTest": {
+          "type": "string",
+          "description": "The XML specification of a WebTest to run against an application."
+        }
+      },
+      "description": "An XML configuration specification for a WebTest."
+    },
+    "WorkbookProperties": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Workbook category, as defined by the user at creation time."
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "user",
+                "shared"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enum indicating if this workbook definition is owned by a specific user or is shared between all users with access to the Application Insights component."
+        },
+        "name": {
+          "type": "string",
+          "description": "The user-defined name of the workbook."
+        },
+        "serializedData": {
+          "type": "string",
+          "description": "Configuration of this particular workbook. Configuration data is a string containing valid JSON"
+        },
+        "sourceResourceId": {
+          "type": "string",
+          "description": "Optional resourceId for a source resource."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of 0 or more tags that are associated with this workbook definition"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Unique user id of the specific user that owns this workbook."
+        },
+        "version": {
+          "type": "string",
+          "description": "This instance's version of the data model. This can change as new features are added that can be marked workbook."
+        },
+        "workbookId": {
+          "type": "string",
+          "description": "Internally assigned unique id of the workbook definition."
+        }
+      },
+      "required": [
+        "category",
+        "kind",
+        "name",
+        "serializedData",
+        "userId",
+        "workbookId"
+      ],
+      "description": "Properties that contain a workbook."
+    }
+  }
+}
