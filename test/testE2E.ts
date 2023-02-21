@@ -17,14 +17,14 @@ type TestCase = {
   options?: Options
 }
 
-export function hasOnly () {
+export function hasOnly() {
   return readdirSync(dir)
     .filter(_ => /^.*\.js$/.test(_))
     .map(_ => require(join(dir, _)))
     .some(_ => _.only)
 }
 
-export function run () {
+export function run() {
   // [filename, absolute dirname, contents][]
   const modules = readdirSync(dir)
     .filter(_ => !_.includes('.ignore.'))
@@ -44,12 +44,12 @@ export function run () {
 const httpWithCacheResolver = {
   order: 1,
   canRead: /^https?:/i,
-  async read ({url}: FileInfo) {
+  async read({url}: FileInfo) {
     return await getWithCache(url)
   }
 }
 
-function runOne (exports: TestCase, name: string) {
+function runOne(exports: TestCase, name: string) {
   log('blue', 'Running test', name)
 
   const options = merge(exports.options, {$refOptions: {resolve: {http: httpWithCacheResolver}}})
