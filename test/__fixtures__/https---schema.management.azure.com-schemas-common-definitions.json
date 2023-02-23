@@ -1,0 +1,261 @@
+{
+  "id": "https://schema.management.azure.com/schemas/common/definitions.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "definitions",
+  "description": "Common definitions",
+  "definitions": {
+    "ARMResourceBase": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the resource"
+        },
+        "type": {
+          "type": "string",
+          "description": "Resource type"
+        },
+        "condition": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/expression"
+            }
+          ],
+          "description": "Condition of the resource"
+        },
+        "apiVersion": {
+          "type": "string",
+          "description": "API Version of the resource type, optional when apiProfile is used on the template"
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Collection of resources this resource depends on"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "proxyResourceBase": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ARMResourceBase"
+        },
+        {
+          "properties": {
+            "location": {
+              "$ref": "#/definitions/resourceLocations",
+              "description": "Location to deploy resource to"
+            }
+          }
+        }
+      ]
+    },
+    "resourceBase": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ARMResourceBase"
+        },
+        {
+          "properties": {
+            "location": {
+              "$ref": "#/definitions/resourceLocations",
+              "description": "Location to deploy resource to"
+            },
+            "tags": {
+              "type": "object",
+              "description": "Name-value pairs to add to the resource"
+            },
+            "copy": {
+              "$ref": "#/definitions/resourceCopy"
+            },
+            "comments": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "resourceBaseExternal": {
+      "$ref": "#/definitions/resourceBase",
+      "required": [
+        "plan"
+      ]
+    },
+    "resourceSku": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the sku"
+        },
+        "tier": {
+          "type": "string",
+          "description": "Tier of the sku"
+        },
+        "size": {
+          "type": "string",
+          "description": "Size of the sku"
+        },
+        "family": {
+          "type": "string",
+          "description": "Family of the sku"
+        },
+        "capacity": {
+          "type": "integer",
+          "description": "Capacity of the sku"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "resourceCopy": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the copy"
+        },
+        "count": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/expression"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "Count of the copy"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "Parallel",
+            "Serial"
+          ],
+          "description": "The copy mode"
+        },
+        "batchSize": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/expression"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "The serial copy batch size"
+        }
+      }
+    },
+    "resourceKind": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "(^[a-zA-Z0-9_.()-]+$)",
+      "description": "Kind of resource"
+    },
+    "resourcePlan": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the plan"
+        },
+        "promotionCode": {
+          "type": "string",
+          "description": "Plan promotion code"
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Name of the publisher"
+        },
+        "product": {
+          "type": "string",
+          "description": "Name of the product"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the product"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "Plan of the resource"
+    },
+    "resourceLocations": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "enum": [
+            "East Asia",
+            "Southeast Asia",
+            "Central US",
+            "East US",
+            "East US 2",
+            "West US",
+            "North Central US",
+            "South Central US",
+            "North Europe",
+            "West Europe",
+            "Japan West",
+            "Japan East",
+            "Brazil South",
+            "Australia East",
+            "Australia Southeast",
+            "Central India",
+            "West India",
+            "South India",
+            "Canada Central",
+            "Canada East",
+            "West Central US",
+            "West US 2",
+            "UK South",
+            "UK West",
+            "Korea Central",
+            "Korea South",
+            "global"
+          ]
+        }
+      ]
+    },
+    "expression": {
+      "type": "string",
+      "pattern": "^\\[([^\\[].*)?\\]$",
+      "description": "Deployment template expression. See https://aka.ms/arm-template-expressions for more details on the ARM expression syntax."
+    },
+    "numberOrExpression": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "#/definitions/expression"
+        }
+      ]
+    },
+    "Iso8601Duration": {
+      "type": "string",
+      "pattern": "^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(((\\d+H)(\\d+M)?(\\d+(\\.\\d{1,2})?S)?)|((\\d+M)(\\d+(\\.\\d{1,2})?S)?)|((\\d+(\\.\\d{1,2})?S))))?$"
+    },
+    "UTC": {
+      "type": "string",
+      "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-([012]\\d|3[01])(T((([01]\\d|2[0123]):[0-5]\\d)|(24:00))(:(([0-5]\\d)|60)(\\.\\d{1,}){0,1}){0,1}){0,1}((Z)|([+-]((([01]\\d|2[0123]):[0-5]\\d)|(24:00)))){0,1}){0,1}){0,1}$"
+    },
+    "apiVersion": {
+      "type": "string",
+      "pattern": "(^((\\d\\d\\d\\d-\\d\\d-\\d\\d)|([0-9]+(\\.[0-9]+)?))(-[a-zA-Z][a-zA-Z0-9]*)?$)",
+      "description": "API version of the resource type"
+    }
+  }
+}

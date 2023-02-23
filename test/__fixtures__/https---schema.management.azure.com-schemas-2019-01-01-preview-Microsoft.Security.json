@@ -1,0 +1,904 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-01-01-preview/Microsoft.Security.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Security",
+  "description": "Microsoft Security Resource Types",
+  "resourceDefinitions": {
+    "automations": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-01-01-preview"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "Entity tag is used for comparing two or more entities from the same requested resource."
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of the resource"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location where the resource is stored"
+        },
+        "name": {
+          "type": "string",
+          "description": "The security automation name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AutomationProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A set of properties that defines the behavior of the automation configuration. To learn more about the supported security events data models schemas - please visit https://aka.ms/ASCAutomationSchemas."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of key value pairs that describe the resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Security/automations"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Security/automations"
+    }
+  },
+  "subscription_resourceDefinitions": {
+    "alertsSuppressionRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The unique name of the suppression alert rule"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AlertsSuppressionRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "describes AlertsSuppressionRule properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Security/alertsSuppressionRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Security/alertsSuppressionRules"
+    },
+    "assessmentMetadata": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Assessment Key - Unique key for the assessment type"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecurityAssessmentMetadataProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes properties of an assessment metadata."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Security/assessmentMetadata"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Security/assessmentMetadata"
+    }
+  },
+  "unknown_resourceDefinitions": {
+    "assessments": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-01-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Assessment Key - Unique key for the assessment type"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecurityAssessmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes properties of an assessment."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Security/assessments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Security/assessments"
+    }
+  },
+  "definitions": {
+    "AlertsSuppressionRuleProperties": {
+      "type": "object",
+      "properties": {
+        "alertType": {
+          "type": "string",
+          "description": "Type of the alert to automatically suppress. For all alert types, use '*'"
+        },
+        "comment": {
+          "type": "string",
+          "description": "Any comment regarding the rule"
+        },
+        "expirationDateUtc": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Expiration date of the rule, if value is not provided or provided as null this field will default to the maximum allowed expiration date."
+        },
+        "reason": {
+          "type": "string",
+          "description": "The reason for dismissing the alert"
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled",
+                "Expired"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Possible states of the rule."
+        },
+        "suppressionAlertsScope": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SuppressionAlertsScope"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "alertType",
+        "reason",
+        "state"
+      ],
+      "description": "describes AlertsSuppressionRule properties"
+    },
+    "AssessmentLinks": {
+      "type": "object",
+      "properties": {},
+      "description": "Links relevant to the assessment"
+    },
+    "AssessmentStatus": {
+      "type": "object",
+      "properties": {
+        "cause": {
+          "type": "string",
+          "description": "Programmatic code for the cause of the assessment status"
+        },
+        "code": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Healthy",
+                "Unhealthy",
+                "NotApplicable"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Programmatic code for the status of the assessment."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human readable description of the assessment status"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "description": "The result of the assessment"
+    },
+    "AutomationAction": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AutomationActionLogicApp"
+        },
+        {
+          "$ref": "#/definitions/AutomationActionEventHub"
+        },
+        {
+          "$ref": "#/definitions/AutomationActionWorkspace"
+        }
+      ],
+      "properties": {},
+      "description": "The action that should be triggered."
+    },
+    "AutomationActionEventHub": {
+      "type": "object",
+      "properties": {
+        "actionType": {
+          "type": "string",
+          "enum": [
+            "EventHub"
+          ]
+        },
+        "connectionString": {
+          "type": "string",
+          "description": "The target Event Hub connection string (it will not be included in any response)."
+        },
+        "eventHubResourceId": {
+          "type": "string",
+          "description": "The target Event Hub Azure Resource ID."
+        }
+      },
+      "required": [
+        "actionType"
+      ],
+      "description": "The target Event Hub to which event data will be exported. To learn more about Microsoft Defender for Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore"
+    },
+    "AutomationActionLogicApp": {
+      "type": "object",
+      "properties": {
+        "actionType": {
+          "type": "string",
+          "enum": [
+            "LogicApp"
+          ]
+        },
+        "logicAppResourceId": {
+          "type": "string",
+          "description": "The triggered Logic App Azure Resource ID. This can also reside on other subscriptions, given that you have permissions to trigger the Logic App"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "description": "The Logic App trigger URI endpoint (it will not be included in any response)."
+        }
+      },
+      "required": [
+        "actionType"
+      ],
+      "description": "The logic app action that should be triggered. To learn more about Microsoft Defender for Cloud's Workflow Automation capabilities, visit https://aka.ms/ASCWorkflowAutomationLearnMore"
+    },
+    "AutomationActionWorkspace": {
+      "type": "object",
+      "properties": {
+        "actionType": {
+          "type": "string",
+          "enum": [
+            "Workspace"
+          ]
+        },
+        "workspaceResourceId": {
+          "type": "string",
+          "description": "The fully qualified Log Analytics Workspace Azure Resource ID."
+        }
+      },
+      "required": [
+        "actionType"
+      ],
+      "description": "The Log Analytics Workspace to which event data will be exported. Security alerts data will reside in the 'SecurityAlert' table and the assessments data will reside in the 'SecurityRecommendation' table (under the 'Security'/'SecurityCenterFree' solutions). Note that in order to view the data in the workspace, the Security Center Log Analytics free/standard solution needs to be enabled on that workspace. To learn more about Microsoft Defender for Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore"
+    },
+    "AutomationProperties": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AutomationAction"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A collection of the actions which are triggered if all the configured rules evaluations, within at least one rule set, are true."
+        },
+        "description": {
+          "type": "string",
+          "description": "The security automation description."
+        },
+        "isEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether the security automation is enabled."
+        },
+        "scopes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AutomationScope"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A collection of scopes on which the security automations logic is applied. Supported scopes are the subscription itself or a resource group under that subscription. The automation will only apply on defined scopes."
+        },
+        "sources": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AutomationSource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A collection of the source event types which evaluate the security automation set of rules."
+        }
+      },
+      "description": "A set of properties that defines the behavior of the automation configuration. To learn more about the supported security events data models schemas - please visit https://aka.ms/ASCAutomationSchemas."
+    },
+    "AutomationRuleSet": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AutomationTriggeringRule"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "description": "A rule set which evaluates all its rules upon an event interception. Only when all the included rules in the rule set will be evaluated as 'true', will the event trigger the defined actions."
+    },
+    "AutomationScope": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The resources scope description."
+        },
+        "scopePath": {
+          "type": "string",
+          "description": "The resources scope path. Can be the subscription on which the automation is defined on or a resource group under that subscription (fully qualified Azure resource IDs)."
+        }
+      },
+      "description": "A single automation scope."
+    },
+    "AutomationSource": {
+      "type": "object",
+      "properties": {
+        "eventSource": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Assessments",
+                "AssessmentsSnapshot",
+                "SubAssessments",
+                "SubAssessmentsSnapshot",
+                "Alerts",
+                "SecureScores",
+                "SecureScoresSnapshot",
+                "SecureScoreControls",
+                "SecureScoreControlsSnapshot",
+                "RegulatoryComplianceAssessment",
+                "RegulatoryComplianceAssessmentSnapshot"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A valid event source type."
+        },
+        "ruleSets": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AutomationRuleSet"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A set of rules which evaluate upon event interception. A logical disjunction is applied between defined rule sets (logical 'or')."
+        }
+      },
+      "description": "The source event types which evaluate the security automation set of rules. For example - security alerts and security assessments. To learn more about the supported security events data models schemas - please visit https://aka.ms/ASCAutomationSchemas."
+    },
+    "AutomationTriggeringRule": {
+      "type": "object",
+      "properties": {
+        "expectedValue": {
+          "type": "string",
+          "description": "The expected value."
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Equals",
+                "GreaterThan",
+                "GreaterThanOrEqualTo",
+                "LesserThan",
+                "LesserThanOrEqualTo",
+                "NotEquals",
+                "Contains",
+                "StartsWith",
+                "EndsWith"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A valid comparer operator to use. A case-insensitive comparison will be applied for String PropertyType."
+        },
+        "propertyJPath": {
+          "type": "string",
+          "description": "The JPath of the entity model property that should be checked."
+        },
+        "propertyType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "String",
+                "Integer",
+                "Number",
+                "Boolean"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The data type of the compared operands (string, integer, floating point number or a boolean [true/false]]."
+        }
+      },
+      "description": "A rule which is evaluated upon event interception. The rule is configured by comparing a specific value from the event model to an expected value. This comparison is done by using one of the supported operators set."
+    },
+    "AzureResourceDetails": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "Azure"
+          ]
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "description": "Details of the Azure resource that was assessed"
+    },
+    "OnPremiseResourceDetails": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/OnPremiseSqlResourceDetails"
+        }
+      ],
+      "properties": {
+        "machineName": {
+          "type": "string",
+          "description": "The name of the machine"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "OnPremise"
+          ]
+        },
+        "sourceComputerId": {
+          "type": "string",
+          "description": "The oms agent Id installed on the machine"
+        },
+        "vmuuid": {
+          "type": "string",
+          "description": "The unique Id of the machine"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Azure resource Id of the workspace the machine is attached to"
+        }
+      },
+      "required": [
+        "machineName",
+        "source",
+        "sourceComputerId",
+        "vmuuid",
+        "workspaceId"
+      ],
+      "description": "Details of the On Premise resource that was assessed"
+    },
+    "OnPremiseSqlResourceDetails": {
+      "type": "object",
+      "properties": {
+        "databaseName": {
+          "type": "string",
+          "description": "The Sql database name installed on the machine"
+        },
+        "serverName": {
+          "type": "string",
+          "description": "The Sql server name installed on the machine"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "OnPremiseSql"
+          ]
+        }
+      },
+      "required": [
+        "databaseName",
+        "serverName",
+        "source"
+      ],
+      "description": "Details of the On Premise Sql resource that was assessed"
+    },
+    "ResourceDetails": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AzureResourceDetails"
+        },
+        {
+          "$ref": "#/definitions/OnPremiseResourceDetails"
+        }
+      ],
+      "properties": {},
+      "description": "Details of the resource that was assessed"
+    },
+    "ScopeElement": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "field": {
+          "type": "string",
+          "description": "The alert entity type to suppress by."
+        }
+      },
+      "description": "A more specific scope used to identify the alerts to suppress."
+    },
+    "SecurityAssessmentMetadataProperties": {
+      "type": "object",
+      "properties": {
+        "assessmentType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "BuiltIn",
+                "CustomPolicy",
+                "CustomerManaged"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "BuiltIn if the assessment based on built-in Azure Policy definition, Custom if the assessment based on custom Azure Policy definition."
+        },
+        "categories": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Compute",
+                  "Networking",
+                  "Data",
+                  "IdentityAndAccess",
+                  "IoT"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human readable description of the assessment"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User friendly display name of the assessment"
+        },
+        "implementationEffort": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Low",
+                "Moderate",
+                "High"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The implementation effort required to remediate this assessment."
+        },
+        "preview": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "True if this assessment is in preview release status"
+        },
+        "remediationDescription": {
+          "type": "string",
+          "description": "Human readable description of what you should do to mitigate this security issue"
+        },
+        "severity": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Low",
+                "Medium",
+                "High"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The severity level of the assessment."
+        },
+        "threats": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "accountBreach",
+                  "dataExfiltration",
+                  "dataSpillage",
+                  "maliciousInsider",
+                  "elevationOfPrivilege",
+                  "threatResistance",
+                  "missingCoverage",
+                  "denialOfService"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "userImpact": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Low",
+                "Moderate",
+                "High"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The user impact of the assessment."
+        }
+      },
+      "required": [
+        "assessmentType",
+        "displayName",
+        "severity"
+      ],
+      "description": "Describes properties of an assessment metadata."
+    },
+    "SecurityAssessmentProperties": {
+      "type": "object",
+      "properties": {
+        "additionalData": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Additional data regarding the assessment"
+        },
+        "links": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AssessmentLinks"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Links relevant to the assessment"
+        },
+        "resourceDetails": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ResourceDetails"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Details of the resource that was assessed"
+        },
+        "status": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AssessmentStatus"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The result of the assessment"
+        }
+      },
+      "required": [
+        "resourceDetails",
+        "status"
+      ],
+      "description": "Describes properties of an assessment."
+    },
+    "SuppressionAlertsScope": {
+      "type": "object",
+      "properties": {
+        "allOf": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ScopeElement"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "All the conditions inside need to be true in order to suppress the alert"
+        }
+      },
+      "required": [
+        "allOf"
+      ]
+    }
+  }
+}

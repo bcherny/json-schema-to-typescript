@@ -1,0 +1,814 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-09-01/Microsoft.ContainerRegistry.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.ContainerRegistry",
+  "description": "Microsoft ContainerRegistry Resource Types",
+  "resourceDefinitions": {
+    "registries_tasks": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-09-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the resource. This cannot be changed after the resource is created."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9-_]*$",
+              "minLength": 5,
+              "maxLength": 50
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the container registry task."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TaskProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a task."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The tags of the resource."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.ContainerRegistry/registries/tasks"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.ContainerRegistry/registries/tasks"
+    }
+  },
+  "definitions": {
+    "AgentProperties": {
+      "type": "object",
+      "properties": {
+        "cpu": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The CPU configuration in terms of number of cores required for the run."
+        }
+      },
+      "description": "The properties that determine the run agent configuration."
+    },
+    "Argument": {
+      "type": "object",
+      "properties": {
+        "isSecret": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Flag to indicate whether the argument represents a secret and want to be removed from build logs."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the argument."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the argument."
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "description": "The properties of a run argument."
+    },
+    "AuthInfo": {
+      "type": "object",
+      "properties": {
+        "expiresIn": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Time in seconds that the token remains valid"
+        },
+        "refreshToken": {
+          "type": "string",
+          "description": "The refresh token used to refresh the access token."
+        },
+        "scope": {
+          "type": "string",
+          "description": "The scope of the access token."
+        },
+        "token": {
+          "type": "string",
+          "description": "The access token used to access the source control provider."
+        },
+        "tokenType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "PAT",
+                "OAuth"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of Auth token."
+        }
+      },
+      "required": [
+        "token",
+        "tokenType"
+      ],
+      "description": "The authorization properties for accessing the source code repository."
+    },
+    "BaseImageTrigger": {
+      "type": "object",
+      "properties": {
+        "baseImageTriggerType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "All",
+                "Runtime"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of the auto trigger for base image dependency updates."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the trigger."
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current status of trigger."
+        }
+      },
+      "required": [
+        "baseImageTriggerType",
+        "name"
+      ],
+      "description": "The trigger based on base image dependency."
+    },
+    "Credentials": {
+      "type": "object",
+      "properties": {
+        "customRegistries": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/CustomRegistryCredentials"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the credential parameters for accessing other custom registries. The key\r\nfor the dictionary item will be the registry login server (myregistry.azurecr.io) and\r\nthe value of the item will be the registry credentials for accessing the registry."
+        },
+        "sourceRegistry": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SourceRegistryCredentials"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the credential parameters for accessing the source registry."
+        }
+      },
+      "description": "The parameters that describes a set of credentials that will be used when a run is invoked."
+    },
+    "CustomRegistryCredentials": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecretObject"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the properties of a secret object value."
+        },
+        "userName": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecretObject"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the properties of a secret object value."
+        }
+      },
+      "description": "Describes the credentials that will be used to access a custom registry during a run."
+    },
+    "DockerBuildStep": {
+      "type": "object",
+      "properties": {
+        "arguments": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Argument"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The collection of override arguments to be used when executing this build step."
+        },
+        "dockerFilePath": {
+          "type": "string",
+          "description": "The Docker file path relative to the source context."
+        },
+        "imageNames": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The fully qualified image names including the repository and tag."
+        },
+        "isPushEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The value of this property indicates whether the image built should be pushed to the registry or not."
+        },
+        "noCache": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The value of this property indicates whether the image cache is enabled or not."
+        },
+        "target": {
+          "type": "string",
+          "description": "The name of the target build stage for the docker build."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Docker"
+          ]
+        }
+      },
+      "required": [
+        "dockerFilePath",
+        "type"
+      ],
+      "description": "The Docker build step."
+    },
+    "EncodedTaskStep": {
+      "type": "object",
+      "properties": {
+        "encodedTaskContent": {
+          "type": "string",
+          "description": "Base64 encoded value of the template/definition file content."
+        },
+        "encodedValuesContent": {
+          "type": "string",
+          "description": "Base64 encoded value of the parameters/values file content."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "EncodedTask"
+          ]
+        },
+        "values": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SetValue"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The collection of overridable values that can be passed when running a task."
+        }
+      },
+      "required": [
+        "encodedTaskContent",
+        "type"
+      ],
+      "description": "The properties of a encoded task step."
+    },
+    "FileTaskStep": {
+      "type": "object",
+      "properties": {
+        "taskFilePath": {
+          "type": "string",
+          "description": "The task template/definition file path relative to the source context."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "FileTask"
+          ]
+        },
+        "values": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SetValue"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The collection of overridable values that can be passed when running a task."
+        },
+        "valuesFilePath": {
+          "type": "string",
+          "description": "The task values/parameters file path relative to the source context."
+        }
+      },
+      "required": [
+        "taskFilePath",
+        "type"
+      ],
+      "description": "The properties of a task step."
+    },
+    "PlatformProperties": {
+      "type": "object",
+      "properties": {
+        "architecture": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "amd64",
+                "x86",
+                "arm"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The OS architecture."
+        },
+        "os": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Windows",
+                "Linux"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The operating system type required for the run."
+        },
+        "variant": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "v6",
+                "v7",
+                "v8"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Variant of the CPU."
+        }
+      },
+      "required": [
+        "os"
+      ],
+      "description": "The platform properties against which the run has to happen."
+    },
+    "SecretObject": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Opaque"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of the secret object which determines how the value of the secret object has to be\r\ninterpreted."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the secret. The format of this value will be determined\r\nbased on the type of the secret object. If the type is Opaque, the value will be\r\nused as is without any modification."
+        }
+      },
+      "description": "Describes the properties of a secret object value."
+    },
+    "SetValue": {
+      "type": "object",
+      "properties": {
+        "isSecret": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Flag to indicate whether the value represents a secret or not."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the overridable value."
+        },
+        "value": {
+          "type": "string",
+          "description": "The overridable value."
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "description": "The properties of a overridable value that can be passed to a task template."
+    },
+    "SourceProperties": {
+      "type": "object",
+      "properties": {
+        "branch": {
+          "type": "string",
+          "description": "The branch name of the source code."
+        },
+        "repositoryUrl": {
+          "type": "string",
+          "description": "The full URL to the source code repository"
+        },
+        "sourceControlAuthProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AuthInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The authorization properties for accessing the source code repository."
+        },
+        "sourceControlType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Github",
+                "VisualStudioTeamService"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of source control service."
+        }
+      },
+      "required": [
+        "repositoryUrl",
+        "sourceControlType"
+      ],
+      "description": "The properties of the source code repository."
+    },
+    "SourceRegistryCredentials": {
+      "type": "object",
+      "properties": {
+        "loginMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "Default"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The authentication mode which determines the source registry login scope. The credentials for the source registry\r\nwill be generated using the given scope. These credentials will be used to login to\r\nthe source registry during the run."
+        }
+      },
+      "description": "Describes the credential parameters for accessing the source registry."
+    },
+    "SourceTrigger": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the trigger."
+        },
+        "sourceRepository": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the source code repository."
+        },
+        "sourceTriggerEvents": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "commit",
+                  "pullrequest"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The source event corresponding to the trigger."
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current status of trigger."
+        }
+      },
+      "required": [
+        "name",
+        "sourceRepository",
+        "sourceTriggerEvents"
+      ],
+      "description": "The properties of a source based trigger."
+    },
+    "TaskProperties": {
+      "type": "object",
+      "properties": {
+        "agentConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AgentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties that determine the run agent configuration."
+        },
+        "credentials": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Credentials"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The parameters that describes a set of credentials that will be used when a run is invoked."
+        },
+        "platform": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PlatformProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The platform properties against which the run has to happen."
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current status of task."
+        },
+        "step": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TaskStepProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base properties for any task step."
+        },
+        "timeout": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 300,
+              "maximum": 28800,
+              "default": "3600"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Run timeout in seconds."
+        },
+        "trigger": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TriggerProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a trigger."
+        }
+      },
+      "required": [
+        "platform",
+        "step"
+      ],
+      "description": "The properties of a task."
+    },
+    "TaskStepProperties": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/DockerBuildStep"
+        },
+        {
+          "$ref": "#/definitions/FileTaskStep"
+        },
+        {
+          "$ref": "#/definitions/EncodedTaskStep"
+        }
+      ],
+      "properties": {
+        "contextAccessToken": {
+          "type": "string",
+          "description": "The token (git PAT or SAS token of storage account blob) associated with the context for a step."
+        },
+        "contextPath": {
+          "type": "string",
+          "description": "The URL(absolute or relative) of the source context for the task step."
+        }
+      },
+      "description": "Base properties for any task step."
+    },
+    "TriggerProperties": {
+      "type": "object",
+      "properties": {
+        "baseImageTrigger": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BaseImageTrigger"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The trigger based on base image dependency."
+        },
+        "sourceTriggers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SourceTrigger"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The collection of triggers based on source code repository."
+        }
+      },
+      "description": "The properties of a trigger."
+    }
+  }
+}

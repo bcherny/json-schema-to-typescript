@@ -1,0 +1,3959 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-07-01/Microsoft.Media.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Media",
+  "description": "Microsoft Media Resource Types",
+  "resourceDefinitions": {
+    "mediaservices": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The Azure Region of the resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "The Media Services account name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MediaServiceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the Media Services account."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/mediaServices_accountFilters_childResource"
+              },
+              {
+                "$ref": "#/definitions/mediaServices_assets_childResource"
+              },
+              {
+                "$ref": "#/definitions/mediaServices_contentKeyPolicies_childResource"
+              },
+              {
+                "$ref": "#/definitions/mediaServices_transforms_childResource"
+              },
+              {
+                "$ref": "#/definitions/mediaServices_streamingPolicies_childResource"
+              },
+              {
+                "$ref": "#/definitions/mediaServices_streamingLocators_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaservices"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaservices"
+    },
+    "mediaServices_accountFilters": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Account Filter name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MediaFilterProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Media Filter properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaServices/accountFilters"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/accountFilters"
+    },
+    "mediaServices_assets": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Asset name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AssetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Asset properties."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/mediaServices_assets_assetFilters_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaServices/assets"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/assets"
+    },
+    "mediaServices_assets_assetFilters": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Asset Filter name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MediaFilterProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Media Filter properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaServices/assets/assetFilters"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/assets/assetFilters"
+    },
+    "mediaServices_contentKeyPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Content Key Policy name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContentKeyPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the Content Key Policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaServices/contentKeyPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/contentKeyPolicies"
+    },
+    "mediaServices_streamingLocators": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Streaming Locator name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingLocatorProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the Streaming Locator."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaServices/streamingLocators"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/streamingLocators"
+    },
+    "mediaServices_streamingPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Streaming Policy name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify properties of Streaming Policy"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaServices/streamingPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/streamingPolicies"
+    },
+    "mediaServices_transforms": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Transform name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TransformProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A Transform."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/mediaServices_transforms_jobs_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaServices/transforms"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/transforms"
+    },
+    "mediaServices_transforms_jobs": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Job name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/JobProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the Job."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Media/mediaServices/transforms/jobs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/transforms/jobs"
+    }
+  },
+  "definitions": {
+    "AacAudio": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.AacAudio"
+          ]
+        },
+        "profile": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AacLc",
+                "HeAacV1",
+                "HeAacV2"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The encoding profile to be used when encoding audio with AAC."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes Advanced Audio Codec (AAC) audio encoding settings."
+    },
+    "AbsoluteClipTime": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.AbsoluteClipTime"
+          ]
+        },
+        "time": {
+          "type": "string",
+          "format": "duration",
+          "description": "The time position on the timeline of the input media. It is usually specified as an ISO8601 period. e.g PT30S for 30 seconds."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "time"
+      ],
+      "description": "Specifies the clip time as an absolute time position in the media file.  The absolute time can point to a different position depending on whether the media file starts from a timestamp of zero or not."
+    },
+    "AssetProperties": {
+      "type": "object",
+      "properties": {
+        "alternateId": {
+          "type": "string",
+          "description": "The alternate ID of the Asset."
+        },
+        "container": {
+          "type": "string",
+          "description": "The name of the asset blob container."
+        },
+        "description": {
+          "type": "string",
+          "description": "The Asset description."
+        },
+        "storageAccountName": {
+          "type": "string",
+          "description": "The name of the storage account."
+        }
+      },
+      "description": "The Asset properties."
+    },
+    "Audio": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AacAudio"
+        }
+      ],
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.Audio"
+          ]
+        },
+        "bitrate": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The bitrate, in bits per second, of the output encoded audio."
+        },
+        "channels": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of channels in the audio."
+        },
+        "samplingRate": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The sampling rate to use for encoding in hertz."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Defines the common properties for all audio codecs."
+    },
+    "AudioAnalyzerPreset": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/VideoAnalyzerPreset"
+        }
+      ],
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.AudioAnalyzerPreset"
+          ]
+        },
+        "audioLanguage": {
+          "type": "string",
+          "description": "The language for the audio payload in the input using the BCP-47 format of 'language tag-region' (e.g: 'en-US').  The list of supported languages are English ('en-US' and 'en-GB'), Spanish ('es-ES' and 'es-MX'), French ('fr-FR'), Italian ('it-IT'), Japanese ('ja-JP'), Portuguese ('pt-BR'), Chinese ('zh-CN'), German ('de-DE'), Arabic ('ar-EG' and 'ar-SY'), Russian ('ru-RU'), Hindi ('hi-IN'), and Korean ('ko-KR'). If you know the language of your content, it is recommended that you specify it. If the language isn't specified or set to null, automatic language detection will choose the first language detected and process with the selected language for the duration of the file. This language detection feature currently supports English, Chinese, French, German, Italian, Japanese, Spanish, Russian, and Portuguese. It does not currently support dynamically switching between languages after the first language is detected. The automatic detection works best with audio recordings with clearly discernable speech. If automatic detection fails to find the language, transcription would fallback to 'en-US'.\""
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "The Audio Analyzer preset applies a pre-defined set of AI-based analysis operations, including speech transcription. Currently, the preset supports processing of content with a single audio track."
+    },
+    "AudioOverlay": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.AudioOverlay"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the properties of an audio overlay."
+    },
+    "BuiltInStandardEncoderPreset": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.BuiltInStandardEncoderPreset"
+          ]
+        },
+        "presetName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "H264SingleBitrateSD",
+                "H264SingleBitrate720p",
+                "H264SingleBitrate1080p",
+                "AdaptiveStreaming",
+                "AACGoodQualityAudio",
+                "ContentAwareEncodingExperimental",
+                "H264MultipleBitrate1080p",
+                "H264MultipleBitrate720p",
+                "H264MultipleBitrateSD"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The built-in preset to be used for encoding videos."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "presetName"
+      ],
+      "description": "Describes a built-in preset for encoding the input video with the Standard Encoder."
+    },
+    "CbcsDrmConfiguration": {
+      "type": "object",
+      "properties": {
+        "fairPlay": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyFairPlayConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify configurations of FairPlay in Streaming Policy"
+        },
+        "playReady": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyPlayReadyConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify configurations of PlayReady in Streaming Policy"
+        },
+        "widevine": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyWidevineConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify configurations of Widevine in Streaming Policy"
+        }
+      },
+      "description": "Class to specify DRM configurations of CommonEncryptionCbcs scheme in Streaming Policy"
+    },
+    "CencDrmConfiguration": {
+      "type": "object",
+      "properties": {
+        "playReady": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyPlayReadyConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify configurations of PlayReady in Streaming Policy"
+        },
+        "widevine": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyWidevineConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify configurations of Widevine in Streaming Policy"
+        }
+      },
+      "description": "Class to specify DRM configurations of CommonEncryptionCenc scheme in Streaming Policy"
+    },
+    "ClipTime": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AbsoluteClipTime"
+        }
+      ],
+      "properties": {},
+      "description": "Base class for specifying a clip time. Use sub classes of this class to specify the time position in the media."
+    },
+    "Codec": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Audio"
+        },
+        {
+          "$ref": "#/definitions/CopyVideo"
+        },
+        {
+          "$ref": "#/definitions/Video"
+        },
+        {
+          "$ref": "#/definitions/CopyAudio"
+        }
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "An optional label for the codec. The label can be used to control muxing behavior."
+        }
+      },
+      "description": "Describes the basic properties of all codecs."
+    },
+    "CommonEncryptionCbcs": {
+      "type": "object",
+      "properties": {
+        "clearTracks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TrackSelection"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Representing which tracks should not be encrypted"
+        },
+        "contentKeys": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyContentKeys"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify properties of all content keys in Streaming Policy"
+        },
+        "drm": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CbcsDrmConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify DRM configurations of CommonEncryptionCbcs scheme in Streaming Policy"
+        },
+        "enabledProtocols": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EnabledProtocols"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify which protocols are enabled"
+        }
+      },
+      "description": "Class for CommonEncryptionCbcs encryption scheme"
+    },
+    "CommonEncryptionCenc": {
+      "type": "object",
+      "properties": {
+        "clearTracks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TrackSelection"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Representing which tracks should not be encrypted"
+        },
+        "contentKeys": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyContentKeys"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify properties of all content keys in Streaming Policy"
+        },
+        "drm": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CencDrmConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify DRM configurations of CommonEncryptionCenc scheme in Streaming Policy"
+        },
+        "enabledProtocols": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EnabledProtocols"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify which protocols are enabled"
+        }
+      },
+      "description": "Class for envelope encryption scheme"
+    },
+    "ContentKeyPolicyClearKeyConfiguration": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Represents a configuration for non-DRM keys."
+    },
+    "ContentKeyPolicyConfiguration": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ContentKeyPolicyClearKeyConfiguration"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyUnknownConfiguration"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyWidevineConfiguration"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyPlayReadyConfiguration"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyFairPlayConfiguration"
+        }
+      ],
+      "properties": {},
+      "description": "Base class for Content Key Policy configuration. A derived class must be used to create a configuration."
+    },
+    "ContentKeyPolicyFairPlayConfiguration": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration"
+          ]
+        },
+        "ask": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The key that must be used as FairPlay Application Secret key."
+        },
+        "fairPlayPfx": {
+          "type": "string",
+          "description": "The Base64 representation of FairPlay certificate in PKCS 12 (pfx) format (including private key)."
+        },
+        "fairPlayPfxPassword": {
+          "type": "string",
+          "description": "The password encrypting FairPlay certificate in PKCS 12 (pfx) format."
+        },
+        "rentalAndLeaseKeyType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unknown",
+                "Undefined",
+                "PersistentUnlimited",
+                "PersistentLimited"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rental and lease key type."
+        },
+        "rentalDuration": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rental duration. Must be greater than or equal to 0."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "ask",
+        "fairPlayPfx",
+        "fairPlayPfxPassword",
+        "rentalAndLeaseKeyType",
+        "rentalDuration"
+      ],
+      "description": "Specifies a configuration for FairPlay licenses."
+    },
+    "ContentKeyPolicyOpenRestriction": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyOpenRestriction"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Represents an open restriction. License or key will be delivered on every request."
+    },
+    "ContentKeyPolicyOption": {
+      "type": "object",
+      "properties": {
+        "configuration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContentKeyPolicyConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base class for Content Key Policy configuration. A derived class must be used to create a configuration."
+        },
+        "name": {
+          "type": "string",
+          "description": "The Policy Option description."
+        },
+        "restriction": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContentKeyPolicyRestriction"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base class for Content Key Policy restrictions. A derived class must be used to create a restriction."
+        }
+      },
+      "required": [
+        "configuration",
+        "restriction"
+      ],
+      "description": "Represents a policy option."
+    },
+    "ContentKeyPolicyPlayReadyConfiguration": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration"
+          ]
+        },
+        "licenses": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ContentKeyPolicyPlayReadyLicense"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The PlayReady licenses."
+        },
+        "responseCustomData": {
+          "type": "string",
+          "description": "The custom response data."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "licenses"
+      ],
+      "description": "Specifies a configuration for PlayReady licenses."
+    },
+    "ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Specifies that the content key ID is in the PlayReady header."
+    },
+    "ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier"
+          ]
+        },
+        "keyId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The content key ID."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "keyId"
+      ],
+      "description": "Specifies that the content key ID is specified in the PlayReady configuration."
+    },
+    "ContentKeyPolicyPlayReadyContentKeyLocation": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier"
+        }
+      ],
+      "properties": {},
+      "description": "Base class for content key ID location. A derived class must be used to represent the location."
+    },
+    "ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction": {
+      "type": "object",
+      "properties": {
+        "bestEffort": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether this restriction is enforced on a Best Effort basis."
+        },
+        "configurationData": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Configures the restriction control bits. Must be between 0 and 3 inclusive."
+        }
+      },
+      "required": [
+        "bestEffort",
+        "configurationData"
+      ],
+      "description": "Configures the Explicit Analog Television Output Restriction control bits. For further details see the PlayReady Compliance Rules."
+    },
+    "ContentKeyPolicyPlayReadyLicense": {
+      "type": "object",
+      "properties": {
+        "allowTestDevices": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A flag indicating whether test devices can use the license."
+        },
+        "beginDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The begin date of license"
+        },
+        "contentKeyLocation": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContentKeyPolicyPlayReadyContentKeyLocation"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base class for content key ID location. A derived class must be used to represent the location."
+        },
+        "contentType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unknown",
+                "Unspecified",
+                "UltraVioletDownload",
+                "UltraVioletStreaming"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The PlayReady content type."
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The expiration date of license."
+        },
+        "gracePeriod": {
+          "type": "string",
+          "format": "duration",
+          "description": "The grace period of license."
+        },
+        "licenseType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unknown",
+                "NonPersistent",
+                "Persistent"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The license type."
+        },
+        "playRight": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContentKeyPolicyPlayReadyPlayRight"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Configures the Play Right in the PlayReady license."
+        },
+        "relativeBeginDate": {
+          "type": "string",
+          "format": "duration",
+          "description": "The relative begin date of license."
+        },
+        "relativeExpirationDate": {
+          "type": "string",
+          "format": "duration",
+          "description": "The relative expiration date of license."
+        }
+      },
+      "required": [
+        "allowTestDevices",
+        "contentKeyLocation",
+        "contentType",
+        "licenseType"
+      ],
+      "description": "The PlayReady license"
+    },
+    "ContentKeyPolicyPlayReadyPlayRight": {
+      "type": "object",
+      "properties": {
+        "agcAndColorStripeRestriction": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Configures Automatic Gain Control (AGC) and Color Stripe in the license. Must be between 0 and 3 inclusive."
+        },
+        "allowPassingVideoContentToUnknownOutput": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unknown",
+                "NotAllowed",
+                "Allowed",
+                "AllowedWithVideoConstriction"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Configures Unknown output handling settings of the license."
+        },
+        "analogVideoOpl": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the output protection level for compressed digital audio."
+        },
+        "compressedDigitalAudioOpl": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the output protection level for compressed digital audio."
+        },
+        "compressedDigitalVideoOpl": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the output protection level for compressed digital video."
+        },
+        "digitalVideoOnlyContentRestriction": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enables the Image Constraint For Analog Component Video Restriction in the license."
+        },
+        "explicitAnalogTelevisionOutputRestriction": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Configures the Explicit Analog Television Output Restriction control bits. For further details see the PlayReady Compliance Rules."
+        },
+        "firstPlayExpiration": {
+          "type": "string",
+          "format": "duration",
+          "description": "The amount of time that the license is valid after the license is first used to play content."
+        },
+        "imageConstraintForAnalogComponentVideoRestriction": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enables the Image Constraint For Analog Component Video Restriction in the license."
+        },
+        "imageConstraintForAnalogComputerMonitorRestriction": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enables the Image Constraint For Analog Component Video Restriction in the license."
+        },
+        "scmsRestriction": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Configures the Serial Copy Management System (SCMS) in the license. Must be between 0 and 3 inclusive."
+        },
+        "uncompressedDigitalAudioOpl": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the output protection level for uncompressed digital audio."
+        },
+        "uncompressedDigitalVideoOpl": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the output protection level for uncompressed digital video."
+        }
+      },
+      "required": [
+        "allowPassingVideoContentToUnknownOutput",
+        "digitalVideoOnlyContentRestriction",
+        "imageConstraintForAnalogComponentVideoRestriction",
+        "imageConstraintForAnalogComputerMonitorRestriction"
+      ],
+      "description": "Configures the Play Right in the PlayReady license."
+    },
+    "ContentKeyPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "A description for the Policy."
+        },
+        "options": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ContentKeyPolicyOption"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Key Policy options."
+        }
+      },
+      "required": [
+        "options"
+      ],
+      "description": "The properties of the Content Key Policy."
+    },
+    "ContentKeyPolicyRestriction": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ContentKeyPolicyOpenRestriction"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyUnknownRestriction"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyTokenRestriction"
+        }
+      ],
+      "properties": {},
+      "description": "Base class for Content Key Policy restrictions. A derived class must be used to create a restriction."
+    },
+    "ContentKeyPolicyRestrictionTokenKey": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ContentKeyPolicySymmetricTokenKey"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyRsaTokenKey"
+        },
+        {
+          "$ref": "#/definitions/ContentKeyPolicyX509CertificateTokenKey"
+        }
+      ],
+      "properties": {},
+      "description": "Base class for Content Key Policy key for token validation. A derived class must be used to create a token key."
+    },
+    "ContentKeyPolicyRsaTokenKey": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyRsaTokenKey"
+          ]
+        },
+        "exponent": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The RSA Parameter exponent"
+        },
+        "modulus": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The RSA Parameter modulus"
+        }
+      },
+      "required": [
+        "@odata.type",
+        "exponent",
+        "modulus"
+      ],
+      "description": "Specifies a RSA key for token validation"
+    },
+    "ContentKeyPolicySymmetricTokenKey": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey"
+          ]
+        },
+        "keyValue": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The key value of the key"
+        }
+      },
+      "required": [
+        "@odata.type",
+        "keyValue"
+      ],
+      "description": "Specifies a symmetric key for token validation."
+    },
+    "ContentKeyPolicyTokenClaim": {
+      "type": "object",
+      "properties": {
+        "claimType": {
+          "type": "string",
+          "description": "Token claim type."
+        },
+        "claimValue": {
+          "type": "string",
+          "description": "Token claim value."
+        }
+      },
+      "description": "Represents a token claim."
+    },
+    "ContentKeyPolicyTokenRestriction": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyTokenRestriction"
+          ]
+        },
+        "alternateVerificationKeys": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ContentKeyPolicyRestrictionTokenKey"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of alternative verification keys."
+        },
+        "audience": {
+          "type": "string",
+          "description": "The audience for the token."
+        },
+        "issuer": {
+          "type": "string",
+          "description": "The token issuer."
+        },
+        "openIdConnectDiscoveryDocument": {
+          "type": "string",
+          "description": "The OpenID connect discovery document."
+        },
+        "primaryVerificationKey": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContentKeyPolicyRestrictionTokenKey"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base class for Content Key Policy key for token validation. A derived class must be used to create a token key."
+        },
+        "requiredClaims": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ContentKeyPolicyTokenClaim"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of required token claims."
+        },
+        "restrictionTokenType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unknown",
+                "Swt",
+                "Jwt"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of token."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "audience",
+        "issuer",
+        "primaryVerificationKey",
+        "restrictionTokenType"
+      ],
+      "description": "Represents a token restriction. Provided token must match these requirements for successful license or key delivery."
+    },
+    "ContentKeyPolicyUnknownConfiguration": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyUnknownConfiguration"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Represents a ContentKeyPolicyConfiguration that is unavailable in the current API version."
+    },
+    "ContentKeyPolicyUnknownRestriction": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyUnknownRestriction"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Represents a ContentKeyPolicyRestriction that is unavailable in the current API version."
+    },
+    "ContentKeyPolicyWidevineConfiguration": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyWidevineConfiguration"
+          ]
+        },
+        "widevineTemplate": {
+          "type": "string",
+          "description": "The Widevine template."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "widevineTemplate"
+      ],
+      "description": "Specifies a configuration for Widevine licenses."
+    },
+    "ContentKeyPolicyX509CertificateTokenKey": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey"
+          ]
+        },
+        "rawBody": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The raw data field of a certificate in PKCS 12 format (X509Certificate2 in .NET)"
+        }
+      },
+      "required": [
+        "@odata.type",
+        "rawBody"
+      ],
+      "description": "Specifies a certificate for token validation."
+    },
+    "CopyAudio": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.CopyAudio"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "A codec flag, which tells the encoder to copy the input audio bitstream."
+    },
+    "CopyVideo": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.CopyVideo"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "A codec flag, which tells the encoder to copy the input video bitstream without re-encoding."
+    },
+    "DefaultKey": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Label can be used to specify Content Key when creating a Streaming Locator"
+        },
+        "policyName": {
+          "type": "string",
+          "description": "Policy used by Default Key"
+        }
+      },
+      "description": "Class to specify properties of default content key for each encryption scheme"
+    },
+    "Deinterlace": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Off",
+                "AutoPixelAdaptive"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The deinterlacing mode. Defaults to AutoPixelAdaptive."
+        },
+        "parity": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Auto",
+                "TopFieldFirst",
+                "BottomFieldFirst"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The field parity for de-interlacing, defaults to Auto."
+        }
+      },
+      "description": "Describes the de-interlacing settings."
+    },
+    "EnabledProtocols": {
+      "type": "object",
+      "properties": {
+        "dash": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enable DASH protocol or not"
+        },
+        "download": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enable Download protocol or not"
+        },
+        "hls": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enable HLS protocol or not"
+        },
+        "smoothStreaming": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enable SmoothStreaming protocol or not"
+        }
+      },
+      "required": [
+        "dash",
+        "download",
+        "hls",
+        "smoothStreaming"
+      ],
+      "description": "Class to specify which protocols are enabled"
+    },
+    "EnvelopeEncryption": {
+      "type": "object",
+      "properties": {
+        "clearTracks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TrackSelection"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Representing which tracks should not be encrypted"
+        },
+        "contentKeys": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyContentKeys"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify properties of all content keys in Streaming Policy"
+        },
+        "customKeyAcquisitionUrlTemplate": {
+          "type": "string",
+          "description": "Template for the URL of the custom service delivering keys to end user players.  Not required when using Azure Media Services for issuing keys.  The template supports replaceable tokens that the service will update at runtime with the value specific to the request.  The currently supported token values are {AlternativeMediaId}, which is replaced with the value of StreamingLocatorId.AlternativeMediaId, and {ContentKeyId}, which is replaced with the value of identifier of the key being requested."
+        },
+        "enabledProtocols": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EnabledProtocols"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify which protocols are enabled"
+        }
+      },
+      "description": "Class for EnvelopeEncryption encryption scheme"
+    },
+    "FaceDetectorPreset": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.FaceDetectorPreset"
+          ]
+        },
+        "resolution": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SourceResolution",
+                "StandardDefinition"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the maximum resolution at which your video is analyzed. The default behavior is \"SourceResolution,\" which will keep the input video at its original resolution when analyzed. Using \"StandardDefinition\" will resize input videos to standard definition while preserving the appropriate aspect ratio. It will only resize if the video is of higher resolution. For example, a 1920x1080 input would be scaled to 640x360 before processing. Switching to \"StandardDefinition\" will reduce the time it takes to process high resolution video. It may also reduce the cost of using this component (see https://azure.microsoft.com/en-us/pricing/details/media-services/#analytics for details). However, faces that end up being too small in the resized video may not be detected."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes all the settings to be used when analyzing a video in order to detect all the faces present."
+    },
+    "Filters": {
+      "type": "object",
+      "properties": {
+        "crop": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Rectangle"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the properties of a rectangular window applied to the input media before processing it."
+        },
+        "deinterlace": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Deinterlace"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the de-interlacing settings."
+        },
+        "overlays": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Overlay"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of overlays to be applied to the input video. These could be audio, image or video overlays."
+        },
+        "rotation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Auto",
+                "None",
+                "Rotate0",
+                "Rotate90",
+                "Rotate180",
+                "Rotate270"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rotation, if any, to be applied to the input video, before it is encoded. Default is Auto."
+        }
+      },
+      "description": "Describes all the filtering operations, such as de-interlacing, rotation etc. that are to be applied to the input media before encoding."
+    },
+    "FilterTrackPropertyCondition": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Equal",
+                "NotEqual"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The track property condition operation."
+        },
+        "property": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unknown",
+                "Type",
+                "Name",
+                "Language",
+                "FourCC",
+                "Bitrate"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The track property type."
+        },
+        "value": {
+          "type": "string",
+          "description": "The track property value."
+        }
+      },
+      "required": [
+        "operation",
+        "property",
+        "value"
+      ],
+      "description": "The class to specify one track property condition."
+    },
+    "FilterTrackSelection": {
+      "type": "object",
+      "properties": {
+        "trackSelections": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FilterTrackPropertyCondition"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The track selections."
+        }
+      },
+      "required": [
+        "trackSelections"
+      ],
+      "description": "Representing a list of FilterTrackPropertyConditions to select a track.  The filters are combined using a logical AND operation."
+    },
+    "FirstQuality": {
+      "type": "object",
+      "properties": {
+        "bitrate": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The first quality bitrate."
+        }
+      },
+      "required": [
+        "bitrate"
+      ],
+      "description": "Filter First Quality"
+    },
+    "Format": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ImageFormat"
+        },
+        {
+          "$ref": "#/definitions/MultiBitrateFormat"
+        }
+      ],
+      "properties": {
+        "filenamePattern": {
+          "type": "string",
+          "description": "The pattern of the file names for the generated output files. The following macros are supported in the file name: {Basename} - The base name of the input video {Extension} - The appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec. Any unsubstituted macros will be collapsed and removed from the filename."
+        }
+      },
+      "required": [
+        "filenamePattern"
+      ],
+      "description": "Base class for output."
+    },
+    "H264Layer": {
+      "type": "object",
+      "properties": {
+        "adaptiveBFrame": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether or not adaptive B-frames are to be used when encoding this layer. If not specified, the encoder will turn it on whenever the video profile permits its use."
+        },
+        "bFrames": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of B-frames to be used when encoding this layer.  If not specified, the encoder chooses an appropriate number based on the video profile and level."
+        },
+        "bitrate": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The average bitrate in bits per second at which to encode the input video when generating this layer. This is a required field."
+        },
+        "bufferWindow": {
+          "type": "string",
+          "format": "duration",
+          "description": "The VBV buffer window length. The value should be in ISO 8601 format. The value should be in the range [0.1-100] seconds. The default is 5 seconds (for example, PT5S)."
+        },
+        "entropyMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Cabac",
+                "Cavlc"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The entropy mode to be used for this layer. If not specified, the encoder chooses the mode that is appropriate for the profile and level."
+        },
+        "frameRate": {
+          "type": "string",
+          "description": "The frame rate (in frames per second) at which to encode this layer. The value can be in the form of M/N where M and N are integers (For example, 30000/1001), or in the form of a number (For example, 30, or 29.97). The encoder enforces constraints on allowed frame rates based on the profile and level. If it is not specified, the encoder will use the same frame rate as the input video."
+        },
+        "height": {
+          "type": "string",
+          "description": "The height of the output video for this layer. The value can be absolute (in pixels) or relative (in percentage). For example 50% means the output video has half as many pixels in height as the input."
+        },
+        "label": {
+          "type": "string",
+          "description": "The alphanumeric label for this layer, which can be used in multiplexing different video and audio layers, or in naming the output file."
+        },
+        "level": {
+          "type": "string",
+          "description": "We currently support Level up to 6.2. The value can be Auto, or a number that matches the H.264 profile. If not specified, the default is Auto, which lets the encoder choose the Level that is appropriate for this layer."
+        },
+        "maxBitrate": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The maximum bitrate (in bits per second), at which the VBV buffer should be assumed to refill. If not specified, defaults to the same value as bitrate."
+        },
+        "profile": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Auto",
+                "Baseline",
+                "Main",
+                "High",
+                "High422",
+                "High444"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "We currently support Baseline, Main, High, High422, High444. Default is Auto."
+        },
+        "referenceFrames": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of reference frames to be used when encoding this layer. If not specified, the encoder determines an appropriate number based on the encoder complexity setting."
+        },
+        "slices": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of slices to be used when encoding this layer. If not specified, default is zero, which means that encoder will use a single slice for each frame."
+        },
+        "width": {
+          "type": "string",
+          "description": "The width of the output video for this layer. The value can be absolute (in pixels) or relative (in percentage). For example 50% means the output video has half as many pixels in width as the input."
+        }
+      },
+      "required": [
+        "bitrate"
+      ],
+      "description": "Describes the settings to be used when encoding the input video into a desired output bitrate layer with the H.264 video codec."
+    },
+    "H264Video": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.H264Video"
+          ]
+        },
+        "complexity": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Speed",
+                "Balanced",
+                "Quality"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Tells the encoder how to choose its encoding settings. The default value is Balanced."
+        },
+        "layers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/H264Layer"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The collection of output H.264 layers to be produced by the encoder."
+        },
+        "sceneChangeDetection": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether or not the encoder should insert key frames at scene changes. If not specified, the default is false. This flag should be set to true only when the encoder is being configured to produce a single output video."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes all the properties for encoding a video with the H.264 codec."
+    },
+    "Image": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/JpgImage"
+        },
+        {
+          "$ref": "#/definitions/PngImage"
+        }
+      ],
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.Image"
+          ]
+        },
+        "range": {
+          "type": "string",
+          "description": "The position in the input video at which to stop generating thumbnails. The value can be in absolute timestamp (ISO 8601, e.g: PT5M30S to stop at 5 minutes and 30 seconds), or a frame count (For example, 300 to stop at the 300th frame), or a relative value (For example, 100%)."
+        },
+        "start": {
+          "type": "string",
+          "description": "The position in the input video from where to start generating thumbnails. The value can be in absolute timestamp (ISO 8601, e.g: PT05S), or a frame count (For example, 10 for the 10th frame), or a relative value (For example, 1%). Also supports a macro {Best}, which tells the encoder to select the best thumbnail from the first few seconds of the video."
+        },
+        "step": {
+          "type": "string",
+          "description": "The intervals at which thumbnails are generated. The value can be in absolute timestamp (ISO 8601, e.g: PT05S for one image every 5 seconds), or a frame count (For example, 30 for every 30 frames), or a relative value (For example, 1%)."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "start"
+      ],
+      "description": "Describes the basic properties for generating thumbnails from the input video"
+    },
+    "ImageFormat": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/JpgFormat"
+        },
+        {
+          "$ref": "#/definitions/PngFormat"
+        }
+      ],
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.ImageFormat"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the properties for an output image file."
+    },
+    "JobInput": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/JobInputClip"
+        },
+        {
+          "$ref": "#/definitions/JobInputs"
+        }
+      ],
+      "properties": {},
+      "description": "Base class for inputs to a Job."
+    },
+    "JobInputAsset": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.JobInputAsset"
+          ]
+        },
+        "assetName": {
+          "type": "string",
+          "description": "The name of the input Asset."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "assetName"
+      ],
+      "description": "Represents an Asset for input into a Job."
+    },
+    "JobInputClip": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/JobInputAsset"
+        },
+        {
+          "$ref": "#/definitions/JobInputHttp"
+        }
+      ],
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.JobInputClip"
+          ]
+        },
+        "end": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ClipTime"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base class for specifying a clip time. Use sub classes of this class to specify the time position in the media."
+        },
+        "files": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of files. Required for JobInputHttp. Maximum of 4000 characters each."
+        },
+        "label": {
+          "type": "string",
+          "description": "A label that is assigned to a JobInputClip, that is used to satisfy a reference used in the Transform. For example, a Transform can be authored so as to take an image file with the label 'xyz' and apply it as an overlay onto the input video before it is encoded. When submitting a Job, exactly one of the JobInputs should be the image file, and it should have the label 'xyz'."
+        },
+        "start": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ClipTime"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base class for specifying a clip time. Use sub classes of this class to specify the time position in the media."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Represents input files for a Job."
+    },
+    "JobInputHttp": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.JobInputHttp"
+          ]
+        },
+        "baseUri": {
+          "type": "string",
+          "description": "Base URI for HTTPS job input. It will be concatenated with provided file names. If no base uri is given, then the provided file list is assumed to be fully qualified uris. Maximum length of 4000 characters."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Represents HTTPS job input."
+    },
+    "JobInputs": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.JobInputs"
+          ]
+        },
+        "inputs": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of inputs to a Job."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes a list of inputs to a Job."
+    },
+    "JobOutput": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/JobOutputAsset"
+        }
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "A label that is assigned to a JobOutput in order to help uniquely identify it. This is useful when your Transform has more than one TransformOutput, whereby your Job has more than one JobOutput. In such cases, when you submit the Job, you will add two or more JobOutputs, in the same order as TransformOutputs in the Transform. Subsequently, when you retrieve the Job, either through events or on a GET request, you can use the label to easily identify the JobOutput. If a label is not provided, a default value of '{presetName}_{outputIndex}' will be used, where the preset name is the name of the preset in the corresponding TransformOutput and the output index is the relative index of the this JobOutput within the Job. Note that this index is the same as the relative index of the corresponding TransformOutput within its Transform."
+        }
+      },
+      "description": "Describes all the properties of a JobOutput."
+    },
+    "JobOutputAsset": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.JobOutputAsset"
+          ]
+        },
+        "assetName": {
+          "type": "string",
+          "description": "The name of the output Asset."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "assetName"
+      ],
+      "description": "Represents an Asset used as a JobOutput."
+    },
+    "JobProperties": {
+      "type": "object",
+      "properties": {
+        "correlationData": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Customer provided key, value pairs that will be returned in Job and JobOutput state events."
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional customer supplied description of the Job."
+        },
+        "input": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/JobInput"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base class for inputs to a Job."
+        },
+        "outputs": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/JobOutput"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The outputs for the Job."
+        },
+        "priority": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Low",
+                "Normal",
+                "High"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Priority with which the job should be processed. Higher priority jobs are processed before lower priority jobs. If not set, the default is normal."
+        }
+      },
+      "required": [
+        "input",
+        "outputs"
+      ],
+      "description": "Properties of the Job."
+    },
+    "JpgFormat": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.JpgFormat"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the settings for producing JPEG thumbnails."
+    },
+    "JpgImage": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.JpgImage"
+          ]
+        },
+        "layers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/JpgLayer"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A collection of output JPEG image layers to be produced by the encoder."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the properties for producing a series of JPEG images from the input video."
+    },
+    "JpgLayer": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "description": "The height of the output video for this layer. The value can be absolute (in pixels) or relative (in percentage). For example 50% means the output video has half as many pixels in height as the input."
+        },
+        "label": {
+          "type": "string",
+          "description": "The alphanumeric label for this layer, which can be used in multiplexing different video and audio layers, or in naming the output file."
+        },
+        "quality": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The compression quality of the JPEG output. Range is from 0-100 and the default is 70."
+        },
+        "width": {
+          "type": "string",
+          "description": "The width of the output video for this layer. The value can be absolute (in pixels) or relative (in percentage). For example 50% means the output video has half as many pixels in width as the input."
+        }
+      },
+      "description": "Describes the settings to produce a JPEG image from the input video."
+    },
+    "MediaFilterProperties": {
+      "type": "object",
+      "properties": {
+        "firstQuality": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/FirstQuality"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Filter First Quality"
+        },
+        "presentationTimeRange": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PresentationTimeRange"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The presentation time range, this is asset related and not recommended for Account Filter."
+        },
+        "tracks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FilterTrackSelection"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The tracks selection conditions."
+        }
+      },
+      "description": "The Media Filter properties."
+    },
+    "MediaServiceProperties": {
+      "type": "object",
+      "properties": {
+        "storageAccounts": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StorageAccount"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The storage accounts for this resource."
+        }
+      },
+      "description": "Properties of the Media Services account."
+    },
+    "mediaServices_accountFilters_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Account Filter name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MediaFilterProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Media Filter properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "accountFilters"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/accountFilters"
+    },
+    "mediaServices_assets_assetFilters_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Asset Filter name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MediaFilterProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Media Filter properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "assetFilters"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/assets/assetFilters"
+    },
+    "mediaServices_assets_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Asset name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AssetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Asset properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "assets"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/assets"
+    },
+    "mediaServices_contentKeyPolicies_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Content Key Policy name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContentKeyPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the Content Key Policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "contentKeyPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/contentKeyPolicies"
+    },
+    "mediaServices_streamingLocators_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Streaming Locator name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingLocatorProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the Streaming Locator."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "streamingLocators"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/streamingLocators"
+    },
+    "mediaServices_streamingPolicies_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Streaming Policy name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StreamingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify properties of Streaming Policy"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "streamingPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/streamingPolicies"
+    },
+    "mediaServices_transforms_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Transform name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TransformProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A Transform."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "transforms"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/transforms"
+    },
+    "mediaServices_transforms_jobs_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-07-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The Job name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/JobProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the Job."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "jobs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Media/mediaServices/transforms/jobs"
+    },
+    "Mp4Format": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.Mp4Format"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the properties for an output ISO MP4 file."
+    },
+    "MultiBitrateFormat": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Mp4Format"
+        },
+        {
+          "$ref": "#/definitions/TransportStreamFormat"
+        }
+      ],
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.MultiBitrateFormat"
+          ]
+        },
+        "outputFiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OutputFile"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of output files to produce.  Each entry in the list is a set of audio and video layer labels to be muxed together ."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the properties for producing a collection of GOP aligned multi-bitrate files. The default behavior is to produce one output file for each video layer which is muxed together with all the audios. The exact output files produced can be controlled by specifying the outputFiles collection."
+    },
+    "NoEncryption": {
+      "type": "object",
+      "properties": {
+        "enabledProtocols": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EnabledProtocols"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify which protocols are enabled"
+        }
+      },
+      "description": "Class for NoEncryption scheme"
+    },
+    "OutputFile": {
+      "type": "object",
+      "properties": {
+        "labels": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of labels that describe how the encoder should multiplex video and audio into an output file. For example, if the encoder is producing two video layers with labels v1 and v2, and one audio layer with label a1, then an array like '[v1, a1]' tells the encoder to produce an output file with the video track represented by v1 and the audio track represented by a1."
+        }
+      },
+      "required": [
+        "labels"
+      ],
+      "description": "Represents an output file produced."
+    },
+    "Overlay": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AudioOverlay"
+        },
+        {
+          "$ref": "#/definitions/VideoOverlay"
+        }
+      ],
+      "properties": {
+        "audioGainLevel": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The gain level of audio in the overlay. The value should be in the range [0, 1.0]. The default is 1.0."
+        },
+        "end": {
+          "type": "string",
+          "format": "duration",
+          "description": "The position in the input video at which the overlay ends. The value should be in ISO 8601 duration format. For example, PT30S to end the overlay at 30 seconds in to the input video. If not specified the overlay will be applied until the end of the input video if inputLoop is true. Else, if inputLoop is false, then overlay will last as long as the duration of the overlay media."
+        },
+        "fadeInDuration": {
+          "type": "string",
+          "format": "duration",
+          "description": "The duration over which the overlay fades in onto the input video. The value should be in ISO 8601 duration format. If not specified the default behavior is to have no fade in (same as PT0S)."
+        },
+        "fadeOutDuration": {
+          "type": "string",
+          "format": "duration",
+          "description": "The duration over which the overlay fades out of the input video. The value should be in ISO 8601 duration format. If not specified the default behavior is to have no fade out (same as PT0S)."
+        },
+        "inputLabel": {
+          "type": "string",
+          "description": "The label of the job input which is to be used as an overlay. The Input must specify exactly one file. You can specify an image file in JPG or PNG formats, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See https://aka.ms/mesformats for the complete list of supported audio and video file formats."
+        },
+        "start": {
+          "type": "string",
+          "format": "duration",
+          "description": "The start position, with reference to the input video, at which the overlay starts. The value should be in ISO 8601 format. For example, PT05S to start the overlay at 5 seconds in to the input video. If not specified the overlay starts from the beginning of the input video."
+        }
+      },
+      "required": [
+        "inputLabel"
+      ],
+      "description": "Base type for all overlays - image, audio or video."
+    },
+    "PngFormat": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.PngFormat"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the settings for producing PNG thumbnails."
+    },
+    "PngImage": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.PngImage"
+          ]
+        },
+        "layers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PngLayer"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A collection of output PNG image layers to be produced by the encoder."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the properties for producing a series of PNG images from the input video."
+    },
+    "PngLayer": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "description": "The height of the output video for this layer. The value can be absolute (in pixels) or relative (in percentage). For example 50% means the output video has half as many pixels in height as the input."
+        },
+        "label": {
+          "type": "string",
+          "description": "The alphanumeric label for this layer, which can be used in multiplexing different video and audio layers, or in naming the output file."
+        },
+        "width": {
+          "type": "string",
+          "description": "The width of the output video for this layer. The value can be absolute (in pixels) or relative (in percentage). For example 50% means the output video has half as many pixels in width as the input."
+        }
+      },
+      "description": "Describes the settings to produce a PNG image from the input video."
+    },
+    "PresentationTimeRange": {
+      "type": "object",
+      "properties": {
+        "endTimestamp": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The absolute end time boundary."
+        },
+        "forceEndTimestamp": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The indicator of forcing existing of end time stamp."
+        },
+        "liveBackoffDuration": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The relative to end right edge."
+        },
+        "presentationWindowDuration": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The relative to end sliding window."
+        },
+        "startTimestamp": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The absolute start time boundary."
+        },
+        "timescale": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The time scale of time stamps."
+        }
+      },
+      "description": "The presentation time range, this is asset related and not recommended for Account Filter."
+    },
+    "Preset": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/FaceDetectorPreset"
+        },
+        {
+          "$ref": "#/definitions/AudioAnalyzerPreset"
+        },
+        {
+          "$ref": "#/definitions/BuiltInStandardEncoderPreset"
+        },
+        {
+          "$ref": "#/definitions/StandardEncoderPreset"
+        }
+      ],
+      "properties": {},
+      "description": "Base type for all Presets, which define the recipe or instructions on how the input media files should be processed."
+    },
+    "Rectangle": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "description": "The height of the rectangular region in pixels. This can be absolute pixel value (e.g 100), or relative to the size of the video (For example, 50%)."
+        },
+        "left": {
+          "type": "string",
+          "description": "The number of pixels from the left-margin. This can be absolute pixel value (e.g 100), or relative to the size of the video (For example, 50%)."
+        },
+        "top": {
+          "type": "string",
+          "description": "The number of pixels from the top-margin. This can be absolute pixel value (e.g 100), or relative to the size of the video (For example, 50%)."
+        },
+        "width": {
+          "type": "string",
+          "description": "The width of the rectangular region in pixels. This can be absolute pixel value (e.g 100), or relative to the size of the video (For example, 50%)."
+        }
+      },
+      "description": "Describes the properties of a rectangular window applied to the input media before processing it."
+    },
+    "StandardEncoderPreset": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.StandardEncoderPreset"
+          ]
+        },
+        "codecs": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Codec"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of codecs to be used when encoding the input video."
+        },
+        "filters": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Filters"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes all the filtering operations, such as de-interlacing, rotation etc. that are to be applied to the input media before encoding."
+        },
+        "formats": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Format"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of outputs to be produced by the encoder."
+        }
+      },
+      "required": [
+        "@odata.type",
+        "codecs",
+        "formats"
+      ],
+      "description": "Describes all the settings to be used when encoding the input video with the Standard Encoder."
+    },
+    "StorageAccount": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the storage account resource. Media Services relies on tables and queues as well as blobs, so the primary storage account must be a Standard Storage account (either Microsoft.ClassicStorage or Microsoft.Storage). Blob only storage accounts can be added as secondary storage accounts."
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Primary",
+                "Secondary"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of the storage account."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "description": "The storage account details."
+    },
+    "StreamingLocatorContentKey": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "ID of Content Key"
+        },
+        "labelReferenceInStreamingPolicy": {
+          "type": "string",
+          "description": "Label of Content Key as specified in the Streaming Policy"
+        },
+        "value": {
+          "type": "string",
+          "description": "Value of Content Key"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "description": "Class for content key in Streaming Locator"
+    },
+    "StreamingLocatorProperties": {
+      "type": "object",
+      "properties": {
+        "alternativeMediaId": {
+          "type": "string",
+          "description": "Alternative Media ID of this Streaming Locator"
+        },
+        "assetName": {
+          "type": "string",
+          "description": "Asset Name"
+        },
+        "contentKeys": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StreamingLocatorContentKey"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The ContentKeys used by this Streaming Locator."
+        },
+        "defaultContentKeyPolicyName": {
+          "type": "string",
+          "description": "Name of the default ContentKeyPolicy used by this Streaming Locator."
+        },
+        "endTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The end time of the Streaming Locator."
+        },
+        "filters": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of asset or account filters which apply to this streaming locator"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The start time of the Streaming Locator."
+        },
+        "streamingLocatorId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The StreamingLocatorId of the Streaming Locator."
+        },
+        "streamingPolicyName": {
+          "type": "string",
+          "description": "Name of the Streaming Policy used by this Streaming Locator. Either specify the name of Streaming Policy you created or use one of the predefined Streaming Policies. The predefined Streaming Policies available are: 'Predefined_DownloadOnly', 'Predefined_ClearStreamingOnly', 'Predefined_DownloadAndClearStreaming', 'Predefined_ClearKey', 'Predefined_MultiDrmCencStreaming' and 'Predefined_MultiDrmStreaming'"
+        }
+      },
+      "required": [
+        "assetName",
+        "streamingPolicyName"
+      ],
+      "description": "Properties of the Streaming Locator."
+    },
+    "StreamingPolicyContentKey": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Label can be used to specify Content Key when creating a Streaming Locator"
+        },
+        "policyName": {
+          "type": "string",
+          "description": "Policy used by Content Key"
+        },
+        "tracks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TrackSelection"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Tracks which use this content key"
+        }
+      },
+      "description": "Class to specify properties of content key"
+    },
+    "StreamingPolicyContentKeys": {
+      "type": "object",
+      "properties": {
+        "defaultKey": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DefaultKey"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class to specify properties of default content key for each encryption scheme"
+        },
+        "keyToTrackMappings": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StreamingPolicyContentKey"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Representing tracks needs separate content key"
+        }
+      },
+      "description": "Class to specify properties of all content keys in Streaming Policy"
+    },
+    "StreamingPolicyFairPlayConfiguration": {
+      "type": "object",
+      "properties": {
+        "allowPersistentLicense": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "All license to be persistent or not"
+        },
+        "customLicenseAcquisitionUrlTemplate": {
+          "type": "string",
+          "description": "Template for the URL of the custom service delivering licenses to end user players.  Not required when using Azure Media Services for issuing licenses.  The template supports replaceable tokens that the service will update at runtime with the value specific to the request.  The currently supported token values are {AlternativeMediaId}, which is replaced with the value of StreamingLocatorId.AlternativeMediaId, and {ContentKeyId}, which is replaced with the value of identifier of the key being requested."
+        }
+      },
+      "required": [
+        "allowPersistentLicense"
+      ],
+      "description": "Class to specify configurations of FairPlay in Streaming Policy"
+    },
+    "StreamingPolicyPlayReadyConfiguration": {
+      "type": "object",
+      "properties": {
+        "customLicenseAcquisitionUrlTemplate": {
+          "type": "string",
+          "description": "Template for the URL of the custom service delivering licenses to end user players.  Not required when using Azure Media Services for issuing licenses.  The template supports replaceable tokens that the service will update at runtime with the value specific to the request.  The currently supported token values are {AlternativeMediaId}, which is replaced with the value of StreamingLocatorId.AlternativeMediaId, and {ContentKeyId}, which is replaced with the value of identifier of the key being requested."
+        },
+        "playReadyCustomAttributes": {
+          "type": "string",
+          "description": "Custom attributes for PlayReady"
+        }
+      },
+      "description": "Class to specify configurations of PlayReady in Streaming Policy"
+    },
+    "StreamingPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "commonEncryptionCbcs": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CommonEncryptionCbcs"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class for CommonEncryptionCbcs encryption scheme"
+        },
+        "commonEncryptionCenc": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CommonEncryptionCenc"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class for envelope encryption scheme"
+        },
+        "defaultContentKeyPolicyName": {
+          "type": "string",
+          "description": "Default ContentKey used by current Streaming Policy"
+        },
+        "envelopeEncryption": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EnvelopeEncryption"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class for EnvelopeEncryption encryption scheme"
+        },
+        "noEncryption": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/NoEncryption"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class for NoEncryption scheme"
+        }
+      },
+      "description": "Class to specify properties of Streaming Policy"
+    },
+    "StreamingPolicyWidevineConfiguration": {
+      "type": "object",
+      "properties": {
+        "customLicenseAcquisitionUrlTemplate": {
+          "type": "string",
+          "description": "Template for the URL of the custom service delivering licenses to end user players.  Not required when using Azure Media Services for issuing licenses.  The template supports replaceable tokens that the service will update at runtime with the value specific to the request.  The currently supported token values are {AlternativeMediaId}, which is replaced with the value of StreamingLocatorId.AlternativeMediaId, and {ContentKeyId}, which is replaced with the value of identifier of the key being requested."
+        }
+      },
+      "description": "Class to specify configurations of Widevine in Streaming Policy"
+    },
+    "TrackPropertyCondition": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unknown",
+                "Equal"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Track property condition operation."
+        },
+        "property": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unknown",
+                "FourCC"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Track property type."
+        },
+        "value": {
+          "type": "string",
+          "description": "Track property value"
+        }
+      },
+      "required": [
+        "operation",
+        "property"
+      ],
+      "description": "Class to specify one track property condition"
+    },
+    "TrackSelection": {
+      "type": "object",
+      "properties": {
+        "trackSelections": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TrackPropertyCondition"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "TrackSelections is a track property condition list which can specify track(s)"
+        }
+      },
+      "description": "Class to select a track"
+    },
+    "TransformOutput": {
+      "type": "object",
+      "properties": {
+        "onError": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "StopProcessingJob",
+                "ContinueJob"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A Transform can define more than one outputs. This property defines what the service should do when one output fails - either continue to produce other outputs, or, stop the other outputs. The overall Job state will not reflect failures of outputs that are specified with 'ContinueJob'. The default is 'StopProcessingJob'."
+        },
+        "preset": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Preset"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base type for all Presets, which define the recipe or instructions on how the input media files should be processed."
+        },
+        "relativePriority": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Low",
+                "Normal",
+                "High"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Sets the relative priority of the TransformOutputs within a Transform. This sets the priority that the service uses for processing TransformOutputs. The default priority is Normal."
+        }
+      },
+      "required": [
+        "preset"
+      ],
+      "description": "Describes the properties of a TransformOutput, which are the rules to be applied while generating the desired output."
+    },
+    "TransformProperties": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "An optional verbose description of the Transform."
+        },
+        "outputs": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TransformOutput"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An array of one or more TransformOutputs that the Transform should generate."
+        }
+      },
+      "required": [
+        "outputs"
+      ],
+      "description": "A Transform."
+    },
+    "TransportStreamFormat": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.TransportStreamFormat"
+          ]
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the properties for generating an MPEG-2 Transport Stream (ISO/IEC 13818-1) output video file(s)."
+    },
+    "Video": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Image"
+        },
+        {
+          "$ref": "#/definitions/H264Video"
+        }
+      ],
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.Video"
+          ]
+        },
+        "keyFrameInterval": {
+          "type": "string",
+          "format": "duration",
+          "description": "The distance between two key frames, thereby defining a group of pictures (GOP). The value should be a non-zero integer in the range [1, 30] seconds, specified in ISO 8601 format. The default is 2 seconds (PT2S)."
+        },
+        "stretchMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "AutoSize",
+                "AutoFit"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resizing mode - how the input video will be resized to fit the desired output resolution(s). Default is AutoSize."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the basic properties for encoding the input video."
+    },
+    "VideoAnalyzerPreset": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.VideoAnalyzerPreset"
+          ]
+        },
+        "insightsToExtract": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AudioInsightsOnly",
+                "VideoInsightsOnly",
+                "AllInsights"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Defines the type of insights that you want the service to generate. The allowed values are 'AudioInsightsOnly', 'VideoInsightsOnly', and 'AllInsights'. The default is AllInsights. If you set this to AllInsights and the input is audio only, then only audio insights are generated. Similarly if the input is video only, then only video insights are generated. It is recommended that you not use AudioInsightsOnly if you expect some of your inputs to be video only; or use VideoInsightsOnly if you expect some of your inputs to be audio only. Your Jobs in such conditions would error out."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "A video analyzer preset that extracts insights (rich metadata) from both audio and video, and outputs a JSON format file."
+    },
+    "VideoOverlay": {
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "enum": [
+            "#Microsoft.Media.VideoOverlay"
+          ]
+        },
+        "cropRectangle": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Rectangle"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the properties of a rectangular window applied to the input media before processing it."
+        },
+        "opacity": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The opacity of the overlay. This is a value in the range [0 - 1.0]. Default is 1.0 which mean the overlay is opaque."
+        },
+        "position": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Rectangle"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the properties of a rectangular window applied to the input media before processing it."
+        }
+      },
+      "required": [
+        "@odata.type"
+      ],
+      "description": "Describes the properties of a video overlay."
+    }
+  }
+}

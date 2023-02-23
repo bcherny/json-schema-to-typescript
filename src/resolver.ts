@@ -1,10 +1,10 @@
-import $RefParser = require('@apidevtools/json-schema-ref-parser')
+import $RefParser = require('@bcherny/json-schema-ref-parser')
 import {JSONSchema} from './types/JSONSchema'
 import {log} from './utils'
 
 export type DereferencedPaths = WeakMap<$RefParser.JSONSchemaObject, string>
 
-export async function dereference(
+export async function dereference (
   schema: JSONSchema,
   {cwd, $refOptions}: {cwd: string; $refOptions: $RefParser.Options}
 ): Promise<{dereferencedPaths: DereferencedPaths; dereferencedSchema: JSONSchema}> {
@@ -15,7 +15,7 @@ export async function dereference(
     ...$refOptions,
     dereference: {
       ...$refOptions.dereference,
-      onDereference($ref, schema) {
+      onDereference ($ref, schema) {
         dereferencedPaths.set(schema, $ref)
       }
     }

@@ -167,7 +167,7 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         params: schema.enum!.map((_, n) => ({
-          ast: parse(_, options, undefined, processed, usedNames),
+          ast: parseLiteral(_, undefined),
           keyName: schema.tsEnumNames![n]
         })),
         type: 'ENUM'
@@ -264,7 +264,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        params: schema.enum!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        params: schema.enum!.map(_ => parseLiteral(_, undefined)),
         type: 'UNION'
       }
     case 'UNNAMED_SCHEMA':

@@ -1,0 +1,134 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-09-16-preview/Microsoft.WindowsESU.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.WindowsESU",
+  "description": "Microsoft WindowsESU Resource Types",
+  "resourceDefinitions": {
+    "multipleActivationKeys": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-09-16-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the MAK key."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MultipleActivationKeyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "MAK key specific properties."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.WindowsESU/multipleActivationKeys"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.WindowsESU/multipleActivationKeys"
+    }
+  },
+  "definitions": {
+    "MultipleActivationKeyProperties": {
+      "type": "object",
+      "properties": {
+        "agreementNumber": {
+          "type": "string",
+          "description": "Agreement number under which the key is requested."
+        },
+        "installedServerNumber": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5000
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of activations/servers using the MAK key."
+        },
+        "isEligible": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "<code> true </code> if user has eligible on-premises Windows physical or virtual machines, and that the requested key will only be used in their organization; <code> false </code> otherwise."
+        },
+        "osType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Windows7",
+                "WindowsServer2008",
+                "WindowsServer2008R2"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of OS for which the key is requested."
+        },
+        "supportType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SupplementalServicing",
+                "PremiumAssurance"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of support."
+        }
+      },
+      "description": "MAK key specific properties."
+    }
+  }
+}

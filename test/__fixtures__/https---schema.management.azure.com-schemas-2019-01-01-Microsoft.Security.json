@@ -1,0 +1,161 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-01-01/Microsoft.Security.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Security",
+  "description": "Microsoft Security Resource Types",
+  "resourceDefinitions": {},
+  "subscription_resourceDefinitions": {
+    "settings": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/DataExportSettings"
+        }
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-01-01"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "MCAS",
+                "WDATP"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Name of setting: (MCAS/WDATP)."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Security/settings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Security/settings"
+    }
+  },
+  "unknown_resourceDefinitions": {
+    "advancedThreatProtectionSettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-01-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "current"
+          ],
+          "description": "Advanced Threat Protection setting name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AdvancedThreatProtectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Advanced Threat Protection settings."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Security/advancedThreatProtectionSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Security/advancedThreatProtectionSettings"
+    }
+  },
+  "definitions": {
+    "AdvancedThreatProtectionProperties": {
+      "type": "object",
+      "properties": {
+        "isEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether Advanced Threat Protection is enabled."
+        }
+      },
+      "description": "The Advanced Threat Protection settings."
+    },
+    "DataExportSettingProperties": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Is the data export setting is enabled"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "description": "The data export setting properties"
+    },
+    "DataExportSettings": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "DataExportSettings"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataExportSettingProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The data export setting properties"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "description": "Represents a data export setting"
+    }
+  }
+}

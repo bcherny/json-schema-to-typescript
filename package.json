@@ -1,6 +1,6 @@
 {
   "name": "json-schema-to-typescript",
-  "version": "11.0.3",
+  "version": "12.0.0",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
@@ -46,7 +46,7 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^10.0.0",
+    "@bcherny/json-schema-ref-parser": "10.0.5-fork",
     "@types/json-schema": "^7.0.11",
     "@types/lodash": "^4.14.182",
     "@types/prettier": "^2.6.1",

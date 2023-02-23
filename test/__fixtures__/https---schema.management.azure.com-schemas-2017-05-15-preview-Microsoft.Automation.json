@@ -1,0 +1,1050 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-05-15-preview/Microsoft.Automation.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Automation",
+  "description": "Microsoft Automation Resource Types",
+  "resourceDefinitions": {
+    "automationAccounts_jobs": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-05-15-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The job name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/JobCreateProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Automation/automationAccounts/jobs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Automation/automationAccounts/jobs"
+    },
+    "automationAccounts_softwareUpdateConfigurations": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-05-15-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the software update configuration to be created."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SoftwareUpdateConfigurationProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Software update configuration properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Automation/automationAccounts/softwareUpdateConfigurations"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Automation/automationAccounts/softwareUpdateConfigurations"
+    },
+    "automationAccounts_sourceControls": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-05-15-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The source control name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SourceControlCreateOrUpdateProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the create source control operation."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/automationAccounts_sourceControls_sourceControlSyncJobs_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Automation/automationAccounts/sourceControls"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Automation/automationAccounts/sourceControls"
+    },
+    "automationAccounts_sourceControls_sourceControlSyncJobs": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-05-15-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The source control sync job id."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SourceControlSyncJobCreateProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Definition of create source control sync job properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Automation/automationAccounts/sourceControls/sourceControlSyncJobs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Automation/automationAccounts/sourceControls/sourceControlSyncJobs"
+    }
+  },
+  "definitions": {
+    "AdvancedSchedule": {
+      "type": "object",
+      "properties": {
+        "monthDays": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Days of the month that the job should execute on. Must be between 1 and 31."
+        },
+        "monthlyOccurrences": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AdvancedScheduleMonthlyOccurrence"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Occurrences of days within a month."
+        },
+        "weekDays": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Days of the week that the job should execute on."
+        }
+      },
+      "description": "The properties of the create Advanced Schedule."
+    },
+    "AdvancedScheduleMonthlyOccurrence": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Day of the occurrence. Must be one of monday, tuesday, wednesday, thursday, friday, saturday, sunday."
+        },
+        "occurrence": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Occurrence of the week within the month. Must be between 1 and 5"
+        }
+      },
+      "description": "The properties of the create advanced schedule monthly occurrence."
+    },
+    "automationAccounts_sourceControls_sourceControlSyncJobs_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-05-15-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The source control sync job id."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SourceControlSyncJobCreateProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Definition of create source control sync job properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "sourceControlSyncJobs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Automation/automationAccounts/sourceControls/sourceControlSyncJobs"
+    },
+    "AzureQueryProperties": {
+      "type": "object",
+      "properties": {
+        "locations": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of locations to scope the query to."
+        },
+        "scope": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of Subscription or Resource Group ARM Ids."
+        },
+        "tagSettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TagSettingsProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Tag filter information for the VM."
+        }
+      },
+      "description": "Azure query for the update configuration."
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message indicating why the operation failed."
+        }
+      },
+      "description": "Error response of an operation failure"
+    },
+    "JobCreateProperties": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the parameters of the job."
+        },
+        "runbook": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RunbookAssociationProperty"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The runbook property associated with the entity."
+        },
+        "runOn": {
+          "type": "string",
+          "description": "Gets or sets the runOn which specifies the group name where the job is to be executed."
+        }
+      }
+    },
+    "LinuxProperties": {
+      "type": "object",
+      "properties": {
+        "excludedPackageNameMasks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "packages excluded from the software update configuration."
+        },
+        "includedPackageClassifications": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unclassified",
+                "Critical",
+                "Security",
+                "Other"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Update classifications included in the software update configuration."
+        },
+        "includedPackageNameMasks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "packages included from the software update configuration."
+        },
+        "rebootSetting": {
+          "type": "string",
+          "description": "Reboot setting for the software update configuration."
+        }
+      },
+      "description": "Linux specific update configuration."
+    },
+    "NonAzureQueryProperties": {
+      "type": "object",
+      "properties": {
+        "functionAlias": {
+          "type": "string",
+          "description": "Log Analytics Saved Search name."
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Workspace Id for Log Analytics in which the saved Search is resided."
+        }
+      },
+      "description": "Non Azure query for the update configuration."
+    },
+    "RunbookAssociationProperty": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Gets or sets the name of the runbook."
+        }
+      },
+      "description": "The runbook property associated with the entity."
+    },
+    "ScheduleProperties": {
+      "type": "object",
+      "properties": {
+        "advancedSchedule": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AdvancedSchedule"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the create Advanced Schedule."
+        },
+        "creationTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Gets or sets the creation time."
+        },
+        "description": {
+          "type": "string",
+          "description": "Gets or sets the description."
+        },
+        "expiryTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Gets or sets the end time of the schedule."
+        },
+        "expiryTimeOffsetMinutes": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the expiry time's offset in minutes."
+        },
+        "frequency": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "OneTime",
+                "Day",
+                "Hour",
+                "Week",
+                "Month",
+                "Minute"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the frequency of the schedule."
+        },
+        "interval": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the interval of the schedule."
+        },
+        "isEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets a value indicating whether this schedule is enabled."
+        },
+        "lastModifiedTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Gets or sets the last modified time."
+        },
+        "nextRun": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Gets or sets the next run time of the schedule."
+        },
+        "nextRunOffsetMinutes": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the next run time's offset in minutes."
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Gets or sets the start time of the schedule."
+        },
+        "timeZone": {
+          "type": "string",
+          "description": "Gets or sets the time zone of the schedule."
+        }
+      },
+      "description": "Definition of schedule parameters."
+    },
+    "SoftwareUpdateConfigurationProperties": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Error response of an operation failure"
+        },
+        "scheduleInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ScheduleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Definition of schedule parameters."
+        },
+        "tasks": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SoftwareUpdateConfigurationTasks"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Task properties of the software update configuration."
+        },
+        "updateConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/UpdateConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Update specific properties of the software update configuration."
+        }
+      },
+      "required": [
+        "scheduleInfo",
+        "updateConfiguration"
+      ],
+      "description": "Software update configuration properties."
+    },
+    "SoftwareUpdateConfigurationTasks": {
+      "type": "object",
+      "properties": {
+        "postTask": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TaskProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Task properties of the software update configuration."
+        },
+        "preTask": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TaskProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Task properties of the software update configuration."
+        }
+      },
+      "description": "Task properties of the software update configuration."
+    },
+    "SourceControlCreateOrUpdateProperties": {
+      "type": "object",
+      "properties": {
+        "autoSync": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The auto async of the source control. Default is false."
+        },
+        "branch": {
+          "type": "string",
+          "maxLength": 255,
+          "description": "The repo branch of the source control. Include branch as empty string for VsoTfvc."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 512,
+          "description": "The user description of the source control."
+        },
+        "folderPath": {
+          "type": "string",
+          "maxLength": 255,
+          "description": "The folder path of the source control. Path must be relative."
+        },
+        "publishRunbook": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The auto publish of the source control. Default is true."
+        },
+        "repoUrl": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "The repo url of the source control."
+        },
+        "securityToken": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SourceControlSecurityTokenProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "sourceType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "VsoGit",
+                "VsoTfvc",
+                "GitHub"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The source type. Must be one of VsoGit, VsoTfvc, GitHub, case sensitive."
+        }
+      },
+      "description": "The properties of the create source control operation."
+    },
+    "SourceControlSecurityTokenProperties": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string",
+          "maxLength": 1024,
+          "description": "The access token."
+        },
+        "refreshToken": {
+          "type": "string",
+          "maxLength": 1024,
+          "description": "The refresh token."
+        },
+        "tokenType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "PersonalAccessToken",
+                "Oauth"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The token type. Must be either PersonalAccessToken or Oauth."
+        }
+      }
+    },
+    "SourceControlSyncJobCreateProperties": {
+      "type": "object",
+      "properties": {
+        "commitId": {
+          "type": "string",
+          "minLength": 0,
+          "description": "The commit id of the source control sync job. If not syncing to a commitId, enter an empty string."
+        }
+      },
+      "required": [
+        "commitId"
+      ],
+      "description": "Definition of create source control sync job properties."
+    },
+    "TagSettingsProperties": {
+      "type": "object",
+      "properties": {
+        "filterOperator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "All",
+                "Any"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Filter VMs by Any or All specified tags."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Dictionary of tags with its list of values."
+        }
+      },
+      "description": "Tag filter information for the VM."
+    },
+    "TargetProperties": {
+      "type": "object",
+      "properties": {
+        "azureQueries": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AzureQueryProperties"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of Azure queries in the software update configuration."
+        },
+        "nonAzureQueries": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NonAzureQueryProperties"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of non Azure queries in the software update configuration."
+        }
+      },
+      "description": "Group specific to the update configuration."
+    },
+    "TaskProperties": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the parameters of the task."
+        },
+        "source": {
+          "type": "string",
+          "description": "Gets or sets the name of the runbook."
+        }
+      },
+      "description": "Task properties of the software update configuration."
+    },
+    "UpdateConfiguration": {
+      "type": "object",
+      "properties": {
+        "azureVirtualMachines": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of azure resource Ids for azure virtual machines targeted by the software update configuration."
+        },
+        "duration": {
+          "type": "string",
+          "format": "duration",
+          "description": "Maximum time allowed for the software update configuration run. Duration needs to be specified using the format PT[n]H[n]M[n]S as per ISO8601"
+        },
+        "linux": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LinuxProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Linux specific update configuration."
+        },
+        "nonAzureComputerNames": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of names of non-azure machines targeted by the software update configuration."
+        },
+        "operatingSystem": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Windows",
+                "Linux"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "operating system of target machines."
+        },
+        "targets": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TargetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Group specific to the update configuration."
+        },
+        "windows": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WindowsProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Windows specific update configuration."
+        }
+      },
+      "required": [
+        "operatingSystem"
+      ],
+      "description": "Update specific properties of the software update configuration."
+    },
+    "WindowsProperties": {
+      "type": "object",
+      "properties": {
+        "excludedKbNumbers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "KB numbers excluded from the software update configuration."
+        },
+        "includedKbNumbers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "KB numbers included from the software update configuration."
+        },
+        "includedUpdateClassifications": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Unclassified",
+                "Critical",
+                "Security",
+                "UpdateRollup",
+                "FeaturePack",
+                "ServicePack",
+                "Definition",
+                "Tools",
+                "Updates"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Update classification included in the software update configuration. A comma separated string with required values."
+        },
+        "rebootSetting": {
+          "type": "string",
+          "description": "Reboot setting for the software update configuration."
+        }
+      },
+      "description": "Windows specific update configuration."
+    }
+  }
+}

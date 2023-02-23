@@ -1,0 +1,517 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-09-01-preview/Microsoft.Migrate.MigrateProjects.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Migrate",
+  "description": "Microsoft Migrate Resource Types",
+  "resourceDefinitions": {
+    "migrateProjects": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-09-01-preview"
+          ]
+        },
+        "eTag": {
+          "type": "string",
+          "description": "Gets or sets the eTag for concurrency control."
+        },
+        "location": {
+          "type": "string",
+          "description": "Gets or sets the Azure location in which migrate project is created."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Azure Migrate project."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MigrateProjectProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class for migrate project properties."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/migrateProjects_solutions_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MigrateProjectTags"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Migrate/migrateProjects"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Migrate/migrateProjects"
+    },
+    "migrateProjects_solutions": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-09-01-preview"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "Gets or sets the ETAG for optimistic concurrency control."
+        },
+        "name": {
+          "type": "string",
+          "description": "Unique name of a migration solution within a migrate project."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SolutionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class for solution properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Migrate/migrateProjects/solutions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Migrate/migrateProjects/solutions"
+    }
+  },
+  "definitions": {
+    "DatabasesSolutionSummary": {
+      "type": "object",
+      "properties": {
+        "databaseInstancesAssessedCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of database instances assessed."
+        },
+        "databasesAssessedCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of databases assessed."
+        },
+        "instanceType": {
+          "type": "string",
+          "enum": [
+            "Databases"
+          ]
+        },
+        "migrationReadyCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of databases ready for migration."
+        }
+      },
+      "required": [
+        "instanceType"
+      ],
+      "description": "Class representing the databases solution summary."
+    },
+    "MigrateProjectProperties": {
+      "type": "object",
+      "properties": {
+        "provisioningState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Accepted",
+                "Creating",
+                "Deleting",
+                "Failed",
+                "Moving",
+                "Succeeded"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Provisioning state of the migrate project."
+        },
+        "registeredTools": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ServerDiscovery",
+                  "ServerAssessment",
+                  "ServerMigration",
+                  "Cloudamize",
+                  "Turbonomic",
+                  "Zerto",
+                  "CorentTech",
+                  "ServerAssessmentV1",
+                  "ServerMigration_Replication",
+                  "Carbonite",
+                  "DataMigrationAssistant",
+                  "DatabaseMigrationService"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the list of tools registered with the migrate project."
+        }
+      },
+      "description": "Class for migrate project properties."
+    },
+    "migrateProjects_solutions_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-09-01-preview"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "Gets or sets the ETAG for optimistic concurrency control."
+        },
+        "name": {
+          "type": "string",
+          "description": "Unique name of a migration solution within a migrate project."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SolutionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class for solution properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "solutions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Migrate/migrateProjects/solutions"
+    },
+    "MigrateProjectTags": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "description": "Gets or sets the tags."
+    },
+    "ServersSolutionSummary": {
+      "type": "object",
+      "properties": {
+        "assessedCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of servers assessed."
+        },
+        "discoveredCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of servers discovered."
+        },
+        "instanceType": {
+          "type": "string",
+          "enum": [
+            "Servers"
+          ]
+        },
+        "migratedCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of servers migrated."
+        },
+        "replicatingCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of servers being replicated."
+        },
+        "testMigratedCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of servers test migrated."
+        }
+      },
+      "required": [
+        "instanceType"
+      ],
+      "description": "Class representing the servers solution summary."
+    },
+    "SolutionDetails": {
+      "type": "object",
+      "properties": {
+        "assessmentCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of assessments reported by the solution."
+        },
+        "extendedDetails": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the extended details reported by the solution."
+        },
+        "groupCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the count of groups reported by the solution."
+        }
+      },
+      "description": "Class representing the details of the solution."
+    },
+    "SolutionProperties": {
+      "type": "object",
+      "properties": {
+        "cleanupState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "Started",
+                "InProgress",
+                "Completed",
+                "Failed"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the cleanup state of the solution."
+        },
+        "details": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SolutionDetails"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Class representing the details of the solution."
+        },
+        "goal": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Servers",
+                "Databases"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the goal of the solution."
+        },
+        "purpose": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Discovery",
+                "Assessment",
+                "Migration"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the purpose of the solution."
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Inactive",
+                "Active"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the current status of the solution."
+        },
+        "summary": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SolutionSummary"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The solution summary class."
+        },
+        "tool": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ServerDiscovery",
+                "ServerAssessment",
+                "ServerMigration",
+                "Cloudamize",
+                "Turbonomic",
+                "Zerto",
+                "CorentTech",
+                "ServerAssessmentV1",
+                "ServerMigration_Replication",
+                "Carbonite",
+                "DataMigrationAssistant",
+                "DatabaseMigrationService"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets the tool being used in the solution."
+        }
+      },
+      "description": "Class for solution properties."
+    },
+    "SolutionSummary": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ServersSolutionSummary"
+        },
+        {
+          "$ref": "#/definitions/DatabasesSolutionSummary"
+        }
+      ],
+      "properties": {},
+      "description": "The solution summary class."
+    }
+  }
+}

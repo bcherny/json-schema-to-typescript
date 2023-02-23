@@ -1,0 +1,56 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-11-30/Microsoft.ManagedIdentity.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.ManagedIdentity",
+  "description": "Microsoft ManagedIdentity Resource Types",
+  "resourceDefinitions": {
+    "userAssignedIdentities": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-11-30"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the identity resource."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.ManagedIdentity/userAssignedIdentities"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.ManagedIdentity/userAssignedIdentities"
+    }
+  },
+  "definitions": {}
+}

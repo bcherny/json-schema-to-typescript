@@ -1,0 +1,1031 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2016-12-01/Microsoft.RecoveryServices.Backup.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.RecoveryServices",
+  "description": "Microsoft RecoveryServices Resource Types",
+  "resourceDefinitions": {
+    "vaults_backupFabrics_protectionContainers": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-12-01"
+          ]
+        },
+        "eTag": {
+          "type": "string",
+          "description": "Optional ETag."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the container to be registered."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ProtectionContainer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Base class for container with backup items. Containers with specific workloads are derived from this class."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers"
+    },
+    "vaults_backupstorageconfig": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-12-01"
+          ]
+        },
+        "eTag": {
+          "type": "string",
+          "description": "Optional ETag."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/vaultstorageconfig$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BackupResourceConfig"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resource storage details."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.RecoveryServices/vaults/backupstorageconfig"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.RecoveryServices/vaults/backupstorageconfig"
+    }
+  },
+  "definitions": {
+    "AzureBackupServerContainer": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "AzureBackupServerContainer"
+          ]
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "AzureBackupServer (DPMVenus) workload-specific protection container."
+    },
+    "AzureIaaSClassicComputeVMContainer": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "Microsoft.ClassicCompute/virtualMachines"
+          ]
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "IaaS VM workload-specific backup item representing a classic virtual machine."
+    },
+    "AzureIaaSComputeVMContainer": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Compute/virtualMachines"
+          ]
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "IaaS VM workload-specific backup item representing an Azure Resource Manager virtual machine."
+    },
+    "AzureSQLAGWorkloadContainerProtectionContainer": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "SQLAGWorkLoadContainer"
+          ]
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "Container for SQL workloads under SQL Availability Group."
+    },
+    "AzureSqlContainer": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "AzureSqlContainer"
+          ]
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "Azure Sql workload-specific container."
+    },
+    "AzureStorageContainer": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "StorageContainer"
+          ]
+        },
+        "protectedItemCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of items backed up in this container."
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group name of Recovery Services Vault."
+        },
+        "sourceResourceId": {
+          "type": "string",
+          "description": "Fully qualified ARM url."
+        },
+        "storageAccountVersion": {
+          "type": "string",
+          "description": "Storage account version."
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "Azure Storage Account workload-specific container."
+    },
+    "AzureVMAppContainerProtectionContainer": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "VMAppContainer"
+          ]
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "Container for SQL workloads under Azure Virtual Machines."
+    },
+    "AzureWorkloadContainer": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AzureSQLAGWorkloadContainerProtectionContainer"
+        },
+        {
+          "$ref": "#/definitions/AzureVMAppContainerProtectionContainer"
+        }
+      ],
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "AzureWorkloadContainer"
+          ]
+        },
+        "extendedInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AzureWorkloadContainerExtendedInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Extended information of the container."
+        },
+        "lastUpdatedTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time stamp when this container was updated."
+        },
+        "operationType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Invalid",
+                "Register",
+                "Reregister"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Re-Do Operation."
+        },
+        "sourceResourceId": {
+          "type": "string",
+          "description": "ARM ID of the virtual machine represented by this Azure Workload Container"
+        },
+        "workloadType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Invalid",
+                "VM",
+                "FileFolder",
+                "AzureSqlDb",
+                "SQLDB",
+                "Exchange",
+                "Sharepoint",
+                "VMwareVM",
+                "SystemState",
+                "Client",
+                "GenericDataSource",
+                "SQLDataBase",
+                "AzureFileShare",
+                "SAPHanaDatabase",
+                "SAPAseDatabase"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workload type for which registration was sent."
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "Container for the workloads running inside Azure Compute or Classic Compute."
+    },
+    "AzureWorkloadContainerExtendedInfo": {
+      "type": "object",
+      "properties": {
+        "hostServerName": {
+          "type": "string",
+          "description": "Host Os Name in case of Stand Alone and Cluster Name in case of distributed container."
+        },
+        "inquiryInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/InquiryInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Details about inquired protectable items under a given container."
+        },
+        "nodesList": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DistributedNodesInfo"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of the nodes in case of distributed container."
+        }
+      },
+      "description": "Extended information of the container."
+    },
+    "BackupResourceConfig": {
+      "type": "object",
+      "properties": {
+        "storageModelType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Invalid",
+                "GeoRedundant",
+                "LocallyRedundant"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Storage type."
+        },
+        "storageType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Invalid",
+                "GeoRedundant",
+                "LocallyRedundant"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Storage type."
+        },
+        "storageTypeState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Invalid",
+                "Locked",
+                "Unlocked"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Locked or Unlocked. Once a machine is registered against a resource, the storageTypeState is always Locked."
+        }
+      },
+      "description": "The resource storage details."
+    },
+    "ContainerIdentityInfo": {
+      "type": "object",
+      "properties": {
+        "aadTenantId": {
+          "type": "string",
+          "description": "Protection container identity - AAD Tenant"
+        },
+        "audience": {
+          "type": "string",
+          "description": "Protection container identity - Audience"
+        },
+        "servicePrincipalClientId": {
+          "type": "string",
+          "description": "Protection container identity - AAD Service Principal"
+        },
+        "uniqueName": {
+          "type": "string",
+          "description": "Unique name of the container"
+        }
+      },
+      "description": "Container identity information"
+    },
+    "DistributedNodesInfo": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ErrorDetail"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Error Detail class which encapsulates Code, Message and Recommendations."
+        },
+        "nodeName": {
+          "type": "string",
+          "description": "Name of the node under a distributed container."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of this Node.\r\nFailed | Succeeded"
+        }
+      },
+      "description": "This is used to represent the various nodes of the distributed container."
+    },
+    "DpmContainer": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AzureBackupServerContainer"
+        }
+      ],
+      "properties": {
+        "canReRegister": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether the container is re-registrable."
+        },
+        "containerId": {
+          "type": "string",
+          "description": "ID of container."
+        },
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "DPMContainer"
+          ]
+        },
+        "dpmAgentVersion": {
+          "type": "string",
+          "description": "Backup engine Agent version"
+        },
+        "dpmServers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of BackupEngines protecting the container"
+        },
+        "extendedInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DPMContainerExtendedInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Additional information of the DPMContainer."
+        },
+        "protectedItemCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of protected items in the BackupEngine"
+        },
+        "protectionStatus": {
+          "type": "string",
+          "description": "Protection status of the container."
+        },
+        "upgradeAvailable": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "To check if upgrade available"
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "DPM workload-specific protection container."
+    },
+    "DPMContainerExtendedInfo": {
+      "type": "object",
+      "properties": {
+        "lastRefreshedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last refresh time of the DPMContainer."
+        }
+      },
+      "description": "Additional information of the DPMContainer."
+    },
+    "ErrorDetail": {
+      "type": "object",
+      "properties": {},
+      "description": "Error Detail class which encapsulates Code, Message and Recommendations."
+    },
+    "GenericContainer": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "GenericContainer"
+          ]
+        },
+        "extendedInformation": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/GenericContainerExtendedInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Container extended information"
+        },
+        "fabricName": {
+          "type": "string",
+          "description": "Name of the container's fabric"
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "Base class for generic container of backup items"
+    },
+    "GenericContainerExtendedInfo": {
+      "type": "object",
+      "properties": {
+        "containerIdentityInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ContainerIdentityInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Container identity information"
+        },
+        "rawCertData": {
+          "type": "string",
+          "description": "Public key of container cert"
+        },
+        "serviceEndpoints": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Backup Service Endpoints for the container"
+        }
+      },
+      "description": "Container extended information"
+    },
+    "IaaSVMContainer": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AzureIaaSClassicComputeVMContainer"
+        },
+        {
+          "$ref": "#/definitions/AzureIaaSComputeVMContainer"
+        }
+      ],
+      "properties": {
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "IaaSVMContainer"
+          ]
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group name of Recovery Services Vault."
+        },
+        "virtualMachineId": {
+          "type": "string",
+          "description": "Fully qualified ARM url of the virtual machine represented by this Azure IaaS VM container."
+        },
+        "virtualMachineVersion": {
+          "type": "string",
+          "description": "Specifies whether the container represents a Classic or an Azure Resource Manager VM."
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "IaaS VM workload-specific container."
+    },
+    "InquiryInfo": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ErrorDetail"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Error Detail class which encapsulates Code, Message and Recommendations."
+        },
+        "inquiryDetails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WorkloadInquiryDetails"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Inquiry Details which will have workload specific details.\r\nFor e.g. - For SQL and oracle this will contain different details."
+        },
+        "status": {
+          "type": "string",
+          "description": "Inquiry Status for this container such as\r\nInProgress | Failed | Succeeded"
+        }
+      },
+      "description": "Details about inquired protectable items under a given container."
+    },
+    "InquiryValidation": {
+      "type": "object",
+      "properties": {
+        "errorDetail": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ErrorDetail"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Error Detail class which encapsulates Code, Message and Recommendations."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status for the Inquiry Validation."
+        }
+      },
+      "description": "Validation for inquired protectable items under a given container."
+    },
+    "MabContainer": {
+      "type": "object",
+      "properties": {
+        "agentVersion": {
+          "type": "string",
+          "description": "Agent version of this container."
+        },
+        "canReRegister": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Can the container be registered one more time."
+        },
+        "containerHealthState": {
+          "type": "string",
+          "description": "Health state of mab container."
+        },
+        "containerId": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "ContainerID represents the container."
+        },
+        "containerType": {
+          "type": "string",
+          "enum": [
+            "Windows"
+          ]
+        },
+        "extendedInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MabContainerExtendedInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Additional information of the container."
+        },
+        "mabContainerHealthDetails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MABContainerHealthDetails"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Health details on this mab container."
+        },
+        "protectedItemCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of items backed up in this container."
+        }
+      },
+      "required": [
+        "containerType"
+      ],
+      "description": "Container with items backed up using MAB backup engine."
+    },
+    "MabContainerExtendedInfo": {
+      "type": "object",
+      "properties": {
+        "backupItems": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of backup items associated with this container."
+        },
+        "backupItemType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Invalid",
+                "VM",
+                "FileFolder",
+                "AzureSqlDb",
+                "SQLDB",
+                "Exchange",
+                "Sharepoint",
+                "VMwareVM",
+                "SystemState",
+                "Client",
+                "GenericDataSource",
+                "SQLDataBase",
+                "AzureFileShare",
+                "SAPHanaDatabase",
+                "SAPAseDatabase"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of backup items associated with this container."
+        },
+        "lastBackupStatus": {
+          "type": "string",
+          "description": "Latest backup status of this container."
+        },
+        "lastRefreshedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time stamp when this container was refreshed."
+        },
+        "policyName": {
+          "type": "string",
+          "description": "Backup policy associated with this container."
+        }
+      },
+      "description": "Additional information of the container."
+    },
+    "MABContainerHealthDetails": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Health Code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Health Message"
+        },
+        "recommendations": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Health Recommended Actions"
+        },
+        "title": {
+          "type": "string",
+          "description": "Health Title"
+        }
+      },
+      "description": "MAB workload-specific Health Details."
+    },
+    "ProtectionContainer": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AzureSqlContainer"
+        },
+        {
+          "$ref": "#/definitions/AzureStorageContainer"
+        },
+        {
+          "$ref": "#/definitions/AzureWorkloadContainer"
+        },
+        {
+          "$ref": "#/definitions/DpmContainer"
+        },
+        {
+          "$ref": "#/definitions/GenericContainer"
+        },
+        {
+          "$ref": "#/definitions/IaaSVMContainer"
+        },
+        {
+          "$ref": "#/definitions/MabContainer"
+        }
+      ],
+      "properties": {
+        "backupManagementType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Invalid",
+                "AzureIaasVM",
+                "MAB",
+                "DPM",
+                "AzureSql",
+                "AzureBackupServer",
+                "AzureWorkload",
+                "AzureStorage",
+                "DefaultBackup"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of backup management for the container."
+        },
+        "friendlyName": {
+          "type": "string",
+          "description": "Friendly name of the container."
+        },
+        "healthStatus": {
+          "type": "string",
+          "description": "Status of health of the container."
+        },
+        "registrationStatus": {
+          "type": "string",
+          "description": "Status of registration of the container with the Recovery Services Vault."
+        }
+      },
+      "description": "Base class for container with backup items. Containers with specific workloads are derived from this class."
+    },
+    "WorkloadInquiryDetails": {
+      "type": "object",
+      "properties": {
+        "inquiryValidation": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/InquiryValidation"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Validation for inquired protectable items under a given container."
+        },
+        "itemCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contains the protectable item Count inside this Container."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the Workload such as SQL, Oracle etc."
+        }
+      },
+      "description": "Details of an inquired protectable item."
+    }
+  }
+}
