@@ -2,6 +2,10 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 12.0.0
+
+- b73e1c7 Bugfix: Parse enums as literals, rather than as schemas (#508)
+
 ## 11.0.0
 
 This is a major release with lots of bugfixes, some of which may change emitted types.
