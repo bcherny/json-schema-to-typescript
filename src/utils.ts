@@ -181,11 +181,13 @@ export function toSafeString(string: string) {
   )
 }
 
-export function generateName(from: string, usedNames: Set<string>) {
+export function generateName(from: string, usedNames: Set<string>, sameExplicitTitle = false) {
   let name = toSafeString(from)
   if (!name) {
     name = 'NoName'
   }
+
+  if (sameExplicitTitle) return name
 
   // increment counter until we find a free name
   if (usedNames.has(name)) {

@@ -127,7 +127,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'INTERSECTION'
       }
@@ -136,13 +136,13 @@ function parseNonLiteral(
         ...(options.unknownAny ? T_UNKNOWN : T_ANY),
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames)
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle)
       }
     case 'ANY_OF':
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'UNION'
       }
@@ -150,7 +150,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         type: 'BOOLEAN'
       }
     case 'CUSTOM_TYPE':
@@ -158,16 +158,16 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params: schema.tsType!,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         type: 'CUSTOM_TYPE'
       }
     case 'NAMED_ENUM':
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
+        standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options.sameExplicitTitle)!,
         params: schema.enum!.map((_, n) => ({
-          ast: parseLiteral(_, undefined),
+          ast: parse(_, options, undefined, processed, usedNames),
           keyName: schema.tsEnumNames![n]
         })),
         type: 'ENUM'
@@ -178,28 +178,28 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         type: 'NULL'
       }
     case 'NUMBER':
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         type: 'NUMBER'
       }
     case 'OBJECT':
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         type: 'OBJECT'
       }
     case 'ONE_OF':
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'UNION'
       }
@@ -209,7 +209,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         type: 'STRING'
       }
     case 'TYPED_ARRAY':
@@ -222,7 +222,7 @@ function parseNonLiteral(
           keyName,
           maxItems,
           minItems,
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
           params: schema.items.map(_ => parse(_, options, undefined, processed, usedNames)),
           type: 'TUPLE'
         }
@@ -236,7 +236,7 @@ function parseNonLiteral(
         return {
           comment: schema.description,
           keyName,
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
           params: parse(schema.items!, options, undefined, processed, usedNames),
           type: 'ARRAY'
         }
@@ -245,7 +245,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
           return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
@@ -256,8 +256,8 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        params: schema.enum!.map(_ => parseLiteral(_, undefined)),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
+        params: schema.enum!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'UNION'
       }
     case 'UNNAMED_SCHEMA':
@@ -277,7 +277,7 @@ function parseNonLiteral(
           params: Array(Math.max(maxItems, minItems) || 0).fill(params),
           // if there is no maximum, then add a spread item to collect the rest
           spreadParam: maxItems >= 0 ? undefined : params,
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
           type: 'TUPLE'
         }
       }
@@ -286,7 +286,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         params,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle),
         type: 'ARRAY'
       }
   }
@@ -298,11 +298,12 @@ function parseNonLiteral(
 function standaloneName(
   schema: LinkedJSONSchema,
   keyNameFromDefinition: string | undefined,
-  usedNames: UsedNames
+  usedNames: UsedNames,
+  sameExplicitTitle: boolean
 ): string | undefined {
   const name = schema.title || schema.$id || keyNameFromDefinition
   if (name) {
-    return generateName(name, usedNames)
+    return generateName(name, usedNames, sameExplicitTitle)
   }
 }
 
@@ -314,7 +315,7 @@ function newInterface(
   keyName?: string,
   keyNameFromDefinition?: string
 ): TInterface {
-  const name = standaloneName(schema, keyNameFromDefinition, usedNames)!
+  const name = standaloneName(schema, keyNameFromDefinition, usedNames, options.sameExplicitTitle)!
   return {
     comment: schema.description,
     keyName,

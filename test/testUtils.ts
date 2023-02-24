@@ -21,6 +21,11 @@ export function run() {
     t.is(generateName('a', usedNames), 'A1')
     t.is(generateName('a', usedNames), 'A2')
     t.is(generateName('a', usedNames), 'A3')
+
+    // Index Not increment:
+    t.is(generateName('a', usedNames, true), 'A')
+    t.is(generateName('a', usedNames, true), 'A')
+    t.is(generateName('a', usedNames, true), 'A')
   })
   test('isSchemaLike', t => {
     const schema = link({
