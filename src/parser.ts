@@ -210,7 +210,8 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'STRING'
+        type: 'STRING',
+        format: schema.format
       }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {

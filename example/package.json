@@ -11,7 +11,7 @@
   "dependencies": {
     "@types/node": "^13.13.4",
     "typescript": "3.8.3",
-    "json-schema-to-typescript": "9.0.0"
+    "@liblab/json-schema-to-typescript": "file:../"
   },
   "repository": {
     "type": "git",
