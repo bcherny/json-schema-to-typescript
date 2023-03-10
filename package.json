@@ -1,6 +1,6 @@
 {
-  "name": "json-schema-to-typescript",
-  "version": "12.0.0",
+  "name": "@liblab/json-schema-to-typescript",
+  "version": "12.1.0",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bcherny/json-schema-to-typescript.git"
+    "url": "git+https://github.com/liblaber/json-schema-to-typescript.git"
   },
   "keywords": [
     "json",

@@ -116,6 +116,7 @@ export interface TReference extends AbstractAST {
 
 export interface TString extends AbstractAST {
   type: 'STRING'
+  format?: string
 }
 
 export interface TTuple extends AbstractAST {

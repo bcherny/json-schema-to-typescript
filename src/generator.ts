@@ -193,6 +193,10 @@ function generateRawType(ast: AST, options: Options): string {
     case 'REFERENCE':
       return ast.params
     case 'STRING':
+      switch (ast.format) {
+        case 'binary':
+          return `import('fs').ReadStream`
+      }
       return 'string'
     case 'TUPLE':
       return (() => {
