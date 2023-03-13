@@ -1,6 +1,6 @@
 {
   "name": "@liblab/json-schema-to-typescript",
-  "version": "12.1.0",
+  "version": "12.1.1",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
