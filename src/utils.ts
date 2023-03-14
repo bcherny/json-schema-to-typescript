@@ -1,9 +1,8 @@
-import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
-import {basename, dirname, extname, join, normalize, sep} from 'path'
-import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
+import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
+import {basename, dirname, extname, normalize, sep, posix} from 'path'
+import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
-// eslint-disable-next-line
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   try {
     return fn()
@@ -12,28 +11,10 @@ export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   }
 }
 
-export function mapDeep(object: object, fn: (value: object, key?: string) => object, key?: string): object {
-  return fn(
-    mapValues(object, (_: unknown, key) => {
-      if (isPlainObject(_)) {
-        return mapDeep(_ as object, fn, key)
-      } else if (Array.isArray(_)) {
-        return _.map(item => {
-          if (isPlainObject(item)) {
-            return mapDeep(item as object, fn, key)
-          }
-          return item
-        })
-      }
-      return _
-    }),
-    key
-  )
-}
-
 // keys that shouldn't be traversed by the catchall step
 const BLACKLISTED_KEYS = new Set([
   'id',
+  '$defs',
   '$id',
   '$schema',
   'title',
@@ -70,26 +51,29 @@ const BLACKLISTED_KEYS = new Set([
 
 function traverseObjectKeys(
   obj: Record<string, LinkedJSONSchema>,
-  callback: (schema: LinkedJSONSchema) => void,
+  callback: (schema: LinkedJSONSchema, key: string | null) => void,
   processed: Set<LinkedJSONSchema>
 ) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, processed)
+      traverse(obj[k], callback, processed, k)
     }
   })
 }
+
 function traverseArray(
   arr: LinkedJSONSchema[],
-  callback: (schema: LinkedJSONSchema) => void,
+  callback: (schema: LinkedJSONSchema, key: string | null) => void,
   processed: Set<LinkedJSONSchema>
 ) {
-  arr.forEach(i => traverse(i, callback, processed))
+  arr.forEach((s, k) => traverse(s, callback, processed, k.toString()))
 }
+
 export function traverse(
   schema: LinkedJSONSchema,
-  callback: (schema: LinkedJSONSchema) => void,
-  processed = new Set<LinkedJSONSchema>()
+  callback: (schema: LinkedJSONSchema, key: string | null) => void,
+  processed = new Set<LinkedJSONSchema>(),
+  key?: string
 ): void {
   // Handle recursive schemas
   if (processed.has(schema)) {
@@ -97,7 +81,7 @@ export function traverse(
   }
 
   processed.add(schema)
-  callback(schema)
+  callback(schema, key ?? null)
 
   if (schema.anyOf) {
     traverseArray(schema.anyOf, callback, processed)
@@ -137,6 +121,9 @@ export function traverse(
   }
   if (schema.definitions) {
     traverseObjectKeys(schema.definitions, callback, processed)
+  }
+  if (schema.$defs) {
+    traverseObjectKeys(schema.$defs, callback, processed)
   }
   if (schema.not) {
     traverse(schema.not, callback, processed)
@@ -291,7 +278,7 @@ export function pathTransform(outputPath: string, inputPath: string, filePath: s
   const filePathList = dirname(normalize(filePath)).split(sep)
   const filePathRel = filePathList.filter((f, i) => f !== inPathList[i])
 
-  return join(normalize(outputPath), ...filePathRel)
+  return posix.join(posix.normalize(outputPath), ...filePathRel)
 }
 
 /**
@@ -343,21 +330,57 @@ export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
 }
 
 /**
- * Removes the schema's `id`, `name`, and `description` properties
+ * Removes the schema's `$id`, `name`, and `description` properties
  * if they exist.
  * Useful when parsing intersections.
  *
  * Mutates `schema`.
  */
 export function maybeStripNameHints(schema: JSONSchema): JSONSchema {
+  if ('$id' in schema) {
+    delete schema.$id
+  }
   if ('description' in schema) {
     delete schema.description
-  }
-  if ('id' in schema) {
-    delete schema.id
   }
   if ('name' in schema) {
     delete schema.name
   }
   return schema
+}
+
+export function appendToDescription(existingDescription: string | undefined, ...values: string[]): string {
+  if (existingDescription) {
+    return `${existingDescription}\n\n${values.join('\n')}`
+  }
+  return values.join('\n')
+}
+
+export function isSchemaLike(schema: LinkedJSONSchema) {
+  if (!isPlainObject(schema)) {
+    return false
+  }
+  const parent = schema[Parent]
+  if (parent === null) {
+    return true
+  }
+
+  const JSON_SCHEMA_KEYWORDS = [
+    '$defs',
+    'allOf',
+    'anyOf',
+    'definitions',
+    'dependencies',
+    'enum',
+    'not',
+    'oneOf',
+    'patternProperties',
+    'properties',
+    'required'
+  ]
+  if (JSON_SCHEMA_KEYWORDS.some(_ => parent[_] === schema)) {
+    return false
+  }
+
+  return true
 }

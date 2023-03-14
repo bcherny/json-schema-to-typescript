@@ -1,6 +1,5 @@
 import test from 'ava'
 import {readdirSync} from 'fs'
-import {template} from 'lodash'
 import {join} from 'path'
 import {JSONSchema, Options, DEFAULT_OPTIONS} from '../src'
 import {link} from '../src/linker'
@@ -21,15 +20,9 @@ export function run() {
     .map(_ => join(normalizerDir, _))
     .map(_ => [_, require(_)] as [string, JSONTestCase])
     .forEach(([filename, json]: [string, JSONTestCase]) => {
-      const params = {filename}
       test(json.name, t => {
-        const normalized = normalize(link(json.in), filename, json.options || DEFAULT_OPTIONS)
-        t.snapshot(template(toString(normalized))(params))
+        const normalized = normalize(link(json.in), new WeakMap(), filename, json.options ?? DEFAULT_OPTIONS)
         t.deepEqual(json.out, normalized)
       })
     })
-}
-
-function toString(json: Record<string, any>): string {
-  return JSON.stringify(json, null, 2)
 }

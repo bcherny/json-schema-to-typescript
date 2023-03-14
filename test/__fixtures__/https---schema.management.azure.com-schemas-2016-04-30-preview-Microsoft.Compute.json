@@ -1,0 +1,3109 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Compute",
+  "description": "Microsoft Compute Resource Types",
+  "resourceDefinitions": {
+    "availabilitySets": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-04-30-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the availability set."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AvailabilitySetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The instance view of a resource."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set sku."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Compute/availabilitySets"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Compute/availabilitySets"
+    },
+    "disks": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-04-30-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the managed disk that is being created. The name can't be changed after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The maximum name length is 80 characters."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DiskProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Disk resource properties."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Compute/disks"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Compute/disks"
+    },
+    "images": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-04-30-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the image."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ImageProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the properties of an Image."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Compute/images"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Compute/images"
+    },
+    "snapshots": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-04-30-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the snapshot within the given subscription and resource group."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DiskProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Disk resource properties."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Compute/snapshots"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Compute/snapshots"
+    },
+    "virtualMachines": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-04-30-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Identity for the virtual machine."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the virtual machine."
+        },
+        "plan": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Plan"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace image that you want to use and then click **Want to deploy programmatically, Get Started ->**. Enter any required information and then click **Save**."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the properties of a Virtual Machine."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/virtualMachines_extensions_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Compute/virtualMachines"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Compute/virtualMachines"
+    },
+    "virtualMachineScaleSets": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-04-30-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Identity for the virtual machine scale set."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the VM scale set to create or update."
+        },
+        "plan": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Plan"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace image that you want to use and then click **Want to deploy programmatically, Get Started ->**. Enter any required information and then click **Save**."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the properties of a Virtual Machine Scale Set."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set sku."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Compute/virtualMachineScaleSets"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Compute/virtualMachineScaleSets"
+    }
+  },
+  "definitions": {
+    "AdditionalUnattendContent": {
+      "type": "object",
+      "properties": {
+        "componentName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Microsoft-Windows-Shell-Setup"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The component name. Currently, the only allowable value is Microsoft-Windows-Shell-Setup."
+        },
+        "content": {
+          "type": "string",
+          "description": "Specifies the XML formatted content that is added to the unattend.xml file for the specified path and component. The XML must be less than 4KB and must include the root element for the setting or feature that is being inserted."
+        },
+        "passName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "OobeSystem"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The pass name. Currently, the only allowable value is OobeSystem."
+        },
+        "settingName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AutoLogon",
+                "FirstLogonCommands"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the name of the setting to which the content applies. Possible values are: FirstLogonCommands and AutoLogon."
+        }
+      },
+      "description": "Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied."
+    },
+    "ApiEntityReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ARM resource id in the form of /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/..."
+        }
+      },
+      "description": "The API entity reference."
+    },
+    "AvailabilitySetProperties": {
+      "type": "object",
+      "properties": {
+        "managed": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "If the availability set supports managed disks."
+        },
+        "platformFaultDomainCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Fault Domain count."
+        },
+        "platformUpdateDomainCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Update Domain count."
+        },
+        "virtualMachines": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SubResource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of references to all virtual machines in the availability set."
+        }
+      },
+      "description": "The instance view of a resource."
+    },
+    "BootDiagnostics": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether boot diagnostics should be enabled on the Virtual Machine."
+        },
+        "storageUri": {
+          "type": "string",
+          "description": "Uri of the storage account to use for placing the console output and screenshot."
+        }
+      },
+      "description": "Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status. <br><br> You can easily view the output of your console log. <br><br> Azure also enables you to see a screenshot of the VM from the hypervisor."
+    },
+    "CreationData": {
+      "type": "object",
+      "properties": {
+        "createOption": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Empty",
+                "Attach",
+                "FromImage",
+                "Import",
+                "Copy",
+                "Restore"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "This enumerates the possible sources of a disk's creation."
+        },
+        "imageReference": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ImageDiskReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The source image used for creating the disk."
+        },
+        "sourceResourceId": {
+          "type": "string",
+          "description": "If createOption is Copy, this is the ARM id of the source snapshot or disk. If createOption is Restore, this is the ARM-like id of the source disk restore point."
+        },
+        "sourceUri": {
+          "type": "string",
+          "description": "If createOption is Import, this is a SAS URI to a blob to be imported into a managed disk. If createOption is Copy, this is a relative Uri containing the id of the source snapshot to be copied into a managed disk."
+        },
+        "storageAccountId": {
+          "type": "string",
+          "description": "If createOption is Import, the Azure Resource Manager identifier of the storage account containing the blob to import as a disk. Required only if the blob is in a different subscription"
+        }
+      },
+      "required": [
+        "createOption"
+      ],
+      "description": "Data used when creating a disk."
+    },
+    "DataDisk": {
+      "type": "object",
+      "properties": {
+        "caching": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "ReadOnly",
+                "ReadWrite"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**."
+        },
+        "createOption": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "FromImage",
+                "Empty",
+                "Attach"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies how the virtual machine should be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This value is used when you are using a specialized disk to create the virtual machine.<br><br> **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described."
+        },
+        "diskSizeGB": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB"
+        },
+        "image": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualHardDisk"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the uri of a disk."
+        },
+        "lun": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the logical unit number of the data disk. This value is used to identify data disks within the VM and therefore must be unique for each data disk attached to a VM."
+        },
+        "managedDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedDiskParameters"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The parameters of a managed disk."
+        },
+        "name": {
+          "type": "string",
+          "description": "The disk name."
+        },
+        "vhd": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualHardDisk"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the uri of a disk."
+        }
+      },
+      "required": [
+        "createOption",
+        "lun"
+      ],
+      "description": "Describes a data disk."
+    },
+    "DiagnosticsProfile": {
+      "type": "object",
+      "properties": {
+        "bootDiagnostics": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BootDiagnostics"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status. <br><br> You can easily view the output of your console log. <br><br> Azure also enables you to see a screenshot of the VM from the hypervisor."
+        }
+      },
+      "description": "Specifies the boot diagnostic settings state. <br><br>Minimum api-version: 2015-06-15."
+    },
+    "DiskEncryptionSettings": {
+      "type": "object",
+      "properties": {
+        "diskEncryptionKey": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyVaultSecretReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a reference to Key Vault Secret"
+        },
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether disk encryption should be enabled on the virtual machine."
+        },
+        "keyEncryptionKey": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyVaultKeyReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a reference to Key Vault Key"
+        }
+      },
+      "description": "Describes a Encryption Settings for a Disk"
+    },
+    "DiskProperties": {
+      "type": "object",
+      "properties": {
+        "accountType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Standard_LRS",
+                "Premium_LRS"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the storage account type of the disk."
+        },
+        "creationData": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreationData"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Data used when creating a disk."
+        },
+        "diskSizeGB": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "If creationData.createOption is Empty, this field is mandatory and it indicates the size of the VHD to create. If this field is present for updates or creation with other options, it indicates a resize. Resizes are only allowed if the disk is not attached to a running VM, and can only increase the disk's size."
+        },
+        "encryptionSettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EncryptionSettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Encryption settings for disk or snapshot"
+        },
+        "osType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Windows",
+                "Linux"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Operating System type."
+        }
+      },
+      "required": [
+        "creationData"
+      ],
+      "description": "Disk resource properties."
+    },
+    "EncryptionSettings": {
+      "type": "object",
+      "properties": {
+        "diskEncryptionKey": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyVaultAndSecretReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key Vault Secret Url and vault id of the encryption key "
+        },
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Set this flag to true and provide DiskEncryptionKey and optional KeyEncryptionKey to enable encryption. Set this flag to false and remove DiskEncryptionKey and KeyEncryptionKey to disable encryption. If EncryptionSettings is null in the request object, the existing settings remain unchanged."
+        },
+        "keyEncryptionKey": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyVaultAndKeyReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey"
+        }
+      },
+      "description": "Encryption settings for disk or snapshot"
+    },
+    "HardwareProfile": {
+      "type": "object",
+      "properties": {
+        "vmSize": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Basic_A0",
+                "Basic_A1",
+                "Basic_A2",
+                "Basic_A3",
+                "Basic_A4",
+                "Standard_A0",
+                "Standard_A1",
+                "Standard_A2",
+                "Standard_A3",
+                "Standard_A4",
+                "Standard_A5",
+                "Standard_A6",
+                "Standard_A7",
+                "Standard_A8",
+                "Standard_A9",
+                "Standard_A10",
+                "Standard_A11",
+                "Standard_D1",
+                "Standard_D2",
+                "Standard_D3",
+                "Standard_D4",
+                "Standard_D11",
+                "Standard_D12",
+                "Standard_D13",
+                "Standard_D14",
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_D15_v2",
+                "Standard_DS1",
+                "Standard_DS2",
+                "Standard_DS3",
+                "Standard_DS4",
+                "Standard_DS11",
+                "Standard_DS12",
+                "Standard_DS13",
+                "Standard_DS14",
+                "Standard_DS1_v2",
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_DS5_v2",
+                "Standard_DS11_v2",
+                "Standard_DS12_v2",
+                "Standard_DS13_v2",
+                "Standard_DS14_v2",
+                "Standard_DS15_v2",
+                "Standard_G1",
+                "Standard_G2",
+                "Standard_G3",
+                "Standard_G4",
+                "Standard_G5",
+                "Standard_GS1",
+                "Standard_GS2",
+                "Standard_GS3",
+                "Standard_GS4",
+                "Standard_GS5"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the size of the virtual machine. For more information about virtual machine sizes, see [Sizes for virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json). <br><br> The available VM sizes depend on region and availability set. For a list of available sizes use these APIs:  <br><br> [List all available virtual machine sizes in an availability set](virtualmachines-list-sizes-availability-set.md) <br><br> [List all available virtual machine sizes in a region](virtualmachines-list-sizes-region.md) <br><br> [List all available virtual machine sizes for resizing](virtualmachines-list-sizes-for-resizing.md)."
+        }
+      },
+      "description": "Specifies the hardware settings for the virtual machine."
+    },
+    "ImageDataDisk": {
+      "type": "object",
+      "properties": {
+        "blobUri": {
+          "type": "string",
+          "description": "The Virtual Hard Disk."
+        },
+        "caching": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "ReadOnly",
+                "ReadWrite"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**."
+        },
+        "diskSizeGB": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the size of empty data disks in gigabytes. This element can be used to overwrite the name of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB"
+        },
+        "lun": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the logical unit number of the data disk. This value is used to identify data disks within the VM and therefore must be unique for each data disk attached to a VM."
+        },
+        "managedDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "snapshot": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "lun"
+      ],
+      "description": "Describes a data disk."
+    },
+    "ImageDiskReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "A relative uri containing either a Platform Image Repository or user image reference."
+        },
+        "lun": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "If the disk is created from an image's data disk, this is an index that indicates which of the data disks in the image to use. For OS disks, this field is null."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "description": "The source image used for creating the disk."
+    },
+    "ImageOSDisk": {
+      "type": "object",
+      "properties": {
+        "blobUri": {
+          "type": "string",
+          "description": "The Virtual Hard Disk."
+        },
+        "caching": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "ReadOnly",
+                "ReadWrite"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**."
+        },
+        "diskSizeGB": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the size of empty data disks in gigabytes. This element can be used to overwrite the name of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB"
+        },
+        "managedDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "osState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Generalized",
+                "Specialized"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The OS State."
+        },
+        "osType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Windows",
+                "Linux"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "This property allows you to specify the type of the OS that is included in the disk if creating a VM from a custom image. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**."
+        },
+        "snapshot": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "osState",
+        "osType"
+      ],
+      "description": "Describes an Operating System disk."
+    },
+    "ImageProperties": {
+      "type": "object",
+      "properties": {
+        "sourceVirtualMachine": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "storageProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ImageStorageProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a storage profile."
+        }
+      },
+      "description": "Describes the properties of an Image."
+    },
+    "ImageReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource Id"
+        },
+        "offer": {
+          "type": "string",
+          "description": "Specifies the offer of the platform image or marketplace image used to create the virtual machine."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "The image publisher."
+        },
+        "sku": {
+          "type": "string",
+          "description": "The image SKU."
+        },
+        "version": {
+          "type": "string",
+          "description": "Specifies the version of the platform image or marketplace image used to create the virtual machine. The allowed formats are Major.Minor.Build or 'latest'. Major, Minor, and Build are decimal numbers. Specify 'latest' to use the latest version of an image available at deploy time. Even if you use 'latest', the VM image will not automatically update after deploy time even if a new version becomes available."
+        }
+      },
+      "description": "Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations."
+    },
+    "ImageStorageProfile": {
+      "type": "object",
+      "properties": {
+        "dataDisks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ImageDataDisk"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the parameters that are used to add a data disk to a virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)."
+        },
+        "osDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ImageOSDisk"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes an Operating System disk."
+        }
+      },
+      "required": [
+        "osDisk"
+      ],
+      "description": "Describes a storage profile."
+    },
+    "InstanceViewStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The status code."
+        },
+        "displayStatus": {
+          "type": "string",
+          "description": "The short localizable label for the status."
+        },
+        "level": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Info",
+                "Warning",
+                "Error"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The level code."
+        },
+        "message": {
+          "type": "string",
+          "description": "The detailed status message, including for alerts and error messages."
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time of the status."
+        }
+      },
+      "description": "Instance view status."
+    },
+    "KeyVaultAndKeyReference": {
+      "type": "object",
+      "properties": {
+        "keyUrl": {
+          "type": "string",
+          "description": "Url pointing to a key or secret in KeyVault"
+        },
+        "sourceVault": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SourceVault"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
+        }
+      },
+      "required": [
+        "keyUrl",
+        "sourceVault"
+      ],
+      "description": "Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey"
+    },
+    "KeyVaultAndSecretReference": {
+      "type": "object",
+      "properties": {
+        "secretUrl": {
+          "type": "string",
+          "description": "Url pointing to a key or secret in KeyVault"
+        },
+        "sourceVault": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SourceVault"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
+        }
+      },
+      "required": [
+        "secretUrl",
+        "sourceVault"
+      ],
+      "description": "Key Vault Secret Url and vault id of the encryption key "
+    },
+    "KeyVaultKeyReference": {
+      "type": "object",
+      "properties": {
+        "keyUrl": {
+          "type": "string",
+          "description": "The URL referencing a key encryption key in Key Vault."
+        },
+        "sourceVault": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "keyUrl",
+        "sourceVault"
+      ],
+      "description": "Describes a reference to Key Vault Key"
+    },
+    "KeyVaultSecretReference": {
+      "type": "object",
+      "properties": {
+        "secretUrl": {
+          "type": "string",
+          "description": "The URL referencing a secret in a Key Vault."
+        },
+        "sourceVault": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "secretUrl",
+        "sourceVault"
+      ],
+      "description": "Describes a reference to Key Vault Secret"
+    },
+    "LinuxConfiguration": {
+      "type": "object",
+      "properties": {
+        "disablePasswordAuthentication": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether password authentication should be disabled."
+        },
+        "ssh": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SshConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "SSH configuration for Linux based VMs running on Azure"
+        }
+      },
+      "description": "Specifies the Linux operating system settings on the virtual machine. <br><br>For a list of supported Linux distributions, see [Linux on Azure-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) <br><br> For running non-endorsed distributions, see [Information for Non-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)."
+    },
+    "ManagedDiskParameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource Id"
+        },
+        "storageAccountType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Standard_LRS",
+                "Premium_LRS"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or Premium_LRS."
+        }
+      },
+      "description": "The parameters of a managed disk."
+    },
+    "NetworkInterfaceReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource Id"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/NetworkInterfaceReferenceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a network interface reference properties."
+        }
+      },
+      "description": "Describes a network interface reference."
+    },
+    "NetworkInterfaceReferenceProperties": {
+      "type": "object",
+      "properties": {
+        "primary": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the primary network interface in case the virtual machine has more than 1 network interface."
+        }
+      },
+      "description": "Describes a network interface reference properties."
+    },
+    "NetworkProfile": {
+      "type": "object",
+      "properties": {
+        "networkInterfaces": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NetworkInterfaceReference"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the list of resource Ids for the network interfaces associated with the virtual machine."
+        }
+      },
+      "description": "Specifies the network interfaces of the virtual machine."
+    },
+    "OSDisk": {
+      "type": "object",
+      "properties": {
+        "caching": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "ReadOnly",
+                "ReadWrite"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**."
+        },
+        "createOption": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "FromImage",
+                "Empty",
+                "Attach"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies how the virtual machine should be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This value is used when you are using a specialized disk to create the virtual machine.<br><br> **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described."
+        },
+        "diskSizeGB": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB"
+        },
+        "encryptionSettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DiskEncryptionSettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a Encryption Settings for a Disk"
+        },
+        "image": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualHardDisk"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the uri of a disk."
+        },
+        "managedDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedDiskParameters"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The parameters of a managed disk."
+        },
+        "name": {
+          "type": "string",
+          "description": "The disk name."
+        },
+        "osType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Windows",
+                "Linux"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "This property allows you to specify the type of the OS that is included in the disk if creating a VM from user-image or a specialized VHD. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**."
+        },
+        "vhd": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualHardDisk"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the uri of a disk."
+        }
+      },
+      "required": [
+        "createOption"
+      ],
+      "description": "Specifies information about the operating system disk used by the virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)."
+    },
+    "OSProfile": {
+      "type": "object",
+      "properties": {
+        "adminPassword": {
+          "type": "string",
+          "description": "Specifies the password of the administrator account. <br><br> **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\\W_]) <br><br> **Disallowed values:** \"abc@123\", \"P@$$w0rd\", \"P@ssw0rd\", \"P@ssword123\", \"Pa$$word\", \"pass@word1\", \"Password!\", \"Password1\", \"Password22\", \"iloveyou!\" <br><br> For resetting the password, see [How to reset the Remote Desktop service or its login password in a Windows VM](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json) <br><br> For resetting root password, see [Manage users, SSH, and check or repair disks on Azure Linux VMs using the VMAccess Extension](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password)"
+        },
+        "adminUsername": {
+          "type": "string",
+          "description": "Specifies the name of the administrator account. <br><br> **Windows-only restriction:** Cannot end in \".\" <br><br> **Disallowed values:** \"administrator\", \"admin\", \"user\", \"user1\", \"test\", \"user2\", \"test1\", \"user3\", \"admin1\", \"1\", \"123\", \"a\", \"actuser\", \"adm\", \"admin2\", \"aspnet\", \"backup\", \"console\", \"david\", \"guest\", \"john\", \"owner\", \"root\", \"server\", \"sql\", \"support\", \"support_388945a0\", \"sys\", \"test2\", \"test3\", \"user4\", \"user5\". <br><br> **Minimum-length (Linux):** 1  character <br><br> **Max-length (Linux):** 64 characters <br><br> **Max-length (Windows):** 20 characters  <br><br><li> For root access to the Linux VM, see [Using root privileges on Linux virtual machines in Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)<br><li> For a list of built-in system users on Linux that should not be used in this field, see [Selecting User Names for Linux on Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)"
+        },
+        "computerName": {
+          "type": "string",
+          "description": "Specifies the host OS name of the virtual machine. <br><br> This name cannot be updated after the VM is created. <br><br> **Max-length (Windows):** 15 characters <br><br> **Max-length (Linux):** 64 characters. <br><br> For naming conventions and restrictions see [Azure infrastructure services implementation guidelines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions)."
+        },
+        "customData": {
+          "type": "string",
+          "description": "Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length of the binary array is 65535 bytes. <br><br> For using cloud-init for your VM, see [Using cloud-init to customize a Linux VM during creation](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)"
+        },
+        "linuxConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LinuxConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the Linux operating system settings on the virtual machine. <br><br>For a list of supported Linux distributions, see [Linux on Azure-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) <br><br> For running non-endorsed distributions, see [Information for Non-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)."
+        },
+        "secrets": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VaultSecretGroup"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies set of certificates that should be installed onto the virtual machine."
+        },
+        "windowsConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WindowsConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies Windows operating system settings on the virtual machine."
+        }
+      },
+      "description": "Specifies the operating system settings for the virtual machine."
+    },
+    "Plan": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The plan ID."
+        },
+        "product": {
+          "type": "string",
+          "description": "Specifies the product of the image from the marketplace. This is the same value as Offer under the imageReference element."
+        },
+        "promotionCode": {
+          "type": "string",
+          "description": "The promotion code."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "The publisher ID."
+        }
+      },
+      "description": "Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace image that you want to use and then click **Want to deploy programmatically, Get Started ->**. Enter any required information and then click **Save**."
+    },
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of virtual machines in the scale set."
+        },
+        "name": {
+          "type": "string",
+          "description": "The sku name."
+        },
+        "tier": {
+          "type": "string",
+          "description": "Specifies the tier of virtual machines in a scale set.<br /><br /> Possible Values:<br /><br /> **Standard**<br /><br /> **Basic**"
+        }
+      },
+      "description": "Describes a virtual machine scale set sku."
+    },
+    "SourceVault": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource Id"
+        }
+      },
+      "description": "The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
+    },
+    "SshConfiguration": {
+      "type": "object",
+      "properties": {
+        "publicKeys": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SshPublicKey"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of SSH public keys used to authenticate with linux based VMs."
+        }
+      },
+      "description": "SSH configuration for Linux based VMs running on Azure"
+    },
+    "SshPublicKey": {
+      "type": "object",
+      "properties": {
+        "keyData": {
+          "type": "string",
+          "description": "SSH public key certificate used to authenticate with the VM through ssh. The key needs to be at least 2048-bit and in ssh-rsa format. <br><br> For creating ssh keys, see [Create SSH keys on Linux and Mac for Linux VMs in Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)."
+        },
+        "path": {
+          "type": "string",
+          "description": "Specifies the full path on the created VM where ssh public key is stored. If the file already exists, the specified key is appended to the file. Example: /home/user/.ssh/authorized_keys"
+        }
+      },
+      "description": "Contains information about SSH certificate public key and the path on the Linux VM where the public key is placed."
+    },
+    "StorageProfile": {
+      "type": "object",
+      "properties": {
+        "dataDisks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DataDisk"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the parameters that are used to add a data disk to a virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)."
+        },
+        "imageReference": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ImageReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations."
+        },
+        "osDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/OSDisk"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies information about the operating system disk used by the virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)."
+        }
+      },
+      "description": "Specifies the storage settings for the virtual machine disks."
+    },
+    "SubResource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource Id"
+        }
+      }
+    },
+    "UpgradePolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Automatic",
+                "Manual"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the mode of an upgrade to virtual machines in the scale set.<br /><br /> Possible values are:<br /><br /> **Manual** - You  control the application of updates to virtual machines in the scale set. You do this by using the manualUpgrade action.<br /><br /> **Automatic** - All virtual machines in the scale set are  automatically updated at the same time."
+        }
+      },
+      "description": "Describes an upgrade policy - automatic or manual."
+    },
+    "VaultCertificate": {
+      "type": "object",
+      "properties": {
+        "certificateStore": {
+          "type": "string",
+          "description": "For Windows VMs, specifies the certificate store on the Virtual Machine to which the certificate should be added. The specified certificate store is implicitly in the LocalMachine account. <br><br>For Linux VMs, the certificate file is placed under the /var/lib/waagent directory, with the file name <UppercaseThumbprint>.crt for the X509 certificate file and <UppercaseThumbprint>.prv for private key. Both of these files are .pem formatted."
+        },
+        "certificateUrl": {
+          "type": "string",
+          "description": "This is the URL of a certificate that has been uploaded to Key Vault as a secret. For adding a secret to the Key Vault, see [Add a key or secret to the key vault](https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add). In this case, your certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded in UTF-8: <br><br> {<br>  \"data\":\"<Base64-encoded-certificate>\",<br>  \"dataType\":\"pfx\",<br>  \"password\":\"<pfx-file-password>\"<br>}"
+        }
+      },
+      "description": "Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM."
+    },
+    "VaultSecretGroup": {
+      "type": "object",
+      "properties": {
+        "sourceVault": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "vaultCertificates": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VaultCertificate"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of key vault references in SourceVault which contain certificates."
+        }
+      },
+      "description": "Describes a set of certificates which are all in the same Key Vault."
+    },
+    "VirtualHardDisk": {
+      "type": "object",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "description": "Specifies the virtual hard disk's uri."
+        }
+      },
+      "description": "Describes the uri of a disk."
+    },
+    "VirtualMachineExtensionInstanceView": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The virtual machine extension name."
+        },
+        "statuses": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/InstanceViewStatus"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resource status information."
+        },
+        "substatuses": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/InstanceViewStatus"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resource status information."
+        },
+        "type": {
+          "type": "string",
+          "description": "Specifies the type of the extension; an example is \"CustomScriptExtension\"."
+        },
+        "typeHandlerVersion": {
+          "type": "string",
+          "description": "Specifies the version of the script handler."
+        }
+      },
+      "description": "The instance view of a virtual machine extension."
+    },
+    "VirtualMachineExtensionProperties": {
+      "type": "object",
+      "properties": {
+        "autoUpgradeMinorVersion": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether the extension should use a newer minor version if one is available at deployment time. Once deployed, however, the extension will not upgrade minor versions unless redeployed, even with this property set to true."
+        },
+        "forceUpdateTag": {
+          "type": "string",
+          "description": "How the extension handler should be forced to update even if the extension configuration has not changed."
+        },
+        "instanceView": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineExtensionInstanceView"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The instance view of a virtual machine extension."
+        },
+        "protectedSettings": {
+          "type": "object",
+          "properties": {},
+          "description": "The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no protected settings at all."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "The name of the extension handler publisher."
+        },
+        "settings": {
+          "type": "object",
+          "properties": {},
+          "description": "Json formatted public settings for the extension."
+        },
+        "type": {
+          "type": "string",
+          "description": "Specifies the type of the extension; an example is \"CustomScriptExtension\"."
+        },
+        "typeHandlerVersion": {
+          "type": "string",
+          "description": "Specifies the version of the script handler."
+        }
+      },
+      "description": "Describes the properties of a Virtual Machine Extension."
+    },
+    "VirtualMachineIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SystemAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of identity used for the virtual machine. Currently, the only supported type is 'SystemAssigned', which implicitly creates an identity."
+        }
+      },
+      "description": "Identity for the virtual machine."
+    },
+    "VirtualMachineProperties": {
+      "type": "object",
+      "properties": {
+        "availabilitySet": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SubResource"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DiagnosticsProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the boot diagnostic settings state. <br><br>Minimum api-version: 2015-06-15."
+        },
+        "hardwareProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/HardwareProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the hardware settings for the virtual machine."
+        },
+        "licenseType": {
+          "type": "string",
+          "description": "Specifies that the image or disk that is being used was licensed on-premises. This element is only used for images that contain the Windows Server operating system. <br><br> Possible values are: <br><br> Windows_Client <br><br> Windows_Server <br><br> If this element is included in a request for an update, the value must match the initial value. This value cannot be updated. <br><br> For more information, see [Azure Hybrid Use Benefit for Windows Server](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json) <br><br> Minimum api-version: 2015-06-15"
+        },
+        "networkProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/NetworkProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the network interfaces of the virtual machine."
+        },
+        "osProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/OSProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the operating system settings for the virtual machine."
+        },
+        "storageProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StorageProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the storage settings for the virtual machine disks."
+        }
+      },
+      "description": "Describes the properties of a Virtual Machine."
+    },
+    "VirtualMachineScaleSetDataDisk": {
+      "type": "object",
+      "properties": {
+        "caching": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "ReadOnly",
+                "ReadWrite"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**."
+        },
+        "createOption": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "FromImage",
+                "Empty",
+                "Attach"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The create option."
+        },
+        "diskSizeGB": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB"
+        },
+        "lun": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the logical unit number of the data disk. This value is used to identify data disks within the VM and therefore must be unique for each data disk attached to a VM."
+        },
+        "managedDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetManagedDiskParameters"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the parameters of a ScaleSet managed disk."
+        },
+        "name": {
+          "type": "string",
+          "description": "The disk name."
+        }
+      },
+      "required": [
+        "createOption",
+        "lun"
+      ],
+      "description": "Describes a virtual machine scale set data disk."
+    },
+    "VirtualMachineScaleSetExtension": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the extension."
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/genericExtension"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/iaaSDiagnostics"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/iaaSAntimalware"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/customScriptExtension"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/customScriptForLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/linuxDiagnostic"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/vmAccessForLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/bgInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/vmAccessAgent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/dscExtension"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/acronisBackupLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/acronisBackup"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/linuxChefClient"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/chefClient"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/datadogLinuxAgent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/datadogWindowsAgent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/dockerExtension"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/dynatraceLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/dynatraceWindows"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/eset"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/hpeSecurityApplicationDefender"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/puppetAgent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/site24x7LinuxServerExtn"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/site24x7WindowsServerExtn"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/site24x7ApmInsightExtn"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/trendMicroDSALinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/trendMicroDSA"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/bmcCtmAgentLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/bmcCtmAgentWindows"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/OSPatchingForLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/VMSnapshot"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/VMSnapshotLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/customScript"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/networkWatcherAgentWindows"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/networkWatcherAgentLinux"
+            }
+          ]
+        }
+      },
+      "description": "Describes a Virtual Machine Scale Set Extension."
+    },
+    "VirtualMachineScaleSetExtensionProfile": {
+      "type": "object",
+      "properties": {
+        "extensions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VirtualMachineScaleSetExtension"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The virtual machine scale set child extension resources."
+        }
+      },
+      "description": "Describes a virtual machine scale set extension profile."
+    },
+    "VirtualMachineScaleSetExtensionProperties": {
+      "type": "object",
+      "properties": {
+        "autoUpgradeMinorVersion": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether the extension should use a newer minor version if one is available at deployment time. Once deployed, however, the extension will not upgrade minor versions unless redeployed, even with this property set to true."
+        },
+        "protectedSettings": {
+          "type": "object",
+          "properties": {},
+          "description": "The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no protected settings at all."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "The name of the extension handler publisher."
+        },
+        "settings": {
+          "type": "object",
+          "properties": {},
+          "description": "Json formatted public settings for the extension."
+        },
+        "type": {
+          "type": "string",
+          "description": "Specifies the type of the extension; an example is \"CustomScriptExtension\"."
+        },
+        "typeHandlerVersion": {
+          "type": "string",
+          "description": "Specifies the version of the script handler."
+        }
+      },
+      "description": "Describes the properties of a Virtual Machine Scale Set Extension."
+    },
+    "VirtualMachineScaleSetIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SystemAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of identity used for the virtual machine scale set. Currently, the only supported type is 'SystemAssigned', which implicitly creates an identity."
+        }
+      },
+      "description": "Identity for the virtual machine scale set."
+    },
+    "VirtualMachineScaleSetIPConfiguration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource Id"
+        },
+        "name": {
+          "type": "string",
+          "description": "The IP configuration name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetIPConfigurationProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set network profile's IP configuration properties."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "Describes a virtual machine scale set network profile's IP configuration."
+    },
+    "VirtualMachineScaleSetIPConfigurationProperties": {
+      "type": "object",
+      "properties": {
+        "applicationGatewayBackendAddressPools": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SubResource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The application gateway backend address pools."
+        },
+        "loadBalancerBackendAddressPools": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SubResource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The load balancer backend address pools."
+        },
+        "loadBalancerInboundNatPools": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SubResource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The load balancer inbound nat pools."
+        },
+        "subnet": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ApiEntityReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The API entity reference."
+        }
+      },
+      "required": [
+        "subnet"
+      ],
+      "description": "Describes a virtual machine scale set network profile's IP configuration properties."
+    },
+    "VirtualMachineScaleSetManagedDiskParameters": {
+      "type": "object",
+      "properties": {
+        "storageAccountType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Standard_LRS",
+                "Premium_LRS"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or Premium_LRS."
+        }
+      },
+      "description": "Describes the parameters of a ScaleSet managed disk."
+    },
+    "VirtualMachineScaleSetNetworkConfiguration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource Id"
+        },
+        "name": {
+          "type": "string",
+          "description": "The network configuration name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetNetworkConfigurationProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set network profile's IP configuration."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "Describes a virtual machine scale set network profile's network configurations."
+    },
+    "VirtualMachineScaleSetNetworkConfigurationProperties": {
+      "type": "object",
+      "properties": {
+        "ipConfigurations": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VirtualMachineScaleSetIPConfiguration"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The virtual machine scale set IP Configuration."
+        },
+        "primary": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether this is a primary NIC on a virtual machine."
+        }
+      },
+      "required": [
+        "ipConfigurations"
+      ],
+      "description": "Describes a virtual machine scale set network profile's IP configuration."
+    },
+    "VirtualMachineScaleSetNetworkProfile": {
+      "type": "object",
+      "properties": {
+        "networkInterfaceConfigurations": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VirtualMachineScaleSetNetworkConfiguration"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of network configurations."
+        }
+      },
+      "description": "Describes a virtual machine scale set network profile."
+    },
+    "VirtualMachineScaleSetOSDisk": {
+      "type": "object",
+      "properties": {
+        "caching": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "ReadOnly",
+                "ReadWrite"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**."
+        },
+        "createOption": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "FromImage",
+                "Empty",
+                "Attach"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies how the virtual machines in the scale set should be created.<br><br> The only allowed value is: **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described."
+        },
+        "image": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualHardDisk"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the uri of a disk."
+        },
+        "managedDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetManagedDiskParameters"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the parameters of a ScaleSet managed disk."
+        },
+        "name": {
+          "type": "string",
+          "description": "The disk name."
+        },
+        "osType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Windows",
+                "Linux"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "This property allows you to specify the type of the OS that is included in the disk if creating a VM from user-image or a specialized VHD. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**."
+        },
+        "vhdContainers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of virtual hard disk container uris."
+        }
+      },
+      "required": [
+        "createOption"
+      ],
+      "description": "Describes a virtual machine scale set operating system disk."
+    },
+    "VirtualMachineScaleSetOSProfile": {
+      "type": "object",
+      "properties": {
+        "adminPassword": {
+          "type": "string",
+          "description": "Specifies the password of the administrator account. <br><br> **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\\W_]) <br><br> **Disallowed values:** \"abc@123\", \"P@$$w0rd\", \"P@ssw0rd\", \"P@ssword123\", \"Pa$$word\", \"pass@word1\", \"Password!\", \"Password1\", \"Password22\", \"iloveyou!\" <br><br> For resetting the password, see [How to reset the Remote Desktop service or its login password in a Windows VM](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json) <br><br> For resetting root password, see [Manage users, SSH, and check or repair disks on Azure Linux VMs using the VMAccess Extension](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password)"
+        },
+        "adminUsername": {
+          "type": "string",
+          "description": "Specifies the name of the administrator account. <br><br> **Windows-only restriction:** Cannot end in \".\" <br><br> **Disallowed values:** \"administrator\", \"admin\", \"user\", \"user1\", \"test\", \"user2\", \"test1\", \"user3\", \"admin1\", \"1\", \"123\", \"a\", \"actuser\", \"adm\", \"admin2\", \"aspnet\", \"backup\", \"console\", \"david\", \"guest\", \"john\", \"owner\", \"root\", \"server\", \"sql\", \"support\", \"support_388945a0\", \"sys\", \"test2\", \"test3\", \"user4\", \"user5\". <br><br> **Minimum-length (Linux):** 1  character <br><br> **Max-length (Linux):** 64 characters <br><br> **Max-length (Windows):** 20 characters  <br><br><li> For root access to the Linux VM, see [Using root privileges on Linux virtual machines in Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)<br><li> For a list of built-in system users on Linux that should not be used in this field, see [Selecting User Names for Linux on Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)"
+        },
+        "computerNamePrefix": {
+          "type": "string",
+          "description": "Specifies the computer name prefix for all of the virtual machines in the scale set. Computer name prefixes must be 1 to 15 characters long."
+        },
+        "customData": {
+          "type": "string",
+          "description": "A base-64 encoded string of custom data."
+        },
+        "linuxConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LinuxConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the Linux operating system settings on the virtual machine. <br><br>For a list of supported Linux distributions, see [Linux on Azure-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) <br><br> For running non-endorsed distributions, see [Information for Non-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)."
+        },
+        "secrets": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VaultSecretGroup"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The List of certificates for addition to the VM."
+        },
+        "windowsConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WindowsConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies Windows operating system settings on the virtual machine."
+        }
+      },
+      "description": "Describes a virtual machine scale set OS profile."
+    },
+    "VirtualMachineScaleSetProperties": {
+      "type": "object",
+      "properties": {
+        "overProvision": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether the Virtual Machine Scale Set should be overprovisioned."
+        },
+        "singlePlacementGroup": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "When true this limits the scale set to a single placement group, of max size 100 virtual machines."
+        },
+        "upgradePolicy": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/UpgradePolicy"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes an upgrade policy - automatic or manual."
+        },
+        "virtualMachineProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetVMProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set virtual machine profile."
+        }
+      },
+      "description": "Describes the properties of a Virtual Machine Scale Set."
+    },
+    "VirtualMachineScaleSetStorageProfile": {
+      "type": "object",
+      "properties": {
+        "dataDisks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VirtualMachineScaleSetDataDisk"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The data disks."
+        },
+        "imageReference": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ImageReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations."
+        },
+        "osDisk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetOSDisk"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set operating system disk."
+        }
+      },
+      "description": "Describes a virtual machine scale set storage profile."
+    },
+    "VirtualMachineScaleSetVMProfile": {
+      "type": "object",
+      "properties": {
+        "extensionProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetExtensionProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set extension profile."
+        },
+        "networkProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetNetworkProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set network profile."
+        },
+        "osProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetOSProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set OS profile."
+        },
+        "storageProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineScaleSetStorageProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes a virtual machine scale set storage profile."
+        }
+      },
+      "description": "Describes a virtual machine scale set virtual machine profile."
+    },
+    "virtualMachines_extensions_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2016-04-30-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the virtual machine extension."
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/genericExtension"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/iaaSDiagnostics"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/iaaSAntimalware"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/customScriptExtension"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/customScriptForLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/linuxDiagnostic"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/vmAccessForLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/bgInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/vmAccessAgent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/dscExtension"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/acronisBackupLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/acronisBackup"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/linuxChefClient"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/chefClient"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/datadogLinuxAgent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/datadogWindowsAgent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/dockerExtension"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/dynatraceLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/dynatraceWindows"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/eset"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/hpeSecurityApplicationDefender"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/puppetAgent"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/site24x7LinuxServerExtn"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/site24x7WindowsServerExtn"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/site24x7ApmInsightExtn"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/trendMicroDSALinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/trendMicroDSA"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/bmcCtmAgentLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/bmcCtmAgentWindows"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/OSPatchingForLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/VMSnapshot"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/VMSnapshotLinux"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/customScript"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/networkWatcherAgentWindows"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/2016-04-30-preview/Microsoft.Compute.Extensions.json#/definitions/networkWatcherAgentLinux"
+            }
+          ]
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "extensions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Compute/virtualMachines/extensions"
+    },
+    "WindowsConfiguration": {
+      "type": "object",
+      "properties": {
+        "additionalUnattendContent": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AdditionalUnattendContent"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies additional base-64 encoded XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup."
+        },
+        "enableAutomaticUpdates": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether virtual machine is enabled for automatic updates."
+        },
+        "provisionVMAgent": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether virtual machine agent should be provisioned on the virtual machine. <br><br> When this property is not specified in the request body, default behavior is to set it to true.  This will ensure that VM Agent is installed on the VM so that extensions can be added to the VM later."
+        },
+        "timeZone": {
+          "type": "string",
+          "description": "Specifies the time zone of the virtual machine. e.g. \"Pacific Standard Time\""
+        },
+        "winRM": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WinRMConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes Windows Remote Management configuration of the VM"
+        }
+      },
+      "description": "Specifies Windows operating system settings on the virtual machine."
+    },
+    "WinRMConfiguration": {
+      "type": "object",
+      "properties": {
+        "listeners": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WinRMListener"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of Windows Remote Management listeners"
+        }
+      },
+      "description": "Describes Windows Remote Management configuration of the VM"
+    },
+    "WinRMListener": {
+      "type": "object",
+      "properties": {
+        "certificateUrl": {
+          "type": "string",
+          "description": "This is the URL of a certificate that has been uploaded to Key Vault as a secret. For adding a secret to the Key Vault, see [Add a key or secret to the key vault](https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add). In this case, your certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded in UTF-8: <br><br> {<br>  \"data\":\"<Base64-encoded-certificate>\",<br>  \"dataType\":\"pfx\",<br>  \"password\":\"<pfx-file-password>\"<br>}"
+        },
+        "protocol": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Http",
+                "Https"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the protocol of listener. <br><br> Possible values are: <br>**http** <br><br> **https**."
+        }
+      },
+      "description": "Describes Protocol and thumbprint of Windows Remote Management listener"
+    }
+  }
+}

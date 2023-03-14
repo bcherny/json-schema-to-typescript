@@ -1,4 +1,4 @@
-import {omit} from 'lodash'
+import {memoize, omit} from 'lodash'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
   AST,
@@ -107,22 +107,19 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   }
 
   processed.add(ast)
-  let type = ''
 
   switch (ast.type) {
     case 'ARRAY':
-      type = [
+      return [
         declareNamedTypes(ast.params, options, rootASTName, processed),
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined
       ]
         .filter(Boolean)
         .join('\n')
-      break
     case 'ENUM':
-      type = ''
-      break
+      return ''
     case 'INTERFACE':
-      type = getSuperTypesAndParams(ast)
+      return getSuperTypesAndParams(ast)
         .map(
           ast =>
             (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
@@ -130,11 +127,10 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         )
         .filter(Boolean)
         .join('\n')
-      break
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
-      type = [
+      return [
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
         ast.params
           .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
@@ -146,17 +142,15 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       ]
         .filter(Boolean)
         .join('\n')
-      break
     default:
       if (hasStandaloneName(ast)) {
-        type = generateStandaloneType(ast, options)
+        return generateStandaloneType(ast, options)
       }
+      return ''
   }
-
-  return type
 }
 
-function generateType(ast: AST, options: Options): string {
+function generateTypeUnmemoized(ast: AST, options: Options): string {
   const type = generateRawType(ast, options)
 
   if (options.strictIndexSignatures && ast.keyName === '[k: string]') {
@@ -165,6 +159,7 @@ function generateType(ast: AST, options: Options): string {
 
   return type
 }
+export const generateType = memoize(generateTypeUnmemoized)
 
 function generateRawType(ast: AST, options: Options): string {
   log('magenta', 'generator', ast)

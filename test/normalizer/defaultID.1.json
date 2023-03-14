@@ -1,0 +1,54 @@
+{
+  "name": "Default top level `id` (1)",
+  "in": {
+    "friend": {
+      "properties": {
+        "knowsFrom": {
+          "enum": [
+            "work",
+            "school",
+            "other"
+          ]
+        }
+      },
+      "additionalProperties": true,
+      "required": [],
+      "$id": "friend"
+    },
+    "properties": {
+      "firstName": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": true,
+    "required": [
+      "firstName"
+    ]
+  },
+  "out": {
+    "$id": "DefaultID1",
+    "friend": {
+      "properties": {
+        "knowsFrom": {
+          "enum": [
+            "work",
+            "school",
+            "other"
+          ]
+        }
+      },
+      "additionalProperties": true,
+      "required": [],
+      "$id": "friend"
+    },
+    "properties": {
+      "firstName": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": true,
+    "required": [
+      "firstName"
+    ]
+  }
+}

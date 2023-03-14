@@ -1,0 +1,39 @@
+{
+  "name": "Default additionalProperties to false",
+  "in": {
+    "$id": "foo",
+    "type": [
+      "object"
+    ],
+    "properties": {
+      "a": {
+        "type": "integer",
+        "$id": "a"
+      },
+      "b": {
+        "type": "object"
+      }
+    },
+    "required": []
+  },
+  "options": {
+    "additionalProperties": false
+  },
+  "out": {
+    "$id": "foo",
+    "type": "object",
+    "properties": {
+      "a": {
+        "type": "integer",
+        "$id": "a"
+      },
+      "b": {
+        "additionalProperties": false,
+        "required": [],
+        "type": "object"
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

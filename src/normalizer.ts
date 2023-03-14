@@ -1,8 +1,16 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {escapeBlockComment, justName, toSafeString, traverse} from './utils'
+import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
+import {DereferencedPaths} from './resolver'
+import {isDeepStrictEqual} from 'util'
 
-type Rule = (schema: LinkedJSONSchema, fileName: string, options: Options) => void
+type Rule = (
+  schema: LinkedJSONSchema,
+  fileName: string,
+  options: Options,
+  key: string | null,
+  dereferencedPaths: DereferencedPaths
+) => void
 const rules = new Map<string, Rule>()
 
 function hasType(schema: LinkedJSONSchema, type: JSONSchemaTypeName) {
@@ -44,32 +52,81 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
   }
 })
 
-// TODO: default to empty schema (as per spec) instead
-rules.set('Default additionalProperties to true', schema => {
+rules.set('Default additionalProperties', (schema, _, options) => {
   if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
-    schema.additionalProperties = true
+    schema.additionalProperties = options.additionalProperties
   }
 })
 
-rules.set('Default top level `id`', (schema, fileName) => {
-  const isRoot = schema[Parent] === null
-  if (isRoot && !schema.id) {
-    schema.id = toSafeString(justName(fileName))
+rules.set('Transform id to $id', (schema, fileName) => {
+  if (!isSchemaLike(schema)) {
+    return
+  }
+  if (schema.id && schema.$id && schema.id !== schema.$id) {
+    throw ReferenceError(
+      `Schema must define either id or $id, not both. Given id=${schema.id}, $id=${schema.$id} in ${fileName}`
+    )
+  }
+  if (schema.id) {
+    schema.$id = schema.id
+    delete schema.id
   }
 })
 
-rules.set('Escape closing JSDoc Comment', schema => {
+rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _key, dereferencedPaths) => {
+  if (!isSchemaLike(schema)) {
+    return
+  }
+
+  // Top-level schema
+  if (!schema.$id && !schema[Parent]) {
+    schema.$id = toSafeString(justName(fileName))
+    return
+  }
+
+  // Sub-schemas with references
+  if (!isArrayType(schema) && !isObjectType(schema)) {
+    return
+  }
+
+  // We'll infer from $id and title downstream
+  // TODO: Normalize upstream
+  const dereferencedName = dereferencedPaths.get(schema)
+  if (!schema.$id && !schema.title && dereferencedName) {
+    schema.$id = toSafeString(justName(dereferencedName))
+  }
+
+  if (dereferencedName) {
+    dereferencedPaths.delete(schema)
+  }
+})
+
+rules.set('Escape closing JSDoc comment', schema => {
   escapeBlockComment(schema)
 })
 
+rules.set('Add JSDoc comments for minItems and maxItems', schema => {
+  if (!isArrayType(schema)) {
+    return
+  }
+  const commentsToAppend = [
+    'minItems' in schema ? `@minItems ${schema.minItems}` : '',
+    'maxItems' in schema ? `@maxItems ${schema.maxItems}` : ''
+  ].filter(Boolean)
+  if (commentsToAppend.length) {
+    schema.description = appendToDescription(schema.description, ...commentsToAppend)
+  }
+})
+
 rules.set('Optionally remove maxItems and minItems', (schema, _fileName, options) => {
-  if (options.ignoreMinAndMaxItems) {
-    if ('maxItems' in schema) {
-      delete schema.maxItems
-    }
-    if ('minItems' in schema) {
-      delete schema.minItems
-    }
+  if (!isArrayType(schema)) {
+    return
+  }
+  if ('minItems' in schema && options.ignoreMinAndMaxItems) {
+    delete schema.minItems
+  }
+  if ('maxItems' in schema && (options.ignoreMinAndMaxItems || options.maxItems === -1)) {
+    delete schema.maxItems
   }
 })
 
@@ -78,11 +135,26 @@ rules.set('Normalize schema.minItems', (schema, _fileName, options) => {
     return
   }
   // make sure we only add the props onto array types
-  if (isArrayType(schema)) {
-    const {minItems} = schema
-    schema.minItems = typeof minItems === 'number' ? minItems : 0
+  if (!isArrayType(schema)) {
+    return
   }
+  const {minItems} = schema
+  schema.minItems = typeof minItems === 'number' ? minItems : 0
   // cannot normalize maxItems because maxItems = 0 has an actual meaning
+})
+
+rules.set('Remove maxItems if it is big enough to likely cause OOMs', (schema, _fileName, options) => {
+  if (options.ignoreMinAndMaxItems || options.maxItems === -1) {
+    return
+  }
+  if (!isArrayType(schema)) {
+    return
+  }
+  const {maxItems, minItems} = schema
+  // minItems is guaranteed to be a number after the previous rule runs
+  if (maxItems !== undefined && maxItems - (minItems as number) > options.maxItems) {
+    delete schema.maxItems
+  }
 })
 
 rules.set('Normalize schema.items', (schema, _fileName, options) => {
@@ -131,10 +203,15 @@ rules.set('Make extends always an array, if it is defined', schema => {
   }
 })
 
-rules.set('Transform $defs to definitions', schema => {
-  if (schema.$defs) {
-    schema.definitions = schema.$defs
-    delete schema.$defs
+rules.set('Transform definitions to $defs', (schema, fileName) => {
+  if (schema.definitions && schema.$defs && !isDeepStrictEqual(schema.definitions, schema.$defs)) {
+    throw ReferenceError(
+      `Schema must define either definitions or $defs, not both. Given id=${schema.id} in ${fileName}`
+    )
+  }
+  if (schema.definitions) {
+    schema.$defs = schema.definitions
+    delete schema.definitions
   }
 })
 
@@ -145,7 +222,12 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
-export function normalize(rootSchema: LinkedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
-  rules.forEach(rule => traverse(rootSchema, schema => rule(schema, filename, options)))
+export function normalize(
+  rootSchema: LinkedJSONSchema,
+  dereferencedPaths: DereferencedPaths,
+  filename: string,
+  options: Options
+): NormalizedJSONSchema {
+  rules.forEach(rule => traverse(rootSchema, (schema, key) => rule(schema, filename, options, key, dereferencedPaths)))
   return rootSchema as NormalizedJSONSchema
 }

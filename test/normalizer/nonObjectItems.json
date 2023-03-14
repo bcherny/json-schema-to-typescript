@@ -1,7 +1,7 @@
 {
   "name": "Non object items.items",
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "myProperty": {
@@ -12,7 +12,7 @@
     "additionalProperties": false
   },
   "out": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "myProperty": {

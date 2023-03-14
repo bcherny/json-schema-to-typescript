@@ -1,0 +1,111 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2020-07-01-preview/Microsoft.Authorization.Resources.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Authorization",
+  "description": "Microsoft Authorization Resource Types",
+  "resourceDefinitions": {},
+  "unknown_resourceDefinitions": {
+    "policyExemptions": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2020-07-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the policy exemption to delete."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PolicyExemptionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy exemption properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/policyExemptions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/policyExemptions"
+    }
+  },
+  "definitions": {
+    "PolicyExemptionProperties": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The description of the policy exemption."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the policy exemption."
+        },
+        "exemptionCategory": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Waiver",
+                "Mitigated"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy exemption category. Possible values are Waiver and Mitigated."
+        },
+        "expiresOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ) of the policy exemption."
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {},
+          "description": "The policy exemption metadata. Metadata is an open ended object and is typically a collection of key value pairs."
+        },
+        "policyAssignmentId": {
+          "type": "string",
+          "description": "The ID of the policy assignment that is being exempted."
+        },
+        "policyDefinitionReferenceIds": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy definition reference ID list when the associated policy assignment is an assignment of a policy set definition."
+        }
+      },
+      "required": [
+        "exemptionCategory",
+        "policyAssignmentId"
+      ],
+      "description": "The policy exemption properties."
+    }
+  }
+}

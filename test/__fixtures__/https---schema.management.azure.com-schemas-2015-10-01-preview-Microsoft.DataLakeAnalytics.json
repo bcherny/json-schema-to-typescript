@@ -1,0 +1,788 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-10-01-preview/Microsoft.DataLakeAnalytics.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.DataLakeAnalytics",
+  "description": "Microsoft DataLakeAnalytics Resource Types",
+  "resourceDefinitions": {
+    "accounts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Data Lake Analytics account to retrieve."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateDataLakeAnalyticsAccountProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/accounts_DataLakeStoreAccounts_childResource"
+              },
+              {
+                "$ref": "#/definitions/accounts_StorageAccounts_childResource"
+              },
+              {
+                "$ref": "#/definitions/accounts_computePolicies_childResource"
+              },
+              {
+                "$ref": "#/definitions/accounts_firewallRules_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeAnalytics/accounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts"
+    },
+    "accounts_computePolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the compute policy to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateComputePolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The compute policy properties to use when creating a new compute policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeAnalytics/accounts/computePolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts/computePolicies"
+    },
+    "accounts_DataLakeStoreAccounts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Data Lake Store account to add."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AddDataLakeStoreProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Data Lake Store account properties to use when adding a new Data Lake Store account."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeAnalytics/accounts/DataLakeStoreAccounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts/DataLakeStoreAccounts"
+    },
+    "accounts_firewallRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the firewall rule to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The firewall rule properties to use when creating a new firewall rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeAnalytics/accounts/firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts/firewallRules"
+    },
+    "accounts_StorageAccounts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Azure Storage account to add"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StorageAccountProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Azure Storage account properties to use when adding a new Azure Storage account."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.DataLakeAnalytics/accounts/StorageAccounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts/StorageAccounts"
+    }
+  },
+  "definitions": {
+    "accounts_computePolicies_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the compute policy to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateComputePolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The compute policy properties to use when creating a new compute policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "computePolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts/computePolicies"
+    },
+    "accounts_DataLakeStoreAccounts_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Data Lake Store account to add."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AddDataLakeStoreProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Data Lake Store account properties to use when adding a new Data Lake Store account."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DataLakeStoreAccounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts/DataLakeStoreAccounts"
+    },
+    "accounts_firewallRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the firewall rule to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The firewall rule properties to use when creating a new firewall rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts/firewallRules"
+    },
+    "accounts_StorageAccounts_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-10-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the Azure Storage account to add"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StorageAccountProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Azure Storage account properties to use when adding a new Azure Storage account."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "StorageAccounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.DataLakeAnalytics/accounts/StorageAccounts"
+    },
+    "AddDataLakeStoreProperties": {
+      "type": "object",
+      "properties": {
+        "suffix": {
+          "type": "string",
+          "description": "The optional suffix for the Data Lake Store account."
+        }
+      },
+      "description": "The Data Lake Store account properties to use when adding a new Data Lake Store account."
+    },
+    "AddDataLakeStoreWithAccountParameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the Data Lake Store account to add."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AddDataLakeStoreProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Data Lake Store account properties to use when adding a new Data Lake Store account."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "The parameters used to add a new Data Lake Store account while creating a new Data Lake Analytics account."
+    },
+    "AddStorageAccountWithAccountParameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the Azure Storage account to add."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StorageAccountProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Azure Storage account properties to use when adding a new Azure Storage account."
+        }
+      },
+      "required": [
+        "name",
+        "properties"
+      ],
+      "description": "The parameters used to add a new Azure Storage account while creating a new Data Lake Analytics account."
+    },
+    "CreateComputePolicyWithAccountParameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the compute policy to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateComputePolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The compute policy properties to use when creating a new compute policy."
+        }
+      },
+      "required": [
+        "name",
+        "properties"
+      ],
+      "description": "The parameters used to create a new compute policy while creating a new Data Lake Analytics account."
+    },
+    "CreateDataLakeAnalyticsAccountProperties": {
+      "type": "object",
+      "properties": {
+        "computePolicies": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CreateComputePolicyWithAccountParameters"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of compute policies associated with this account."
+        },
+        "dataLakeStoreAccounts": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AddDataLakeStoreWithAccountParameters"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of Data Lake Store accounts associated with this account."
+        },
+        "defaultDataLakeStoreAccount": {
+          "type": "string",
+          "description": "The default Data Lake Store account associated with this account."
+        },
+        "firewallAllowAzureIps": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current state of allowing or disallowing IPs originating within Azure through the firewall. If the firewall is disabled, this is not enforced."
+        },
+        "firewallRules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CreateFirewallRuleWithAccountParameters"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of firewall rules associated with this account."
+        },
+        "firewallState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The current state of the IP address firewall for this account."
+        },
+        "maxDegreeOfParallelism": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The maximum supported degree of parallelism for this account."
+        },
+        "maxDegreeOfParallelismPerJob": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "default": "32"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The maximum supported degree of parallelism per job for this account."
+        },
+        "maxJobCount": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "default": "20"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The maximum supported jobs running under the account at the same time."
+        },
+        "minPriorityPerJob": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The minimum supported priority per job for this account."
+        },
+        "newTier": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Consumption",
+                "Commitment_100AUHours",
+                "Commitment_500AUHours",
+                "Commitment_1000AUHours",
+                "Commitment_5000AUHours",
+                "Commitment_10000AUHours",
+                "Commitment_50000AUHours",
+                "Commitment_100000AUHours",
+                "Commitment_500000AUHours"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The commitment tier for the next month."
+        },
+        "queryStoreRetention": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 180,
+              "default": "30"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of days that job metadata is retained."
+        },
+        "storageAccounts": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AddStorageAccountWithAccountParameters"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of Azure Blob Storage accounts associated with this account."
+        }
+      },
+      "required": [
+        "dataLakeStoreAccounts",
+        "defaultDataLakeStoreAccount"
+      ]
+    },
+    "CreateFirewallRuleWithAccountParameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the firewall rule to create."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CreateOrUpdateFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The firewall rule properties to use when creating a new firewall rule."
+        }
+      },
+      "required": [
+        "name",
+        "properties"
+      ],
+      "description": "The parameters used to create a new firewall rule while creating a new Data Lake Analytics account."
+    },
+    "CreateOrUpdateComputePolicyProperties": {
+      "type": "object",
+      "properties": {
+        "maxDegreeOfParallelismPerJob": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The maximum degree of parallelism per job this user can use to submit jobs. This property, the min priority per job property, or both must be passed."
+        },
+        "minPriorityPerJob": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The minimum priority per job this user can use to submit jobs. This property, the max degree of parallelism per job property, or both must be passed."
+        },
+        "objectId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The AAD object identifier for the entity to create a policy for."
+        },
+        "objectType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "User",
+                "Group",
+                "ServicePrincipal"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of AAD object the object identifier refers to."
+        }
+      },
+      "required": [
+        "objectId",
+        "objectType"
+      ],
+      "description": "The compute policy properties to use when creating a new compute policy."
+    },
+    "CreateOrUpdateFirewallRuleProperties": {
+      "type": "object",
+      "properties": {
+        "endIpAddress": {
+          "type": "string",
+          "description": "The end IP address for the firewall rule. This can be either ipv4 or ipv6. Start and End should be in the same protocol."
+        },
+        "startIpAddress": {
+          "type": "string",
+          "description": "The start IP address for the firewall rule. This can be either ipv4 or ipv6. Start and End should be in the same protocol."
+        }
+      },
+      "required": [
+        "endIpAddress",
+        "startIpAddress"
+      ],
+      "description": "The firewall rule properties to use when creating a new firewall rule."
+    },
+    "StorageAccountProperties": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "description": "The access key associated with this Azure Storage account that will be used to connect to it."
+        },
+        "suffix": {
+          "type": "string",
+          "description": "The optional suffix for the storage account."
+        }
+      },
+      "required": [
+        "accessKey"
+      ],
+      "description": "The Azure Storage account properties to use when adding a new Azure Storage account."
+    }
+  }
+}

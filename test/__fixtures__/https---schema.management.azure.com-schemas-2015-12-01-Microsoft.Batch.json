@@ -1,0 +1,267 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-12-01/Microsoft.Batch.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Batch",
+  "description": "Microsoft Batch Resource Types",
+  "resourceDefinitions": {
+    "batchAccounts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-12-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The region in which to create the account."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[-\\w\\._]+$",
+              "minLength": 3,
+              "maxLength": 24
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A name for the Batch account which must be unique within the region. Batch account names must be between 3 and 24 characters in length and must use only numbers and lowercase letters. This name is used as part of the DNS name that is used to access the Batch service in the region in which the account is created. For example: http://accountname.region.batch.azure.com/."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BatchAccountBaseProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a Batch account."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/batchAccounts_applications_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The user specified tags associated with the account."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Batch/batchAccounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Batch/batchAccounts"
+    },
+    "batchAccounts_applications": {
+      "type": "object",
+      "properties": {
+        "allowUpdates": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A value indicating whether packages within the application may be overwritten using the same version string."
+        },
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-12-01"
+          ]
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name for the application."
+        },
+        "name": {
+          "type": "string",
+          "description": "The ID of the application."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/batchAccounts_applications_versions_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Batch/batchAccounts/applications"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Batch/batchAccounts/applications"
+    },
+    "batchAccounts_applications_versions": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-12-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The version of the application."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Batch/batchAccounts/applications/versions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Batch/batchAccounts/applications/versions"
+    }
+  },
+  "definitions": {
+    "AutoStorageBaseProperties": {
+      "type": "object",
+      "properties": {
+        "storageAccountId": {
+          "type": "string",
+          "description": "The resource ID of the storage account to be used for auto storage account."
+        }
+      },
+      "required": [
+        "storageAccountId"
+      ],
+      "description": "The properties related to auto storage account."
+    },
+    "BatchAccountBaseProperties": {
+      "type": "object",
+      "properties": {
+        "autoStorage": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AutoStorageBaseProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties related to auto storage account."
+        }
+      },
+      "description": "The properties of a Batch account."
+    },
+    "batchAccounts_applications_childResource": {
+      "type": "object",
+      "properties": {
+        "allowUpdates": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A value indicating whether packages within the application may be overwritten using the same version string."
+        },
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-12-01"
+          ]
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name for the application."
+        },
+        "name": {
+          "type": "string",
+          "description": "The ID of the application."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "applications"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Batch/batchAccounts/applications"
+    },
+    "batchAccounts_applications_versions_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-12-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The version of the application."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "versions"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Batch/batchAccounts/applications/versions"
+    }
+  }
+}

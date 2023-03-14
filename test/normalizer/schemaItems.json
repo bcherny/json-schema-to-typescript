@@ -1,7 +1,7 @@
 {
   "name": "Normalize schema.items",
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untypedUnbounded": {
@@ -79,7 +79,7 @@
     "additionalProperties": false
   },
   "out": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untypedUnbounded": {
@@ -93,6 +93,7 @@
         "minItems": 0
       },
       "typedMinBounded": {
+        "description": "@minItems 2",
         "items": [
           {
             "type": "string"
@@ -107,6 +108,7 @@
         "minItems": 2
       },
       "typedMaxBounded": {
+        "description": "@maxItems 2",
         "items": [
           {
             "type": "string"
@@ -119,6 +121,7 @@
         "minItems": 0
       },
       "typedMinMaxBounded": {
+        "description": "@minItems 2\n@maxItems 5",
         "items": [
           {
             "type": "string"
@@ -140,6 +143,7 @@
         "maxItems": 5
       },
       "moreItemsThanMax": {
+        "description": "@maxItems 1",
         "items": [
           {
             "type": "string"
@@ -149,6 +153,7 @@
         "minItems": 0
       },
       "itemAnyOf": {
+        "description": "@maxItems 1",
         "items": [
           {
             "anyOf": [
@@ -169,6 +174,7 @@
       "baseAnyOf": {
         "anyOf": [
           {
+            "description": "@maxItems 1",
             "items": [
               {
                 "type": "string"
@@ -178,6 +184,7 @@
             "minItems": 0
           },
           {
+            "description": "@maxItems 2",
             "items": [
               {
                 "type": "number"

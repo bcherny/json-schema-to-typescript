@@ -1,0 +1,1639 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-05-01-preview/Microsoft.Sql.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Sql",
+  "description": "Microsoft Sql Resource Types",
+  "resourceDefinitions": {
+    "managedInstances": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ResourceIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Active Directory identity configuration for a resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the managed instance."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedInstanceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a managed instance."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An ARM Resource SKU."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/managedInstances"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances"
+    },
+    "servers": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ResourceIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Active Directory identity configuration for a resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the server."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a server."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/servers_encryptionProtector_childResource"
+              },
+              {
+                "$ref": "#/definitions/servers_failoverGroups_childResource"
+              },
+              {
+                "$ref": "#/definitions/servers_keys_childResource"
+              },
+              {
+                "$ref": "#/definitions/servers_syncAgents_childResource"
+              },
+              {
+                "$ref": "#/definitions/servers_virtualNetworkRules_childResource"
+              },
+              {
+                "$ref": "#/definitions/servers_firewallRules_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers"
+    },
+    "servers_databases_auditingSettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DatabaseBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a database blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/databases/auditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/databases/auditingSettings"
+    },
+    "servers_databases_syncGroups": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the sync group."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SyncGroupProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a sync group."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/servers_databases_syncGroups_syncMembers_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/databases/syncGroups"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/databases/syncGroups"
+    },
+    "servers_databases_syncGroups_syncMembers": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the sync member."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SyncMemberProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a sync member."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/databases/syncGroups/syncMembers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/databases/syncGroups/syncMembers"
+    },
+    "servers_encryptionProtector": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/current$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the encryption protector to be updated."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EncryptionProtectorProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties for an encryption protector execution."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/encryptionProtector"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/encryptionProtector"
+    },
+    "servers_failoverGroups": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the failover group."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/FailoverGroupProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a failover group."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/failoverGroups"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/failoverGroups"
+    },
+    "servers_firewallRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the firewall rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a server firewall rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/firewallRules"
+    },
+    "servers_keys": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of encryption protector. This is metadata used for the Azure portal experience."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the server key to be operated on (updated or created). The key name is required to be in the format of 'vault_key_version'. For example, if the keyId is https://YourVaultName.vault.azure.net/keys/YourKeyName/01234567890123456789012345678901, then the server key name should be formatted as: YourVaultName_YourKeyName_01234567890123456789012345678901"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerKeyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties for a server key execution."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/keys"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/keys"
+    },
+    "servers_syncAgents": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the sync agent."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SyncAgentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of an Azure SQL Database sync agent."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/syncAgents"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/syncAgents"
+    },
+    "servers_virtualNetworkRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the virtual network rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualNetworkRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a virtual network rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/virtualNetworkRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/virtualNetworkRules"
+    }
+  },
+  "definitions": {
+    "DatabaseBlobAuditingPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "auditActionsAndGroups": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the Actions-Groups and Actions to audit.\r\n\r\nThe recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:\r\n\r\nBATCH_COMPLETED_GROUP,\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,\r\nFAILED_DATABASE_AUTHENTICATION_GROUP.\r\n\r\nThis above combination is also the set that is configured by default when enabling auditing from the Azure portal.\r\n\r\nThe supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):\r\n\r\nAPPLICATION_ROLE_CHANGE_PASSWORD_GROUP\r\nBACKUP_RESTORE_GROUP\r\nDATABASE_LOGOUT_GROUP\r\nDATABASE_OBJECT_CHANGE_GROUP\r\nDATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nDATABASE_OBJECT_PERMISSION_CHANGE_GROUP\r\nDATABASE_OPERATION_GROUP\r\nDATABASE_PERMISSION_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_IMPERSONATION_GROUP\r\nDATABASE_ROLE_MEMBER_CHANGE_GROUP\r\nFAILED_DATABASE_AUTHENTICATION_GROUP\r\nSCHEMA_OBJECT_ACCESS_GROUP\r\nSCHEMA_OBJECT_CHANGE_GROUP\r\nSCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nSCHEMA_OBJECT_PERMISSION_CHANGE_GROUP\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP\r\nUSER_CHANGE_PASSWORD_GROUP\r\nBATCH_STARTED_GROUP\r\nBATCH_COMPLETED_GROUP\r\n\r\nThese are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.\r\n\r\nFor more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).\r\n\r\nFor Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:\r\nSELECT\r\nUPDATE\r\nINSERT\r\nDELETE\r\nEXECUTE\r\nRECEIVE\r\nREFERENCES\r\n\r\nThe general form for defining an action to be audited is:\r\n{action} ON {object} BY {principal}\r\n\r\nNote that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.\r\n\r\nFor example:\r\nSELECT on dbo.myTable by public\r\nSELECT on DATABASE::myDatabase by public\r\nSELECT on SCHEMA::mySchema by public\r\n\r\nFor more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)"
+        },
+        "isAzureMonitorTargetEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether audit events are sent to Azure Monitor. \r\nIn order to send the events to Azure Monitor, specify 'state' as 'Enabled' and 'isAzureMonitorTargetEnabled' as true.\r\n\r\nWhen using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.\r\nNote that for server level audit you should use the 'master' database as {databaseName}.\r\n\r\nDiagnostic Settings URI format:\r\nPUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview\r\n\r\nFor more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)\r\nor [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)\r\n"
+        },
+        "isStorageSecondaryKeyInUse": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether storageAccountAccessKey value is the storage's secondary key."
+        },
+        "queueDelayMs": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the amount of time in milliseconds that can elapse before audit actions are forced to be processed.\r\nThe default minimum value is 1000 (1 second). The maximum is 2,147,483,647."
+        },
+        "retentionDays": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of days to keep in the audit logs in the storage account."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the state of the policy. If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the auditing storage account. \r\nIf state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.\r\nPrerequisites for using managed identity authentication:\r\n1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).\r\n2. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data Contributor' RBAC role to the server identity.\r\nFor more information, see [Auditing to storage using Managed Identity authentication](https://go.microsoft.com/fwlink/?linkid=2114355)"
+        },
+        "storageAccountSubscriptionId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the blob storage subscription Id."
+        },
+        "storageEndpoint": {
+          "type": "string",
+          "description": "Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled is required."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "Properties of a database blob auditing policy."
+    },
+    "EncryptionProtectorProperties": {
+      "type": "object",
+      "properties": {
+        "serverKeyName": {
+          "type": "string",
+          "description": "The name of the server key."
+        },
+        "serverKeyType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ServiceManaged",
+                "AzureKeyVault"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The encryption protector type like 'ServiceManaged', 'AzureKeyVault'."
+        }
+      },
+      "required": [
+        "serverKeyType"
+      ],
+      "description": "Properties for an encryption protector execution."
+    },
+    "FailoverGroupProperties": {
+      "type": "object",
+      "properties": {
+        "databases": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of databases in the failover group."
+        },
+        "partnerServers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PartnerInfo"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of partner server information for the failover group."
+        },
+        "readOnlyEndpoint": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/FailoverGroupReadOnlyEndpoint"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Read-only endpoint of the failover group instance."
+        },
+        "readWriteEndpoint": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/FailoverGroupReadWriteEndpoint"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Read-write endpoint of the failover group instance."
+        }
+      },
+      "required": [
+        "partnerServers",
+        "readWriteEndpoint"
+      ],
+      "description": "Properties of a failover group."
+    },
+    "FailoverGroupReadOnlyEndpoint": {
+      "type": "object",
+      "properties": {
+        "failoverPolicy": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Failover policy of the read-only endpoint for the failover group."
+        }
+      },
+      "description": "Read-only endpoint of the failover group instance."
+    },
+    "FailoverGroupReadWriteEndpoint": {
+      "type": "object",
+      "properties": {
+        "failoverPolicy": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Manual",
+                "Automatic"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Failover policy of the read-write endpoint for the failover group. If failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required."
+        },
+        "failoverWithDataLossGracePeriodMinutes": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Grace period before failover with data loss is attempted for the read-write endpoint. If failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required."
+        }
+      },
+      "required": [
+        "failoverPolicy"
+      ],
+      "description": "Read-write endpoint of the failover group instance."
+    },
+    "FirewallRule": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Resource name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a server firewall rule."
+        }
+      },
+      "description": "A server firewall rule."
+    },
+    "ManagedInstanceProperties": {
+      "type": "object",
+      "properties": {
+        "administratorLogin": {
+          "type": "string",
+          "description": "Administrator username for the managed instance. Can only be specified when the managed instance is being created (and is required for creation)."
+        },
+        "administratorLoginPassword": {
+          "type": "string",
+          "description": "The administrator login password (required for managed instance creation)."
+        },
+        "collation": {
+          "type": "string",
+          "description": "Collation of the managed instance."
+        },
+        "dnsZonePartner": {
+          "type": "string",
+          "description": "The resource id of another managed instance whose DNS zone this managed instance will share after creation."
+        },
+        "instancePoolId": {
+          "type": "string",
+          "description": "The Id of the instance pool this managed server belongs to."
+        },
+        "licenseType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "LicenseIncluded",
+                "BasePrice"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The license type. Possible values are 'LicenseIncluded' (regular price inclusive of a new SQL license) and 'BasePrice' (discounted AHB price for bringing your own SQL licenses)."
+        },
+        "maintenanceConfigurationId": {
+          "type": "string",
+          "description": "Specifies maintenance configuration id to apply to this managed instance."
+        },
+        "managedInstanceCreateMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Default",
+                "PointInTimeRestore"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the mode of database creation.\r\n\r\nDefault: Regular instance creation.\r\n\r\nRestore: Creates an instance by restoring a set of backups to specific point in time. RestorePointInTime and SourceManagedInstanceId must be specified."
+        },
+        "minimalTlsVersion": {
+          "type": "string",
+          "description": "Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'"
+        },
+        "proxyOverride": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Proxy",
+                "Redirect",
+                "Default"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Connection type used for connecting to the instance."
+        },
+        "publicDataEndpointEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether or not the public data endpoint is enabled."
+        },
+        "restorePointInTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Specifies the point in time (ISO8601 format) of the source database that will be restored to create the new database."
+        },
+        "sourceManagedInstanceId": {
+          "type": "string",
+          "description": "The resource identifier of the source managed instance associated with create operation of this instance."
+        },
+        "storageSizeInGB": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Storage size in GB. Minimum value: 32. Maximum value: 8192. Increments of 32 GB allowed only."
+        },
+        "subnetId": {
+          "type": "string",
+          "description": "Subnet resource ID for the managed instance."
+        },
+        "timezoneId": {
+          "type": "string",
+          "description": "Id of the timezone. Allowed values are timezones supported by Windows.\r\nWindows keeps details on supported timezones, including the id, in registry under\r\nKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.\r\nYou can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM sys.time_zone_info.\r\nList of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell.\r\nAn example of valid timezone id is \"Pacific Standard Time\" or \"W. Europe Standard Time\"."
+        },
+        "vCores": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80."
+        }
+      },
+      "description": "The properties of a managed instance."
+    },
+    "PartnerInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource identifier of the partner server."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "description": "Partner server information for the failover group."
+    },
+    "ResourceIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "SystemAssigned",
+                "UserAssigned",
+                "SystemAssigned,UserAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The identity type. Set this to 'SystemAssigned' in order to automatically create and assign an Azure Active Directory principal for the resource."
+        }
+      },
+      "description": "Azure Active Directory identity configuration for a resource."
+    },
+    "ServerFirewallRuleProperties": {
+      "type": "object",
+      "properties": {
+        "endIpAddress": {
+          "type": "string",
+          "description": "The end IP address of the firewall rule. Must be IPv4 format. Must be greater than or equal to startIpAddress. Use value '0.0.0.0' for all Azure-internal IP addresses."
+        },
+        "startIpAddress": {
+          "type": "string",
+          "description": "The start IP address of the firewall rule. Must be IPv4 format. Use value '0.0.0.0' for all Azure-internal IP addresses."
+        }
+      },
+      "description": "The properties of a server firewall rule."
+    },
+    "ServerKeyProperties": {
+      "type": "object",
+      "properties": {
+        "creationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The server key creation date."
+        },
+        "serverKeyType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ServiceManaged",
+                "AzureKeyVault"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The server key type like 'ServiceManaged', 'AzureKeyVault'."
+        },
+        "thumbprint": {
+          "type": "string",
+          "description": "Thumbprint of the server key."
+        },
+        "uri": {
+          "type": "string",
+          "description": "The URI of the server key."
+        }
+      },
+      "required": [
+        "serverKeyType"
+      ],
+      "description": "Properties for a server key execution."
+    },
+    "ServerProperties": {
+      "type": "object",
+      "properties": {
+        "administratorLogin": {
+          "type": "string",
+          "description": "Administrator username for the server. Once created it cannot be changed."
+        },
+        "administratorLoginPassword": {
+          "type": "string",
+          "description": "The administrator login password (required for server creation)."
+        },
+        "version": {
+          "type": "string",
+          "description": "The version of the server."
+        }
+      },
+      "description": "The properties of a server."
+    },
+    "servers_databases_syncGroups_syncMembers_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the sync member."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SyncMemberProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a sync member."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "syncMembers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/databases/syncGroups/syncMembers"
+    },
+    "servers_encryptionProtector_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "current"
+          ],
+          "description": "The name of the encryption protector to be updated."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EncryptionProtectorProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties for an encryption protector execution."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "encryptionProtector"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/encryptionProtector"
+    },
+    "servers_failoverGroups_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the failover group."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/FailoverGroupProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a failover group."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "failoverGroups"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/failoverGroups"
+    },
+    "servers_firewallRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the firewall rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a server firewall rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/firewallRules"
+    },
+    "servers_keys_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "description": "Kind of encryption protector. This is metadata used for the Azure portal experience."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the server key to be operated on (updated or created). The key name is required to be in the format of 'vault_key_version'. For example, if the keyId is https://YourVaultName.vault.azure.net/keys/YourKeyName/01234567890123456789012345678901, then the server key name should be formatted as: YourVaultName_YourKeyName_01234567890123456789012345678901"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerKeyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties for a server key execution."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "keys"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/keys"
+    },
+    "servers_syncAgents_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the sync agent."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SyncAgentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of an Azure SQL Database sync agent."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "syncAgents"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/syncAgents"
+    },
+    "servers_virtualNetworkRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-05-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the virtual network rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualNetworkRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a virtual network rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "virtualNetworkRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/virtualNetworkRules"
+    },
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Capacity of the particular SKU."
+        },
+        "family": {
+          "type": "string",
+          "description": "If the service has different generations of hardware, for the same SKU, then that can be captured here."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the SKU, typically, a letter + Number code, e.g. P3."
+        },
+        "size": {
+          "type": "string",
+          "description": "Size of the particular SKU"
+        },
+        "tier": {
+          "type": "string",
+          "description": "The tier or edition of the particular SKU, e.g. Basic, Premium."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "An ARM Resource SKU."
+    },
+    "SyncAgentProperties": {
+      "type": "object",
+      "properties": {
+        "syncDatabaseId": {
+          "type": "string",
+          "description": "ARM resource id of the sync database in the sync agent."
+        }
+      },
+      "description": "Properties of an Azure SQL Database sync agent."
+    },
+    "SyncGroupProperties": {
+      "type": "object",
+      "properties": {
+        "conflictResolutionPolicy": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "HubWin",
+                "MemberWin"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Conflict resolution policy of the sync group."
+        },
+        "hubDatabasePassword": {
+          "type": "string",
+          "description": "Password for the sync group hub database credential."
+        },
+        "hubDatabaseUserName": {
+          "type": "string",
+          "description": "User name for the sync group hub database credential."
+        },
+        "interval": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Sync interval of the sync group."
+        },
+        "schema": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SyncGroupSchema"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of sync group schema."
+        },
+        "syncDatabaseId": {
+          "type": "string",
+          "description": "ARM resource id of the sync database in the sync group."
+        }
+      },
+      "description": "Properties of a sync group."
+    },
+    "SyncGroupSchema": {
+      "type": "object",
+      "properties": {
+        "masterSyncMemberName": {
+          "type": "string",
+          "description": "Name of master sync member where the schema is from."
+        },
+        "tables": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SyncGroupSchemaTable"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of tables in sync group schema."
+        }
+      },
+      "description": "Properties of sync group schema."
+    },
+    "SyncGroupSchemaTable": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SyncGroupSchemaTableColumn"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of columns in sync group schema."
+        },
+        "quotedName": {
+          "type": "string",
+          "description": "Quoted name of sync group schema table."
+        }
+      },
+      "description": "Properties of table in sync group schema."
+    },
+    "SyncGroupSchemaTableColumn": {
+      "type": "object",
+      "properties": {
+        "dataSize": {
+          "type": "string",
+          "description": "Data size of the column."
+        },
+        "dataType": {
+          "type": "string",
+          "description": "Data type of the column."
+        },
+        "quotedName": {
+          "type": "string",
+          "description": "Quoted name of sync group table column."
+        }
+      },
+      "description": "Properties of column in sync group table."
+    },
+    "SyncMemberProperties": {
+      "type": "object",
+      "properties": {
+        "databaseName": {
+          "type": "string",
+          "description": "Database name of the member database in the sync member."
+        },
+        "databaseType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AzureSqlDatabase",
+                "SqlServerDatabase"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Database type of the sync member."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password of the member database in the sync member."
+        },
+        "serverName": {
+          "type": "string",
+          "description": "Server name of the member database in the sync member"
+        },
+        "sqlServerDatabaseId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "SQL Server database id of the sync member."
+        },
+        "syncAgentId": {
+          "type": "string",
+          "description": "ARM resource id of the sync agent in the sync member."
+        },
+        "syncDirection": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Bidirectional",
+                "OneWayMemberToHub",
+                "OneWayHubToMember"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Sync direction of the sync member."
+        },
+        "userName": {
+          "type": "string",
+          "description": "User name of the member database in the sync member."
+        }
+      },
+      "description": "Properties of a sync member."
+    },
+    "VirtualNetworkRuleProperties": {
+      "type": "object",
+      "properties": {
+        "ignoreMissingVnetServiceEndpoint": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Create firewall rule before the virtual network has vnet service endpoint enabled."
+        },
+        "virtualNetworkSubnetId": {
+          "type": "string",
+          "description": "The ARM resource id of the virtual network subnet."
+        }
+      },
+      "required": [
+        "virtualNetworkSubnetId"
+      ],
+      "description": "Properties of a virtual network rule."
+    }
+  }
+}

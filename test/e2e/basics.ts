@@ -15,6 +15,7 @@ export const input = {
       minimum: 0
     },
     height: {
+      $id: 'height',
       type: 'number'
     },
     favoriteFoods: {

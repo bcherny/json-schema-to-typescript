@@ -1,0 +1,634 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-10-01/Microsoft.Network.FrontDoor.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Network",
+  "description": "Microsoft Network Resource Types",
+  "resourceDefinitions": {
+    "FrontDoorWebApplicationFirewallPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-10-01"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "Gets a unique read-only string that changes whenever the resource is updated."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "The name of the Web Application Firewall Policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WebApplicationFirewallPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Defines web application firewall policy properties."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies"
+    }
+  },
+  "definitions": {
+    "CustomRule": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Allow",
+                "Block",
+                "Log",
+                "Redirect"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes what action to be applied when rule matches."
+        },
+        "enabledState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes if the custom rule is in enabled or disabled state. Defaults to Enabled if not specified."
+        },
+        "matchConditions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MatchCondition"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of match conditions."
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Describes the name of the rule."
+        },
+        "priority": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes priority of the rule. Rules with a lower value will be evaluated before rules with a higher value."
+        },
+        "rateLimitDurationInMinutes": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Time window for resetting the rate limit count. Default is 1 minute."
+        },
+        "rateLimitThreshold": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of allowed requests per client within the time window."
+        },
+        "ruleType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "MatchRule",
+                "RateLimitRule"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes type of rule."
+        }
+      },
+      "required": [
+        "action",
+        "matchConditions",
+        "priority",
+        "ruleType"
+      ],
+      "description": "Defines contents of a web application rule"
+    },
+    "CustomRuleList": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CustomRule"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of rules"
+        }
+      },
+      "description": "Defines contents of custom rules"
+    },
+    "ManagedRuleExclusion": {
+      "type": "object",
+      "properties": {
+        "matchVariable": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "RequestHeaderNames",
+                "RequestCookieNames",
+                "QueryStringArgNames",
+                "RequestBodyPostArgNames"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The variable type to be excluded."
+        },
+        "selector": {
+          "type": "string",
+          "description": "Selector value for which elements in the collection this exclusion applies to."
+        },
+        "selectorMatchOperator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Equals",
+                "Contains",
+                "StartsWith",
+                "EndsWith",
+                "EqualsAny"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Comparison operator to apply to the selector when specifying which elements in the collection this exclusion applies to."
+        }
+      },
+      "required": [
+        "matchVariable",
+        "selector",
+        "selectorMatchOperator"
+      ],
+      "description": "Exclude variables from managed rule evaluation."
+    },
+    "ManagedRuleGroupOverride": {
+      "type": "object",
+      "properties": {
+        "exclusions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ManagedRuleExclusion"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the exclusions that are applied to all rules in the group."
+        },
+        "ruleGroupName": {
+          "type": "string",
+          "description": "Describes the managed rule group to override."
+        },
+        "rules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ManagedRuleOverride"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of rules that will be disabled. If none specified, all rules in the group will be disabled."
+        }
+      },
+      "required": [
+        "ruleGroupName"
+      ],
+      "description": "Defines a managed rule group override setting."
+    },
+    "ManagedRuleOverride": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Allow",
+                "Block",
+                "Log",
+                "Redirect"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the override action to be applied when rule matches."
+        },
+        "enabledState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes if the managed rule is in enabled or disabled state. Defaults to Disabled if not specified."
+        },
+        "exclusions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ManagedRuleExclusion"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the exclusions that are applied to this specific rule."
+        },
+        "ruleId": {
+          "type": "string",
+          "description": "Identifier for the managed rule."
+        }
+      },
+      "required": [
+        "ruleId"
+      ],
+      "description": "Defines a managed rule group override setting."
+    },
+    "ManagedRuleSet": {
+      "type": "object",
+      "properties": {
+        "exclusions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ManagedRuleExclusion"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes the exclusions that are applied to all rules in the set."
+        },
+        "ruleGroupOverrides": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ManagedRuleGroupOverride"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Defines the rule group overrides to apply to the rule set."
+        },
+        "ruleSetType": {
+          "type": "string",
+          "description": "Defines the rule set type to use."
+        },
+        "ruleSetVersion": {
+          "type": "string",
+          "description": "Defines the version of the rule set to use."
+        }
+      },
+      "required": [
+        "ruleSetType",
+        "ruleSetVersion"
+      ],
+      "description": "Defines a managed rule set."
+    },
+    "ManagedRuleSetList": {
+      "type": "object",
+      "properties": {
+        "managedRuleSets": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ManagedRuleSet"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of rule sets."
+        }
+      },
+      "description": "Defines the list of managed rule sets for the policy."
+    },
+    "MatchCondition": {
+      "type": "object",
+      "properties": {
+        "matchValue": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of possible match values."
+        },
+        "matchVariable": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "RemoteAddr",
+                "RequestMethod",
+                "QueryString",
+                "PostArgs",
+                "RequestUri",
+                "RequestHeader",
+                "RequestBody",
+                "Cookies",
+                "SocketAddr"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Request variable to compare with."
+        },
+        "negateCondition": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes if the result of this condition should be negated."
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Any",
+                "IPMatch",
+                "GeoMatch",
+                "Equal",
+                "Contains",
+                "LessThan",
+                "GreaterThan",
+                "LessThanOrEqual",
+                "GreaterThanOrEqual",
+                "BeginsWith",
+                "EndsWith",
+                "RegEx"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Comparison type to use for matching with the variable value."
+        },
+        "selector": {
+          "type": "string",
+          "description": "Match against a specific key from the QueryString, PostArgs, RequestHeader or Cookies variables. Default is null."
+        },
+        "transforms": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Lowercase",
+                  "Uppercase",
+                  "Trim",
+                  "UrlDecode",
+                  "UrlEncode",
+                  "RemoveNulls"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of transforms."
+        }
+      },
+      "required": [
+        "matchValue",
+        "matchVariable",
+        "operator"
+      ],
+      "description": "Define a match condition."
+    },
+    "PolicySettings": {
+      "type": "object",
+      "properties": {
+        "customBlockResponseBody": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "If the action type is block, customer can override the response body. The body must be specified in base64 encoding."
+        },
+        "customBlockResponseStatusCode": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "If the action type is block, customer can override the response status code."
+        },
+        "enabledState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes if the policy is in enabled or disabled state. Defaults to Enabled if not specified."
+        },
+        "mode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Prevention",
+                "Detection"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Describes if it is in detection mode or prevention mode at policy level."
+        },
+        "redirectUrl": {
+          "type": "string",
+          "description": "If action type is redirect, this field represents redirect URL for the client."
+        }
+      },
+      "description": "Defines top-level WebApplicationFirewallPolicy configuration settings."
+    },
+    "WebApplicationFirewallPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "customRules": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CustomRuleList"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Defines contents of custom rules"
+        },
+        "managedRules": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedRuleSetList"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Defines the list of managed rule sets for the policy."
+        },
+        "policySettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PolicySettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Defines top-level WebApplicationFirewallPolicy configuration settings."
+        }
+      },
+      "description": "Defines web application firewall policy properties."
+    }
+  }
+}

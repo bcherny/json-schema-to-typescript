@@ -52,9 +52,9 @@ export function parse(
   // so that it gets first pick for standalone name.
   const ast = parseAsTypeWithCache(
     {
+      $id: schema.$id,
       allOf: [],
       description: schema.description,
-      id: schema.id,
       title: schema.title
     },
     'ALL_OF',
@@ -168,7 +168,7 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         params: schema.enum!.map((_, n) => ({
-          ast: parse(_, options, undefined, processed, usedNames),
+          ast: parseLiteral(_, undefined),
           keyName: schema.tsEnumNames![n]
         })),
         type: 'ENUM'
@@ -248,7 +248,7 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
-          const member: LinkedJSONSchema = {...omit(schema, 'description', 'id', 'title'), type}
+          const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
           return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
         }),
         type: 'UNION'
@@ -258,7 +258,7 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        params: schema.enum!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        params: schema.enum!.map(_ => parseLiteral(_, undefined)),
         type: 'UNION'
       }
     case 'UNNAMED_SCHEMA':
@@ -301,7 +301,7 @@ function standaloneName(
   keyNameFromDefinition: string | undefined,
   usedNames: UsedNames
 ): string | undefined {
-  const name = schema.title || schema.id || keyNameFromDefinition
+  const name = schema.title || schema.$id || keyNameFromDefinition
   if (name) {
     return generateName(name, usedNames)
   }
@@ -432,7 +432,7 @@ via the \`patternProperty\` "${key}".`
 
   if (options.unreachableDefinitions) {
     asts = asts.concat(
-      map(schema.definitions, (value, key: string) => {
+      map(schema.$defs, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
 via the \`definition\` "${key}".`
@@ -501,7 +501,7 @@ function getDefinitions(
   }
   if (isPlainObject(schema)) {
     return {
-      ...(isSchema && hasDefinitions(schema) ? schema.definitions : {}),
+      ...(isSchema && hasDefinitions(schema) ? schema.$defs : {}),
       ...Object.keys(schema).reduce<Definitions>(
         (prev, cur) => ({
           ...prev,
@@ -520,5 +520,5 @@ const getDefinitionsMemoized = memoize(getDefinitions)
  * TODO: Reduce rate of false positives
  */
 function hasDefinitions(schema: LinkedJSONSchema): schema is JSONSchemaWithDefinitions {
-  return 'definitions' in schema
+  return '$defs' in schema
 }

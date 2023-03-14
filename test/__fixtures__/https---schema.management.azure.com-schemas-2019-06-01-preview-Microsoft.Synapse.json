@@ -1,0 +1,5415 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-06-01-preview/Microsoft.Synapse.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Synapse",
+  "description": "Microsoft Synapse Resource Types",
+  "resourceDefinitions": {
+    "privateLinkHubs": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the privateLinkHub"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateLinkHubProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "PrivateLinkHub properties"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/privateLinkHubs"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/privateLinkHubs"
+    },
+    "workspaces": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The workspace managed identity"
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the workspace"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkspaceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workspace properties"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/workspaces_bigDataPools_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_firewallRules_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_administrators_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlAdministrators_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_managedIdentitySqlControlSettings_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_integrationRuntimes_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_privateEndpointConnections_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_auditingSettings_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_extendedAuditingSettings_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_securityAlertPolicies_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_vulnerabilityAssessments_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_keys_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces"
+    },
+    "workspaces_administrators": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/activeDirectory$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AadAdminProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workspace active directory administrator properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/administrators"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/administrators"
+    },
+    "workspaces_auditingSettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a server blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/auditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/auditingSettings"
+    },
+    "workspaces_bigDataPools": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "Big Data pool name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BigDataPoolResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Big Data pool powered by Apache Spark"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/bigDataPools"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/bigDataPools"
+    },
+    "workspaces_extendedAuditingSettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ExtendedServerBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of an extended server blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/extendedAuditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/extendedAuditingSettings"
+    },
+    "workspaces_firewallRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The IP firewall rule name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IpFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "IP firewall rule properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/firewallRules"
+    },
+    "workspaces_integrationRuntimes": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Integration runtime name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntime"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Synapse nested object which serves as a compute resource for activities."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/integrationRuntimes"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/integrationRuntimes"
+    },
+    "workspaces_keys": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the workspace key"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/keys"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/keys"
+    },
+    "workspaces_managedIdentitySqlControlSettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedIdentitySqlControlSettingsModelProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Sql Control Settings for workspace managed identity"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/managedIdentitySqlControlSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/managedIdentitySqlControlSettings"
+    },
+    "workspaces_privateEndpointConnections": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the private endpoint connection."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a private endpoint connection."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/privateEndpointConnections"
+    },
+    "workspaces_securityAlertPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the security alert policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerSecurityAlertPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a security alert policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/securityAlertPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/securityAlertPolicies"
+    },
+    "workspaces_sqlAdministrators": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/activeDirectory$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AadAdminProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workspace active directory administrator properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlAdministrators"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlAdministrators"
+    },
+    "workspaces_sqlPools": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "SQL pool name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SqlPoolResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a SQL Analytics pool"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_metadataSync_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_geoBackupPolicies_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_maintenancewindows_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_transparentDataEncryption_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_auditingSettings_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_vulnerabilityAssessments_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_securityAlertPolicies_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_extendedAuditingSettings_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_dataMaskingPolicies_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_workloadGroups_childResource"
+              }
+            ]
+          }
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "SQL pool SKU"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools"
+    },
+    "workspaces_sqlPools_auditingSettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SqlPoolBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Sql pool blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/auditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/auditingSettings"
+    },
+    "workspaces_sqlPools_dataMaskingPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/Default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the data masking policy for which the masking rule applies."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataMaskingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a database data masking policy."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_dataMaskingPolicies_rules_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies"
+    },
+    "workspaces_sqlPools_dataMaskingPolicies_rules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the data masking rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataMaskingRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a Sql pool data masking rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/rules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/rules"
+    },
+    "workspaces_sqlPools_extendedAuditingSettings": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ExtendedSqlPoolBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of an extended Sql pool blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/extendedAuditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/extendedAuditingSettings"
+    },
+    "workspaces_sqlPools_geoBackupPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/Default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the geo backup policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/GeoBackupPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the geo backup policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/geoBackupPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/geoBackupPolicies"
+    },
+    "workspaces_sqlPools_maintenancewindows": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/current$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MaintenanceWindowsProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Maintenance windows resource properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/maintenancewindows"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/maintenancewindows"
+    },
+    "workspaces_sqlPools_metadataSync": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/config$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MetadataSyncConfigProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Metadata Sync Config properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/metadataSync"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/metadataSync"
+    },
+    "workspaces_sqlPools_schemas_tables_columns_sensitivityLabels": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/current$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The source of the sensitivity label."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SensitivityLabelProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a sensitivity label."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/schemas/tables/columns/sensitivityLabels"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/schemas/tables/columns/sensitivityLabels"
+    },
+    "workspaces_sqlPools_securityAlertPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the security alert policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecurityAlertPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a security alert policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/securityAlertPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/securityAlertPolicies"
+    },
+    "workspaces_sqlPools_transparentDataEncryption": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/current$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the transparent data encryption configuration."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TransparentDataEncryptionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Represents the properties of a database transparent data encryption."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/transparentDataEncryption"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/transparentDataEncryption"
+    },
+    "workspaces_sqlPools_vulnerabilityAssessments": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the vulnerability assessment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SqlPoolVulnerabilityAssessmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Sql pool Vulnerability Assessment."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments"
+    },
+    "workspaces_sqlPools_vulnerabilityAssessments_rules_baselines": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "master",
+                "default"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the vulnerability assessment rule baseline (default implies a baseline on a Sql pool level rule and master for workspace level rule)."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SqlPoolVulnerabilityAssessmentRuleBaselineProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Sql pool vulnerability assessment rule baseline."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments/rules/baselines"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments/rules/baselines"
+    },
+    "workspaces_sqlPools_workloadGroups": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the workload group."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkloadGroupProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workload group definition. For more information look at sys.workload_management_workload_groups (DMV)."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/workspaces_sqlPools_workloadGroups_workloadClassifiers_childResource"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/workloadGroups"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/workloadGroups"
+    },
+    "workspaces_sqlPools_workloadGroups_workloadClassifiers": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the workload classifier."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkloadClassifierProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workload classifier definition. For more information look at sys.workload_management_workload_classifiers (DMV)."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/sqlPools/workloadGroups/workloadClassifiers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/workloadGroups/workloadClassifiers"
+    },
+    "workspaces_vulnerabilityAssessments": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the vulnerability assessment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerVulnerabilityAssessmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a server Vulnerability Assessment."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Synapse/workspaces/vulnerabilityAssessments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/vulnerabilityAssessments"
+    }
+  },
+  "definitions": {
+    "AadAdminProperties": {
+      "type": "object",
+      "properties": {
+        "administratorType": {
+          "type": "string",
+          "description": "Workspace active directory administrator type"
+        },
+        "login": {
+          "type": "string",
+          "description": "Login of the workspace active directory administrator"
+        },
+        "sid": {
+          "type": "string",
+          "description": "Object ID of the workspace active directory administrator"
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "Tenant ID of the workspace active directory administrator"
+        }
+      },
+      "description": "Workspace active directory administrator properties"
+    },
+    "AutoPauseProperties": {
+      "type": "object",
+      "properties": {
+        "delayInMinutes": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of minutes of idle time before the Big Data pool is automatically paused."
+        },
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether auto-pausing is enabled for the Big Data pool."
+        }
+      },
+      "description": "Auto-pausing properties of a Big Data pool powered by Apache Spark"
+    },
+    "AutoScaleProperties": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether automatic scaling is enabled for the Big Data pool."
+        },
+        "maxNodeCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The maximum number of nodes the Big Data pool can support."
+        },
+        "minNodeCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The minimum number of nodes the Big Data pool can support."
+        }
+      },
+      "description": "Auto-scaling properties of a Big Data pool powered by Apache Spark"
+    },
+    "BigDataPoolResourceProperties": {
+      "type": "object",
+      "properties": {
+        "autoPause": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AutoPauseProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Auto-pausing properties of a Big Data pool powered by Apache Spark"
+        },
+        "autoScale": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AutoScaleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Auto-scaling properties of a Big Data pool powered by Apache Spark"
+        },
+        "cacheSize": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The cache size"
+        },
+        "creationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time when the Big Data pool was created."
+        },
+        "customLibraries": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LibraryInfo"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of custom libraries/packages associated with the spark pool."
+        },
+        "defaultSparkLogFolder": {
+          "type": "string",
+          "description": "The default folder where Spark logs will be written."
+        },
+        "dynamicExecutorAllocation": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DynamicExecutorAllocation"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Dynamic Executor Allocation Properties"
+        },
+        "isComputeIsolationEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether compute isolation is required or not."
+        },
+        "libraryRequirements": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LibraryRequirements"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Library requirements for a Big Data pool powered by Apache Spark"
+        },
+        "nodeCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of nodes in the Big Data pool."
+        },
+        "nodeSize": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "Small",
+                "Medium",
+                "Large",
+                "XLarge",
+                "XXLarge",
+                "XXXLarge"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The level of compute power that each node in the Big Data pool has."
+        },
+        "nodeSizeFamily": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "MemoryOptimized"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The kind of nodes that the Big Data pool provides."
+        },
+        "provisioningState": {
+          "type": "string",
+          "description": "The state of the Big Data pool."
+        },
+        "sessionLevelPackagesEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether session level packages enabled."
+        },
+        "sparkConfigProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LibraryRequirements"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Library requirements for a Big Data pool powered by Apache Spark"
+        },
+        "sparkEventsFolder": {
+          "type": "string",
+          "description": "The Spark events folder"
+        },
+        "sparkVersion": {
+          "type": "string",
+          "description": "The Apache Spark version."
+        }
+      },
+      "description": "Properties of a Big Data pool powered by Apache Spark"
+    },
+    "CmdkeySetup": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "CmdkeySetup"
+          ]
+        },
+        "typeProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CmdkeySetupTypeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Cmdkey command custom setup type properties."
+        }
+      },
+      "required": [
+        "type",
+        "typeProperties"
+      ],
+      "description": "The custom setup of running cmdkey commands."
+    },
+    "CmdkeySetupTypeProperties": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecretBase"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The base definition of a secret type."
+        },
+        "targetName": {
+          "type": "object",
+          "properties": {},
+          "description": "The server name of data source access."
+        },
+        "userName": {
+          "type": "object",
+          "properties": {},
+          "description": "The user name of data source access."
+        }
+      },
+      "required": [
+        "password",
+        "targetName",
+        "userName"
+      ],
+      "description": "Cmdkey command custom setup type properties."
+    },
+    "ComponentSetup": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "ComponentSetup"
+          ]
+        },
+        "typeProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LicensedComponentSetupTypeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Installation of licensed component setup type properties."
+        }
+      },
+      "required": [
+        "type",
+        "typeProperties"
+      ],
+      "description": "The custom setup of installing 3rd party components."
+    },
+    "CustomerManagedKeyDetails": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkspaceKeyDetails"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Details of the customer managed key associated with the workspace"
+        }
+      },
+      "description": "Details of the customer managed key associated with the workspace"
+    },
+    "CustomSetupBase": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/CmdkeySetup"
+        },
+        {
+          "$ref": "#/definitions/EnvironmentVariableSetup"
+        },
+        {
+          "$ref": "#/definitions/ComponentSetup"
+        }
+      ],
+      "properties": {},
+      "description": "The base definition of the custom setup."
+    },
+    "DataLakeStorageAccountDetails": {
+      "type": "object",
+      "properties": {
+        "accountUrl": {
+          "type": "string",
+          "description": "Account URL"
+        },
+        "filesystem": {
+          "type": "string",
+          "description": "Filesystem name"
+        }
+      },
+      "description": "Details of the data lake storage account associated with the workspace"
+    },
+    "DataMaskingPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "dataMaskingState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The state of the data masking policy."
+        },
+        "exemptPrincipals": {
+          "type": "string",
+          "description": "The list of the exempt principals. Specifies the semicolon-separated list of database users for which the data masking policy does not apply. The specified users receive data results without masking for all of the database queries."
+        }
+      },
+      "required": [
+        "dataMaskingState"
+      ],
+      "description": "The properties of a database data masking policy."
+    },
+    "DataMaskingRuleProperties": {
+      "type": "object",
+      "properties": {
+        "aliasName": {
+          "type": "string",
+          "description": "The alias name. This is a legacy parameter and is no longer used."
+        },
+        "columnName": {
+          "type": "string",
+          "description": "The column name on which the data masking rule is applied."
+        },
+        "maskingFunction": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Default",
+                "CCN",
+                "Email",
+                "Number",
+                "SSN",
+                "Text"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The masking function that is used for the data masking rule."
+        },
+        "numberFrom": {
+          "type": "string",
+          "description": "The numberFrom property of the masking rule. Required if maskingFunction is set to Number, otherwise this parameter will be ignored."
+        },
+        "numberTo": {
+          "type": "string",
+          "description": "The numberTo property of the data masking rule. Required if maskingFunction is set to Number, otherwise this parameter will be ignored."
+        },
+        "prefixSize": {
+          "type": "string",
+          "description": "If maskingFunction is set to Text, the number of characters to show unmasked in the beginning of the string. Otherwise, this parameter will be ignored."
+        },
+        "replacementString": {
+          "type": "string",
+          "description": "If maskingFunction is set to Text, the character to use for masking the unexposed part of the string. Otherwise, this parameter will be ignored."
+        },
+        "ruleState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rule state. Used to delete a rule. To delete an existing rule, specify the schemaName, tableName, columnName, maskingFunction, and specify ruleState as disabled. However, if the rule doesn't already exist, the rule will be created with ruleState set to enabled, regardless of the provided value of ruleState."
+        },
+        "schemaName": {
+          "type": "string",
+          "description": "The schema name on which the data masking rule is applied."
+        },
+        "suffixSize": {
+          "type": "string",
+          "description": "If maskingFunction is set to Text, the number of characters to show unmasked at the end of the string. Otherwise, this parameter will be ignored."
+        },
+        "tableName": {
+          "type": "string",
+          "description": "The table name on which the data masking rule is applied."
+        }
+      },
+      "required": [
+        "columnName",
+        "maskingFunction",
+        "schemaName",
+        "tableName"
+      ],
+      "description": "The properties of a Sql pool data masking rule."
+    },
+    "DynamicExecutorAllocation": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether Dynamic Executor Allocation is enabled or not."
+        }
+      },
+      "description": "Dynamic Executor Allocation Properties"
+    },
+    "EncryptionDetails": {
+      "type": "object",
+      "properties": {
+        "cmk": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CustomerManagedKeyDetails"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Details of the customer managed key associated with the workspace"
+        }
+      },
+      "description": "Details of the encryption associated with the workspace"
+    },
+    "EntityReference": {
+      "type": "object",
+      "properties": {
+        "referenceName": {
+          "type": "string",
+          "description": "The name of this referenced entity."
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "IntegrationRuntimeReference",
+                "LinkedServiceReference"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of this referenced entity."
+        }
+      },
+      "description": "The entity reference."
+    },
+    "EnvironmentVariableSetup": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "EnvironmentVariableSetup"
+          ]
+        },
+        "typeProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EnvironmentVariableSetupTypeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Environment variable custom setup type properties."
+        }
+      },
+      "required": [
+        "type",
+        "typeProperties"
+      ],
+      "description": "The custom setup of setting environment variable."
+    },
+    "EnvironmentVariableSetupTypeProperties": {
+      "type": "object",
+      "properties": {
+        "variableName": {
+          "type": "string",
+          "description": "The name of the environment variable."
+        },
+        "variableValue": {
+          "type": "string",
+          "description": "The value of the environment variable."
+        }
+      },
+      "required": [
+        "variableName",
+        "variableValue"
+      ],
+      "description": "Environment variable custom setup type properties."
+    },
+    "ExtendedServerBlobAuditingPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "auditActionsAndGroups": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the Actions-Groups and Actions to audit.\r\n\r\nThe recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:\r\n\r\nBATCH_COMPLETED_GROUP,\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,\r\nFAILED_DATABASE_AUTHENTICATION_GROUP.\r\n\r\nThis above combination is also the set that is configured by default when enabling auditing from the Azure portal.\r\n\r\nThe supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):\r\n\r\nAPPLICATION_ROLE_CHANGE_PASSWORD_GROUP\r\nBACKUP_RESTORE_GROUP\r\nDATABASE_LOGOUT_GROUP\r\nDATABASE_OBJECT_CHANGE_GROUP\r\nDATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nDATABASE_OBJECT_PERMISSION_CHANGE_GROUP\r\nDATABASE_OPERATION_GROUP\r\nDATABASE_PERMISSION_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_IMPERSONATION_GROUP\r\nDATABASE_ROLE_MEMBER_CHANGE_GROUP\r\nFAILED_DATABASE_AUTHENTICATION_GROUP\r\nSCHEMA_OBJECT_ACCESS_GROUP\r\nSCHEMA_OBJECT_CHANGE_GROUP\r\nSCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nSCHEMA_OBJECT_PERMISSION_CHANGE_GROUP\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP\r\nUSER_CHANGE_PASSWORD_GROUP\r\nBATCH_STARTED_GROUP\r\nBATCH_COMPLETED_GROUP\r\n\r\nThese are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.\r\n\r\nFor more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).\r\n\r\nFor Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:\r\nSELECT\r\nUPDATE\r\nINSERT\r\nDELETE\r\nEXECUTE\r\nRECEIVE\r\nREFERENCES\r\n\r\nThe general form for defining an action to be audited is:\r\n{action} ON {object} BY {principal}\r\n\r\nNote that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.\r\n\r\nFor example:\r\nSELECT on dbo.myTable by public\r\nSELECT on DATABASE::myDatabase by public\r\nSELECT on SCHEMA::mySchema by public\r\n\r\nFor more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)"
+        },
+        "isAzureMonitorTargetEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether audit events are sent to Azure Monitor. \r\nIn order to send the events to Azure Monitor, specify 'state' as 'Enabled' and 'isAzureMonitorTargetEnabled' as true.\r\n\r\nWhen using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.\r\nNote that for server level audit you should use the 'master' database as {databaseName}.\r\n\r\nDiagnostic Settings URI format:\r\nPUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview\r\n\r\nFor more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)\r\nor [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)\r\n"
+        },
+        "isStorageSecondaryKeyInUse": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether storageAccountAccessKey value is the storage's secondary key."
+        },
+        "predicateExpression": {
+          "type": "string",
+          "description": "Specifies condition of where clause when creating an audit."
+        },
+        "queueDelayMs": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the amount of time in milliseconds that can elapse before audit actions are forced to be processed.\r\nThe default minimum value is 1000 (1 second). The maximum is 2,147,483,647."
+        },
+        "retentionDays": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of days to keep in the audit logs in the storage account."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the state of the policy. If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the auditing storage account. \r\nIf state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.\r\nPrerequisites for using managed identity authentication:\r\n1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).\r\n2. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data Contributor' RBAC role to the server identity.\r\nFor more information, see [Auditing to storage using Managed Identity authentication](https://go.microsoft.com/fwlink/?linkid=2114355)"
+        },
+        "storageAccountSubscriptionId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the blob storage subscription Id."
+        },
+        "storageEndpoint": {
+          "type": "string",
+          "description": "Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled is required."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "Properties of an extended server blob auditing policy."
+    },
+    "ExtendedSqlPoolBlobAuditingPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "auditActionsAndGroups": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the Actions-Groups and Actions to audit.\r\n\r\nThe recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:\r\n\r\nBATCH_COMPLETED_GROUP,\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,\r\nFAILED_DATABASE_AUTHENTICATION_GROUP.\r\n\r\nThis above combination is also the set that is configured by default when enabling auditing from the Azure portal.\r\n\r\nThe supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):\r\n\r\nAPPLICATION_ROLE_CHANGE_PASSWORD_GROUP\r\nBACKUP_RESTORE_GROUP\r\nDATABASE_LOGOUT_GROUP\r\nDATABASE_OBJECT_CHANGE_GROUP\r\nDATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nDATABASE_OBJECT_PERMISSION_CHANGE_GROUP\r\nDATABASE_OPERATION_GROUP\r\nDATABASE_PERMISSION_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_IMPERSONATION_GROUP\r\nDATABASE_ROLE_MEMBER_CHANGE_GROUP\r\nFAILED_DATABASE_AUTHENTICATION_GROUP\r\nSCHEMA_OBJECT_ACCESS_GROUP\r\nSCHEMA_OBJECT_CHANGE_GROUP\r\nSCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nSCHEMA_OBJECT_PERMISSION_CHANGE_GROUP\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP\r\nUSER_CHANGE_PASSWORD_GROUP\r\nBATCH_STARTED_GROUP\r\nBATCH_COMPLETED_GROUP\r\n\r\nThese are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.\r\n\r\nFor more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).\r\n\r\nFor Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:\r\nSELECT\r\nUPDATE\r\nINSERT\r\nDELETE\r\nEXECUTE\r\nRECEIVE\r\nREFERENCES\r\n\r\nThe general form for defining an action to be audited is:\r\n{action} ON {object} BY {principal}\r\n\r\nNote that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.\r\n\r\nFor example:\r\nSELECT on dbo.myTable by public\r\nSELECT on DATABASE::myDatabase by public\r\nSELECT on SCHEMA::mySchema by public\r\n\r\nFor more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)"
+        },
+        "isAzureMonitorTargetEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether audit events are sent to Azure Monitor. \r\nIn order to send the events to Azure Monitor, specify 'state' as 'Enabled' and 'isAzureMonitorTargetEnabled' as true.\r\n\r\nWhen using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.\r\nNote that for server level audit you should use the 'master' database as {databaseName}.\r\n\r\nDiagnostic Settings URI format:\r\nPUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview\r\n\r\nFor more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)\r\nor [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)\r\n"
+        },
+        "isStorageSecondaryKeyInUse": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether storageAccountAccessKey value is the storage's secondary key."
+        },
+        "predicateExpression": {
+          "type": "string",
+          "description": "Specifies condition of where clause when creating an audit."
+        },
+        "queueDelayMs": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the amount of time in milliseconds that can elapse before audit actions are forced to be processed.\r\nThe default minimum value is 1000 (1 second). The maximum is 2,147,483,647."
+        },
+        "retentionDays": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of days to keep in the audit logs in the storage account."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the state of the policy. If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the auditing storage account. \r\nIf state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.\r\nPrerequisites for using managed identity authentication:\r\n1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).\r\n2. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data Contributor' RBAC role to the server identity.\r\nFor more information, see [Auditing to storage using Managed Identity authentication](https://go.microsoft.com/fwlink/?linkid=2114355)"
+        },
+        "storageAccountSubscriptionId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the blob storage subscription Id."
+        },
+        "storageEndpoint": {
+          "type": "string",
+          "description": "Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled is required."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "Properties of an extended Sql pool blob auditing policy."
+    },
+    "GeoBackupPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The state of the geo backup policy."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "The properties of the geo backup policy."
+    },
+    "GitHubClientSecret": {
+      "type": "object",
+      "properties": {
+        "byoaSecretAkvUrl": {
+          "type": "string",
+          "description": "Bring your own app client secret AKV URL"
+        },
+        "byoaSecretName": {
+          "type": "string",
+          "description": "Bring your own app client secret name in AKV"
+        }
+      },
+      "description": "Client secret information for factory's bring your own app repository configuration"
+    },
+    "IntegrationRuntime": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ManagedIntegrationRuntime"
+        },
+        {
+          "$ref": "#/definitions/SelfHostedIntegrationRuntime"
+        }
+      ],
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "description": {
+          "type": "string",
+          "description": "Integration runtime description."
+        }
+      },
+      "description": "Azure Synapse nested object which serves as a compute resource for activities."
+    },
+    "IntegrationRuntimeComputeProperties": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "dataFlowProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntimeDataFlowProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Data flow properties for managed integration runtime."
+        },
+        "location": {
+          "type": "string",
+          "description": "The location for managed integration runtime. The supported regions could be found on https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities"
+        },
+        "maxParallelExecutionsPerNode": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Maximum parallel executions count per node for managed integration runtime."
+        },
+        "nodeSize": {
+          "type": "string",
+          "description": "The node size requirement to managed integration runtime."
+        },
+        "numberOfNodes": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The required number of nodes for managed integration runtime."
+        },
+        "vNetProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntimeVNetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "VNet properties for managed integration runtime."
+        }
+      },
+      "description": "The compute resource properties for managed integration runtime."
+    },
+    "IntegrationRuntimeCustomSetupScriptProperties": {
+      "type": "object",
+      "properties": {
+        "blobContainerUri": {
+          "type": "string",
+          "description": "The URI of the Azure blob container that contains the custom setup script."
+        },
+        "sasToken": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecureString"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Synapse secure string definition. The string value will be masked with asterisks '*' during Get or List API calls."
+        }
+      },
+      "description": "Custom setup script properties for a managed dedicated integration runtime."
+    },
+    "IntegrationRuntimeDataFlowProperties": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "cleanup": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Cluster will not be recycled and it will be used in next data flow activity run until TTL (time to live) is reached if this is set as false. Default is true."
+        },
+        "computeType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "General",
+                "MemoryOptimized",
+                "ComputeOptimized"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Compute type of the cluster which will execute data flow job."
+        },
+        "coreCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Core count of the cluster which will execute data flow job. Supported values are: 8, 16, 32, 48, 80, 144 and 272."
+        },
+        "timeToLive": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Time to live (in minutes) setting of the cluster which will execute data flow job."
+        }
+      },
+      "description": "Data flow properties for managed integration runtime."
+    },
+    "IntegrationRuntimeDataProxyProperties": {
+      "type": "object",
+      "properties": {
+        "connectVia": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EntityReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The entity reference."
+        },
+        "path": {
+          "type": "string",
+          "description": "The path to contain the staged data in the Blob storage."
+        },
+        "stagingLinkedService": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EntityReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The entity reference."
+        }
+      },
+      "description": "Data proxy properties for a managed dedicated integration runtime."
+    },
+    "IntegrationRuntimeSsisCatalogInfo": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "catalogAdminPassword": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecureString"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Synapse secure string definition. The string value will be masked with asterisks '*' during Get or List API calls."
+        },
+        "catalogAdminUserName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "The administrator user name of catalog database."
+        },
+        "catalogPricingTier": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Basic",
+                "Standard",
+                "Premium",
+                "PremiumRS"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The pricing tier for the catalog database. The valid values could be found in https://azure.microsoft.com/en-us/pricing/details/sql-database/."
+        },
+        "catalogServerEndpoint": {
+          "type": "string",
+          "description": "The catalog database server URL."
+        }
+      },
+      "description": "Catalog information for managed dedicated integration runtime."
+    },
+    "IntegrationRuntimeSsisProperties": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "catalogInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntimeSsisCatalogInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Catalog information for managed dedicated integration runtime."
+        },
+        "customSetupScriptProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntimeCustomSetupScriptProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Custom setup script properties for a managed dedicated integration runtime."
+        },
+        "dataProxyProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntimeDataProxyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Data proxy properties for a managed dedicated integration runtime."
+        },
+        "edition": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Standard",
+                "Enterprise"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The edition for the SSIS Integration Runtime."
+        },
+        "expressCustomSetupProperties": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CustomSetupBase"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Custom setup without script properties for a SSIS integration runtime."
+        },
+        "licenseType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "BasePrice",
+                "LicenseIncluded"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "License type for bringing your own license scenario."
+        }
+      },
+      "description": "SSIS properties for managed integration runtime."
+    },
+    "IntegrationRuntimeVNetProperties": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {}
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Unmatched properties from the message are deserialized this collection"
+        },
+        "publicIPs": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource IDs of the public IP addresses that this integration runtime will use."
+        },
+        "subnet": {
+          "type": "string",
+          "description": "The name of the subnet this integration runtime will join."
+        },
+        "vNetId": {
+          "type": "string",
+          "description": "The ID of the VNet that this integration runtime will join."
+        }
+      },
+      "description": "VNet properties for managed integration runtime."
+    },
+    "IpFirewallRuleProperties": {
+      "type": "object",
+      "properties": {
+        "endIpAddress": {
+          "type": "string",
+          "description": "The end IP address of the firewall rule. Must be IPv4 format. Must be greater than or equal to startIpAddress"
+        },
+        "startIpAddress": {
+          "type": "string",
+          "description": "The start IP address of the firewall rule. Must be IPv4 format"
+        }
+      },
+      "description": "IP firewall rule properties"
+    },
+    "KeyProperties": {
+      "type": "object",
+      "properties": {
+        "isActiveCMK": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Used to activate the workspace after a customer managed key is provided."
+        },
+        "keyVaultUrl": {
+          "type": "string",
+          "description": "The Key Vault Url of the workspace key."
+        }
+      },
+      "description": "Key properties"
+    },
+    "LibraryInfo": {
+      "type": "object",
+      "properties": {
+        "containerName": {
+          "type": "string",
+          "description": "Storage blob container name."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the library."
+        },
+        "path": {
+          "type": "string",
+          "description": "Storage blob path of library."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the library."
+        },
+        "uploadedTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last update time of the library."
+        }
+      },
+      "description": "Library/package information of a Big Data pool powered by Apache Spark"
+    },
+    "LibraryRequirements": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "The library requirements."
+        },
+        "filename": {
+          "type": "string",
+          "description": "The filename of the library requirements file."
+        }
+      },
+      "description": "Library requirements for a Big Data pool powered by Apache Spark"
+    },
+    "LicensedComponentSetupTypeProperties": {
+      "type": "object",
+      "properties": {
+        "componentName": {
+          "type": "string",
+          "description": "The name of the 3rd party component."
+        },
+        "licenseKey": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecretBase"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The base definition of a secret type."
+        }
+      },
+      "required": [
+        "componentName"
+      ],
+      "description": "Installation of licensed component setup type properties."
+    },
+    "LinkedIntegrationRuntimeKeyAuthorization": {
+      "type": "object",
+      "properties": {
+        "authorizationType": {
+          "type": "string",
+          "enum": [
+            "Key"
+          ]
+        },
+        "key": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecureString"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Synapse secure string definition. The string value will be masked with asterisks '*' during Get or List API calls."
+        }
+      },
+      "required": [
+        "authorizationType",
+        "key"
+      ],
+      "description": "The key authorization type integration runtime."
+    },
+    "LinkedIntegrationRuntimeRbacAuthorization": {
+      "type": "object",
+      "properties": {
+        "authorizationType": {
+          "type": "string",
+          "enum": [
+            "RBAC"
+          ]
+        },
+        "resourceId": {
+          "type": "string",
+          "description": "The resource identifier of the integration runtime to be shared."
+        }
+      },
+      "required": [
+        "authorizationType",
+        "resourceId"
+      ],
+      "description": "The role based access control (RBAC) authorization type integration runtime."
+    },
+    "LinkedIntegrationRuntimeType": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/LinkedIntegrationRuntimeKeyAuthorization"
+        },
+        {
+          "$ref": "#/definitions/LinkedIntegrationRuntimeRbacAuthorization"
+        }
+      ],
+      "properties": {},
+      "description": "The base definition of a linked integration runtime."
+    },
+    "MaintenanceWindowsProperties": {
+      "type": "object",
+      "properties": {
+        "timeRanges": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MaintenanceWindowTimeRange"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "description": "Maintenance windows resource properties."
+    },
+    "MaintenanceWindowTimeRange": {
+      "type": "object",
+      "properties": {
+        "dayOfWeek": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Day of maintenance window."
+        },
+        "duration": {
+          "type": "string",
+          "description": "Duration of maintenance window in minutes."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Start time minutes offset from 12am."
+        }
+      },
+      "description": "Maintenance window time range."
+    },
+    "ManagedIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "SystemAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The type of managed identity for the workspace."
+        }
+      },
+      "description": "The workspace managed identity"
+    },
+    "ManagedIdentitySqlControlSettingsModelProperties": {
+      "type": "object",
+      "properties": {
+        "grantSqlControlToManagedIdentity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Grant sql control to managed identity"
+        }
+      },
+      "description": "Sql Control Settings for workspace managed identity"
+    },
+    "ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity": {
+      "type": "object",
+      "properties": {
+        "desiredState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Desired state."
+        }
+      },
+      "description": "Grant sql control to managed identity"
+    },
+    "ManagedIntegrationRuntime": {
+      "type": "object",
+      "properties": {
+        "managedVirtualNetwork": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedVirtualNetworkReference"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Managed Virtual Network reference type."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Managed"
+          ]
+        },
+        "typeProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedIntegrationRuntimeTypeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Managed integration runtime type properties."
+        }
+      },
+      "required": [
+        "type",
+        "typeProperties"
+      ],
+      "description": "Managed integration runtime, including managed elastic and managed dedicated integration runtimes."
+    },
+    "ManagedIntegrationRuntimeTypeProperties": {
+      "type": "object",
+      "properties": {
+        "computeProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntimeComputeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The compute resource properties for managed integration runtime."
+        },
+        "ssisProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntimeSsisProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "SSIS properties for managed integration runtime."
+        }
+      },
+      "description": "Managed integration runtime type properties."
+    },
+    "ManagedVirtualNetworkReference": {
+      "type": "object",
+      "properties": {
+        "referenceName": {
+          "type": "string",
+          "description": "Reference ManagedVirtualNetwork name."
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ManagedVirtualNetworkReference"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Managed Virtual Network reference type."
+        }
+      },
+      "required": [
+        "referenceName",
+        "type"
+      ],
+      "description": "Managed Virtual Network reference type."
+    },
+    "ManagedVirtualNetworkSettings": {
+      "type": "object",
+      "properties": {
+        "allowedAadTenantIdsForLinking": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Allowed Aad Tenant Ids For Linking"
+        },
+        "linkedAccessCheckOnTargetResource": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Linked Access Check On Target Resource"
+        },
+        "preventDataExfiltration": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Prevent Data Exfiltration"
+        }
+      },
+      "description": "Managed Virtual Network Settings"
+    },
+    "MetadataSyncConfigProperties": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether the metadata sync is enabled or disabled"
+        },
+        "syncIntervalInMinutes": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Sync Interval in minutes."
+        }
+      },
+      "description": "Metadata Sync Config properties"
+    },
+    "PrivateEndpoint": {
+      "type": "object",
+      "properties": {},
+      "description": "Private endpoint details"
+    },
+    "PrivateEndpointConnection": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a private endpoint connection."
+        }
+      },
+      "description": "A private endpoint connection"
+    },
+    "PrivateEndpointConnectionProperties": {
+      "type": "object",
+      "properties": {
+        "privateEndpoint": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpoint"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Private endpoint details"
+        },
+        "privateLinkServiceConnectionState": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateLinkServiceConnectionState"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Connection state details of the private endpoint"
+        }
+      },
+      "description": "Properties of a private endpoint connection."
+    },
+    "PrivateLinkHubProperties": {
+      "type": "object",
+      "properties": {
+        "provisioningState": {
+          "type": "string",
+          "description": "PrivateLinkHub provisioning state"
+        }
+      },
+      "description": "PrivateLinkHub properties"
+    },
+    "PrivateLinkServiceConnectionState": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The private link service connection description."
+        },
+        "status": {
+          "type": "string",
+          "description": "The private link service connection status."
+        }
+      },
+      "description": "Connection state details of the private endpoint"
+    },
+    "PurviewConfiguration": {
+      "type": "object",
+      "properties": {
+        "purviewResourceId": {
+          "type": "string",
+          "description": "Purview Resource ID"
+        }
+      },
+      "description": "Purview Configuration"
+    },
+    "SecretBase": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/SecureString"
+        }
+      ],
+      "properties": {},
+      "description": "The base definition of a secret type."
+    },
+    "SecureString": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SecureString"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "Value of secure string."
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "description": "Azure Synapse secure string definition. The string value will be masked with asterisks '*' during Get or List API calls."
+    },
+    "SecurityAlertPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "disabledAlerts": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies an array of alerts that are disabled. Allowed values are: Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action"
+        },
+        "emailAccountAdmins": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies that the alert is sent to the account administrators."
+        },
+        "emailAddresses": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies an array of e-mail addresses to which the alert is sent."
+        },
+        "retentionDays": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of days to keep in the Threat Detection audit logs."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "New",
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the state of the policy, whether it is enabled or disabled or a policy has not been applied yet on the specific Sql pool."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the Threat Detection audit storage account."
+        },
+        "storageEndpoint": {
+          "type": "string",
+          "description": "Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection audit logs."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "Properties of a security alert policy."
+    },
+    "SelfHostedIntegrationRuntime": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SelfHosted"
+          ]
+        },
+        "typeProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SelfHostedIntegrationRuntimeTypeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The self-hosted integration runtime properties."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "description": "Self-hosted integration runtime."
+    },
+    "SelfHostedIntegrationRuntimeTypeProperties": {
+      "type": "object",
+      "properties": {
+        "linkedInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LinkedIntegrationRuntimeType"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The base definition of a linked integration runtime."
+        }
+      },
+      "description": "The self-hosted integration runtime properties."
+    },
+    "SensitivityLabelProperties": {
+      "type": "object",
+      "properties": {
+        "informationType": {
+          "type": "string",
+          "description": "The information type."
+        },
+        "informationTypeId": {
+          "type": "string",
+          "description": "The information type ID."
+        },
+        "labelId": {
+          "type": "string",
+          "description": "The label ID."
+        },
+        "labelName": {
+          "type": "string",
+          "description": "The label name."
+        },
+        "rank": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "Low",
+                "Medium",
+                "High",
+                "Critical"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "description": "Properties of a sensitivity label."
+    },
+    "ServerBlobAuditingPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "auditActionsAndGroups": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the Actions-Groups and Actions to audit.\r\n\r\nThe recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:\r\n\r\nBATCH_COMPLETED_GROUP,\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,\r\nFAILED_DATABASE_AUTHENTICATION_GROUP.\r\n\r\nThis above combination is also the set that is configured by default when enabling auditing from the Azure portal.\r\n\r\nThe supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):\r\n\r\nAPPLICATION_ROLE_CHANGE_PASSWORD_GROUP\r\nBACKUP_RESTORE_GROUP\r\nDATABASE_LOGOUT_GROUP\r\nDATABASE_OBJECT_CHANGE_GROUP\r\nDATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nDATABASE_OBJECT_PERMISSION_CHANGE_GROUP\r\nDATABASE_OPERATION_GROUP\r\nDATABASE_PERMISSION_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_IMPERSONATION_GROUP\r\nDATABASE_ROLE_MEMBER_CHANGE_GROUP\r\nFAILED_DATABASE_AUTHENTICATION_GROUP\r\nSCHEMA_OBJECT_ACCESS_GROUP\r\nSCHEMA_OBJECT_CHANGE_GROUP\r\nSCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nSCHEMA_OBJECT_PERMISSION_CHANGE_GROUP\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP\r\nUSER_CHANGE_PASSWORD_GROUP\r\nBATCH_STARTED_GROUP\r\nBATCH_COMPLETED_GROUP\r\n\r\nThese are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.\r\n\r\nFor more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).\r\n\r\nFor Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:\r\nSELECT\r\nUPDATE\r\nINSERT\r\nDELETE\r\nEXECUTE\r\nRECEIVE\r\nREFERENCES\r\n\r\nThe general form for defining an action to be audited is:\r\n{action} ON {object} BY {principal}\r\n\r\nNote that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.\r\n\r\nFor example:\r\nSELECT on dbo.myTable by public\r\nSELECT on DATABASE::myDatabase by public\r\nSELECT on SCHEMA::mySchema by public\r\n\r\nFor more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)"
+        },
+        "isAzureMonitorTargetEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether audit events are sent to Azure Monitor. \r\nIn order to send the events to Azure Monitor, specify 'state' as 'Enabled' and 'isAzureMonitorTargetEnabled' as true.\r\n\r\nWhen using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.\r\nNote that for server level audit you should use the 'master' database as {databaseName}.\r\n\r\nDiagnostic Settings URI format:\r\nPUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview\r\n\r\nFor more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)\r\nor [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)\r\n"
+        },
+        "isStorageSecondaryKeyInUse": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether storageAccountAccessKey value is the storage's secondary key."
+        },
+        "queueDelayMs": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the amount of time in milliseconds that can elapse before audit actions are forced to be processed.\r\nThe default minimum value is 1000 (1 second). The maximum is 2,147,483,647."
+        },
+        "retentionDays": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of days to keep in the audit logs in the storage account."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the state of the policy. If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the auditing storage account. \r\nIf state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.\r\nPrerequisites for using managed identity authentication:\r\n1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).\r\n2. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data Contributor' RBAC role to the server identity.\r\nFor more information, see [Auditing to storage using Managed Identity authentication](https://go.microsoft.com/fwlink/?linkid=2114355)"
+        },
+        "storageAccountSubscriptionId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the blob storage subscription Id."
+        },
+        "storageEndpoint": {
+          "type": "string",
+          "description": "Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled is required."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "Properties of a server blob auditing policy."
+    },
+    "ServerSecurityAlertPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "disabledAlerts": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies an array of alerts that are disabled. Allowed values are: Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action"
+        },
+        "emailAccountAdmins": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies that the alert is sent to the account administrators."
+        },
+        "emailAddresses": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies an array of e-mail addresses to which the alert is sent."
+        },
+        "retentionDays": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of days to keep in the Threat Detection audit logs."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "New",
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the state of the policy, whether it is enabled or disabled or a policy has not been applied yet on the specific server."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the Threat Detection audit storage account."
+        },
+        "storageEndpoint": {
+          "type": "string",
+          "description": "Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection audit logs."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "Properties of a security alert policy."
+    },
+    "ServerVulnerabilityAssessmentProperties": {
+      "type": "object",
+      "properties": {
+        "recurringScans": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VulnerabilityAssessmentRecurringScansProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Vulnerability Assessment recurring scans."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the storage account for vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified, storageAccountAccessKey is required."
+        },
+        "storageContainerPath": {
+          "type": "string",
+          "description": "A blob storage container path to hold the scan results (e.g. https://myStorage.blob.core.windows.net/VaScans/)."
+        },
+        "storageContainerSasKey": {
+          "type": "string",
+          "description": "A shared access signature (SAS Key) that has read and write access to the blob container specified in 'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required."
+        }
+      },
+      "required": [
+        "storageContainerPath"
+      ],
+      "description": "Properties of a server Vulnerability Assessment."
+    },
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible for the resource this may be omitted."
+        },
+        "name": {
+          "type": "string",
+          "description": "The SKU name"
+        },
+        "tier": {
+          "type": "string",
+          "description": "The service tier"
+        }
+      },
+      "description": "SQL pool SKU"
+    },
+    "SqlPoolBlobAuditingPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "auditActionsAndGroups": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the Actions-Groups and Actions to audit.\r\n\r\nThe recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:\r\n\r\nBATCH_COMPLETED_GROUP,\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,\r\nFAILED_DATABASE_AUTHENTICATION_GROUP.\r\n\r\nThis above combination is also the set that is configured by default when enabling auditing from the Azure portal.\r\n\r\nThe supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):\r\n\r\nAPPLICATION_ROLE_CHANGE_PASSWORD_GROUP\r\nBACKUP_RESTORE_GROUP\r\nDATABASE_LOGOUT_GROUP\r\nDATABASE_OBJECT_CHANGE_GROUP\r\nDATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nDATABASE_OBJECT_PERMISSION_CHANGE_GROUP\r\nDATABASE_OPERATION_GROUP\r\nDATABASE_PERMISSION_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_CHANGE_GROUP\r\nDATABASE_PRINCIPAL_IMPERSONATION_GROUP\r\nDATABASE_ROLE_MEMBER_CHANGE_GROUP\r\nFAILED_DATABASE_AUTHENTICATION_GROUP\r\nSCHEMA_OBJECT_ACCESS_GROUP\r\nSCHEMA_OBJECT_CHANGE_GROUP\r\nSCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP\r\nSCHEMA_OBJECT_PERMISSION_CHANGE_GROUP\r\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP\r\nUSER_CHANGE_PASSWORD_GROUP\r\nBATCH_STARTED_GROUP\r\nBATCH_COMPLETED_GROUP\r\n\r\nThese are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.\r\n\r\nFor more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).\r\n\r\nFor Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:\r\nSELECT\r\nUPDATE\r\nINSERT\r\nDELETE\r\nEXECUTE\r\nRECEIVE\r\nREFERENCES\r\n\r\nThe general form for defining an action to be audited is:\r\n{action} ON {object} BY {principal}\r\n\r\nNote that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.\r\n\r\nFor example:\r\nSELECT on dbo.myTable by public\r\nSELECT on DATABASE::myDatabase by public\r\nSELECT on SCHEMA::mySchema by public\r\n\r\nFor more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)"
+        },
+        "isAzureMonitorTargetEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether audit events are sent to Azure Monitor. \r\nIn order to send the events to Azure Monitor, specify 'state' as 'Enabled' and 'isAzureMonitorTargetEnabled' as true.\r\n\r\nWhen using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.\r\nNote that for server level audit you should use the 'master' database as {databaseName}.\r\n\r\nDiagnostic Settings URI format:\r\nPUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview\r\n\r\nFor more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)\r\nor [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)\r\n"
+        },
+        "isStorageSecondaryKeyInUse": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies whether storageAccountAccessKey value is the storage's secondary key."
+        },
+        "retentionDays": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of days to keep in the audit logs in the storage account."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the state of the policy. If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the auditing storage account. If state is Enabled and storageEndpoint is specified, storageAccountAccessKey is required."
+        },
+        "storageAccountSubscriptionId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the blob storage subscription Id."
+        },
+        "storageEndpoint": {
+          "type": "string",
+          "description": "Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint is required."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "Properties of a Sql pool blob auditing policy."
+    },
+    "SqlPoolResourceProperties": {
+      "type": "object",
+      "properties": {
+        "collation": {
+          "type": "string",
+          "description": "Collation mode"
+        },
+        "createMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Default",
+                "PointInTimeRestore",
+                "Recovery",
+                "Restore"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the mode of sql pool creation.\n\nDefault: regular sql pool creation.\n\nPointInTimeRestore: Creates a sql pool by restoring a point in time backup of an existing sql pool. sourceDatabaseId must be specified as the resource ID of the existing sql pool, and restorePointInTime must be specified.\n\nRecovery: Creates a sql pool by a geo-replicated backup. sourceDatabaseId  must be specified as the recoverableDatabaseId to restore.\n\nRestore: Creates a sql pool by restoring a backup of a deleted sql  pool. SourceDatabaseId should be the sql pool's original resource ID. SourceDatabaseId and sourceDatabaseDeletionDate must be specified."
+        },
+        "creationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date the SQL pool was created"
+        },
+        "maxSizeBytes": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Maximum size in bytes"
+        },
+        "provisioningState": {
+          "type": "string",
+          "description": "Resource state"
+        },
+        "recoverableDatabaseId": {
+          "type": "string",
+          "description": "Backup database to restore from"
+        },
+        "restorePointInTime": {
+          "type": "string",
+          "description": "Snapshot time to restore"
+        },
+        "sourceDatabaseId": {
+          "type": "string",
+          "description": "Source database to create from"
+        },
+        "status": {
+          "type": "string",
+          "description": "Resource status"
+        }
+      },
+      "description": "Properties of a SQL Analytics pool"
+    },
+    "SqlPoolVulnerabilityAssessmentProperties": {
+      "type": "object",
+      "properties": {
+        "recurringScans": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VulnerabilityAssessmentRecurringScansProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Vulnerability Assessment recurring scans."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the storage account for vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified, storageAccountAccessKey is required."
+        },
+        "storageContainerPath": {
+          "type": "string",
+          "description": "A blob storage container path to hold the scan results (e.g. https://myStorage.blob.core.windows.net/VaScans/).  It is required if server level vulnerability assessment policy doesn't set"
+        },
+        "storageContainerSasKey": {
+          "type": "string",
+          "description": "A shared access signature (SAS Key) that has write access to the blob container specified in 'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required."
+        }
+      },
+      "description": "Properties of a Sql pool Vulnerability Assessment."
+    },
+    "SqlPoolVulnerabilityAssessmentRuleBaselineItem": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rule baseline result"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "description": "Properties for an Sql pool vulnerability assessment rule baseline's result."
+    },
+    "SqlPoolVulnerabilityAssessmentRuleBaselineProperties": {
+      "type": "object",
+      "properties": {
+        "baselineResults": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SqlPoolVulnerabilityAssessmentRuleBaselineItem"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The rule baseline result"
+        }
+      },
+      "required": [
+        "baselineResults"
+      ],
+      "description": "Properties of a Sql pool vulnerability assessment rule baseline."
+    },
+    "TransparentDataEncryptionProperties": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The status of the database transparent data encryption."
+        }
+      },
+      "description": "Represents the properties of a database transparent data encryption."
+    },
+    "VirtualNetworkProfile": {
+      "type": "object",
+      "properties": {
+        "computeSubnetId": {
+          "type": "string",
+          "description": "Subnet ID used for computes in workspace"
+        }
+      },
+      "description": "Virtual Network Profile"
+    },
+    "VulnerabilityAssessmentRecurringScansProperties": {
+      "type": "object",
+      "properties": {
+        "emails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies an array of e-mail addresses to which the scan notification is sent."
+        },
+        "emailSubscriptionAdmins": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies that the schedule scan notification will be is sent to the subscription administrators."
+        },
+        "isEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Recurring scans state."
+        }
+      },
+      "description": "Properties of a Vulnerability Assessment recurring scans."
+    },
+    "WorkloadClassifierProperties": {
+      "type": "object",
+      "properties": {
+        "context": {
+          "type": "string",
+          "description": "The workload classifier context."
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The workload classifier end time for classification."
+        },
+        "importance": {
+          "type": "string",
+          "description": "The workload classifier importance."
+        },
+        "label": {
+          "type": "string",
+          "description": "The workload classifier label."
+        },
+        "memberName": {
+          "type": "string",
+          "description": "The workload classifier member name."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The workload classifier start time for classification."
+        }
+      },
+      "required": [
+        "memberName"
+      ],
+      "description": "Workload classifier definition. For more information look at sys.workload_management_workload_classifiers (DMV)."
+    },
+    "WorkloadGroupProperties": {
+      "type": "object",
+      "properties": {
+        "importance": {
+          "type": "string",
+          "description": "The workload group importance level."
+        },
+        "maxResourcePercent": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The workload group cap percentage resource."
+        },
+        "maxResourcePercentPerRequest": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The workload group request maximum grant percentage."
+        },
+        "minResourcePercent": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The workload group minimum percentage resource."
+        },
+        "minResourcePercentPerRequest": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The workload group request minimum grant percentage."
+        },
+        "queryExecutionTimeout": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The workload group query execution timeout."
+        }
+      },
+      "required": [
+        "maxResourcePercent",
+        "minResourcePercent",
+        "minResourcePercentPerRequest"
+      ],
+      "description": "Workload group definition. For more information look at sys.workload_management_workload_groups (DMV)."
+    },
+    "WorkspaceKeyDetails": {
+      "type": "object",
+      "properties": {
+        "keyVaultUrl": {
+          "type": "string",
+          "description": "Workspace Key sub-resource key vault url"
+        },
+        "name": {
+          "type": "string",
+          "description": "Workspace Key sub-resource name"
+        }
+      },
+      "description": "Details of the customer managed key associated with the workspace"
+    },
+    "WorkspaceProperties": {
+      "type": "object",
+      "properties": {
+        "connectivityEndpoints": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Connectivity endpoints"
+        },
+        "defaultDataLakeStorage": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataLakeStorageAccountDetails"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Details of the data lake storage account associated with the workspace"
+        },
+        "encryption": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/EncryptionDetails"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Details of the encryption associated with the workspace"
+        },
+        "managedResourceGroupName": {
+          "type": "string",
+          "description": "Workspace managed resource group. The resource group name uniquely identifies the resource group within the user subscriptionId. The resource group name must be no longer than 90 characters long, and must be alphanumeric characters (Char.IsLetterOrDigit()) and '-', '_', '(', ')' and'.'. Note that the name cannot end with '.'"
+        },
+        "managedVirtualNetwork": {
+          "type": "string",
+          "description": "Setting this to 'default' will ensure that all compute for this workspace is in a virtual network managed on behalf of the user."
+        },
+        "managedVirtualNetworkSettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedVirtualNetworkSettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Managed Virtual Network Settings"
+        },
+        "privateEndpointConnections": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PrivateEndpointConnection"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Private endpoint connections to the workspace"
+        },
+        "purviewConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PurviewConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Purview Configuration"
+        },
+        "sqlAdministratorLogin": {
+          "type": "string",
+          "description": "Login for workspace SQL active directory administrator"
+        },
+        "sqlAdministratorLoginPassword": {
+          "type": "string",
+          "description": "SQL administrator login password"
+        },
+        "virtualNetworkProfile": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualNetworkProfile"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Virtual Network Profile"
+        },
+        "workspaceRepositoryConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkspaceRepositoryConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Git integration settings"
+        }
+      },
+      "description": "Workspace properties"
+    },
+    "WorkspaceRepositoryConfiguration": {
+      "type": "object",
+      "properties": {
+        "accountName": {
+          "type": "string",
+          "description": "Account name"
+        },
+        "clientId": {
+          "type": "string",
+          "description": "GitHub bring your own app client id"
+        },
+        "clientSecret": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/GitHubClientSecret"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Client secret information for factory's bring your own app repository configuration"
+        },
+        "collaborationBranch": {
+          "type": "string",
+          "description": "Collaboration branch"
+        },
+        "hostName": {
+          "type": "string",
+          "description": "GitHub Enterprise host name. For example: https://github.mydomain.com"
+        },
+        "lastCommitId": {
+          "type": "string",
+          "description": "The last commit ID"
+        },
+        "projectName": {
+          "type": "string",
+          "description": "VSTS project name"
+        },
+        "repositoryName": {
+          "type": "string",
+          "description": "Repository name"
+        },
+        "rootFolder": {
+          "type": "string",
+          "description": "Root folder to use in the repository"
+        },
+        "tenantId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The VSTS tenant ID"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of workspace repositoryID configuration. Example WorkspaceVSTSConfiguration, WorkspaceGitHubConfiguration"
+        }
+      },
+      "description": "Git integration settings"
+    },
+    "workspaces_administrators_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "activeDirectory"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AadAdminProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workspace active directory administrator properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "administrators"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/administrators"
+    },
+    "workspaces_auditingSettings_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a server blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "auditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/auditingSettings"
+    },
+    "workspaces_bigDataPools_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "Big Data pool name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BigDataPoolResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Big Data pool powered by Apache Spark"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "bigDataPools"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/bigDataPools"
+    },
+    "workspaces_extendedAuditingSettings_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ExtendedServerBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of an extended server blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "extendedAuditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/extendedAuditingSettings"
+    },
+    "workspaces_firewallRules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The IP firewall rule name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IpFirewallRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "IP firewall rule properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "firewallRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/firewallRules"
+    },
+    "workspaces_integrationRuntimes_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Integration runtime name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IntegrationRuntime"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Synapse nested object which serves as a compute resource for activities."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "integrationRuntimes"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/integrationRuntimes"
+    },
+    "workspaces_keys_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the workspace key"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Key properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "keys"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/keys"
+    },
+    "workspaces_managedIdentitySqlControlSettings_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedIdentitySqlControlSettingsModelProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Sql Control Settings for workspace managed identity"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "managedIdentitySqlControlSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/managedIdentitySqlControlSettings"
+    },
+    "workspaces_privateEndpointConnections_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the private endpoint connection."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a private endpoint connection."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/privateEndpointConnections"
+    },
+    "workspaces_securityAlertPolicies_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the security alert policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerSecurityAlertPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a security alert policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "securityAlertPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/securityAlertPolicies"
+    },
+    "workspaces_sqlAdministrators_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "activeDirectory"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AadAdminProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workspace active directory administrator properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "sqlAdministrators"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlAdministrators"
+    },
+    "workspaces_sqlPools_auditingSettings_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SqlPoolBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Sql pool blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "auditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/auditingSettings"
+    },
+    "workspaces_sqlPools_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        },
+        "name": {
+          "type": "string",
+          "description": "SQL pool name"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SqlPoolResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a SQL Analytics pool"
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "SQL pool SKU"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "sqlPools"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools"
+    },
+    "workspaces_sqlPools_dataMaskingPolicies_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "Default"
+          ],
+          "description": "The name of the data masking policy for which the masking rule applies."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataMaskingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a database data masking policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "dataMaskingPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies"
+    },
+    "workspaces_sqlPools_dataMaskingPolicies_rules_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the data masking rule."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataMaskingRuleProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a Sql pool data masking rule."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "rules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/rules"
+    },
+    "workspaces_sqlPools_extendedAuditingSettings_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the blob auditing policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ExtendedSqlPoolBlobAuditingPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of an extended Sql pool blob auditing policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "extendedAuditingSettings"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/extendedAuditingSettings"
+    },
+    "workspaces_sqlPools_geoBackupPolicies_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "Default"
+          ],
+          "description": "The name of the geo backup policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/GeoBackupPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the geo backup policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "geoBackupPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/geoBackupPolicies"
+    },
+    "workspaces_sqlPools_maintenancewindows_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "current"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MaintenanceWindowsProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Maintenance windows resource properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "maintenancewindows"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/maintenancewindows"
+    },
+    "workspaces_sqlPools_metadataSync_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "config"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/MetadataSyncConfigProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Metadata Sync Config properties"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "metadataSync"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/metadataSync"
+    },
+    "workspaces_sqlPools_securityAlertPolicies_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the security alert policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecurityAlertPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a security alert policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "securityAlertPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/securityAlertPolicies"
+    },
+    "workspaces_sqlPools_transparentDataEncryption_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "current"
+          ],
+          "description": "The name of the transparent data encryption configuration."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TransparentDataEncryptionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Represents the properties of a database transparent data encryption."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "transparentDataEncryption"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/transparentDataEncryption"
+    },
+    "workspaces_sqlPools_vulnerabilityAssessments_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the vulnerability assessment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SqlPoolVulnerabilityAssessmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Sql pool Vulnerability Assessment."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "vulnerabilityAssessments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments"
+    },
+    "workspaces_sqlPools_workloadGroups_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the workload group."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkloadGroupProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workload group definition. For more information look at sys.workload_management_workload_groups (DMV)."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "workloadGroups"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/workloadGroups"
+    },
+    "workspaces_sqlPools_workloadGroups_workloadClassifiers_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the workload classifier."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkloadClassifierProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workload classifier definition. For more information look at sys.workload_management_workload_classifiers (DMV)."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "workloadClassifiers"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/sqlPools/workloadGroups/workloadClassifiers"
+    },
+    "workspaces_vulnerabilityAssessments_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the vulnerability assessment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerVulnerabilityAssessmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a server Vulnerability Assessment."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "vulnerabilityAssessments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Synapse/workspaces/vulnerabilityAssessments"
+    }
+  }
+}

@@ -1,0 +1,584 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2019-11-01-preview/Microsoft.Insights.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Insights",
+  "description": "Microsoft Insights Resource Types",
+  "resourceDefinitions": {
+    "dataCollectionRules": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-11-01-preview"
+          ]
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Linux",
+                "Windows"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The kind of the resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the data collection rule. The name is case insensitive."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataCollectionRuleResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource properties."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/dataCollectionRules"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/dataCollectionRules"
+    }
+  },
+  "unknown_resourceDefinitions": {
+    "dataCollectionRuleAssociations": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2019-11-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the association. The name is case insensitive."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataCollectionRuleAssociationProxyOnlyResourceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Insights/dataCollectionRuleAssociations"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Insights/dataCollectionRuleAssociations"
+    }
+  },
+  "definitions": {
+    "DataCollectionRuleAssociationProxyOnlyResourceProperties": {
+      "type": "object",
+      "properties": {
+        "dataCollectionRuleId": {
+          "type": "string",
+          "description": "The resource ID of the data collection rule that is to be associated."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the association."
+        }
+      },
+      "description": "Resource properties."
+    },
+    "DataCollectionRuleDataSources": {
+      "type": "object",
+      "properties": {
+        "extensions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ExtensionDataSource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of Azure VM extension data source configurations."
+        },
+        "performanceCounters": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PerfCounterDataSource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of performance counter data source configurations."
+        },
+        "syslog": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SyslogDataSource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of Syslog data source configurations."
+        },
+        "windowsEventLogs": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WindowsEventLogDataSource"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of Windows Event Log data source configurations."
+        }
+      },
+      "description": "The specification of data sources. \r\nThis property is optional and can be omitted if the rule is meant to be used via direct calls to the provisioned endpoint."
+    },
+    "DataCollectionRuleDestinations": {
+      "type": "object",
+      "properties": {
+        "azureMonitorMetrics": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DestinationsSpecAzureMonitorMetrics"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Monitor Metrics destination."
+        },
+        "logAnalytics": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LogAnalyticsDestination"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of Log Analytics destinations."
+        }
+      },
+      "description": "The specification of destinations."
+    },
+    "DataCollectionRuleResourceProperties": {
+      "type": "object",
+      "properties": {
+        "dataFlows": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DataFlow"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The specification of data flows."
+        },
+        "dataSources": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataCollectionRuleDataSources"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The specification of data sources. \r\nThis property is optional and can be omitted if the rule is meant to be used via direct calls to the provisioned endpoint."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the data collection rule."
+        },
+        "destinations": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataCollectionRuleDestinations"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The specification of destinations."
+        }
+      },
+      "description": "Resource properties."
+    },
+    "DataFlow": {
+      "type": "object",
+      "properties": {
+        "destinations": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of destinations for this data flow."
+        },
+        "streams": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Microsoft-Event",
+                  "Microsoft-InsightsMetrics",
+                  "Microsoft-Perf",
+                  "Microsoft-Syslog",
+                  "Microsoft-WindowsEvent"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of streams for this data flow."
+        }
+      },
+      "description": "Definition of which streams are sent to which destinations."
+    },
+    "DestinationsSpecAzureMonitorMetrics": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A friendly name for the destination. \r\nThis name should be unique across all destinations (regardless of type) within the data collection rule."
+        }
+      },
+      "description": "Azure Monitor Metrics destination."
+    },
+    "ExtensionDataSource": {
+      "type": "object",
+      "properties": {
+        "extensionName": {
+          "type": "string",
+          "description": "The name of the VM extension."
+        },
+        "extensionSettings": {
+          "type": "object",
+          "properties": {},
+          "description": "The extension settings. The format is specific for particular extension."
+        },
+        "inputDataSources": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of data sources this extension needs data from."
+        },
+        "name": {
+          "type": "string",
+          "description": "A friendly name for the data source. \r\nThis name should be unique across all data sources (regardless of type) within the data collection rule."
+        },
+        "streams": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Microsoft-Event",
+                  "Microsoft-InsightsMetrics",
+                  "Microsoft-Perf",
+                  "Microsoft-Syslog",
+                  "Microsoft-WindowsEvent"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of streams that this data source will be sent to.\r\nA stream indicates what schema will be used for this data and usually what table in Log Analytics the data will be sent to."
+        }
+      },
+      "required": [
+        "extensionName"
+      ],
+      "description": "Definition of which data will be collected from a separate VM extension that integrates with the Azure Monitor Agent.\r\nCollected from either Windows and Linux machines, depending on which extension is defined."
+    },
+    "LogAnalyticsDestination": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A friendly name for the destination. \r\nThis name should be unique across all destinations (regardless of type) within the data collection rule."
+        },
+        "workspaceResourceId": {
+          "type": "string",
+          "description": "The resource ID of the Log Analytics workspace."
+        }
+      },
+      "description": "Log Analytics destination."
+    },
+    "PerfCounterDataSource": {
+      "type": "object",
+      "properties": {
+        "counterSpecifiers": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of specifier names of the performance counters you want to collect.\r\nUse a wildcard (*) to collect a counter for all instances.\r\nTo get a list of performance counters on Windows, run the command 'typeperf'."
+        },
+        "name": {
+          "type": "string",
+          "description": "A friendly name for the data source. \r\nThis name should be unique across all data sources (regardless of type) within the data collection rule."
+        },
+        "samplingFrequencyInSeconds": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of seconds between consecutive counter measurements (samples)."
+        },
+        "streams": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Microsoft-Perf",
+                  "Microsoft-InsightsMetrics"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of streams that this data source will be sent to.\r\nA stream indicates what schema will be used for this data and usually what table in Log Analytics the data will be sent to."
+        }
+      },
+      "description": "Definition of which performance counters will be collected and how they will be collected by this data collection rule.\r\nCollected from both Windows and Linux machines where the counter is present."
+    },
+    "SyslogDataSource": {
+      "type": "object",
+      "properties": {
+        "facilityNames": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "auth",
+                  "authpriv",
+                  "cron",
+                  "daemon",
+                  "kern",
+                  "lpr",
+                  "mail",
+                  "mark",
+                  "news",
+                  "syslog",
+                  "user",
+                  "uucp",
+                  "local0",
+                  "local1",
+                  "local2",
+                  "local3",
+                  "local4",
+                  "local5",
+                  "local6",
+                  "local7",
+                  "*"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of facility names."
+        },
+        "logLevels": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Debug",
+                  "Info",
+                  "Notice",
+                  "Warning",
+                  "Error",
+                  "Critical",
+                  "Alert",
+                  "Emergency",
+                  "*"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The log levels to collect."
+        },
+        "name": {
+          "type": "string",
+          "description": "A friendly name for the data source. \r\nThis name should be unique across all data sources (regardless of type) within the data collection rule."
+        },
+        "streams": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Microsoft-Syslog"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of streams that this data source will be sent to.\r\nA stream indicates what schema will be used for this data and usually what table in Log Analytics the data will be sent to."
+        }
+      },
+      "description": "Definition of which syslog data will be collected and how it will be collected.\r\nOnly collected from Linux machines."
+    },
+    "WindowsEventLogDataSource": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A friendly name for the data source. \r\nThis name should be unique across all data sources (regardless of type) within the data collection rule."
+        },
+        "streams": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Microsoft-WindowsEvent",
+                  "Microsoft-Event"
+                ]
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of streams that this data source will be sent to.\r\nA stream indicates what schema will be used for this data and usually what table in Log Analytics the data will be sent to."
+        },
+        "xPathQueries": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A list of Windows Event Log queries in XPATH format."
+        }
+      },
+      "description": "Definition of which Windows Event Log events will be collected and how they will be collected.\r\nOnly collected from Windows machines."
+    }
+  }
+}

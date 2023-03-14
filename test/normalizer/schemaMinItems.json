@@ -1,7 +1,7 @@
 {
   "name": "Normalise schema.minItems",
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untyped": {
@@ -31,18 +31,30 @@
         "type": "object",
         "properties": {
           "unbounded": {
-            "type": ["array", "string"]
+            "type": [
+              "array",
+              "string"
+            ]
           },
           "minOnly": {
-            "type": ["array", "string"],
+            "type": [
+              "array",
+              "string"
+            ],
             "minItems": 1
           },
           "maxOnly": {
-            "type": ["array", "string"],
+            "type": [
+              "array",
+              "string"
+            ],
             "maxItems": 2
           },
           "minAndMax": {
-            "type": ["array", "string"],
+            "type": [
+              "array",
+              "string"
+            ],
             "minItems": 1,
             "maxItems": 2
           }
@@ -147,7 +159,7 @@
     "required": []
   },
   "out": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untyped": {
@@ -158,15 +170,18 @@
             "minItems": 0
           },
           "minOnly": {
+            "description": "@minItems 1",
             "type": "array",
             "minItems": 1
           },
           "maxOnly": {
+            "description": "@maxItems 2",
             "type": "array",
             "maxItems": 2,
             "minItems": 0
           },
           "minAndMax": {
+            "description": "@minItems 1\n@maxItems 2",
             "type": "array",
             "minItems": 1,
             "maxItems": 2
@@ -179,20 +194,35 @@
         "type": "object",
         "properties": {
           "unbounded": {
-            "type": ["array", "string"],
+            "type": [
+              "array",
+              "string"
+            ],
             "minItems": 0
           },
           "minOnly": {
-            "type": ["array", "string"],
+            "description": "@minItems 1",
+            "type": [
+              "array",
+              "string"
+            ],
             "minItems": 1
           },
           "maxOnly": {
-            "type": ["array", "string"],
+            "description": "@maxItems 2",
+            "type": [
+              "array",
+              "string"
+            ],
             "maxItems": 2,
             "minItems": 0
           },
           "minAndMax": {
-            "type": ["array", "string"],
+            "description": "@minItems 1\n@maxItems 2",
+            "type": [
+              "array",
+              "string"
+            ],
             "minItems": 1,
             "maxItems": 2
           }
@@ -210,6 +240,7 @@
             "minItems": 0
           },
           "minOnly": {
+            "description": "@minItems 1",
             "additionalItems": {
               "type": "string"
             },
@@ -221,6 +252,7 @@
             "minItems": 1
           },
           "maxOnly": {
+            "description": "@maxItems 2",
             "items": [
               {
                 "type": "string"
@@ -233,6 +265,7 @@
             "minItems": 0
           },
           "minAndMax": {
+            "description": "@minItems 1\n@maxItems 2",
             "items": [
               {
                 "type": "string"
@@ -266,6 +299,7 @@
           "minOnly": {
             "anyOf": [
               {
+                "description": "@minItems 1",
                 "items": [
                   {
                     "type": "string"
@@ -283,6 +317,7 @@
           "maxOnly": {
             "anyOf": [
               {
+                "description": "@maxItems 2",
                 "items": [
                   {
                     "type": "string"
@@ -301,6 +336,7 @@
           "minAndMax": {
             "anyOf": [
               {
+                "description": "@minItems 1\n@maxItems 2",
                 "items": [
                   {
                     "type": "string"

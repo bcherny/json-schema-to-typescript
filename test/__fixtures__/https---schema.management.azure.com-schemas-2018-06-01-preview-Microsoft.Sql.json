@@ -1,0 +1,1364 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-06-01-preview/Microsoft.Sql.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Sql",
+  "description": "Microsoft Sql Resource Types",
+  "resourceDefinitions": {
+    "instancePools": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the instance pool to be created or updated."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/InstancePoolProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of an instance pool."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An ARM Resource SKU."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/instancePools"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/instancePools"
+    },
+    "managedInstances": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ResourceIdentity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Azure Active Directory identity configuration for a resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the managed instance."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedInstanceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a managed instance."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/managedInstances_vulnerabilityAssessments_childResource"
+              },
+              {
+                "$ref": "#/definitions/managedInstances_databases_childResource"
+              }
+            ]
+          }
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "An ARM Resource SKU."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/managedInstances"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances"
+    },
+    "managedInstances_databases": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the database."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedDatabaseProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The managed database's properties."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/managedInstances_databases_backupLongTermRetentionPolicies_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/managedInstances/databases"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances/databases"
+    },
+    "managedInstances_databases_backupLongTermRetentionPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The policy name. Should always be Default."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BaseLongTermRetentionPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a long term retention policy"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/managedInstances/databases/backupLongTermRetentionPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances/databases/backupLongTermRetentionPolicies"
+    },
+    "managedInstances_databases_schemas_tables_columns_sensitivityLabels": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The source of the sensitivity label."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SensitivityLabelProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a sensitivity label."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/managedInstances/databases/schemas/tables/columns/sensitivityLabels"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances/databases/schemas/tables/columns/sensitivityLabels"
+    },
+    "managedInstances_vulnerabilityAssessments": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the vulnerability assessment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedInstanceVulnerabilityAssessmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a managed instance vulnerability assessment."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/managedInstances/vulnerabilityAssessments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances/vulnerabilityAssessments"
+    },
+    "servers_administrators": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/ActiveDirectory$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of server active directory administrator."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AdministratorProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a active directory administrator."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/administrators"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/administrators"
+    },
+    "servers_databases_securityAlertPolicies": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the security alert policy."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SecurityAlertPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a security alert policy."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/databases/securityAlertPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/databases/securityAlertPolicies"
+    },
+    "servers_privateEndpointConnections": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the private endpoint connection."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a private endpoint connection."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/privateEndpointConnections"
+    },
+    "servers_vulnerabilityAssessments": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^.*/default$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the vulnerability assessment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServerVulnerabilityAssessmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a server Vulnerability Assessment."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Sql/servers/vulnerabilityAssessments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/servers/vulnerabilityAssessments"
+    }
+  },
+  "definitions": {
+    "AdministratorProperties": {
+      "type": "object",
+      "properties": {
+        "administratorType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ActiveDirectory"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of the sever administrator."
+        },
+        "login": {
+          "type": "string",
+          "description": "Login name of the server administrator."
+        },
+        "sid": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "SID (object ID) of the server administrator."
+        },
+        "tenantId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Tenant ID of the administrator."
+        }
+      },
+      "required": [
+        "administratorType",
+        "login",
+        "sid"
+      ],
+      "description": "Properties of a active directory administrator."
+    },
+    "BaseLongTermRetentionPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "monthlyRetention": {
+          "type": "string",
+          "description": "The monthly retention policy for an LTR backup in an ISO 8601 format."
+        },
+        "weeklyRetention": {
+          "type": "string",
+          "description": "The weekly retention policy for an LTR backup in an ISO 8601 format."
+        },
+        "weekOfYear": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The week of year to take the yearly backup in an ISO 8601 format."
+        },
+        "yearlyRetention": {
+          "type": "string",
+          "description": "The yearly retention policy for an LTR backup in an ISO 8601 format."
+        }
+      },
+      "description": "Properties of a long term retention policy"
+    },
+    "InstancePoolProperties": {
+      "type": "object",
+      "properties": {
+        "licenseType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "LicenseIncluded",
+                "BasePrice"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The license type. Possible values are 'LicenseIncluded' (price for SQL license is included) and 'BasePrice' (without SQL license price)."
+        },
+        "subnetId": {
+          "type": "string",
+          "description": "Resource ID of the subnet to place this instance pool in."
+        },
+        "vCores": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Count of vCores belonging to this instance pool."
+        }
+      },
+      "required": [
+        "licenseType",
+        "subnetId",
+        "vCores"
+      ],
+      "description": "Properties of an instance pool."
+    },
+    "ManagedDatabaseProperties": {
+      "type": "object",
+      "properties": {
+        "catalogCollation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "DATABASE_DEFAULT",
+                "SQL_Latin1_General_CP1_CI_AS"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Collation of the metadata catalog."
+        },
+        "collation": {
+          "type": "string",
+          "description": "Collation of the managed database."
+        },
+        "createMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Default",
+                "RestoreExternalBackup",
+                "PointInTimeRestore",
+                "Recovery",
+                "RestoreLongTermRetentionBackup"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Managed database create mode. PointInTimeRestore: Create a database by restoring a point in time backup of an existing database. SourceDatabaseName, SourceManagedInstanceName and PointInTime must be specified. RestoreExternalBackup: Create a database by restoring from external backup files. Collation, StorageContainerUri and StorageContainerSasToken must be specified. Recovery: Creates a database by restoring a geo-replicated backup. RecoverableDatabaseId must be specified as the recoverable database resource ID to restore."
+        },
+        "longTermRetentionBackupResourceId": {
+          "type": "string",
+          "description": "The name of the Long Term Retention backup to be used for restore of this managed database."
+        },
+        "recoverableDatabaseId": {
+          "type": "string",
+          "description": "The resource identifier of the recoverable database associated with create operation of this database."
+        },
+        "restorableDroppedDatabaseId": {
+          "type": "string",
+          "description": "The restorable dropped database resource id to restore when creating this database."
+        },
+        "restorePointInTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Conditional. If createMode is PointInTimeRestore, this value is required. Specifies the point in time (ISO8601 format) of the source database that will be restored to create the new database."
+        },
+        "sourceDatabaseId": {
+          "type": "string",
+          "description": "The resource identifier of the source database associated with create operation of this database."
+        },
+        "storageContainerSasToken": {
+          "type": "string",
+          "description": "Conditional. If createMode is RestoreExternalBackup, this value is required. Specifies the storage container sas token."
+        },
+        "storageContainerUri": {
+          "type": "string",
+          "description": "Conditional. If createMode is RestoreExternalBackup, this value is required. Specifies the uri of the storage container where backups for this restore are stored."
+        }
+      },
+      "description": "The managed database's properties."
+    },
+    "ManagedInstanceProperties": {
+      "type": "object",
+      "properties": {
+        "administratorLogin": {
+          "type": "string",
+          "description": "Administrator username for the managed instance. Can only be specified when the managed instance is being created (and is required for creation)."
+        },
+        "administratorLoginPassword": {
+          "type": "string",
+          "description": "The administrator login password (required for managed instance creation)."
+        },
+        "collation": {
+          "type": "string",
+          "description": "Collation of the managed instance."
+        },
+        "dnsZonePartner": {
+          "type": "string",
+          "description": "The resource id of another managed instance whose DNS zone this managed instance will share after creation."
+        },
+        "instancePoolId": {
+          "type": "string",
+          "description": "The Id of the instance pool this managed server belongs to."
+        },
+        "licenseType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "LicenseIncluded",
+                "BasePrice"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The license type. Possible values are 'LicenseIncluded' (regular price inclusive of a new SQL license) and 'BasePrice' (discounted AHB price for bringing your own SQL licenses)."
+        },
+        "maintenanceConfigurationId": {
+          "type": "string",
+          "description": "Specifies maintenance configuration id to apply to this managed instance."
+        },
+        "managedInstanceCreateMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Default",
+                "PointInTimeRestore"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the mode of database creation.\r\n\r\nDefault: Regular instance creation.\r\n\r\nRestore: Creates an instance by restoring a set of backups to specific point in time. RestorePointInTime and SourceManagedInstanceId must be specified."
+        },
+        "minimalTlsVersion": {
+          "type": "string",
+          "description": "Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'"
+        },
+        "proxyOverride": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Proxy",
+                "Redirect",
+                "Default"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Connection type used for connecting to the instance."
+        },
+        "publicDataEndpointEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether or not the public data endpoint is enabled."
+        },
+        "restorePointInTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Specifies the point in time (ISO8601 format) of the source database that will be restored to create the new database."
+        },
+        "sourceManagedInstanceId": {
+          "type": "string",
+          "description": "The resource identifier of the source managed instance associated with create operation of this instance."
+        },
+        "storageSizeInGB": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Storage size in GB. Minimum value: 32. Maximum value: 8192. Increments of 32 GB allowed only."
+        },
+        "subnetId": {
+          "type": "string",
+          "description": "Subnet resource ID for the managed instance."
+        },
+        "timezoneId": {
+          "type": "string",
+          "description": "Id of the timezone. Allowed values are timezones supported by Windows.\r\nWindows keeps details on supported timezones, including the id, in registry under\r\nKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.\r\nYou can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM sys.time_zone_info.\r\nList of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell.\r\nAn example of valid timezone id is \"Pacific Standard Time\" or \"W. Europe Standard Time\"."
+        },
+        "vCores": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80."
+        }
+      },
+      "description": "The properties of a managed instance."
+    },
+    "managedInstances_databases_backupLongTermRetentionPolicies_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The policy name. Should always be Default."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BaseLongTermRetentionPolicyProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a long term retention policy"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "backupLongTermRetentionPolicies"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances/databases/backupLongTermRetentionPolicies"
+    },
+    "managedInstances_databases_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the database."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedDatabaseProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The managed database's properties."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "databases"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances/databases"
+    },
+    "managedInstances_vulnerabilityAssessments_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-06-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "default"
+          ],
+          "description": "The name of the vulnerability assessment."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagedInstanceVulnerabilityAssessmentProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a managed instance vulnerability assessment."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "vulnerabilityAssessments"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Sql/managedInstances/vulnerabilityAssessments"
+    },
+    "ManagedInstanceVulnerabilityAssessmentProperties": {
+      "type": "object",
+      "properties": {
+        "recurringScans": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VulnerabilityAssessmentRecurringScansProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Vulnerability Assessment recurring scans."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the storage account for vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified, storageAccountAccessKey is required."
+        },
+        "storageContainerPath": {
+          "type": "string",
+          "description": "A blob storage container path to hold the scan results (e.g. https://myStorage.blob.core.windows.net/VaScans/)."
+        },
+        "storageContainerSasKey": {
+          "type": "string",
+          "description": "A shared access signature (SAS Key) that has read and write access to the blob container specified in 'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required."
+        }
+      },
+      "required": [
+        "storageContainerPath"
+      ],
+      "description": "Properties of a managed instance vulnerability assessment."
+    },
+    "PrivateEndpointConnectionProperties": {
+      "type": "object",
+      "properties": {
+        "privateEndpoint": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointProperty"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "privateLinkServiceConnectionState": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateLinkServiceConnectionStateProperty"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "description": "Properties of a private endpoint connection."
+    },
+    "PrivateEndpointProperty": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource id of the private endpoint."
+        }
+      }
+    },
+    "PrivateLinkServiceConnectionStateProperty": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The private link service connection description."
+        },
+        "status": {
+          "type": "string",
+          "description": "The private link service connection status."
+        }
+      },
+      "required": [
+        "description",
+        "status"
+      ]
+    },
+    "ResourceIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "SystemAssigned",
+                "UserAssigned",
+                "SystemAssigned,UserAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The identity type. Set this to 'SystemAssigned' in order to automatically create and assign an Azure Active Directory principal for the resource."
+        }
+      },
+      "description": "Azure Active Directory identity configuration for a resource."
+    },
+    "SecurityAlertPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "disabledAlerts": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies an array of alerts that are disabled. Allowed values are: Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action"
+        },
+        "emailAccountAdmins": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies that the alert is sent to the account administrators."
+        },
+        "emailAddresses": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies an array of e-mail addresses to which the alert is sent."
+        },
+        "retentionDays": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the number of days to keep in the Threat Detection audit logs."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "New",
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies the state of the policy, whether it is enabled or disabled or a policy has not been applied yet on the specific database."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the Threat Detection audit storage account."
+        },
+        "storageEndpoint": {
+          "type": "string",
+          "description": "Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection audit logs."
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "description": "Properties of a security alert policy."
+    },
+    "SensitivityLabelProperties": {
+      "type": "object",
+      "properties": {
+        "informationType": {
+          "type": "string",
+          "description": "The information type."
+        },
+        "informationTypeId": {
+          "type": "string",
+          "description": "The information type ID."
+        },
+        "labelId": {
+          "type": "string",
+          "description": "The label ID."
+        },
+        "labelName": {
+          "type": "string",
+          "description": "The label name."
+        },
+        "rank": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "Low",
+                "Medium",
+                "High",
+                "Critical"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "description": "Properties of a sensitivity label."
+    },
+    "ServerVulnerabilityAssessmentProperties": {
+      "type": "object",
+      "properties": {
+        "recurringScans": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VulnerabilityAssessmentRecurringScansProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of a Vulnerability Assessment recurring scans."
+        },
+        "storageAccountAccessKey": {
+          "type": "string",
+          "description": "Specifies the identifier key of the storage account for vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified, storageAccountAccessKey is required."
+        },
+        "storageContainerPath": {
+          "type": "string",
+          "description": "A blob storage container path to hold the scan results (e.g. https://myStorage.blob.core.windows.net/VaScans/)."
+        },
+        "storageContainerSasKey": {
+          "type": "string",
+          "description": "A shared access signature (SAS Key) that has read and write access to the blob container specified in 'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required."
+        }
+      },
+      "required": [
+        "storageContainerPath"
+      ],
+      "description": "Properties of a server Vulnerability Assessment."
+    },
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Capacity of the particular SKU."
+        },
+        "family": {
+          "type": "string",
+          "description": "If the service has different generations of hardware, for the same SKU, then that can be captured here."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the SKU, typically, a letter + Number code, e.g. P3."
+        },
+        "size": {
+          "type": "string",
+          "description": "Size of the particular SKU"
+        },
+        "tier": {
+          "type": "string",
+          "description": "The tier or edition of the particular SKU, e.g. Basic, Premium."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "An ARM Resource SKU."
+    },
+    "VulnerabilityAssessmentRecurringScansProperties": {
+      "type": "object",
+      "properties": {
+        "emails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies an array of e-mail addresses to which the scan notification is sent."
+        },
+        "emailSubscriptionAdmins": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Specifies that the schedule scan notification will be is sent to the subscription administrators."
+        },
+        "isEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Recurring scans state."
+        }
+      },
+      "description": "Properties of a Vulnerability Assessment recurring scans."
+    }
+  }
+}

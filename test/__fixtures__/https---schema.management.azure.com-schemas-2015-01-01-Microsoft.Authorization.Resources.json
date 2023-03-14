@@ -1,0 +1,157 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-01-01/Microsoft.Authorization.Resources.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Authorization",
+  "description": "Microsoft Authorization Resource Types",
+  "resourceDefinitions": {
+    "locks": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-01-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The lock name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagementLockProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The management lock properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/locks"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/locks"
+    }
+  },
+  "subscription_resourceDefinitions": {
+    "locks": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-01-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of lock."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagementLockProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The management lock properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/locks"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/locks"
+    }
+  },
+  "extension_resourceDefinitions": {
+    "locks": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-01-01"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of lock."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ManagementLockProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The management lock properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Authorization/locks"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Authorization/locks"
+    }
+  },
+  "definitions": {
+    "ManagementLockProperties": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "NotSpecified",
+                "CanNotDelete",
+                "ReadOnly"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The lock level of the management lock."
+        },
+        "notes": {
+          "type": "string",
+          "description": "The notes of the management lock."
+        }
+      },
+      "description": "The management lock properties."
+    }
+  }
+}

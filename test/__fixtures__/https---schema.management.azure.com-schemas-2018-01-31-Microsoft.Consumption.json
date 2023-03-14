@@ -1,0 +1,341 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-01-31/Microsoft.Consumption.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Consumption",
+  "description": "Microsoft Consumption Resource Types",
+  "resourceDefinitions": {
+    "budgets": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-31"
+          ]
+        },
+        "eTag": {
+          "type": "string",
+          "description": "eTag of the resource. To handle concurrent update scenario, this field will be used to determine whether the user is updating the latest version or not."
+        },
+        "name": {
+          "type": "string",
+          "description": "Budget Name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BudgetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the budget."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Consumption/budgets"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Consumption/budgets"
+    }
+  },
+  "subscription_resourceDefinitions": {
+    "budgets": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-01-31"
+          ]
+        },
+        "eTag": {
+          "type": "string",
+          "description": "eTag of the resource. To handle concurrent update scenario, this field will be used to determine whether the user is updating the latest version or not."
+        },
+        "name": {
+          "type": "string",
+          "description": "Budget Name."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BudgetProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of the budget."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Consumption/budgets"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.Consumption/budgets"
+    }
+  },
+  "definitions": {
+    "BudgetProperties": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The total amount of cost to track with the budget"
+        },
+        "category": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Cost",
+                "Usage"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The category of the budget, whether the budget tracks cost or usage."
+        },
+        "filters": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Filters"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "May be used to filter budgets by resource group, resource, or meter."
+        },
+        "notifications": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Notification"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Dictionary of notifications associated with the budget. Budget can have up to five notifications."
+        },
+        "timeGrain": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Monthly",
+                "Quarterly",
+                "Annually"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The time covered by a budget. Tracking of the amount will be reset based on the time grain."
+        },
+        "timePeriod": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BudgetTimePeriod"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The start and end date for a budget."
+        }
+      },
+      "required": [
+        "amount",
+        "category",
+        "timeGrain",
+        "timePeriod"
+      ],
+      "description": "The properties of the budget."
+    },
+    "BudgetTimePeriod": {
+      "type": "object",
+      "properties": {
+        "endDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The end date for the budget. If not provided, we default this to 10 years from the start date."
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The start date for the budget."
+        }
+      },
+      "required": [
+        "startDate"
+      ],
+      "description": "The start and end date for a budget."
+    },
+    "Filters": {
+      "type": "object",
+      "properties": {
+        "meters": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of filters on meters, mandatory for budgets of usage category. "
+        },
+        "resourceGroups": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of filters on resource groups, allowed at subscription level only."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The list of filters on resources."
+        }
+      },
+      "description": "May be used to filter budgets by resource group, resource, or meter."
+    },
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "contactEmails": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Email addresses to send the budget notification to when the threshold is exceeded."
+        },
+        "contactGroups": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Action groups to send the budget notification to when the threshold is exceeded."
+        },
+        "contactRoles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contact roles to send the budget notification to when the threshold is exceeded."
+        },
+        "enabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The notification is enabled or not."
+        },
+        "operator": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "EqualTo",
+                "GreaterThan",
+                "GreaterThanOrEqualTo"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The comparison operator."
+        },
+        "threshold": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
+        }
+      },
+      "required": [
+        "contactEmails",
+        "enabled",
+        "operator",
+        "threshold"
+      ],
+      "description": "The notification associated with a budget."
+    }
+  }
+}

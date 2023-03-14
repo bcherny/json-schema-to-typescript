@@ -1,0 +1,677 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-04-18/Microsoft.CognitiveServices.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.CognitiveServices",
+  "description": "Microsoft CognitiveServices Resource Types",
+  "resourceDefinitions": {
+    "accounts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-04-18"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Identity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Managed service identity."
+        },
+        "kind": {
+          "type": "string",
+          "description": "Required. Indicates the type of cognitive service account."
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the resource"
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$",
+              "minLength": 2,
+              "maxLength": 64
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of Cognitive Services account."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CognitiveServicesAccountProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of Cognitive Services account."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/accounts_privateEndpointConnections_childResource"
+              }
+            ]
+          }
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The SKU of the cognitive services account."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Gets or sets a list of key value pairs that describe the resource. These tags can be used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128 characters and value no greater than 256 characters."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.CognitiveServices/accounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.CognitiveServices/accounts"
+    },
+    "accounts_privateEndpointConnections": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-04-18"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the private endpoint connection"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the private endpoint connection associated with the Cognitive Services Account"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the PrivateEndpointConnectProperties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.CognitiveServices/accounts/privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.CognitiveServices/accounts/privateEndpointConnections"
+    }
+  },
+  "definitions": {
+    "accounts_privateEndpointConnections_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-04-18"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the private endpoint connection"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the private endpoint connection associated with the Cognitive Services Account"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the PrivateEndpointConnectProperties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "privateEndpointConnections"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.CognitiveServices/accounts/privateEndpointConnections"
+    },
+    "CognitiveServicesAccountApiProperties": {
+      "type": "object",
+      "properties": {
+        "aadClientId": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "(Metrics Advisor Only) The Azure AD Client Id (Application Id)."
+        },
+        "aadTenantId": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "(Metrics Advisor Only) The Azure AD Tenant Id."
+        },
+        "eventHubConnectionString": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^( *)Endpoint=sb://(.*);( *)SharedAccessKeyName=(.*);( *)SharedAccessKey=(.*)$",
+              "maxLength": 1000
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "(Personalization Only) The flag to enable statistics of Bing Search."
+        },
+        "qnaAzureSearchEndpointId": {
+          "type": "string",
+          "description": "(QnAMaker Only) The Azure Search endpoint id of QnAMaker."
+        },
+        "qnaAzureSearchEndpointKey": {
+          "type": "string",
+          "description": "(QnAMaker Only) The Azure Search endpoint key of QnAMaker."
+        },
+        "qnaRuntimeEndpoint": {
+          "type": "string",
+          "description": "(QnAMaker Only) The runtime endpoint of QnAMaker."
+        },
+        "statisticsEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "(Bing Search Only) The flag to enable statistics of Bing Search."
+        },
+        "storageAccountConnectionString": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(( *)DefaultEndpointsProtocol=(http|https)( *);( *))?AccountName=(.*)AccountKey=(.*)EndpointSuffix=(.*)$",
+              "maxLength": 1000
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "(Personalization Only) The storage account connection string."
+        },
+        "superUser": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "(Metrics Advisor Only) The super user of Metrics Advisor."
+        },
+        "websiteName": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "(Metrics Advisor Only) The website name of Metrics Advisor."
+        }
+      },
+      "description": "The api properties for special APIs."
+    },
+    "CognitiveServicesAccountProperties": {
+      "type": "object",
+      "properties": {
+        "apiProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CognitiveServicesAccountApiProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The api properties for special APIs."
+        },
+        "customSubDomainName": {
+          "type": "string",
+          "description": "Optional subdomain name used for token-based authentication."
+        },
+        "encryption": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Encryption"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties to configure Encryption"
+        },
+        "networkAcls": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/NetworkRuleSet"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A set of rules governing the network accessibility."
+        },
+        "privateEndpointConnections": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PrivateEndpointConnection"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The private endpoint connection associated with the Cognitive Services account."
+        },
+        "publicNetworkAccess": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Enabled",
+                "Disabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Whether or not public endpoint access is allowed for this account. Value is optional but if passed in, must be 'Enabled' or 'Disabled'."
+        },
+        "userOwnedStorage": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserOwnedStorage"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The storage accounts for this resource."
+        }
+      },
+      "description": "Properties of Cognitive Services account."
+    },
+    "Encryption": {
+      "type": "object",
+      "properties": {
+        "keySource": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Microsoft.CognitiveServices",
+                "Microsoft.KeyVault"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enumerates the possible value of keySource for Encryption."
+        },
+        "keyVaultProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KeyVaultProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties to configure keyVault Properties"
+        }
+      },
+      "description": "Properties to configure Encryption"
+    },
+    "Identity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "SystemAssigned",
+                "UserAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Type of managed service identity."
+        },
+        "userAssignedIdentities": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/UserAssignedIdentity"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of user assigned identities associated with the resource. The user identity dictionary key references will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}"
+        }
+      },
+      "description": "Managed service identity."
+    },
+    "IpRule": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78)."
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "description": "A rule governing the accessibility from a specific ip address or ip range."
+    },
+    "KeyVaultProperties": {
+      "type": "object",
+      "properties": {
+        "keyName": {
+          "type": "string",
+          "description": "Name of the Key from KeyVault"
+        },
+        "keyVaultUri": {
+          "type": "string",
+          "description": "Uri of KeyVault"
+        },
+        "keyVersion": {
+          "type": "string",
+          "description": "Version of the Key from KeyVault"
+        }
+      },
+      "description": "Properties to configure keyVault Properties"
+    },
+    "NetworkRuleSet": {
+      "type": "object",
+      "properties": {
+        "defaultAction": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Allow",
+                "Deny"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated."
+        },
+        "ipRules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/IpRule"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of IP address rules."
+        },
+        "virtualNetworkRules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VirtualNetworkRule"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The list of virtual network rules."
+        }
+      },
+      "description": "A set of rules governing the network accessibility."
+    },
+    "PrivateEndpoint": {
+      "type": "object",
+      "properties": {},
+      "description": "The Private Endpoint resource."
+    },
+    "PrivateEndpointConnection": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "description": "The location of the private endpoint connection"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointConnectionProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Properties of the PrivateEndpointConnectProperties."
+        }
+      },
+      "description": "The Private Endpoint Connection resource."
+    },
+    "PrivateEndpointConnectionProperties": {
+      "type": "object",
+      "properties": {
+        "groupIds": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The private link resource group ids."
+        },
+        "privateEndpoint": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpoint"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The Private Endpoint resource."
+        },
+        "privateLinkServiceConnectionState": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PrivateLinkServiceConnectionState"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "A collection of information about the state of the connection between service consumer and provider."
+        }
+      },
+      "required": [
+        "privateLinkServiceConnectionState"
+      ],
+      "description": "Properties of the PrivateEndpointConnectProperties."
+    },
+    "PrivateLinkServiceConnectionState": {
+      "type": "object",
+      "properties": {
+        "actionsRequired": {
+          "type": "string",
+          "description": "A message indicating if changes on the service provider require any updates on the consumer."
+        },
+        "description": {
+          "type": "string",
+          "description": "The reason for approval/rejection of the connection."
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Pending",
+                "Approved",
+                "Rejected",
+                "Disconnected"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Indicates whether the connection has been Approved/Rejected/Removed by the owner of the service."
+        }
+      },
+      "description": "A collection of information about the state of the connection between service consumer and provider."
+    },
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of SKU."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "The SKU of the cognitive services account."
+    },
+    "UserAssignedIdentity": {
+      "type": "object",
+      "properties": {
+        "clientId": {
+          "type": "string",
+          "description": "Client App Id associated with this identity."
+        },
+        "principalId": {
+          "type": "string",
+          "description": "Azure Active Directory principal ID associated with this Identity."
+        }
+      },
+      "description": "User-assigned managed identity."
+    },
+    "UserOwnedStorage": {
+      "type": "object",
+      "properties": {
+        "resourceId": {
+          "type": "string",
+          "description": "Full resource id of a Microsoft.Storage resource."
+        }
+      },
+      "description": "The user owned storage for Cognitive Services account."
+    },
+    "VirtualNetworkRule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Full resource id of a vnet subnet, such as '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'."
+        },
+        "ignoreMissingVnetServiceEndpoint": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Ignore missing vnet service endpoint or not."
+        },
+        "state": {
+          "type": "string",
+          "description": "Gets the state of virtual network rule."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "description": "A rule governing the accessibility from a specific virtual network."
+    }
+  }
+}

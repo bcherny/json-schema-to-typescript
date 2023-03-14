@@ -1,0 +1,678 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2018-03-01-preview/Microsoft.MachineLearningServices.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.MachineLearningServices",
+  "description": "Microsoft MachineLearningServices Resource Types",
+  "resourceDefinitions": {
+    "workspaces": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-03-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Identity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Identity for the resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Specifies the location of the resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of Azure Machine Learning workspace."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkspaceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The properties of a machine learning workspace."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/workspaces_computes_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contains resource tags defined as key/value pairs."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.MachineLearningServices/workspaces"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.MachineLearningServices/workspaces"
+    },
+    "workspaces_computes": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-03-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Identity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Identity for the resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Specifies the location of the resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Azure Machine Learning compute."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Compute"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Machine Learning compute object."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contains resource tags defined as key/value pairs."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.MachineLearningServices/workspaces/computes"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.MachineLearningServices/workspaces/computes"
+    }
+  },
+  "definitions": {
+    "AKS": {
+      "type": "object",
+      "properties": {
+        "computeType": {
+          "type": "string",
+          "enum": [
+            "AKS"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AKSProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "AKS properties"
+        }
+      },
+      "required": [
+        "computeType"
+      ],
+      "description": "A Machine Learning compute based on AKS."
+    },
+    "AKSProperties": {
+      "type": "object",
+      "properties": {
+        "agentCount": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Number of agents"
+        },
+        "agentVMSize": {
+          "type": "string",
+          "description": "Agent virtual machine size"
+        },
+        "clusterFqdn": {
+          "type": "string",
+          "description": "Cluster full qualified domain name"
+        },
+        "sslConfiguration": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SslConfiguration"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The SSL configuration for scoring"
+        },
+        "systemServices": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SystemService"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "System services"
+        }
+      },
+      "description": "AKS properties"
+    },
+    "BatchAI": {
+      "type": "object",
+      "properties": {
+        "computeType": {
+          "type": "string",
+          "enum": [
+            "BatchAI"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/BatchAIProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "BatchAI properties"
+        }
+      },
+      "required": [
+        "computeType"
+      ],
+      "description": "A Machine Learning compute based on Azure BatchAI."
+    },
+    "BatchAIProperties": {
+      "type": "object",
+      "properties": {
+        "scaleSettings": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ScaleSettings"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "scale settings for BatchAI Compute"
+        },
+        "vmPriority": {
+          "type": "string",
+          "description": "Virtual Machine priority"
+        },
+        "vmSize": {
+          "type": "string",
+          "description": "Virtual Machine Size"
+        }
+      },
+      "description": "BatchAI properties"
+    },
+    "Compute": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AKS"
+        },
+        {
+          "$ref": "#/definitions/BatchAI"
+        },
+        {
+          "$ref": "#/definitions/VirtualMachine"
+        },
+        {
+          "$ref": "#/definitions/HDInsight"
+        },
+        {
+          "$ref": "#/definitions/DataFactory"
+        }
+      ],
+      "properties": {
+        "computeLocation": {
+          "type": "string",
+          "description": "Location for the underlying compute"
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the Machine Learning compute."
+        },
+        "resourceId": {
+          "type": "string",
+          "description": "ARM resource id of the compute"
+        }
+      },
+      "description": "Machine Learning compute object."
+    },
+    "DataFactory": {
+      "type": "object",
+      "properties": {
+        "computeType": {
+          "type": "string",
+          "enum": [
+            "DataFactory"
+          ]
+        }
+      },
+      "required": [
+        "computeType"
+      ],
+      "description": "A DataFactory compute."
+    },
+    "HDInsight": {
+      "type": "object",
+      "properties": {
+        "computeType": {
+          "type": "string",
+          "enum": [
+            "HDInsight"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/HDInsightProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "computeType"
+      ],
+      "description": "A HDInsight compute."
+    },
+    "HDInsightProperties": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "Public IP address of the master node of the cluster."
+        },
+        "administratorAccount": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineSshCredentials"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Admin credentials for virtual machine"
+        },
+        "sshPort": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Port open for ssh connections on the master node of the cluster."
+        }
+      }
+    },
+    "Identity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SystemAssigned"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The identity type."
+        }
+      },
+      "description": "Identity for the resource."
+    },
+    "ScaleSettings": {
+      "type": "object",
+      "properties": {
+        "autoScaleEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enable or disable auto scale"
+        },
+        "maxNodeCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Max number of nodes to use"
+        },
+        "minNodeCount": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Min number of nodes to use"
+        }
+      },
+      "description": "scale settings for BatchAI Compute"
+    },
+    "SslConfiguration": {
+      "type": "object",
+      "properties": {
+        "cert": {
+          "type": "string",
+          "description": "Cert data"
+        },
+        "cname": {
+          "type": "string",
+          "description": "CNAME of the cert"
+        },
+        "key": {
+          "type": "string",
+          "description": "Key data"
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Disabled",
+                "Enabled"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Enable or disable SSL for scoring."
+        }
+      },
+      "description": "The SSL configuration for scoring"
+    },
+    "SystemService": {
+      "type": "object",
+      "properties": {},
+      "description": "A system service running on a compute."
+    },
+    "VirtualMachine": {
+      "type": "object",
+      "properties": {
+        "computeType": {
+          "type": "string",
+          "enum": [
+            "VirtualMachine"
+          ]
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "required": [
+        "computeType"
+      ],
+      "description": "A Machine Learning compute based on Azure Virtual Machines."
+    },
+    "VirtualMachineProperties": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "Public IP address of the virtual machine."
+        },
+        "administratorAccount": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VirtualMachineSshCredentials"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Admin credentials for virtual machine"
+        },
+        "sshPort": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Port open for ssh connections."
+        },
+        "virtualMachineSize": {
+          "type": "string",
+          "description": "Virtual Machine size"
+        }
+      }
+    },
+    "VirtualMachineSshCredentials": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string",
+          "description": "Password of admin account"
+        },
+        "privateKeyData": {
+          "type": "string",
+          "description": "Private key data"
+        },
+        "publicKeyData": {
+          "type": "string",
+          "description": "Public key data"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username of admin account"
+        }
+      },
+      "description": "Admin credentials for virtual machine"
+    },
+    "WorkspaceProperties": {
+      "type": "object",
+      "properties": {
+        "applicationInsights": {
+          "type": "string",
+          "description": "ARM id of the application insights associated with this workspace. This cannot be changed once the workspace has been created"
+        },
+        "batchaiWorkspace": {
+          "type": "string",
+          "description": "ARM id of the Batch AI workspace associated with this workspace. This cannot be changed once the workspace has been created"
+        },
+        "containerRegistry": {
+          "type": "string",
+          "description": "ARM id of the container registry associated with this workspace. This cannot be changed once the workspace has been created"
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of this workspace."
+        },
+        "discoveryUrl": {
+          "type": "string",
+          "description": "Url for the discovery service to identify regional endpoints for machine learning experimentation services"
+        },
+        "friendlyName": {
+          "type": "string",
+          "description": "The friendly name for this workspace. This name in mutable"
+        },
+        "keyVault": {
+          "type": "string",
+          "description": "ARM id of the key vault associated with this workspace. This cannot be changed once the workspace has been created"
+        },
+        "storageAccount": {
+          "type": "string",
+          "description": "ARM id of the storage account associated with this workspace. This cannot be changed once the workspace has been created"
+        }
+      },
+      "description": "The properties of a machine learning workspace."
+    },
+    "workspaces_computes_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2018-03-01-preview"
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Identity"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Identity for the resource."
+        },
+        "location": {
+          "type": "string",
+          "description": "Specifies the location of the resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the Azure Machine Learning compute."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Compute"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Machine Learning compute object."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Contains resource tags defined as key/value pairs."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "computes"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.MachineLearningServices/workspaces/computes"
+    }
+  }
+}

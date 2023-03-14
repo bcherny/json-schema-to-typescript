@@ -1,0 +1,69 @@
+{
+  "name": "Remove maxItems if it is big enough to likely cause OOMs (3)",
+  "in": {
+    "additionalProperties": false,
+    "$id": "RemoveMaxItems",
+    "properties": {
+      "a": {
+        "description": "Test",
+        "minItems": 5,
+        "type": "array"
+      },
+      "b": {
+        "description": "Test",
+        "maxItems": 50,
+        "minItems": 5,
+        "type": "array"
+      },
+      "c": {
+        "maxItems": 50,
+        "type": "array"
+      },
+      "d": {
+        "maxItems": 15,
+        "minItems": 5,
+        "type": "array"
+      },
+      "e": {
+        "maxItems": 15,
+        "type": "array"
+      }
+    },
+    "required": []
+  },
+  "out": {
+    "additionalProperties": false,
+    "$id": "RemoveMaxItems",
+    "properties": {
+      "a": {
+        "description": "Test\n\n@minItems 5",
+        "minItems": 5,
+        "type": "array"
+      },
+      "b": {
+        "description": "Test\n\n@minItems 5\n@maxItems 50",
+        "minItems": 5,
+        "type": "array"
+      },
+      "c": {
+        "description": "@maxItems 50",
+        "minItems": 0,
+        "type": "array"
+      },
+      "d": {
+        "description": "@minItems 5\n@maxItems 15",
+        "minItems": 5,
+        "type": "array"
+      },
+      "e": {
+        "description": "@maxItems 15",
+        "minItems": 0,
+        "type": "array"
+      }
+    },
+    "required": []
+  },
+  "options": {
+    "maxItems": -1
+  }
+}

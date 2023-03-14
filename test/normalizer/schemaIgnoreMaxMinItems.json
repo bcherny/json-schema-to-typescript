@@ -4,7 +4,7 @@
     "ignoreMinAndMaxItems": true
   },
   "in": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untyped": {
@@ -34,18 +34,30 @@
         "type": "object",
         "properties": {
           "unbounded": {
-            "type": ["array", "string"]
+            "type": [
+              "array",
+              "string"
+            ]
           },
           "minOnly": {
-            "type": ["array", "string"],
+            "type": [
+              "array",
+              "string"
+            ],
             "minItems": 1
           },
           "maxOnly": {
-            "type": ["array", "string"],
+            "type": [
+              "array",
+              "string"
+            ],
             "maxItems": 2
           },
           "minAndMax": {
-            "type": ["array", "string"],
+            "type": [
+              "array",
+              "string"
+            ],
             "minItems": 1,
             "maxItems": 2
           }
@@ -150,7 +162,7 @@
     "required": []
   },
   "out": {
-    "id": "foo",
+    "$id": "foo",
     "type": "object",
     "properties": {
       "untyped": {
@@ -160,12 +172,15 @@
             "type": "array"
           },
           "minOnly": {
+            "description": "@minItems 1",
             "type": "array"
           },
           "maxOnly": {
+            "description": "@maxItems 2",
             "type": "array"
           },
           "minAndMax": {
+            "description": "@minItems 1\n@maxItems 2",
             "type": "array"
           }
         },
@@ -176,16 +191,31 @@
         "type": "object",
         "properties": {
           "unbounded": {
-            "type": ["array", "string"]
+            "type": [
+              "array",
+              "string"
+            ]
           },
           "minOnly": {
-            "type": ["array", "string"]
+            "description": "@minItems 1",
+            "type": [
+              "array",
+              "string"
+            ]
           },
           "maxOnly": {
-            "type": ["array", "string"]
+            "description": "@maxItems 2",
+            "type": [
+              "array",
+              "string"
+            ]
           },
           "minAndMax": {
-            "type": ["array", "string"]
+            "description": "@minItems 1\n@maxItems 2",
+            "type": [
+              "array",
+              "string"
+            ]
           }
         },
         "additionalProperties": false,
@@ -200,6 +230,7 @@
             }
           },
           "minOnly": {
+            "description": "@minItems 1",
             "items": {
               "type": "string"
             },
@@ -208,11 +239,13 @@
             }
           },
           "maxOnly": {
+            "description": "@maxItems 2",
             "items": {
               "type": "string"
             }
           },
           "minAndMax": {
+            "description": "@minItems 1\n@maxItems 2",
             "items": {
               "type": "string"
             }
@@ -238,6 +271,7 @@
           "minOnly": {
             "anyOf": [
               {
+                "description": "@minItems 1",
                 "items": {
                   "type": "string"
                 },
@@ -252,6 +286,7 @@
           "maxOnly": {
             "anyOf": [
               {
+                "description": "@maxItems 2",
                 "items": {
                   "type": "string"
                 }
@@ -263,6 +298,7 @@
           "minAndMax": {
             "anyOf": [
               {
+                "description": "@minItems 1\n@maxItems 2",
                 "items": {
                   "type": "string"
                 }

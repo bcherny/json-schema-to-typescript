@@ -1,0 +1,154 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-03-01/Microsoft.ContainerRegistry.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.ContainerRegistry",
+  "description": "Microsoft ContainerRegistry Resource Types",
+  "resourceDefinitions": {
+    "registries": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-03-01"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the container registry. This cannot be changed after the resource is created."
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9]*$",
+              "minLength": 5,
+              "maxLength": 50
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the container registry."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RegistryPropertiesCreateParameters"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The parameters for creating the properties of a container registry."
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The SKU of a container registry."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The tags for the container registry."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.ContainerRegistry/registries"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "sku",
+        "type"
+      ],
+      "description": "Microsoft.ContainerRegistry/registries"
+    }
+  },
+  "definitions": {
+    "RegistryPropertiesCreateParameters": {
+      "type": "object",
+      "properties": {
+        "adminUserEnabled": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The value that indicates whether the admin user is enabled."
+        },
+        "storageAccount": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/StorageAccountParameters"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The parameters of a storage account for a container registry."
+        }
+      },
+      "required": [
+        "storageAccount"
+      ],
+      "description": "The parameters for creating the properties of a container registry."
+    },
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The SKU name of the container registry. Required for registry creation. Allowed value: Basic."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "The SKU of a container registry."
+    },
+    "StorageAccountParameters": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "description": "The access key to the storage account."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the storage account."
+        }
+      },
+      "required": [
+        "accessKey",
+        "name"
+      ],
+      "description": "The parameters of a storage account for a container registry."
+    }
+  }
+}

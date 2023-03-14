@@ -1,0 +1,654 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-08-15/Microsoft.NetApp.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.NetApp",
+  "description": "Microsoft NetApp Resource Types",
+  "resourceDefinitions": {
+    "netAppAccounts": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-08-15"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the NetApp account"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AccountProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "NetApp account properties"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/netAppAccounts_capacityPools_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.NetApp/netAppAccounts"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.NetApp/netAppAccounts"
+    },
+    "netAppAccounts_capacityPools": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-08-15"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the capacity pool"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PoolProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Pool properties"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/netAppAccounts_capacityPools_volumes_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.NetApp/netAppAccounts/capacityPools"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.NetApp/netAppAccounts/capacityPools"
+    },
+    "netAppAccounts_capacityPools_volumes": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-08-15"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the volume"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VolumeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Volume properties"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/netAppAccounts_capacityPools_volumes_snapshots_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
+    },
+    "netAppAccounts_capacityPools_volumes_snapshots": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-08-15"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the mount target"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SnapshotProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Snapshot properties"
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
+    }
+  },
+  "definitions": {
+    "AccountProperties": {
+      "type": "object",
+      "properties": {
+        "activeDirectories": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ActiveDirectory"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Active Directories"
+        }
+      },
+      "description": "NetApp account properties"
+    },
+    "ActiveDirectory": {
+      "type": "object",
+      "properties": {
+        "activeDirectoryId": {
+          "type": "string",
+          "description": "Id of the Active Directory"
+        },
+        "dNS": {
+          "type": "string",
+          "description": "Comma separated list of DNS server IP addresses for the Active Directory domain"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Name of the Active Directory domain"
+        },
+        "organizationalUnit": {
+          "type": "string",
+          "description": "The Organizational Unit (OU) within the Windows Active Directory"
+        },
+        "password": {
+          "type": "string",
+          "description": "Plain text password of Active Directory domain administrator"
+        },
+        "sMBServerName": {
+          "type": "string",
+          "description": "NetBIOS name of the SMB server. This name will be registered as a computer account in the AD and used to mount volumes"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the Active Directory"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username of Active Directory domain administrator"
+        }
+      },
+      "description": "Active Directory"
+    },
+    "ExportPolicyRule": {
+      "type": "object",
+      "properties": {
+        "allowedClients": {
+          "type": "string",
+          "description": "Client ingress specification as comma separated string with IPv4 CIDRs, IPv4 host addresses and host names"
+        },
+        "cifs": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Allows CIFS protocol"
+        },
+        "nfsv3": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Allows NFSv3 protocol"
+        },
+        "nfsv4": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Allows NFSv4 protocol"
+        },
+        "ruleIndex": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Order index"
+        },
+        "unixReadOnly": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Read only access"
+        },
+        "unixReadWrite": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Read and write access"
+        }
+      },
+      "description": "Volume Export Policy Rule"
+    },
+    "netAppAccounts_capacityPools_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-08-15"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the capacity pool"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PoolProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Pool properties"
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "capacityPools"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.NetApp/netAppAccounts/capacityPools"
+    },
+    "netAppAccounts_capacityPools_volumes_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-08-15"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the volume"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VolumeProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Volume properties"
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "volumes"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
+    },
+    "netAppAccounts_capacityPools_volumes_snapshots_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-08-15"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the mount target"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SnapshotProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Snapshot properties"
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "snapshots"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
+    },
+    "PoolProperties": {
+      "type": "object",
+      "properties": {
+        "serviceLevel": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Standard",
+                "Premium",
+                "Ultra"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The service level of the file system."
+        },
+        "size": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 4398046511104,
+              "maximum": 549755813888000,
+              "default": "4398046511104"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Provisioned size of the pool (in bytes). Allowed values are in 4TiB chunks (value must be multiply of 4398046511104)."
+        }
+      },
+      "description": "Pool properties"
+    },
+    "SnapshotProperties": {
+      "type": "object",
+      "properties": {
+        "fileSystemId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+              "minLength": 36,
+              "maxLength": 36
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "UUID v4 used to identify the FileSystem"
+        }
+      },
+      "required": [
+        "fileSystemId"
+      ],
+      "description": "Snapshot properties"
+    },
+    "VolumeProperties": {
+      "type": "object",
+      "properties": {
+        "creationToken": {
+          "type": "string",
+          "description": "A unique file path for the volume. Used when creating mount targets"
+        },
+        "exportPolicy": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/VolumePropertiesExportPolicy"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Export policy rule"
+        },
+        "serviceLevel": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Standard",
+                "Premium",
+                "Ultra"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The service level of the file system."
+        },
+        "subnetId": {
+          "type": "string",
+          "description": "The Azure Resource URI for a delegated subnet. Must have the delegation Microsoft.NetApp/volumes"
+        },
+        "usageThreshold": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 107374182400,
+              "maximum": 109951162777600,
+              "default": "107374182400"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Maximum storage quota allowed for a file system in bytes. This is a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB."
+        }
+      },
+      "required": [
+        "creationToken",
+        "serviceLevel"
+      ],
+      "description": "Volume properties"
+    },
+    "VolumePropertiesExportPolicy": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ExportPolicyRule"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        }
+      },
+      "description": "Export policy rule"
+    }
+  }
+}

@@ -1,0 +1,348 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2017-11-15/Microsoft.Devices.Provisioning.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.Devices",
+  "description": "Microsoft Devices Resource Types",
+  "resourceDefinitions": {
+    "provisioningServices": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-11-15"
+          ]
+        },
+        "etag": {
+          "type": "string",
+          "description": "The Etag field is *not* required. If it is provided in the response body, it must also be provided as a header per the normal ETag convention."
+        },
+        "location": {
+          "type": "string",
+          "description": "The resource location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of provisioning service to create or update."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IotDpsPropertiesDescription"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "the service specific properties of a provisioning service, including keys, linked iot hubs, current state, and system generated properties such as hostname and idScope"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/provisioningServices_certificates_childResource"
+              }
+            ]
+          }
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/IotDpsSkuInfo"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of possible provisioning service SKUs."
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The resource tags."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Devices/provisioningServices"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "location",
+        "name",
+        "properties",
+        "sku",
+        "type"
+      ],
+      "description": "Microsoft.Devices/provisioningServices"
+    },
+    "provisioningServices_certificates": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-11-15"
+          ]
+        },
+        "certificate": {
+          "type": "string",
+          "description": "Base-64 representation of the X509 leaf certificate .cer file or just .pem file content."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the certificate create or update."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.Devices/provisioningServices/certificates"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Devices/provisioningServices/certificates"
+    }
+  },
+  "definitions": {
+    "IotDpsPropertiesDescription": {
+      "type": "object",
+      "properties": {
+        "allocationPolicy": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Hashed",
+                "GeoLatency",
+                "Static"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Allocation policy to be used by this provisioning service."
+        },
+        "authorizationPolicies": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SharedAccessSignatureAuthorizationRuleAccessRightsDescription"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of authorization keys for a provisioning service."
+        },
+        "iotHubs": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/IotHubDefinitionDescription"
+              }
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "List of IoT hubs associated with this provisioning service."
+        },
+        "provisioningState": {
+          "type": "string",
+          "description": "The ARM provisioning state of the provisioning service."
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Activating",
+                "Active",
+                "Deleting",
+                "Deleted",
+                "ActivationFailed",
+                "DeletionFailed",
+                "Transitioning",
+                "Suspending",
+                "Suspended",
+                "Resuming",
+                "FailingOver",
+                "FailoverFailed"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Current state of the provisioning service."
+        }
+      },
+      "description": "the service specific properties of a provisioning service, including keys, linked iot hubs, current state, and system generated properties such as hostname and idScope"
+    },
+    "IotDpsSkuInfo": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The number of units to provision"
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "S1"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Sku name."
+        }
+      },
+      "description": "List of possible provisioning service SKUs."
+    },
+    "IotHubDefinitionDescription": {
+      "type": "object",
+      "properties": {
+        "allocationWeight": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Weight to apply for a given IoT hub."
+        },
+        "applyAllocationPolicy": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Flag for applying allocationPolicy or not for a given IoT hub."
+        },
+        "connectionString": {
+          "type": "string",
+          "description": "Connection string of the IoT hub."
+        },
+        "location": {
+          "type": "string",
+          "description": "ARM region of the IoT hub."
+        }
+      },
+      "required": [
+        "connectionString",
+        "location"
+      ],
+      "description": "Description of the IoT hub."
+    },
+    "provisioningServices_certificates_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2017-11-15"
+          ]
+        },
+        "certificate": {
+          "type": "string",
+          "description": "Base-64 representation of the X509 leaf certificate .cer file or just .pem file content."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the certificate create or update."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "certificates"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "type"
+      ],
+      "description": "Microsoft.Devices/provisioningServices/certificates"
+    },
+    "SharedAccessSignatureAuthorizationRuleAccessRightsDescription": {
+      "type": "object",
+      "properties": {
+        "keyName": {
+          "type": "string",
+          "description": "Name of the key."
+        },
+        "primaryKey": {
+          "type": "string",
+          "description": "Primary SAS key value."
+        },
+        "rights": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ServiceConfig",
+                "EnrollmentRead",
+                "EnrollmentWrite",
+                "DeviceConnect",
+                "RegistrationStatusRead",
+                "RegistrationStatusWrite"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Rights that this key has."
+        },
+        "secondaryKey": {
+          "type": "string",
+          "description": "Secondary SAS key value."
+        }
+      },
+      "required": [
+        "keyName",
+        "rights"
+      ],
+      "description": "Description of the shared access key."
+    }
+  }
+}

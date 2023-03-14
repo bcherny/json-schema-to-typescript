@@ -1,0 +1,414 @@
+{
+  "id": "https://schema.management.azure.com/schemas/2015-11-01-preview/Microsoft.OperationalInsights.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Microsoft.OperationalInsights",
+  "description": "Microsoft OperationalInsights Resource Types",
+  "resourceDefinitions": {
+    "workspaces": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-11-01-preview"
+          ]
+        },
+        "eTag": {
+          "type": "string",
+          "description": "The ETag of the workspace."
+        },
+        "location": {
+          "type": "string",
+          "description": "Resource location"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the workspace."
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/WorkspaceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Workspace properties."
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/workspaces_linkedServices_childResource"
+              },
+              {
+                "$ref": "#/definitions/workspaces_dataSources_childResource"
+              }
+            ]
+          }
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.OperationalInsights/workspaces"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.OperationalInsights/workspaces"
+    },
+    "workspaces_dataSources": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-11-01-preview"
+          ]
+        },
+        "eTag": {
+          "type": "string",
+          "description": "The ETag of the data source."
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AzureActivityLog",
+                "ChangeTrackingPath",
+                "ChangeTrackingDefaultPath",
+                "ChangeTrackingDefaultRegistry",
+                "ChangeTrackingCustomRegistry",
+                "CustomLog",
+                "CustomLogCollection",
+                "GenericDataSource",
+                "IISLogs",
+                "LinuxPerformanceObject",
+                "LinuxPerformanceCollection",
+                "LinuxSyslog",
+                "LinuxSyslogCollection",
+                "WindowsEvent",
+                "WindowsPerformanceCounter"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the datasource resource."
+        },
+        "properties": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.OperationalInsights/workspaces/dataSources"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "kind",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.OperationalInsights/workspaces/dataSources"
+    },
+    "workspaces_linkedServices": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-11-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the linkedServices resource"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LinkedServiceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Linked service properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Microsoft.OperationalInsights/workspaces/linkedServices"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.OperationalInsights/workspaces/linkedServices"
+    }
+  },
+  "definitions": {
+    "LinkedServiceProperties": {
+      "type": "object",
+      "properties": {
+        "resourceId": {
+          "type": "string",
+          "description": "The resource id of the resource that will be linked to the workspace."
+        }
+      },
+      "required": [
+        "resourceId"
+      ],
+      "description": "Linked service properties."
+    },
+    "Sku": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Free",
+                "Standard",
+                "Premium",
+                "PerNode",
+                "PerGB2018",
+                "Standalone",
+                "CapacityReservation"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The name of the SKU."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "The SKU (tier) of a workspace."
+    },
+    "WorkspaceProperties": {
+      "type": "object",
+      "properties": {
+        "provisioningState": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Creating",
+                "Succeeded",
+                "Failed",
+                "Canceled",
+                "Deleting",
+                "ProvisioningAccount"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The provisioning state of the workspace."
+        },
+        "retentionInDays": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 730
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The workspace data retention in days. -1 means Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed for all other Skus. "
+        },
+        "sku": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The SKU (tier) of a workspace."
+        }
+      },
+      "description": "Workspace properties."
+    },
+    "workspaces_dataSources_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-11-01-preview"
+          ]
+        },
+        "eTag": {
+          "type": "string",
+          "description": "The ETag of the data source."
+        },
+        "kind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AzureActivityLog",
+                "ChangeTrackingPath",
+                "ChangeTrackingDefaultPath",
+                "ChangeTrackingDefaultRegistry",
+                "ChangeTrackingCustomRegistry",
+                "CustomLog",
+                "CustomLogCollection",
+                "GenericDataSource",
+                "IISLogs",
+                "LinuxPerformanceObject",
+                "LinuxPerformanceCollection",
+                "LinuxSyslog",
+                "LinuxSyslogCollection",
+                "WindowsEvent",
+                "WindowsPerformanceCounter"
+              ]
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the datasource resource."
+        },
+        "properties": {
+          "type": "object",
+          "properties": {},
+          "description": "JSON object"
+        },
+        "tags": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Resource tags"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "dataSources"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "kind",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.OperationalInsights/workspaces/dataSources"
+    },
+    "workspaces_linkedServices_childResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "enum": [
+            "2015-11-01-preview"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the linkedServices resource"
+        },
+        "properties": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LinkedServiceProperties"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Linked service properties."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "linkedServices"
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "name",
+        "properties",
+        "type"
+      ],
+      "description": "Microsoft.OperationalInsights/workspaces/linkedServices"
+    }
+  }
+}
