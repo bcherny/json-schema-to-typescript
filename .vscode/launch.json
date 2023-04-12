@@ -5,8 +5,13 @@
         "type": "node",
         "request": "launch",
         "name": "Launch Program",
-        "program": "${workspaceRoot}/node_modules/.bin/ava ./dist/test/test.js",
-        "cwd": "${workspaceRoot}"
+        "program": "${workspaceRoot}/node_modules/.bin/ava",
+        "args": ["./dist/test/test.js"],
+        "cwd": "${workspaceRoot}",
+        "console": "integratedTerminal",
+        "env": {
+          "VERBOSE": "true"
+        }
     },
     {
       "type": "node",
