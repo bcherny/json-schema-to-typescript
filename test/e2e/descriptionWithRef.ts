@@ -14,4 +14,3 @@ export const input = {
   title: 'Example Schema',
   type: 'object'
 }
-export const only = true
