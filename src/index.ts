@@ -107,7 +107,7 @@ export const DEFAULT_OPTIONS: Options = {
   unknownAny: true
 }
 
-export function compileFromFile (filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
   const contents = Try(
     () => readFileSync(filename),
     () => {
@@ -123,13 +123,13 @@ export function compileFromFile (filename: string, options: Partial<Options> = D
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
-export async function compile (schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
+export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
   validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
   const start = Date.now()
-  function time () {
+  function time() {
     return `(${Date.now() - start}ms)`
   }
 
@@ -141,7 +141,7 @@ export async function compile (schema: JSONSchema4, name: string, options: Parti
   // Initial clone to avoid mutating the input
   const _schema = cloneDeep(schema)
 
-  const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
+  const {dereferencedPaths, dereferencedSchema, refMap} = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
@@ -167,7 +167,7 @@ export async function compile (schema: JSONSchema4, name: string, options: Parti
   const normalized = normalize(linked, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
-  const parsed = parse(normalized, _options)
+  const parsed = parse(normalized, _options, dereferencedPaths, refMap)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed, _options)
