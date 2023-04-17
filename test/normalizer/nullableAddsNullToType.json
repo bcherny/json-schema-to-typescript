@@ -1,0 +1,33 @@
+{
+  "name": "Nullable adds null to type",
+  "in": {
+    "$id": "a",
+    "type": "object",
+    "properties": {
+      "foo": {
+        "type": "string",
+        "nullable": true
+      },
+      "bar": {
+        "type": ["string", "number"],
+        "nullable": true
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  },
+  "out": {
+    "$id": "a",
+    "type": "object",
+    "properties": {
+      "foo": {
+        "type": ["string", "null"]
+      },
+      "bar": {
+        "type": ["string", "number", "null"]
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}
