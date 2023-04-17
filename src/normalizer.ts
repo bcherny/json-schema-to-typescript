@@ -222,6 +222,20 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
+rules.set('Transform nullable to null type', schema => {
+  if (schema.nullable !== true) {
+    return
+  }
+
+  delete schema.nullable
+
+  if (!schema.type) {
+    return
+  }
+
+  schema.type = [...[schema.type].flatMap(value => value), 'null']
+})
+
 export function normalize(
   rootSchema: LinkedJSONSchema,
   dereferencedPaths: DereferencedPaths,
