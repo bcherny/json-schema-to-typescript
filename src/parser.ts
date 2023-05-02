@@ -114,11 +114,11 @@ function parseBooleanSchema(schema: boolean, keyName: string | undefined, option
       keyName,
       type: options.unknownAny ? 'UNKNOWN' : 'ANY'
     }
-  } else {
-    return {
-      keyName,
-      type: 'NEVER'
-    }
+  }
+
+  return {
+    keyName,
+    type: 'NEVER'
   }
 }
 
