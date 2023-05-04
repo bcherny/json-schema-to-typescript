@@ -83,6 +83,14 @@ export function run() {
     )
   })
 
+  test('--additionalProperties', t => {
+    t.snapshot(
+      execSync(
+        'node dist/src/cli.js --additionalProperties=false --input ./test/resources/ReferencedType.json'
+      ).toString()
+    )
+  })
+
   test('files in (-i), files out (-o)', t => {
     execSync(`node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.json" -o ./test/resources/MultiSchema/out`)
 
