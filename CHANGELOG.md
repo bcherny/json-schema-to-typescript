@@ -2,6 +2,10 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 13.0.1
+
+- b13a6f2 Bugfix: Boolean CLI flags were not respected (#524)
+
 ## 13.0.0
 
 - 05b0103 Bugfix: Parse boolean schemas as schemas, rather than as literals (#515)
