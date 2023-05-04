@@ -7,7 +7,7 @@ import * as mkdirp from 'mkdirp'
 import glob from 'glob-promise'
 import isGlob = require('is-glob')
 import {join, resolve, dirname, basename} from 'path'
-import {compile, Options} from './index'
+import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error} from './utils'
 
 main(
@@ -16,7 +16,19 @@ main(
       help: ['h'],
       input: ['i'],
       output: ['o']
-    }
+    },
+    boolean: [
+      'additionalProperties',
+      'declareExternallyReferenced',
+      'enableConstEnums',
+      'format',
+      'ignoreMinAndMaxItems',
+      'strictIndexSignatures',
+      'unknownAny',
+      'unreachableDefinitions'
+    ],
+    default: DEFAULT_OPTIONS,
+    string: ['bannerComment', 'cwd']
   })
 )
 
