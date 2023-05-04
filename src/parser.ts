@@ -17,6 +17,7 @@ import {
 } from './types/AST'
 import {
   getRootSchema,
+  isBoolean,
   isPrimitive,
   JSONSchema as LinkedJSONSchema,
   JSONSchemaWithDefinitions,
@@ -37,6 +38,10 @@ export function parse(
   usedNames = new Set<string>()
 ): AST {
   if (isPrimitive(schema)) {
+    if (isBoolean(schema)) {
+      return parseBooleanSchema(schema, keyName, options)
+    }
+
     return parseLiteral(schema, keyName)
   }
 
@@ -101,6 +106,20 @@ function parseAsTypeWithCache(
   // Update the AST in place. This updates the `processed` cache, as well
   // as any nodes that directly reference the node.
   return Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames))
+}
+
+function parseBooleanSchema(schema: boolean, keyName: string | undefined, options: Options): AST {
+  if (schema) {
+    return {
+      keyName,
+      type: options.unknownAny ? 'UNKNOWN' : 'ANY'
+    }
+  }
+
+  return {
+    keyName,
+    type: 'NEVER'
+  }
 }
 
 function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined): AST {
@@ -174,6 +193,13 @@ function parseNonLiteral(
       }
     case 'NAMED_SCHEMA':
       return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName)
+    case 'NEVER':
+      return {
+        comment: schema.description,
+        keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        type: 'NEVER'
+      }
     case 'NULL':
       return {
         comment: schema.description,

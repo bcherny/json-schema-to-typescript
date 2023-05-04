@@ -11,6 +11,7 @@ export type AST =
   | TNamedInterface
   | TIntersection
   | TLiteral
+  | TNever
   | TNumber
   | TNull
   | TObject
@@ -77,6 +78,10 @@ export interface TNamedInterface extends AbstractAST {
   type: 'INTERFACE'
   params: TInterfaceParam[]
   superTypes: TNamedInterface[]
+}
+
+export interface TNever extends AbstractAST {
+  type: 'NEVER'
 }
 
 export interface TInterfaceParam {

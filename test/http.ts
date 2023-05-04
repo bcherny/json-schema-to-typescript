@@ -7,7 +7,7 @@ const CACHE_DIR = 'test/__fixtures__'
 
 // Gets a URL, with read-through cache
 // TODO: Pull this out into its own NPM module
-export async function getWithCache (url: string): Promise<object> {
+export async function getWithCache(url: string): Promise<object> {
   const resultFromFilesystem = getFromFilesystem(url)
   if (resultFromFilesystem) {
     return resultFromFilesystem
@@ -18,7 +18,7 @@ export async function getWithCache (url: string): Promise<object> {
   return resultFromNetwork
 }
 
-function getFromFilesystem (url: string): object | undefined {
+function getFromFilesystem(url: string): object | undefined {
   const filepath = getFilepath(url)
   if (!existsSync(filepath)) {
     return
@@ -26,17 +26,17 @@ function getFromFilesystem (url: string): object | undefined {
   return JSON.parse(readFileSync(filepath, 'utf8'))
 }
 
-function getFilepath (url: string): string {
+function getFilepath(url: string): string {
   return join(__dirname, '../../', CACHE_DIR, url.replace(/[:\/\\]/g, '-'))
 }
 
-function writeToFilesystem (url: string, data: object): void {
+function writeToFilesystem(url: string, data: object): void {
   const filepath = getFilepath(url)
   console.info(`Writing "${filepath} to filesystem...`)
   writeFileSync(filepath, JSON.stringify(data, null, 2))
 }
 
-function getFromNetwork (url: string): Promise<object> {
+function getFromNetwork(url: string): Promise<object> {
   const f = url.startsWith('https://') ? httpsGet : httpGet
   return new Promise((resolve, reject) => {
     f(url, res => {
