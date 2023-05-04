@@ -2,6 +2,11 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 13.0.0
+
+- 05b0103 Bugfix: Parse boolean schemas as schemas, rather than as literals (#515)
+- 8f973d1 Bugfix: Fix edge case where emitted names were corrupted when using `strictIndexSignature` (#423)
+
 ## 12.0.0
 
 - b73e1c7 Bugfix: Parse enums as literals, rather than as schemas (#508)
