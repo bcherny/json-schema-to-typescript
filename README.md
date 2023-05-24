@@ -95,7 +95,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
-| enableBigInt | boolean | `false` | Use `bigint` for unbounded (i.e. no 'maximum') `integer` in the schema. |
+| enableBigInt | boolean | `false` | Use 'bigint' for 'integer' types that are unbounded (i.e. no 'maximum' and/or 'minimum'), or unsafe (i.e. 'maximum' > Number.MAX_SAFE_INTEGER and/or 'minimum' < Number.MIN_SAFE_INTEGER) |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 

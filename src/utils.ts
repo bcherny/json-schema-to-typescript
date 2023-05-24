@@ -49,6 +49,16 @@ const BLACKLISTED_KEYS = new Set([
   'not'
 ])
 
+// Determines if the constraints on a given integer schema could result in values that are unsafe for the JS Number type
+export function isUnsafeIntegerForNumberType({minimum, maximum}: {minimum?: number; maximum?: number}) {
+  return (
+    minimum === undefined ||
+    maximum === undefined ||
+    minimum < Number.MIN_SAFE_INTEGER ||
+    maximum > Number.MAX_SAFE_INTEGER
+  )
+}
+
 function traverseObjectKeys(
   obj: Record<string, LinkedJSONSchema>,
   callback: (schema: LinkedJSONSchema, key: string | null) => void,

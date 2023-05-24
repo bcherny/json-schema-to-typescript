@@ -185,7 +185,7 @@ Boolean values can be set to false using the 'no-' prefix.
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
   --enableBigInt
-      Use 'bigint' for unbounded (i.e. no 'maximum') 'integer' in the schema
+      Use 'bigint' for 'integer' types that are unbounded (i.e. no 'maximum' and/or 'minimum'), or unsafe (i.e. 'maximum' > Number.MAX_SAFE_INTEGER and/or 'minimum' < Number.MIN_SAFE_INTEGER)
 `
   )
 }

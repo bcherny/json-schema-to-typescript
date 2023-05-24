@@ -1,6 +1,7 @@
 import {isPlainObject} from 'lodash'
 import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
 import {Options} from './'
+import {isUnsafeIntegerForNumberType} from './utils'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
@@ -82,7 +83,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema, options: Options) => boo
     if (schema.type === 'number') {
       return true
     }
-    if (schema.type === 'integer' && (!options.enableBigInt || schema.maximum !== undefined)) {
+    if (schema.type === 'integer' && (!options.enableBigInt || !isUnsafeIntegerForNumberType(schema))) {
       return true
     }
     if (!isCompound(schema) && typeof schema.default === 'number') {
@@ -94,7 +95,7 @@ const matchers: Record<SchemaType, (schema: JSONSchema, options: Options) => boo
     if ('enum' in schema) {
       return false
     }
-    if (schema.type === 'integer' && options.enableBigInt && schema.maximum === undefined) {
+    if (schema.type === 'integer' && options.enableBigInt && isUnsafeIntegerForNumberType(schema)) {
       return true
     }
     return false
