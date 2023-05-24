@@ -1,0 +1,3 @@
+# Treat text as lf
+* text=auto
+* eol=lf
