@@ -263,7 +263,7 @@ function parseNonLiteral(
           comment: schema.description,
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-          params: parse(schema.items!, options, undefined, processed, usedNames),
+          params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
           type: 'ARRAY'
         }
       }
