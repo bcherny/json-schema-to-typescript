@@ -143,7 +143,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         .filter(Boolean)
         .join('\n')
     default:
-      if (hasStandaloneName(ast)) {
+      if (hasStandaloneName(ast) && options.declareExternallyReferenced) {
         return generateStandaloneType(ast, options)
       }
       return ''
