@@ -1,6 +1,7 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
+import {JSONSchema4} from 'json-schema'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -50,7 +51,7 @@ const BLACKLISTED_KEYS = new Set([
 ])
 
 // Determines if the constraints on a given integer schema could result in values that are unsafe for the JS Number type
-export function isUnsafeIntegerForNumberType({minimum, maximum}: {minimum?: number; maximum?: number}) {
+export function isUnsafeIntegerForNumberType({minimum, maximum}: JSONSchema4) {
   return (
     minimum === undefined ||
     maximum === undefined ||

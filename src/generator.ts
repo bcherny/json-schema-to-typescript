@@ -176,6 +176,8 @@ function generateRawType(ast: AST, options: Options): string {
         const type = generateType(ast.params, options)
         return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
       })()
+    case 'BIGINT':
+      return 'bigint'
     case 'BOOLEAN':
       return 'boolean'
     case 'INTERFACE':
@@ -188,8 +190,6 @@ function generateRawType(ast: AST, options: Options): string {
       return 'never'
     case 'NUMBER':
       return 'number'
-    case 'BIGINT':
-      return 'bigint'
     case 'NULL':
       return 'null'
     case 'OBJECT':

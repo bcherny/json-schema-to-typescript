@@ -169,6 +169,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Root directory for resolving $ref
   --declareExternallyReferenced
       Declare external schemas referenced via '$ref'?
+  --enableBigInt
+      Use 'bigint' for 'integer' types that are unbounded (i.e. no 'maximum' and/or 'minimum'), or unsafe (i.e. 'maximum' > Number.MAX_SAFE_INTEGER and/or 'minimum' < Number.MIN_SAFE_INTEGER)
   --enableConstEnums
       Prepend enums with 'const'?
   --format
@@ -184,8 +186,6 @@ Boolean values can be set to false using the 'no-' prefix.
       Output unknown type instead of any type
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
-  --enableBigInt
-      Use 'bigint' for 'integer' types that are unbounded (i.e. no 'maximum' and/or 'minimum'), or unsafe (i.e. 'maximum' > Number.MAX_SAFE_INTEGER and/or 'minimum' < Number.MIN_SAFE_INTEGER)
 `
   )
 }

@@ -40,6 +40,10 @@ export interface Options {
    */
   declareExternallyReferenced: boolean
   /**
+   * Use `bigint` for unbounded (i.e. no 'maximum') `integer` in the schema.
+   */
+  enableBigInt: boolean
+  /**
    * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
    */
   enableConstEnums: boolean
@@ -76,10 +80,6 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
-  /**
-   * Use `bigint` for unbounded (i.e. no 'maximum') `integer` in the schema.
-   */
-  enableBigInt: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -93,6 +93,7 @@ export const DEFAULT_OPTIONS: Options = {
 */`,
   cwd: process.cwd(),
   declareExternallyReferenced: true,
+  enableBigInt: false,
   enableConstEnums: true,
   format: true,
   ignoreMinAndMaxItems: false,
@@ -108,8 +109,7 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  unknownAny: true,
-  enableBigInt: false // True would be more sensible, but also a breaking change from older versions.
+  unknownAny: true
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {

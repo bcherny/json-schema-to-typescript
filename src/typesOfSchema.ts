@@ -48,6 +48,15 @@ const matchers: Record<SchemaType, (schema: JSONSchema, options: Options) => boo
   ANY_OF(schema) {
     return 'anyOf' in schema
   },
+  BIGINT(schema, options) {
+    if ('enum' in schema) {
+      return false
+    }
+    if (schema.type === 'integer' && options.enableBigInt && isUnsafeIntegerForNumberType(schema)) {
+      return true
+    }
+    return false
+  },
   BOOLEAN(schema) {
     if ('enum' in schema) {
       return false
@@ -87,15 +96,6 @@ const matchers: Record<SchemaType, (schema: JSONSchema, options: Options) => boo
       return true
     }
     if (!isCompound(schema) && typeof schema.default === 'number') {
-      return true
-    }
-    return false
-  },
-  BIGINT(schema, options) {
-    if ('enum' in schema) {
-      return false
-    }
-    if (schema.type === 'integer' && options.enableBigInt && isUnsafeIntegerForNumberType(schema)) {
       return true
     }
     return false

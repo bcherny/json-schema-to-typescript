@@ -1,5 +1,3 @@
-import {DEFAULT_OPTIONS} from '../../src'
-
 export const input = {
   title: 'Example Schema -- BigInt Disabled',
   type: 'object',
@@ -27,6 +25,5 @@ export const input = {
 }
 
 export const options = {
-  ...DEFAULT_OPTIONS,
   enableBigInt: false
 }
