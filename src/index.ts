@@ -40,6 +40,10 @@ export interface Options {
    */
   declareExternallyReferenced: boolean
   /**
+   * Use `bigint` for unbounded (i.e. no 'maximum') `integer` in the schema.
+   */
+  enableBigInt: boolean
+  /**
    * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
    */
   enableConstEnums: boolean
@@ -89,6 +93,7 @@ export const DEFAULT_OPTIONS: Options = {
 */`,
   cwd: process.cwd(),
   declareExternallyReferenced: true,
+  enableBigInt: false,
   enableConstEnums: true,
   format: true,
   ignoreMinAndMaxItems: false,

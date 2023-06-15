@@ -6,6 +6,7 @@ export type SchemaType =
   | 'UNNAMED_SCHEMA'
   | 'ANY'
   | 'ANY_OF'
+  | 'BIGINT'
   | 'BOOLEAN'
   | 'NAMED_ENUM'
   | 'NAMED_SCHEMA'
