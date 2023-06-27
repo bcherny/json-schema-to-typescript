@@ -163,11 +163,18 @@ export function toSafeString(string: string) {
   // First character: a-zA-Z | _ | $
   // Rest: a-zA-Z | _ | $ | 0-9
 
-  return upperFirst(
-    // remove accents, umlauts, ... by their basic latin letters
-    deburr(string)
-      // replace leading number with an underscore?
-      .replace(/^\d/g, "_")
+  // remove accents, umlauts, ... by their basic latin letters
+  let safeString = deburr(string)
+
+  let leadingInvalidCharactersMatch = safeString.match(/^\d+[^a-zA-Z_$]*/);
+  if (leadingInvalidCharactersMatch?.length !== undefined && leadingInvalidCharactersMatch.length > 0) {
+    let match = leadingInvalidCharactersMatch[0];
+    console.log(match);
+    safeString = safeString.slice(match.length) + match;
+    console.log(safeString);
+  }
+
+  safeString = safeString
       // replace chars which are not valid for typescript identifiers with whitespace
       .replace(/(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g, ' ')
       // uppercase leading underscores followed by lowercase
@@ -179,8 +186,9 @@ export function toSafeString(string: string) {
       // uppercase first letter after whitespace
       .replace(/\s+([a-zA-Z])/g, match => trim(match.toUpperCase()))
       // remove remaining whitespace
-      .replace(/\s/g, '')
-  )
+      .replace(/\s/g, '');
+
+  return upperFirst(safeString)
 }
 
 export function generateName(from: string, usedNames: Set<string>) {
