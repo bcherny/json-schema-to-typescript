@@ -166,6 +166,8 @@ export function toSafeString(string: string) {
   return upperFirst(
     // remove accents, umlauts, ... by their basic latin letters
     deburr(string)
+      // replace leading number with an underscore?
+      .replace(/^\d/g, "_")
       // replace chars which are not valid for typescript identifiers with whitespace
       .replace(/(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g, ' ')
       // uppercase leading underscores followed by lowercase

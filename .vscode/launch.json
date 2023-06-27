@@ -2,11 +2,20 @@
   "version": "0.2.5",
   "configurations": [
     {
-        "type": "node",
-        "request": "launch",
-        "name": "Launch Program",
-        "program": "${workspaceRoot}/node_modules/.bin/ava ./dist/test/test.js",
-        "cwd": "${workspaceRoot}"
+      "name": "Launch test-script.js",
+      "program": "${workspaceFolder}/test-script.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceRoot}/node_modules/.bin/ava ./dist/test/test.js",
+      "cwd": "${workspaceRoot}"
     },
     {
       "type": "node",
