@@ -124,7 +124,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       return getSuperTypesAndParams(ast)
         .map(
           ast =>
-            (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+            shouldGenerateStandalone(ast, options, rootASTName) &&
             declareNamedTypes(ast, options, rootASTName, processed)
         )
         .filter(Boolean)
