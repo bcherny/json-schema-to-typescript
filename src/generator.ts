@@ -58,6 +58,10 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
   }
 }
 
+function shouldGenerateStandalone(ast: AST, options: Options, rootASTName: string): ast is ASTWithStandaloneName {
+  return hasStandaloneName(ast) && (ast.standaloneName === rootASTName || options.declareExternallyReferenced)
+}
+
 function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
   if (processed.has(ast)) {
     return ''
@@ -72,9 +76,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
       break
     case 'INTERFACE':
       type = [
-        hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-          generateStandaloneInterface(ast, options),
+        shouldGenerateStandalone(ast, options, rootASTName) && generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
           .filter(Boolean)
@@ -112,7 +114,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
     case 'ARRAY':
       return [
         declareNamedTypes(ast.params, options, rootASTName, processed),
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined
+        shouldGenerateStandalone(ast, options, rootASTName) && generateStandaloneType(ast, options)
       ]
         .filter(Boolean)
         .join('\n')
@@ -131,7 +133,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
     case 'TUPLE':
     case 'UNION':
       return [
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
+        shouldGenerateStandalone(ast, options, rootASTName) && generateStandaloneType(ast, options),
         ast.params
           .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
           .filter(Boolean)
@@ -143,7 +145,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         .filter(Boolean)
         .join('\n')
     default:
-      if (hasStandaloneName(ast)) {
+      if (shouldGenerateStandalone(ast, options, rootASTName)) {
         return generateStandaloneType(ast, options)
       }
       return ''
