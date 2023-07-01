@@ -9,6 +9,7 @@ export type SchemaType =
   | 'BOOLEAN'
   | 'NAMED_ENUM'
   | 'NAMED_SCHEMA'
+  | 'NEVER'
   | 'NULL'
   | 'NUMBER'
   | 'STRING'
@@ -125,6 +126,10 @@ export const getRootSchema = memoize((schema: LinkedJSONSchema): LinkedJSONSchem
   }
   return getRootSchema(parent)
 })
+
+export function isBoolean(schema: LinkedJSONSchema | JSONSchemaType): schema is boolean {
+  return schema === true || schema === false
+}
 
 export function isPrimitive(schema: LinkedJSONSchema | JSONSchemaType): schema is JSONSchemaType {
   return !isPlainObject(schema)
