@@ -1,8 +1,9 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {appendToDescription, escapeBlockComment, isSchemaLike, justName, log, toSafeString, traverse} from './utils'
 import {Options} from './'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
+import {link} from './linker'
 
 type Rule = (
   schema: LinkedJSONSchema,
@@ -229,11 +230,20 @@ rules.set('Transform nullable to null type', schema => {
 
   delete schema.nullable
 
-  if (!schema.type) {
-    return
+  // schema.const has already been converted to a single-value enum by rule "Transform const to singleton enum", so it
+  // does not need to be handled here.
+  if (schema.enum) {
+    if (!schema.enum.includes(null)) {
+      schema.enum.push(null)
+      log('yellow', 'normalizer', 'enum should include "null" when schema is nullable', schema)
+    }
+  } else if (schema.type) {
+    schema.type = [...[schema.type].flatMap(value => value), 'null']
+  } else if (schema.anyOf) {
+    schema.anyOf.push(link({type: 'null'}, schema.anyOf))
+  } else if (schema.oneOf) {
+    schema.oneOf.push(link({type: 'null'}, schema.oneOf))
   }
-
-  schema.type = [...[schema.type].flatMap(value => value), 'null']
 })
 
 export function normalize(

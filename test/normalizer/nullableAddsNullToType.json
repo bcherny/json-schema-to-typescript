@@ -4,12 +4,72 @@
     "$id": "a",
     "type": "object",
     "properties": {
-      "foo": {
+      "a": {
+        "const": "",
+        "nullable": true
+      },
+      "b": {
+        "const": null,
+        "nullable": true
+      },
+      "c": {
+        "enum": ["a", "b"],
+        "nullable": true
+      },
+      "d": {
+        "enum": ["", null],
+        "nullable": true
+      },
+      "e": {
         "type": "string",
         "nullable": true
       },
-      "bar": {
-        "type": ["string", "number"],
+      "f": {
+        "type": "null",
+        "nullable": true
+      },
+      "g": {
+        "type": "string",
+        "const": "",
+        "nullable": true
+      },
+      "h": {
+        "type": "string",
+        "const": null,
+        "nullable": true
+      },
+      "i": {
+        "type": "string",
+        "enum": ["a", "b"],
+        "nullable": true
+      },
+      "j": {
+        "type": "string",
+        "enum": ["", null],
+        "nullable": true
+      },
+      "k": {
+        "type": ["string", "integer"],
+        "nullable": true
+      },
+      "l": {
+        "type": ["string", "null"],
+        "nullable": true
+      },
+      "m": {
+        "anyOf": [{"type": "string"}, {"type": "integer"}],
+        "nullable": true
+      },
+      "n": {
+        "anyOf": [{"type": "string"}, {"type": "null"}],
+        "nullable": true
+      },
+      "o": {
+        "oneOf": [{"type": "string"}, {"type": "integer"}],
+        "nullable": true
+      },
+      "p": {
+        "oneOf": [{"type": "string"}, {"type": "null"}],
         "nullable": true
       }
     },
@@ -20,11 +80,57 @@
     "$id": "a",
     "type": "object",
     "properties": {
-      "foo": {
+      "a": {
+        "enum": ["", null]
+      },
+      "b": {
+        "enum": [null]
+      },
+      "c": {
+        "enum": ["a", "b", null]
+      },
+      "d": {
+        "enum": ["", null]
+      },
+      "e": {
         "type": ["string", "null"]
       },
-      "bar": {
-        "type": ["string", "number", "null"]
+      "f": {
+        "type": ["null", "null"]
+      },
+      "g": {
+        "type": "string",
+        "enum": ["", null]
+      },
+      "h": {
+        "type": "string",
+        "enum": [null]
+      },
+      "i": {
+        "type": "string",
+        "enum": ["a", "b", null]
+      },
+      "j": {
+        "type": "string",
+        "enum": ["", null]
+      },
+      "k": {
+        "type": ["string", "integer", "null"]
+      },
+      "l": {
+        "type": ["string", "null", "null"]
+      },
+      "m": {
+        "anyOf": [{"type": "string"}, {"type": "integer"}, {"type": "null"}]
+      },
+      "n": {
+        "anyOf": [{"type": "string"}, {"type": "null"}, {"type": "null"}]
+      },
+      "o": {
+        "oneOf": [{"type": "string"}, {"type": "integer"}, {"type": "null"}]
+      },
+      "p": {
+        "oneOf": [{"type": "string"}, {"type": "null"}, {"type": "null"}]
       }
     },
     "required": [],
