@@ -16,6 +16,7 @@ export function run() {
     t.is(generateName('ABcd', usedNames), 'ABcd')
     t.is(generateName('$Abc_123', usedNames), '$Abc_123')
     t.is(generateName('Abc-de-f', usedNames), 'AbcDeF')
+    t.is(generateName('123-中abcdefg', usedNames), 'Abcdefg')
 
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
