@@ -18,6 +18,10 @@ export function run() {
     t.is(generateName('Abc-de-f', usedNames), 'AbcDeF')
     t.is(generateName('123-中abcdefg', usedNames), 'Abcdefg')
 
+    //Work in-progress, add test cases as necessary
+    t.is(generateName('2022Abc-de-f', usedNames), 'AbcDeF1')
+    t.is(generateName('555tartsWithManyDigits', usedNames), 'TartsWithManyDigits')
+
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
     t.is(generateName('a', usedNames), 'A2')
