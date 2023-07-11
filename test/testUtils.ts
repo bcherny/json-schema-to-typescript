@@ -19,7 +19,8 @@ export function run() {
 
     //Work in-progress, add test cases as necessary
     t.is(generateName('2022Abc-de-f', usedNames), 'AbcDeF1')
-    t.is(generateName('555tartsWithManyDigits', usedNames), 'TartsWithManyDigits')
+    t.is(generateName('555tartsWithThreeDigits', usedNames), 'TartsWithThreeDigits')
+    t.is(generateName('123455566666tartsWithManyDigits', usedNames), 'TartsWithManyDigits')
 
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
