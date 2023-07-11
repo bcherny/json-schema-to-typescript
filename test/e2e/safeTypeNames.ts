@@ -68,6 +68,11 @@ export const input = {
         a: {type: 'string'}
       }
     },
+    '12345tartsWithManyDigits': {
+      properties: {
+        a: {type: 'string'}
+      }
+    },
     ' 5tartsWithBlankAndDigit': {
       properties: {
         a: {type: 'string'}
