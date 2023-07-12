@@ -25,7 +25,6 @@ export function run() {
     t.is(generateName('654321_cbA_123', usedNames), '_CbA_123')
     t.is(generateName('1654321_cbA_123', usedNames), '_CbA_1231') // there's already '_CbA_123' output above
 
-
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
     t.is(generateName('a', usedNames), 'A2')
