@@ -20,7 +20,8 @@ export function run() {
     //Work in-progress, add test cases as necessary
     t.is(generateName('2022Abc-de-f', usedNames), 'AbcDeF1')
     t.is(generateName('555tartsWithThreeDigits', usedNames), 'TartsWithThreeDigits')
-    t.is(generateName('123455566666tartsWithManyDigits', usedNames), 'TartsWithManyDigits')
+    t.is(generateName('1234555666tartsWithManyDigits', usedNames), 'TartsWithManyDigits')
+    t.is(generateName('123-455-5666%% startsWithDigitsAndSpecialChars', usedNames), 'StartsWithDigitsAndSpecialChars')
     t.is(generateName('123456$Abc_123', usedNames), '$Abc_1231') // there's already '$Abc_123' on line 17 above
     t.is(generateName('654321_cbA_123', usedNames), '_CbA_123')
     t.is(generateName('1654321_cbA_123', usedNames), '_CbA_1231') // there's already '_CbA_123' output above
