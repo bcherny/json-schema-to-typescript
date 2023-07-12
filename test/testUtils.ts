@@ -17,6 +17,7 @@ export function run() {
     t.is(generateName('$Abc_123', usedNames), '$Abc_123')
     t.is(generateName('Abc-de-f', usedNames), 'AbcDeF')
 
+    // Leading invalid characters should be removed
     t.is(generateName('2022Abc-de-f', usedNames), 'AbcDeF1')
     t.is(generateName('555tartsWithThreeDigits', usedNames), 'TartsWithThreeDigits')
     t.is(generateName('1234555666tartsWithManyDigits', usedNames), 'TartsWithManyDigits')
