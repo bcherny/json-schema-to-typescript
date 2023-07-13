@@ -1,4 +1,4 @@
-import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
+import {isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
 
@@ -159,21 +159,21 @@ export function stripExtension(filename: string): string {
  * can safely be used as a TypeScript interface or enum name.
  */
 export function toSafeString(string: string) {
-  // identifiers in javaScript/ts:
-  // First character: a-zA-Z | _ | $
-  // Rest: a-zA-Z | _ | $ | 0-9
+  // According to https://mathiasbynens.be/notes/javascript-identifiers-es6
+  // | In ES2015, identifiers must start with $, _, or any symbol with the Unicode derived core property ID_Start.
+  // | The rest of the identifier can contain $, _, U+200C zero width non-joiner, U+200D zero width joiner, or any symbol with the Unicode derived core property ID_Continue.
 
   // Unicode regex ("u" regex flag) only works on ECMAScript 2018 above
   // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
-  const startsWithValidChar = /\p{XID_Start}.+/u.exec(string)?.[0]
-  if (startsWithValidChar === undefined) {
+  const startingWithValidChar = /[$_\p{XID_Start}].*/u.exec(string)?.[0]
+  if (startingWithValidChar === undefined) {
     return "";
   }
 
   return upperFirst(
-    startsWithValidChar
+    startingWithValidChar
       // Replace invalid characters within string with whitespace, so that letters will be upper cased
-      .replace(/\P{XID_Continue}/ug, ' ')
+      .replace(/[^$_\p{XID_Continue}]/ug, ' ')
       // uppercase leading underscores followed by lowercase
       .replace(/^_[a-z]/g, match => match.toUpperCase())
       // remove non-leading underscores followed by lowercase (convert snake_case)

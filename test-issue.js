@@ -8,6 +8,10 @@ const schema = {
     "id": {
       "type": "string",
       "example": "61e36b8fc12c4d8fd0842f76"
+    },
+    "$Starts with dollar sign": {
+      "type": "number",
+      "title": "_starts with underscore"
     }
   }
 };
