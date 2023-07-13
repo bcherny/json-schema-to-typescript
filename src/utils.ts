@@ -163,11 +163,17 @@ export function toSafeString(string: string) {
   // First character: a-zA-Z | _ | $
   // Rest: a-zA-Z | _ | $ | 0-9
 
+  // Unicode regex ("u" regex flag) only works on ECMAScript 2018 above
+  // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
+  const startsWithValidChar = /\p{XID_Start}.+/u.exec(string)?.[0]
+  if (startsWithValidChar === undefined) {
+    return "";
+  }
+
   return upperFirst(
-    // remove accents, umlauts, ... by their basic latin letters
-    deburr(string)
-      // replace chars which are not valid for typescript identifiers with whitespace
-      .replace(/(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g, ' ')
+    startsWithValidChar
+      // Replace invalid characters within string with whitespace, so that letters will be upper cased
+      .replace(/\P{XID_Continue}/ug, ' ')
       // uppercase leading underscores followed by lowercase
       .replace(/^_[a-z]/g, match => match.toUpperCase())
       // remove non-leading underscores followed by lowercase (convert snake_case)
