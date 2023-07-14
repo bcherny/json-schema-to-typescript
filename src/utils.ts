@@ -160,15 +160,15 @@ export function stripExtension(filename: string): string {
 const startingCharRegex = RegExp(
   rewritePattern('[$_\\p{L}\\p{Nl}].*', 'u', {
     unicodeFlag: 'transform'
-  }),
-  'u'
+  })
 )
 
 const invalidMiddleCharRegex = new RegExp(
   rewritePattern('[^$_\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\u{200C}\\u{200D}]', 'ug', {
-    unicodeFlag: 'transform'
+    unicodeFlag: 'transform',
+    unicodePropertyEscapes: 'transform'
   }),
-  'ug'
+  'g'
 )
 
 /**
