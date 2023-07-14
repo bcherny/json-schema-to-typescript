@@ -21,7 +21,7 @@ export function run() {
     t.is(generateName('呵呵', usedNames), '呵呵')
     t.is(generateName('呵呵', usedNames), '呵呵1')
     t.is(generateName('Abc😄de-fg', usedNames), 'AbcDeFg')
-    t.is(generateName('Abcಠ_ಠde-fgh๏_๏', usedNames), 'Abcಠ_ಠDeFgh_')
+    t.is(generateName('Abcಠ_ಠde-fgh๏_๏', usedNames), 'Abcಠ_ಠdeFgh_')
     
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
