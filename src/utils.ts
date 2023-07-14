@@ -1,6 +1,7 @@
 import {isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
+import rewritePattern from "regexpu-core"
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -154,6 +155,22 @@ export function stripExtension(filename: string): string {
   return filename.replace(extname(filename), '')
 }
 
+// According to https://mathiasbynens.be/notes/javascript-identifiers
+// Unicode escape sequences are also permitted, but difficult to check
+const startingCharRegex = RegExp(
+  rewritePattern('[$_\\p{L}\\p{Nl}].*', 'u', {
+    unicodeFlag: 'transform'
+  }),
+  'u'
+)
+
+const invalidMiddleCharRegex = new RegExp(
+  rewritePattern('[^$_\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\u{200C}\\u{200D}]', 'ug', {
+    unicodeFlag: 'transform'
+  }),
+  'ug'
+)
+
 /**
  * Convert a string that might contain spaces or special characters to one that
  * can safely be used as a TypeScript interface or enum name.
@@ -163,16 +180,15 @@ export function toSafeString(string: string) {
   // | In ES2015, identifiers must start with $, _, or any symbol with the Unicode derived core property ID_Start.
   // | The rest of the identifier can contain $, _, U+200C zero width non-joiner, U+200D zero width joiner, or any symbol with the Unicode derived core property ID_Continue.
 
-  // Unicode regex ("u" regex flag) only works on ECMAScript 2018 above
   // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
-  const startingWithValidChar = /[$_\p{XID_Start}].*/u.exec(string)?.[0]
+  const startingWithValidChar = startingCharRegex.exec(string)?.[0]
   if (startingWithValidChar === undefined) {
     return "";
   }
 
   // Replace invalid characters within string with whitespace, so that letters will be uppercased
   // Skip first character because already validated
-  const invalidCharsReplaced = startingWithValidChar[0] + startingWithValidChar.slice(1).replace(/[^$_\p{XID_Continue}]/ug, ' ')
+  const invalidCharsReplaced = startingWithValidChar[0] + startingWithValidChar.slice(1).replace(invalidMiddleCharRegex, ' ')
 
   return upperFirst(
     invalidCharsReplaced
