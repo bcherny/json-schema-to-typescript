@@ -20,6 +20,7 @@ export function run() {
     // test unicode
     t.is(generateName('呵呵', usedNames), '呵呵')
     t.is(generateName('呵呵', usedNames), '呵呵1')
+    t.is(generateName('Abc😄de-fg', usedNames), 'AbcDeFg')
 
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
