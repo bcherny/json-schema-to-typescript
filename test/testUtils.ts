@@ -17,6 +17,10 @@ export function run() {
     t.is(generateName('$Abc_123', usedNames), '$Abc_123')
     t.is(generateName('Abc-de-f', usedNames), 'AbcDeF')
 
+    // test unicode
+    t.is(generateName('呵呵', usedNames), '呵呵')
+    t.is(generateName('呵呵', usedNames), '呵呵1')
+
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
     t.is(generateName('a', usedNames), 'A2')
