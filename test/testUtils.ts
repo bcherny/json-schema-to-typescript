@@ -17,11 +17,12 @@ export function run() {
     t.is(generateName('$Abc_123', usedNames), '$Abc_123')
     t.is(generateName('Abc-de-f', usedNames), 'AbcDeF')
 
-    // test unicode
+    // Unicode tests, according to https://mathiasbynens.be/notes/javascript-identifiers-es6
     t.is(generateName('呵呵', usedNames), '呵呵')
     t.is(generateName('呵呵', usedNames), '呵呵1')
     t.is(generateName('Abc😄de-fg', usedNames), 'AbcDeFg')
-
+    t.is(generateName('Abcಠ_ಠde-fgh๏_๏', usedNames), 'Abcಠ_ಠDeFgh_')
+    
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
     t.is(generateName('a', usedNames), 'A2')
