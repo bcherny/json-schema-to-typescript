@@ -1,5 +1,6 @@
 const { stringify } = require('querystring');
 const { compile } = require('./dist/src');
+const { toSafeString } = require("./dist/src/utils")
 
 const schema = {
   "title": "2022 Example Schema",
@@ -61,6 +62,8 @@ const schema2 = {
 }
 
 compile(schema2).then(ts => console.log(ts));
+
+console.log("Safing: ", toSafeString("𐌼𐌰𐌲 𐌲𐌻𐌴𐍃 𐌹̈𐍄𐌰𐌽, 𐌽𐌹 𐌼𐌹𐍃 𐍅𐌿 𐌽𐌳𐌰𐌽 𐌱𐍂𐌹𐌲𐌲𐌹𐌸."))
 
 const unicodeSchema = {
   "type": "object",
