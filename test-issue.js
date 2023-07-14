@@ -12,6 +12,9 @@ const schema = {
     "$Starts with dollar sign": {
       "type": "number",
       "title": "_starts with underscore"
+    },
+    "a": {
+      "type": "string"
     }
   }
 };
@@ -82,7 +85,7 @@ compile(unicodeSchema).then(ts => console.log(ts));
 
 const operatorSchema = {
   "type": "object",
-  "title": "CD-RW vs. CD+RW",
+  "title": "a",
   "properties": {
     "some_key": {
       "type": "string",

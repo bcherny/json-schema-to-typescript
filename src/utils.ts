@@ -170,10 +170,12 @@ export function toSafeString(string: string) {
     return "";
   }
 
+  // Replace invalid characters within string with whitespace, so that letters will be uppercased
+  // Skip first character because already validated
+  const invalidCharsReplaced = startingWithValidChar[0] + startingWithValidChar.slice(1).replace(/[^$_\p{XID_Continue}]/ug, ' ')
+
   return upperFirst(
-    startingWithValidChar
-      // Replace invalid characters within string with whitespace, so that letters will be upper cased
-      .replace(/[^$_\p{XID_Continue}]/ug, ' ')
+    invalidCharsReplaced
       // uppercase leading underscores followed by lowercase
       .replace(/^_[a-z]/g, match => match.toUpperCase())
       // remove non-leading underscores followed by lowercase (convert snake_case)
