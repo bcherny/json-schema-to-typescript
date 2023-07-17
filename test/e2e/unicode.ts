@@ -8,7 +8,7 @@ export const input = {
     },
     'this is \'I can eat glass in Gothic\' apparently': {
       type: 'string', 
-      //title: '𐌼𐌰𐌲 𐌲𐌻𐌴𐍃 𐌹̈𐍄𐌰𐌽, 𐌽𐌹 𐌼𐌹𐍃 𐍅𐌿 𐌽𐌳𐌰𐌽 𐌱𐍂𐌹𐌲𐌲𐌹𐌸.' //Work-in progress (not supported in ES5)
+      title: '𐌼𐌰𐌲 𐌲𐌻𐌴𐍃 𐌹̈𐍄𐌰𐌽, 𐌽𐌹 𐌼𐌹𐍃 𐍅𐌿 𐌽𐌳𐌰𐌽 𐌱𐍂𐌹𐌲𐌲𐌹𐌸.'
     },
     'non ASCII punctuation': {
       type: 'string',
