@@ -89,6 +89,10 @@ export const input = {
     hindi: {
       type: 'string',
       title: 'Би Google Translate ашигласан'
+    },
+    specialSymbols: {
+      type: 'string',
+      title: '🇦🇶 doesn\'t have 𝄰 𝄱 𝄲 𝄳 𝄴 𝄵 or 🀀 🀁 🀂 🀃 🀄 or 🏴󠁧󠁢󠁷󠁬󠁳󠁿'
     }
   }
 }
