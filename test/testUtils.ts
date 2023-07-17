@@ -24,6 +24,13 @@ export function run() {
     t.is(generateName('Abcಠ_ಠde-fgh๏_๏', usedNames), 'Abcಠ_ಠdeFgh_')
     t.is(generateName('ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ', usedNames), 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ')
     t.is(generateName('ÄÖÉÜß', usedNames), 'ÄÖÉÜß')
+    // Surrogate pairs at start
+    t.is(generateName("𝄀 𝄁 𝄂 𝄃 𝄄 𝄅 𝄆 𝄇 𝄈 𝄉 𝄊 music", usedNames), "Music")
+    // Multiple Unicode codepoints
+    // Emoji flags use two regional indicator symbols
+    t.is(generateName("🇳🇵 Emoji flags 🇦🇩", usedNames), "EmojiFlags")
+    // Regional flags like England use emoji tag sequences
+    t.is(generateName("🏴󠁧󠁢󠁥󠁮󠁧󠁿 England 🏴󠁧󠁢󠁳󠁣󠁴󠁿", usedNames), "England")
     
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')

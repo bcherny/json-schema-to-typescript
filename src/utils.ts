@@ -1,7 +1,7 @@
 import {isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
-import rewritePattern from "regexpu-core"
+import rewritePattern from 'regexpu-core'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -157,6 +157,7 @@ export function stripExtension(filename: string): string {
 
 // According to https://mathiasbynens.be/notes/javascript-identifiers
 // Unicode escape sequences are also permitted, but difficult to check
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
 const startingCharRegex = RegExp(
   rewritePattern('[$_\\p{L}\\p{Nl}].*', 'u', {
     unicodeFlag: 'transform'
@@ -176,19 +177,31 @@ const invalidMiddleCharRegex = new RegExp(
  * can safely be used as a TypeScript interface or enum name.
  */
 export function toSafeString(string: string) {
-  // According to https://mathiasbynens.be/notes/javascript-identifiers-es6
-  // | In ES2015, identifiers must start with $, _, or any symbol with the Unicode derived core property ID_Start.
-  // | The rest of the identifier can contain $, _, U+200C zero width non-joiner, U+200D zero width joiner, or any symbol with the Unicode derived core property ID_Continue.
+  /**
+   * According to https://mathiasbynens.be/notes/javascript-identifiers-es6
+   * In ES2015, identifiers must start with $, _, or any symbol with the Unicode derived core property ID_Start.
+   * The rest of the identifier can contain $, _, U+200C zero width non-joiner, U+200D zero width joiner, or any symbol
+   * with the Unicode derived core property ID_Continue.
+   */
 
-  // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
   const startingWithValidChar = startingCharRegex.exec(string)?.[0]
-  if (startingWithValidChar === undefined) {
+  if (startingWithValidChar === undefined || startingWithValidChar.length == 0) {
     return "";
   }
 
-  // Replace invalid characters within string with whitespace, so that letters will be uppercased
-  // Skip first character because already validated
-  const invalidCharsReplaced = startingWithValidChar[0] + startingWithValidChar.slice(1).replace(invalidMiddleCharRegex, ' ')
+  
+  // Getting first character while handling surrogates
+  // String is not empty, so codePointAt will always return number
+  const firstCodePoint = startingWithValidChar.codePointAt(0) as number;
+
+  // If first char is surrogate pair, need to remove first two "characters" (the first two surrogates). Otherwise, only remove one.
+  // This would be easier with ES6 string iterators, which handle in iteration
+  let firstChar: string = String.fromCodePoint(firstCodePoint);
+  let restString: string = firstChar.length == 2 ? startingWithValidChar.slice(2) : startingWithValidChar.slice(1);
+
+  // Replace invalid characters within string with whitespace, so that letters following will be uppercased
+  // Skip first character because already validated and has different valid characters
+  const invalidCharsReplaced = firstChar + restString.replace(invalidMiddleCharRegex, ' ')
 
   return upperFirst(
     invalidCharsReplaced
