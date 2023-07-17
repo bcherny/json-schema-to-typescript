@@ -31,6 +31,15 @@ export function run() {
     t.is(generateName("🇳🇵 Emoji flags 🇦🇩", usedNames), "EmojiFlags")
     // Regional flags like England use emoji tag sequences
     t.is(generateName("🏴󠁧󠁢󠁥󠁮󠁧󠁿 England 🏴󠁧󠁢󠁳󠁣󠁴󠁿", usedNames), "England")
+
+    // should have counter at the end of output:
+    t.is(generateName("𝄀 𝄁 𝄂 𝄃 𝄄 𝄅 𝄆 𝄇 𝄈 𝄉 𝄊 music", usedNames), "Music1")
+    // Multiple Unicode codepoints
+    // Emoji flags use two regional indicator symbols
+    t.is(generateName("🇳🇵 Emoji flags 🇦🇩", usedNames), "EmojiFlags1")
+    // Regional flags like England use emoji tag sequences
+    t.is(generateName("🏴󠁧󠁢󠁥󠁮󠁧󠁿 England 🏴󠁧󠁢󠁳󠁣󠁴󠁿", usedNames), "England1")
+
     
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
