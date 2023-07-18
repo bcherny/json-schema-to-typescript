@@ -55,7 +55,6 @@
     "glob": "^7.1.6",
     "glob-promise": "^4.2.2",
     "is-glob": "^4.0.3",
-    "json-schema-to-typescript": "^13.0.2",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
     "mkdirp": "^1.0.4",
