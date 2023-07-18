@@ -1,7 +1,7 @@
 import {isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
-import rewritePattern from 'regexpu-core'
+import { startingRegex, invalidPartRegex } from './resources/es5IdentifierRegex'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -155,22 +155,9 @@ export function stripExtension(filename: string): string {
   return filename.replace(extname(filename), '')
 }
 
-// According to https://mathiasbynens.be/notes/javascript-identifiers
+// Source: https://gist.github.com/mathiasbynens/6334847
 // Unicode escape sequences are also permitted, but difficult to check
 // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
-const startingCharRegex = RegExp(
-  rewritePattern('[$_\\p{L}\\p{Nl}].*', 'u', {
-    unicodeFlag: 'transform'
-  })
-)
-
-const invalidMiddleCharRegex = new RegExp(
-  rewritePattern('[^$_\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}\\u{200C}\\u{200D}]', 'ug', {
-    unicodeFlag: 'transform',
-    unicodePropertyEscapes: 'transform'
-  }),
-  'g'
-)
 
 /**
  * Convert a string that might contain spaces or special characters to one that
@@ -184,27 +171,16 @@ export function toSafeString(string: string) {
    * with the Unicode derived core property ID_Continue.
    */
 
-  const startingWithValidChar = startingCharRegex.exec(string)?.[0]
-  if (startingWithValidChar === undefined || startingWithValidChar.length == 0) {
+  const startMatch = startingRegex.exec(string)
+  if (!startMatch) {
     return "";
   }
+  const startingWithValidIdentifier = string.slice(startMatch.index, string.length)
 
-  
-  // Getting first character while handling surrogates
-  // String is not empty, so codePointAt will always return number
-  const firstCodePoint = startingWithValidChar.codePointAt(0) as number;
-
-  // If first char is surrogate pair, need to remove first two "characters" (the first two surrogates). Otherwise, only remove one.
-  // This would be easier with ES6 string iterators, which handle in iteration
-  let firstChar: string = String.fromCodePoint(firstCodePoint);
-  let restString: string = firstChar.length == 2 ? startingWithValidChar.slice(2) : startingWithValidChar.slice(1);
-
-  // Replace invalid characters within string with whitespace, so that letters following will be uppercased
-  // Skip first character because already validated and has different valid characters
-  const invalidCharsReplaced = firstChar + restString.replace(invalidMiddleCharRegex, ' ')
+  const newString = startingWithValidIdentifier[0] + startingWithValidIdentifier.slice(1).replace(invalidPartRegex, ' ')
 
   return upperFirst(
-    invalidCharsReplaced
+    newString
       // uppercase leading underscores followed by lowercase
       .replace(/^_[a-z]/g, match => match.toUpperCase())
       // remove non-leading underscores followed by lowercase (convert snake_case)

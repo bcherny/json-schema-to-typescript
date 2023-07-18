@@ -60,8 +60,7 @@
     "minimist": "^1.2.6",
     "mkdirp": "^1.0.4",
     "mz": "^2.7.0",
-    "prettier": "^2.6.2",
-    "regexpu-core": "^5.3.2"
+    "prettier": "^2.6.2"
   },
   "devDependencies": {
     "@types/cli-color": "^2.0.2",
@@ -81,10 +80,13 @@
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "lodash.template": "^4.5.0",
+    "regenerate": "^1.4.2",
     "rimraf": "^3.0.2",
     "shx": "^0.3.4",
     "tsify": "^5.0.4",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "unicode-11.0.0": "^0.7.8"
   },
   "ava": {
     "files": [
