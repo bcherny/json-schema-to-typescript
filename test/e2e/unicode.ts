@@ -88,7 +88,23 @@ export const input = {
     },
     hindi: {
       type: 'string',
-      title: 'Би Google Translate ашигласан'
+      title: 'मैंने गूगल अनुवाद का इस्तेमाल किया'
+    },
+    tamil: {
+      type: 'string',
+      title: 'நான் கூகல் மொழிப்பெயர்ப்பை பயன்படுத்தினேன்'
+    },
+    telugu: {
+      type: 'string',
+      title: 'నేను Google అనువాదం ఉపయోగించాను'
+    },     
+    urdu: {
+      type: 'string',
+      title: 'میں نے گوگل ٹرانسلیٹ استعمال کیا۔'
+    },
+    french: {
+      type: 'string',
+      title: "j'utilise Google Traduction"
     },
     specialSymbols: {
       type: 'string',

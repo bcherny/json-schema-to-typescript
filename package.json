@@ -55,6 +55,7 @@
     "glob": "^7.1.6",
     "glob-promise": "^4.2.2",
     "is-glob": "^4.0.3",
+    "json-schema-to-typescript": "^13.0.2",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
     "mkdirp": "^1.0.4",
@@ -83,7 +84,7 @@
     "rimraf": "^3.0.2",
     "shx": "^0.3.4",
     "tsify": "^5.0.4",
-    "typescript": "^4.6.4"
+    "typescript": "^5.1.6"
   },
   "ava": {
     "files": [
