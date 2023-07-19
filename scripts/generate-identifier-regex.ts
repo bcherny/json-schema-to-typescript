@@ -81,48 +81,6 @@ const generateES5Regex = function(): [string, string, string] { // ES 5.1
 	];
 };
 
-const generateES6Regex = function() {
-	// http://ecma-international.org/ecma-262/6.0/#sec-identifier-names-static-semantics-early-errors
-	// http://unicode.org/reports/tr31/#Default_Identifier_Syntax
-	// https://bugs.ecmascript.org/show_bug.cgi?id=2717#c0
-	const identifierStart = regenerate(ID_Start)
-		// Note: this already includes `Other_ID_Start`. http://git.io/wRCAfQ
-		.add(
-			'$',
-			'_'
-		);
-	const identifierPart = regenerate(ID_Continue)
-		// Note: `ID_Continue` already includes `Other_ID_Continue`. http://git.io/wRCAfQ
-		.add(Other_ID_Start)
-		.add(
-			'$',
-			'_',
-			'\u200C',
-			'\u200D'
-		);
-
-	const reservedWords = [
-		// https://mathiasbynens.be/notes/reserved-keywords#ecmascript-6
-		'do', 'if', 'in', 'for', 'let', 'new', 'try', 'var', 'case', 'else',
-		'enum', 'eval', 'null', 'this', 'true', 'void', 'with', 'await', 'break',
-		'catch', 'class', 'const', 'false', 'super', 'throw', 'while', 'yield',
-		'delete', 'export', 'import', 'public', 'return', 'static', 'switch',
-		'typeof', 'default', 'extends', 'finally', 'package', 'private',
-		'continue', 'debugger', 'function', 'arguments', 'interface', 'protected',
-		'implements', 'instanceof',
-		// These aren’t strictly reserved words, but they kind of behave as if
-		// they were.
-		//'NaN', 'Infinity', 'undefined'
-	];
-
-	const regex = compileRegex({
-		'reservedWords': reservedWords.join('|'),
-		'identifierStart': identifierStart.toString(),
-		'identifierPart': identifierPart.toString()
-	});
-	return regex;
-};
-
 function generateRegexFileContents(entireIdentifierRegex: string, startingRegex: string, invalidPartRegex: string) {
 	return `export const entireIdentifier = ${ entireIdentifierRegex };\n`
 		+ `export const startingRegex = ${ startingRegex };\n`
@@ -133,7 +91,3 @@ fs.writeFileSync(
 	'../src/resources/es5IdentifierRegex.ts',
 	"// ECMAScript 5.1:\n\n" + generateRegexFileContents(...generateES5Regex())
 );
-// fs.writeFileSync(
-// 	'ecmascript-6.js',
-// 	`// ECMAScript 6:\n\n${ generateES6Regex() }\n`
-// );
