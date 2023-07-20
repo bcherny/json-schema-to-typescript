@@ -177,10 +177,10 @@ export function toSafeString(string: string) {
   }
   const startingWithValidIdentifier = string.slice(startMatch.index, string.length)
 
-  const newString = startingWithValidIdentifier[0] + startingWithValidIdentifier.slice(1).replace(invalidPartRegex, ' ')
+  const invalidIdentifiersRemoved = startingWithValidIdentifier[0] + startingWithValidIdentifier.slice(1).replace(invalidPartRegex, ' ')
 
   return upperFirst(
-    newString
+    invalidIdentifiersRemoved
       // uppercase leading underscores followed by lowercase
       .replace(/^_[a-z]/g, match => match.toUpperCase())
       // remove non-leading underscores followed by lowercase (convert snake_case)
