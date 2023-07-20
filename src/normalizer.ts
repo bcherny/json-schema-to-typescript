@@ -222,6 +222,20 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
+/**
+ * "self" is a special keyword used by Snowplow Analytics to define a self-describing schema.
+ * @see https://snowplow.io/blog/introducing-self-describing-jsons/.
+ * Typically, to reduce repetition and conflicting concepts, snowplow schemas don't have a title or $id, but instead a self.name.
+ * @see https://github.com/snowplow/iglu-example-schema-registry/blob/master/schemas/com.example_company/example_event/jsonschema/1-0-0 for an example.
+ * This rule transforms self.name into title.
+ */
+rules.set('Transform self.name to title and remove self', schema => {
+  if (schema.self) {
+    schema.title = schema.self.name
+    delete schema.self
+  }
+})
+
 export function normalize(
   rootSchema: LinkedJSONSchema,
   dereferencedPaths: DereferencedPaths,

@@ -1,0 +1,33 @@
+{
+  "name": "Transforms self.name to title",
+  "in": {
+    "self": {
+      "vendor": "com.example_company",
+      "name": "example_event",
+      "format": "jsonschema",
+      "version": "1-0-0"
+    },
+    "properties": {
+      "exampleStringField": {
+        "description": "Example string field",
+        "type": "string",
+        "maxLength": 255
+      }
+    },
+    "additionalProperties": false,
+    "required": []
+  },
+  "out": {
+    "$id": "SelfNameToTitle",
+    "title": "example_event",
+    "properties": {
+      "exampleStringField": {
+        "description": "Example string field",
+        "type": "string",
+        "maxLength": 255
+      }
+    },
+    "additionalProperties": false,
+    "required": []
+  }
+}
