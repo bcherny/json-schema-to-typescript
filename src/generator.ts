@@ -304,7 +304,7 @@ function generateInterface(ast: TInterface, options: Options): string {
       )
       .map(
         ([isRequired, keyName, ast, type]) =>
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment) + '\n' : '') +
+        (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
@@ -316,13 +316,24 @@ function generateInterface(ast: TInterface, options: Options): string {
   )
 }
 
-function generateComment(comment: string): string {
-  return ['/**', ...comment.split('\n').map(_ => ' * ' + _), ' */'].join('\n')
+function generateComment(comment?: string, deprecated?: boolean): string {
+  if (!comment && deprecated === undefined) {
+    return "";
+  }
+  const commentLines = ['/**']
+  if (deprecated) {
+    commentLines.push(' * @deprecated')
+  }
+  if (comment) {
+    commentLines.push(...comment?.split('\n')?.map(_ => ' * ' + _))
+  }
+  commentLines.push(' */')
+  return commentLines.join('\n')
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
   return (
-    (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
     'export ' +
     (options.enableConstEnums ? 'const ' : '') +
     `enum ${toSafeString(ast.standaloneName)} {` +

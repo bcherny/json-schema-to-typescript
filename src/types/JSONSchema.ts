@@ -26,7 +26,7 @@ export type JSONSchemaTypeName = JSONSchema4TypeName
 export type JSONSchemaType = JSONSchema4Type
 
 export interface JSONSchema extends JSONSchema4 {
-  /**
+/**
    * schema extension to support numeric enums
    */
   tsEnumNames?: string[]
@@ -34,6 +34,10 @@ export interface JSONSchema extends JSONSchema4 {
    * schema extension to support custom types
    */
   tsType?: string
+  /**
+   * Find proper place for this
+   */
+  deprecated?: boolean
 }
 
 export const Parent = Symbol('Parent')

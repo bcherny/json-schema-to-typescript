@@ -148,14 +148,16 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
-        type: 'INTERSECTION'
+        type: 'INTERSECTION',
+        deprecated: schema.deprecated
       }
     case 'ANY':
       return {
         ...(options.unknownAny ? T_UNKNOWN : T_ANY),
         comment: schema.description,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames)
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        deprecated: schema.deprecated
       }
     case 'ANY_OF':
       return {
@@ -163,14 +165,16 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
-        type: 'UNION'
+        type: 'UNION',
+        deprecated: schema.deprecated
       }
     case 'BOOLEAN':
       return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'BOOLEAN'
+        type: 'BOOLEAN',
+        deprecated: schema.deprecated
       }
     case 'CUSTOM_TYPE':
       return {
@@ -178,7 +182,8 @@ function parseNonLiteral(
         keyName,
         params: schema.tsType!,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'CUSTOM_TYPE'
+        type: 'CUSTOM_TYPE',
+        deprecated: schema.deprecated
       }
     case 'NAMED_ENUM':
       return {
@@ -189,7 +194,8 @@ function parseNonLiteral(
           ast: parseLiteral(_, undefined),
           keyName: schema.tsEnumNames![n]
         })),
-        type: 'ENUM'
+        type: 'ENUM',
+        deprecated: schema.deprecated
       }
     case 'NAMED_SCHEMA':
       return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName)
@@ -198,28 +204,32 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'NEVER'
+        type: 'NEVER',
+        deprecated: schema.deprecated
       }
     case 'NULL':
       return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'NULL'
+        type: 'NULL',
+        deprecated: schema.deprecated
       }
     case 'NUMBER':
       return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'NUMBER'
+        type: 'NUMBER',
+        deprecated: schema.deprecated
       }
     case 'OBJECT':
       return {
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'OBJECT'
+        type: 'OBJECT',
+        deprecated: schema.deprecated
       }
     case 'ONE_OF':
       return {
@@ -227,7 +237,8 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
-        type: 'UNION'
+        type: 'UNION',
+        deprecated: schema.deprecated
       }
     case 'REFERENCE':
       throw Error(format('Refs should have been resolved by the resolver!', schema))
@@ -236,7 +247,8 @@ function parseNonLiteral(
         comment: schema.description,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'STRING'
+        type: 'STRING',
+        deprecated: schema.deprecated
       }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
@@ -250,7 +262,8 @@ function parseNonLiteral(
           minItems,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           params: schema.items.map(_ => parse(_, options, undefined, processed, usedNames)),
-          type: 'TUPLE'
+          type: 'TUPLE',
+          deprecated: schema.deprecated
         }
         if (schema.additionalItems === true) {
           arrayType.spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
@@ -264,7 +277,8 @@ function parseNonLiteral(
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
-          type: 'ARRAY'
+          type: 'ARRAY',
+          deprecated: schema.deprecated
         }
       }
     case 'UNION':
@@ -276,7 +290,8 @@ function parseNonLiteral(
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
           return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
         }),
-        type: 'UNION'
+        type: 'UNION',
+        deprecated: schema.deprecated
       }
     case 'UNNAMED_ENUM':
       return {
@@ -284,7 +299,8 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.enum!.map(_ => parseLiteral(_, undefined)),
-        type: 'UNION'
+        type: 'UNION',
+        deprecated: schema.deprecated
       }
     case 'UNNAMED_SCHEMA':
       return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName, keyNameFromDefinition)
@@ -304,7 +320,8 @@ function parseNonLiteral(
           // if there is no maximum, then add a spread item to collect the rest
           spreadParam: maxItems >= 0 ? undefined : params,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-          type: 'TUPLE'
+          type: 'TUPLE',
+          deprecated: schema.deprecated
         }
       }
 
@@ -313,7 +330,8 @@ function parseNonLiteral(
         keyName,
         params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'ARRAY'
+        type: 'ARRAY',
+        deprecated: schema.deprecated
       }
   }
 }
@@ -347,7 +365,8 @@ function newInterface(
     params: parseSchema(schema, options, processed, usedNames, name),
     standaloneName: name,
     superTypes: parseSuperTypes(schema, options, processed, usedNames),
-    type: 'INTERFACE'
+    type: 'INTERFACE',
+    deprecated: schema.deprecated
   }
 }
 
