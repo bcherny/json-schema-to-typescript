@@ -346,7 +346,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (
-    (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
     `export interface ${toSafeString(ast.standaloneName)} ` +
     (ast.superTypes.length > 0
       ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
