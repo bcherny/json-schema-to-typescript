@@ -325,7 +325,7 @@ function generateComment(comment?: string, deprecated?: boolean): string {
     commentLines.push(' * @deprecated')
   }
   if (comment) {
-    commentLines.push(...comment?.split('\n')?.map(_ => ' * ' + _))
+    commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
   }
   commentLines.push(' */')
   return commentLines.join('\n')
