@@ -3,14 +3,17 @@ export const input = {
     "title": "Example Schema",
     "type": "object",
     "deprecated": true,
+    description: '/*  comment  */',
     "properties": {
       "firstName": {
         "type": "string",
-        "deprecated": true
+        "deprecated": true,
+        description: '/*  nested comment  */'
       },
       "lastName":{
         "type": "string",
-        "deprecated": false
+        "deprecated": false,
+        description: '/*  nested comment  */'
       },
     },
     "additionalProperties": false,
