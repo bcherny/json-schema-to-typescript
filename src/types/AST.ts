@@ -36,7 +36,7 @@ export type ASTWithStandaloneName = AST & {standaloneName: string}
 
 export function hasComment(ast: AST): ast is ASTWithComment {
   return ('comment' in ast && ast.comment != null && ast.comment !== '')
-    // Compare to true to check for undefined
+    // Compare to true because ast.deprecated might be undefined
     || ('deprecated' in ast && ast.deprecated === true)
 }
 
