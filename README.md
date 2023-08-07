@@ -6,7 +6,7 @@
 
 > Compile json schema to typescript typings
 
-## Example
+## Example 
 
 Input:
 ```json
