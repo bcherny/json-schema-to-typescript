@@ -13,7 +13,7 @@ import {
   TTuple,
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
-  TIntersection
+  TIntersection,
 } from './types/AST'
 import {
   getRootSchema,
@@ -22,7 +22,7 @@ import {
   JSONSchema as LinkedJSONSchema,
   JSONSchemaWithDefinitions,
   SchemaSchema,
-  SchemaType
+  SchemaType,
 } from './types/JSONSchema'
 import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
 
@@ -35,7 +35,7 @@ export function parse(
   options: Options,
   keyName?: string,
   processed: Processed = new Map(),
-  usedNames = new Set<string>()
+  usedNames = new Set<string>(),
 ): AST {
   if (isPrimitive(schema)) {
     if (isBoolean(schema)) {
@@ -59,19 +59,19 @@ export function parse(
       $id: schema.$id,
       allOf: [],
       description: schema.description,
-      title: schema.title
+      title: schema.title,
     },
     'ALL_OF',
     options,
     keyName,
     processed,
-    usedNames
+    usedNames,
   ) as TIntersection
 
   ast.params = types.map(type =>
     // We hoist description (for comment) and id/title (for standaloneName)
     // to the parent intersection type, so we remove it from the children.
-    parseAsTypeWithCache(maybeStripNameHints(schema), type, options, keyName, processed, usedNames)
+    parseAsTypeWithCache(maybeStripNameHints(schema), type, options, keyName, processed, usedNames),
   )
 
   log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
@@ -84,7 +84,7 @@ function parseAsTypeWithCache(
   options: Options,
   keyName?: string,
   processed: Processed = new Map(),
-  usedNames = new Set<string>()
+  usedNames = new Set<string>(),
 ): AST {
   // If we've seen this node before, return it.
   let cachedTypeMap = processed.get(schema)
@@ -112,13 +112,13 @@ function parseBooleanSchema(schema: boolean, keyName: string | undefined, option
   if (schema) {
     return {
       keyName,
-      type: options.unknownAny ? 'UNKNOWN' : 'ANY'
+      type: options.unknownAny ? 'UNKNOWN' : 'ANY',
     }
   }
 
   return {
     keyName,
-    type: 'NEVER'
+    type: 'NEVER',
   }
 }
 
@@ -126,7 +126,7 @@ function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined): AST
   return {
     keyName,
     params: schema,
-    type: 'LITERAL'
+    type: 'LITERAL',
   }
 }
 
@@ -136,7 +136,7 @@ function parseNonLiteral(
   options: Options,
   keyName: string | undefined,
   processed: Processed,
-  usedNames: UsedNames
+  usedNames: UsedNames,
 ): AST {
   const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
   const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
@@ -145,83 +145,83 @@ function parseNonLiteral(
     case 'ALL_OF':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'INTERSECTION',
-        deprecated: schema.deprecated
       }
     case 'ANY':
       return {
         ...(options.unknownAny ? T_UNKNOWN : T_ANY),
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        deprecated: schema.deprecated
       }
     case 'ANY_OF':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'UNION',
-        deprecated: schema.deprecated
       }
     case 'BOOLEAN':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'BOOLEAN',
-        deprecated: schema.deprecated
       }
     case 'CUSTOM_TYPE':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         params: schema.tsType!,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'CUSTOM_TYPE',
-        deprecated: schema.deprecated
       }
     case 'NAMED_ENUM':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames)!,
         params: schema.enum!.map((_, n) => ({
           ast: parseLiteral(_, undefined),
-          keyName: schema.tsEnumNames![n]
+          keyName: schema.tsEnumNames![n],
         })),
         type: 'ENUM',
-        deprecated: schema.deprecated
       }
     case 'NAMED_SCHEMA':
       return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName)
     case 'NEVER':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NEVER',
-        deprecated: schema.deprecated
       }
     case 'NULL':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NULL',
-        deprecated: schema.deprecated
       }
     case 'NUMBER':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'NUMBER',
-        deprecated: schema.deprecated
       }
     case 'OBJECT':
       return {
@@ -229,26 +229,26 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'OBJECT',
-        deprecated: schema.deprecated
+        deprecated: schema.deprecated,
       }
     case 'ONE_OF':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
         type: 'UNION',
-        deprecated: schema.deprecated
       }
     case 'REFERENCE':
       throw Error(format('Refs should have been resolved by the resolver!', schema))
     case 'STRING':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'STRING',
-        deprecated: schema.deprecated
       }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
@@ -257,13 +257,13 @@ function parseNonLiteral(
         const maxItems = schema.maxItems!
         const arrayType: TTuple = {
           comment: schema.description,
+          deprecated: schema.deprecated,
           keyName,
           maxItems,
           minItems,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           params: schema.items.map(_ => parse(_, options, undefined, processed, usedNames)),
           type: 'TUPLE',
-          deprecated: schema.deprecated
         }
         if (schema.additionalItems === true) {
           arrayType.spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
@@ -274,16 +274,17 @@ function parseNonLiteral(
       } else {
         return {
           comment: schema.description,
+          deprecated: schema.deprecated,
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
           type: 'ARRAY',
-          deprecated: schema.deprecated
         }
       }
     case 'UNION':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
@@ -291,16 +292,15 @@ function parseNonLiteral(
           return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
         }),
         type: 'UNION',
-        deprecated: schema.deprecated
       }
     case 'UNNAMED_ENUM':
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         params: schema.enum!.map(_ => parseLiteral(_, undefined)),
         type: 'UNION',
-        deprecated: schema.deprecated
       }
     case 'UNNAMED_SCHEMA':
       return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName, keyNameFromDefinition)
@@ -312,6 +312,7 @@ function parseNonLiteral(
       if (minItems > 0 || maxItems >= 0) {
         return {
           comment: schema.description,
+          deprecated: schema.deprecated,
           keyName,
           maxItems: schema.maxItems,
           minItems,
@@ -321,17 +322,16 @@ function parseNonLiteral(
           spreadParam: maxItems >= 0 ? undefined : params,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           type: 'TUPLE',
-          deprecated: schema.deprecated
         }
       }
 
       return {
         comment: schema.description,
+        deprecated: schema.deprecated,
         keyName,
         params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'ARRAY',
-        deprecated: schema.deprecated
       }
   }
 }
@@ -342,7 +342,7 @@ function parseNonLiteral(
 function standaloneName(
   schema: LinkedJSONSchema,
   keyNameFromDefinition: string | undefined,
-  usedNames: UsedNames
+  usedNames: UsedNames,
 ): string | undefined {
   const name = schema.title || schema.$id || keyNameFromDefinition
   if (name) {
@@ -356,17 +356,17 @@ function newInterface(
   processed: Processed,
   usedNames: UsedNames,
   keyName?: string,
-  keyNameFromDefinition?: string
+  keyNameFromDefinition?: string,
 ): TInterface {
   const name = standaloneName(schema, keyNameFromDefinition, usedNames)!
   return {
     comment: schema.description,
+    deprecated: schema.deprecated,
     keyName,
     params: parseSchema(schema, options, processed, usedNames, name),
     standaloneName: name,
     superTypes: parseSuperTypes(schema, options, processed, usedNames),
     type: 'INTERFACE',
-    deprecated: schema.deprecated
   }
 }
 
@@ -374,7 +374,7 @@ function parseSuperTypes(
   schema: SchemaSchema,
   options: Options,
   processed: Processed,
-  usedNames: UsedNames
+  usedNames: UsedNames,
 ): TNamedInterface[] {
   // Type assertion needed because of dereferencing step
   // TODO: Type it upstream
@@ -393,14 +393,14 @@ function parseSchema(
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
-  parentSchemaName: string
+  parentSchemaName: string,
 ): TInterfaceParam[] {
   let asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
     ast: parse(value, options, key, processed, usedNames),
     isPatternProperty: false,
     isRequired: includes(schema.required || [], key),
     isUnreachableDefinition: false,
-    keyName: key
+    keyName: key,
   }))
 
   let singlePatternProperty = false
@@ -421,9 +421,9 @@ via the \`patternProperty\` "${key}".`
           isPatternProperty: !singlePatternProperty,
           isRequired: singlePatternProperty || includes(schema.required || [], key),
           isUnreachableDefinition: false,
-          keyName: singlePatternProperty ? '[k: string]' : key
+          keyName: singlePatternProperty ? '[k: string]' : key,
         }
-      })
+      }),
     )
   }
 
@@ -439,9 +439,9 @@ via the \`definition\` "${key}".`
           isPatternProperty: false,
           isRequired: includes(schema.required || [], key),
           isUnreachableDefinition: true,
-          keyName: key
+          keyName: key,
         }
-      })
+      }),
     )
   }
 
@@ -457,7 +457,7 @@ via the \`definition\` "${key}".`
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
-        keyName: '[k: string]'
+        keyName: '[k: string]',
       })
 
     case false:
@@ -471,7 +471,7 @@ via the \`definition\` "${key}".`
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
-        keyName: '[k: string]'
+        keyName: '[k: string]',
       })
   }
 }
@@ -481,7 +481,7 @@ type Definitions = {[k: string]: LinkedJSONSchema}
 function getDefinitions(
   schema: LinkedJSONSchema,
   isSchema = true,
-  processed = new Set<LinkedJSONSchema>()
+  processed = new Set<LinkedJSONSchema>(),
 ): Definitions {
   if (processed.has(schema)) {
     return {}
@@ -491,9 +491,9 @@ function getDefinitions(
     return schema.reduce(
       (prev, cur) => ({
         ...prev,
-        ...getDefinitions(cur, false, processed)
+        ...getDefinitions(cur, false, processed),
       }),
-      {}
+      {},
     )
   }
   if (isPlainObject(schema)) {
@@ -502,10 +502,10 @@ function getDefinitions(
       ...Object.keys(schema).reduce<Definitions>(
         (prev, cur) => ({
           ...prev,
-          ...getDefinitions(schema[cur], false, processed)
+          ...getDefinitions(schema[cur], false, processed),
         }),
-        {}
-      )
+        {},
+      ),
     }
   }
   return {}
