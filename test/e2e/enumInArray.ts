@@ -7,9 +7,9 @@ export const input = {
         type: 'string',
         enum: ['BAR', 'BAZ'],
         enumNames: ['bar', 'baz'],
-        tsEnumNames: ['BAR', 'BAZ']
-      }
+        tsEnumNames: ['BAR', 'BAZ'],
+      },
     },
-    title: 'foo'
-  }
+    title: 'foo',
+  },
 }

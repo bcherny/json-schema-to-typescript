@@ -4,7 +4,7 @@ export const input = {
   properties: {
     someKey: {
       type: 'string',
-      title: '哈哈'
-    }
-  }
+      title: '哈哈',
+    },
+  },
 }

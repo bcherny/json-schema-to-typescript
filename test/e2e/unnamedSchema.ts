@@ -2,9 +2,9 @@ export const input = {
   type: 'object',
   properties: {
     foo: {
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
   required: ['foo'],
-  additionalProperties: false
+  additionalProperties: false,
 }

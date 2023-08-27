@@ -3,10 +3,10 @@ export const input = {
   type: 'object',
   properties: {
     foo: {
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
   additionalProperties: {
-    type: 'number'
-  }
+    type: 'number',
+  },
 }

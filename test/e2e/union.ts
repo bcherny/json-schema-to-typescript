@@ -9,17 +9,17 @@ export const input = {
           type: ['boolean', 'array'],
           minItems: 1,
           items: {
-            type: 'string'
-          }
+            type: 'string',
+          },
         },
         test2: {
           type: ['boolean', 'array'],
           minItems: 1,
           items: {
-            type: 'string'
-          }
-        }
-      }
-    }
-  }
+            type: 'string',
+          },
+        },
+      },
+    },
+  },
 }

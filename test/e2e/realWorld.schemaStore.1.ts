@@ -8,64 +8,64 @@ export const input = {
       required: ['name'],
       properties: {
         name: {
-          type: 'string'
+          type: 'string',
         },
         url: {
           type: 'string',
-          format: 'uri'
+          format: 'uri',
         },
         email: {
           type: 'string',
-          format: 'email'
-        }
-      }
+          format: 'email',
+        },
+      },
     },
     dependency: {
       description:
         'Dependencies are specified with a simple hash of package name to version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL.',
       type: 'object',
       additionalProperties: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     scriptsInstallAfter: {
       description: 'Run AFTER the package is installed.',
-      type: 'string'
+      type: 'string',
     },
     scriptsPublishAfter: {
       description: 'Run AFTER the package is published.',
-      type: 'string'
+      type: 'string',
     },
     scriptsRestart: {
       description:
         "Run by the 'npm restart' command. Note: 'npm restart' will run the stop and start scripts if no restart script is provided.",
-      type: 'string'
+      type: 'string',
     },
     scriptsStart: {
       description: "Run by the 'npm start' command.",
-      type: 'string'
+      type: 'string',
     },
     scriptsStop: {
       description: "Run by the 'npm stop' command.",
-      type: 'string'
+      type: 'string',
     },
     scriptsTest: {
       description: "Run by the 'npm test' command.",
-      type: 'string'
+      type: 'string',
     },
     scriptsUninstallBefore: {
       description: 'Run BEFORE the package is uninstalled.',
-      type: 'string'
+      type: 'string',
     },
     scriptsVersionBefore: {
       description: 'Run BEFORE bump the package version.',
-      type: 'string'
+      type: 'string',
     },
     packageExportsEntryPath: {
       type: ['string', 'null'],
       description:
         'The module path that is resolved when this specifier is imported. Set to `null` to disallow importing this module.',
-      pattern: '^\\./'
+      pattern: '^\\./',
     },
     packageExportsEntryObject: {
       type: 'object',
@@ -75,64 +75,64 @@ export const input = {
         require: {
           $ref: '#/definitions/packageExportsEntryOrFallback',
           description:
-            'The module path that is resolved when this specifier is imported as a CommonJS module using the `require(...)` function.'
+            'The module path that is resolved when this specifier is imported as a CommonJS module using the `require(...)` function.',
         },
         import: {
           $ref: '#/definitions/packageExportsEntryOrFallback',
           description:
-            'The module path that is resolved when this specifier is imported as an ECMAScript module using an `import` declaration or the dynamic `import(...)` function.'
+            'The module path that is resolved when this specifier is imported as an ECMAScript module using an `import` declaration or the dynamic `import(...)` function.',
         },
         node: {
           $ref: '#/definitions/packageExportsEntryOrFallback',
-          description: 'The module path that is resolved when this environment is Node.js.'
+          description: 'The module path that is resolved when this environment is Node.js.',
         },
         default: {
           $ref: '#/definitions/packageExportsEntryOrFallback',
-          description: 'The module path that is resolved when no other export type matches.'
-        }
+          description: 'The module path that is resolved when no other export type matches.',
+        },
       },
       patternProperties: {
         '^(?![\\.0-9]).': {
           $ref: '#/definitions/packageExportsEntryOrFallback',
-          description: 'The module path that is resolved when this environment matches the property name.'
-        }
+          description: 'The module path that is resolved when this environment matches the property name.',
+        },
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     packageExportsEntry: {
       oneOf: [
         {
-          $ref: '#/definitions/packageExportsEntryPath'
+          $ref: '#/definitions/packageExportsEntryPath',
         },
         {
-          $ref: '#/definitions/packageExportsEntryObject'
-        }
-      ]
+          $ref: '#/definitions/packageExportsEntryObject',
+        },
+      ],
     },
     packageExportsFallback: {
       type: 'array',
       description: "Used to allow fallbacks in case this environment doesn't support the preceding entries.",
       items: {
-        $ref: '#/definitions/packageExportsEntry'
-      }
+        $ref: '#/definitions/packageExportsEntry',
+      },
     },
     packageExportsEntryOrFallback: {
       oneOf: [
         {
-          $ref: '#/definitions/packageExportsEntry'
+          $ref: '#/definitions/packageExportsEntry',
         },
         {
-          $ref: '#/definitions/packageExportsFallback'
-        }
-      ]
-    }
+          $ref: '#/definitions/packageExportsFallback',
+        },
+      ],
+    },
   },
   type: 'object',
   patternProperties: {
     '^_': {
       description: 'Any property starting with _ is valid.',
-      tsType: 'any'
-    }
+      tsType: 'any',
+    },
   },
   properties: {
     name: {
@@ -140,26 +140,26 @@ export const input = {
       type: 'string',
       maxLength: 214,
       minLength: 1,
-      pattern: '^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$'
+      pattern: '^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$',
     },
     version: {
       description: 'Version must be parseable by node-semver, which is bundled with npm as a dependency.',
-      type: 'string'
+      type: 'string',
     },
     description: {
       description: "This helps people discover your package, as it's listed in 'npm search'.",
-      type: 'string'
+      type: 'string',
     },
     keywords: {
       description: "This helps people discover your package as it's listed in 'npm search'.",
       type: 'array',
       items: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     homepage: {
       description: 'The url to the project homepage.',
-      type: 'string'
+      type: 'string',
     },
     bugs: {
       description:
@@ -169,19 +169,19 @@ export const input = {
         url: {
           type: 'string',
           description: "The url to your project's issue tracker.",
-          format: 'uri'
+          format: 'uri',
         },
         email: {
           type: 'string',
           description: 'The email address to which issues should be reported.',
-          format: 'email'
-        }
-      }
+          format: 'email',
+        },
+      },
     },
     license: {
       type: 'string',
       description:
-        "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you're placing on it."
+        "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you're placing on it.",
     },
     licenses: {
       description:
@@ -191,43 +191,43 @@ export const input = {
         type: 'object',
         properties: {
           type: {
-            type: 'string'
+            type: 'string',
           },
           url: {
             type: 'string',
-            format: 'uri'
-          }
-        }
-      }
+            format: 'uri',
+          },
+        },
+      },
     },
     author: {
-      $ref: '#/definitions/person'
+      $ref: '#/definitions/person',
     },
     contributors: {
       description: 'A list of people who contributed to this package.',
       type: 'array',
       items: {
-        $ref: '#/definitions/person'
-      }
+        $ref: '#/definitions/person',
+      },
     },
     maintainers: {
       description: 'A list of people who maintains this package.',
       type: 'array',
       items: {
-        $ref: '#/definitions/person'
-      }
+        $ref: '#/definitions/person',
+      },
     },
     files: {
       description:
         "The 'files' field is an array of files to include in your project. If you name a folder in the array, then it will also include the files inside that folder.",
       type: 'array',
       items: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     main: {
       description: 'The main field is a module ID that is the primary entry point to your program.',
-      type: 'string'
+      type: 'string',
     },
     exports: {
       description:
@@ -236,7 +236,7 @@ export const input = {
         {
           $ref: '#/definitions/packageExportsEntryPath',
           description:
-            'The module path that is resolved when the module specifier matches "name", shadows the "main" field.'
+            'The module path that is resolved when the module specifier matches "name", shadows the "main" field.',
         },
         {
           type: 'object',
@@ -244,55 +244,55 @@ export const input = {
             '.': {
               $ref: '#/definitions/packageExportsEntryOrFallback',
               description:
-                'The module path that is resolved when the module specifier matches "name", shadows the "main" field.'
+                'The module path that is resolved when the module specifier matches "name", shadows the "main" field.',
             },
             './': {
               $ref: '#/definitions/packageExportsEntryOrFallback',
               description:
-                'The module path prefix that is resolved when the module specifier starts with "name/", set to "./" to allow external modules to import any subpath.'
-            }
+                'The module path prefix that is resolved when the module specifier starts with "name/", set to "./" to allow external modules to import any subpath.',
+            },
           },
           patternProperties: {
             '^\\./': {
               $ref: '#/definitions/packageExportsEntryOrFallback',
               description:
-                'The module path that is resolved when the path component of the module specifier matches the property name.'
-            }
+                'The module path that is resolved when the path component of the module specifier matches the property name.',
+            },
           },
-          additionalProperties: false
+          additionalProperties: false,
         },
         {
           $ref: '#/definitions/packageExportsEntryObject',
           description:
-            'The module path that is resolved when the module specifier matches "name", shadows the "main" field.'
+            'The module path that is resolved when the module specifier matches "name", shadows the "main" field.',
         },
         {
           $ref: '#/definitions/packageExportsFallback',
           description:
-            'The module path that is resolved when the module specifier matches "name", shadows the "main" field.'
-        }
-      ]
+            'The module path that is resolved when the module specifier matches "name", shadows the "main" field.',
+        },
+      ],
     },
     bin: {
       type: ['string', 'object'],
       additionalProperties: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     type: {
       description:
         'When set to "module", the type field allows a package to specify all .js files within are ES modules. If the "type" field is omitted or set to "commonjs", all .js files are treated as CommonJS.',
       type: 'string',
       enum: ['commonjs', 'module'],
-      default: 'commonjs'
+      default: 'commonjs',
     },
     types: {
       description: 'Set the types property to point to your bundled declaration file.',
-      type: 'string'
+      type: 'string',
     },
     typings: {
       description: 'Note that the "typings" field is synonymous with "types", and could be used as well.',
-      type: 'string'
+      type: 'string',
     },
     typesVersions: {
       description:
@@ -308,17 +308,17 @@ export const input = {
             type: 'array',
             items: {
               type: 'string',
-              pattern: '^[^*]*(?:\\*[^*]*)?$'
-            }
-          }
+              pattern: '^[^*]*(?:\\*[^*]*)?$',
+            },
+          },
         },
         patternProperties: {
           '^[^*]+$': {
             description: 'Maps the file path matching the property key to the file paths specified in the array.',
             type: 'array',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           '^[^*]*\\*[^*]*$': {
             description:
@@ -326,19 +326,19 @@ export const input = {
             type: 'array',
             items: {
               type: 'string',
-              pattern: '^[^*]*(?:\\*[^*]*)?$'
-            }
-          }
+              pattern: '^[^*]*(?:\\*[^*]*)?$',
+            },
+          },
         },
-        additionalProperties: false
-      }
+        additionalProperties: false,
+      },
     },
     man: {
       type: ['array', 'string'],
       description: 'Specify either a single file or an array of filenames to put in place for the man program to find.',
       items: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     directories: {
       type: 'object',
@@ -346,44 +346,44 @@ export const input = {
         bin: {
           description:
             "If you specify a 'bin' directory, then all the files in that folder will be used as the 'bin' hash.",
-          type: 'string'
+          type: 'string',
         },
         doc: {
           description: 'Put markdown files in here. Eventually, these will be displayed nicely, maybe, someday.',
-          type: 'string'
+          type: 'string',
         },
         example: {
           description: 'Put example scripts in here. Someday, it might be exposed in some clever way.',
-          type: 'string'
+          type: 'string',
         },
         lib: {
           description:
             "Tell people where the bulk of your library is. Nothing special is done with the lib folder in any way, but it's useful meta info.",
-          type: 'string'
+          type: 'string',
         },
         man: {
           description: "A folder that is full of man pages. Sugar to generate a 'man' array by walking the folder.",
-          type: 'string'
+          type: 'string',
         },
         test: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     repository: {
       description: 'Specify the place where your code lives. This is helpful for people who want to contribute.',
       type: ['object', 'string'],
       properties: {
         type: {
-          type: 'string'
+          type: 'string',
         },
         url: {
-          type: 'string'
+          type: 'string',
         },
         directory: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     scripts: {
       description:
@@ -392,121 +392,121 @@ export const input = {
       properties: {
         prepublish: {
           type: 'string',
-          description: 'Run BEFORE the package is published (Also run on local npm install without any arguments).'
+          description: 'Run BEFORE the package is published (Also run on local npm install without any arguments).',
         },
         prepare: {
           type: 'string',
           description:
-            'Run both BEFORE the package is packed and published, and on local npm install without any arguments. This is run AFTER prepublish, but BEFORE prepublishOnly.'
+            'Run both BEFORE the package is packed and published, and on local npm install without any arguments. This is run AFTER prepublish, but BEFORE prepublishOnly.',
         },
         prepublishOnly: {
           type: 'string',
-          description: 'Run BEFORE the package is prepared and packed, ONLY on npm publish.'
+          description: 'Run BEFORE the package is prepared and packed, ONLY on npm publish.',
         },
         prepack: {
           type: 'string',
           description:
-            'run BEFORE a tarball is packed (on npm pack, npm publish, and when installing git dependencies).'
+            'run BEFORE a tarball is packed (on npm pack, npm publish, and when installing git dependencies).',
         },
         postpack: {
           type: 'string',
-          description: 'Run AFTER the tarball has been generated and moved to its final destination.'
+          description: 'Run AFTER the tarball has been generated and moved to its final destination.',
         },
         publish: {
-          $ref: '#/definitions/scriptsPublishAfter'
+          $ref: '#/definitions/scriptsPublishAfter',
         },
         postpublish: {
-          $ref: '#/definitions/scriptsPublishAfter'
+          $ref: '#/definitions/scriptsPublishAfter',
         },
         preinstall: {
           type: 'string',
-          description: 'Run BEFORE the package is installed.'
+          description: 'Run BEFORE the package is installed.',
         },
         install: {
-          $ref: '#/definitions/scriptsInstallAfter'
+          $ref: '#/definitions/scriptsInstallAfter',
         },
         postinstall: {
-          $ref: '#/definitions/scriptsInstallAfter'
+          $ref: '#/definitions/scriptsInstallAfter',
         },
         preuninstall: {
-          $ref: '#/definitions/scriptsUninstallBefore'
+          $ref: '#/definitions/scriptsUninstallBefore',
         },
         uninstall: {
-          $ref: '#/definitions/scriptsUninstallBefore'
+          $ref: '#/definitions/scriptsUninstallBefore',
         },
         postuninstall: {
           type: 'string',
-          description: 'Run AFTER the package is uninstalled.'
+          description: 'Run AFTER the package is uninstalled.',
         },
         preversion: {
-          $ref: '#/definitions/scriptsVersionBefore'
+          $ref: '#/definitions/scriptsVersionBefore',
         },
         version: {
-          $ref: '#/definitions/scriptsVersionBefore'
+          $ref: '#/definitions/scriptsVersionBefore',
         },
         postversion: {
           type: 'string',
-          description: 'Run AFTER bump the package version.'
+          description: 'Run AFTER bump the package version.',
         },
         pretest: {
-          $ref: '#/definitions/scriptsTest'
+          $ref: '#/definitions/scriptsTest',
         },
         test: {
-          $ref: '#/definitions/scriptsTest'
+          $ref: '#/definitions/scriptsTest',
         },
         posttest: {
-          $ref: '#/definitions/scriptsTest'
+          $ref: '#/definitions/scriptsTest',
         },
         prestop: {
-          $ref: '#/definitions/scriptsStop'
+          $ref: '#/definitions/scriptsStop',
         },
         stop: {
-          $ref: '#/definitions/scriptsStop'
+          $ref: '#/definitions/scriptsStop',
         },
         poststop: {
-          $ref: '#/definitions/scriptsStop'
+          $ref: '#/definitions/scriptsStop',
         },
         prestart: {
-          $ref: '#/definitions/scriptsStart'
+          $ref: '#/definitions/scriptsStart',
         },
         start: {
-          $ref: '#/definitions/scriptsStart'
+          $ref: '#/definitions/scriptsStart',
         },
         poststart: {
-          $ref: '#/definitions/scriptsStart'
+          $ref: '#/definitions/scriptsStart',
         },
         prerestart: {
-          $ref: '#/definitions/scriptsRestart'
+          $ref: '#/definitions/scriptsRestart',
         },
         restart: {
-          $ref: '#/definitions/scriptsRestart'
+          $ref: '#/definitions/scriptsRestart',
         },
         postrestart: {
-          $ref: '#/definitions/scriptsRestart'
-        }
+          $ref: '#/definitions/scriptsRestart',
+        },
       },
       additionalProperties: {
         type: 'string',
-        tsType: 'string | undefined'
-      }
+        tsType: 'string | undefined',
+      },
     },
     config: {
       description:
         "A 'config' hash can be used to set configuration parameters used in package scripts that persist across upgrades.",
       type: 'object',
-      additionalProperties: true
+      additionalProperties: true,
     },
     dependencies: {
-      $ref: '#/definitions/dependency'
+      $ref: '#/definitions/dependency',
     },
     devDependencies: {
-      $ref: '#/definitions/dependency'
+      $ref: '#/definitions/dependency',
     },
     optionalDependencies: {
-      $ref: '#/definitions/dependency'
+      $ref: '#/definitions/dependency',
     },
     peerDependencies: {
-      $ref: '#/definitions/dependency'
+      $ref: '#/definitions/dependency',
     },
     peerDependenciesMeta: {
       description:
@@ -518,10 +518,10 @@ export const input = {
         properties: {
           optional: {
             description: 'Specifies that this peer dependency is optional and should not be installed automatically.',
-            type: 'boolean'
-          }
-        }
-      }
+            type: 'boolean',
+          },
+        },
+      },
     },
     bundledDependencies: {
       description: 'Array of package names that will be bundled when publishing the package.',
@@ -529,13 +529,13 @@ export const input = {
         {
           type: 'array',
           items: {
-            type: 'string'
-          }
+            type: 'string',
+          },
         },
         {
-          enum: [false]
-        }
-      ]
+          enum: [false],
+        },
+      ],
     },
     bundleDependencies: {
       description: 'DEPRECATED: This field is honored, but "bundledDependencies" is the correct field name.',
@@ -543,112 +543,112 @@ export const input = {
         {
           type: 'array',
           items: {
-            type: 'string'
-          }
+            type: 'string',
+          },
         },
         {
-          enum: [false]
-        }
-      ]
+          enum: [false],
+        },
+      ],
     },
     resolutions: {
       description:
         'Resolutions is used to support selective version resolutions, which lets you define custom package versions or ranges inside your dependencies. See: https://classic.yarnpkg.com/en/docs/selective-version-resolutions',
-      type: 'object'
+      type: 'object',
     },
     engines: {
       type: 'object',
       properties: {
         node: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       additionalProperties: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     engineStrict: {
-      type: 'boolean'
+      type: 'boolean',
     },
     os: {
       description: 'Specify which operating systems your module will run on.',
       type: 'array',
       items: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     cpu: {
       description: 'Specify that your code only runs on certain cpu architectures.',
       type: 'array',
       items: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     preferGlobal: {
       type: 'boolean',
       description:
-        'DEPRECATED: This option used to trigger an npm warning, but it will no longer warn. It is purely there for informational purposes. It is now recommended that you install any binaries as local devDependencies wherever possible.'
+        'DEPRECATED: This option used to trigger an npm warning, but it will no longer warn. It is purely there for informational purposes. It is now recommended that you install any binaries as local devDependencies wherever possible.',
     },
     private: {
       description: 'If set to true, then npm will refuse to publish it.',
       oneOf: [
         {
-          type: 'boolean'
+          type: 'boolean',
         },
         {
-          enum: ['false', 'true']
-        }
-      ]
+          enum: ['false', 'true'],
+        },
+      ],
     },
     publishConfig: {
       type: 'object',
       properties: {
         access: {
           type: 'string',
-          enum: ['public', 'restricted']
+          enum: ['public', 'restricted'],
         },
         tag: {
-          type: 'string'
+          type: 'string',
         },
         registry: {
           type: 'string',
-          format: 'uri'
-        }
+          format: 'uri',
+        },
       },
-      additionalProperties: true
+      additionalProperties: true,
     },
     dist: {
       type: 'object',
       properties: {
         shasum: {
-          type: 'string'
+          type: 'string',
         },
         tarball: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     readme: {
-      type: 'string'
+      type: 'string',
     },
     module: {
       description: 'An ECMAScript module ID that is the primary entry point to your program.',
-      type: 'string'
+      type: 'string',
     },
     esnext: {
       description: 'A module ID with untranspiled code that is the primary entry point to your program.',
       type: ['string', 'object'],
       properties: {
         main: {
-          type: 'string'
+          type: 'string',
         },
         browser: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       additionalProperties: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     workspaces: {
       description:
@@ -658,8 +658,8 @@ export const input = {
           type: 'array',
           description: 'Workspace package paths. Glob patterns are supported.',
           items: {
-            type: 'string'
-          }
+            type: 'string',
+          },
         },
         {
           type: 'object',
@@ -668,43 +668,43 @@ export const input = {
               type: 'array',
               description: 'Workspace package paths. Glob patterns are supported.',
               items: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
             nohoist: {
               type: 'array',
               description:
                 'Packages to block from hoisting to the workspace root. Currently only supported in Yarn only.',
               items: {
-                type: 'string'
-              }
-            }
-          }
-        }
-      ]
+                type: 'string',
+              },
+            },
+          },
+        },
+      ],
     },
-    jspm: {$ref: '#'}
+    jspm: {$ref: '#'},
   },
   anyOf: [
     {
       type: 'object',
       not: {
-        required: ['bundledDependencies', 'bundleDependencies']
-      }
+        required: ['bundledDependencies', 'bundleDependencies'],
+      },
     },
     {
       type: 'object',
       not: {
-        required: ['bundleDependencies']
+        required: ['bundleDependencies'],
       },
-      required: ['bundledDependencies']
+      required: ['bundledDependencies'],
     },
     {
       type: 'object',
       not: {
-        required: ['bundledDependencies']
+        required: ['bundledDependencies'],
       },
-      required: ['bundleDependencies']
-    }
-  ]
+      required: ['bundleDependencies'],
+    },
+  ],
 }

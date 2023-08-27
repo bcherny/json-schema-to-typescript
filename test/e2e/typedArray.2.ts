@@ -6,8 +6,8 @@ export const input = {
     data: {
       type: 'array',
       title: 'Array Items',
-      items: {$ref: '#/definitions/item'}
-    }
+      items: {$ref: '#/definitions/item'},
+    },
   },
   definitions: {
     item: {
@@ -16,13 +16,13 @@ export const input = {
       properties: {
         id: {
           title: 'Id',
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       required: ['id'],
-      additionalProperties: false
-    }
+      additionalProperties: false,
+    },
   },
   required: ['data'],
-  additionalProperties: false
+  additionalProperties: false,
 }

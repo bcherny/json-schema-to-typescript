@@ -2,11 +2,11 @@
 export const input = {
   oneOf: [
     {
-      type: 'string'
+      type: 'string',
     },
     {
-      enum: [false]
-    }
+      enum: [false],
+    },
   ],
-  default: 'foo'
+  default: 'foo',
 }

@@ -145,5 +145,5 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   },
   UNTYPED_ARRAY(schema) {
     return schema.type === 'array' && !('items' in schema)
-  }
+  },
 }

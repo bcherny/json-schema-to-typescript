@@ -15,7 +15,7 @@ main(
     alias: {
       help: ['h'],
       input: ['i'],
-      output: ['o']
+      output: ['o'],
     },
     boolean: [
       'additionalProperties',
@@ -25,11 +25,11 @@ main(
       'ignoreMinAndMaxItems',
       'strictIndexSignatures',
       'unknownAny',
-      'unreachableDefinitions'
+      'unreachableDefinitions',
     ],
     default: DEFAULT_OPTIONS,
-    string: ['bannerComment', 'cwd']
-  })
+    string: ['bannerComment', 'cwd'],
+  }),
 )
 
 async function main(argv: minimist.ParsedArgs) {
@@ -46,7 +46,7 @@ async function main(argv: minimist.ParsedArgs) {
 
   if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
     throw new ReferenceError(
-      `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`
+      `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`,
     )
   }
 
@@ -76,7 +76,7 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
 
   if (files.length === 0) {
     throw ReferenceError(
-      `You passed a glob pattern "${argIn}", but there are no files that match that pattern in ${process.cwd()}`
+      `You passed a glob pattern "${argIn}", but there are no files that match that pattern in ${process.cwd()}`,
     )
   }
 
@@ -84,7 +84,7 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
   const results = await Promise.all(
     files.map(async file => {
       return [file, await processFile(file, argv)] as const
-    })
+    }),
   )
 
   // careful to do this serially
@@ -106,12 +106,12 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
         const outputPath = pathTransform(argOut, argIn, file)
         return [file, await processFile(file, argv), outputPath] as const
       }
-    })
+    }),
   )
 
   // careful to do this serially
   results.forEach(([file, result, outputPath]) =>
-    outputResult(result, outputPath ? `${outputPath}/${basename(file, '.json')}.d.ts` : undefined)
+    outputResult(result, outputPath ? `${outputPath}/${basename(file, '.json')}.d.ts` : undefined),
   )
 }
 
@@ -184,6 +184,6 @@ Boolean values can be set to false using the 'no-' prefix.
       Output unknown type instead of any type
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
-`
+`,
   )
 }

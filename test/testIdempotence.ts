@@ -8,10 +8,10 @@ export function run() {
     type: 'object',
     properties: {
       firstName: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
-    required: ['firstName']
+    required: ['firstName'],
   }
 
   test('compile() should not mutate its input', async t => {

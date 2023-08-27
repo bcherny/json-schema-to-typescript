@@ -3,31 +3,31 @@ export const input = {
   type: 'object',
   properties: {
     maybe: {
-      type: 'string'
+      type: 'string',
     },
     complex: {
       type: 'object',
       properties: {
         maybe: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       additionalProperties: {
         title: 'Leaf',
         type: 'object',
         properties: {
           maybe: {
-            type: 'string'
-          }
-        }
-      }
-    }
+            type: 'string',
+          },
+        },
+      },
+    },
   },
   additionalProperties: {
-    type: 'string'
-  }
+    type: 'string',
+  },
 }
 
 export const options = {
-  strictIndexSignatures: true
+  strictIndexSignatures: true,
 }

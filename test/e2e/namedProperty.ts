@@ -8,8 +8,8 @@ export const input = {
       title: 'user id array',
       description: 'Array of authorized user ids.',
       items: {
-        type: 'string'
-      }
-    }
-  }
+        type: 'string',
+      },
+    },
+  },
 }

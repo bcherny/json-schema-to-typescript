@@ -5,9 +5,9 @@ export const input = {
   type: 'object',
   properties: {
     ref: {
-      $ref: 'test/resources/ReferencedType.json'
-    }
+      $ref: 'test/resources/ReferencedType.json',
+    },
   },
   required: ['ref'],
-  additionalProperties: false
+  additionalProperties: false,
 }

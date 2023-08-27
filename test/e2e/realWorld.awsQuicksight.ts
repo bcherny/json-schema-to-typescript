@@ -12,22 +12,22 @@ export const input = {
           maxLength: 64,
           minLength: 1,
           description:
-            '<p>A unique ID to identify a calculated column. During a dataset update, if the column ID\n            of a calculated column matches that of an existing calculated column, Amazon QuickSight\n            preserves the existing calculated column.</p>'
+            '<p>A unique ID to identify a calculated column. During a dataset update, if the column ID\n            of a calculated column matches that of an existing calculated column, Amazon QuickSight\n            preserves the existing calculated column.</p>',
         },
         ColumnName: {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>Column name.</p>'
+          description: '<p>Column name.</p>',
         },
         Expression: {
           type: 'string',
           maxLength: 4096,
           minLength: 1,
-          description: '<p>An expression that defines the calculated column.</p>'
-        }
+          description: '<p>An expression that defines the calculated column.</p>',
+        },
       },
-      required: ['ColumnId', 'ColumnName', 'Expression']
+      required: ['ColumnId', 'ColumnName', 'Expression'],
     },
     CastColumnTypeOperation: {
       type: 'object',
@@ -37,24 +37,24 @@ export const input = {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>Column name.</p>'
+          description: '<p>Column name.</p>',
         },
         Format: {
           type: 'string',
           maxLength: 32,
           minLength: 0,
           description:
-            '<p>When casting a column from string to datetime type, you can supply a string in a\n            format supported by Amazon QuickSight to denote the source data format.</p>'
+            '<p>When casting a column from string to datetime type, you can supply a string in a\n            format supported by Amazon QuickSight to denote the source data format.</p>',
         },
         NewColumnType: {
-          $ref: '#/definitions/ColumnDataType'
-        }
+          $ref: '#/definitions/ColumnDataType',
+        },
       },
-      required: ['ColumnName', 'NewColumnType']
+      required: ['ColumnName', 'NewColumnType'],
     },
     ColumnDataType: {
       type: 'string',
-      enum: ['STRING', 'INTEGER', 'DECIMAL', 'DATETIME']
+      enum: ['STRING', 'INTEGER', 'DECIMAL', 'DATETIME'],
     },
     ColumnDescription: {
       type: 'object',
@@ -64,9 +64,9 @@ export const input = {
           type: 'string',
           maxLength: 500,
           minLength: 0,
-          description: '<p>The text of a description for a column.</p>'
-        }
-      }
+          description: '<p>The text of a description for a column.</p>',
+        },
+      },
     },
     ColumnGroup: {
       type: 'object',
@@ -74,9 +74,9 @@ export const input = {
         '<p>Groupings of columns that work together in certain Amazon QuickSight features. This is\n            a variant type structure. For this structure to be valid, only one of the attributes can\n            be non-null.</p>',
       properties: {
         GeoSpatialColumnGroup: {
-          $ref: '#/definitions/GeoSpatialColumnGroup'
-        }
-      }
+          $ref: '#/definitions/GeoSpatialColumnGroup',
+        },
+      },
     },
     ColumnLevelPermissionRule: {
       type: 'object',
@@ -84,19 +84,19 @@ export const input = {
         ColumnNames: {
           type: 'array',
           items: {
-            type: 'string'
+            type: 'string',
           },
-          minItems: 1
+          minItems: 1,
         },
         Principals: {
           type: 'array',
           items: {
-            type: 'string'
+            type: 'string',
           },
           maxItems: 100,
-          minItems: 1
-        }
-      }
+          minItems: 1,
+        },
+      },
     },
     ColumnTag: {
       type: 'object',
@@ -104,12 +104,12 @@ export const input = {
         '<p>A tag for a column in a <a>TagColumnOperation</a> structure. This is a\n            variant type structure. For this structure to be valid, only one of the attributes can\n            be non-null.</p>',
       properties: {
         ColumnGeographicRole: {
-          $ref: '#/definitions/GeoSpatialDataRole'
+          $ref: '#/definitions/GeoSpatialDataRole',
         },
         ColumnDescription: {
-          $ref: '#/definitions/ColumnDescription'
-        }
-      }
+          $ref: '#/definitions/ColumnDescription',
+        },
+      },
     },
     CreateColumnsOperation: {
       type: 'object',
@@ -119,14 +119,14 @@ export const input = {
         Columns: {
           type: 'array',
           items: {
-            $ref: '#/definitions/CalculatedColumn'
+            $ref: '#/definitions/CalculatedColumn',
           },
           maxItems: 128,
           minItems: 1,
-          description: '<p>Calculated columns to create.</p>'
-        }
+          description: '<p>Calculated columns to create.</p>',
+        },
       },
-      required: ['Columns']
+      required: ['Columns'],
     },
     CustomSql: {
       type: 'object',
@@ -134,35 +134,35 @@ export const input = {
       properties: {
         DataSourceArn: {
           type: 'string',
-          description: '<p>The Amazon Resource Name (ARN) of the data source.</p>'
+          description: '<p>The Amazon Resource Name (ARN) of the data source.</p>',
         },
         SqlQuery: {
           type: 'string',
           maxLength: 65536,
           minLength: 1,
-          description: '<p>The SQL query.</p>'
+          description: '<p>The SQL query.</p>',
         },
         Columns: {
           type: 'array',
           items: {
-            $ref: '#/definitions/InputColumn'
+            $ref: '#/definitions/InputColumn',
           },
           maxItems: 2048,
           minItems: 1,
-          description: '<p>The column schema from the SQL query result set.</p>'
+          description: '<p>The column schema from the SQL query result set.</p>',
         },
         Name: {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>A display name for the SQL query result.</p>'
-        }
+          description: '<p>A display name for the SQL query result.</p>',
+        },
       },
-      required: ['Columns', 'DataSourceArn', 'Name', 'SqlQuery']
+      required: ['Columns', 'DataSourceArn', 'Name', 'SqlQuery'],
     },
     DataSetImportMode: {
       type: 'string',
-      enum: ['SPICE', 'DIRECT_QUERY']
+      enum: ['SPICE', 'DIRECT_QUERY'],
     },
     FieldFolder: {
       type: 'object',
@@ -170,29 +170,29 @@ export const input = {
         Description: {
           type: 'string',
           maxLength: 500,
-          minLength: 0
+          minLength: 0,
         },
         Columns: {
           type: 'array',
           items: {
-            type: 'string'
+            type: 'string',
           },
           maxItems: 5000,
-          minItems: 0
-        }
-      }
+          minItems: 0,
+        },
+      },
     },
     FieldFolderMap: {
       type: 'object',
       patternProperties: {
         '.+': {
-          $ref: '#/definitions/FieldFolder'
-        }
-      }
+          $ref: '#/definitions/FieldFolder',
+        },
+      },
     },
     FileFormat: {
       type: 'string',
-      enum: ['CSV', 'TSV', 'CLF', 'ELF', 'XLSX', 'JSON']
+      enum: ['CSV', 'TSV', 'CLF', 'ELF', 'XLSX', 'JSON'],
     },
     FilterOperation: {
       type: 'object',
@@ -203,10 +203,10 @@ export const input = {
           maxLength: 4096,
           minLength: 1,
           description:
-            '<p>An expression that must evaluate to a Boolean value. Rows for which the expression\n            evaluates to true are kept in the dataset.</p>'
-        }
+            '<p>An expression that must evaluate to a Boolean value. Rows for which the expression\n            evaluates to true are kept in the dataset.</p>',
+        },
       },
-      required: ['ConditionExpression']
+      required: ['ConditionExpression'],
     },
     GeoSpatialColumnGroup: {
       type: 'object',
@@ -217,51 +217,51 @@ export const input = {
           items: {
             type: 'string',
             maxLength: 128,
-            minLength: 1
+            minLength: 1,
           },
           maxItems: 16,
           minItems: 1,
-          description: '<p>Columns in this hierarchy.</p>'
+          description: '<p>Columns in this hierarchy.</p>',
         },
         CountryCode: {
-          $ref: '#/definitions/GeoSpatialCountryCode'
+          $ref: '#/definitions/GeoSpatialCountryCode',
         },
         Name: {
           type: 'string',
           maxLength: 64,
           minLength: 1,
-          description: '<p>A display name for the hierarchy.</p>'
-        }
+          description: '<p>A display name for the hierarchy.</p>',
+        },
       },
-      required: ['Columns', 'Name']
+      required: ['Columns', 'Name'],
     },
     GeoSpatialCountryCode: {
       type: 'string',
-      enum: ['US']
+      enum: ['US'],
     },
     GeoSpatialDataRole: {
       type: 'string',
-      enum: ['COUNTRY', 'STATE', 'COUNTY', 'CITY', 'POSTCODE', 'LONGITUDE', 'LATITUDE', 'POLITICAL1']
+      enum: ['COUNTRY', 'STATE', 'COUNTY', 'CITY', 'POSTCODE', 'LONGITUDE', 'LATITUDE', 'POLITICAL1'],
     },
     InputColumn: {
       type: 'object',
       description: '<p>Metadata for a column that is used as the input of a transform operation.</p>',
       properties: {
         Type: {
-          $ref: '#/definitions/InputColumnDataType'
+          $ref: '#/definitions/InputColumnDataType',
         },
         Name: {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>The name of this column in the underlying data source.</p>'
-        }
+          description: '<p>The name of this column in the underlying data source.</p>',
+        },
       },
-      required: ['Name', 'Type']
+      required: ['Name', 'Type'],
     },
     InputColumnDataType: {
       type: 'string',
-      enum: ['STRING', 'INTEGER', 'DECIMAL', 'DATETIME', 'BIT', 'BOOLEAN', 'JSON']
+      enum: ['STRING', 'INTEGER', 'DECIMAL', 'DATETIME', 'BIT', 'BOOLEAN', 'JSON'],
     },
     JoinInstruction: {
       type: 'object',
@@ -271,45 +271,45 @@ export const input = {
           type: 'string',
           maxLength: 512,
           minLength: 1,
-          description: '<p>On Clause.</p>'
+          description: '<p>On Clause.</p>',
         },
         Type: {
-          $ref: '#/definitions/JoinType'
+          $ref: '#/definitions/JoinType',
         },
         LeftJoinKeyProperties: {
-          $ref: '#/definitions/JoinKeyProperties'
+          $ref: '#/definitions/JoinKeyProperties',
         },
         LeftOperand: {
           type: 'string',
           maxLength: 64,
           minLength: 1,
           pattern: '[0-9a-zA-Z-]*',
-          description: '<p>Left operand.</p>'
+          description: '<p>Left operand.</p>',
         },
         RightOperand: {
           type: 'string',
           maxLength: 64,
           minLength: 1,
           pattern: '[0-9a-zA-Z-]*',
-          description: '<p>Right operand.</p>'
+          description: '<p>Right operand.</p>',
         },
         RightJoinKeyProperties: {
-          $ref: '#/definitions/JoinKeyProperties'
-        }
+          $ref: '#/definitions/JoinKeyProperties',
+        },
       },
-      required: ['LeftOperand', 'OnClause', 'RightOperand', 'Type']
+      required: ['LeftOperand', 'OnClause', 'RightOperand', 'Type'],
     },
     JoinKeyProperties: {
       type: 'object',
       properties: {
         UniqueKey: {
-          type: 'boolean'
-        }
-      }
+          type: 'boolean',
+        },
+      },
     },
     JoinType: {
       type: 'string',
-      enum: ['INNER', 'OUTER', 'LEFT', 'RIGHT']
+      enum: ['INNER', 'OUTER', 'LEFT', 'RIGHT'],
     },
     LogicalTable: {
       type: 'object',
@@ -320,22 +320,22 @@ export const input = {
           type: 'string',
           maxLength: 64,
           minLength: 1,
-          description: '<p>A display name for the logical table.</p>'
+          description: '<p>A display name for the logical table.</p>',
         },
         DataTransforms: {
           type: 'array',
           items: {
-            $ref: '#/definitions/TransformOperation'
+            $ref: '#/definitions/TransformOperation',
           },
           maxItems: 2048,
           minItems: 1,
-          description: '<p>Transform operations that act on this logical table.</p>'
+          description: '<p>Transform operations that act on this logical table.</p>',
         },
         Source: {
-          $ref: '#/definitions/LogicalTableSource'
-        }
+          $ref: '#/definitions/LogicalTableSource',
+        },
       },
-      required: ['Alias', 'Source']
+      required: ['Alias', 'Source'],
     },
     LogicalTableMap: {
       type: 'object',
@@ -343,9 +343,9 @@ export const input = {
       minProperties: 1,
       patternProperties: {
         '[0-9a-zA-Z-]*': {
-          $ref: '#/definitions/LogicalTable'
-        }
-      }
+          $ref: '#/definitions/LogicalTable',
+        },
+      },
     },
     LogicalTableSource: {
       type: 'object',
@@ -357,33 +357,33 @@ export const input = {
           maxLength: 64,
           minLength: 1,
           pattern: '[0-9a-zA-Z-]*',
-          description: '<p>Physical table ID.</p>'
+          description: '<p>Physical table ID.</p>',
         },
         JoinInstruction: {
-          $ref: '#/definitions/JoinInstruction'
-        }
-      }
+          $ref: '#/definitions/JoinInstruction',
+        },
+      },
     },
     OutputColumn: {
       type: 'object',
       description: '<p>Output column.</p>',
       properties: {
         Type: {
-          $ref: '#/definitions/ColumnDataType'
+          $ref: '#/definitions/ColumnDataType',
         },
         Description: {
           type: 'string',
           maxLength: 500,
           minLength: 0,
-          description: '<p>A description for a column.</p>'
+          description: '<p>A description for a column.</p>',
         },
         Name: {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>A display name for the dataset.</p>'
-        }
-      }
+          description: '<p>A display name for the dataset.</p>',
+        },
+      },
     },
     PhysicalTable: {
       type: 'object',
@@ -391,15 +391,15 @@ export const input = {
         '<p>A view of a data source that contains information about the shape of the data in the\n            underlying source. This is a variant type structure. For this structure to be valid,\n            only one of the attributes can be non-null.</p>',
       properties: {
         RelationalTable: {
-          $ref: '#/definitions/RelationalTable'
+          $ref: '#/definitions/RelationalTable',
         },
         CustomSql: {
-          $ref: '#/definitions/CustomSql'
+          $ref: '#/definitions/CustomSql',
         },
         S3Source: {
-          $ref: '#/definitions/S3Source'
-        }
-      }
+          $ref: '#/definitions/S3Source',
+        },
+      },
     },
     PhysicalTableMap: {
       type: 'object',
@@ -407,9 +407,9 @@ export const input = {
       minProperties: 1,
       patternProperties: {
         '[0-9a-zA-Z-]*': {
-          $ref: '#/definitions/PhysicalTable'
-        }
-      }
+          $ref: '#/definitions/PhysicalTable',
+        },
+      },
     },
     ProjectOperation: {
       type: 'object',
@@ -419,14 +419,14 @@ export const input = {
         ProjectedColumns: {
           type: 'array',
           items: {
-            type: 'string'
+            type: 'string',
           },
           maxItems: 2000,
           minItems: 1,
-          description: '<p>Projected columns.</p>'
-        }
+          description: '<p>Projected columns.</p>',
+        },
       },
-      required: ['ProjectedColumns']
+      required: ['ProjectedColumns'],
     },
     RelationalTable: {
       type: 'object',
@@ -434,37 +434,37 @@ export const input = {
       properties: {
         DataSourceArn: {
           type: 'string',
-          description: '<p>The Amazon Resource Name (ARN) for the data source.</p>'
+          description: '<p>The Amazon Resource Name (ARN) for the data source.</p>',
         },
         InputColumns: {
           type: 'array',
           items: {
-            $ref: '#/definitions/InputColumn'
+            $ref: '#/definitions/InputColumn',
           },
           maxItems: 2048,
           minItems: 1,
-          description: '<p>The column schema of the table.</p>'
+          description: '<p>The column schema of the table.</p>',
         },
         Schema: {
           type: 'string',
           maxLength: 64,
           minLength: 0,
-          description: '<p>The schema name. This name applies to certain relational database engines.</p>'
+          description: '<p>The schema name. This name applies to certain relational database engines.</p>',
         },
         Catalog: {
           type: 'string',
           description: '<p>The catalog associated with a table.</p>',
           maxLength: 256,
-          minLength: 0
+          minLength: 0,
         },
         Name: {
           type: 'string',
           maxLength: 64,
           minLength: 1,
-          description: '<p>The name of the relational table.</p>'
-        }
+          description: '<p>The name of the relational table.</p>',
+        },
       },
-      required: ['DataSourceArn', 'InputColumns', 'Name']
+      required: ['DataSourceArn', 'InputColumns', 'Name'],
     },
     RenameColumnOperation: {
       type: 'object',
@@ -474,16 +474,16 @@ export const input = {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>The new name for the column.</p>'
+          description: '<p>The new name for the column.</p>',
         },
         ColumnName: {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>The name of the column to be renamed.</p>'
-        }
+          description: '<p>The name of the column to be renamed.</p>',
+        },
       },
-      required: ['ColumnName', 'NewColumnName']
+      required: ['ColumnName', 'NewColumnName'],
     },
     ResourcePermission: {
       type: 'object',
@@ -492,21 +492,21 @@ export const input = {
         Actions: {
           type: 'array',
           items: {
-            type: 'string'
+            type: 'string',
           },
           maxItems: 16,
           minItems: 1,
-          description: '<p>The IAM action to grant or revoke permissions on.</p>'
+          description: '<p>The IAM action to grant or revoke permissions on.</p>',
         },
         Principal: {
           type: 'string',
           maxLength: 256,
           minLength: 1,
           description:
-            '<p>The Amazon Resource Name (ARN) of the principal. This can be one of the\n            following:</p>\n        <ul>\n            <li>\n                <p>The ARN of an Amazon QuickSight user or group associated with a data source or dataset. (This is common.)</p>\n            </li>\n            <li>\n                <p>The ARN of an Amazon QuickSight user, group, or namespace associated with an analysis, dashboard, template, or theme. (This is common.)</p>\n            </li>\n            <li>\n                <p>The ARN of an AWS account root: This is an IAM ARN rather than a QuickSight\n                    ARN. Use this option only to share resources (templates) across AWS accounts.\n                    (This is less common.) </p>\n            </li>\n         </ul>'
-        }
+            '<p>The Amazon Resource Name (ARN) of the principal. This can be one of the\n            following:</p>\n        <ul>\n            <li>\n                <p>The ARN of an Amazon QuickSight user or group associated with a data source or dataset. (This is common.)</p>\n            </li>\n            <li>\n                <p>The ARN of an Amazon QuickSight user, group, or namespace associated with an analysis, dashboard, template, or theme. (This is common.)</p>\n            </li>\n            <li>\n                <p>The ARN of an AWS account root: This is an IAM ARN rather than a QuickSight\n                    ARN. Use this option only to share resources (templates) across AWS accounts.\n                    (This is less common.) </p>\n            </li>\n         </ul>',
+        },
       },
-      required: ['Actions', 'Principal']
+      required: ['Actions', 'Principal'],
     },
     RowLevelPermissionDataSet: {
       type: 'object',
@@ -514,31 +514,31 @@ export const input = {
       properties: {
         Arn: {
           type: 'string',
-          description: '<p>The Amazon Resource Name (ARN) of the permission dataset.</p>'
+          description: '<p>The Amazon Resource Name (ARN) of the permission dataset.</p>',
         },
         Namespace: {
           type: 'string',
           maxLength: 64,
           minLength: 0,
           pattern: '^[a-zA-Z0-9._-]*$',
-          description: '<p>The namespace associated with the row-level permissions dataset.</p>'
+          description: '<p>The namespace associated with the row-level permissions dataset.</p>',
         },
         PermissionPolicy: {
-          $ref: '#/definitions/RowLevelPermissionPolicy'
+          $ref: '#/definitions/RowLevelPermissionPolicy',
         },
         FormatVersion: {
-          $ref: '#/definitions/RowLevelPermissionFormatVersion'
-        }
+          $ref: '#/definitions/RowLevelPermissionFormatVersion',
+        },
       },
-      required: ['Arn', 'PermissionPolicy']
+      required: ['Arn', 'PermissionPolicy'],
     },
     RowLevelPermissionPolicy: {
       type: 'string',
-      enum: ['GRANT_ACCESS', 'DENY_ACCESS']
+      enum: ['GRANT_ACCESS', 'DENY_ACCESS'],
     },
     RowLevelPermissionFormatVersion: {
       type: 'string',
-      enum: ['VERSION_1', 'VERSION_2']
+      enum: ['VERSION_1', 'VERSION_2'],
     },
     S3Source: {
       type: 'object',
@@ -546,22 +546,22 @@ export const input = {
       properties: {
         DataSourceArn: {
           type: 'string',
-          description: '<p>The amazon Resource Name (ARN) for the data source.</p>'
+          description: '<p>The amazon Resource Name (ARN) for the data source.</p>',
         },
         InputColumns: {
           type: 'array',
           items: {
-            $ref: '#/definitions/InputColumn'
+            $ref: '#/definitions/InputColumn',
           },
           maxItems: 2048,
           minItems: 1,
-          description: '<p>A physical table type for as S3 data source.</p>'
+          description: '<p>A physical table type for as S3 data source.</p>',
         },
         UploadSettings: {
-          $ref: '#/definitions/UploadSettings'
-        }
+          $ref: '#/definitions/UploadSettings',
+        },
       },
-      required: ['DataSourceArn', 'InputColumns']
+      required: ['DataSourceArn', 'InputColumns'],
     },
     Tag: {
       type: 'object',
@@ -572,16 +572,16 @@ export const input = {
           type: 'string',
           maxLength: 256,
           minLength: 1,
-          description: '<p>Tag value.</p>'
+          description: '<p>Tag value.</p>',
         },
         Key: {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>Tag key.</p>'
-        }
+          description: '<p>Tag key.</p>',
+        },
       },
-      required: ['Key', 'Value']
+      required: ['Key', 'Value'],
     },
     TagColumnOperation: {
       type: 'object',
@@ -591,24 +591,24 @@ export const input = {
           type: 'string',
           maxLength: 128,
           minLength: 1,
-          description: '<p>The column that this operation acts on.</p>'
+          description: '<p>The column that this operation acts on.</p>',
         },
         Tags: {
           type: 'array',
           items: {
-            $ref: '#/definitions/ColumnTag'
+            $ref: '#/definitions/ColumnTag',
           },
           maxItems: 16,
           minItems: 1,
           description:
-            '<p>The dataset column tag, currently only used for geospatial type tagging. .</p>\n        <note>\n            <p>This is not tags for the AWS tagging feature. .</p>\n        </note>'
-        }
+            '<p>The dataset column tag, currently only used for geospatial type tagging. .</p>\n        <note>\n            <p>This is not tags for the AWS tagging feature. .</p>\n        </note>',
+        },
       },
-      required: ['ColumnName', 'Tags']
+      required: ['ColumnName', 'Tags'],
     },
     TextQualifier: {
       type: 'string',
-      enum: ['DOUBLE_QUOTE', 'SINGLE_QUOTE']
+      enum: ['DOUBLE_QUOTE', 'SINGLE_QUOTE'],
     },
     TransformOperation: {
       type: 'object',
@@ -616,24 +616,24 @@ export const input = {
         '<p>A data transformation on a logical table. This is a variant type structure. For this\n            structure to be valid, only one of the attributes can be non-null.</p>',
       properties: {
         TagColumnOperation: {
-          $ref: '#/definitions/TagColumnOperation'
+          $ref: '#/definitions/TagColumnOperation',
         },
         FilterOperation: {
-          $ref: '#/definitions/FilterOperation'
+          $ref: '#/definitions/FilterOperation',
         },
         CastColumnTypeOperation: {
-          $ref: '#/definitions/CastColumnTypeOperation'
+          $ref: '#/definitions/CastColumnTypeOperation',
         },
         CreateColumnsOperation: {
-          $ref: '#/definitions/CreateColumnsOperation'
+          $ref: '#/definitions/CreateColumnsOperation',
         },
         RenameColumnOperation: {
-          $ref: '#/definitions/RenameColumnOperation'
+          $ref: '#/definitions/RenameColumnOperation',
         },
         ProjectOperation: {
-          $ref: '#/definitions/ProjectOperation'
-        }
-      }
+          $ref: '#/definitions/ProjectOperation',
+        },
+      },
     },
     UploadSettings: {
       type: 'object',
@@ -641,26 +641,26 @@ export const input = {
       properties: {
         ContainsHeader: {
           type: 'boolean',
-          description: '<p>Whether the file has a header row, or the files each have a header row.</p>'
+          description: '<p>Whether the file has a header row, or the files each have a header row.</p>',
         },
         TextQualifier: {
-          $ref: '#/definitions/TextQualifier'
+          $ref: '#/definitions/TextQualifier',
         },
         Format: {
-          $ref: '#/definitions/FileFormat'
+          $ref: '#/definitions/FileFormat',
         },
         StartFromRow: {
           type: 'number',
           minimum: 1,
-          description: '<p>A row number to start reading data from.</p>'
+          description: '<p>A row number to start reading data from.</p>',
         },
         Delimiter: {
           type: 'string',
           maxLength: 1,
           minLength: 1,
-          description: '<p>The delimiter between values in the file.</p>'
-        }
-      }
+          description: '<p>The delimiter between values in the file.</p>',
+        },
+      },
     },
     IngestionWaitPolicy: {
       type: 'object',
@@ -671,7 +671,7 @@ export const input = {
           type: 'boolean',
           description:
             '<p>Wait for SPICE ingestion to finish to mark dataset creation/update successful. Default (true).\n  Applicable only when DataSetImportMode mode is set to SPICE.</p>',
-          default: true
+          default: true,
         },
         IngestionWaitTimeInHours: {
           type: 'number',
@@ -679,114 +679,114 @@ export const input = {
             '<p>The maximum time (in hours) to wait for Ingestion to complete. Default timeout is 36 hours.\n Applicable only when DataSetImportMode mode is set to SPICE and WaitForSpiceIngestion is set to true.</p>',
           minimum: 1,
           maximum: 36,
-          default: 36
-        }
-      }
-    }
+          default: 36,
+        },
+      },
+    },
   },
   properties: {
     Arn: {
       type: 'string',
-      description: '<p>The Amazon Resource Name (ARN) of the resource.</p>'
+      description: '<p>The Amazon Resource Name (ARN) of the resource.</p>',
     },
     AwsAccountId: {
       type: 'string',
       maxLength: 12,
       minLength: 12,
-      pattern: '^[0-9]{12}$'
+      pattern: '^[0-9]{12}$',
     },
     ColumnGroups: {
       type: 'array',
       items: {
-        $ref: '#/definitions/ColumnGroup'
+        $ref: '#/definitions/ColumnGroup',
       },
       maxItems: 8,
       minItems: 1,
       description:
-        '<p>Groupings of columns that work together in certain QuickSight features. Currently, only geospatial hierarchy is supported.</p>'
+        '<p>Groupings of columns that work together in certain QuickSight features. Currently, only geospatial hierarchy is supported.</p>',
     },
     ColumnLevelPermissionRules: {
       type: 'array',
       items: {
-        $ref: '#/definitions/ColumnLevelPermissionRule'
+        $ref: '#/definitions/ColumnLevelPermissionRule',
       },
-      minItems: 1
+      minItems: 1,
     },
     ConsumedSpiceCapacityInBytes: {
       type: 'number',
       description:
-        "<p>The amount of SPICE capacity used by this dataset. This is 0 if the dataset isn't\n            imported into SPICE.</p>"
+        "<p>The amount of SPICE capacity used by this dataset. This is 0 if the dataset isn't\n            imported into SPICE.</p>",
     },
     CreatedTime: {
       type: 'string',
       description: '<p>The time that this dataset was created.</p>',
-      format: 'string'
+      format: 'string',
     },
     DataSetId: {
-      type: 'string'
+      type: 'string',
     },
     FieldFolders: {
-      $ref: '#/definitions/FieldFolderMap'
+      $ref: '#/definitions/FieldFolderMap',
     },
     ImportMode: {
-      $ref: '#/definitions/DataSetImportMode'
+      $ref: '#/definitions/DataSetImportMode',
     },
     LastUpdatedTime: {
       type: 'string',
       description: '<p>The last time that this dataset was updated.</p>',
-      format: 'string'
+      format: 'string',
     },
     LogicalTableMap: {
-      $ref: '#/definitions/LogicalTableMap'
+      $ref: '#/definitions/LogicalTableMap',
     },
     Name: {
       type: 'string',
       maxLength: 128,
       minLength: 1,
-      description: '<p>The display name for the dataset.</p>'
+      description: '<p>The display name for the dataset.</p>',
     },
     OutputColumns: {
       type: 'array',
       items: {
-        $ref: '#/definitions/OutputColumn'
+        $ref: '#/definitions/OutputColumn',
       },
       description:
-        '<p>The list of columns after all transforms. These columns are available in templates,\n            analyses, and dashboards.</p>'
+        '<p>The list of columns after all transforms. These columns are available in templates,\n            analyses, and dashboards.</p>',
     },
     Permissions: {
       type: 'array',
       items: {
-        $ref: '#/definitions/ResourcePermission'
+        $ref: '#/definitions/ResourcePermission',
       },
       maxItems: 64,
       minItems: 1,
-      description: '<p>A list of resource permissions on the dataset.</p>'
+      description: '<p>A list of resource permissions on the dataset.</p>',
     },
     PhysicalTableMap: {
-      $ref: '#/definitions/PhysicalTableMap'
+      $ref: '#/definitions/PhysicalTableMap',
     },
     RowLevelPermissionDataSet: {
-      $ref: '#/definitions/RowLevelPermissionDataSet'
+      $ref: '#/definitions/RowLevelPermissionDataSet',
     },
     Tags: {
       type: 'array',
       items: {
-        $ref: '#/definitions/Tag'
+        $ref: '#/definitions/Tag',
       },
       maxItems: 200,
       minItems: 1,
-      description: '<p>Contains a map of the key-value pairs for the resource tag or tags assigned to the dataset.</p>'
+      description: '<p>Contains a map of the key-value pairs for the resource tag or tags assigned to the dataset.</p>',
     },
     IngestionWaitPolicy: {
-      $ref: '#/definitions/IngestionWaitPolicy'
-    }
+      $ref: '#/definitions/IngestionWaitPolicy',
+    },
   },
   readOnlyProperties: [
     '/properties/Arn',
     '/properties/ConsumedSpiceCapacityInBytes',
     '/properties/CreatedTime',
     '/properties/LastUpdatedTime',
-    '/properties/OutputColumns'
+    '/properties/OutputColumns',
   ],
   writeOnlyProperties: ['/properties/FieldFolders', '/properties/IngestionWaitPolicy'],
   createOnlyProperties: ['/properties/AwsAccountId', '/properties/DataSetId'],
@@ -802,15 +802,15 @@ export const input = {
         'quicksight:PassDataSource',
         'quicksight:PassDataSet',
         'quicksight:TagResource',
-        'quicksight:ListTagsForResource'
-      ]
+        'quicksight:ListTagsForResource',
+      ],
     },
     read: {
       permissions: [
         'quicksight:DescribeDataSet',
         'quicksight:DescribeDataSetPermissions',
-        'quicksight:ListTagsForResource'
-      ]
+        'quicksight:ListTagsForResource',
+      ],
     },
     update: {
       permissions: [
@@ -825,19 +825,19 @@ export const input = {
         'quicksight:CancelIngestion',
         'quicksight:TagResource',
         'quicksight:UntagResource',
-        'quicksight:ListTagsForResource'
-      ]
+        'quicksight:ListTagsForResource',
+      ],
     },
     delete: {
       permissions: [
         'quicksight:DescribeDataSet',
         'quicksight:DeleteDataSet',
         'quicksight:ListTagsForResource',
-        'quicksight:DescribeIngestion'
-      ]
+        'quicksight:DescribeIngestion',
+      ],
     },
     list: {
-      permissions: ['quicksight:DescribeDataSet', 'quicksight:ListDataSets']
-    }
-  }
+      permissions: ['quicksight:DescribeDataSet', 'quicksight:ListDataSets'],
+    },
+  },
 }

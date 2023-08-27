@@ -10,10 +10,10 @@ export const input = {
       patternProperties: {
         '^[a-zA-Z0-9_. /]+$': {
           type: 'object',
-          $ref: '#/definitions/EntityObject'
-        }
-      }
-    }
+          $ref: '#/definitions/EntityObject',
+        },
+      },
+    },
   },
   definitions: {
     EntityObject: {
@@ -26,16 +26,16 @@ export const input = {
           additionalProperties: false,
           properties: {
             APorpertyName: {
-              $ref: '#/definitions/EntityDataCategory'
-            }
-          }
-        }
-      }
+              $ref: '#/definitions/EntityDataCategory',
+            },
+          },
+        },
+      },
     },
     EntityDataCategory: {
       type: 'string',
       enum: ['TABLE', 'OBJ', 'FUNC'],
-      tsEnumNames: ['Table', 'Field', 'Func']
-    }
-  }
+      tsEnumNames: ['Table', 'Field', 'Func'],
+    },
+  },
 }

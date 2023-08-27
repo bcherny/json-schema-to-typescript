@@ -12,7 +12,7 @@ import {
   TIntersection,
   TNamedInterface,
   TUnion,
-  T_UNKNOWN
+  T_UNKNOWN,
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
@@ -22,7 +22,7 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
       options.bannerComment,
       declareNamedTypes(ast, options, ast.standaloneName!),
       declareNamedInterfaces(ast, options, ast.standaloneName!),
-      declareEnums(ast, options)
+      declareEnums(ast, options),
     ]
       .filter(Boolean)
       .join('\n\n') + '\n'
@@ -78,7 +78,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
           .filter(Boolean)
-          .join('\n')
+          .join('\n'),
       ]
         .filter(Boolean)
         .join('\n')
@@ -112,7 +112,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
     case 'ARRAY':
       return [
         declareNamedTypes(ast.params, options, rootASTName, processed),
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined
+        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
       ]
         .filter(Boolean)
         .join('\n')
@@ -123,7 +123,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         .map(
           ast =>
             (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-            declareNamedTypes(ast, options, rootASTName, processed)
+            declareNamedTypes(ast, options, rootASTName, processed),
         )
         .filter(Boolean)
         .join('\n')
@@ -138,7 +138,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
           .join('\n'),
         'spreadParam' in ast && ast.spreadParam
           ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
-          : undefined
+          : undefined,
       ]
         .filter(Boolean)
         .join('\n')
@@ -300,7 +300,7 @@ function generateInterface(ast: TInterface, options: Options): string {
       .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
       .map(
         ({isRequired, keyName, ast}) =>
-          [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string]
+          [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string],
       )
       .map(
         ([isRequired, keyName, ast, type]) =>
@@ -308,7 +308,7 @@ function generateInterface(ast: TInterface, options: Options): string {
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
-          type
+          type,
       )
       .join('\n') +
     '\n' +
@@ -355,7 +355,7 @@ function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): s
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
     `export type ${toSafeString(ast.standaloneName)} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
-      options
+      options,
     )}`
   )
 }

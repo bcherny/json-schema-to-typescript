@@ -153,19 +153,19 @@ export interface TCustomType extends AbstractAST {
 ////////////////////////////////////////////     literals
 
 export const T_ANY: TAny = {
-  type: 'ANY'
+  type: 'ANY',
 }
 
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   keyName: '[k: string]',
-  type: 'ANY'
+  type: 'ANY',
 }
 
 export const T_UNKNOWN: TUnknown = {
-  type: 'UNKNOWN'
+  type: 'UNKNOWN',
 }
 
 export const T_UNKNOWN_ADDITIONAL_PROPERTIES: TUnknown & ASTWithName = {
   keyName: '[k: string]',
-  type: 'UNKNOWN'
+  type: 'UNKNOWN',
 }
