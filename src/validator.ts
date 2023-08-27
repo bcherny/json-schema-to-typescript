@@ -37,6 +37,11 @@ rules.set('When minItems exists, minItems >= 0', schema => {
   }
 })
 
+rules.set('deprecated must be a boolean', schema => {
+  const typeOfDeprecated = typeof schema.deprecated
+  return typeOfDeprecated === 'boolean' || typeOfDeprecated === 'undefined'
+})
+
 export function validate(schema: LinkedJSONSchema, filename: string): string[] {
   const errors: string[] = []
   rules.forEach((rule, ruleName) => {
