@@ -8,7 +8,6 @@ export const input = {
     firstName: {
       type: 'string',
       deprecated: true,
-      description: 'nested comment',
     },
     middleName: {
       type: 'string',
