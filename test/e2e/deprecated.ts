@@ -5,10 +5,10 @@ export const input = {
   deprecated: true,
   description: 'comment',
   properties: {
+    // https://github.com/bcherny/json-schema-to-typescript/issues/548
     firstName: {
       type: 'string',
       deprecated: true,
-      description: 'nested comment',
     },
     middleName: {
       type: 'string',
@@ -19,6 +19,10 @@ export const input = {
       type: 'string',
       deprecated: false,
       description: 'nested comment',
+    },
+    // https://github.com/bcherny/json-schema-to-typescript/issues/540
+    description: {
+      type: 'string',
     },
   },
   additionalProperties: false,

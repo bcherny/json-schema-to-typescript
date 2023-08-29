@@ -316,12 +316,14 @@ function generateInterface(ast: TInterface, options: Options): string {
   )
 }
 
-function generateComment(comment: string, deprecated?: boolean): string {
+function generateComment(comment?: string, deprecated?: boolean): string {
   const commentLines = ['/**']
   if (deprecated) {
     commentLines.push(' * @deprecated')
   }
-  commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
+  if (typeof comment !== 'undefined') {
+    commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
+  }
   commentLines.push(' */')
   return commentLines.join('\n')
 }
