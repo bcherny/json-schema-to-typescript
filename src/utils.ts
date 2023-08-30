@@ -1,7 +1,6 @@
 import {isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
-import { startingRegex, invalidPartRegex } from './resources/es5IdentifierRegex'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -164,25 +163,15 @@ export function stripExtension(filename: string): string {
  * can safely be used as a TypeScript interface or enum name.
  */
 export function toSafeString(string: string) {
-  /**
-   * According to https://mathiasbynens.be/notes/javascript-identifiers-es6
-   * In ES2015, identifiers must start with $, _, or any symbol with the Unicode derived core property ID_Start.
-   * The rest of the identifier can contain $, _, U+200C zero width non-joiner, U+200D zero width joiner, or any symbol
-   * with the Unicode derived core property ID_Continue.
-   */
-
-  const startMatch = startingRegex.exec(string)
-  if (!startMatch) {
-    return "";
-  }
-  const startingWithValidIdentifier = string.slice(startMatch.index, string.length)
-
-  const invalidIdentifiersRemoved = startingWithValidIdentifier[0] + startingWithValidIdentifier.slice(1).replace(invalidPartRegex, ' ')
-
+  // According to https://mathiasbynens.be/notes/javascript-identifiers-es6
+  // In ES2015, identifiers must start with $, _, or any symbol with the Unicode derived core property ID_Start.
+  // The rest of the identifier can contain $, _, U+200C zero width non-joiner, U+200D zero width joiner, or any symbol with the Unicode derived core property ID_Continue.
+  
   return upperFirst(
-    invalidIdentifiersRemoved
-      // uppercase leading underscores followed by lowercase
-      .replace(/^_[a-z]/g, match => match.toUpperCase())
+    string
+      // Replace invalid characters with whitespace, so that letters following will be uppercases
+      // positive lookbehind makes the XID_Continue case not match the first character
+      .replace(/(^[^$_\p{XID_Start}])|((?<=.)[^$_\p{XID_Continue}])/ug, ' ')
       // remove non-leading underscores followed by lowercase (convert snake_case)
       .replace(/_[a-z]/g, match => match.substr(1, match.length).toUpperCase())
       // uppercase letters after digits, dollars
