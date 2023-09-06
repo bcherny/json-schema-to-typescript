@@ -4,8 +4,8 @@
     "lib": [
       "es2015"
     ],
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
@@ -14,7 +14,7 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "es2016"
+    "target": "esnext"
   },
   "files": [
     "./index.ts"
