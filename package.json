@@ -1,9 +1,9 @@
 {
-  "name": "json-schema-to-typescript",
-  "version": "13.1.1",
+  "name": "@kickstartds/json-schema-to-typescript",
+  "version": "13.1.7",
   "description": "compile json schema to typescript typings",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "bin": {
     "json2ts": "dist/cli.js"
   },
@@ -13,8 +13,8 @@
   },
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },
@@ -30,6 +30,7 @@
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
     "test": "npm run pre-test && ava --timeout=300s --verbose",
     "stresstest": "seq 1 10 | xargs -I{} npm test",
+    "postinstall": "patch-package",
     "prepublishOnly": "npm test",
     "pre-test": "npm run clean && npm run format-check && npm run build:server && npm run build:test",
     "watch": "tsup src/index.ts src/cli.ts --watch",
@@ -60,16 +61,18 @@
   "dependencies": {
     "@bcherny/json-schema-ref-parser": "10.0.5-fork",
     "@types/json-schema": "^7.0.11",
-    "@types/lodash": "^4.14.182",
+    "@types/lodash-es": "^4.17.9",
     "@types/prettier": "^2.6.1",
     "cli-color": "^2.0.2",
     "get-stdin": "^8.0.0",
     "glob": "^7.1.6",
     "glob-promise": "^4.2.2",
     "is-glob": "^4.0.3",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "minimist": "^1.2.6",
     "mkdirp": "^1.0.4",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.6.2"
   },
   "devDependencies": {
