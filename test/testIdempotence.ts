@@ -1,7 +1,7 @@
 import test from 'ava'
 import {JSONSchema4} from 'json-schema'
 import {cloneDeep} from 'lodash'
-import {compile} from '../src'
+import {compile} from '../src/index.js'
 
 export function run() {
   const SCHEMA: JSONSchema4 = {

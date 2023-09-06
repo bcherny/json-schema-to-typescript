@@ -1,9 +1,9 @@
 import test from 'ava'
 import {readdirSync} from 'fs'
 import {join} from 'path'
-import {JSONSchema, Options, DEFAULT_OPTIONS} from '../src'
-import {link} from '../src/linker'
-import {normalize} from '../src/normalizer'
+import {JSONSchema, Options, DEFAULT_OPTIONS} from '../src/index.js'
+import {link} from '../src/linker.js'
+import {normalize} from '../src/normalizer.js'
 
 interface JSONTestCase {
   name: string
@@ -12,7 +12,7 @@ interface JSONTestCase {
   options?: Options
 }
 
-const normalizerDir = __dirname + '/../../test/normalizer'
+const normalizerDir = __dirname + '/../test/normalizer'
 
 export function run() {
   readdirSync(normalizerDir)

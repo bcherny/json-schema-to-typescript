@@ -1,5 +1,5 @@
 import {format as prettify} from 'prettier'
-import {Options} from './'
+import {Options} from './index.js'
 
 export function format(code: string, options: Options): string {
   if (!options.format) {

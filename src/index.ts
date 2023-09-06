@@ -1,28 +1,28 @@
 import {readFileSync} from 'fs'
 import {JSONSchema4} from 'json-schema'
-import {Options as $RefOptions} from '@bcherny/json-schema-ref-parser'
+import $RefParser from '@bcherny/json-schema-ref-parser'
 import {cloneDeep, endsWith, merge} from 'lodash'
 import {dirname} from 'path'
 import {Options as PrettierOptions} from 'prettier'
-import {format} from './formatter'
-import {generate} from './generator'
-import {normalize} from './normalizer'
-import {optimize} from './optimizer'
-import {parse} from './parser'
-import {dereference} from './resolver'
-import {error, stripExtension, Try, log} from './utils'
-import {validate} from './validator'
+import {format} from './formatter.js'
+import {generate} from './generator.js'
+import {normalize} from './normalizer.js'
+import {optimize} from './optimizer.js'
+import {parse} from './parser.js'
+import {dereference} from './resolver.js'
+import {error, stripExtension, Try, log} from './utils.js'
+import {validate} from './validator.js'
 import {isDeepStrictEqual} from 'util'
-import {link} from './linker'
-import {validateOptions} from './optionValidator'
+import {link} from './linker.js'
+import {validateOptions} from './optionValidator.js'
 
-export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
+export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema.js'
 
 export interface Options {
   /**
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
-  $refOptions: $RefOptions
+  $refOptions: $RefParser.Options
   /**
    * Default value for additionalProperties, when it is not explicitly set.
    */

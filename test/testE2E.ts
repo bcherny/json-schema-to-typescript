@@ -1,11 +1,11 @@
-import {FileInfo} from '@bcherny/json-schema-ref-parser'
+import $RefParser from '@bcherny/json-schema-ref-parser'
 import test from 'ava'
 import {readdirSync} from 'fs'
 import {find, merge} from 'lodash'
 import {join} from 'path'
-import {compile, JSONSchema, Options} from '../src'
-import {log, stripExtension} from '../src/utils'
-import {getWithCache} from './http'
+import {compile, JSONSchema, Options} from '../src/index.js'
+import {log, stripExtension} from '../src/utils.js'
+import {getWithCache} from './http.js'
 
 const dir = __dirname + '/e2e'
 
@@ -44,7 +44,7 @@ export function run() {
 const httpWithCacheResolver = {
   order: 1,
   canRead: /^https?:/i,
-  async read({url}: FileInfo) {
+  async read({url}: $RefParser.FileInfo) {
     return await getWithCache(url)
   },
 }

@@ -1,8 +1,8 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
-import {Options} from './'
-import {typesOfSchema} from './typesOfSchema'
+import {Options} from './index.js'
+import {typesOfSchema} from './typesOfSchema.js'
 import {
   AST,
   T_ANY,
@@ -14,7 +14,7 @@ import {
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
   TIntersection,
-} from './types/AST'
+} from './types/AST.js'
 import {
   getRootSchema,
   isBoolean,
@@ -23,8 +23,8 @@ import {
   JSONSchemaWithDefinitions,
   SchemaSchema,
   SchemaType,
-} from './types/JSONSchema'
-import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
+} from './types/JSONSchema.js'
+import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils.js'
 
 export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
 

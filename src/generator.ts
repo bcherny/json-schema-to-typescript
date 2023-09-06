@@ -1,5 +1,5 @@
 import {memoize, omit} from 'lodash'
-import {DEFAULT_OPTIONS, Options} from './index'
+import {DEFAULT_OPTIONS, Options} from './index.js'
 import {
   AST,
   ASTWithStandaloneName,
@@ -13,8 +13,8 @@ import {
   TNamedInterface,
   TUnion,
   T_UNKNOWN,
-} from './types/AST'
-import {log, toSafeString} from './utils'
+} from './types/AST.js'
+import {log, toSafeString} from './utils.js'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (

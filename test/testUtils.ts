@@ -1,7 +1,7 @@
 import test from 'ava'
-import {link} from '../src/linker'
-import {LinkedJSONSchema} from '../src/types/JSONSchema'
-import {pathTransform, generateName, isSchemaLike} from '../src/utils'
+import {link} from '../src/linker.js'
+import {LinkedJSONSchema} from '../src/types/JSONSchema.js'
+import {pathTransform, generateName, isSchemaLike} from '../src/utils.js'
 
 export function run() {
   test('pathTransform', t => {

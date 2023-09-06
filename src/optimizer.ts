@@ -1,8 +1,8 @@
 import {uniqBy} from 'lodash'
-import {Options} from '.'
-import {generateType} from './generator'
-import {AST, T_ANY, T_UNKNOWN} from './types/AST'
-import {log} from './utils'
+import {Options} from './index.js'
+import {generateType} from './generator.js'
+import {AST, T_ANY, T_UNKNOWN} from './types/AST.js'
+import {log} from './utils.js'
 
 export function optimize(ast: AST, options: Options, processed = new Set<AST>()): AST {
   if (processed.has(ast)) {

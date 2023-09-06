@@ -2,13 +2,14 @@
 
 import minimist = require('minimist')
 import getStdin from 'get-stdin'
-import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
+import {readFile, writeFile} from 'node:fs/promises'
+import {existsSync, lstatSync, readdirSync} from 'node:fs'
 import * as mkdirp from 'mkdirp'
 import glob from 'glob-promise'
 import isGlob = require('is-glob')
 import {join, resolve, dirname, basename} from 'path'
-import {compile, DEFAULT_OPTIONS, Options} from './index'
-import {pathTransform, error} from './utils'
+import {compile, DEFAULT_OPTIONS, Options} from './index.js'
+import {pathTransform, error} from './utils.js'
 
 main(
   minimist(process.argv.slice(2), {
@@ -149,7 +150,7 @@ function readInput(argIn?: string) {
 }
 
 function printHelp() {
-  const pkg = require('../../package.json')
+  const pkg = require('../package.json')
 
   process.stdout.write(
     `
