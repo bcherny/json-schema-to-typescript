@@ -4,14 +4,14 @@ export const input = {
   additionalProperties: true,
   properties: {
     foo: {
-      $ref: '#/definitions/bar'
-    }
+      $ref: '#/definitions/bar',
+    },
   },
   definitions: {
     bar: {
-      $ref: '#/definitions/bar'
-    }
+      $ref: '#/definitions/bar',
+    },
   },
   required: ['foo'],
-  title: 'Cycle (3)'
+  title: 'Cycle (3)',
 }

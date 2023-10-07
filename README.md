@@ -153,6 +153,7 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 - [x] Add support for running in browser
 - [x] default interface name
 - [x] infer unnamed interface name from filename
+- [x] `deprecated`
 - [x] `allOf` ("intersection")
 - [x] `anyOf` ("union")
 - [x] `oneOf` (treated like `anyOf`)

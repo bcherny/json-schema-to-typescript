@@ -7,42 +7,42 @@ export const input = {
   properties: {
     openapi: {
       type: 'string',
-      pattern: '^3\\.0\\.\\d(-.+)?$'
+      pattern: '^3\\.0\\.\\d(-.+)?$',
     },
     info: {
-      $ref: '#/definitions/Info'
+      $ref: '#/definitions/Info',
     },
     externalDocs: {
-      $ref: '#/definitions/ExternalDocumentation'
+      $ref: '#/definitions/ExternalDocumentation',
     },
     servers: {
       type: 'array',
       items: {
-        $ref: '#/definitions/Server'
-      }
+        $ref: '#/definitions/Server',
+      },
     },
     security: {
       type: 'array',
       items: {
-        $ref: '#/definitions/SecurityRequirement'
-      }
+        $ref: '#/definitions/SecurityRequirement',
+      },
     },
     tags: {
       type: 'array',
       items: {
-        $ref: '#/definitions/Tag'
+        $ref: '#/definitions/Tag',
       },
-      uniqueItems: true
+      uniqueItems: true,
     },
     paths: {
-      $ref: '#/definitions/Paths'
+      $ref: '#/definitions/Paths',
     },
     components: {
-      $ref: '#/definitions/Components'
-    }
+      $ref: '#/definitions/Components',
+    },
   },
   patternProperties: {
-    '^x-': {}
+    '^x-': {},
   },
   additionalProperties: false,
   definitions: {
@@ -52,97 +52,97 @@ export const input = {
       patternProperties: {
         '^\\$ref$': {
           type: 'string',
-          format: 'uri-reference'
-        }
-      }
+          format: 'uri-reference',
+        },
+      },
     },
     Info: {
       type: 'object',
       required: ['title', 'version'],
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         termsOfService: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         contact: {
-          $ref: '#/definitions/Contact'
+          $ref: '#/definitions/Contact',
         },
         license: {
-          $ref: '#/definitions/License'
+          $ref: '#/definitions/License',
         },
         version: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Contact: {
       type: 'object',
       properties: {
         name: {
-          type: 'string'
+          type: 'string',
         },
         url: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         email: {
           type: 'string',
-          format: 'email'
-        }
+          format: 'email',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     License: {
       type: 'object',
       required: ['name'],
       properties: {
         name: {
-          type: 'string'
+          type: 'string',
         },
         url: {
           type: 'string',
-          format: 'uri-reference'
-        }
+          format: 'uri-reference',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Server: {
       type: 'object',
       required: ['url'],
       properties: {
         url: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         variables: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/ServerVariable'
-          }
-        }
+            $ref: '#/definitions/ServerVariable',
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     ServerVariable: {
       type: 'object',
@@ -151,20 +151,20 @@ export const input = {
         enum: {
           type: 'array',
           items: {
-            type: 'string'
-          }
+            type: 'string',
+          },
         },
         default: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Components: {
       type: 'object',
@@ -175,14 +175,14 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Schema'
+                  $ref: '#/definitions/Schema',
                 },
                 {
-                  $ref: '#/definitions/Reference'
-                }
-              ]
-            }
-          }
+                  $ref: '#/definitions/Reference',
+                },
+              ],
+            },
+          },
         },
         responses: {
           type: 'object',
@@ -190,14 +190,14 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Reference'
+                  $ref: '#/definitions/Reference',
                 },
                 {
-                  $ref: '#/definitions/Response'
-                }
-              ]
-            }
-          }
+                  $ref: '#/definitions/Response',
+                },
+              ],
+            },
+          },
         },
         parameters: {
           type: 'object',
@@ -205,14 +205,14 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Reference'
+                  $ref: '#/definitions/Reference',
                 },
                 {
-                  $ref: '#/definitions/Parameter'
-                }
-              ]
-            }
-          }
+                  $ref: '#/definitions/Parameter',
+                },
+              ],
+            },
+          },
         },
         examples: {
           type: 'object',
@@ -220,14 +220,14 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Reference'
+                  $ref: '#/definitions/Reference',
                 },
                 {
-                  $ref: '#/definitions/Example'
-                }
-              ]
-            }
-          }
+                  $ref: '#/definitions/Example',
+                },
+              ],
+            },
+          },
         },
         requestBodies: {
           type: 'object',
@@ -235,14 +235,14 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Reference'
+                  $ref: '#/definitions/Reference',
                 },
                 {
-                  $ref: '#/definitions/RequestBody'
-                }
-              ]
-            }
-          }
+                  $ref: '#/definitions/RequestBody',
+                },
+              ],
+            },
+          },
         },
         headers: {
           type: 'object',
@@ -250,14 +250,14 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Reference'
+                  $ref: '#/definitions/Reference',
                 },
                 {
-                  $ref: '#/definitions/Header'
-                }
-              ]
-            }
-          }
+                  $ref: '#/definitions/Header',
+                },
+              ],
+            },
+          },
         },
         securitySchemes: {
           type: 'object',
@@ -265,14 +265,14 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Reference'
+                  $ref: '#/definitions/Reference',
                 },
                 {
-                  $ref: '#/definitions/SecurityScheme'
-                }
-              ]
-            }
-          }
+                  $ref: '#/definitions/SecurityScheme',
+                },
+              ],
+            },
+          },
         },
         links: {
           type: 'object',
@@ -280,14 +280,14 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Reference'
+                  $ref: '#/definitions/Reference',
                 },
                 {
-                  $ref: '#/definitions/Link'
-                }
-              ]
-            }
-          }
+                  $ref: '#/definitions/Link',
+                },
+              ],
+            },
+          },
         },
         callbacks: {
           type: 'object',
@@ -295,310 +295,310 @@ export const input = {
             '^[a-zA-Z0-9\\.\\-_]+$': {
               oneOf: [
                 {
-                  $ref: '#/definitions/Reference'
+                  $ref: '#/definitions/Reference',
                 },
                 {
-                  $ref: '#/definitions/Callback'
-                }
-              ]
-            }
-          }
-        }
+                  $ref: '#/definitions/Callback',
+                },
+              ],
+            },
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Schema: {
       type: 'object',
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         multipleOf: {
           type: 'number',
           minimum: 0,
-          exclusiveMinimum: true
+          exclusiveMinimum: true,
         },
         maximum: {
-          type: 'number'
+          type: 'number',
         },
         exclusiveMaximum: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         minimum: {
-          type: 'number'
+          type: 'number',
         },
         exclusiveMinimum: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         maxLength: {
           type: 'integer',
-          minimum: 0
+          minimum: 0,
         },
         minLength: {
           type: 'integer',
           minimum: 0,
-          default: 0
+          default: 0,
         },
         pattern: {
           type: 'string',
-          format: 'regex'
+          format: 'regex',
         },
         maxItems: {
           type: 'integer',
-          minimum: 0
+          minimum: 0,
         },
         minItems: {
           type: 'integer',
           minimum: 0,
-          default: 0
+          default: 0,
         },
         uniqueItems: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         maxProperties: {
           type: 'integer',
-          minimum: 0
+          minimum: 0,
         },
         minProperties: {
           type: 'integer',
           minimum: 0,
-          default: 0
+          default: 0,
         },
         required: {
           type: 'array',
           items: {
-            type: 'string'
+            type: 'string',
           },
           minItems: 1,
-          uniqueItems: true
+          uniqueItems: true,
         },
         enum: {
           type: 'array',
           items: {},
           minItems: 1,
-          uniqueItems: false
+          uniqueItems: false,
         },
         type: {
           type: 'string',
-          enum: ['array', 'boolean', 'integer', 'number', 'object', 'string']
+          enum: ['array', 'boolean', 'integer', 'number', 'object', 'string'],
         },
         not: {
           oneOf: [
             {
-              $ref: '#/definitions/Schema'
+              $ref: '#/definitions/Schema',
             },
             {
-              $ref: '#/definitions/Reference'
-            }
-          ]
+              $ref: '#/definitions/Reference',
+            },
+          ],
         },
         allOf: {
           type: 'array',
           items: {
             oneOf: [
               {
-                $ref: '#/definitions/Schema'
+                $ref: '#/definitions/Schema',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
         },
         oneOf: {
           type: 'array',
           items: {
             oneOf: [
               {
-                $ref: '#/definitions/Schema'
+                $ref: '#/definitions/Schema',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
         },
         anyOf: {
           type: 'array',
           items: {
             oneOf: [
               {
-                $ref: '#/definitions/Schema'
+                $ref: '#/definitions/Schema',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
         },
         items: {
           oneOf: [
             {
-              $ref: '#/definitions/Schema'
+              $ref: '#/definitions/Schema',
             },
             {
-              $ref: '#/definitions/Reference'
-            }
-          ]
+              $ref: '#/definitions/Reference',
+            },
+          ],
         },
         properties: {
           type: 'object',
           additionalProperties: {
             oneOf: [
               {
-                $ref: '#/definitions/Schema'
+                $ref: '#/definitions/Schema',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
         },
         additionalProperties: {
           oneOf: [
             {
-              $ref: '#/definitions/Schema'
+              $ref: '#/definitions/Schema',
             },
             {
-              $ref: '#/definitions/Reference'
+              $ref: '#/definitions/Reference',
             },
             {
-              type: 'boolean'
-            }
+              type: 'boolean',
+            },
           ],
-          default: true
+          default: true,
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         format: {
-          type: 'string'
+          type: 'string',
         },
         default: {},
         nullable: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         discriminator: {
-          $ref: '#/definitions/Discriminator'
+          $ref: '#/definitions/Discriminator',
         },
         readOnly: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         writeOnly: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         example: {},
         externalDocs: {
-          $ref: '#/definitions/ExternalDocumentation'
+          $ref: '#/definitions/ExternalDocumentation',
         },
         deprecated: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         xml: {
-          $ref: '#/definitions/XML'
-        }
+          $ref: '#/definitions/XML',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Discriminator: {
       type: 'object',
       required: ['propertyName'],
       properties: {
         propertyName: {
-          type: 'string'
+          type: 'string',
         },
         mapping: {
           type: 'object',
           additionalProperties: {
-            type: 'string'
-          }
-        }
-      }
+            type: 'string',
+          },
+        },
+      },
     },
     XML: {
       type: 'object',
       properties: {
         name: {
-          type: 'string'
+          type: 'string',
         },
         namespace: {
           type: 'string',
-          format: 'uri'
+          format: 'uri',
         },
         prefix: {
-          type: 'string'
+          type: 'string',
         },
         attribute: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         wrapped: {
           type: 'boolean',
-          default: false
-        }
+          default: false,
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Response: {
       type: 'object',
       required: ['description'],
       properties: {
         description: {
-          type: 'string'
+          type: 'string',
         },
         headers: {
           type: 'object',
           additionalProperties: {
             oneOf: [
               {
-                $ref: '#/definitions/Header'
+                $ref: '#/definitions/Header',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
         },
         content: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/MediaType'
-          }
+            $ref: '#/definitions/MediaType',
+          },
         },
         links: {
           type: 'object',
           additionalProperties: {
             oneOf: [
               {
-                $ref: '#/definitions/Link'
+                $ref: '#/definitions/Link',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
-        }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     MediaType: {
       type: 'object',
@@ -606,12 +606,12 @@ export const input = {
         schema: {
           oneOf: [
             {
-              $ref: '#/definitions/Schema'
+              $ref: '#/definitions/Schema',
             },
             {
-              $ref: '#/definitions/Reference'
-            }
-          ]
+              $ref: '#/definitions/Reference',
+            },
+          ],
         },
         example: {},
         examples: {
@@ -619,98 +619,98 @@ export const input = {
           additionalProperties: {
             oneOf: [
               {
-                $ref: '#/definitions/Example'
+                $ref: '#/definitions/Example',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
         },
         encoding: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/Encoding'
-          }
-        }
+            $ref: '#/definitions/Encoding',
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
       additionalProperties: false,
       allOf: [
         {
-          $ref: '#/definitions/ExampleXORExamples'
-        }
-      ]
+          $ref: '#/definitions/ExampleXORExamples',
+        },
+      ],
     },
     Example: {
       type: 'object',
       properties: {
         summary: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         value: {},
         externalValue: {
           type: 'string',
-          format: 'uri-reference'
-        }
+          format: 'uri-reference',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Header: {
       type: 'object',
       properties: {
         description: {
-          type: 'string'
+          type: 'string',
         },
         required: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         deprecated: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         allowEmptyValue: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         style: {
           type: 'string',
           enum: ['simple'],
-          default: 'simple'
+          default: 'simple',
         },
         explode: {
-          type: 'boolean'
+          type: 'boolean',
         },
         allowReserved: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         schema: {
           oneOf: [
             {
-              $ref: '#/definitions/Schema'
+              $ref: '#/definitions/Schema',
             },
             {
-              $ref: '#/definitions/Reference'
-            }
-          ]
+              $ref: '#/definitions/Reference',
+            },
+          ],
         },
         content: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/MediaType'
+            $ref: '#/definitions/MediaType',
           },
           minProperties: 1,
-          maxProperties: 1
+          maxProperties: 1,
         },
         example: {},
         examples: {
@@ -718,78 +718,78 @@ export const input = {
           additionalProperties: {
             oneOf: [
               {
-                $ref: '#/definitions/Example'
+                $ref: '#/definitions/Example',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
-        }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
       additionalProperties: false,
       allOf: [
         {
-          $ref: '#/definitions/ExampleXORExamples'
+          $ref: '#/definitions/ExampleXORExamples',
         },
         {
-          $ref: '#/definitions/SchemaXORContent'
-        }
-      ]
+          $ref: '#/definitions/SchemaXORContent',
+        },
+      ],
     },
     Paths: {
       type: 'object',
       patternProperties: {
         '^\\/': {
-          $ref: '#/definitions/PathItem'
+          $ref: '#/definitions/PathItem',
         },
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     PathItem: {
       type: 'object',
       properties: {
         $ref: {
-          type: 'string'
+          type: 'string',
         },
         summary: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         servers: {
           type: 'array',
           items: {
-            $ref: '#/definitions/Server'
-          }
+            $ref: '#/definitions/Server',
+          },
         },
         parameters: {
           type: 'array',
           items: {
             oneOf: [
               {
-                $ref: '#/definitions/Parameter'
+                $ref: '#/definitions/Parameter',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
+                $ref: '#/definitions/Reference',
+              },
+            ],
           },
-          uniqueItems: true
-        }
+          uniqueItems: true,
+        },
       },
       patternProperties: {
         '^(get|put|post|delete|options|head|patch|trace)$': {
-          $ref: '#/definitions/Operation'
+          $ref: '#/definitions/Operation',
         },
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Operation: {
       type: 'object',
@@ -798,82 +798,82 @@ export const input = {
         tags: {
           type: 'array',
           items: {
-            type: 'string'
-          }
+            type: 'string',
+          },
         },
         summary: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         externalDocs: {
-          $ref: '#/definitions/ExternalDocumentation'
+          $ref: '#/definitions/ExternalDocumentation',
         },
         operationId: {
-          type: 'string'
+          type: 'string',
         },
         parameters: {
           type: 'array',
           items: {
             oneOf: [
               {
-                $ref: '#/definitions/Parameter'
+                $ref: '#/definitions/Parameter',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
+                $ref: '#/definitions/Reference',
+              },
+            ],
           },
-          uniqueItems: true
+          uniqueItems: true,
         },
         requestBody: {
           oneOf: [
             {
-              $ref: '#/definitions/RequestBody'
+              $ref: '#/definitions/RequestBody',
             },
             {
-              $ref: '#/definitions/Reference'
-            }
-          ]
+              $ref: '#/definitions/Reference',
+            },
+          ],
         },
         responses: {
-          $ref: '#/definitions/Responses'
+          $ref: '#/definitions/Responses',
         },
         callbacks: {
           type: 'object',
           additionalProperties: {
             oneOf: [
               {
-                $ref: '#/definitions/Callback'
+                $ref: '#/definitions/Callback',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
         },
         deprecated: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         security: {
           type: 'array',
           items: {
-            $ref: '#/definitions/SecurityRequirement'
-          }
+            $ref: '#/definitions/SecurityRequirement',
+          },
         },
         servers: {
           type: 'array',
           items: {
-            $ref: '#/definitions/Server'
-          }
-        }
+            $ref: '#/definitions/Server',
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Responses: {
       type: 'object',
@@ -881,89 +881,89 @@ export const input = {
         default: {
           oneOf: [
             {
-              $ref: '#/definitions/Response'
+              $ref: '#/definitions/Response',
             },
             {
-              $ref: '#/definitions/Reference'
-            }
-          ]
-        }
+              $ref: '#/definitions/Reference',
+            },
+          ],
+        },
       },
       patternProperties: {
         '^[1-5](?:\\d{2}|XX)$': {
           oneOf: [
             {
-              $ref: '#/definitions/Response'
+              $ref: '#/definitions/Response',
             },
             {
-              $ref: '#/definitions/Reference'
-            }
-          ]
+              $ref: '#/definitions/Reference',
+            },
+          ],
         },
-        '^x-': {}
+        '^x-': {},
       },
       minProperties: 1,
-      additionalProperties: false
+      additionalProperties: false,
     },
     SecurityRequirement: {
       type: 'object',
       additionalProperties: {
         type: 'array',
         items: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     Tag: {
       type: 'object',
       required: ['name'],
       properties: {
         name: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         externalDocs: {
-          $ref: '#/definitions/ExternalDocumentation'
-        }
+          $ref: '#/definitions/ExternalDocumentation',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     ExternalDocumentation: {
       type: 'object',
       required: ['url'],
       properties: {
         description: {
-          type: 'string'
+          type: 'string',
         },
         url: {
           type: 'string',
-          format: 'uri-reference'
-        }
+          format: 'uri-reference',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     ExampleXORExamples: {
       description: 'Example and examples are mutually exclusive',
       not: {
-        required: ['example', 'examples']
-      }
+        required: ['example', 'examples'],
+      },
     },
     SchemaXORContent: {
       description: 'Schema and content are mutually exclusive, at least one is required',
       not: {
-        required: ['schema', 'content']
+        required: ['schema', 'content'],
       },
       oneOf: [
         {
-          required: ['schema']
+          required: ['schema'],
         },
         {
           required: ['content'],
@@ -971,84 +971,84 @@ export const input = {
           allOf: [
             {
               not: {
-                required: ['style']
-              }
+                required: ['style'],
+              },
             },
             {
               not: {
-                required: ['explode']
-              }
+                required: ['explode'],
+              },
             },
             {
               not: {
-                required: ['allowReserved']
-              }
+                required: ['allowReserved'],
+              },
             },
             {
               not: {
-                required: ['example']
-              }
+                required: ['example'],
+              },
             },
             {
               not: {
-                required: ['examples']
-              }
-            }
-          ]
-        }
-      ]
+                required: ['examples'],
+              },
+            },
+          ],
+        },
+      ],
     },
     Parameter: {
       type: 'object',
       properties: {
         name: {
-          type: 'string'
+          type: 'string',
         },
         in: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         required: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         deprecated: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         allowEmptyValue: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         style: {
-          type: 'string'
+          type: 'string',
         },
         explode: {
-          type: 'boolean'
+          type: 'boolean',
         },
         allowReserved: {
           type: 'boolean',
-          default: false
+          default: false,
         },
         schema: {
           oneOf: [
             {
-              $ref: '#/definitions/Schema'
+              $ref: '#/definitions/Schema',
             },
             {
-              $ref: '#/definitions/Reference'
-            }
-          ]
+              $ref: '#/definitions/Reference',
+            },
+          ],
         },
         content: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/MediaType'
+            $ref: '#/definitions/MediaType',
           },
           minProperties: 1,
-          maxProperties: 1
+          maxProperties: 1,
         },
         example: {},
         examples: {
@@ -1056,31 +1056,31 @@ export const input = {
           additionalProperties: {
             oneOf: [
               {
-                $ref: '#/definitions/Example'
+                $ref: '#/definitions/Example',
               },
               {
-                $ref: '#/definitions/Reference'
-              }
-            ]
-          }
-        }
+                $ref: '#/definitions/Reference',
+              },
+            ],
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
       additionalProperties: false,
       required: ['name', 'in'],
       allOf: [
         {
-          $ref: '#/definitions/ExampleXORExamples'
+          $ref: '#/definitions/ExampleXORExamples',
         },
         {
-          $ref: '#/definitions/SchemaXORContent'
+          $ref: '#/definitions/SchemaXORContent',
         },
         {
-          $ref: '#/definitions/ParameterLocation'
-        }
-      ]
+          $ref: '#/definitions/ParameterLocation',
+        },
+      ],
     },
     ParameterLocation: {
       description: 'Parameter location',
@@ -1090,93 +1090,93 @@ export const input = {
           required: ['required'],
           properties: {
             in: {
-              enum: ['path']
+              enum: ['path'],
             },
             style: {
               enum: ['matrix', 'label', 'simple'],
-              default: 'simple'
+              default: 'simple',
             },
             required: {
-              enum: [true]
-            }
-          }
+              enum: [true],
+            },
+          },
         },
         {
           description: 'Parameter in query',
           properties: {
             in: {
-              enum: ['query']
+              enum: ['query'],
             },
             style: {
               enum: ['form', 'spaceDelimited', 'pipeDelimited', 'deepObject'],
-              default: 'form'
-            }
-          }
+              default: 'form',
+            },
+          },
         },
         {
           description: 'Parameter in header',
           properties: {
             in: {
-              enum: ['header']
+              enum: ['header'],
             },
             style: {
               enum: ['simple'],
-              default: 'simple'
-            }
-          }
+              default: 'simple',
+            },
+          },
         },
         {
           description: 'Parameter in cookie',
           properties: {
             in: {
-              enum: ['cookie']
+              enum: ['cookie'],
             },
             style: {
               enum: ['form'],
-              default: 'form'
-            }
-          }
-        }
-      ]
+              default: 'form',
+            },
+          },
+        },
+      ],
     },
     RequestBody: {
       type: 'object',
       required: ['content'],
       properties: {
         description: {
-          type: 'string'
+          type: 'string',
         },
         content: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/MediaType'
-          }
+            $ref: '#/definitions/MediaType',
+          },
         },
         required: {
           type: 'boolean',
-          default: false
-        }
+          default: false,
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     SecurityScheme: {
       oneOf: [
         {
-          $ref: '#/definitions/APIKeySecurityScheme'
+          $ref: '#/definitions/APIKeySecurityScheme',
         },
         {
-          $ref: '#/definitions/HTTPSecurityScheme'
+          $ref: '#/definitions/HTTPSecurityScheme',
         },
         {
-          $ref: '#/definitions/OAuth2SecurityScheme'
+          $ref: '#/definitions/OAuth2SecurityScheme',
         },
         {
-          $ref: '#/definitions/OpenIdConnectSecurityScheme'
-        }
-      ]
+          $ref: '#/definitions/OpenIdConnectSecurityScheme',
+        },
+      ],
     },
     APIKeySecurityScheme: {
       type: 'object',
@@ -1184,44 +1184,44 @@ export const input = {
       properties: {
         type: {
           type: 'string',
-          enum: ['apiKey']
+          enum: ['apiKey'],
         },
         name: {
-          type: 'string'
+          type: 'string',
         },
         in: {
           type: 'string',
-          enum: ['header', 'query', 'cookie']
+          enum: ['header', 'query', 'cookie'],
         },
         description: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     HTTPSecurityScheme: {
       type: 'object',
       required: ['scheme', 'type'],
       properties: {
         scheme: {
-          type: 'string'
+          type: 'string',
         },
         bearerFormat: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         type: {
           type: 'string',
-          enum: ['http']
-        }
+          enum: ['http'],
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
       additionalProperties: false,
       oneOf: [
@@ -1229,24 +1229,24 @@ export const input = {
           description: 'Bearer',
           properties: {
             scheme: {
-              enum: ['bearer']
-            }
-          }
+              enum: ['bearer'],
+            },
+          },
         },
         {
           description: 'Non Bearer',
           not: {
-            required: ['bearerFormat']
+            required: ['bearerFormat'],
           },
           properties: {
             scheme: {
               not: {
-                enum: ['bearer']
-              }
-            }
-          }
-        }
-      ]
+                enum: ['bearer'],
+              },
+            },
+          },
+        },
+      ],
     },
     OAuth2SecurityScheme: {
       type: 'object',
@@ -1254,19 +1254,19 @@ export const input = {
       properties: {
         type: {
           type: 'string',
-          enum: ['oauth2']
+          enum: ['oauth2'],
         },
         flows: {
-          $ref: '#/definitions/OAuthFlows'
+          $ref: '#/definitions/OAuthFlows',
         },
         description: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     OpenIdConnectSecurityScheme: {
       type: 'object',
@@ -1274,41 +1274,41 @@ export const input = {
       properties: {
         type: {
           type: 'string',
-          enum: ['openIdConnect']
+          enum: ['openIdConnect'],
         },
         openIdConnectUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         description: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     OAuthFlows: {
       type: 'object',
       properties: {
         implicit: {
-          $ref: '#/definitions/ImplicitOAuthFlow'
+          $ref: '#/definitions/ImplicitOAuthFlow',
         },
         password: {
-          $ref: '#/definitions/PasswordOAuthFlow'
+          $ref: '#/definitions/PasswordOAuthFlow',
         },
         clientCredentials: {
-          $ref: '#/definitions/ClientCredentialsFlow'
+          $ref: '#/definitions/ClientCredentialsFlow',
         },
         authorizationCode: {
-          $ref: '#/definitions/AuthorizationCodeOAuthFlow'
-        }
+          $ref: '#/definitions/AuthorizationCodeOAuthFlow',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     ImplicitOAuthFlow: {
       type: 'object',
@@ -1316,23 +1316,23 @@ export const input = {
       properties: {
         authorizationUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         refreshUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         scopes: {
           type: 'object',
           additionalProperties: {
-            type: 'string'
-          }
-        }
+            type: 'string',
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     PasswordOAuthFlow: {
       type: 'object',
@@ -1340,23 +1340,23 @@ export const input = {
       properties: {
         tokenUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         refreshUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         scopes: {
           type: 'object',
           additionalProperties: {
-            type: 'string'
-          }
-        }
+            type: 'string',
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     ClientCredentialsFlow: {
       type: 'object',
@@ -1364,23 +1364,23 @@ export const input = {
       properties: {
         tokenUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         refreshUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         scopes: {
           type: 'object',
           additionalProperties: {
-            type: 'string'
-          }
-        }
+            type: 'string',
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     AuthorizationCodeOAuthFlow: {
       type: 'object',
@@ -1388,93 +1388,93 @@ export const input = {
       properties: {
         authorizationUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         tokenUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         refreshUrl: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         scopes: {
           type: 'object',
           additionalProperties: {
-            type: 'string'
-          }
-        }
+            type: 'string',
+          },
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     Link: {
       type: 'object',
       properties: {
         operationId: {
-          type: 'string'
+          type: 'string',
         },
         operationRef: {
           type: 'string',
-          format: 'uri-reference'
+          format: 'uri-reference',
         },
         parameters: {
           type: 'object',
-          additionalProperties: {}
+          additionalProperties: {},
         },
         requestBody: {},
         description: {
-          type: 'string'
+          type: 'string',
         },
         server: {
-          $ref: '#/definitions/Server'
-        }
+          $ref: '#/definitions/Server',
+        },
       },
       patternProperties: {
-        '^x-': {}
+        '^x-': {},
       },
       additionalProperties: false,
       not: {
         description: 'Operation Id and Operation Ref are mutually exclusive',
-        required: ['operationId', 'operationRef']
-      }
+        required: ['operationId', 'operationRef'],
+      },
     },
     Callback: {
       type: 'object',
       additionalProperties: {
-        $ref: '#/definitions/PathItem'
+        $ref: '#/definitions/PathItem',
       },
       patternProperties: {
-        '^x-': {}
-      }
+        '^x-': {},
+      },
     },
     Encoding: {
       type: 'object',
       properties: {
         contentType: {
-          type: 'string'
+          type: 'string',
         },
         headers: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/Header'
-          }
+            $ref: '#/definitions/Header',
+          },
         },
         style: {
           type: 'string',
-          enum: ['form', 'spaceDelimited', 'pipeDelimited', 'deepObject']
+          enum: ['form', 'spaceDelimited', 'pipeDelimited', 'deepObject'],
         },
         explode: {
-          type: 'boolean'
+          type: 'boolean',
         },
         allowReserved: {
           type: 'boolean',
-          default: false
-        }
+          default: false,
+        },
       },
-      additionalProperties: false
-    }
-  }
+      additionalProperties: false,
+    },
+  },
 }

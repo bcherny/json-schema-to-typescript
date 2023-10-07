@@ -5,20 +5,20 @@ export const input = {
     foo: {
       properties: {
         a: {type: 'string'},
-        b: {type: 'integer'}
+        b: {type: 'integer'},
       },
       additionalProperties: false,
-      required: ['a']
+      required: ['a'],
     },
     bar: {
       properties: {
-        a: {enum: ['a', 'b', 'c']}
-      }
+        a: {enum: ['a', 'b', 'c']},
+      },
     },
     baz: {
       properties: {
-        baz: {$ref: '#/definitions/bar'}
-      }
-    }
-  }
+        baz: {$ref: '#/definitions/bar'},
+      },
+    },
+  },
 }

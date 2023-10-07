@@ -7,10 +7,10 @@ const namedEums = {
         {
           enum: [1, 2, 3],
           title: 'NamedEnum2',
-          tsEnumNames: ['One', 'Two', 'Three']
-        }
+          tsEnumNames: ['One', 'Two', 'Three'],
+        },
       ],
-      additionalItems: true
+      additionalItems: true,
     },
     additionalItems: {
       type: 'array',
@@ -18,17 +18,17 @@ const namedEums = {
         {
           enum: [1, 2, 3],
           title: 'NamedEnum2',
-          tsEnumNames: ['One', 'Two', 'Three']
-        }
+          tsEnumNames: ['One', 'Two', 'Three'],
+        },
       ],
       additionalItems: {
         enum: [4, 5, 6],
         title: 'NamedEnum2',
-        tsEnumNames: ['Four', 'Five', 'Six']
-      }
-    }
+        tsEnumNames: ['Four', 'Five', 'Six'],
+      },
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 const unnamedEmums = {
@@ -38,24 +38,24 @@ const unnamedEmums = {
       type: 'array',
       items: [
         {
-          enum: [1, 2, 3]
-        }
+          enum: [1, 2, 3],
+        },
       ],
-      additionalItems: true
+      additionalItems: true,
     },
     additionalItems: {
       type: 'array',
       items: [
         {
-          enum: ['One', 'Two', 'Three']
-        }
+          enum: ['One', 'Two', 'Three'],
+        },
       ],
       additionalItems: {
-        enum: [4, 5, 6]
-      }
-    }
+        enum: [4, 5, 6],
+      },
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 const schema = {
@@ -67,17 +67,17 @@ const schema = {
         {
           type: 'object',
           properties: {
-            foo: {type: 'string'}
-          }
+            foo: {type: 'string'},
+          },
         },
         {
           type: 'object',
           properties: {
-            bar: {type: 'number'}
-          }
-        }
+            bar: {type: 'number'},
+          },
+        },
       ],
-      additionalItems: true
+      additionalItems: true,
     },
     additionalItems: {
       type: 'array',
@@ -85,25 +85,25 @@ const schema = {
         {
           type: 'object',
           properties: {
-            foo: {type: 'string'}
-          }
+            foo: {type: 'string'},
+          },
         },
         {
           type: 'object',
           properties: {
-            bar: {type: 'number'}
-          }
-        }
+            bar: {type: 'number'},
+          },
+        },
       ],
       additionalItems: {
         type: 'object',
         properties: {
-          baz: {type: 'boolean'}
-        }
-      }
-    }
+          baz: {type: 'boolean'},
+        },
+      },
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 const namedSchema = {
@@ -116,18 +116,18 @@ const namedSchema = {
           id: 'StringSchema1',
           type: 'object',
           properties: {
-            foo: {type: 'string'}
-          }
+            foo: {type: 'string'},
+          },
         },
         {
           id: 'NumberSchema1',
           type: 'object',
           properties: {
-            bar: {type: 'number'}
-          }
-        }
+            bar: {type: 'number'},
+          },
+        },
       ],
-      additionalItems: true
+      additionalItems: true,
     },
     additionalItems: {
       type: 'array',
@@ -136,27 +136,27 @@ const namedSchema = {
           id: 'StringSchema2',
           type: 'object',
           properties: {
-            foo: {type: 'string'}
-          }
+            foo: {type: 'string'},
+          },
         },
         {
           id: 'NumberSchema2',
           type: 'object',
           properties: {
-            bar: {type: 'number'}
-          }
-        }
+            bar: {type: 'number'},
+          },
+        },
       ],
       additionalItems: {
         id: 'BooleanSchema1',
         type: 'object',
         properties: {
-          baz: {type: 'boolean'}
-        }
-      }
-    }
+          baz: {type: 'boolean'},
+        },
+      },
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 const ofType = {
@@ -164,14 +164,14 @@ const ofType = {
   properties: {
     additonalItemsAny: {
       items: [{type: 'integer'}, {type: 'string'}],
-      additionalItems: true
+      additionalItems: true,
     },
     additonalItems: {
       items: [{type: 'integer'}, {type: 'string'}],
-      additionalItems: {type: 'boolean'}
-    }
+      additionalItems: {type: 'boolean'},
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 const refs = {
@@ -181,24 +181,24 @@ const refs = {
       type: 'array',
       items: [
         {
-          $ref: 'test/resources/ReferencedType.json'
-        }
+          $ref: 'test/resources/ReferencedType.json',
+        },
       ],
-      additionalItems: true
+      additionalItems: true,
     },
     additionalItems: {
       type: 'array',
       items: [
         {
-          $ref: 'test/resources/ReferencedTypeWithoutID.json'
-        }
+          $ref: 'test/resources/ReferencedTypeWithoutID.json',
+        },
       ],
       additionalItems: {
-        $ref: 'test/resources/ReferencedTypeWithoutIDConflict.json'
-      }
-    }
+        $ref: 'test/resources/ReferencedTypeWithoutIDConflict.json',
+      },
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 const definitions = {
@@ -208,10 +208,10 @@ const definitions = {
     type: 'object',
     properties: {
       name: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
-    additionalProperties: false
+    additionalProperties: false,
   },
   secondDefinition: {
     title: 'Unrelated Title',
@@ -219,21 +219,21 @@ const definitions = {
     type: 'object',
     properties: {
       name: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
-    additionalProperties: false
+    additionalProperties: false,
   },
   thirdDefinition: {
     description: 'Definition has no title and produces no duplicate Interface',
     type: 'object',
     properties: {
       name: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }
 const defs = {
   type: 'object',
@@ -242,24 +242,24 @@ const defs = {
       type: 'array',
       items: [
         {
-          $ref: '#/definitions/firstDefinition'
-        }
+          $ref: '#/definitions/firstDefinition',
+        },
       ],
-      additionalItems: true
+      additionalItems: true,
     },
     additionalItems: {
       type: 'array',
       items: [
         {
-          $ref: '#/definitions/secondDefinition'
-        }
+          $ref: '#/definitions/secondDefinition',
+        },
       ],
       additionalItems: {
-        $ref: '#/definitions/thirdDefinition'
-      }
-    }
+        $ref: '#/definitions/thirdDefinition',
+      },
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 export const input = {
@@ -272,7 +272,7 @@ export const input = {
     schema,
     ofType,
     refs,
-    defs
+    defs,
   },
-  additionalProperties: false
+  additionalProperties: false,
 }

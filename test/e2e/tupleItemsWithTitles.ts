@@ -4,22 +4,22 @@ export const input = {
     {
       properties: {
         foo: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       title: 'Foo',
-      type: 'object'
+      type: 'object',
     },
     {
       properties: {
         bar: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       title: 'Bar',
-      type: 'object'
-    }
+      type: 'object',
+    },
   ],
   title: 'TupleFooBar',
-  type: 'array'
+  type: 'array',
 }

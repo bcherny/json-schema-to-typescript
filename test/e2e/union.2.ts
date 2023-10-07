@@ -4,9 +4,9 @@ export const input = {
     input: {
       type: ['string', 'object', 'array'],
       items: {
-        type: 'string'
-      }
-    }
+        type: 'string',
+      },
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }

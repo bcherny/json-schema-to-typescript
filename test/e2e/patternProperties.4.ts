@@ -5,11 +5,11 @@ export let input = {
   patternProperties: {
     '^[0-9]+': {
       id: 'NumberChild',
-      type: 'number'
+      type: 'number',
     },
     '^[a-zA-Z]+': {
       id: 'StringChild',
-      type: 'string'
-    }
-  }
+      type: 'string',
+    },
+  },
 }

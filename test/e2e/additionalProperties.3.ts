@@ -3,29 +3,29 @@ export const input = {
   type: 'object',
   definitions: {
     e: {
-      type: 'object'
-    }
+      type: 'object',
+    },
   },
   properties: {
     a: {
-      type: 'object'
+      type: 'object',
     },
     b: {
       type: 'object',
-      additionalProperties: false
+      additionalProperties: false,
     },
     c: {
       type: 'object',
-      additionalProperties: true
+      additionalProperties: true,
     },
     d: {
       type: 'object',
       additionalProperties: {
-        type: 'number'
-      }
+        type: 'number',
+      },
     },
     e: {
-      $ref: '#/definitions/e'
-    }
-  }
+      $ref: '#/definitions/e',
+    },
+  },
 }

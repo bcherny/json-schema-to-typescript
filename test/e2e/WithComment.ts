@@ -8,9 +8,9 @@ export const input = {
       properties: {
         b: {
           type: 'string',
-          description: '/* nested comment */'
-        }
-      }
-    }
-  }
+          description: '/* nested comment */',
+        },
+      },
+    },
+  },
 }

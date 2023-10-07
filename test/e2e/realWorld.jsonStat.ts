@@ -10,36 +10,36 @@ export const input = {
     strarray: {
       type: 'array',
       items: {
-        type: 'string'
+        type: 'string',
       },
-      uniqueItems: true
+      uniqueItems: true,
     },
 
     version: {
       type: 'string',
-      enum: ['2.0']
+      enum: ['2.0'],
     },
     updated: {
       oneOf: [
         {type: 'string', format: 'date-time'},
-        {type: 'string', pattern: '^((19|20)\\d\\d)\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$'}
-      ]
+        {type: 'string', pattern: '^((19|20)\\d\\d)\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$'},
+      ],
     },
     href: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
     },
     label: {
-      type: 'string'
+      type: 'string',
     },
     source: {
-      type: 'string'
+      type: 'string',
     },
     extension: {
-      type: 'object'
+      type: 'object',
     },
     error: {
-      type: 'array'
+      type: 'array',
     },
     note: {$ref: '#/definitions/strarray'},
 
@@ -49,27 +49,27 @@ export const input = {
         index: {
           oneOf: [
             {
-              $ref: '#/definitions/strarray'
+              $ref: '#/definitions/strarray',
             },
             {
               type: 'object',
               additionalProperties: {
-                type: 'number'
-              }
-            }
-          ]
+                type: 'number',
+              },
+            },
+          ],
         },
         label: {
           type: 'object',
           additionalProperties: {
-            type: 'string'
-          }
+            type: 'string',
+          },
         },
         note: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/strarray'
-          }
+            $ref: '#/definitions/strarray',
+          },
         },
 
         unit: {
@@ -78,17 +78,17 @@ export const input = {
             type: 'object',
             properties: {
               label: {
-                $ref: '#/definitions/label'
+                $ref: '#/definitions/label',
               },
               decimals: {
-                type: 'integer'
+                type: 'integer',
               },
               position: {
                 type: 'string',
-                enum: ['start', 'end']
-              }
-            }
-          }
+                enum: ['start', 'end'],
+              },
+            },
+          },
         },
 
         coordinates: {
@@ -96,122 +96,123 @@ export const input = {
           additionalProperties: {
             type: 'array',
             items: [{type: 'number'}, {type: 'number'}],
-            additionalItems: false
-          }
+            additionalItems: false,
+          },
         },
 
         child: {
           type: 'object',
           additionalProperties: {
-            $ref: '#/definitions/strarray'
-          }
-        }
+            $ref: '#/definitions/strarray',
+          },
+        },
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
 
     link: {
       type: 'object',
       patternProperties: {
-        '^(about|alternate|appendix|archives|author|blocked-by|bookmark|canonical|chapter|collection|contents|copyright|create-form|current|derivedfrom|describedby|describes|disclosure|dns-prefetch|duplicate|edit|edit-form|edit-media|enclosure|first|glossary|help|hosts|hub|icon|index|item|last|latest-version|license|lrdd|memento|monitor|monitor-group|next|next-archive|nofollow|noreferrer|original|payment|pingback|preconnect|predecessor-version|prefetch|preload|prerender|prev|preview|previous|prev-archive|privacy-policy|profile|related|replies|search|section|self|service|start|stylesheet|subsection|successor-version|tag|terms-of-service|timegate|timemap|type|up|version-history|via|webmention|working-copy|working-copy-of)$': {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              type: {
-                type: 'string'
-              },
-              class: {type: 'string', enum: ['dataset', 'collection', 'dimension']},
-              href: {$ref: '#/definitions/href'},
-              label: {$ref: '#/definitions/label'},
-              note: {$ref: '#/definitions/note'},
-              link: {$ref: '#/definitions/link'},
-              updated: {$ref: '#/definitions/updated'},
-              source: {$ref: '#/definitions/source'},
-              extension: {$ref: '#/definitions/extension'},
-
-              category: {$ref: '#/definitions/category'},
-
-              id: {$ref: '#/definitions/strarray'},
-
-              size: {
-                type: 'array',
-                items: {
-                  type: 'integer'
-                }
-              },
-
-              role: {
-                type: 'object',
-                properties: {
-                  time: {$ref: '#/definitions/strarray'},
-                  geo: {$ref: '#/definitions/strarray'},
-                  metric: {$ref: '#/definitions/strarray'}
+        '^(about|alternate|appendix|archives|author|blocked-by|bookmark|canonical|chapter|collection|contents|copyright|create-form|current|derivedfrom|describedby|describes|disclosure|dns-prefetch|duplicate|edit|edit-form|edit-media|enclosure|first|glossary|help|hosts|hub|icon|index|item|last|latest-version|license|lrdd|memento|monitor|monitor-group|next|next-archive|nofollow|noreferrer|original|payment|pingback|preconnect|predecessor-version|prefetch|preload|prerender|prev|preview|previous|prev-archive|privacy-policy|profile|related|replies|search|section|self|service|start|stylesheet|subsection|successor-version|tag|terms-of-service|timegate|timemap|type|up|version-history|via|webmention|working-copy|working-copy-of)$':
+          {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                type: {
+                  type: 'string',
                 },
-                additionalProperties: false
-              },
+                class: {type: 'string', enum: ['dataset', 'collection', 'dimension']},
+                href: {$ref: '#/definitions/href'},
+                label: {$ref: '#/definitions/label'},
+                note: {$ref: '#/definitions/note'},
+                link: {$ref: '#/definitions/link'},
+                updated: {$ref: '#/definitions/updated'},
+                source: {$ref: '#/definitions/source'},
+                extension: {$ref: '#/definitions/extension'},
 
-              dimension: {
-                type: 'object',
-                additionalProperties: {
+                category: {$ref: '#/definitions/category'},
+
+                id: {$ref: '#/definitions/strarray'},
+
+                size: {
+                  type: 'array',
+                  items: {
+                    type: 'integer',
+                  },
+                },
+
+                role: {
                   type: 'object',
                   properties: {
-                    href: {$ref: '#/definitions/href'},
-                    label: {$ref: '#/definitions/label'},
-                    note: {$ref: '#/definitions/note'},
-                    link: {$ref: '#/definitions/link'},
-                    extension: {$ref: '#/definitions/extension'},
-
-                    category: {$ref: '#/definitions/category'}
+                    time: {$ref: '#/definitions/strarray'},
+                    geo: {$ref: '#/definitions/strarray'},
+                    metric: {$ref: '#/definitions/strarray'},
                   },
                   additionalProperties: false,
-                  required: ['category']
-                }
-              },
+                },
 
-              value: {
-                oneOf: [
-                  {
-                    type: 'array',
-                    items: {
-                      anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}]
-                    }
-                  },
-                  {
+                dimension: {
+                  type: 'object',
+                  additionalProperties: {
                     type: 'object',
-                    additionalProperties: {
-                      anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}]
-                    }
-                  }
-                ]
-              },
+                    properties: {
+                      href: {$ref: '#/definitions/href'},
+                      label: {$ref: '#/definitions/label'},
+                      note: {$ref: '#/definitions/note'},
+                      link: {$ref: '#/definitions/link'},
+                      extension: {$ref: '#/definitions/extension'},
 
-              status: {
-                oneOf: [
-                  {
-                    type: 'string'
+                      category: {$ref: '#/definitions/category'},
+                    },
+                    additionalProperties: false,
+                    required: ['category'],
                   },
-                  {
-                    type: 'array',
-                    items: {
-                      type: 'string'
-                    }
-                  },
-                  {
-                    type: 'object',
-                    additionalProperties: {
-                      type: 'string'
-                    }
-                  }
-                ]
-              }
+                },
+
+                value: {
+                  oneOf: [
+                    {
+                      type: 'array',
+                      items: {
+                        anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}],
+                      },
+                    },
+                    {
+                      type: 'object',
+                      additionalProperties: {
+                        anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}],
+                      },
+                    },
+                  ],
+                },
+
+                status: {
+                  oneOf: [
+                    {
+                      type: 'string',
+                    },
+                    {
+                      type: 'array',
+                      items: {
+                        type: 'string',
+                      },
+                    },
+                    {
+                      type: 'object',
+                      additionalProperties: {
+                        type: 'string',
+                      },
+                    },
+                  ],
+                },
+              },
+              additionalProperties: false,
             },
-            additionalProperties: false
-          }
-        }
+          },
       },
-      additionalProperties: false
-    }
+      additionalProperties: false,
+    },
   },
 
   oneOf: [
@@ -235,8 +236,8 @@ export const input = {
         size: {
           type: 'array',
           items: {
-            type: 'integer'
-          }
+            type: 'integer',
+          },
         },
 
         role: {
@@ -244,9 +245,9 @@ export const input = {
           properties: {
             time: {$ref: '#/definitions/strarray'},
             geo: {$ref: '#/definitions/strarray'},
-            metric: {$ref: '#/definitions/strarray'}
+            metric: {$ref: '#/definitions/strarray'},
           },
-          additionalProperties: false
+          additionalProperties: false,
         },
 
         dimension: {
@@ -260,11 +261,11 @@ export const input = {
               link: {$ref: '#/definitions/link'},
               extension: {$ref: '#/definitions/extension'},
 
-              category: {$ref: '#/definitions/category'}
+              category: {$ref: '#/definitions/category'},
             },
             additionalProperties: false,
-            required: ['category']
-          }
+            required: ['category'],
+          },
         },
 
         value: {
@@ -272,40 +273,40 @@ export const input = {
             {
               type: 'array',
               items: {
-                anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}]
-              }
+                anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}],
+              },
             },
             {
               type: 'object',
               additionalProperties: {
-                anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}]
-              }
-            }
-          ]
+                anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}],
+              },
+            },
+          ],
         },
 
         status: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
               type: 'array',
               items: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
             {
               type: 'object',
               additionalProperties: {
-                type: 'string'
-              }
-            }
-          ]
-        }
+                type: 'string',
+              },
+            },
+          ],
+        },
       },
       additionalProperties: false,
-      required: ['version', 'class', 'value', 'id', 'size', 'dimension']
+      required: ['version', 'class', 'value', 'id', 'size', 'dimension'],
     },
     {
       type: 'object',
@@ -322,10 +323,10 @@ export const input = {
         error: {$ref: '#/definitions/error'},
         extension: {$ref: '#/definitions/extension'},
 
-        category: {$ref: '#/definitions/category'}
+        category: {$ref: '#/definitions/category'},
       },
       additionalProperties: false,
-      required: ['version', 'class', 'category']
+      required: ['version', 'class', 'category'],
     },
     {
       type: 'object',
@@ -345,7 +346,7 @@ export const input = {
                 type: 'object',
                 properties: {
                   type: {
-                    type: 'string'
+                    type: 'string',
                   },
                   class: {type: 'string', enum: ['dataset', 'collection', 'dimension']},
                   href: {$ref: '#/definitions/href'},
@@ -363,8 +364,8 @@ export const input = {
                   size: {
                     type: 'array',
                     items: {
-                      type: 'integer'
-                    }
+                      type: 'integer',
+                    },
                   },
 
                   role: {
@@ -372,9 +373,9 @@ export const input = {
                     properties: {
                       time: {$ref: '#/definitions/strarray'},
                       geo: {$ref: '#/definitions/strarray'},
-                      metric: {$ref: '#/definitions/strarray'}
+                      metric: {$ref: '#/definitions/strarray'},
                     },
-                    additionalProperties: false
+                    additionalProperties: false,
                   },
 
                   dimension: {
@@ -388,11 +389,11 @@ export const input = {
                         link: {$ref: '#/definitions/link'},
                         extension: {$ref: '#/definitions/extension'},
 
-                        category: {$ref: '#/definitions/category'}
+                        category: {$ref: '#/definitions/category'},
                       },
                       additionalProperties: false,
-                      required: ['category']
-                    }
+                      required: ['category'],
+                    },
                   },
 
                   value: {
@@ -400,51 +401,51 @@ export const input = {
                       {
                         type: 'array',
                         items: {
-                          anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}]
-                        }
+                          anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}],
+                        },
                       },
                       {
                         type: 'object',
                         additionalProperties: {
-                          anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}]
-                        }
-                      }
-                    ]
+                          anyOf: [{type: 'number'}, {type: 'null'}, {type: 'string'}],
+                        },
+                      },
+                    ],
                   },
 
                   status: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
                         type: 'array',
                         items: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
                       {
                         type: 'object',
                         additionalProperties: {
-                          type: 'string'
-                        }
-                      }
-                    ]
-                  }
+                          type: 'string',
+                        },
+                      },
+                    ],
+                  },
                 },
-                additionalProperties: false
-              }
-            }
+                additionalProperties: false,
+              },
+            },
           },
-          additionalProperties: false
+          additionalProperties: false,
         },
         updated: {$ref: '#/definitions/updated'},
         source: {$ref: '#/definitions/source'},
         error: {$ref: '#/definitions/error'},
-        extension: {$ref: '#/definitions/extension'}
+        extension: {$ref: '#/definitions/extension'},
       },
       additionalProperties: false,
-      required: ['version', 'class', 'link']
-    }
-  ]
+      required: ['version', 'class', 'link'],
+    },
+  ],
 }

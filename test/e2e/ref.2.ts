@@ -12,9 +12,9 @@ export const input = {
       type: 'object',
       properties: {
         name: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     secondDefinition: {
       title: 'Unrelated Title',
@@ -22,34 +22,34 @@ export const input = {
       type: 'object',
       properties: {
         name: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     thirdDefinition: {
       description: 'Definition has no title and produces no duplicate Interface',
       type: 'object',
       properties: {
         name: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     fourthDefinition: {
       title: 'Fourth Definition Simple Object',
       description: 'A simple object type with title set and no properties defined produces no duplicate Interface',
-      type: 'object'
+      type: 'object',
     },
     fifthDefinition: {
       title: 'Fifth Definition String',
       description: 'A string with title and enum defined does produce a duplicate Interface',
       type: 'string',
-      enum: ['one', 'two', 'three']
+      enum: ['one', 'two', 'three'],
     },
     sixthDefinition: {
       id: 'six',
-      type: 'number'
-    }
+      type: 'number',
+    },
   },
   properties: {
     firstContainer: {
@@ -57,24 +57,24 @@ export const input = {
       type: 'object',
       properties: {
         first: {
-          $ref: '#/definitions/firstDefinition'
-        }
-      }
+          $ref: '#/definitions/firstDefinition',
+        },
+      },
     },
     second: {
-      $ref: '#/definitions/secondDefinition'
+      $ref: '#/definitions/secondDefinition',
     },
     third: {
-      $ref: '#/definitions/thirdDefinition'
+      $ref: '#/definitions/thirdDefinition',
     },
     fourth: {
-      $ref: '#/definitions/fourthDefinition'
+      $ref: '#/definitions/fourthDefinition',
     },
     fifth: {
-      $ref: '#/definitions/fifthDefinition'
+      $ref: '#/definitions/fifthDefinition',
     },
     sixth: {
-      $ref: '#/definitions/sixthDefinition'
-    }
-  }
+      $ref: '#/definitions/sixthDefinition',
+    },
+  },
 }

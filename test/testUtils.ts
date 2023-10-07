@@ -28,14 +28,14 @@ export function run() {
       type: 'object',
       properties: {
         firstName: {
-          type: 'string'
+          type: 'string',
         },
         lastName: {
           id: 'lastName',
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
-      required: ['firstName', 'lastName']
+      required: ['firstName', 'lastName'],
     })
     t.is(isSchemaLike(schema), true)
     t.is(isSchemaLike([] as any as LinkedJSONSchema), false)

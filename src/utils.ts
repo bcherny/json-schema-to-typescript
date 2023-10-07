@@ -46,13 +46,13 @@ const BLACKLISTED_KEYS = new Set([
   'allOf',
   'anyOf',
   'oneOf',
-  'not'
+  'not',
 ])
 
 function traverseObjectKeys(
   obj: Record<string, LinkedJSONSchema>,
   callback: (schema: LinkedJSONSchema, key: string | null) => void,
-  processed: Set<LinkedJSONSchema>
+  processed: Set<LinkedJSONSchema>,
 ) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
@@ -64,7 +64,7 @@ function traverseObjectKeys(
 function traverseArray(
   arr: LinkedJSONSchema[],
   callback: (schema: LinkedJSONSchema, key: string | null) => void,
-  processed: Set<LinkedJSONSchema>
+  processed: Set<LinkedJSONSchema>,
 ) {
   arr.forEach((s, k) => traverse(s, callback, processed, k.toString()))
 }
@@ -73,7 +73,7 @@ export function traverse(
   schema: LinkedJSONSchema,
   callback: (schema: LinkedJSONSchema, key: string | null) => void,
   processed = new Set<LinkedJSONSchema>(),
-  key?: string
+  key?: string,
 ): void {
   // Handle recursive schemas
   if (processed.has(schema)) {
@@ -177,7 +177,7 @@ export function toSafeString(string: string) {
       // uppercase first letter after whitespace
       .replace(/\s+([a-zA-Z])/g, match => trim(match.toUpperCase()))
       // remove remaining whitespace
-      .replace(/\s/g, '')
+      .replace(/\s/g, ''),
   )
 }
 
@@ -376,7 +376,7 @@ export function isSchemaLike(schema: LinkedJSONSchema) {
     'oneOf',
     'patternProperties',
     'properties',
-    'required'
+    'required',
   ]
   if (JSON_SCHEMA_KEYWORDS.some(_ => parent[_] === schema)) {
     return false

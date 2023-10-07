@@ -16,10 +16,10 @@ export const input = {
             properties: {
               type: {
                 type: 'string',
-                enum: ['link', 'subMenu']
+                enum: ['link', 'subMenu'],
               },
               label: {
-                type: 'string'
+                type: 'string',
               },
               subMenu: {
                 type: 'object',
@@ -35,7 +35,7 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['primary', 'secondary', 'arrow']
+                              enum: ['primary', 'secondary', 'arrow'],
                             },
                             link: {
                               type: 'object',
@@ -43,10 +43,10 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 label: {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 reference: {
                                   oneOf: [
@@ -57,18 +57,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -77,18 +77,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -97,57 +97,57 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['label', 'reference', 'url']
+                              required: ['label', 'reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuLink'
-                            }
+                              const: 'menuLink',
+                            },
                           },
-                          required: ['blockType']
+                          required: ['blockType'],
                         },
                         {
                           type: 'object',
                           additionalProperties: false,
                           properties: {
                             content: {
-                              type: 'string'
+                              type: 'string',
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuDescription'
-                            }
+                              const: 'menuDescription',
+                            },
                           },
-                          required: ['blockType', 'content']
+                          required: ['blockType', 'content'],
                         },
                         {
                           type: 'object',
@@ -156,15 +156,15 @@ export const input = {
                             media: {
                               oneOf: [
                                 {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 {
-                                  $ref: '#/definitions/media'
-                                }
-                              ]
+                                  $ref: '#/definitions/media',
+                                },
+                              ],
                             },
                             headline: {
-                              type: 'string'
+                              type: 'string',
                             },
                             link: {
                               type: 'object',
@@ -172,7 +172,7 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 reference: {
                                   oneOf: [
@@ -183,18 +183,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -203,18 +203,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -223,44 +223,44 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['reference', 'url']
+                              required: ['reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuFeature'
-                            }
+                              const: 'menuFeature',
+                            },
                           },
-                          required: ['blockType', 'media', 'headline']
-                        }
-                      ]
-                    }
+                          required: ['blockType', 'media', 'headline'],
+                        },
+                      ],
+                    },
                   },
                   enableColumn2: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   column2: {
                     type: 'array',
@@ -272,7 +272,7 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['primary', 'secondary', 'arrow']
+                              enum: ['primary', 'secondary', 'arrow'],
                             },
                             link: {
                               type: 'object',
@@ -280,10 +280,10 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 label: {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 reference: {
                                   oneOf: [
@@ -294,18 +294,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -314,18 +314,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -334,57 +334,57 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['label', 'reference', 'url']
+                              required: ['label', 'reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuLink'
-                            }
+                              const: 'menuLink',
+                            },
                           },
-                          required: ['blockType']
+                          required: ['blockType'],
                         },
                         {
                           type: 'object',
                           additionalProperties: false,
                           properties: {
                             content: {
-                              type: 'string'
+                              type: 'string',
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuDescription'
-                            }
+                              const: 'menuDescription',
+                            },
                           },
-                          required: ['blockType', 'content']
+                          required: ['blockType', 'content'],
                         },
                         {
                           type: 'object',
@@ -393,15 +393,15 @@ export const input = {
                             media: {
                               oneOf: [
                                 {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 {
-                                  $ref: '#/definitions/media'
-                                }
-                              ]
+                                  $ref: '#/definitions/media',
+                                },
+                              ],
                             },
                             headline: {
-                              type: 'string'
+                              type: 'string',
                             },
                             link: {
                               type: 'object',
@@ -409,7 +409,7 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 reference: {
                                   oneOf: [
@@ -420,18 +420,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -440,18 +440,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -460,44 +460,44 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['reference', 'url']
+                              required: ['reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuFeature'
-                            }
+                              const: 'menuFeature',
+                            },
                           },
-                          required: ['blockType', 'media', 'headline']
-                        }
-                      ]
-                    }
-                  }
+                          required: ['blockType', 'media', 'headline'],
+                        },
+                      ],
+                    },
+                  },
                 },
-                required: []
+                required: [],
               },
               link: {
                 type: 'object',
@@ -505,7 +505,7 @@ export const input = {
                 properties: {
                   type: {
                     type: 'string',
-                    enum: ['reference', 'custom']
+                    enum: ['reference', 'custom'],
                   },
                   reference: {
                     oneOf: [
@@ -516,18 +516,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/pages'
-                              }
-                            ]
+                                $ref: '#/definitions/pages',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'pages'
-                          }
+                            const: 'pages',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -536,18 +536,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/posts'
-                              }
-                            ]
+                                $ref: '#/definitions/posts',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'posts'
-                          }
+                            const: 'posts',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -556,33 +556,33 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/housing'
-                              }
-                            ]
+                                $ref: '#/definitions/housing',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'housing'
-                          }
+                            const: 'housing',
+                          },
                         },
-                        required: ['value', 'relationTo']
-                      }
-                    ]
+                        required: ['value', 'relationTo'],
+                      },
+                    ],
                   },
                   url: {
-                    type: 'string'
-                  }
+                    type: 'string',
+                  },
                 },
-                required: ['reference', 'url']
+                required: ['reference', 'url'],
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: ['label']
-          }
+            required: ['label'],
+          },
         },
         secondaryItems: {
           type: 'array',
@@ -596,10 +596,10 @@ export const input = {
                 properties: {
                   type: {
                     type: 'string',
-                    enum: ['reference', 'custom']
+                    enum: ['reference', 'custom'],
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   reference: {
                     oneOf: [
@@ -610,18 +610,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/pages'
-                              }
-                            ]
+                                $ref: '#/definitions/pages',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'pages'
-                          }
+                            const: 'pages',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -630,18 +630,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/posts'
-                              }
-                            ]
+                                $ref: '#/definitions/posts',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'posts'
-                          }
+                            const: 'posts',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -650,36 +650,36 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/housing'
-                              }
-                            ]
+                                $ref: '#/definitions/housing',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'housing'
-                          }
+                            const: 'housing',
+                          },
                         },
-                        required: ['value', 'relationTo']
-                      }
-                    ]
+                        required: ['value', 'relationTo'],
+                      },
+                    ],
                   },
                   url: {
-                    type: 'string'
-                  }
+                    type: 'string',
+                  },
                 },
-                required: ['label', 'reference', 'url']
+                required: ['label', 'reference', 'url'],
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
-        }
+            required: [],
+          },
+        },
       },
-      required: []
+      required: [],
     },
     footer: {
       title: 'Footer',
@@ -694,13 +694,13 @@ export const input = {
             properties: {
               appearance: {
                 type: 'string',
-                enum: ['primary', 'secondary', 'tertiary']
+                enum: ['primary', 'secondary', 'tertiary'],
               },
               label: {
-                type: 'string'
+                type: 'string',
               },
               useLink: {
-                type: 'boolean'
+                type: 'boolean',
               },
               link: {
                 type: 'object',
@@ -708,7 +708,7 @@ export const input = {
                 properties: {
                   type: {
                     type: 'string',
-                    enum: ['reference', 'custom']
+                    enum: ['reference', 'custom'],
                   },
                   reference: {
                     oneOf: [
@@ -719,18 +719,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/pages'
-                              }
-                            ]
+                                $ref: '#/definitions/pages',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'pages'
-                          }
+                            const: 'pages',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -739,18 +739,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/posts'
-                              }
-                            ]
+                                $ref: '#/definitions/posts',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'posts'
-                          }
+                            const: 'posts',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -759,33 +759,33 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/housing'
-                              }
-                            ]
+                                $ref: '#/definitions/housing',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'housing'
-                          }
+                            const: 'housing',
+                          },
                         },
-                        required: ['value', 'relationTo']
-                      }
-                    ]
+                        required: ['value', 'relationTo'],
+                      },
+                    ],
                   },
                   url: {
-                    type: 'string'
-                  }
+                    type: 'string',
+                  },
                 },
-                required: ['reference', 'url']
+                required: ['reference', 'url'],
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
+            required: [],
+          },
         },
         column2: {
           type: 'array',
@@ -795,13 +795,13 @@ export const input = {
             properties: {
               appearance: {
                 type: 'string',
-                enum: ['secondary', 'tertiary']
+                enum: ['secondary', 'tertiary'],
               },
               label: {
-                type: 'string'
+                type: 'string',
               },
               useLink: {
-                type: 'boolean'
+                type: 'boolean',
               },
               link: {
                 type: 'object',
@@ -809,7 +809,7 @@ export const input = {
                 properties: {
                   type: {
                     type: 'string',
-                    enum: ['reference', 'custom']
+                    enum: ['reference', 'custom'],
                   },
                   reference: {
                     oneOf: [
@@ -820,18 +820,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/pages'
-                              }
-                            ]
+                                $ref: '#/definitions/pages',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'pages'
-                          }
+                            const: 'pages',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -840,18 +840,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/posts'
-                              }
-                            ]
+                                $ref: '#/definitions/posts',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'posts'
-                          }
+                            const: 'posts',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -860,36 +860,36 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/housing'
-                              }
-                            ]
+                                $ref: '#/definitions/housing',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'housing'
-                          }
+                            const: 'housing',
+                          },
                         },
-                        required: ['value', 'relationTo']
-                      }
-                    ]
+                        required: ['value', 'relationTo'],
+                      },
+                    ],
                   },
                   url: {
-                    type: 'string'
-                  }
+                    type: 'string',
+                  },
                 },
-                required: ['reference', 'url']
+                required: ['reference', 'url'],
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
-        }
+            required: [],
+          },
+        },
       },
-      required: []
+      required: [],
     },
     meta: {
       title: 'Meta',
@@ -904,17 +904,17 @@ export const input = {
             properties: {
               type: {
                 type: 'string',
-                enum: ['facebook', 'vimeo', 'twitter', 'linkedin', 'instagram']
+                enum: ['facebook', 'vimeo', 'twitter', 'linkedin', 'instagram'],
               },
               url: {
-                type: 'string'
+                type: 'string',
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: ['type', 'url']
-          }
+            required: ['type', 'url'],
+          },
         },
         legalLinks: {
           type: 'array',
@@ -928,10 +928,10 @@ export const input = {
                 properties: {
                   type: {
                     type: 'string',
-                    enum: ['reference', 'custom']
+                    enum: ['reference', 'custom'],
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   reference: {
                     oneOf: [
@@ -942,18 +942,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/pages'
-                              }
-                            ]
+                                $ref: '#/definitions/pages',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'pages'
-                          }
+                            const: 'pages',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -962,18 +962,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/posts'
-                              }
-                            ]
+                                $ref: '#/definitions/posts',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'posts'
-                          }
+                            const: 'posts',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -982,55 +982,55 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/housing'
-                              }
-                            ]
+                                $ref: '#/definitions/housing',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'housing'
-                          }
+                            const: 'housing',
+                          },
                         },
-                        required: ['value', 'relationTo']
-                      }
-                    ]
+                        required: ['value', 'relationTo'],
+                      },
+                    ],
                   },
                   url: {
-                    type: 'string'
-                  }
+                    type: 'string',
+                  },
                 },
-                required: ['label', 'reference', 'url']
+                required: ['label', 'reference', 'url'],
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
+            required: [],
+          },
         },
         locations: {
           type: 'array',
           items: {
             oneOf: [
               {
-                type: 'string'
+                type: 'string',
               },
               {
-                $ref: '#/definitions/locations'
-              }
-            ]
-          }
+                $ref: '#/definitions/locations',
+              },
+            ],
+          },
         },
         phone: {
-          type: 'string'
+          type: 'string',
         },
         nationalPhone: {
-          type: 'string'
+          type: 'string',
         },
         fax: {
-          type: 'string'
+          type: 'string',
         },
         popularSearchTerms: {
           type: 'array',
@@ -1039,17 +1039,17 @@ export const input = {
             additionalProperties: false,
             properties: {
               term: {
-                type: 'string'
+                type: 'string',
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: ['term']
-          }
-        }
+            required: ['term'],
+          },
+        },
       },
-      required: []
+      required: [],
     },
     pages: {
       title: 'Page',
@@ -1065,31 +1065,31 @@ export const input = {
               doc: {
                 oneOf: [
                   {
-                    type: 'string'
+                    type: 'string',
                   },
                   {
-                    $ref: '#/definitions/pages'
-                  }
-                ]
+                    $ref: '#/definitions/pages',
+                  },
+                ],
               },
               url: {
-                type: 'string'
+                type: 'string',
               },
               label: {
-                type: 'string'
+                type: 'string',
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
+            required: [],
+          },
         },
         title: {
-          type: 'string'
+          type: 'string',
         },
         showBreadcrumbs: {
-          type: 'boolean'
+          type: 'boolean',
         },
         hero: {
           type: 'object',
@@ -1106,8 +1106,8 @@ export const input = {
                 'columnsBelow',
                 'quickNav',
                 'fullscreenBackground',
-                'fullscreenSlider'
-              ]
+                'fullscreenSlider',
+              ],
             },
             basic: {
               type: 'object',
@@ -1116,8 +1116,8 @@ export const input = {
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -1131,14 +1131,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -1149,18 +1149,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1169,18 +1169,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1189,36 +1189,36 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
-                }
+                    required: [],
+                  },
+                },
               },
-              required: []
+              required: [],
             },
             content: {
               type: 'object',
@@ -1227,8 +1227,8 @@ export const input = {
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -1242,14 +1242,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -1260,18 +1260,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1280,18 +1280,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1300,36 +1300,36 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
-                }
+                    required: [],
+                  },
+                },
               },
-              required: []
+              required: [],
             },
             contentMedia: {
               type: 'object',
@@ -1338,8 +1338,8 @@ export const input = {
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -1353,14 +1353,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -1371,18 +1371,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1391,18 +1391,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1411,46 +1411,46 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 media: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
-                }
+                      $ref: '#/definitions/media',
+                    },
+                  ],
+                },
               },
-              required: ['media']
+              required: ['media'],
             },
             contentMedia2: {
               type: 'object',
@@ -1459,8 +1459,8 @@ export const input = {
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -1474,14 +1474,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -1492,18 +1492,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1512,18 +1512,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1532,46 +1532,46 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 media: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
-                }
+                      $ref: '#/definitions/media',
+                    },
+                  ],
+                },
               },
-              required: ['media']
+              required: ['media'],
             },
             contentSidebar: {
               type: 'object',
@@ -1580,8 +1580,8 @@ export const input = {
                 mainContent: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -1595,14 +1595,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -1613,18 +1613,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1633,18 +1633,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1653,42 +1653,42 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 sidebarContent: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
-                }
+                    type: 'object',
+                  },
+                },
               },
-              required: []
+              required: [],
             },
             columnsBelow: {
               type: 'object',
@@ -1697,21 +1697,21 @@ export const input = {
                 backgroundMedia: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
+                      $ref: '#/definitions/media',
+                    },
+                  ],
                 },
                 useOverlay: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -1725,14 +1725,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -1743,18 +1743,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1763,18 +1763,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1783,33 +1783,33 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 columns: {
                   type: 'array',
@@ -1818,10 +1818,10 @@ export const input = {
                     additionalProperties: false,
                     properties: {
                       heading: {
-                        type: 'string'
+                        type: 'string',
                       },
                       description: {
-                        type: 'string'
+                        type: 'string',
                       },
                       link: {
                         type: 'object',
@@ -1829,7 +1829,7 @@ export const input = {
                         properties: {
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           reference: {
                             oneOf: [
@@ -1840,18 +1840,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1860,18 +1860,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1880,62 +1880,62 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['reference', 'url']
+                        required: ['reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: ['heading', 'description']
-                  }
-                }
+                    required: ['heading', 'description'],
+                  },
+                },
               },
-              required: ['backgroundMedia']
+              required: ['backgroundMedia'],
             },
             fullscreenBackground: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 invertColors: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 backgroundMedia: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
+                      $ref: '#/definitions/media',
+                    },
+                  ],
                 },
                 useOverlay: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -1949,14 +1949,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -1967,18 +1967,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -1987,18 +1987,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -2007,62 +2007,62 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
-                }
+                    required: [],
+                  },
+                },
               },
-              required: ['backgroundMedia']
+              required: ['backgroundMedia'],
             },
             quickNav: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 invertColors: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 backgroundMedia: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
+                      $ref: '#/definitions/media',
+                    },
+                  ],
                 },
                 useOverlay: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -2076,14 +2076,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -2094,18 +2094,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -2114,18 +2114,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -2134,33 +2134,33 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 columns: {
                   type: 'array',
@@ -2169,10 +2169,10 @@ export const input = {
                     additionalProperties: false,
                     properties: {
                       heading: {
-                        type: 'string'
+                        type: 'string',
                       },
                       description: {
-                        type: 'string'
+                        type: 'string',
                       },
                       link: {
                         type: 'object',
@@ -2180,7 +2180,7 @@ export const input = {
                         properties: {
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           reference: {
                             oneOf: [
@@ -2191,18 +2191,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -2211,18 +2211,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -2231,49 +2231,49 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['reference', 'url']
+                        required: ['reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: ['heading', 'description']
-                  }
-                }
+                    required: ['heading', 'description'],
+                  },
+                },
               },
-              required: ['backgroundMedia']
+              required: ['backgroundMedia'],
             },
             fullscreenSlider: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 useStaticContent: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -2287,14 +2287,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -2305,18 +2305,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -2325,18 +2325,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -2345,33 +2345,33 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 slides: {
                   type: 'array',
@@ -2382,21 +2382,21 @@ export const input = {
                       backgroundMedia: {
                         oneOf: [
                           {
-                            type: 'string'
+                            type: 'string',
                           },
                           {
-                            $ref: '#/definitions/media'
-                          }
-                        ]
+                            $ref: '#/definitions/media',
+                          },
+                        ],
                       },
                       useOverlay: {
-                        type: 'boolean'
+                        type: 'boolean',
                       },
                       richText: {
                         type: 'array',
                         items: {
-                          type: 'object'
-                        }
+                          type: 'object',
+                        },
                       },
                       links: {
                         type: 'array',
@@ -2410,14 +2410,14 @@ export const input = {
                               properties: {
                                 appearance: {
                                   type: 'string',
-                                  enum: ['text', 'primaryButton', 'secondaryButton']
+                                  enum: ['text', 'primaryButton', 'secondaryButton'],
                                 },
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 label: {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 reference: {
                                   oneOf: [
@@ -2428,18 +2428,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -2448,18 +2448,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -2468,46 +2468,46 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['label', 'reference', 'url']
+                              required: ['label', 'reference', 'url'],
                             },
                             id: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: []
-                        }
+                          required: [],
+                        },
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: ['backgroundMedia']
-                  }
-                }
+                    required: ['backgroundMedia'],
+                  },
+                },
               },
-              required: []
-            }
+              required: [],
+            },
           },
-          required: ['type']
+          required: ['type'],
         },
         layout: {
           type: 'array',
@@ -2519,7 +2519,7 @@ export const input = {
                 properties: {
                   appearance: {
                     type: 'string',
-                    enum: ['default', 'condensed']
+                    enum: ['default', 'condensed'],
                   },
                   sections: {
                     type: 'array',
@@ -2528,10 +2528,10 @@ export const input = {
                       additionalProperties: false,
                       properties: {
                         label: {
-                          type: 'string'
+                          type: 'string',
                         },
                         openOnInit: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         columns: {
                           type: 'array',
@@ -2541,17 +2541,17 @@ export const input = {
                             properties: {
                               width: {
                                 type: 'string',
-                                enum: ['oneThird', 'half', 'twoThirds', 'full']
+                                enum: ['oneThird', 'half', 'twoThirds', 'full'],
                               },
                               alignment: {
                                 type: 'string',
-                                enum: ['left', 'center', 'right']
+                                enum: ['left', 'center', 'right'],
                               },
                               richText: {
                                 type: 'array',
                                 items: {
-                                  type: 'object'
-                                }
+                                  type: 'object',
+                                },
                               },
                               links: {
                                 type: 'array',
@@ -2565,10 +2565,10 @@ export const input = {
                                       properties: {
                                         type: {
                                           type: 'string',
-                                          enum: ['reference', 'custom']
+                                          enum: ['reference', 'custom'],
                                         },
                                         label: {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         reference: {
                                           oneOf: [
@@ -2579,18 +2579,18 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/pages'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/pages',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'pages'
-                                                }
+                                                  const: 'pages',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
+                                              required: ['value', 'relationTo'],
                                             },
                                             {
                                               type: 'object',
@@ -2599,18 +2599,18 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/posts'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/posts',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'posts'
-                                                }
+                                                  const: 'posts',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
+                                              required: ['value', 'relationTo'],
                                             },
                                             {
                                               type: 'object',
@@ -2619,59 +2619,59 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/housing'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/housing',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'housing'
-                                                }
+                                                  const: 'housing',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
-                                            }
-                                          ]
+                                              required: ['value', 'relationTo'],
+                                            },
+                                          ],
                                         },
                                         url: {
-                                          type: 'string'
-                                        }
+                                          type: 'string',
+                                        },
                                       },
-                                      required: ['label', 'reference', 'url']
+                                      required: ['label', 'reference', 'url'],
                                     },
                                     id: {
-                                      type: 'string'
-                                    }
+                                      type: 'string',
+                                    },
                                   },
-                                  required: []
-                                }
+                                  required: [],
+                                },
                               },
                               id: {
-                                type: 'string'
-                              }
+                                type: 'string',
+                              },
                             },
-                            required: ['width', 'alignment']
-                          }
+                            required: ['width', 'alignment'],
+                          },
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['label']
-                    }
+                      required: ['label'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'accordion'
-                  }
+                    const: 'accordion',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -2680,46 +2680,46 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'blackbaudForm'
-                  }
+                    const: 'blackbaudForm',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   backgroundMedia: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   useOverlay: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   links: {
                     type: 'array',
@@ -2733,14 +2733,14 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['text', 'primaryButton', 'secondaryButton']
+                              enum: ['text', 'primaryButton', 'secondaryButton'],
                             },
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -2751,18 +2751,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -2771,18 +2771,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -2791,45 +2791,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'callToAction'
-                  }
+                    const: 'callToAction',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -2838,12 +2838,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   cardStyle: {
                     type: 'string',
-                    enum: ['fullBG', 'insetImage', 'noImage']
+                    enum: ['fullBG', 'insetImage', 'noImage'],
                   },
                   cards: {
                     type: 'array',
@@ -2854,8 +2854,8 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         link: {
                           type: 'object',
@@ -2863,7 +2863,7 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             reference: {
                               oneOf: [
@@ -2874,18 +2874,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -2894,18 +2894,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -2914,58 +2914,58 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['reference', 'url']
+                          required: ['reference', 'url'],
                         },
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         useOverlay: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'cardGrid'
-                  }
+                    const: 'cardGrid',
+                  },
                 },
-                required: ['blockType', 'cardStyle']
+                required: ['blockType', 'cardStyle'],
               },
               {
                 type: 'object',
@@ -2974,16 +2974,16 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   cardStyle: {
                     type: 'string',
-                    enum: ['fullBG', 'insetImage', 'noImage']
+                    enum: ['fullBG', 'insetImage', 'noImage'],
                   },
                   slides: {
                     type: 'array',
@@ -2994,8 +2994,8 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         link: {
                           type: 'object',
@@ -3003,7 +3003,7 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             reference: {
                               oneOf: [
@@ -3014,18 +3014,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -3034,18 +3034,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -3054,58 +3054,58 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['reference', 'url']
+                          required: ['reference', 'url'],
                         },
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         useOverlay: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'cardSlider'
-                  }
+                    const: 'cardSlider',
+                  },
                 },
-                required: ['blockType', 'cardStyle']
+                required: ['blockType', 'cardStyle'],
               },
               {
                 type: 'object',
@@ -3114,57 +3114,57 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   media1: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   media2: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   media3: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'careerSearch'
-                  }
+                    const: 'careerSearch',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   enableGrayBackground: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   columns: {
                     type: 'array',
@@ -3174,17 +3174,17 @@ export const input = {
                       properties: {
                         width: {
                           type: 'string',
-                          enum: ['oneThird', 'half', 'twoThirds', 'full']
+                          enum: ['oneThird', 'half', 'twoThirds', 'full'],
                         },
                         alignment: {
                           type: 'string',
-                          enum: ['left', 'center', 'right']
+                          enum: ['left', 'center', 'right'],
                         },
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         links: {
                           type: 'array',
@@ -3198,10 +3198,10 @@ export const input = {
                                 properties: {
                                   type: {
                                     type: 'string',
-                                    enum: ['reference', 'custom']
+                                    enum: ['reference', 'custom'],
                                   },
                                   label: {
-                                    type: 'string'
+                                    type: 'string',
                                   },
                                   reference: {
                                     oneOf: [
@@ -3212,18 +3212,18 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/pages'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/pages',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'pages'
-                                          }
+                                            const: 'pages',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
+                                        required: ['value', 'relationTo'],
                                       },
                                       {
                                         type: 'object',
@@ -3232,18 +3232,18 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/posts'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/posts',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'posts'
-                                          }
+                                            const: 'posts',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
+                                        required: ['value', 'relationTo'],
                                       },
                                       {
                                         type: 'object',
@@ -3252,52 +3252,52 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/housing'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/housing',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'housing'
-                                          }
+                                            const: 'housing',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
-                                      }
-                                    ]
+                                        required: ['value', 'relationTo'],
+                                      },
+                                    ],
                                   },
                                   url: {
-                                    type: 'string'
-                                  }
+                                    type: 'string',
+                                  },
                                 },
-                                required: ['label', 'reference', 'url']
+                                required: ['label', 'reference', 'url'],
                               },
                               id: {
-                                type: 'string'
-                              }
+                                type: 'string',
+                              },
                             },
-                            required: []
-                          }
+                            required: [],
+                          },
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['width', 'alignment']
-                    }
+                      required: ['width', 'alignment'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'content'
-                  }
+                    const: 'content',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -3305,19 +3305,19 @@ export const input = {
                 properties: {
                   cellWidth: {
                     type: 'string',
-                    enum: ['two', 'three']
+                    enum: ['two', 'three'],
                   },
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   enableCellNumbers: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   cells: {
                     type: 'array',
@@ -3328,11 +3328,11 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -3340,10 +3340,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -3354,18 +3354,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -3374,18 +3374,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -3394,45 +3394,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'contentGrid'
-                  }
+                    const: 'contentGrid',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -3441,12 +3441,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   slides: {
                     type: 'array',
@@ -3457,11 +3457,11 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -3469,10 +3469,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -3483,18 +3483,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -3503,18 +3503,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -3523,45 +3523,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'contentSlider'
-                  }
+                    const: 'contentSlider',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -3570,20 +3570,20 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'housingMap'
-                  }
+                    const: 'housingMap',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -3592,20 +3592,20 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'housingList'
-                  }
+                    const: 'housingList',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -3614,30 +3614,30 @@ export const input = {
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   form: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/forms'
-                      }
-                    ]
+                        $ref: '#/definitions/forms',
+                      },
+                    ],
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'embeddedForm'
-                  }
+                    const: 'embeddedForm',
+                  },
                 },
-                required: ['blockType', 'form']
+                required: ['blockType', 'form'],
               },
               {
                 type: 'object',
@@ -3646,33 +3646,33 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   locations: {
                     type: 'array',
                     items: {
                       oneOf: [
                         {
-                          type: 'string'
+                          type: 'string',
                         },
                         {
-                          $ref: '#/definitions/locations'
-                        }
-                      ]
-                    }
+                          $ref: '#/definitions/locations',
+                        },
+                      ],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'locations'
-                  }
+                    const: 'locations',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -3681,44 +3681,44 @@ export const input = {
                   media: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   useVimeo: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   vimeoID: {
-                    type: 'string'
+                    type: 'string',
                   },
                   aspectRatio: {
                     type: 'string',
-                    enum: ['56.25', '75']
+                    enum: ['56.25', '75'],
                   },
                   size: {
                     type: 'string',
-                    enum: ['normal', 'wide', 'fullscreen']
+                    enum: ['normal', 'wide', 'fullscreen'],
                   },
                   caption: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'media'
-                  }
+                    const: 'media',
+                  },
                 },
-                required: ['blockType', 'media', 'vimeoID']
+                required: ['blockType', 'media', 'vimeoID'],
               },
               {
                 type: 'object',
@@ -3733,31 +3733,31 @@ export const input = {
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaCollage'
-                  }
+                    const: 'mediaCollage',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -3765,60 +3765,60 @@ export const input = {
                 properties: {
                   alignment: {
                     type: 'string',
-                    enum: ['contentOnLeft', 'contentOnRight']
+                    enum: ['contentOnLeft', 'contentOnRight'],
                   },
                   overlap: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   media: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   embeddedVideo: {
                     type: 'object',
                     additionalProperties: false,
                     properties: {
                       embed: {
-                        type: 'boolean'
+                        type: 'boolean',
                       },
                       poster: {
                         oneOf: [
                           {
-                            type: 'string'
+                            type: 'string',
                           },
                           {
-                            $ref: '#/definitions/media'
-                          }
-                        ]
+                            $ref: '#/definitions/media',
+                          },
+                        ],
                       },
                       platform: {
                         type: 'string',
-                        enum: ['youtube', 'vimeo']
+                        enum: ['youtube', 'vimeo'],
                       },
                       videoID: {
-                        type: 'string'
+                        type: 'string',
                       },
                       aspectRatio: {
                         type: 'string',
-                        enum: ['56.25', '75']
-                      }
+                        enum: ['56.25', '75'],
+                      },
                     },
-                    required: ['videoID']
+                    required: ['videoID'],
                   },
                   links: {
                     type: 'array',
@@ -3832,14 +3832,14 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['text', 'primaryButton', 'secondaryButton']
+                              enum: ['text', 'primaryButton', 'secondaryButton'],
                             },
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -3850,18 +3850,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -3870,18 +3870,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -3890,45 +3890,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaContent'
-                  }
+                    const: 'mediaContent',
+                  },
                 },
-                required: ['blockType', 'alignment', 'richText', 'media']
+                required: ['blockType', 'alignment', 'richText', 'media'],
               },
               {
                 type: 'object',
@@ -3937,12 +3937,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   slides: {
                     type: 'array',
@@ -3953,31 +3953,31 @@ export const input = {
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaSlider'
-                  }
+                    const: 'mediaSlider',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -3990,16 +3990,16 @@ export const input = {
                       additionalProperties: false,
                       properties: {
                         label: {
-                          type: 'string'
+                          type: 'string',
                         },
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -4007,10 +4007,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -4021,18 +4021,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -4041,18 +4041,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -4061,143 +4061,143 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['label']
-                    }
+                      required: ['label'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'stickyList'
-                  }
+                    const: 'stickyList',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'divider'
-                  }
+                    const: 'divider',
+                  },
                 },
-                required: ['blockType']
-              }
-            ]
-          }
+                required: ['blockType'],
+              },
+            ],
+          },
         },
         fullTitle: {
-          type: 'string'
+          type: 'string',
         },
         excerpt: {
-          type: 'string'
+          type: 'string',
         },
         meta: {
           type: 'object',
           additionalProperties: false,
           properties: {
             title: {
-              type: 'string'
+              type: 'string',
             },
             description: {
-              type: 'string'
+              type: 'string',
             },
             keywords: {
-              type: 'string'
+              type: 'string',
             },
             image: {
               oneOf: [
                 {
-                  type: 'string'
+                  type: 'string',
                 },
                 {
-                  $ref: '#/definitions/media'
-                }
-              ]
-            }
+                  $ref: '#/definitions/media',
+                },
+              ],
+            },
           },
-          required: []
+          required: [],
         },
         status: {
           type: 'string',
-          enum: ['published', 'draft']
+          enum: ['published', 'draft'],
         },
         slug: {
-          type: 'string'
+          type: 'string',
         },
         parent: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/pages'
-            }
-          ]
+              $ref: '#/definitions/pages',
+            },
+          ],
         },
         subsite: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/subsites'
-            }
-          ]
+              $ref: '#/definitions/subsites',
+            },
+          ],
         },
         color: {
           type: 'string',
-          enum: ['green', 'blue', 'red', 'purple']
+          enum: ['green', 'blue', 'red', 'purple'],
         },
         author: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/users'
-            }
-          ]
+              $ref: '#/definitions/users',
+            },
+          ],
         },
         preview: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
-      required: ['title']
+      required: ['title'],
     },
     posts: {
       title: 'Post',
@@ -4205,7 +4205,7 @@ export const input = {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         hero: {
           type: 'object',
@@ -4222,8 +4222,8 @@ export const input = {
                 'columnsBelow',
                 'quickNav',
                 'fullscreenBackground',
-                'fullscreenSlider'
-              ]
+                'fullscreenSlider',
+              ],
             },
             basic: {
               type: 'object',
@@ -4232,8 +4232,8 @@ export const input = {
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -4247,14 +4247,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -4265,18 +4265,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4285,18 +4285,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4305,36 +4305,36 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
-                }
+                    required: [],
+                  },
+                },
               },
-              required: []
+              required: [],
             },
             content: {
               type: 'object',
@@ -4343,8 +4343,8 @@ export const input = {
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -4358,14 +4358,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -4376,18 +4376,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4396,18 +4396,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4416,36 +4416,36 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
-                }
+                    required: [],
+                  },
+                },
               },
-              required: []
+              required: [],
             },
             contentMedia: {
               type: 'object',
@@ -4454,8 +4454,8 @@ export const input = {
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -4469,14 +4469,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -4487,18 +4487,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4507,18 +4507,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4527,46 +4527,46 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 media: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
-                }
+                      $ref: '#/definitions/media',
+                    },
+                  ],
+                },
               },
-              required: ['media']
+              required: ['media'],
             },
             contentMedia2: {
               type: 'object',
@@ -4575,8 +4575,8 @@ export const input = {
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -4590,14 +4590,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -4608,18 +4608,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4628,18 +4628,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4648,46 +4648,46 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 media: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
-                }
+                      $ref: '#/definitions/media',
+                    },
+                  ],
+                },
               },
-              required: ['media']
+              required: ['media'],
             },
             contentSidebar: {
               type: 'object',
@@ -4696,8 +4696,8 @@ export const input = {
                 mainContent: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -4711,14 +4711,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -4729,18 +4729,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4749,18 +4749,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4769,42 +4769,42 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 sidebarContent: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
-                }
+                    type: 'object',
+                  },
+                },
               },
-              required: []
+              required: [],
             },
             columnsBelow: {
               type: 'object',
@@ -4813,21 +4813,21 @@ export const input = {
                 backgroundMedia: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
+                      $ref: '#/definitions/media',
+                    },
+                  ],
                 },
                 useOverlay: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -4841,14 +4841,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -4859,18 +4859,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4879,18 +4879,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4899,33 +4899,33 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 columns: {
                   type: 'array',
@@ -4934,10 +4934,10 @@ export const input = {
                     additionalProperties: false,
                     properties: {
                       heading: {
-                        type: 'string'
+                        type: 'string',
                       },
                       description: {
-                        type: 'string'
+                        type: 'string',
                       },
                       link: {
                         type: 'object',
@@ -4945,7 +4945,7 @@ export const input = {
                         properties: {
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           reference: {
                             oneOf: [
@@ -4956,18 +4956,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4976,18 +4976,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -4996,62 +4996,62 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['reference', 'url']
+                        required: ['reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: ['heading', 'description']
-                  }
-                }
+                    required: ['heading', 'description'],
+                  },
+                },
               },
-              required: ['backgroundMedia']
+              required: ['backgroundMedia'],
             },
             fullscreenBackground: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 invertColors: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 backgroundMedia: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
+                      $ref: '#/definitions/media',
+                    },
+                  ],
                 },
                 useOverlay: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -5065,14 +5065,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -5083,18 +5083,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -5103,18 +5103,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -5123,62 +5123,62 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
-                }
+                    required: [],
+                  },
+                },
               },
-              required: ['backgroundMedia']
+              required: ['backgroundMedia'],
             },
             quickNav: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 invertColors: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 backgroundMedia: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/media'
-                    }
-                  ]
+                      $ref: '#/definitions/media',
+                    },
+                  ],
                 },
                 useOverlay: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -5192,14 +5192,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -5210,18 +5210,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -5230,18 +5230,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -5250,33 +5250,33 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 columns: {
                   type: 'array',
@@ -5285,10 +5285,10 @@ export const input = {
                     additionalProperties: false,
                     properties: {
                       heading: {
-                        type: 'string'
+                        type: 'string',
                       },
                       description: {
-                        type: 'string'
+                        type: 'string',
                       },
                       link: {
                         type: 'object',
@@ -5296,7 +5296,7 @@ export const input = {
                         properties: {
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           reference: {
                             oneOf: [
@@ -5307,18 +5307,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -5327,18 +5327,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -5347,49 +5347,49 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['reference', 'url']
+                        required: ['reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: ['heading', 'description']
-                  }
-                }
+                    required: ['heading', 'description'],
+                  },
+                },
               },
-              required: ['backgroundMedia']
+              required: ['backgroundMedia'],
             },
             fullscreenSlider: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 useStaticContent: {
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 richText: {
                   type: 'array',
                   items: {
-                    type: 'object'
-                  }
+                    type: 'object',
+                  },
                 },
                 links: {
                   type: 'array',
@@ -5403,14 +5403,14 @@ export const input = {
                         properties: {
                           appearance: {
                             type: 'string',
-                            enum: ['text', 'primaryButton', 'secondaryButton']
+                            enum: ['text', 'primaryButton', 'secondaryButton'],
                           },
                           type: {
                             type: 'string',
-                            enum: ['reference', 'custom']
+                            enum: ['reference', 'custom'],
                           },
                           label: {
-                            type: 'string'
+                            type: 'string',
                           },
                           reference: {
                             oneOf: [
@@ -5421,18 +5421,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/pages'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/pages',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'pages'
-                                  }
+                                    const: 'pages',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -5441,18 +5441,18 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/posts'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/posts',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'posts'
-                                  }
+                                    const: 'posts',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
+                                required: ['value', 'relationTo'],
                               },
                               {
                                 type: 'object',
@@ -5461,33 +5461,33 @@ export const input = {
                                   value: {
                                     oneOf: [
                                       {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       {
-                                        $ref: '#/definitions/housing'
-                                      }
-                                    ]
+                                        $ref: '#/definitions/housing',
+                                      },
+                                    ],
                                   },
                                   relationTo: {
-                                    const: 'housing'
-                                  }
+                                    const: 'housing',
+                                  },
                                 },
-                                required: ['value', 'relationTo']
-                              }
-                            ]
+                                required: ['value', 'relationTo'],
+                              },
+                            ],
                           },
                           url: {
-                            type: 'string'
-                          }
+                            type: 'string',
+                          },
                         },
-                        required: ['label', 'reference', 'url']
+                        required: ['label', 'reference', 'url'],
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: []
-                  }
+                    required: [],
+                  },
                 },
                 slides: {
                   type: 'array',
@@ -5498,21 +5498,21 @@ export const input = {
                       backgroundMedia: {
                         oneOf: [
                           {
-                            type: 'string'
+                            type: 'string',
                           },
                           {
-                            $ref: '#/definitions/media'
-                          }
-                        ]
+                            $ref: '#/definitions/media',
+                          },
+                        ],
                       },
                       useOverlay: {
-                        type: 'boolean'
+                        type: 'boolean',
                       },
                       richText: {
                         type: 'array',
                         items: {
-                          type: 'object'
-                        }
+                          type: 'object',
+                        },
                       },
                       links: {
                         type: 'array',
@@ -5526,14 +5526,14 @@ export const input = {
                               properties: {
                                 appearance: {
                                   type: 'string',
-                                  enum: ['text', 'primaryButton', 'secondaryButton']
+                                  enum: ['text', 'primaryButton', 'secondaryButton'],
                                 },
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 label: {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 reference: {
                                   oneOf: [
@@ -5544,18 +5544,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -5564,18 +5564,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -5584,46 +5584,46 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['label', 'reference', 'url']
+                              required: ['label', 'reference', 'url'],
                             },
                             id: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: []
-                        }
+                          required: [],
+                        },
                       },
                       id: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: ['backgroundMedia']
-                  }
-                }
+                    required: ['backgroundMedia'],
+                  },
+                },
               },
-              required: []
-            }
+              required: [],
+            },
           },
-          required: ['type']
+          required: ['type'],
         },
         layout: {
           type: 'array',
@@ -5635,7 +5635,7 @@ export const input = {
                 properties: {
                   appearance: {
                     type: 'string',
-                    enum: ['default', 'condensed']
+                    enum: ['default', 'condensed'],
                   },
                   sections: {
                     type: 'array',
@@ -5644,10 +5644,10 @@ export const input = {
                       additionalProperties: false,
                       properties: {
                         label: {
-                          type: 'string'
+                          type: 'string',
                         },
                         openOnInit: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         columns: {
                           type: 'array',
@@ -5657,17 +5657,17 @@ export const input = {
                             properties: {
                               width: {
                                 type: 'string',
-                                enum: ['oneThird', 'half', 'twoThirds', 'full']
+                                enum: ['oneThird', 'half', 'twoThirds', 'full'],
                               },
                               alignment: {
                                 type: 'string',
-                                enum: ['left', 'center', 'right']
+                                enum: ['left', 'center', 'right'],
                               },
                               richText: {
                                 type: 'array',
                                 items: {
-                                  type: 'object'
-                                }
+                                  type: 'object',
+                                },
                               },
                               links: {
                                 type: 'array',
@@ -5681,10 +5681,10 @@ export const input = {
                                       properties: {
                                         type: {
                                           type: 'string',
-                                          enum: ['reference', 'custom']
+                                          enum: ['reference', 'custom'],
                                         },
                                         label: {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         reference: {
                                           oneOf: [
@@ -5695,18 +5695,18 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/pages'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/pages',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'pages'
-                                                }
+                                                  const: 'pages',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
+                                              required: ['value', 'relationTo'],
                                             },
                                             {
                                               type: 'object',
@@ -5715,18 +5715,18 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/posts'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/posts',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'posts'
-                                                }
+                                                  const: 'posts',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
+                                              required: ['value', 'relationTo'],
                                             },
                                             {
                                               type: 'object',
@@ -5735,59 +5735,59 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/housing'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/housing',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'housing'
-                                                }
+                                                  const: 'housing',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
-                                            }
-                                          ]
+                                              required: ['value', 'relationTo'],
+                                            },
+                                          ],
                                         },
                                         url: {
-                                          type: 'string'
-                                        }
+                                          type: 'string',
+                                        },
                                       },
-                                      required: ['label', 'reference', 'url']
+                                      required: ['label', 'reference', 'url'],
                                     },
                                     id: {
-                                      type: 'string'
-                                    }
+                                      type: 'string',
+                                    },
                                   },
-                                  required: []
-                                }
+                                  required: [],
+                                },
                               },
                               id: {
-                                type: 'string'
-                              }
+                                type: 'string',
+                              },
                             },
-                            required: ['width', 'alignment']
-                          }
+                            required: ['width', 'alignment'],
+                          },
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['label']
-                    }
+                      required: ['label'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'accordion'
-                  }
+                    const: 'accordion',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -5796,46 +5796,46 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'blackbaudForm'
-                  }
+                    const: 'blackbaudForm',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   backgroundMedia: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   useOverlay: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   links: {
                     type: 'array',
@@ -5849,14 +5849,14 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['text', 'primaryButton', 'secondaryButton']
+                              enum: ['text', 'primaryButton', 'secondaryButton'],
                             },
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -5867,18 +5867,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -5887,18 +5887,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -5907,45 +5907,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'callToAction'
-                  }
+                    const: 'callToAction',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -5954,12 +5954,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   cardStyle: {
                     type: 'string',
-                    enum: ['fullBG', 'insetImage', 'noImage']
+                    enum: ['fullBG', 'insetImage', 'noImage'],
                   },
                   cards: {
                     type: 'array',
@@ -5970,8 +5970,8 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         link: {
                           type: 'object',
@@ -5979,7 +5979,7 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             reference: {
                               oneOf: [
@@ -5990,18 +5990,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6010,18 +6010,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6030,58 +6030,58 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['reference', 'url']
+                          required: ['reference', 'url'],
                         },
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         useOverlay: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'cardGrid'
-                  }
+                    const: 'cardGrid',
+                  },
                 },
-                required: ['blockType', 'cardStyle']
+                required: ['blockType', 'cardStyle'],
               },
               {
                 type: 'object',
@@ -6090,16 +6090,16 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   cardStyle: {
                     type: 'string',
-                    enum: ['fullBG', 'insetImage', 'noImage']
+                    enum: ['fullBG', 'insetImage', 'noImage'],
                   },
                   slides: {
                     type: 'array',
@@ -6110,8 +6110,8 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         link: {
                           type: 'object',
@@ -6119,7 +6119,7 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             reference: {
                               oneOf: [
@@ -6130,18 +6130,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6150,18 +6150,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6170,58 +6170,58 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['reference', 'url']
+                          required: ['reference', 'url'],
                         },
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         useOverlay: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'cardSlider'
-                  }
+                    const: 'cardSlider',
+                  },
                 },
-                required: ['blockType', 'cardStyle']
+                required: ['blockType', 'cardStyle'],
               },
               {
                 type: 'object',
@@ -6230,57 +6230,57 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   media1: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   media2: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   media3: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'careerSearch'
-                  }
+                    const: 'careerSearch',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   enableGrayBackground: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   columns: {
                     type: 'array',
@@ -6290,17 +6290,17 @@ export const input = {
                       properties: {
                         width: {
                           type: 'string',
-                          enum: ['oneThird', 'half', 'twoThirds', 'full']
+                          enum: ['oneThird', 'half', 'twoThirds', 'full'],
                         },
                         alignment: {
                           type: 'string',
-                          enum: ['left', 'center', 'right']
+                          enum: ['left', 'center', 'right'],
                         },
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         links: {
                           type: 'array',
@@ -6314,10 +6314,10 @@ export const input = {
                                 properties: {
                                   type: {
                                     type: 'string',
-                                    enum: ['reference', 'custom']
+                                    enum: ['reference', 'custom'],
                                   },
                                   label: {
-                                    type: 'string'
+                                    type: 'string',
                                   },
                                   reference: {
                                     oneOf: [
@@ -6328,18 +6328,18 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/pages'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/pages',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'pages'
-                                          }
+                                            const: 'pages',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
+                                        required: ['value', 'relationTo'],
                                       },
                                       {
                                         type: 'object',
@@ -6348,18 +6348,18 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/posts'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/posts',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'posts'
-                                          }
+                                            const: 'posts',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
+                                        required: ['value', 'relationTo'],
                                       },
                                       {
                                         type: 'object',
@@ -6368,52 +6368,52 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/housing'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/housing',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'housing'
-                                          }
+                                            const: 'housing',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
-                                      }
-                                    ]
+                                        required: ['value', 'relationTo'],
+                                      },
+                                    ],
                                   },
                                   url: {
-                                    type: 'string'
-                                  }
+                                    type: 'string',
+                                  },
                                 },
-                                required: ['label', 'reference', 'url']
+                                required: ['label', 'reference', 'url'],
                               },
                               id: {
-                                type: 'string'
-                              }
+                                type: 'string',
+                              },
                             },
-                            required: []
-                          }
+                            required: [],
+                          },
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['width', 'alignment']
-                    }
+                      required: ['width', 'alignment'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'content'
-                  }
+                    const: 'content',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -6421,19 +6421,19 @@ export const input = {
                 properties: {
                   cellWidth: {
                     type: 'string',
-                    enum: ['two', 'three']
+                    enum: ['two', 'three'],
                   },
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   enableCellNumbers: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   cells: {
                     type: 'array',
@@ -6444,11 +6444,11 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -6456,10 +6456,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -6470,18 +6470,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6490,18 +6490,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6510,45 +6510,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'contentGrid'
-                  }
+                    const: 'contentGrid',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -6557,12 +6557,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   slides: {
                     type: 'array',
@@ -6573,11 +6573,11 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -6585,10 +6585,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -6599,18 +6599,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6619,18 +6619,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6639,45 +6639,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'contentSlider'
-                  }
+                    const: 'contentSlider',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -6686,30 +6686,30 @@ export const input = {
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   form: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/forms'
-                      }
-                    ]
+                        $ref: '#/definitions/forms',
+                      },
+                    ],
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'embeddedForm'
-                  }
+                    const: 'embeddedForm',
+                  },
                 },
-                required: ['blockType', 'form']
+                required: ['blockType', 'form'],
               },
               {
                 type: 'object',
@@ -6718,20 +6718,20 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'housingMap'
-                  }
+                    const: 'housingMap',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -6740,20 +6740,20 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'housingList'
-                  }
+                    const: 'housingList',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -6762,33 +6762,33 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   locations: {
                     type: 'array',
                     items: {
                       oneOf: [
                         {
-                          type: 'string'
+                          type: 'string',
                         },
                         {
-                          $ref: '#/definitions/locations'
-                        }
-                      ]
-                    }
+                          $ref: '#/definitions/locations',
+                        },
+                      ],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'locations'
-                  }
+                    const: 'locations',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -6797,44 +6797,44 @@ export const input = {
                   media: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   useVimeo: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   vimeoID: {
-                    type: 'string'
+                    type: 'string',
                   },
                   aspectRatio: {
                     type: 'string',
-                    enum: ['56.25', '75']
+                    enum: ['56.25', '75'],
                   },
                   size: {
                     type: 'string',
-                    enum: ['normal', 'wide', 'fullscreen']
+                    enum: ['normal', 'wide', 'fullscreen'],
                   },
                   caption: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'media'
-                  }
+                    const: 'media',
+                  },
                 },
-                required: ['blockType', 'media', 'vimeoID']
+                required: ['blockType', 'media', 'vimeoID'],
               },
               {
                 type: 'object',
@@ -6849,31 +6849,31 @@ export const input = {
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaCollage'
-                  }
+                    const: 'mediaCollage',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -6881,60 +6881,60 @@ export const input = {
                 properties: {
                   alignment: {
                     type: 'string',
-                    enum: ['contentOnLeft', 'contentOnRight']
+                    enum: ['contentOnLeft', 'contentOnRight'],
                   },
                   overlap: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   media: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   embeddedVideo: {
                     type: 'object',
                     additionalProperties: false,
                     properties: {
                       embed: {
-                        type: 'boolean'
+                        type: 'boolean',
                       },
                       poster: {
                         oneOf: [
                           {
-                            type: 'string'
+                            type: 'string',
                           },
                           {
-                            $ref: '#/definitions/media'
-                          }
-                        ]
+                            $ref: '#/definitions/media',
+                          },
+                        ],
                       },
                       platform: {
                         type: 'string',
-                        enum: ['youtube', 'vimeo']
+                        enum: ['youtube', 'vimeo'],
                       },
                       videoID: {
-                        type: 'string'
+                        type: 'string',
                       },
                       aspectRatio: {
                         type: 'string',
-                        enum: ['56.25', '75']
-                      }
+                        enum: ['56.25', '75'],
+                      },
                     },
-                    required: ['videoID']
+                    required: ['videoID'],
                   },
                   links: {
                     type: 'array',
@@ -6948,14 +6948,14 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['text', 'primaryButton', 'secondaryButton']
+                              enum: ['text', 'primaryButton', 'secondaryButton'],
                             },
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -6966,18 +6966,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -6986,18 +6986,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7006,45 +7006,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaContent'
-                  }
+                    const: 'mediaContent',
+                  },
                 },
-                required: ['blockType', 'alignment', 'richText', 'media']
+                required: ['blockType', 'alignment', 'richText', 'media'],
               },
               {
                 type: 'object',
@@ -7053,12 +7053,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   slides: {
                     type: 'array',
@@ -7069,31 +7069,31 @@ export const input = {
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaSlider'
-                  }
+                    const: 'mediaSlider',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -7106,16 +7106,16 @@ export const input = {
                       additionalProperties: false,
                       properties: {
                         label: {
-                          type: 'string'
+                          type: 'string',
                         },
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -7123,10 +7123,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -7137,18 +7137,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7157,18 +7157,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7177,116 +7177,116 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['label']
-                    }
+                      required: ['label'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'stickyList'
-                  }
+                    const: 'stickyList',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'divider'
-                  }
+                    const: 'divider',
+                  },
                 },
-                required: ['blockType']
-              }
-            ]
-          }
+                required: ['blockType'],
+              },
+            ],
+          },
         },
         slug: {
-          type: 'string'
+          type: 'string',
         },
         category: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/post-categories'
-            }
-          ]
+              $ref: '#/definitions/post-categories',
+            },
+          ],
         },
         subsite: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/subsites'
-            }
-          ]
+              $ref: '#/definitions/subsites',
+            },
+          ],
         },
         meta: {
           type: 'object',
           additionalProperties: false,
           properties: {
             title: {
-              type: 'string'
+              type: 'string',
             },
             description: {
-              type: 'string'
+              type: 'string',
             },
             keywords: {
-              type: 'string'
+              type: 'string',
             },
             image: {
               oneOf: [
                 {
-                  type: 'string'
+                  type: 'string',
                 },
                 {
-                  $ref: '#/definitions/media'
-                }
-              ]
-            }
+                  $ref: '#/definitions/media',
+                },
+              ],
+            },
           },
-          required: []
-        }
+          required: [],
+        },
       },
-      required: ['title', 'category']
+      required: ['title', 'category'],
     },
     'post-categories': {
       title: 'Post Category',
@@ -7294,27 +7294,27 @@ export const input = {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         color: {
           type: 'string',
-          enum: ['green', 'blue', 'red', 'purple']
+          enum: ['green', 'blue', 'red', 'purple'],
         },
         slug: {
-          type: 'string'
+          type: 'string',
         },
         subsite: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/subsites'
-            }
-          ]
-        }
+              $ref: '#/definitions/subsites',
+            },
+          ],
+        },
       },
-      required: ['title']
+      required: ['title'],
     },
     housing: {
       title: 'Housing',
@@ -7322,20 +7322,20 @@ export const input = {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         address: {
           type: 'object',
           additionalProperties: false,
           properties: {
             line1: {
-              type: 'string'
+              type: 'string',
             },
             line2: {
-              type: 'string'
+              type: 'string',
             },
             city: {
-              type: 'string'
+              type: 'string',
             },
             state: {
               type: 'string',
@@ -7390,27 +7390,27 @@ export const input = {
                 'Washington',
                 'West Virginia',
                 'Wisconsin',
-                'Wyoming'
-              ]
+                'Wyoming',
+              ],
             },
             zip: {
-              type: 'string'
+              type: 'string',
             },
             coords: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 lat: {
-                  type: 'number'
+                  type: 'number',
                 },
                 lng: {
-                  type: 'number'
-                }
+                  type: 'number',
+                },
               },
-              required: []
-            }
+              required: [],
+            },
           },
-          required: []
+          required: [],
         },
         contacts: {
           type: 'array',
@@ -7420,20 +7420,20 @@ export const input = {
             properties: {
               type: {
                 type: 'string',
-                enum: ['mailto', 'tel', 'fax']
+                enum: ['mailto', 'tel', 'fax'],
               },
               label: {
-                type: 'string'
+                type: 'string',
               },
               value: {
-                type: 'string'
+                type: 'string',
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
+            required: [],
+          },
         },
         layout: {
           type: 'array',
@@ -7445,7 +7445,7 @@ export const input = {
                 properties: {
                   appearance: {
                     type: 'string',
-                    enum: ['default', 'condensed']
+                    enum: ['default', 'condensed'],
                   },
                   sections: {
                     type: 'array',
@@ -7454,10 +7454,10 @@ export const input = {
                       additionalProperties: false,
                       properties: {
                         label: {
-                          type: 'string'
+                          type: 'string',
                         },
                         openOnInit: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         columns: {
                           type: 'array',
@@ -7467,17 +7467,17 @@ export const input = {
                             properties: {
                               width: {
                                 type: 'string',
-                                enum: ['oneThird', 'half', 'twoThirds', 'full']
+                                enum: ['oneThird', 'half', 'twoThirds', 'full'],
                               },
                               alignment: {
                                 type: 'string',
-                                enum: ['left', 'center', 'right']
+                                enum: ['left', 'center', 'right'],
                               },
                               richText: {
                                 type: 'array',
                                 items: {
-                                  type: 'object'
-                                }
+                                  type: 'object',
+                                },
                               },
                               links: {
                                 type: 'array',
@@ -7491,10 +7491,10 @@ export const input = {
                                       properties: {
                                         type: {
                                           type: 'string',
-                                          enum: ['reference', 'custom']
+                                          enum: ['reference', 'custom'],
                                         },
                                         label: {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         reference: {
                                           oneOf: [
@@ -7505,18 +7505,18 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/pages'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/pages',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'pages'
-                                                }
+                                                  const: 'pages',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
+                                              required: ['value', 'relationTo'],
                                             },
                                             {
                                               type: 'object',
@@ -7525,18 +7525,18 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/posts'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/posts',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'posts'
-                                                }
+                                                  const: 'posts',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
+                                              required: ['value', 'relationTo'],
                                             },
                                             {
                                               type: 'object',
@@ -7545,85 +7545,85 @@ export const input = {
                                                 value: {
                                                   oneOf: [
                                                     {
-                                                      type: 'string'
+                                                      type: 'string',
                                                     },
                                                     {
-                                                      $ref: '#/definitions/housing'
-                                                    }
-                                                  ]
+                                                      $ref: '#/definitions/housing',
+                                                    },
+                                                  ],
                                                 },
                                                 relationTo: {
-                                                  const: 'housing'
-                                                }
+                                                  const: 'housing',
+                                                },
                                               },
-                                              required: ['value', 'relationTo']
-                                            }
-                                          ]
+                                              required: ['value', 'relationTo'],
+                                            },
+                                          ],
                                         },
                                         url: {
-                                          type: 'string'
-                                        }
+                                          type: 'string',
+                                        },
                                       },
-                                      required: ['label', 'reference', 'url']
+                                      required: ['label', 'reference', 'url'],
                                     },
                                     id: {
-                                      type: 'string'
-                                    }
+                                      type: 'string',
+                                    },
                                   },
-                                  required: []
-                                }
+                                  required: [],
+                                },
                               },
                               id: {
-                                type: 'string'
-                              }
+                                type: 'string',
+                              },
                             },
-                            required: ['width', 'alignment']
-                          }
+                            required: ['width', 'alignment'],
+                          },
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['label']
-                    }
+                      required: ['label'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'accordion'
-                  }
+                    const: 'accordion',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   backgroundMedia: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   useOverlay: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   links: {
                     type: 'array',
@@ -7637,14 +7637,14 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['text', 'primaryButton', 'secondaryButton']
+                              enum: ['text', 'primaryButton', 'secondaryButton'],
                             },
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -7655,18 +7655,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7675,18 +7675,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7695,45 +7695,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'callToAction'
-                  }
+                    const: 'callToAction',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -7742,12 +7742,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   cardStyle: {
                     type: 'string',
-                    enum: ['fullBG', 'insetImage', 'noImage']
+                    enum: ['fullBG', 'insetImage', 'noImage'],
                   },
                   cards: {
                     type: 'array',
@@ -7758,8 +7758,8 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         link: {
                           type: 'object',
@@ -7767,7 +7767,7 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             reference: {
                               oneOf: [
@@ -7778,18 +7778,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7798,18 +7798,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7818,58 +7818,58 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['reference', 'url']
+                          required: ['reference', 'url'],
                         },
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         useOverlay: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'cardGrid'
-                  }
+                    const: 'cardGrid',
+                  },
                 },
-                required: ['blockType', 'cardStyle']
+                required: ['blockType', 'cardStyle'],
               },
               {
                 type: 'object',
@@ -7878,16 +7878,16 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   cardStyle: {
                     type: 'string',
-                    enum: ['fullBG', 'insetImage', 'noImage']
+                    enum: ['fullBG', 'insetImage', 'noImage'],
                   },
                   slides: {
                     type: 'array',
@@ -7898,8 +7898,8 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         link: {
                           type: 'object',
@@ -7907,7 +7907,7 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             reference: {
                               oneOf: [
@@ -7918,18 +7918,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7938,18 +7938,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -7958,58 +7958,58 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['reference', 'url']
+                          required: ['reference', 'url'],
                         },
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         useOverlay: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'cardSlider'
-                  }
+                    const: 'cardSlider',
+                  },
                 },
-                required: ['blockType', 'cardStyle']
+                required: ['blockType', 'cardStyle'],
               },
               {
                 type: 'object',
@@ -8018,57 +8018,57 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   media1: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   media2: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   media3: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'careerSearch'
-                  }
+                    const: 'careerSearch',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   enableGrayBackground: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   columns: {
                     type: 'array',
@@ -8078,17 +8078,17 @@ export const input = {
                       properties: {
                         width: {
                           type: 'string',
-                          enum: ['oneThird', 'half', 'twoThirds', 'full']
+                          enum: ['oneThird', 'half', 'twoThirds', 'full'],
                         },
                         alignment: {
                           type: 'string',
-                          enum: ['left', 'center', 'right']
+                          enum: ['left', 'center', 'right'],
                         },
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         links: {
                           type: 'array',
@@ -8102,10 +8102,10 @@ export const input = {
                                 properties: {
                                   type: {
                                     type: 'string',
-                                    enum: ['reference', 'custom']
+                                    enum: ['reference', 'custom'],
                                   },
                                   label: {
-                                    type: 'string'
+                                    type: 'string',
                                   },
                                   reference: {
                                     oneOf: [
@@ -8116,18 +8116,18 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/pages'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/pages',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'pages'
-                                          }
+                                            const: 'pages',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
+                                        required: ['value', 'relationTo'],
                                       },
                                       {
                                         type: 'object',
@@ -8136,18 +8136,18 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/posts'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/posts',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'posts'
-                                          }
+                                            const: 'posts',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
+                                        required: ['value', 'relationTo'],
                                       },
                                       {
                                         type: 'object',
@@ -8156,52 +8156,52 @@ export const input = {
                                           value: {
                                             oneOf: [
                                               {
-                                                type: 'string'
+                                                type: 'string',
                                               },
                                               {
-                                                $ref: '#/definitions/housing'
-                                              }
-                                            ]
+                                                $ref: '#/definitions/housing',
+                                              },
+                                            ],
                                           },
                                           relationTo: {
-                                            const: 'housing'
-                                          }
+                                            const: 'housing',
+                                          },
                                         },
-                                        required: ['value', 'relationTo']
-                                      }
-                                    ]
+                                        required: ['value', 'relationTo'],
+                                      },
+                                    ],
                                   },
                                   url: {
-                                    type: 'string'
-                                  }
+                                    type: 'string',
+                                  },
                                 },
-                                required: ['label', 'reference', 'url']
+                                required: ['label', 'reference', 'url'],
                               },
                               id: {
-                                type: 'string'
-                              }
+                                type: 'string',
+                              },
                             },
-                            required: []
-                          }
+                            required: [],
+                          },
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['width', 'alignment']
-                    }
+                      required: ['width', 'alignment'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'content'
-                  }
+                    const: 'content',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -8209,19 +8209,19 @@ export const input = {
                 properties: {
                   cellWidth: {
                     type: 'string',
-                    enum: ['two', 'three']
+                    enum: ['two', 'three'],
                   },
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   enableCellNumbers: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   cells: {
                     type: 'array',
@@ -8232,11 +8232,11 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -8244,10 +8244,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -8258,18 +8258,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -8278,18 +8278,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -8298,45 +8298,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'contentGrid'
-                  }
+                    const: 'contentGrid',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -8345,12 +8345,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   slides: {
                     type: 'array',
@@ -8361,11 +8361,11 @@ export const input = {
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -8373,10 +8373,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -8387,18 +8387,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -8407,18 +8407,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -8427,45 +8427,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'contentSlider'
-                  }
+                    const: 'contentSlider',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -8474,30 +8474,30 @@ export const input = {
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   form: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/forms'
-                      }
-                    ]
+                        $ref: '#/definitions/forms',
+                      },
+                    ],
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'embeddedForm'
-                  }
+                    const: 'embeddedForm',
+                  },
                 },
-                required: ['blockType', 'form']
+                required: ['blockType', 'form'],
               },
               {
                 type: 'object',
@@ -8506,33 +8506,33 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   locations: {
                     type: 'array',
                     items: {
                       oneOf: [
                         {
-                          type: 'string'
+                          type: 'string',
                         },
                         {
-                          $ref: '#/definitions/locations'
-                        }
-                      ]
-                    }
+                          $ref: '#/definitions/locations',
+                        },
+                      ],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'locations'
-                  }
+                    const: 'locations',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -8541,44 +8541,44 @@ export const input = {
                   media: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   useVimeo: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   vimeoID: {
-                    type: 'string'
+                    type: 'string',
                   },
                   aspectRatio: {
                     type: 'string',
-                    enum: ['56.25', '75']
+                    enum: ['56.25', '75'],
                   },
                   size: {
                     type: 'string',
-                    enum: ['normal', 'wide', 'fullscreen']
+                    enum: ['normal', 'wide', 'fullscreen'],
                   },
                   caption: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'media'
-                  }
+                    const: 'media',
+                  },
                 },
-                required: ['blockType', 'media', 'vimeoID']
+                required: ['blockType', 'media', 'vimeoID'],
               },
               {
                 type: 'object',
@@ -8593,31 +8593,31 @@ export const input = {
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaCollage'
-                  }
+                    const: 'mediaCollage',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -8625,60 +8625,60 @@ export const input = {
                 properties: {
                   alignment: {
                     type: 'string',
-                    enum: ['contentOnLeft', 'contentOnRight']
+                    enum: ['contentOnLeft', 'contentOnRight'],
                   },
                   overlap: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   invertColors: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   richText: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   media: {
                     oneOf: [
                       {
-                        type: 'string'
+                        type: 'string',
                       },
                       {
-                        $ref: '#/definitions/media'
-                      }
-                    ]
+                        $ref: '#/definitions/media',
+                      },
+                    ],
                   },
                   embeddedVideo: {
                     type: 'object',
                     additionalProperties: false,
                     properties: {
                       embed: {
-                        type: 'boolean'
+                        type: 'boolean',
                       },
                       poster: {
                         oneOf: [
                           {
-                            type: 'string'
+                            type: 'string',
                           },
                           {
-                            $ref: '#/definitions/media'
-                          }
-                        ]
+                            $ref: '#/definitions/media',
+                          },
+                        ],
                       },
                       platform: {
                         type: 'string',
-                        enum: ['youtube', 'vimeo']
+                        enum: ['youtube', 'vimeo'],
                       },
                       videoID: {
-                        type: 'string'
+                        type: 'string',
                       },
                       aspectRatio: {
                         type: 'string',
-                        enum: ['56.25', '75']
-                      }
+                        enum: ['56.25', '75'],
+                      },
                     },
-                    required: ['videoID']
+                    required: ['videoID'],
                   },
                   links: {
                     type: 'array',
@@ -8692,14 +8692,14 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['text', 'primaryButton', 'secondaryButton']
+                              enum: ['text', 'primaryButton', 'secondaryButton'],
                             },
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -8710,18 +8710,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -8730,18 +8730,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -8750,45 +8750,45 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: []
-                    }
+                      required: [],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaContent'
-                  }
+                    const: 'mediaContent',
+                  },
                 },
-                required: ['blockType', 'alignment', 'richText', 'media']
+                required: ['blockType', 'alignment', 'richText', 'media'],
               },
               {
                 type: 'object',
@@ -8797,12 +8797,12 @@ export const input = {
                   introContent: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   backgroundType: {
                     type: 'string',
-                    enum: ['light', 'color']
+                    enum: ['light', 'color'],
                   },
                   slides: {
                     type: 'array',
@@ -8813,31 +8813,31 @@ export const input = {
                         media: {
                           oneOf: [
                             {
-                              type: 'string'
+                              type: 'string',
                             },
                             {
-                              $ref: '#/definitions/media'
-                            }
-                          ]
+                              $ref: '#/definitions/media',
+                            },
+                          ],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['media']
-                    }
+                      required: ['media'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'mediaSlider'
-                  }
+                    const: 'mediaSlider',
+                  },
                 },
-                required: ['blockType']
+                required: ['blockType'],
               },
               {
                 type: 'object',
@@ -8850,16 +8850,16 @@ export const input = {
                       additionalProperties: false,
                       properties: {
                         label: {
-                          type: 'string'
+                          type: 'string',
                         },
                         richText: {
                           type: 'array',
                           items: {
-                            type: 'object'
-                          }
+                            type: 'object',
+                          },
                         },
                         enableLink: {
-                          type: 'boolean'
+                          type: 'boolean',
                         },
                         link: {
                           type: 'object',
@@ -8867,10 +8867,10 @@ export const input = {
                           properties: {
                             type: {
                               type: 'string',
-                              enum: ['reference', 'custom']
+                              enum: ['reference', 'custom'],
                             },
                             label: {
-                              type: 'string'
+                              type: 'string',
                             },
                             reference: {
                               oneOf: [
@@ -8881,18 +8881,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/pages'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/pages',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'pages'
-                                    }
+                                      const: 'pages',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -8901,18 +8901,18 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/posts'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/posts',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'posts'
-                                    }
+                                      const: 'posts',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
+                                  required: ['value', 'relationTo'],
                                 },
                                 {
                                   type: 'object',
@@ -8921,103 +8921,103 @@ export const input = {
                                     value: {
                                       oneOf: [
                                         {
-                                          type: 'string'
+                                          type: 'string',
                                         },
                                         {
-                                          $ref: '#/definitions/housing'
-                                        }
-                                      ]
+                                          $ref: '#/definitions/housing',
+                                        },
+                                      ],
                                     },
                                     relationTo: {
-                                      const: 'housing'
-                                    }
+                                      const: 'housing',
+                                    },
                                   },
-                                  required: ['value', 'relationTo']
-                                }
-                              ]
+                                  required: ['value', 'relationTo'],
+                                },
+                              ],
                             },
                             url: {
-                              type: 'string'
-                            }
+                              type: 'string',
+                            },
                           },
-                          required: ['label', 'reference', 'url']
+                          required: ['label', 'reference', 'url'],
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['label']
-                    }
+                      required: ['label'],
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'stickyList'
-                  }
+                    const: 'stickyList',
+                  },
                 },
-                required: ['blockType']
-              }
-            ]
-          }
+                required: ['blockType'],
+              },
+            ],
+          },
         },
         meta: {
           type: 'object',
           additionalProperties: false,
           properties: {
             title: {
-              type: 'string'
+              type: 'string',
             },
             description: {
-              type: 'string'
+              type: 'string',
             },
             keywords: {
-              type: 'string'
+              type: 'string',
             },
             image: {
               oneOf: [
                 {
-                  type: 'string'
+                  type: 'string',
                 },
                 {
-                  $ref: '#/definitions/media'
-                }
-              ]
-            }
+                  $ref: '#/definitions/media',
+                },
+              ],
+            },
           },
-          required: []
+          required: [],
         },
         slug: {
-          type: 'string'
+          type: 'string',
         },
         categories: {
           type: 'array',
           items: {
             oneOf: [
               {
-                type: 'string'
+                type: 'string',
               },
               {
-                $ref: '#/definitions/housing-categories'
-              }
-            ]
-          }
+                $ref: '#/definitions/housing-categories',
+              },
+            ],
+          },
         },
         subsite: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/subsites'
-            }
-          ]
-        }
+              $ref: '#/definitions/subsites',
+            },
+          ],
+        },
       },
-      required: ['title']
+      required: ['title'],
     },
     'housing-categories': {
       title: 'Housing Category',
@@ -9025,13 +9025,13 @@ export const input = {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         slug: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
-      required: ['title']
+      required: ['title'],
     },
     locations: {
       title: 'Location',
@@ -9039,20 +9039,20 @@ export const input = {
       additionalProperties: false,
       properties: {
         name: {
-          type: 'string'
+          type: 'string',
         },
         address: {
           type: 'object',
           additionalProperties: false,
           properties: {
             line1: {
-              type: 'string'
+              type: 'string',
             },
             line2: {
-              type: 'string'
+              type: 'string',
             },
             city: {
-              type: 'string'
+              type: 'string',
             },
             state: {
               type: 'string',
@@ -9107,27 +9107,27 @@ export const input = {
                 'Washington',
                 'West Virginia',
                 'Wisconsin',
-                'Wyoming'
-              ]
+                'Wyoming',
+              ],
             },
             zip: {
-              type: 'string'
+              type: 'string',
             },
             coords: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 lat: {
-                  type: 'number'
+                  type: 'number',
                 },
                 lng: {
-                  type: 'number'
-                }
+                  type: 'number',
+                },
               },
-              required: []
-            }
+              required: [],
+            },
           },
-          required: []
+          required: [],
         },
         contacts: {
           type: 'array',
@@ -9137,49 +9137,49 @@ export const input = {
             properties: {
               type: {
                 type: 'string',
-                enum: ['mailto', 'tel', 'fax']
+                enum: ['mailto', 'tel', 'fax'],
               },
               label: {
-                type: 'string'
+                type: 'string',
               },
               value: {
-                type: 'string'
+                type: 'string',
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
+            required: [],
+          },
         },
         meta: {
           type: 'object',
           additionalProperties: false,
           properties: {
             title: {
-              type: 'string'
+              type: 'string',
             },
             description: {
-              type: 'string'
+              type: 'string',
             },
             keywords: {
-              type: 'string'
+              type: 'string',
             },
             image: {
               oneOf: [
                 {
-                  type: 'string'
+                  type: 'string',
                 },
                 {
-                  $ref: '#/definitions/media'
-                }
-              ]
-            }
+                  $ref: '#/definitions/media',
+                },
+              ],
+            },
           },
-          required: []
-        }
+          required: [],
+        },
       },
-      required: ['name']
+      required: ['name'],
     },
     subsites: {
       title: 'Subsite',
@@ -9187,7 +9187,7 @@ export const input = {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         menuItems: {
           type: 'array',
@@ -9197,7 +9197,7 @@ export const input = {
             properties: {
               type: {
                 type: 'string',
-                enum: ['link', 'subMenu']
+                enum: ['link', 'subMenu'],
               },
               link: {
                 type: 'object',
@@ -9205,10 +9205,10 @@ export const input = {
                 properties: {
                   type: {
                     type: 'string',
-                    enum: ['reference', 'custom']
+                    enum: ['reference', 'custom'],
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   reference: {
                     oneOf: [
@@ -9219,18 +9219,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/pages'
-                              }
-                            ]
+                                $ref: '#/definitions/pages',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'pages'
-                          }
+                            const: 'pages',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -9239,18 +9239,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/posts'
-                              }
-                            ]
+                                $ref: '#/definitions/posts',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'posts'
-                          }
+                            const: 'posts',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -9259,29 +9259,29 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/housing'
-                              }
-                            ]
+                                $ref: '#/definitions/housing',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'housing'
-                          }
+                            const: 'housing',
+                          },
                         },
-                        required: ['value', 'relationTo']
-                      }
-                    ]
+                        required: ['value', 'relationTo'],
+                      },
+                    ],
                   },
                   url: {
-                    type: 'string'
-                  }
+                    type: 'string',
+                  },
                 },
-                required: ['label', 'reference', 'url']
+                required: ['label', 'reference', 'url'],
               },
               label: {
-                type: 'string'
+                type: 'string',
               },
               subMenu: {
                 type: 'object',
@@ -9297,7 +9297,7 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['primary', 'secondary', 'arrow']
+                              enum: ['primary', 'secondary', 'arrow'],
                             },
                             link: {
                               type: 'object',
@@ -9305,10 +9305,10 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 label: {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 reference: {
                                   oneOf: [
@@ -9319,18 +9319,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9339,18 +9339,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9359,57 +9359,57 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['label', 'reference', 'url']
+                              required: ['label', 'reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuLink'
-                            }
+                              const: 'menuLink',
+                            },
                           },
-                          required: ['blockType']
+                          required: ['blockType'],
                         },
                         {
                           type: 'object',
                           additionalProperties: false,
                           properties: {
                             content: {
-                              type: 'string'
+                              type: 'string',
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuDescription'
-                            }
+                              const: 'menuDescription',
+                            },
                           },
-                          required: ['blockType', 'content']
+                          required: ['blockType', 'content'],
                         },
                         {
                           type: 'object',
@@ -9418,15 +9418,15 @@ export const input = {
                             media: {
                               oneOf: [
                                 {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 {
-                                  $ref: '#/definitions/media'
-                                }
-                              ]
+                                  $ref: '#/definitions/media',
+                                },
+                              ],
                             },
                             headline: {
-                              type: 'string'
+                              type: 'string',
                             },
                             link: {
                               type: 'object',
@@ -9434,7 +9434,7 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 reference: {
                                   oneOf: [
@@ -9445,18 +9445,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9465,18 +9465,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9485,44 +9485,44 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['reference', 'url']
+                              required: ['reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuFeature'
-                            }
+                              const: 'menuFeature',
+                            },
                           },
-                          required: ['blockType', 'media', 'headline']
-                        }
-                      ]
-                    }
+                          required: ['blockType', 'media', 'headline'],
+                        },
+                      ],
+                    },
                   },
                   enableColumn2: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   column2: {
                     type: 'array',
@@ -9534,7 +9534,7 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['primary', 'secondary', 'arrow']
+                              enum: ['primary', 'secondary', 'arrow'],
                             },
                             link: {
                               type: 'object',
@@ -9542,10 +9542,10 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 label: {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 reference: {
                                   oneOf: [
@@ -9556,18 +9556,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9576,18 +9576,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9596,57 +9596,57 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['label', 'reference', 'url']
+                              required: ['label', 'reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuLink'
-                            }
+                              const: 'menuLink',
+                            },
                           },
-                          required: ['blockType']
+                          required: ['blockType'],
                         },
                         {
                           type: 'object',
                           additionalProperties: false,
                           properties: {
                             content: {
-                              type: 'string'
+                              type: 'string',
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuDescription'
-                            }
+                              const: 'menuDescription',
+                            },
                           },
-                          required: ['blockType', 'content']
+                          required: ['blockType', 'content'],
                         },
                         {
                           type: 'object',
@@ -9655,15 +9655,15 @@ export const input = {
                             media: {
                               oneOf: [
                                 {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 {
-                                  $ref: '#/definitions/media'
-                                }
-                              ]
+                                  $ref: '#/definitions/media',
+                                },
+                              ],
                             },
                             headline: {
-                              type: 'string'
+                              type: 'string',
                             },
                             link: {
                               type: 'object',
@@ -9671,7 +9671,7 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 reference: {
                                   oneOf: [
@@ -9682,18 +9682,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9702,18 +9702,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9722,44 +9722,44 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['reference', 'url']
+                              required: ['reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuFeature'
-                            }
+                              const: 'menuFeature',
+                            },
                           },
-                          required: ['blockType', 'media', 'headline']
-                        }
-                      ]
-                    }
+                          required: ['blockType', 'media', 'headline'],
+                        },
+                      ],
+                    },
                   },
                   enableColumn3: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   column3: {
                     type: 'array',
@@ -9771,7 +9771,7 @@ export const input = {
                           properties: {
                             appearance: {
                               type: 'string',
-                              enum: ['primary', 'secondary', 'arrow']
+                              enum: ['primary', 'secondary', 'arrow'],
                             },
                             link: {
                               type: 'object',
@@ -9779,10 +9779,10 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 label: {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 reference: {
                                   oneOf: [
@@ -9793,18 +9793,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9813,18 +9813,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9833,57 +9833,57 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['label', 'reference', 'url']
+                              required: ['label', 'reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuLink'
-                            }
+                              const: 'menuLink',
+                            },
                           },
-                          required: ['blockType']
+                          required: ['blockType'],
                         },
                         {
                           type: 'object',
                           additionalProperties: false,
                           properties: {
                             content: {
-                              type: 'string'
+                              type: 'string',
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuDescription'
-                            }
+                              const: 'menuDescription',
+                            },
                           },
-                          required: ['blockType', 'content']
+                          required: ['blockType', 'content'],
                         },
                         {
                           type: 'object',
@@ -9892,15 +9892,15 @@ export const input = {
                             media: {
                               oneOf: [
                                 {
-                                  type: 'string'
+                                  type: 'string',
                                 },
                                 {
-                                  $ref: '#/definitions/media'
-                                }
-                              ]
+                                  $ref: '#/definitions/media',
+                                },
+                              ],
                             },
                             headline: {
-                              type: 'string'
+                              type: 'string',
                             },
                             link: {
                               type: 'object',
@@ -9908,7 +9908,7 @@ export const input = {
                               properties: {
                                 type: {
                                   type: 'string',
-                                  enum: ['reference', 'custom']
+                                  enum: ['reference', 'custom'],
                                 },
                                 reference: {
                                   oneOf: [
@@ -9919,18 +9919,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/pages'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/pages',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'pages'
-                                        }
+                                          const: 'pages',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9939,18 +9939,18 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/posts'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/posts',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'posts'
-                                        }
+                                          const: 'posts',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
+                                      required: ['value', 'relationTo'],
                                     },
                                     {
                                       type: 'object',
@@ -9959,71 +9959,71 @@ export const input = {
                                         value: {
                                           oneOf: [
                                             {
-                                              type: 'string'
+                                              type: 'string',
                                             },
                                             {
-                                              $ref: '#/definitions/housing'
-                                            }
-                                          ]
+                                              $ref: '#/definitions/housing',
+                                            },
+                                          ],
                                         },
                                         relationTo: {
-                                          const: 'housing'
-                                        }
+                                          const: 'housing',
+                                        },
                                       },
-                                      required: ['value', 'relationTo']
-                                    }
-                                  ]
+                                      required: ['value', 'relationTo'],
+                                    },
+                                  ],
                                 },
                                 url: {
-                                  type: 'string'
-                                }
+                                  type: 'string',
+                                },
                               },
-                              required: ['reference', 'url']
+                              required: ['reference', 'url'],
                             },
                             id: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockName: {
-                              type: 'string'
+                              type: 'string',
                             },
                             blockType: {
-                              const: 'menuFeature'
-                            }
+                              const: 'menuFeature',
+                            },
                           },
-                          required: ['blockType', 'media', 'headline']
-                        }
-                      ]
-                    }
-                  }
+                          required: ['blockType', 'media', 'headline'],
+                        },
+                      ],
+                    },
+                  },
                 },
-                required: []
+                required: [],
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: ['label']
-          }
+            required: ['label'],
+          },
         },
         slug: {
-          type: 'string'
+          type: 'string',
         },
         color: {
           type: 'string',
-          enum: ['green', 'blue', 'red', 'purple']
+          enum: ['green', 'blue', 'red', 'purple'],
         },
         home: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/pages'
-            }
-          ]
-        }
+              $ref: '#/definitions/pages',
+            },
+          ],
+        },
       },
-      required: ['title', 'home']
+      required: ['title', 'home'],
     },
     alerts: {
       title: 'Alert',
@@ -10032,30 +10032,30 @@ export const input = {
       properties: {
         placement: {
           type: 'string',
-          enum: ['global', 'subsite']
+          enum: ['global', 'subsite'],
         },
         subsites: {
           type: 'array',
           items: {
             oneOf: [
               {
-                type: 'string'
+                type: 'string',
               },
               {
-                $ref: '#/definitions/subsites'
-              }
-            ]
-          }
+                $ref: '#/definitions/subsites',
+              },
+            ],
+          },
         },
         backgroundColor: {
           type: 'string',
-          enum: ['matchTheme', 'green', 'blue', 'red', 'purple']
+          enum: ['matchTheme', 'green', 'blue', 'red', 'purple'],
         },
         content: {
           type: 'array',
           items: {
-            type: 'object'
-          }
+            type: 'object',
+          },
         },
         links: {
           type: 'array',
@@ -10069,14 +10069,14 @@ export const input = {
                 properties: {
                   appearance: {
                     type: 'string',
-                    enum: ['text', 'primaryButton', 'secondaryButton']
+                    enum: ['text', 'primaryButton', 'secondaryButton'],
                   },
                   type: {
                     type: 'string',
-                    enum: ['reference', 'custom']
+                    enum: ['reference', 'custom'],
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   reference: {
                     oneOf: [
@@ -10087,18 +10087,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/pages'
-                              }
-                            ]
+                                $ref: '#/definitions/pages',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'pages'
-                          }
+                            const: 'pages',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -10107,18 +10107,18 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/posts'
-                              }
-                            ]
+                                $ref: '#/definitions/posts',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'posts'
-                          }
+                            const: 'posts',
+                          },
                         },
-                        required: ['value', 'relationTo']
+                        required: ['value', 'relationTo'],
                       },
                       {
                         type: 'object',
@@ -10127,36 +10127,36 @@ export const input = {
                           value: {
                             oneOf: [
                               {
-                                type: 'string'
+                                type: 'string',
                               },
                               {
-                                $ref: '#/definitions/housing'
-                              }
-                            ]
+                                $ref: '#/definitions/housing',
+                              },
+                            ],
                           },
                           relationTo: {
-                            const: 'housing'
-                          }
+                            const: 'housing',
+                          },
                         },
-                        required: ['value', 'relationTo']
-                      }
-                    ]
+                        required: ['value', 'relationTo'],
+                      },
+                    ],
                   },
                   url: {
-                    type: 'string'
-                  }
+                    type: 'string',
+                  },
                 },
-                required: ['label', 'reference', 'url']
+                required: ['label', 'reference', 'url'],
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
-        }
+            required: [],
+          },
+        },
       },
-      required: ['placement', 'subsites', 'content']
+      required: ['placement', 'subsites', 'content'],
     },
     search: {
       title: 'Search Result',
@@ -10164,26 +10164,26 @@ export const input = {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         description: {
-          type: 'string'
+          type: 'string',
         },
         keywords: {
-          type: 'string'
+          type: 'string',
         },
         slug: {
-          type: 'string'
+          type: 'string',
         },
         media: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/media'
-            }
-          ]
+              $ref: '#/definitions/media',
+            },
+          ],
         },
         doc: {
           oneOf: [
@@ -10194,18 +10194,18 @@ export const input = {
                 value: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/pages'
-                    }
-                  ]
+                      $ref: '#/definitions/pages',
+                    },
+                  ],
                 },
                 relationTo: {
-                  const: 'pages'
-                }
+                  const: 'pages',
+                },
               },
-              required: ['value', 'relationTo']
+              required: ['value', 'relationTo'],
             },
             {
               type: 'object',
@@ -10214,18 +10214,18 @@ export const input = {
                 value: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/posts'
-                    }
-                  ]
+                      $ref: '#/definitions/posts',
+                    },
+                  ],
                 },
                 relationTo: {
-                  const: 'posts'
-                }
+                  const: 'posts',
+                },
               },
-              required: ['value', 'relationTo']
+              required: ['value', 'relationTo'],
             },
             {
               type: 'object',
@@ -10234,18 +10234,18 @@ export const input = {
                 value: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/housing'
-                    }
-                  ]
+                      $ref: '#/definitions/housing',
+                    },
+                  ],
                 },
                 relationTo: {
-                  const: 'housing'
-                }
+                  const: 'housing',
+                },
               },
-              required: ['value', 'relationTo']
+              required: ['value', 'relationTo'],
             },
             {
               type: 'object',
@@ -10254,18 +10254,18 @@ export const input = {
                 value: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/people'
-                    }
-                  ]
+                      $ref: '#/definitions/people',
+                    },
+                  ],
                 },
                 relationTo: {
-                  const: 'people'
-                }
+                  const: 'people',
+                },
               },
-              required: ['value', 'relationTo']
+              required: ['value', 'relationTo'],
             },
             {
               type: 'object',
@@ -10274,23 +10274,23 @@ export const input = {
                 value: {
                   oneOf: [
                     {
-                      type: 'string'
+                      type: 'string',
                     },
                     {
-                      $ref: '#/definitions/locations'
-                    }
-                  ]
+                      $ref: '#/definitions/locations',
+                    },
+                  ],
                 },
                 relationTo: {
-                  const: 'locations'
-                }
+                  const: 'locations',
+                },
               },
-              required: ['value', 'relationTo']
-            }
-          ]
-        }
+              required: ['value', 'relationTo'],
+            },
+          ],
+        },
       },
-      required: ['title', 'slug', 'doc']
+      required: ['title', 'slug', 'doc'],
     },
     media: {
       title: 'Media',
@@ -10298,22 +10298,22 @@ export const input = {
       additionalProperties: false,
       properties: {
         url: {
-          type: 'string'
+          type: 'string',
         },
         filename: {
-          type: 'string'
+          type: 'string',
         },
         mimeType: {
-          type: 'string'
+          type: 'string',
         },
         filesize: {
-          type: 'number'
+          type: 'number',
         },
         width: {
-          type: 'number'
+          type: 'number',
         },
         height: {
-          type: 'number'
+          type: 'number',
         },
         sizes: {
           type: 'object',
@@ -10324,194 +10324,194 @@ export const input = {
               additionalProperties: false,
               properties: {
                 url: {
-                  type: 'string'
+                  type: 'string',
                 },
                 width: {
-                  type: 'number'
+                  type: 'number',
                 },
                 height: {
-                  type: 'number'
+                  type: 'number',
                 },
                 mimeType: {
-                  type: 'string'
+                  type: 'string',
                 },
                 filesize: {
-                  type: 'number'
+                  type: 'number',
                 },
                 filename: {
-                  type: 'string'
-                }
+                  type: 'string',
+                },
               },
-              required: []
+              required: [],
             },
             card: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 url: {
-                  type: 'string'
+                  type: 'string',
                 },
                 width: {
-                  type: 'number'
+                  type: 'number',
                 },
                 height: {
-                  type: 'number'
+                  type: 'number',
                 },
                 mimeType: {
-                  type: 'string'
+                  type: 'string',
                 },
                 filesize: {
-                  type: 'number'
+                  type: 'number',
                 },
                 filename: {
-                  type: 'string'
-                }
+                  type: 'string',
+                },
               },
-              required: []
+              required: [],
             },
             portrait: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 url: {
-                  type: 'string'
+                  type: 'string',
                 },
                 width: {
-                  type: 'number'
+                  type: 'number',
                 },
                 height: {
-                  type: 'number'
+                  type: 'number',
                 },
                 mimeType: {
-                  type: 'string'
+                  type: 'string',
                 },
                 filesize: {
-                  type: 'number'
+                  type: 'number',
                 },
                 filename: {
-                  type: 'string'
-                }
+                  type: 'string',
+                },
               },
-              required: []
+              required: [],
             },
             square: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 url: {
-                  type: 'string'
+                  type: 'string',
                 },
                 width: {
-                  type: 'number'
+                  type: 'number',
                 },
                 height: {
-                  type: 'number'
+                  type: 'number',
                 },
                 mimeType: {
-                  type: 'string'
+                  type: 'string',
                 },
                 filesize: {
-                  type: 'number'
+                  type: 'number',
                 },
                 filename: {
-                  type: 'string'
-                }
+                  type: 'string',
+                },
               },
-              required: []
+              required: [],
             },
             feature: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 url: {
-                  type: 'string'
+                  type: 'string',
                 },
                 width: {
-                  type: 'number'
+                  type: 'number',
                 },
                 height: {
-                  type: 'number'
+                  type: 'number',
                 },
                 mimeType: {
-                  type: 'string'
+                  type: 'string',
                 },
                 filesize: {
-                  type: 'number'
+                  type: 'number',
                 },
                 filename: {
-                  type: 'string'
-                }
+                  type: 'string',
+                },
               },
-              required: []
+              required: [],
             },
             meta: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 url: {
-                  type: 'string'
+                  type: 'string',
                 },
                 width: {
-                  type: 'number'
+                  type: 'number',
                 },
                 height: {
-                  type: 'number'
+                  type: 'number',
                 },
                 mimeType: {
-                  type: 'string'
+                  type: 'string',
                 },
                 filesize: {
-                  type: 'number'
+                  type: 'number',
                 },
                 filename: {
-                  type: 'string'
-                }
+                  type: 'string',
+                },
               },
-              required: []
+              required: [],
             },
             hero: {
               type: 'object',
               additionalProperties: false,
               properties: {
                 url: {
-                  type: 'string'
+                  type: 'string',
                 },
                 width: {
-                  type: 'number'
+                  type: 'number',
                 },
                 height: {
-                  type: 'number'
+                  type: 'number',
                 },
                 mimeType: {
-                  type: 'string'
+                  type: 'string',
                 },
                 filesize: {
-                  type: 'number'
+                  type: 'number',
                 },
                 filename: {
-                  type: 'string'
-                }
+                  type: 'string',
+                },
               },
-              required: []
-            }
+              required: [],
+            },
           },
-          required: []
+          required: [],
         },
         alt: {
-          type: 'string'
+          type: 'string',
         },
         fallback: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/media'
-            }
-          ]
-        }
+              $ref: '#/definitions/media',
+            },
+          ],
+        },
       },
-      required: ['alt']
+      required: ['alt'],
     },
     people: {
       title: 'Person',
@@ -10519,10 +10519,10 @@ export const input = {
       additionalProperties: false,
       properties: {
         name: {
-          type: 'string'
+          type: 'string',
         },
         position: {
-          type: 'string'
+          type: 'string',
         },
         contacts: {
           type: 'array',
@@ -10532,20 +10532,20 @@ export const input = {
             properties: {
               type: {
                 type: 'string',
-                enum: ['mailto', 'tel', 'fax']
+                enum: ['mailto', 'tel', 'fax'],
               },
               label: {
-                type: 'string'
+                type: 'string',
               },
               value: {
-                type: 'string'
+                type: 'string',
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: []
-          }
+            required: [],
+          },
         },
         socialMediaLinks: {
           type: 'array',
@@ -10555,65 +10555,65 @@ export const input = {
             properties: {
               type: {
                 type: 'string',
-                enum: ['facebook', 'vimeo', 'twitter', 'linkedin', 'instagram']
+                enum: ['facebook', 'vimeo', 'twitter', 'linkedin', 'instagram'],
               },
               url: {
-                type: 'string'
+                type: 'string',
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: ['type', 'url']
-          }
+            required: ['type', 'url'],
+          },
         },
         richText: {
           type: 'array',
           items: {
-            type: 'object'
-          }
+            type: 'object',
+          },
         },
         meta: {
           type: 'object',
           additionalProperties: false,
           properties: {
             title: {
-              type: 'string'
+              type: 'string',
             },
             description: {
-              type: 'string'
+              type: 'string',
             },
             keywords: {
-              type: 'string'
+              type: 'string',
             },
             image: {
               oneOf: [
                 {
-                  type: 'string'
+                  type: 'string',
                 },
                 {
-                  $ref: '#/definitions/media'
-                }
-              ]
-            }
+                  $ref: '#/definitions/media',
+                },
+              ],
+            },
           },
-          required: []
+          required: [],
         },
         slug: {
-          type: 'string'
+          type: 'string',
         },
         home: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/pages'
-            }
-          ]
-        }
+              $ref: '#/definitions/pages',
+            },
+          ],
+        },
       },
-      required: ['name']
+      required: ['name'],
     },
     forms: {
       title: 'Form',
@@ -10621,22 +10621,22 @@ export const input = {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'string'
+          type: 'string',
         },
         emailTo: {
-          type: 'string'
+          type: 'string',
         },
         successMessage: {
           type: 'array',
           items: {
-            type: 'object'
-          }
+            type: 'object',
+          },
         },
         redirect: {
-          type: 'string'
+          type: 'string',
         },
         submitButtonLabel: {
-          type: 'string'
+          type: 'string',
         },
         fields: {
           type: 'array',
@@ -10647,47 +10647,47 @@ export const input = {
                 additionalProperties: false,
                 properties: {
                   name: {
-                    type: 'string'
+                    type: 'string',
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   width: {
-                    type: 'number'
+                    type: 'number',
                   },
                   defaultValue: {
-                    type: 'string'
+                    type: 'string',
                   },
                   required: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'text'
-                  }
+                    const: 'text',
+                  },
                 },
-                required: ['blockType', 'name', 'label']
+                required: ['blockType', 'name', 'label'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   name: {
-                    type: 'string'
+                    type: 'string',
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   width: {
-                    type: 'number'
+                    type: 'number',
                   },
                   defaultValue: {
-                    type: 'string'
+                    type: 'string',
                   },
                   options: {
                     type: 'array',
@@ -10696,147 +10696,147 @@ export const input = {
                       additionalProperties: false,
                       properties: {
                         label: {
-                          type: 'string'
+                          type: 'string',
                         },
                         value: {
-                          type: 'string'
+                          type: 'string',
                         },
                         id: {
-                          type: 'string'
-                        }
+                          type: 'string',
+                        },
                       },
-                      required: ['label', 'value']
-                    }
+                      required: ['label', 'value'],
+                    },
                   },
                   required: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'select'
-                  }
+                    const: 'select',
+                  },
                 },
-                required: ['blockType', 'name', 'label']
+                required: ['blockType', 'name', 'label'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   name: {
-                    type: 'string'
+                    type: 'string',
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   width: {
-                    type: 'number'
+                    type: 'number',
                   },
                   required: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'email'
-                  }
+                    const: 'email',
+                  },
                 },
-                required: ['blockType', 'name', 'label']
+                required: ['blockType', 'name', 'label'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   name: {
-                    type: 'string'
+                    type: 'string',
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   width: {
-                    type: 'number'
+                    type: 'number',
                   },
                   required: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'state'
-                  }
+                    const: 'state',
+                  },
                 },
-                required: ['blockType', 'name', 'label']
+                required: ['blockType', 'name', 'label'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   name: {
-                    type: 'string'
+                    type: 'string',
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   width: {
-                    type: 'number'
+                    type: 'number',
                   },
                   required: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'country'
-                  }
+                    const: 'country',
+                  },
                 },
-                required: ['blockType', 'name', 'label']
+                required: ['blockType', 'name', 'label'],
               },
               {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
                   name: {
-                    type: 'string'
+                    type: 'string',
                   },
                   label: {
-                    type: 'string'
+                    type: 'string',
                   },
                   width: {
-                    type: 'number'
+                    type: 'number',
                   },
                   required: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   defaultValue: {
-                    type: 'boolean'
+                    type: 'boolean',
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'checkbox'
-                  }
+                    const: 'checkbox',
+                  },
                 },
-                required: ['blockType', 'name', 'label']
+                required: ['blockType', 'name', 'label'],
               },
               {
                 type: 'object',
@@ -10845,26 +10845,26 @@ export const input = {
                   message: {
                     type: 'array',
                     items: {
-                      type: 'object'
-                    }
+                      type: 'object',
+                    },
                   },
                   id: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockName: {
-                    type: 'string'
+                    type: 'string',
                   },
                   blockType: {
-                    const: 'message'
-                  }
+                    const: 'message',
+                  },
                 },
-                required: ['blockType']
-              }
-            ]
-          }
-        }
+                required: ['blockType'],
+              },
+            ],
+          },
+        },
       },
-      required: ['title']
+      required: ['title'],
     },
     'form-submissions': {
       title: 'Form Submission',
@@ -10874,12 +10874,12 @@ export const input = {
         form: {
           oneOf: [
             {
-              type: 'string'
+              type: 'string',
             },
             {
-              $ref: '#/definitions/forms'
-            }
-          ]
+              $ref: '#/definitions/forms',
+            },
+          ],
         },
         submissionData: {
           type: 'array',
@@ -10888,20 +10888,20 @@ export const input = {
             additionalProperties: false,
             properties: {
               field: {
-                type: 'string'
+                type: 'string',
               },
               value: {
-                type: 'string'
+                type: 'string',
               },
               id: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             },
-            required: ['field', 'value']
-          }
-        }
+            required: ['field', 'value'],
+          },
+        },
       },
-      required: ['form']
+      required: ['form'],
     },
     users: {
       title: 'User',
@@ -10909,27 +10909,27 @@ export const input = {
       additionalProperties: false,
       properties: {
         email: {
-          type: 'string'
+          type: 'string',
         },
         resetPasswordToken: {
-          type: 'string'
+          type: 'string',
         },
         resetPasswordExpiration: {
-          type: 'string'
+          type: 'string',
         },
         loginAttempts: {
-          type: 'number'
+          type: 'number',
         },
         lockUntil: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
-      required: []
-    }
+      required: [],
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 export const options = {
-  unreachableDefinitions: true
+  unreachableDefinitions: true,
 }

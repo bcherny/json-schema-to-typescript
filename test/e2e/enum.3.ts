@@ -6,14 +6,14 @@ export const input = {
     InterfaceWithTsEnumNames: {
       type: 'object',
       properties: {
-        TsEnumNames: {$ref: '#/definitions/TsEnums'}
+        TsEnumNames: {$ref: '#/definitions/TsEnums'},
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     TsEnums: {
       type: 'string',
       tsEnumNames: ['publish', 'draft'],
-      enum: ['publish', 'draft']
-    }
-  }
+      enum: ['publish', 'draft'],
+    },
+  },
 }

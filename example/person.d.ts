@@ -6,12 +6,12 @@
  */
 
 export interface Person {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  hairColor?: "black" | "brown" | "blue";
-  [k: string]: unknown;
+  age?: number
+  hairColor?: 'black' | 'brown' | 'blue'
+  [k: string]: unknown
 }
