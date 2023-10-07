@@ -3,72 +3,72 @@ export const input = {
   properties: {
     a: {
       const: '',
-      nullable: true
+      nullable: true,
     },
     b: {
       const: null,
-      nullable: true
+      nullable: true,
     },
     c: {
       enum: ['a', 'b'],
-      nullable: true
+      nullable: true,
     },
     d: {
       enum: ['', null],
-      nullable: true
+      nullable: true,
     },
     e: {
       type: 'string',
-      nullable: true
+      nullable: true,
     },
     f: {
       type: 'null',
-      nullable: true
+      nullable: true,
     },
     g: {
       type: 'string',
       const: '',
-      nullable: true
+      nullable: true,
     },
     h: {
       type: 'string',
       const: null,
-      nullable: true
+      nullable: true,
     },
     i: {
       type: 'string',
       enum: ['a', 'b'],
-      nullable: true
+      nullable: true,
     },
     j: {
       type: 'string',
       enum: ['', null],
-      nullable: true
+      nullable: true,
     },
     k: {
       type: ['string', 'integer'],
-      nullable: true
+      nullable: true,
     },
     l: {
       type: ['string', 'null'],
-      nullable: true
+      nullable: true,
     },
     m: {
       anyOf: [{type: 'string'}, {type: 'integer'}],
-      nullable: true
+      nullable: true,
     },
     n: {
       anyOf: [{type: 'string'}, {type: 'null'}],
-      nullable: true
+      nullable: true,
     },
     o: {
       oneOf: [{type: 'string'}, {type: 'integer'}],
-      nullable: true
+      nullable: true,
     },
     p: {
       oneOf: [{type: 'string'}, {type: 'null'}],
-      nullable: true
-    }
+      nullable: true,
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
