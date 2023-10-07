@@ -230,12 +230,15 @@ rules.set('Transform nullable to null type', schema => {
 
   delete schema.nullable
 
-  // schema.const has already been converted to a single-value enum by rule "Transform const to singleton enum", so it
-  // does not need to be handled here.
-  if (schema.enum) {
+  if (schema.const !== undefined) {
+    if (schema.const !== null) {
+      schema.enum = [schema.const, null]
+      delete schema.const
+    }
+  } else if (schema.enum) {
     if (!schema.enum.includes(null)) {
       schema.enum.push(null)
-      log('yellow', 'normalizer', 'enum should include "null" when schema is nullable', schema)
+      log('yellow', 'normalizer', 'enum should include null when schema is nullable', schema)
     }
   } else if (schema.type) {
     schema.type = [...[schema.type].flatMap(value => value), 'null']
