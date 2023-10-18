@@ -294,6 +294,20 @@ function parseNonLiteral(
         type: 'UNION',
       }
     case 'UNNAMED_ENUM':
+      if (options.enableStringEnums && schema.type === 'string') {
+        return {
+          comment: schema.description,
+          deprecated: schema.deprecated,
+          keyName,
+          standaloneName: standaloneName(schema, keyName, usedNames)!,
+          params: schema.enum!.map(_ => ({
+            ast: parseLiteral(_, undefined),
+            keyName: _ as string,
+          })),
+          type: 'ENUM',
+        }
+      }
+
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
