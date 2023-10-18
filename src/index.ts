@@ -44,6 +44,10 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
+   * Generate string enums instead of string union types?
+   */
+  enableStringEnums: boolean
+  /**
    * Format code? Set this to `false` to improve performance.
    */
   format: boolean
@@ -90,6 +94,7 @@ export const DEFAULT_OPTIONS: Options = {
   cwd: process.cwd(),
   declareExternallyReferenced: true,
   enableConstEnums: true,
+  enableStringEnums: false,
   format: true,
   ignoreMinAndMaxItems: false,
   maxItems: 20,
