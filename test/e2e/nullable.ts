@@ -53,22 +53,6 @@ export const input = {
       type: ['string', 'null'],
       nullable: true,
     },
-    m: {
-      anyOf: [{type: 'string'}, {type: 'integer'}],
-      nullable: true,
-    },
-    n: {
-      anyOf: [{type: 'string'}, {type: 'null'}],
-      nullable: true,
-    },
-    o: {
-      oneOf: [{type: 'string'}, {type: 'integer'}],
-      nullable: true,
-    },
-    p: {
-      oneOf: [{type: 'string'}, {type: 'null'}],
-      nullable: true,
-    },
   },
   additionalProperties: false,
 }

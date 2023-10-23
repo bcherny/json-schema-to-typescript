@@ -209,6 +209,13 @@ export function error(...messages: any[]): void {
   console.error(getStyledTextForLogging('red')?.('error'), ...messages)
 }
 
+export function warning(...messages: any[]): void {
+  if (!process.env.VERBOSE) {
+    return console.warn(messages)
+  }
+  console.warn(getStyledTextForLogging('yellow')?.('warning'), ...messages)
+}
+
 type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'white' | 'yellow'
 
 export function log(style: LogStyle, title: string, ...messages: unknown[]): void {

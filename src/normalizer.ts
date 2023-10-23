@@ -1,9 +1,8 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, isSchemaLike, justName, log, toSafeString, traverse} from './utils'
+import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse, warning} from './utils'
 import {Options} from './'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
-import {link} from './linker'
 
 type Rule = (
   schema: LinkedJSONSchema,
@@ -216,13 +215,6 @@ rules.set('Transform definitions to $defs', (schema, fileName) => {
   }
 })
 
-rules.set('Transform const to singleton enum', schema => {
-  if (schema.const !== undefined) {
-    schema.enum = [schema.const]
-    delete schema.const
-  }
-})
-
 rules.set('Transform nullable to null type', schema => {
   if (schema.nullable !== true) {
     return
@@ -232,20 +224,30 @@ rules.set('Transform nullable to null type', schema => {
 
   if (schema.const !== undefined) {
     if (schema.const !== null) {
+      warning('normalizer', 'const should be set to null when schema is nullable', schema)
       schema.enum = [schema.const, null]
       delete schema.const
     }
   } else if (schema.enum) {
     if (!schema.enum.includes(null)) {
+      warning('normalizer', 'enum should include null when schema is nullable', schema)
       schema.enum.push(null)
-      log('yellow', 'normalizer', 'enum should include null when schema is nullable', schema)
     }
   } else if (schema.type) {
-    schema.type = [...[schema.type].flatMap(value => value), 'null']
-  } else if (schema.anyOf) {
-    schema.anyOf.push(link({type: 'null'}, schema.anyOf))
-  } else if (schema.oneOf) {
-    schema.oneOf.push(link({type: 'null'}, schema.oneOf))
+    if (Array.isArray(schema.type)) {
+      if (!schema.type.includes('null')) {
+        schema.type.push('null')
+      }
+    } else if (schema.type !== 'null') {
+      schema.type = [schema.type, 'null']
+    }
+  }
+})
+
+rules.set('Transform const to singleton enum', schema => {
+  if (schema.const !== undefined) {
+    schema.enum = [schema.const]
+    delete schema.const
   }
 })
 

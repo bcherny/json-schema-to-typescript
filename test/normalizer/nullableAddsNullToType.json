@@ -55,22 +55,6 @@
       "l": {
         "type": ["string", "null"],
         "nullable": true
-      },
-      "m": {
-        "anyOf": [{"type": "string"}, {"type": "integer"}],
-        "nullable": true
-      },
-      "n": {
-        "anyOf": [{"type": "string"}, {"type": "null"}],
-        "nullable": true
-      },
-      "o": {
-        "oneOf": [{"type": "string"}, {"type": "integer"}],
-        "nullable": true
-      },
-      "p": {
-        "oneOf": [{"type": "string"}, {"type": "null"}],
-        "nullable": true
       }
     },
     "required": [],
@@ -96,7 +80,7 @@
         "type": ["string", "null"]
       },
       "f": {
-        "type": ["null", "null"]
+        "type": "null"
       },
       "g": {
         "type": "string",
@@ -118,19 +102,7 @@
         "type": ["string", "integer", "null"]
       },
       "l": {
-        "type": ["string", "null", "null"]
-      },
-      "m": {
-        "anyOf": [{"type": "string"}, {"type": "integer"}, {"type": "null"}]
-      },
-      "n": {
-        "anyOf": [{"type": "string"}, {"type": "null"}, {"type": "null"}]
-      },
-      "o": {
-        "oneOf": [{"type": "string"}, {"type": "integer"}, {"type": "null"}]
-      },
-      "p": {
-        "oneOf": [{"type": "string"}, {"type": "null"}, {"type": "null"}]
+        "type": ["string", "null"]
       }
     },
     "required": [],
