@@ -2,12 +2,12 @@ export const input = {
   title: 'Local Cycle',
   properties: {
     foo: {
-      $ref: '#'
+      $ref: '#',
     },
     bar: {
-      $ref: '#'
-    }
+      $ref: '#',
+    },
   },
   required: ['foo'],
-  additionalProperties: true
+  additionalProperties: true,
 }

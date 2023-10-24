@@ -3,16 +3,16 @@ export const input = {
   type: 'object',
   properties: {
     foo: {
-      $ref: 'ReferencedTypeWithoutID.json'
+      $ref: 'ReferencedTypeWithoutID.json',
     },
     bar: {
-      $ref: 'ReferencedTypeWithoutIDConflict.json'
-    }
+      $ref: 'ReferencedTypeWithoutIDConflict.json',
+    },
   },
   required: ['foo', 'bar'],
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 export const options = {
-  cwd: 'test/resources/'
+  cwd: 'test/resources/',
 }

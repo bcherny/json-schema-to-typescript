@@ -9,7 +9,7 @@ type Rule = (
   fileName: string,
   options: Options,
   key: string | null,
-  dereferencedPaths: DereferencedPaths
+  dereferencedPaths: DereferencedPaths,
 ) => void
 const rules = new Map<string, Rule>()
 
@@ -64,7 +64,7 @@ rules.set('Transform id to $id', (schema, fileName) => {
   }
   if (schema.id && schema.$id && schema.id !== schema.$id) {
     throw ReferenceError(
-      `Schema must define either id or $id, not both. Given id=${schema.id}, $id=${schema.$id} in ${fileName}`
+      `Schema must define either id or $id, not both. Given id=${schema.id}, $id=${schema.$id} in ${fileName}`,
     )
   }
   if (schema.id) {
@@ -111,7 +111,7 @@ rules.set('Add JSDoc comments for minItems and maxItems', schema => {
   }
   const commentsToAppend = [
     'minItems' in schema ? `@minItems ${schema.minItems}` : '',
-    'maxItems' in schema ? `@maxItems ${schema.maxItems}` : ''
+    'maxItems' in schema ? `@maxItems ${schema.maxItems}` : '',
   ].filter(Boolean)
   if (commentsToAppend.length) {
     schema.description = appendToDescription(schema.description, ...commentsToAppend)
@@ -206,7 +206,7 @@ rules.set('Make extends always an array, if it is defined', schema => {
 rules.set('Transform definitions to $defs', (schema, fileName) => {
   if (schema.definitions && schema.$defs && !isDeepStrictEqual(schema.definitions, schema.$defs)) {
     throw ReferenceError(
-      `Schema must define either definitions or $defs, not both. Given id=${schema.id} in ${fileName}`
+      `Schema must define either definitions or $defs, not both. Given id=${schema.id} in ${fileName}`,
     )
   }
   if (schema.definitions) {
@@ -226,7 +226,7 @@ export function normalize(
   rootSchema: LinkedJSONSchema,
   dereferencedPaths: DereferencedPaths,
   filename: string,
-  options: Options
+  options: Options,
 ): NormalizedJSONSchema {
   rules.forEach(rule => traverse(rootSchema, (schema, key) => rule(schema, filename, options, key, dereferencedPaths)))
   return rootSchema as NormalizedJSONSchema

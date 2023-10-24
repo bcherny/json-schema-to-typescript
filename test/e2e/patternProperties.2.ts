@@ -6,12 +6,12 @@ export let input = {
       id: 'Child',
       type: 'object',
       properties: {
-        aProperty: {type: 'string'}
-      }
-    }
+        aProperty: {type: 'string'},
+      },
+    },
   },
   properties: {
     a: {type: 'number'},
-    b: {type: 'string'}
-  }
+    b: {type: 'string'},
+  },
 }

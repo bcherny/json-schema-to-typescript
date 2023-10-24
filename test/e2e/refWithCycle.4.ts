@@ -5,6 +5,6 @@ export const input = {
   type: 'object',
   properties: {
     id: idSchema,
-    userId: idSchema
-  }
+    userId: idSchema,
+  },
 }

@@ -14,13 +14,13 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
   switch (ast.type) {
     case 'INTERFACE':
       return Object.assign(ast, {
-        params: ast.params.map(_ => Object.assign(_, {ast: optimize(_.ast, options, processed)}))
+        params: ast.params.map(_ => Object.assign(_, {ast: optimize(_.ast, options, processed)})),
       })
     case 'INTERSECTION':
     case 'UNION':
       // Start with the leaves...
       const optimizedAST = Object.assign(ast, {
-        params: ast.params.map(_ => optimize(_, options, processed))
+        params: ast.params.map(_ => optimize(_, options, processed)),
       })
 
       // [A, B, C, Any] -> Any
@@ -56,7 +56,7 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       }
 
       return Object.assign(optimizedAST, {
-        params: optimizedAST.params.map(_ => optimize(_, options, processed))
+        params: optimizedAST.params.map(_ => optimize(_, options, processed)),
       })
     default:
       return ast

@@ -6,113 +6,113 @@ export const input = {
     schemaArray: {
       type: 'array',
       minItems: 1,
-      items: {$ref: '#'}
+      items: {$ref: '#'},
     },
     positiveInteger: {
       type: 'integer',
-      minimum: 0
+      minimum: 0,
     },
     positiveIntegerDefault0: {
-      allOf: [{$ref: '#/definitions/positiveInteger'}, {default: 0}]
+      allOf: [{$ref: '#/definitions/positiveInteger'}, {default: 0}],
     },
     simpleTypes: {
-      enum: ['array', 'boolean', 'integer', 'null', 'number', 'object', 'string']
+      enum: ['array', 'boolean', 'integer', 'null', 'number', 'object', 'string'],
     },
     stringArray: {
       type: 'array',
       items: {type: 'string'},
       minItems: 1,
-      uniqueItems: true
-    }
+      uniqueItems: true,
+    },
   },
   type: 'object',
   properties: {
     id: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
     },
     $schema: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
     },
     title: {
-      type: 'string'
+      type: 'string',
     },
     description: {
-      type: 'string'
+      type: 'string',
     },
     default: {},
     multipleOf: {
       type: 'number',
       minimum: 0,
-      exclusiveMinimum: true
+      exclusiveMinimum: true,
     },
     maximum: {
-      type: 'number'
+      type: 'number',
     },
     exclusiveMaximum: {
       type: 'boolean',
-      default: false
+      default: false,
     },
     minimum: {
-      type: 'number'
+      type: 'number',
     },
     exclusiveMinimum: {
       type: 'boolean',
-      default: false
+      default: false,
     },
     maxLength: {$ref: '#/definitions/positiveInteger'},
     minLength: {$ref: '#/definitions/positiveIntegerDefault0'},
     pattern: {
       type: 'string',
-      format: 'regex'
+      format: 'regex',
     },
     additionalItems: {
       anyOf: [{type: 'boolean'}, {$ref: '#'}],
-      default: {}
+      default: {},
     },
     items: {
       anyOf: [{$ref: '#'}, {$ref: '#/definitions/schemaArray'}],
-      default: {}
+      default: {},
     },
     maxItems: {$ref: '#/definitions/positiveInteger'},
     minItems: {$ref: '#/definitions/positiveIntegerDefault0'},
     uniqueItems: {
       type: 'boolean',
-      default: false
+      default: false,
     },
     maxProperties: {$ref: '#/definitions/positiveInteger'},
     minProperties: {$ref: '#/definitions/positiveIntegerDefault0'},
     required: {$ref: '#/definitions/stringArray'},
     additionalProperties: {
       anyOf: [{type: 'boolean'}, {$ref: '#'}],
-      default: {}
+      default: {},
     },
     definitions: {
       type: 'object',
       additionalProperties: {$ref: '#'},
-      default: {}
+      default: {},
     },
     properties: {
       type: 'object',
       additionalProperties: {$ref: '#'},
-      default: {}
+      default: {},
     },
     patternProperties: {
       type: 'object',
       additionalProperties: {$ref: '#'},
-      default: {}
+      default: {},
     },
     dependencies: {
       type: 'object',
       additionalProperties: {
-        anyOf: [{$ref: '#'}, {$ref: '#/definitions/stringArray'}]
-      }
+        anyOf: [{$ref: '#'}, {$ref: '#/definitions/stringArray'}],
+      },
     },
     enum: {
       type: 'array',
       minItems: 1,
-      uniqueItems: true
+      uniqueItems: true,
     },
     type: {
       anyOf: [
@@ -121,18 +121,18 @@ export const input = {
           type: 'array',
           items: {$ref: '#/definitions/simpleTypes'},
           minItems: 1,
-          uniqueItems: true
-        }
-      ]
+          uniqueItems: true,
+        },
+      ],
     },
     allOf: {$ref: '#/definitions/schemaArray'},
     anyOf: {$ref: '#/definitions/schemaArray'},
     oneOf: {$ref: '#/definitions/schemaArray'},
-    not: {$ref: '#'}
+    not: {$ref: '#'},
   },
   dependencies: {
     exclusiveMaximum: ['maximum'],
-    exclusiveMinimum: ['minimum']
+    exclusiveMinimum: ['minimum'],
   },
-  default: {}
+  default: {},
 }

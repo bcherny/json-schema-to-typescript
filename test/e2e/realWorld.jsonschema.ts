@@ -7,93 +7,93 @@ export const input = {
     schemaArray: {
       type: 'array',
       minItems: 1,
-      items: {$ref: '#'}
+      items: {$ref: '#'},
     },
     nonNegativeInteger: {
       type: 'integer',
-      minimum: 0
+      minimum: 0,
     },
     nonNegativeIntegerDefault0: {
-      allOf: [{$ref: '#/definitions/nonNegativeInteger'}, {default: 0}]
+      allOf: [{$ref: '#/definitions/nonNegativeInteger'}, {default: 0}],
     },
     simpleTypes: {
-      enum: ['array', 'boolean', 'integer', 'null', 'number', 'object', 'string']
+      enum: ['array', 'boolean', 'integer', 'null', 'number', 'object', 'string'],
     },
     stringArray: {
       type: 'array',
       items: {type: 'string'},
       uniqueItems: true,
-      default: []
-    }
+      default: [],
+    },
   },
   type: ['object', 'boolean'],
   properties: {
     $id: {
       type: 'string',
-      format: 'uri-reference'
+      format: 'uri-reference',
     },
     $schema: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
     },
     $ref: {
       type: 'string',
-      format: 'uri-reference'
+      format: 'uri-reference',
     },
     $comment: {
-      type: 'string'
+      type: 'string',
     },
     title: {
-      type: 'string'
+      type: 'string',
     },
     description: {
-      type: 'string'
+      type: 'string',
     },
     default: true,
     readOnly: {
       type: 'boolean',
-      default: false
+      default: false,
     },
     writeOnly: {
       type: 'boolean',
-      default: false
+      default: false,
     },
     examples: {
       type: 'array',
-      items: true
+      items: true,
     },
     multipleOf: {
       type: 'number',
-      exclusiveMinimum: 0
+      exclusiveMinimum: 0,
     },
     maximum: {
-      type: 'number'
+      type: 'number',
     },
     exclusiveMaximum: {
-      type: 'number'
+      type: 'number',
     },
     minimum: {
-      type: 'number'
+      type: 'number',
     },
     exclusiveMinimum: {
-      type: 'number'
+      type: 'number',
     },
     maxLength: {$ref: '#/definitions/nonNegativeInteger'},
     minLength: {$ref: '#/definitions/nonNegativeIntegerDefault0'},
     pattern: {
       type: 'string',
-      format: 'regex'
+      format: 'regex',
     },
     additionalItems: {$ref: '#'},
     items: {
       anyOf: [{$ref: '#'}, {$ref: '#/definitions/schemaArray'}],
-      default: true
+      default: true,
     },
     maxItems: {$ref: '#/definitions/nonNegativeInteger'},
     minItems: {$ref: '#/definitions/nonNegativeIntegerDefault0'},
     uniqueItems: {
       type: 'boolean',
-      default: false
+      default: false,
     },
     contains: {$ref: '#'},
     maxProperties: {$ref: '#/definitions/nonNegativeInteger'},
@@ -103,24 +103,24 @@ export const input = {
     definitions: {
       type: 'object',
       additionalProperties: {$ref: '#'},
-      default: {}
+      default: {},
     },
     properties: {
       type: 'object',
       additionalProperties: {$ref: '#'},
-      default: {}
+      default: {},
     },
     patternProperties: {
       type: 'object',
       additionalProperties: {$ref: '#'},
       propertyNames: {format: 'regex'},
-      default: {}
+      default: {},
     },
     dependencies: {
       type: 'object',
       additionalProperties: {
-        anyOf: [{$ref: '#'}, {$ref: '#/definitions/stringArray'}]
-      }
+        anyOf: [{$ref: '#'}, {$ref: '#/definitions/stringArray'}],
+      },
     },
     propertyNames: {$ref: '#'},
     const: true,
@@ -128,7 +128,7 @@ export const input = {
       type: 'array',
       items: true,
       minItems: 1,
-      uniqueItems: true
+      uniqueItems: true,
     },
     type: {
       anyOf: [
@@ -137,9 +137,9 @@ export const input = {
           type: 'array',
           items: {$ref: '#/definitions/simpleTypes'},
           minItems: 1,
-          uniqueItems: true
-        }
-      ]
+          uniqueItems: true,
+        },
+      ],
     },
     format: {type: 'string'},
     contentMediaType: {type: 'string'},
@@ -150,7 +150,7 @@ export const input = {
     allOf: {$ref: '#/definitions/schemaArray'},
     anyOf: {$ref: '#/definitions/schemaArray'},
     oneOf: {$ref: '#/definitions/schemaArray'},
-    not: {$ref: '#'}
+    not: {$ref: '#'},
   },
-  default: true
+  default: true,
 }

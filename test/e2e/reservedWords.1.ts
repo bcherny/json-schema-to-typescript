@@ -1,25 +1,25 @@
 export const input = {
   definitions: {
     definitions: {
-      type: 'integer'
+      type: 'integer',
     },
     properties: {
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
   properties: {
     additionalProperties: {
       items: {
-        type: 'number'
+        type: 'number',
       },
-      type: 'array'
+      type: 'array',
     },
     definitions: {
-      type: 'number'
+      type: 'number',
     },
     properties: {
-      type: 'boolean'
-    }
+      type: 'boolean',
+    },
   },
-  type: 'object'
+  type: 'object',
 }

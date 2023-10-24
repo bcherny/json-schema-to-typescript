@@ -46,7 +46,7 @@ const httpWithCacheResolver = {
   canRead: /^https?:/i,
   async read({url}: FileInfo) {
     return await getWithCache(url)
-  }
+  },
 }
 
 function runOne(exports: TestCase, name: string) {
@@ -64,7 +64,7 @@ function runOne(exports: TestCase, name: string) {
     } else {
       t.snapshot(
         await compile(exports.input, stripExtension(name), options),
-        `Expected output to match snapshot for e2e test: ${name}`
+        `Expected output to match snapshot for e2e test: ${name}`,
       )
     }
   })

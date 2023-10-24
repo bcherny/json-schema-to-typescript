@@ -4,17 +4,17 @@ export const input = {
   properties: {
     foo: {
       type: 'object',
-      anyOf: [{$ref: '#/definitions/foo'}, {$ref: '#/definitions/bar'}, {$ref: '#/definitions/baz'}]
-    }
+      anyOf: [{$ref: '#/definitions/foo'}, {$ref: '#/definitions/bar'}, {$ref: '#/definitions/baz'}],
+    },
   },
   definitions: {
     foo: {
       properties: {
         a: {type: 'string'},
-        b: {type: 'integer'}
+        b: {type: 'integer'},
       },
       additionalProperties: false,
-      required: ['a']
+      required: ['a'],
     },
     bar: {
       properties: {
@@ -24,19 +24,19 @@ export const input = {
           items: {
             anyOf: [
               {
-                enum: ['wam']
-              }
-            ]
-          }
-        }
-      }
+                enum: ['wam'],
+              },
+            ],
+          },
+        },
+      },
     },
     baz: {
       properties: {
-        baz: {$ref: '#/definitions/bar'}
-      }
-    }
+        baz: {$ref: '#/definitions/bar'},
+      },
+    },
   },
   required: ['foo'],
-  additionalProperties: false
+  additionalProperties: false,
 }

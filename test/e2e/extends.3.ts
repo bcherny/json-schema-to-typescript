@@ -4,5 +4,5 @@ export const input = {
   title: 'Schema',
   description: 'Any Shape',
   additionalProperties: false,
-  anyOf: [{$ref: 'test/resources/extends/Circle.json'}, {$ref: 'test/resources/extends/Square.json'}]
+  anyOf: [{$ref: 'test/resources/extends/Circle.json'}, {$ref: 'test/resources/extends/Square.json'}],
 }

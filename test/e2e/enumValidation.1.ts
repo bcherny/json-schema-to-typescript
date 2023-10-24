@@ -5,15 +5,15 @@ export const input = {
     bar: {
       type: 'integer',
       enum: [1, 2, 3],
-      tsEnumNames: ['One', 'Three']
-    }
+      tsEnumNames: ['One', 'Three'],
+    },
   },
   required: ['bar'],
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 export const options = {
-  useTypescriptEnums: true
+  useTypescriptEnums: true,
 }
 
 export const error = true

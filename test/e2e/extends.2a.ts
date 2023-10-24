@@ -3,21 +3,21 @@ export const input = {
   type: 'object',
   extends: [
     {
-      $ref: 'test/resources/BaseType.1.json'
+      $ref: 'test/resources/BaseType.1.json',
     },
     {
-      $ref: 'test/resources/BaseType.2.json'
-    }
+      $ref: 'test/resources/BaseType.2.json',
+    },
   ],
   properties: {
     foo: {
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
   required: ['foo'],
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 export const options = {
-  declareExternallyReferenced: true
+  declareExternallyReferenced: true,
 }

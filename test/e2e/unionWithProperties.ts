@@ -8,8 +8,8 @@ export const input = {
       required: ['obj_type', 'type'],
       properties: {
         obj_type: {type: 'string', enum: ['Foo']},
-        foo_type: {type: 'string'}
-      }
+        foo_type: {type: 'string'},
+      },
     },
     {
       type: 'object',
@@ -18,13 +18,13 @@ export const input = {
         obj_type: {type: 'string', enum: ['Bar']},
         bar_type: {type: 'string'},
         team: {type: 'string'},
-        health: {type: 'integer', format: 'uint', minimum: 0.0}
-      }
-    }
+        health: {type: 'integer', format: 'uint', minimum: 0.0},
+      },
+    },
   ],
   required: ['coords', 'id'],
   properties: {
     coords: {type: 'number'},
-    id: {type: 'integer'}
-  }
+    id: {type: 'integer'},
+  },
 }
