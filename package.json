@@ -82,7 +82,6 @@
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "regenerate": "^1.4.2",
     "rimraf": "^3.0.2",
     "shx": "^0.3.4",
     "tsify": "^5.0.4",
