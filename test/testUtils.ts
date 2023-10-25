@@ -17,7 +17,7 @@ export function run() {
     t.is(generateName('$Abc_123', usedNames), '$Abc_123')
     t.is(generateName('Abc-de-f', usedNames), 'AbcDeF')
 
-    // Unicode tests, according to https://mathiasbynens.be/notes/javascript-identifiers-es6
+    // Unicode tests. See https://mathiasbynens.be/notes/javascript-identifiers-es6 to confirm results
     t.is(generateName('呵呵', usedNames), '呵呵')
     t.is(generateName('Abc 𝄇 de-fg', usedNames), 'AbcDeFg')
     t.is(generateName('Abcಠ_ಠde-fgh๏_๏', usedNames), 'Abcಠ_ಠdeFgh_')
