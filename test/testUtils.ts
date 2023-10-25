@@ -31,7 +31,7 @@ export function run() {
     t.is(generateName('🇳🇵 Emoji flags 🇦🇩', usedNames), 'EmojiFlags')
     // Regional flags like England use emoji tag sequences
     t.is(generateName('🏴󠁧󠁢󠁥󠁮󠁧󠁿 England 🏴󠁧󠁢󠁳󠁣󠁴󠁿', usedNames), 'England')
-    
+
     // Index should increment:
     t.is(generateName('a', usedNames), 'A1')
     t.is(generateName('a', usedNames), 'A2')

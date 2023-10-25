@@ -1,4 +1,4 @@
-import {isPlainObject, upperFirst, trim} from 'lodash'
+import {isPlainObject, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
 import identifierfy from 'identifierfy'
@@ -155,25 +155,18 @@ export function stripExtension(filename: string): string {
   return filename.replace(extname(filename), '')
 }
 
-// Source: https://gist.github.com/mathiasbynens/6334847
-// Unicode escape sequences are also permitted, but difficult to check
-// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
-
 /**
  * Convert a string that might contain spaces or special characters to one that
  * can safely be used as a TypeScript interface or enum name.
  */
 export function toSafeString(string: string) {
   return upperFirst(
+    // Convert to valid identifier
     identifierfy(string)
       // remove non-leading underscores followed by lowercase (convert snake_case)
       ?.replace(/_[a-z]/g, match => match.substr(1, match.length).toUpperCase())
       // uppercase letters after digits, dollars
-      .replace(/([\d$]+[a-zA-Z])/g, match => match.toUpperCase())
-      // uppercase first letter after whitespace
-      .replace(/\s+([a-zA-Z])/g, match => trim(match.toUpperCase()))
-      // remove remaining whitespace
-      .replace(/\s/g, ''),
+      .replace(/([\d$]+[a-zA-Z])/g, match => match.toUpperCase()),
   )
 }
 

@@ -16,11 +16,11 @@ export const input = {
     },
     spanish: {
       type: 'boolean',
-      title: 'Utilicé el traductor de google'
+      title: 'Utilicé el traductor de'
     },
     myanmar: {
       type: 'string',
-      title: 'ကျွန်တော် google translate သုံးပါတယ်။'
+      title: 'ကျွန်တော် translate သုံးပါတယ်။'
     },
     korean: {
       type: 'string',
@@ -28,7 +28,7 @@ export const input = {
     },
     japanese: {
       type: 'string',
-      title: '私はGoogle翻訳を使用しました'
+      title: '私は翻訳を使用しました'
     },
     hebrew: {
       type: 'string',
@@ -36,11 +36,11 @@ export const input = {
     },
     greek: {
       type: 'string',
-      title: 'Χρησιμοποίησα το Google Translate'
+      title: 'Χρησιμοποίησα το Translate'
     },
     armenian: {
       type: 'string',
-      title: 'Ես օգտագործել եմ Google translate-ը'
+      title: 'Ես օգտագործել եմ translate-ը'
     },
     arabic: {
       type: 'string',
@@ -48,7 +48,7 @@ export const input = {
     },
     thai: {
       type: 'string',
-      title: 'ผมใช้ Google แปล'
+      title: 'ผมใช้ แปล'
     },
     'Russian/Cyrillic': {
       type: 'string',
@@ -69,19 +69,19 @@ export const input = {
     },
     tibetian: {
       type: 'string',
-      title: 'ངས་སྔོན་ཆད་stars21.com'
+      title: 'ངས་སྔོན་ཆད་'
     },
     lao: {
       type: 'string',
-      title: 'ຂ້ອຍໃຊ້ Google ແປພາສາ'
+      title: 'ຂ້ອຍໃຊ້ ແປພາສາ'
     },
     kmer: {
       type: 'string',
-      title: 'ខ្ញុំបានប្រើ Google បកប្រែ'
+      title: 'ខ្ញុំបានប្រើ បកប្រែ'
     },
     mongolian: {
       type: 'string',
-      title: 'Би Google Translate ашигласан'
+      title: 'Би Translate ашигласан'
     },
     hindi: {
       type: 'string',
@@ -93,7 +93,7 @@ export const input = {
     },
     telugu: {
       type: 'string',
-      title: 'నేను Google అనువాదం ఉపయోగించాను'
+      title: 'నేను అనువాదం ఉపయోగించాను'
     },     
     urdu: {
       type: 'string',
