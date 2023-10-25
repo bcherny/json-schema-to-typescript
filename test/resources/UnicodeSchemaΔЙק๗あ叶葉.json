@@ -1,0 +1,12 @@
+{
+  "title": "Მე გამოვიყენე გუგლის თარგმანი",
+  "type": "object",
+  "properties": {
+    "გამოვიყენე": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 5
+    }
+  }
+}
