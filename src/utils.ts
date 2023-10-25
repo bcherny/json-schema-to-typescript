@@ -163,8 +163,10 @@ export function toSafeString(string: string) {
   return upperFirst(
     // Convert to valid identifier
     identifierfy(string)
+      // uppercase leading underscores followed by lowercase
+      ?.replace(/^_[a-z]/g, match => match.toUpperCase())
       // remove non-leading underscores followed by lowercase (convert snake_case)
-      ?.replace(/_[a-z]/g, match => match.substr(1, match.length).toUpperCase())
+      .replace(/_[a-z]/g, match => match.substr(1, match.length).toUpperCase())
       // uppercase letters after digits, dollars
       .replace(/([\d$]+[a-zA-Z])/g, match => match.toUpperCase()),
   )
