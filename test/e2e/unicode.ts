@@ -99,6 +99,10 @@ export const input = {
       type: 'string',
       title: 'میں نے گوگل ٹرانسلیٹ استعمال کیا۔',
     },
+    '✔✔✔': {
+      type: 'integer',
+      title: '𝄇𝄇𝄇'
+    },
     refAndExtends: {
       $ref: 'test/resources/UnicodeSchemaΔЙק๗あ叶葉.json',
     },
