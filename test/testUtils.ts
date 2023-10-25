@@ -19,8 +19,7 @@ export function run() {
 
     // Unicode tests, according to https://mathiasbynens.be/notes/javascript-identifiers-es6
     t.is(generateName('呵呵', usedNames), '呵呵')
-    t.is(generateName('呵呵', usedNames), '呵呵1')
-    t.is(generateName('Abc😄de-fg', usedNames), 'AbcDeFg')
+    t.is(generateName('Abc 𝄇 de-fg', usedNames), 'AbcDeFg')
     t.is(generateName('Abcಠ_ಠde-fgh๏_๏', usedNames), 'Abcಠ_ಠdeFgh_')
     t.is(generateName('ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ', usedNames), 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ')
     t.is(generateName('ÄÖÉÜß', usedNames), 'ÄÖÉÜß')
@@ -37,6 +36,7 @@ export function run() {
     t.is(generateName('a', usedNames), 'A2')
     t.is(generateName('a', usedNames), 'A3')
     t.is(generateName('🇳🇵 Emoji flags 🇦🇩', usedNames), 'EmojiFlags1')
+    t.is(generateName('🇳🇵 Emoji flags 🇦🇩', usedNames), 'EmojiFlags2')
   })
   test('isSchemaLike', t => {
     const schema = link({
