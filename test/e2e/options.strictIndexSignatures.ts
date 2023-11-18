@@ -22,6 +22,19 @@ export const input = {
         },
       },
     },
+    pattern: {
+      type: 'object',
+      properties: {
+        maybe: {
+          type: 'string',
+        },
+      },
+      patternProperties: {
+        'leaf|tree': {
+          type: 'array',
+        },
+      },
+    },
   },
   additionalProperties: {
     type: 'string',

@@ -416,12 +416,13 @@ function parseSchema(
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
 via the \`patternProperty\` "${key}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+        ast.keyName = singlePatternProperty ? '[k: string]' : key
         return {
           ast,
           isPatternProperty: !singlePatternProperty,
           isRequired: singlePatternProperty || includes(schema.required || [], key),
           isUnreachableDefinition: false,
-          keyName: singlePatternProperty ? '[k: string]' : key,
+          keyName: ast.keyName,
         }
       }),
     )
