@@ -4,26 +4,26 @@ export const input = {
   properties: {
     foo: {
       type: 'object',
-      allOf: [{$ref: '#/definitions/foo'}, {$ref: '#/definitions/bar'}]
-    }
+      allOf: [{$ref: '#/definitions/foo'}, {$ref: '#/definitions/bar'}],
+    },
   },
   definitions: {
     foo: {
       properties: {
         a: {type: 'string'},
-        b: {type: 'integer'}
+        b: {type: 'integer'},
       },
       additionalProperties: false,
-      required: ['a', 'b']
+      required: ['a', 'b'],
     },
     bar: {
       properties: {
-        a: {type: 'string'}
+        a: {type: 'string'},
       },
       additionalProperties: false,
-      required: ['a', 'b']
-    }
+      required: ['a', 'b'],
+    },
   },
   required: ['foo', 'bar'],
-  additionalProperties: false
+  additionalProperties: false,
 }

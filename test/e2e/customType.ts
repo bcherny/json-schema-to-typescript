@@ -4,20 +4,20 @@ export const input = {
   properties: {
     foo: {
       type: 'object',
-      tsType: 'Set<number|string>'
+      tsType: 'Set<number|string>',
     },
     bar: {
       description: 'Comparator function',
       instanceOf: 'Function',
-      tsType: '(a: number, b: number) => number'
+      tsType: '(a: number, b: number) => number',
     },
-    foobar: {$ref: '#/definitions/foobar'}
+    foobar: {$ref: '#/definitions/foobar'},
   },
   definitions: {
     foobar: {
       description: 'Map from number to string',
-      tsType: 'Map<number, string>'
-    }
+      tsType: 'Map<number, string>',
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }

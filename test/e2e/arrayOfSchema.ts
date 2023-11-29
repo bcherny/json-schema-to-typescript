@@ -12,14 +12,14 @@ export const input = {
             type: 'string',
             minLength: 2,
             maxLength: 2,
-            pattern: '[A-Z]+'
+            pattern: '[A-Z]+',
           },
           name: {
-            type: 'string'
-          }
+            type: 'string',
+          },
         },
-        required: ['id', 'name']
-      }
+        required: ['id', 'name'],
+      },
     },
     tuple: {
       type: 'array',
@@ -27,16 +27,16 @@ export const input = {
         {
           type: 'object',
           properties: {
-            foo: {type: 'string'}
-          }
+            foo: {type: 'string'},
+          },
         },
         {
           type: 'object',
           properties: {
-            bar: {type: 'number'}
-          }
-        }
-      ]
-    }
-  }
+            bar: {type: 'number'},
+          },
+        },
+      ],
+    },
+  },
 }

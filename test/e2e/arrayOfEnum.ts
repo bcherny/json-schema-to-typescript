@@ -6,8 +6,8 @@ export const input = {
       items: {
         enum: [1, 2, 3],
         title: 'NamedEnum',
-        tsEnumNames: ['One', 'Two', 'Three']
-      }
+        tsEnumNames: ['One', 'Two', 'Three'],
+      },
     },
     tuples: {
       type: 'array',
@@ -16,11 +16,11 @@ export const input = {
         {
           enum: [1, 2, 3],
           title: 'NamedEnum2',
-          tsEnumNames: ['One', 'Two', 'Three']
-        }
-      ]
-    }
+          tsEnumNames: ['One', 'Two', 'Three'],
+        },
+      ],
+    },
   },
   required: ['namedEnum'],
-  additionalProperties: false
+  additionalProperties: false,
 }

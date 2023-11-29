@@ -5,12 +5,12 @@ export const input = {
   type: 'object',
   properties: {
     definitions: {
-      $ref: '#/definitions/definitions'
-    }
+      $ref: '#/definitions/definitions',
+    },
   },
   definitions: {
     definitions: {
-      $ref: '#/definitions/schema'
+      $ref: '#/definitions/schema',
     },
     schema: {
       type: 'object',
@@ -18,11 +18,11 @@ export const input = {
         additionalProperties: {
           anyOf: [
             {
-              $ref: '#/definitions/schema'
-            }
-          ]
-        }
-      }
-    }
-  }
+              $ref: '#/definitions/schema',
+            },
+          ],
+        },
+      },
+    },
+  },
 }

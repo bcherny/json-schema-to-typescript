@@ -101,35 +101,35 @@ export const DEFAULT_OPTIONS: Options = {
     singleQuote: false,
     tabWidth: 2,
     trailingComma: 'none',
-    useTabs: false
+    useTabs: false,
   },
   unreachableDefinitions: false,
-  unknownAny: true
+  unknownAny: true,
 }
 
-export function compileFromFile (filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
   const contents = Try(
     () => readFileSync(filename),
     () => {
       throw new ReferenceError(`Unable to read file "${filename}"`)
-    }
+    },
   )
   const schema = Try<JSONSchema4>(
     () => JSON.parse(contents.toString()),
     () => {
       throw new TypeError(`Error parsing JSON in file "${filename}"`)
-    }
+    },
   )
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
-export async function compile (schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
+export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
   validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
   const start = Date.now()
-  function time () {
+  function time() {
     return `(${Date.now() - start}ms)`
   }
 

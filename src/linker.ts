@@ -20,7 +20,7 @@ export function link(schema: JSONSchema4Type | JSONSchema, parent: JSONSchema4Ty
   Object.defineProperty(schema, Parent, {
     enumerable: false,
     value: parent,
-    writable: false
+    writable: false,
   })
 
   // Arrays

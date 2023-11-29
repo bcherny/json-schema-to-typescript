@@ -3,8 +3,8 @@ export const input = {
   type: 'object',
   properties: {
     a: {
-      $ref: 'test/resources/ReferencedTypeNotNormalized.json'
-    }
+      $ref: 'test/resources/ReferencedTypeNotNormalized.json',
+    },
   },
-  required: ['a']
+  required: ['a'],
 }

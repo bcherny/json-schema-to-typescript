@@ -2,12 +2,12 @@ export let input = {
   id: 'Parent',
   type: 'object',
   additionalProperties: {
-    type: 'number'
+    type: 'number',
   },
   patternProperties: {
     '^[a-zA-Z]+': {
       id: 'StringChild',
-      type: 'string'
-    }
-  }
+      type: 'string',
+    },
+  },
 }

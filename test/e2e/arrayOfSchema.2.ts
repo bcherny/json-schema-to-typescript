@@ -16,14 +16,14 @@ export const input = {
           properties: {
             description: {type: 'string'},
             data: {},
-            valid: {type: 'boolean'}
+            valid: {type: 'boolean'},
           },
-          additionalProperties: false
+          additionalProperties: false,
         },
-        minItems: 1
-      }
+        minItems: 1,
+      },
     },
     additionalProperties: false,
-    minItems: 1
-  }
+    minItems: 1,
+  },
 }

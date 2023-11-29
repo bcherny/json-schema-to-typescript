@@ -3,20 +3,20 @@ export const input = {
   type: 'object',
   properties: {
     '`foo`': {
-      type: 'string'
+      type: 'string',
     },
     "'bar'": {
-      type: 'string'
+      type: 'string',
     },
     '"baz"': {
-      type: 'string'
+      type: 'string',
     },
     '$zoo 2': {
-      type: 'string'
+      type: 'string',
     },
     'qux...': {
-      type: 'number'
-    }
+      type: 'number',
+    },
   },
-  required: ['`foo`', "'bar'", '"baz"']
+  required: ['`foo`', "'bar'", '"baz"'],
 }

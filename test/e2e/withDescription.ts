@@ -4,16 +4,16 @@ export const input = {
   type: 'object',
   properties: {
     firstName: {
-      type: 'string'
+      type: 'string',
     },
     lastName: {
-      type: 'string'
+      type: 'string',
     },
     age: {
       description: 'Age in years',
       type: 'integer',
-      minimum: 0
-    }
+      minimum: 0,
+    },
   },
-  required: ['firstName', 'lastName']
+  required: ['firstName', 'lastName'],
 }

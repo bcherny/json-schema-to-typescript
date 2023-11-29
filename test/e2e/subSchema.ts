@@ -2,33 +2,33 @@ export const input = {
   title: 'Schema with Subschema',
   properties: {
     firstName: {
-      type: 'string'
+      type: 'string',
     },
     friend: {
       properties: {
         knowsFrom: {
-          enum: ['work', 'school', 'other']
-        }
+          enum: ['work', 'school', 'other'],
+        },
       },
-      required: ['knowsFrom']
+      required: ['knowsFrom'],
     },
     coworker: {
       properties: {
         company: {
           properties: {
             name: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           required: ['name'],
-          additionalProperties: false
-        }
+          additionalProperties: false,
+        },
       },
       additionalProperties: {
         enum: [10, 20, 30],
-        tsEnumNames: ['red', 'green', 'blue']
-      }
-    }
+        tsEnumNames: ['red', 'green', 'blue'],
+      },
+    },
   },
-  required: ['firstName']
+  required: ['firstName'],
 }

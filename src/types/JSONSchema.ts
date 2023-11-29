@@ -9,6 +9,7 @@ export type SchemaType =
   | 'BOOLEAN'
   | 'NAMED_ENUM'
   | 'NAMED_SCHEMA'
+  | 'NEVER'
   | 'NULL'
   | 'NUMBER'
   | 'STRING'
@@ -33,6 +34,10 @@ export interface JSONSchema extends JSONSchema4 {
    * schema extension to support custom types
    */
   tsType?: string
+  /**
+   * property exists at least in https://json-schema.org/draft/2019-09/json-schema-validation.html#rfc.section.9.3
+   */
+  deprecated?: boolean
 }
 
 export const Parent = Symbol('Parent')
@@ -125,6 +130,10 @@ export const getRootSchema = memoize((schema: LinkedJSONSchema): LinkedJSONSchem
   }
   return getRootSchema(parent)
 })
+
+export function isBoolean(schema: LinkedJSONSchema | JSONSchemaType): schema is boolean {
+  return schema === true || schema === false
+}
 
 export function isPrimitive(schema: LinkedJSONSchema | JSONSchemaType): schema is JSONSchemaType {
   return !isPlainObject(schema)

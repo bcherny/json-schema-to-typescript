@@ -5,26 +5,26 @@ export const input = {
     a: {
       properties: {
         firstName: {
-          type: 'string'
+          type: 'string',
         },
         lastName: {
           id: 'lastName',
-          type: 'string'
-        }
-      }
-    }
+          type: 'string',
+        },
+      },
+    },
   },
   properties: {
     b: {
       properties: {
         likesDogs: {
-          type: 'boolean'
-        }
-      }
-    }
-  }
+          type: 'boolean',
+        },
+      },
+    },
+  },
 }
 
 export const options = {
-  unreachableDefinitions: true
+  unreachableDefinitions: true,
 }

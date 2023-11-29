@@ -5,11 +5,11 @@ export const input = {
     bar: {
       type: 'integer',
       enum: [1, 2, 3],
-      tsEnumNames: ['One', 2, 'Three']
-    }
+      tsEnumNames: ['One', 2, 'Three'],
+    },
   },
   required: ['bar'],
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 export const error = true

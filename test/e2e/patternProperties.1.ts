@@ -6,8 +6,8 @@ export let input = {
       id: 'Child',
       type: 'object',
       properties: {
-        aProperty: {type: 'string'}
-      }
-    }
-  }
+        aProperty: {type: 'string'},
+      },
+    },
+  },
 }

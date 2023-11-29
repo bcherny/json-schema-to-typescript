@@ -4,6 +4,6 @@ export const input = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   type: 'object',
   properties: {
-    owner: {$ref: 'test/resources/Person.json'}
-  }
+    owner: {$ref: 'test/resources/Person.json'},
+  },
 }

@@ -6,8 +6,8 @@ export const input = {
   properties: {
     example: {
       type: ['boolean', 'string'],
-      default: true
-    }
+      default: true,
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }

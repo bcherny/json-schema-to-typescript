@@ -4,31 +4,31 @@ export const input = {
   type: 'object',
   properties: {
     value: {
-      type: ['number', 'string']
+      type: ['number', 'string'],
     },
     anotherValue: {
-      type: ['null', 'string']
+      type: ['null', 'string'],
     },
     nullableStringEnum: {
       type: ['null', 'string'],
-      enum: ['foo', 'bar']
+      enum: ['foo', 'bar'],
     },
     nullableObj: {
       type: ['null', 'object'],
       required: ['foo'],
       properties: {
         foo: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     nullableArrayEnums: {
       type: ['null', 'array'],
       items: {
         type: 'string',
-        enum: ['foo', 'bar']
-      }
-    }
+        enum: ['foo', 'bar'],
+      },
+    },
   },
-  required: ['value']
+  required: ['value'],
 }

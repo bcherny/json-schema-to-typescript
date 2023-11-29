@@ -5,16 +5,16 @@ export const input = {
   type: 'object',
   properties: {
     firstName: {
-      type: 'string'
+      type: 'string',
     },
     lastName: {
       id: 'lastName',
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
-  required: ['firstName', 'lastName']
+  required: ['firstName', 'lastName'],
 }
 
 export const options: Partial<Options> = {
-  format: false
+  format: false,
 }

@@ -2,37 +2,37 @@ export const input = {
   type: 'object',
   properties: {
     c: {
-      type: 'string'
+      type: 'string',
     },
     d: {
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
   patternProperties: {
-    '^x-': {}
+    '^x-': {},
   },
   additionalProperties: false,
   required: ['c', 'd'],
   allOf: [
     {
-      $ref: '#/definitions/A'
+      $ref: '#/definitions/A',
     },
     {
-      $ref: '#/definitions/B'
-    }
+      $ref: '#/definitions/B',
+    },
   ],
   definitions: {
     A: {
       type: 'object',
       properties: {
-        a: {type: 'string'}
-      }
+        a: {type: 'string'},
+      },
     },
     B: {
       type: 'object',
       properties: {
-        b: {type: 'string'}
-      }
-    }
-  }
+        b: {type: 'string'},
+      },
+    },
+  },
 }

@@ -1,9 +1,9 @@
 export const input = {
   definitions: {
-    b: {}
+    b: {},
   },
   properties: {
     a: {},
-    b: {$ref: '#/definitions/b'}
-  }
+    b: {$ref: '#/definitions/b'},
+  },
 }

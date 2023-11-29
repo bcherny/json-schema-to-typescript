@@ -11,6 +11,7 @@ export type AST =
   | TNamedInterface
   | TIntersection
   | TLiteral
+  | TNever
   | TNumber
   | TNull
   | TObject
@@ -26,6 +27,7 @@ export interface AbstractAST {
   keyName?: string
   standaloneName?: string
   type: AST_TYPE
+  deprecated?: boolean
 }
 
 export type ASTWithComment = AST & {comment: string}
@@ -33,7 +35,11 @@ export type ASTWithName = AST & {keyName: string}
 export type ASTWithStandaloneName = AST & {standaloneName: string}
 
 export function hasComment(ast: AST): ast is ASTWithComment {
-  return 'comment' in ast && ast.comment != null && ast.comment !== ''
+  return (
+    ('comment' in ast && ast.comment != null && ast.comment !== '') ||
+    // Compare to true because ast.deprecated might be undefined
+    ('deprecated' in ast && ast.deprecated === true)
+  )
 }
 
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
@@ -77,6 +83,10 @@ export interface TNamedInterface extends AbstractAST {
   type: 'INTERFACE'
   params: TInterfaceParam[]
   superTypes: TNamedInterface[]
+}
+
+export interface TNever extends AbstractAST {
+  type: 'NEVER'
 }
 
 export interface TInterfaceParam {
@@ -144,19 +154,19 @@ export interface TCustomType extends AbstractAST {
 ////////////////////////////////////////////     literals
 
 export const T_ANY: TAny = {
-  type: 'ANY'
+  type: 'ANY',
 }
 
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   keyName: '[k: string]',
-  type: 'ANY'
+  type: 'ANY',
 }
 
 export const T_UNKNOWN: TUnknown = {
-  type: 'UNKNOWN'
+  type: 'UNKNOWN',
 }
 
 export const T_UNKNOWN_ADDITIONAL_PROPERTIES: TUnknown & ASTWithName = {
   keyName: '[k: string]',
-  type: 'UNKNOWN'
+  type: 'UNKNOWN',
 }
