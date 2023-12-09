@@ -140,6 +140,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | declareExternallyReferenced | boolean | `true` | Declare external schemas referenced via `$ref`? |
 | enableConstEnums | boolean | `true` | Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)? |
 | inferStringEnumKeysFromValues | boolean | `false` | Create enums from JSON enums with eponymous keys |
+| exactOptionalPropertyTypes | boolean | `false` | Append all optional property signatures with `\| undefined` so that they are strictly typed in accordance with TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) option. |
 | format | boolean | `true` | Format code? Set this to `false` to improve performance. |
 | formatTypes | `Record<string, string>` | `{}` | Map from a string schema's [`format`](https://json-schema.org/understanding-json-schema/reference/string#format) to the TypeScript type to emit for it, verbatim, like `tsType` (which still takes precedence, as do `enum` and `const`). Eg. `{ 'date-time': 'Date' }` turns `{ "type": "string", "format": "date-time" }` into `Date` instead of `string`; `nullable`, arrays and `$ref`s follow (`Date \| null`, `Date[]`). Formats you don't list stay `string`. For a type of your own, add its `import` via `bannerComment`. CLI: `--formatTypes.date-time=Date`. |
 | ignoreMinAndMaxItems | boolean | `false` | Ignore maxItems and minItems for `array` types, preventing tuples being generated. |

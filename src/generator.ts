@@ -546,7 +546,8 @@ function generateInterface(ast: TInterface, options: Options): string {
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +
-          type
+          type +
+          (!isRequired && options.exactOptionalPropertyTypes ? ' | undefined' : '')
         )
       })
       .join('\n') +
