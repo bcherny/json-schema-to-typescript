@@ -53,6 +53,12 @@ export interface Options {
    */
   inferStringEnumKeysFromValues: boolean
   /**
+   * Append all optional property signatures with `| undefined` so that they are strictly typed in accordance with
+   * TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes)
+   * option.
+   */
+  exactOptionalPropertyTypes: boolean
+  /**
    * Format code? Set this to `false` to improve performance.
    */
   format: boolean
@@ -100,6 +106,7 @@ export const DEFAULT_OPTIONS: Options = {
   declareExternallyReferenced: true,
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
+  exactOptionalPropertyTypes: false,
   format: true,
   ignoreMinAndMaxItems: false,
   maxItems: 20,

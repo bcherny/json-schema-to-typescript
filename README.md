@@ -139,6 +139,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | declareExternallyReferenced | boolean | `true` | Declare external schemas referenced via `$ref`? |
 | enableConstEnums | boolean | `true` | Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)? |
 | inferStringEnumKeysFromValues | boolean | `false` | Create enums from JSON enums with eponymous keys |
+| exactOptionalPropertyTypes | boolean | `false` | Append all optional property signatures with `\| undefined` so that they are strictly typed in accordance with TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) option. |
 | format | boolean | `true` | Format code? Set this to `false` to improve performance. |
 | ignoreMinAndMaxItems | boolean | `false` | Ignore maxItems and minItems for `array` types, preventing tuples being generated. |
 | maxItems | number | `20` | Maximum number of unioned tuples to emit when representing bounded-size array types, before falling back to emitting unbounded arrays. Increase this to improve precision of emitted types, decrease it to improve performance, or set it to `-1` to ignore `maxItems`.
