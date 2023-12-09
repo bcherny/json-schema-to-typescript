@@ -308,7 +308,8 @@ function generateInterface(ast: TInterface, options: Options): string {
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
-          type,
+          type +
+          (!isRequired && options.exactOptionalPropertyTypes ? ' | undefined' : ''),
       )
       .join('\n') +
     '\n' +
