@@ -21,7 +21,7 @@ export const input = {
         a: {type: 'string'},
       },
       additionalProperties: false,
-      required: ['a', 'b'],
+      required: ['a'],
     },
   },
   required: ['foo', 'bar'],

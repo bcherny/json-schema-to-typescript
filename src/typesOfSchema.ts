@@ -140,8 +140,14 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     }
     return 'enum' in schema
   },
-  UNNAMED_SCHEMA() {
-    return false // Explicitly handled as the default case
+  UNNAMED_SCHEMA(schema) {
+    return Boolean(
+      !('$id' in schema) &&
+        (schema.patternProperties?.length ||
+          schema.properties?.length ||
+          // TODO: fix the typing
+          (schema.required as string[])?.length),
+    )
   },
   UNTYPED_ARRAY(schema) {
     return schema.type === 'array' && !('items' in schema)
