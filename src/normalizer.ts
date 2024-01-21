@@ -222,6 +222,20 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
+// @see https://json-schema.org/understanding-json-schema/reference/combining#factoring-schemas
+rules.set('Propagate additionalProperties=false to all factors', schema => {
+  const parent = schema[Parent]
+  if (!parent || parent.additionalProperties !== false) {
+    return
+  }
+
+  if (schema.hasOwnProperty('additionalProperties')) {
+    return
+  }
+
+  schema.additionalProperties = false
+})
+
 export function normalize(
   rootSchema: LinkedJSONSchema,
   dereferencedPaths: DereferencedPaths,
