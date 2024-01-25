@@ -59,6 +59,11 @@ export interface Options {
    */
   maxItems: number
   /**
+   * Use `prefixItems` and `items` instead of `items` and `additionalItems` for tuple validation. This change was introduced in the 2020-12 Release Notes of the
+   * JSON Schema specification. [Read more about this](https://json-schema.org/draft/2020-12/release-notes#2020-12-release-notes)
+   */
+  usePrefixItems: boolean
+  /**
    * Append all index signatures with `| undefined` so that they are strictly typed.
    *
    * This is required to be compatible with `strictNullChecks`.
@@ -93,6 +98,7 @@ export const DEFAULT_OPTIONS: Options = {
   format: true,
   ignoreMinAndMaxItems: false,
   maxItems: 20,
+  usePrefixItems: false,
   strictIndexSignatures: false,
   style: {
     bracketSpacing: false,
