@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
@@ -20,7 +21,9 @@ function isObjectType(schema: LinkedJSONSchema) {
   return schema.properties !== undefined || hasType(schema, 'object') || hasType(schema, 'any')
 }
 function isArrayType(schema: LinkedJSONSchema) {
-  return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
+  return (
+    schema.items !== undefined || schema.prefixItems !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
+  )
 }
 
 rules.set('Remove `type=["null"]` if `enum=[null]`', schema => {
@@ -103,6 +106,16 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
 
 rules.set('Escape closing JSDoc comment', schema => {
   escapeBlockComment(schema)
+})
+
+rules.set('Rename `prefixItems` to `items` and `items` to `additionallItems`', (schema, _, options) => {
+  if (isArrayType(schema) && options.usePrefixItems) {
+    // @ts-expect-error this is a simple renaming procedure, there is in no need to change the `schema.items` type to allow for boolean values
+    schema.additionalItems = schema.items
+    schema.items = schema.prefixItems
+    delete schema.prefixItems
+  }
+  return
 })
 
 rules.set('Add JSDoc comments for minItems and maxItems', schema => {
