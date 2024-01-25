@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import minimist = require('minimist')
 import getStdin from 'get-stdin'
 import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
@@ -26,6 +25,7 @@ main(
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
+      'usePrefixItems',
     ],
     default: DEFAULT_OPTIONS,
     string: ['bannerComment', 'cwd'],
