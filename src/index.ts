@@ -76,6 +76,13 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Comment style for describing types.
+   * When set to line, multiline comments are collapsed to a single line.
+   *
+   * @default 'block'
+   */
+  commentStyle: 'block' | 'line'
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -105,6 +112,7 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
+  commentStyle: 'block',
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {

@@ -15,3 +15,4 @@ dist/
 dist_tests/
 package-lock.json
 yarn-error.log
+bun.lockb

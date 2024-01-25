@@ -304,7 +304,7 @@ function generateInterface(ast: TInterface, options: Options): string {
       )
       .map(
         ([isRequired, keyName, ast, type]) =>
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated, options) + '\n' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
@@ -316,21 +316,30 @@ function generateInterface(ast: TInterface, options: Options): string {
   )
 }
 
-function generateComment(comment?: string, deprecated?: boolean): string {
-  const commentLines = ['/**']
+function generateComment(comment: string | undefined, deprecated: boolean | undefined, options: Options): string {
+  const commentLines = []
+  const linePrefix = options.commentStyle === 'block' ? ' * ' : ''
+
   if (deprecated) {
-    commentLines.push(' * @deprecated')
+    commentLines.push(linePrefix + '@deprecated')
   }
   if (typeof comment !== 'undefined') {
-    commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
+    commentLines.push(...comment.split('\n').map(_ => linePrefix + _))
   }
-  commentLines.push(' */')
-  return commentLines.join('\n')
+
+  if (options.commentStyle === 'block') {
+    commentLines.unshift('/**')
+    commentLines.push(' */')
+
+    return commentLines.join('\n')
+  }
+
+  return '// ' + commentLines.map(_ => (_.endsWith('.') ? _ : _ + '.')).join(' ')
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
   return (
-    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated, options) + '\n' : '') +
     'export ' +
     (options.enableConstEnums ? 'const ' : '') +
     `enum ${toSafeString(ast.standaloneName)} {` +
@@ -343,7 +352,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (
-    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated, options) + '\n' : '') +
     `export interface ${toSafeString(ast.standaloneName)} ` +
     (ast.superTypes.length > 0
       ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
@@ -354,7 +363,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (
-    (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasComment(ast) ? generateComment(ast.comment, undefined, options) + '\n' : '') +
     `export type ${toSafeString(ast.standaloneName)} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
       options,

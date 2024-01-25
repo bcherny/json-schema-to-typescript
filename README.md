@@ -96,6 +96,8 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
+| commentStyle | `'block' \| 'line'` | `'block'` | Comment style for describing types. When set to `line`, multiline comments are collapsed to a single line. |
+
 ## CLI
 
 A CLI utility is provided with this package.

@@ -26,9 +26,9 @@ main(
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
-    ],
+    ] satisfies (keyof Options)[],
     default: DEFAULT_OPTIONS,
-    string: ['bannerComment', 'cwd'],
+    string: ['bannerComment', 'cwd', 'commentStyle'] satisfies (keyof Options)[],
   }),
 )
 
