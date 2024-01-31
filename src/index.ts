@@ -76,6 +76,10 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Ignore the "Title" field of the property to keep interfaces compact
+   */
+  ignoreTitles: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -105,6 +109,7 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
+  ignoreTitles: false,
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
