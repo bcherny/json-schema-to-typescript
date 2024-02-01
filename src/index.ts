@@ -73,6 +73,10 @@ export interface Options {
    */
   unreachableDefinitions: boolean
   /**
+   * Generate comment for: defintions that aren't referenced by schema, and pattern properties; pointing to referencer
+   */
+  interfaceReferenceComment: boolean
+  /**
    * Generate unknown type instead of any
    */
   unknownAny: boolean
@@ -104,6 +108,7 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false,
   },
   unreachableDefinitions: false,
+  interfaceReferenceComment: true,
   unknownAny: true,
 }
 
