@@ -26,5 +26,5 @@ export const input = {
 }
 
 export const options = {
-  referenceSourceComment: false,
+  interfaceReferenceComment: false,
 }

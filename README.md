@@ -95,7 +95,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
-| referenceSourceComment | boolean | `true` | Generate comment for: defintions that aren't referenced by schema, and pattern properties; pointing to referencer. |
+| interfaceReferenceComment | boolean | `true` | Generate comment for: defintions that aren't referenced by schema, and pattern properties; pointing to referencer. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 
