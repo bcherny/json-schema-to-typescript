@@ -96,7 +96,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
-| expandPropertyTitles | boolean | `true` | Use the `"title"` field within each property to expand into a separate type? |
+| useTitleAsType | boolean | `true` | Use the `"title"` field within each property to expand into a separate type? |
 ## CLI
 
 A CLI utility is provided with this package.

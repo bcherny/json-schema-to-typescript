@@ -79,7 +79,7 @@ export interface Options {
   /**
    * Expand the title field of each property into a separate type
    */
-  expandPropertyTitles: boolean
+  useTitleAsType: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -109,7 +109,7 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
-  expandPropertyTitles: true,
+  useTitleAsType: true,
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {

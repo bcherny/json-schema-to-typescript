@@ -345,7 +345,7 @@ function standaloneName(
   usedNames: UsedNames,
   options: Options,
 ): string | undefined {
-  const name = (options.expandPropertyTitles && schema.title) || schema.$id || keyNameFromDefinition
+  const name = (options.useTitleAsType && schema.title) || schema.$id || keyNameFromDefinition
   if (name) {
     return generateName(name, usedNames)
   }
