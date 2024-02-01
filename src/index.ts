@@ -77,9 +77,9 @@ export interface Options {
    */
   unknownAny: boolean
   /**
-   * Ignore the "Title" field of the property to keep interfaces compact
+   * Expand the title field of each property into a separate type
    */
-  ignoreTitles: boolean
+  expandTitles: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -109,7 +109,7 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
-  ignoreTitles: false,
+  expandTitles: true,
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
