@@ -76,6 +76,10 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Expand the title field of each property into a separate type
+   */
+  useSchemaTitleAsPropertyType: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -105,6 +109,7 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
+  useSchemaTitleAsPropertyType: true,
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
