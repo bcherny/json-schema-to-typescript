@@ -35,5 +35,5 @@ export const input = {
 }
 
 export const options = {
-  useTitleAsType: true,
+  useSchemaTitleAsPropertyType: true,
 }
