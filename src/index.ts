@@ -112,7 +112,7 @@ export const DEFAULT_OPTIONS: Options = {
   useSchemaTitleAsPropertyType: true,
 }
 
-export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<CompileResult> {
   const contents = Try(
     () => readFileSync(filename),
     () => {
@@ -125,10 +125,19 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
       throw new TypeError(`Error parsing JSON in file "${filename}"`)
     },
   )
+
+  if (schema.info && schema.info.name && schema.info.version) {
+    schema.$id = `${schema.info.name}V${schema.info.version}`
+  }
+
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
-export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
+export async function compile(
+  schema: JSONSchema4,
+  name: string,
+  options: Partial<Options> = {},
+): Promise<CompileResult> {
   validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
@@ -184,7 +193,15 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const formatted = format(generated, _options)
   log('white', 'formatter', time(), '✅ Result:', formatted)
 
-  return formatted
+  return {
+    typescript: formatted,
+    schemaName: optimized.standaloneName!
+  }
 }
 
 export class ValidationError extends Error {}
+
+export interface CompileResult {
+  typescript: string
+  schemaName: string
+}
