@@ -1,5 +1,5 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse, warning} from './utils'
 import {Options} from './'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
@@ -212,6 +212,35 @@ rules.set('Transform definitions to $defs', (schema, fileName) => {
   if (schema.definitions) {
     schema.$defs = schema.definitions
     delete schema.definitions
+  }
+})
+
+rules.set('Transform nullable to null type', schema => {
+  if (schema.nullable !== true) {
+    return
+  }
+
+  delete schema.nullable
+
+  if (schema.const !== undefined) {
+    if (schema.const !== null) {
+      warning('normalizer', 'const should be set to null when schema is nullable', schema)
+      schema.enum = [schema.const, null]
+      delete schema.const
+    }
+  } else if (schema.enum) {
+    if (!schema.enum.includes(null)) {
+      warning('normalizer', 'enum should include null when schema is nullable', schema)
+      schema.enum.push(null)
+    }
+  } else if (schema.type) {
+    if (Array.isArray(schema.type)) {
+      if (!schema.type.includes('null')) {
+        schema.type.push('null')
+      }
+    } else if (schema.type !== 'null') {
+      schema.type = [schema.type, 'null']
+    }
   }
 })
 
