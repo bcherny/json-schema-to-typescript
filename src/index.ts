@@ -195,7 +195,7 @@ export async function compile(
 
   return {
     typescript: formatted,
-    schemaName: optimized.standaloneName!
+    schemaName: optimized.standaloneName!,
   }
 }
 
