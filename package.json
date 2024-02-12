@@ -19,8 +19,9 @@
     "format-check": "prettier \"{src,test}/*.ts\" --check",
     "lint": "eslint src/*.ts test/*.ts",
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
-    "test": "npm ru`n pre-test && ava --timeout=300s --verbose",
+    "test": "npm run pre-test && ava --timeout=300s --verbose",
     "stresstest": "seq 1 10 | xargs -I{} npm test",
+    "prepublishOnly": "npm test",
     "pre-test": "npm run clean && npm run format-check && npm run build:server",
     "watch": "tsc -w",
     "watch:test": "ava -w"

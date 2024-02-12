@@ -63,7 +63,7 @@ function runOne(exports: TestCase, name: string) {
       }
     } else {
       t.snapshot(
-        await compile(exports.input, stripExtension(name), options),
+        await compile(exports.input, stripExtension(name), options).then(result => result.typescript),
         `Expected output to match snapshot for e2e test: ${name}`,
       )
     }

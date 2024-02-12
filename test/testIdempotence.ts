@@ -16,13 +16,13 @@ export function run() {
 
   test('compile() should not mutate its input', async t => {
     const before = cloneDeep(SCHEMA)
-    await compile(SCHEMA, 'A')
+    await compile(SCHEMA, 'A').then(result => result.typescript)
     t.deepEqual(before, SCHEMA)
   })
 
   test('compile() should be idempotent', async t => {
-    const a = await compile(SCHEMA, 'A')
-    const b = await compile(SCHEMA, 'A')
+    const a = await compile(SCHEMA, 'A').then(result => result.typescript)
+    const b = await compile(SCHEMA, 'A').then(result => result.typescript)
     t.deepEqual(a, b)
   })
 }
