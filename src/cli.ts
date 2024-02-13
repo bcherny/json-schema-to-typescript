@@ -128,7 +128,7 @@ async function outputResult(result: string, outputPath: string | undefined): Pro
 
 async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
   const schema = JSON.parse(await readInput(argIn))
-  return compile(schema, argIn, argv)
+  return compile(schema, argIn, argv).then(result => result.typescript)
 }
 
 function getPaths(path: string, paths: string[] = []) {

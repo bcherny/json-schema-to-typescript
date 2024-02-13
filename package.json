@@ -1,6 +1,6 @@
 {
   "name": "@linktr.ee/json-schema-to-typescript",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "compile json schema to typescript typings",
   "main": "dist/src/index.js",
   "bin": {
