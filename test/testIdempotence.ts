@@ -21,8 +21,8 @@ export function run() {
   })
 
   test('compile() should be idempotent', async t => {
-    const a = await compile(SCHEMA, 'A').then(result => result.typescript)
-    const b = await compile(SCHEMA, 'A').then(result => result.typescript)
+    const {typescript: a} = await compile(SCHEMA, 'A')
+    const {typescript: b} = await compile(SCHEMA, 'A')
     t.deepEqual(a, b)
   })
 }
