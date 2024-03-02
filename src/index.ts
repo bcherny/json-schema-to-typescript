@@ -1,6 +1,6 @@
 import {readFileSync} from 'fs'
 import {JSONSchema4} from 'json-schema'
-import {Options as $RefOptions} from '@bcherny/json-schema-ref-parser'
+import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
 import {cloneDeep, endsWith, merge} from 'lodash'
 import {dirname} from 'path'
 import {Options as PrettierOptions} from 'prettier'
@@ -20,7 +20,7 @@ export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} f
 
 export interface Options {
   /**
-   * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
+   * [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
   $refOptions: $RefOptions
   /**

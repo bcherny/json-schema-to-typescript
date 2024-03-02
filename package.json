@@ -48,7 +48,7 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "@bcherny/json-schema-ref-parser": "10.0.5-fork",
+    "@apidevtools/json-schema-ref-parser": "^11.5.5",
     "@types/json-schema": "^7.0.11",
     "@types/lodash": "^4.14.182",
     "@types/prettier": "^2.6.1",
@@ -57,16 +57,19 @@
     "glob": "^7.1.6",
     "glob-promise": "^4.2.2",
     "is-glob": "^4.0.3",
+    "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
     "mkdirp": "^1.0.4",
     "mz": "^2.7.0",
+    "node-fetch": "^3.3.2",
     "prettier": "^2.6.2"
   },
   "devDependencies": {
     "@types/cli-color": "^2.0.2",
     "@types/glob": "^7.2.0",
     "@types/is-glob": "^4.0.2",
+    "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.2",
     "@types/mkdirp": "^1.0.2",
     "@types/mz": "^2.7.4",

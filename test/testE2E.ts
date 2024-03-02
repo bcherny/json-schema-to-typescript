@@ -1,4 +1,4 @@
-import {FileInfo} from '@bcherny/json-schema-ref-parser'
+import type {FileInfo} from '@apidevtools/json-schema-ref-parser'
 import test from 'ava'
 import {readdirSync} from 'fs'
 import {find, merge} from 'lodash'

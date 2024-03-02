@@ -3,7 +3,8 @@
     "declaration": false,
     "esModuleInterop": true,
     "lib": [
-      "es2015"
+      "DOM",
+      "es2015",
     ],
     "module": "commonjs",
     "moduleResolution": "node",
@@ -12,6 +13,7 @@
     "noUnusedParameters": true,
     "outDir": "dist",
     "preserveConstEnums": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "target": "es6"
