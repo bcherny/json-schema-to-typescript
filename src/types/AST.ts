@@ -21,6 +21,7 @@ export type AST =
   | TUnion
   | TUnknown
   | TCustomType
+  | TArrayObject
 
 export interface AbstractAST {
   comment?: string
@@ -54,6 +55,11 @@ export interface TAny extends AbstractAST {
 
 export interface TArray extends AbstractAST {
   type: 'ARRAY'
+  params: AST
+}
+
+export interface TArrayObject extends AbstractAST {
+  type: 'ARRAYOBJECT'
   params: AST
 }
 
