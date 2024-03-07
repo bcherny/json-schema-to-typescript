@@ -172,6 +172,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'ANY':
       return 'any'
     case 'ARRAY':
+    case 'ARRAYOBJECT':
       return (() => {
         const type = generateType(ast.params, options)
         return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'

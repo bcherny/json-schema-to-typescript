@@ -16,6 +16,10 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       return Object.assign(ast, {
         params: ast.params.map(_ => Object.assign(_, {ast: optimize(_.ast, options, processed)})),
       })
+    case 'ARRAYOBJECT':
+      return Object.assign(ast, {
+        params: Object.assign(ast.params, {ast: optimize(ast.params, options, processed)}),
+      })
     case 'INTERSECTION':
     case 'UNION':
       // Start with the leaves...
