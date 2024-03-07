@@ -278,7 +278,7 @@ function parseNonLiteral(
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
           params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
-          type: 'ARRAY',
+          type: schema.items?.type === 'object' ? 'ARRAYOBJECT' : 'ARRAY',
         }
       }
     case 'UNION':
