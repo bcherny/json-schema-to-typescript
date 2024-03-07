@@ -53,5 +53,3 @@ export const input = {
   $schema: 'http://json-schema.org/draft-04/schema#',
   additionalProperties: false,
 }
-
-export const only = true
