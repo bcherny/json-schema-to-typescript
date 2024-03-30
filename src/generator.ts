@@ -150,7 +150,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   }
 }
 
-function generateTypeUnmemoized(ast: AST, options: Options): string {
+function generateTypeUnmemorized(ast: AST, options: Options): string {
   const type = generateRawType(ast, options)
 
   if (options.strictIndexSignatures && ast.keyName === '[k: string]') {
@@ -159,7 +159,7 @@ function generateTypeUnmemoized(ast: AST, options: Options): string {
 
   return type
 }
-export const generateType = memoize(generateTypeUnmemoized)
+export const generateType = memoize(generateTypeUnmemorized)
 
 function generateRawType(ast: AST, options: Options): string {
   log('magenta', 'generator', ast)
