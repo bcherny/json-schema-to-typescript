@@ -5,7 +5,7 @@
 [mit]: https://img.shields.io/npm/l/json-schema-to-typescript.svg?style=flat-square
 [node]: https://img.shields.io/badge/Node.js-16+-417e37?style=flat-square
 
-> Compile json schema to typescript typings
+> Compile json/yml schema to typescript typings
 
 ## Example
 

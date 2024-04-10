@@ -16,6 +16,7 @@ import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
+import yaml from 'js-yaml'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -112,6 +113,10 @@ export const DEFAULT_OPTIONS: Options = {
   unknownAny: true,
 }
 
+function isYml(filename: string) {
+  return filename.split('.').pop() === 'yml'
+}
+
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
   const contents = Try(
     () => readFileSync(filename),
@@ -119,12 +124,25 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
       throw new ReferenceError(`Unable to read file "${filename}"`)
     },
   )
-  const schema = Try<JSONSchema4>(
-    () => JSON.parse(contents.toString()),
-    () => {
-      throw new TypeError(`Error parsing JSON in file "${filename}"`)
-    },
-  )
+
+  let schema: JSONSchema4
+
+  if (isYml(filename)) {
+    schema = Try<JSONSchema4>(
+      () => JSON.parse(JSON.stringify(yaml.load(contents.toString()))),
+      () => {
+        throw new TypeError(`Error parsing YML in file "${filename}"`)
+      },
+    )
+  } else {
+    schema = Try<JSONSchema4>(
+      () => JSON.parse(contents.toString()),
+      () => {
+        throw new TypeError(`Error parsing JSON in file "${filename}"`)
+      },
+    )
+  }
+
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
