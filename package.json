@@ -52,7 +52,7 @@
     "@types/json-schema": "^7.0.11",
     "@types/lodash": "^4.14.182",
     "@types/prettier": "^2.6.1",
-    "cli-color": "^2.0.2",
+    "cli-color": "^2.0.4",
     "get-stdin": "^8.0.0",
     "glob": "^7.1.6",
     "glob-promise": "^4.2.2",
@@ -64,7 +64,7 @@
     "prettier": "^2.6.2"
   },
   "devDependencies": {
-    "@types/cli-color": "^2.0.2",
+    "@types/cli-color": "^2.0.4",
     "@types/glob": "^7.2.0",
     "@types/is-glob": "^4.0.2",
     "@types/minimist": "^1.2.2",
