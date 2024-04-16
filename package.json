@@ -26,6 +26,9 @@
     "watch": "tsc -w",
     "watch:test": "ava -w"
   },
+  "resolutions": {
+    "es5-ext": "0.10.53"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bcherny/json-schema-to-typescript.git"
