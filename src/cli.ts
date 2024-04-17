@@ -4,11 +4,11 @@ import minimist = require('minimist')
 import getStdin from 'get-stdin'
 import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
 import * as mkdirp from 'mkdirp'
-import glob from 'glob-promise'
 import isGlob = require('is-glob')
 import {join, resolve, dirname, basename} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error} from './utils'
+import {glob} from 'glob'
 
 main(
   minimist(process.argv.slice(2), {
