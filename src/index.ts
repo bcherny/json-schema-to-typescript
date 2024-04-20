@@ -114,7 +114,7 @@ export const DEFAULT_OPTIONS: Options = {
 }
 
 function isYml(filename: string) {
-  return filename.split('.').pop() === 'yml'
+  return filename.endsWith('.yaml') || filename.endsWith('.yml')
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
@@ -129,7 +129,7 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
 
   if (isYml(filename)) {
     schema = Try<JSONSchema4>(
-      () => JSON.parse(JSON.stringify(yaml.load(contents.toString()))),
+      () => yaml.load(contents.toString()) as JSONSchema4,
       () => {
         throw new TypeError(`Error parsing YML in file "${filename}"`)
       },
