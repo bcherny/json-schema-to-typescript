@@ -176,7 +176,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const generated = generate(optimized, _options)
   log('magenta', 'generator', time(), '✅ Result:', generated)
 
-  const formatted = format(generated, _options)
+  const formatted = await format(generated, _options)
   log('white', 'formatter', time(), '✅ Result:', formatted)
 
   return formatted
