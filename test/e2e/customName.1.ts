@@ -16,7 +16,9 @@ export const input = {
 }
 
 export const options: Partial<Options> = {
-  customName: (schema, keyName) => {
-    return 'CustomPrefix_' + (keyName || schema.$ref || 'FooRootName')
+  customName: (_schema, keyName) => {
+    if (!keyName)
+      return undefined // Fallback to default naming
+    return 'CustomPrefix_' + keyName
   },
 }

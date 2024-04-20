@@ -80,7 +80,7 @@ export interface Options {
   /**
    * Custom function to provide a type name for a given schema
    */
-  customName?: (schema: LinkedJSONSchema, keyNameFromDefinition: string | undefined) => string
+  customName?: (schema: LinkedJSONSchema, keyNameFromDefinition: string | undefined) => string | undefined
 }
 
 export const DEFAULT_OPTIONS: Options = {
