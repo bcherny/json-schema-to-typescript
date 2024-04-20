@@ -1,8 +1,9 @@
-# json-schema-to-typescript [![Build Status][build]](https://github.com/bcherny/json-schema-to-typescript/actions?query=branch%3Amaster+workflow%3ACI) [![npm]](https://www.npmjs.com/package/json-schema-to-typescript) [![mit]](https://opensource.org/licenses/MIT)
+# json-schema-to-typescript [![Build Status][build]](https://github.com/bcherny/json-schema-to-typescript/actions?query=branch%3Amaster+workflow%3ACI) [![npm]](https://www.npmjs.com/package/json-schema-to-typescript) [![mit]](https://opensource.org/licenses/MIT) ![node]
 
 [build]: https://img.shields.io/github/actions/workflow/status/bcherny/json-schema-to-typescript/ci.yml?style=flat-square
 [npm]: https://img.shields.io/npm/v/json-schema-to-typescript.svg?style=flat-square
 [mit]: https://img.shields.io/npm/l/json-schema-to-typescript.svg?style=flat-square
+[node]: https://img.shields.io/badge/Node.js-16+-417e37?style=flat-square
 
 > Compile json schema to typescript typings
 
@@ -95,7 +96,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
-| $refOptions | object | `{}` | [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s |
+| $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s |
 ## CLI
 
 A CLI utility is provided with this package.
