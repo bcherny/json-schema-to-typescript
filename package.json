@@ -41,7 +41,7 @@
     "typing",
     "share"
   ],
-  "author": "Boris Cherny <boris@performancejs.com> (http://performancejs.com/)",
+  "author": "Boris Cherny <boris@borischerny.com> (https://borischerny.com)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/bcherny/json-schema-to-typescript/issues"
