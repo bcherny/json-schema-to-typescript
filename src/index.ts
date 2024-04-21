@@ -33,6 +33,10 @@ export interface Options {
    */
   bannerComment: string
   /**
+   * Custom function to provide a type name for a given schema
+   */
+  customName?: (schema: LinkedJSONSchema, keyNameFromDefinition: string | undefined) => string | undefined
+  /**
    * Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s.
    */
   cwd: string
@@ -77,10 +81,6 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
-  /**
-   * Custom function to provide a type name for a given schema
-   */
-  customName?: (schema: LinkedJSONSchema, keyNameFromDefinition: string | undefined) => string | undefined
 }
 
 export const DEFAULT_OPTIONS: Options = {
