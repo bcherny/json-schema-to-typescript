@@ -15,6 +15,7 @@ import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
 import {validateOptions} from './optionValidator'
+import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -76,6 +77,10 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Custom function to provide a type name for a given schema
+   */
+  customName?: (schema: LinkedJSONSchema, keyNameFromDefinition: string | undefined) => string | undefined
 }
 
 export const DEFAULT_OPTIONS: Options = {
