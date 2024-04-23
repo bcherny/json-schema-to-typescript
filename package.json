@@ -51,7 +51,6 @@
     "@apidevtools/json-schema-ref-parser": "^11.5.5",
     "@types/json-schema": "^7.0.15",
     "@types/lodash": "^4.17.0",
-    "@types/prettier": "^3.0.0",
     "cli-color": "^2.0.4",
     "glob": "^10.3.12",
     "is-glob": "^4.0.3",
