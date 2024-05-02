@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import minimist = require('minimist')
+import minimist from 'minimist'
 import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
 import * as mkdirp from 'mkdirp'
 import {glob} from 'glob'
-import isGlob = require('is-glob')
+import isGlob from 'is-glob'
 import {join, resolve, dirname, basename} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error} from './utils'
