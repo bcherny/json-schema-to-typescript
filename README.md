@@ -5,11 +5,14 @@
 [mit]: https://img.shields.io/npm/l/json-schema-to-typescript.svg?style=flat-square
 [node]: https://img.shields.io/badge/Node.js-16+-417e37?style=flat-square
 
-> Compile json/yaml schema to typescript typings
+> Compile JSONSchema to TypeScript typings.
 
 ## Example
 
+Check out the [live demo](https://borischerny.com/json-schema-to-typescript-browser/).
+
 Input:
+
 ```json
 {
   "title": "Example Schema",
@@ -37,6 +40,7 @@ Input:
 ```
 
 Output:
+
 ```ts
 export interface ExampleSchema {
   firstName: string;
@@ -52,14 +56,45 @@ export interface ExampleSchema {
 ## Installation
 
 ```sh
-# Using Yarn:
-yarn add json-schema-to-typescript
-
-# Or, using NPM:
-npm install json-schema-to-typescript --save
+npm install json-schema-to-typescript
 ```
 
 ## Usage
+
+json-schema-to-typescript is easy to use via the CLI, or programmatically.
+
+### CLI
+
+A CLI utility is provided with this package.
+
+```sh
+cat foo.json | json2ts > foo.d.ts
+# or
+json2ts foo.json > foo.d.ts
+# or
+json2ts foo.yaml foo.d.ts
+# or
+json2ts --input foo.json --output foo.d.ts
+# or
+json2ts -i foo.json -o foo.d.ts
+# or (quote globs so that your shell doesn't expand them)
+json2ts -i 'schemas/**/*.json'
+# or
+json2ts -i schemas/ -o types/
+```
+
+You can pass any of the options described below (including style options) as CLI flags. Boolean values can be set to false using the `no-` prefix.
+
+```sh
+# generate code for definitions that aren't referenced
+json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
+# use single quotes and disable trailing semicolons
+json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
+```
+
+### API
+
+To invoke json-schema-to-typescript from your TypeScript or JavaScript program, import it and call `compile` or `compileFromFile`.
 
 ```js
 import { compile, compileFromFile } from 'json-schema-to-typescript'
@@ -98,38 +133,12 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s |
-## CLI
-
-A CLI utility is provided with this package.
-
-```sh
-cat foo.json | json2ts > foo.d.ts
-# or
-json2ts foo.json > foo.d.ts
-# or
-json2ts foo.json foo.d.ts
-# or
-json2ts --input foo.json --output foo.d.ts
-# or
-json2ts -i foo.json -o foo.d.ts
-# or (quote globs so that your shell doesn't expand them)
-json2ts -i 'schemas/**/*.json'
-# or
-json2ts -i schemas/ -o types/
-```
-
-You can pass any of the options described above (including style options) as CLI flags. Boolean values can be set to false using the `no-` prefix.
-
-```sh
-# generate code for definitions that aren't referenced
-json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
-# use single quotes and disable trailing semicolons
-json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
-```
 
 ## Tests
 
-`npm test`
+```sh
+$ npm test
+```
 
 ## Features
 
