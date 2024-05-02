@@ -113,11 +113,12 @@ export const DEFAULT_OPTIONS: Options = {
   unknownAny: true,
 }
 
-function isYml(filename: string) {
-  return filename.endsWith('.yaml') || filename.endsWith('.yml')
+export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+  const schema = parseAsJSONSchema(filename)
+  return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
-export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+function parseAsJSONSchema(filename: string): JSONSchema4 {
   const contents = Try(
     () => readFileSync(filename),
     () => {
@@ -125,25 +126,25 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
     },
   )
 
-  let schema: JSONSchema4
-
-  if (isYml(filename)) {
-    schema = Try<JSONSchema4>(
+  if (isYaml(filename)) {
+    return Try(
       () => yaml.load(contents.toString()) as JSONSchema4,
       () => {
         throw new TypeError(`Error parsing YML in file "${filename}"`)
       },
     )
-  } else {
-    schema = Try<JSONSchema4>(
-      () => JSON.parse(contents.toString()),
-      () => {
-        throw new TypeError(`Error parsing JSON in file "${filename}"`)
-      },
-    )
   }
 
-  return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
+  return Try(
+    () => JSON.parse(contents.toString()),
+    () => {
+      throw new TypeError(`Error parsing JSON in file "${filename}"`)
+    },
+  )
+}
+
+function isYaml(filename: string) {
+  return filename.endsWith('.yaml') || filename.endsWith('.yml')
 }
 
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
