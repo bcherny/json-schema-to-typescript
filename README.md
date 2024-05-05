@@ -65,7 +65,20 @@ json-schema-to-typescript is easy to use via the CLI, or programmatically.
 
 ### CLI
 
-A CLI utility is provided with this package.
+First make the CLI available using one of the following options:
+
+```sh
+# install locally, then use `npx json2ts`
+npm install json-schema-to-typescript
+
+# or install globally, then use `json2ts`
+npm install json-schema-to-typescript --global
+
+# or install to npm cache, then use `npx --package=json-schema-to-typescript json2ts`
+# (you don't need to run an install command first)
+```
+
+Then, use the CLI to convert JSON files to TypeScript typings:
 
 ```sh
 cat foo.json | json2ts > foo.d.ts
