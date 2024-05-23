@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
-import minimist = require('minimist')
-import getStdin from 'get-stdin'
+import minimist from 'minimist'
 import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
 import * as mkdirp from 'mkdirp'
-import glob from 'glob-promise'
-import isGlob = require('is-glob')
+import {glob} from 'glob'
+import isGlob from 'is-glob'
 import {join, resolve, dirname, basename} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error} from './utils'
@@ -141,11 +140,17 @@ function getPaths(path: string, paths: string[] = []) {
   return paths
 }
 
-function readInput(argIn?: string) {
+async function readInput(argIn?: string): Promise<string> {
   if (!argIn) {
-    return getStdin()
+    return readStream(process.stdin)
   }
   return readFile(resolve(process.cwd(), argIn), 'utf-8')
+}
+
+async function readStream(stream: NodeJS.ReadStream): Promise<string> {
+  const chunks = []
+  for await (const chunk of stream) chunks.push(chunk)
+  return Buffer.concat(chunks).toString('utf8')
 }
 
 function printHelp() {

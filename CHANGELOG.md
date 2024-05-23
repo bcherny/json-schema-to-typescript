@@ -2,6 +2,18 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 14.0.2
+
+- 9ec0c70 Added .yaml support (#577)
+
+## 14.0.1
+
+- 2f29f19 Added `customName` option
+
+## 14.0.0
+
+- 967eb13 Require Node v16+
+
 ## 13.1.0
 
 - f797848 Feat: Add support for `deprecated` keyword

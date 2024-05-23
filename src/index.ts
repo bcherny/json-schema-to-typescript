@@ -1,6 +1,6 @@
 import {readFileSync} from 'fs'
 import {JSONSchema4} from 'json-schema'
-import {Options as $RefOptions} from '@bcherny/json-schema-ref-parser'
+import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
 import {cloneDeep, endsWith, merge} from 'lodash'
 import {dirname} from 'path'
 import {Options as PrettierOptions} from 'prettier'
@@ -15,12 +15,14 @@ import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
 import {validateOptions} from './optionValidator'
+import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
+import yaml from 'js-yaml'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
 export interface Options {
   /**
-   * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
+   * [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
   $refOptions: $RefOptions
   /**
@@ -31,6 +33,10 @@ export interface Options {
    * Disclaimer comment prepended to the top of each generated file.
    */
   bannerComment: string
+  /**
+   * Custom function to provide a type name for a given schema
+   */
+  customName?: (schema: LinkedJSONSchema, keyNameFromDefinition: string | undefined) => string | undefined
   /**
    * Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s.
    */
@@ -108,19 +114,37 @@ export const DEFAULT_OPTIONS: Options = {
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+  const schema = parseAsJSONSchema(filename)
+  return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
+}
+
+function parseAsJSONSchema(filename: string): JSONSchema4 {
   const contents = Try(
     () => readFileSync(filename),
     () => {
       throw new ReferenceError(`Unable to read file "${filename}"`)
     },
   )
-  const schema = Try<JSONSchema4>(
+
+  if (isYaml(filename)) {
+    return Try(
+      () => yaml.load(contents.toString()) as JSONSchema4,
+      () => {
+        throw new TypeError(`Error parsing YML in file "${filename}"`)
+      },
+    )
+  }
+
+  return Try(
     () => JSON.parse(contents.toString()),
     () => {
       throw new TypeError(`Error parsing JSON in file "${filename}"`)
     },
   )
-  return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
+}
+
+function isYaml(filename: string) {
+  return filename.endsWith('.yaml') || filename.endsWith('.yml')
 }
 
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
@@ -176,7 +200,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const generated = generate(optimized, _options)
   log('magenta', 'generator', time(), '✅ Result:', generated)
 
-  const formatted = format(generated, _options)
+  const formatted = await format(generated, _options)
   log('white', 'formatter', time(), '✅ Result:', formatted)
 
   return formatted
