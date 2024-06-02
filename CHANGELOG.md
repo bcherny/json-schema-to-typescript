@@ -2,6 +2,10 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 14.0.5
+
+- b7fee29 Added .taml support for CLI (#598)
+
 ## 14.0.2
 
 - 9ec0c70 Added .yaml support (#577)
