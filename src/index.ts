@@ -10,13 +10,12 @@ import {normalize} from './normalizer'
 import {optimize} from './optimizer'
 import {parse} from './parser'
 import {dereference} from './resolver'
-import {error, stripExtension, Try, log} from './utils'
+import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
-import yaml from 'js-yaml'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -125,26 +124,7 @@ function parseAsJSONSchema(filename: string): JSONSchema4 {
       throw new ReferenceError(`Unable to read file "${filename}"`)
     },
   )
-
-  if (isYaml(filename)) {
-    return Try(
-      () => yaml.load(contents.toString()) as JSONSchema4,
-      () => {
-        throw new TypeError(`Error parsing YML in file "${filename}"`)
-      },
-    )
-  }
-
-  return Try(
-    () => JSON.parse(contents.toString()),
-    () => {
-      throw new TypeError(`Error parsing JSON in file "${filename}"`)
-    },
-  )
-}
-
-function isYaml(filename: string) {
-  return filename.endsWith('.yaml') || filename.endsWith('.yml')
+  return parseFileAsJSONSchema(filename, contents.toString())
 }
 
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {

@@ -47,6 +47,10 @@ export function run() {
     t.snapshot(execSync(`node dist/src/cli.js -i ${__dirname}/../../test/resources/ReferencedType.json`).toString())
   })
 
+  test('file in (yaml), pipe out', t => {
+    t.snapshot(execSync('node dist/src/cli.js ./test/resources/Schema.yaml').toString())
+  })
+
   test('pipe in, file out (--output)', t => {
     execSync('shx cat ./test/resources/ReferencedType.json | node dist/src/cli.js --output ./ReferencedType.d.ts')
     t.snapshot(readFileSync('./ReferencedType.d.ts', 'utf-8'))
@@ -92,7 +96,9 @@ export function run() {
   })
 
   test('files in (-i), files out (-o)', t => {
-    execSync(`node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.json" -o ./test/resources/MultiSchema/out`)
+    execSync(
+      `node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.{json,yaml,yml}" -o ./test/resources/MultiSchema/out`,
+    )
 
     readdirSync('./test/resources/MultiSchema/out').forEach(f => {
       const path = `./test/resources/MultiSchema/out/${f}`
@@ -104,12 +110,12 @@ export function run() {
   })
 
   test('files in (-i), pipe out', t => {
-    t.snapshot(execSync(`node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.json"`).toString())
+    t.snapshot(execSync(`node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.{json,yaml,yml}"`).toString())
   })
 
   test('files in (-i), files out (-o) nested dir does not exist', t => {
     execSync(
-      `node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.json" -o ./test/resources/MultiSchema/foo/bar/out`,
+      `node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.{json,yaml,yml}" -o ./test/resources/MultiSchema/foo/bar/out`,
     )
     readdirSync('./test/resources/MultiSchema/foo/bar/out').forEach(f => {
       const path = `./test/resources/MultiSchema/foo/bar/out/${f}`

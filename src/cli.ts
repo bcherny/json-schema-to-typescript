@@ -5,9 +5,9 @@ import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
 import * as mkdirp from 'mkdirp'
 import {glob} from 'glob'
 import isGlob from 'is-glob'
-import {join, resolve, dirname, basename} from 'path'
+import {join, resolve, dirname} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
-import {pathTransform, error} from './utils'
+import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
 
 main(
   minimist(process.argv.slice(2), {
@@ -88,7 +88,7 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
 
   // careful to do this serially
   results.forEach(([file, result]) => {
-    const outputPath = argOut && `${argOut}/${basename(file, '.json')}.d.ts`
+    const outputPath = argOut && `${argOut}/${justName(file)}.d.ts`
     outputResult(result, outputPath)
   })
 }
@@ -110,7 +110,7 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
 
   // careful to do this serially
   results.forEach(([file, result, outputPath]) =>
-    outputResult(result, outputPath ? `${outputPath}/${basename(file, '.json')}.d.ts` : undefined),
+    outputResult(result, outputPath ? `${outputPath}/${justName(file)}.d.ts` : undefined),
   )
 }
 
@@ -126,7 +126,8 @@ async function outputResult(result: string, outputPath: string | undefined): Pro
 }
 
 async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
-  const schema = JSON.parse(await readInput(argIn))
+  const {filename, contents} = await readInput(argIn)
+  const schema = parseFileAsJSONSchema(filename, contents)
   return compile(schema, argIn, argv)
 }
 
@@ -140,11 +141,17 @@ function getPaths(path: string, paths: string[] = []) {
   return paths
 }
 
-async function readInput(argIn?: string): Promise<string> {
+async function readInput(argIn?: string): Promise<{filename: string | null; contents: string}> {
   if (!argIn) {
-    return readStream(process.stdin)
+    return {
+      filename: null,
+      contents: await readStream(process.stdin),
+    }
   }
-  return readFile(resolve(process.cwd(), argIn), 'utf-8')
+  return {
+    filename: argIn,
+    contents: await readFile(resolve(process.cwd(), argIn), 'utf-8'),
+  }
 }
 
 async function readStream(stream: NodeJS.ReadStream): Promise<string> {

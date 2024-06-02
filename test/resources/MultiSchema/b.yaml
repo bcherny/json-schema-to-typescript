@@ -1,0 +1,10 @@
+title: B schema
+type: object
+properties:
+  x:
+    type: string
+  "y":
+    type: integer
+additionalProperties: true
+required:
+- "y"

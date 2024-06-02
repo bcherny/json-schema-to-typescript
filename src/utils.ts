@@ -1,6 +1,8 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
+import {JSONSchema4} from 'json-schema'
+import yaml from 'js-yaml'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -383,4 +385,26 @@ export function isSchemaLike(schema: LinkedJSONSchema) {
   }
 
   return true
+}
+
+export function parseFileAsJSONSchema(filename: string | null, contents: string): JSONSchema4 {
+  if (filename != null && isYaml(filename)) {
+    return Try(
+      () => yaml.load(contents.toString()) as JSONSchema4,
+      () => {
+        throw new TypeError(`Error parsing YML in file "${filename}"`)
+      },
+    )
+  }
+
+  return Try(
+    () => JSON.parse(contents.toString()),
+    () => {
+      throw new TypeError(`Error parsing JSON in file "${filename}"`)
+    },
+  )
+}
+
+function isYaml(filename: string) {
+  return filename.endsWith('.yaml') || filename.endsWith('.yml')
 }
