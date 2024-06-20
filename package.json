@@ -58,7 +58,6 @@
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
     "mkdirp": "^3.0.1",
-    "mz": "^2.7.0",
     "node-fetch": "^3.3.2",
     "prettier": "^3.2.5"
   },
@@ -68,7 +67,6 @@
     "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
     "@types/mkdirp": "^2.0.0",
-    "@types/mz": "^2.7.8",
     "@types/node": "^20.12.7",
     "@types/rimraf": "^4.0.5",
     "@typescript-eslint/eslint-plugin": "^7.7.0",

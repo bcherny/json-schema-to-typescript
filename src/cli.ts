@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import minimist from 'minimist'
-import {readFile, writeFile, existsSync, lstatSync, readdirSync} from 'mz/fs'
+import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync} from 'fs'
 import * as mkdirp from 'mkdirp'
 import {glob} from 'glob'
 import isGlob from 'is-glob'
@@ -114,14 +114,14 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
   )
 }
 
-async function outputResult(result: string, outputPath: string | undefined): Promise<void> {
+function outputResult(result: string, outputPath: string | undefined): void {
   if (!outputPath) {
     process.stdout.write(result)
   } else {
     if (!isDir(dirname(outputPath))) {
       mkdirp.sync(dirname(outputPath))
     }
-    return await writeFile(outputPath, result)
+    return writeFileSync(outputPath, result)
   }
 }
 
@@ -150,12 +150,12 @@ async function readInput(argIn?: string): Promise<{filename: string | null; cont
   }
   return {
     filename: argIn,
-    contents: await readFile(resolve(process.cwd(), argIn), 'utf-8'),
+    contents: readFileSync(resolve(process.cwd(), argIn), 'utf-8'),
   }
 }
 
 async function readStream(stream: NodeJS.ReadStream): Promise<string> {
-  const chunks = []
+  const chunks: Uint8Array[] = []
   for await (const chunk of stream) chunks.push(chunk)
   return Buffer.concat(chunks).toString('utf8')
 }
