@@ -1,6 +1,6 @@
 import {$RefParser, ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
-import {JSONSchema} from './types/JSONSchema'
-import {log} from './utils'
+import {JSONSchema} from './types/JSONSchema.js'
+import {log} from './utils.js'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
 

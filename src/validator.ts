@@ -1,5 +1,5 @@
-import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
-import {traverse} from './utils'
+import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema.js'
+import {traverse} from './utils.js'
 
 type Rule = (schema: JSONSchema) => boolean | void
 const rules = new Map<string, Rule>()

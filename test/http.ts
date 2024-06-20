@@ -1,7 +1,8 @@
 import {existsSync, readFileSync, writeFileSync} from 'fs'
 import {get as httpGet} from 'http'
 import {get as httpsGet} from 'https'
-import {join} from 'path'
+import {dirname, join} from 'path'
+import {fileURLToPath} from 'url'
 
 const CACHE_DIR = 'test/__fixtures__'
 
@@ -27,6 +28,8 @@ function getFromFilesystem(url: string): object | undefined {
 }
 
 function getFilepath(url: string): string {
+  const __filename = fileURLToPath(import.meta.url)
+  const __dirname = dirname(__filename)
   return join(__dirname, '../../', CACHE_DIR, url.replace(/[:\/\\]/g, '-'))
 }
 

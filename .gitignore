@@ -11,6 +11,6 @@ npm-debug.log
 node_modules
 *.js
 *.map
-dist/
-dist_tests/
+dist-cjs/
+dist-esm/
 yarn-error.log

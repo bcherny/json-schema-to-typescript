@@ -1,13 +1,16 @@
 import type {FileInfo} from '@apidevtools/json-schema-ref-parser'
 import test from 'ava'
 import {readdirSync} from 'fs'
-import {find, merge} from 'lodash'
-import {join} from 'path'
-import {compile, JSONSchema, Options} from '../src'
-import {log, stripExtension} from '../src/utils'
-import {getWithCache} from './http'
+import {find, merge, zip} from 'lodash-es'
+import {basename, dirname, join, resolve} from 'path'
+import {compile, JSONSchema, Options} from '../src/index.js'
+import {log, stripExtension} from '../src/utils.js'
+import {getWithCache} from './http.js'
+import {fileURLToPath} from 'url'
 
-const dir = __dirname + '/e2e'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const E2E_TEST_DIR = resolve(__dirname, './e2e')
 
 type TestCase = {
   input: JSONSchema
@@ -17,27 +20,35 @@ type TestCase = {
   options?: Options
 }
 
-export function hasOnly() {
-  return readdirSync(dir)
-    .filter(_ => /^.*\.js$/.test(_))
-    .map(_ => require(join(dir, _)))
-    .some(_ => _.only)
+export async function hasOnly(): Promise<boolean> {
+  const files = await Promise.all(
+    readdirSync(E2E_TEST_DIR)
+      .filter(_ => /^.*\.js$/.test(_))
+      .map(_ => join(E2E_TEST_DIR, _))
+      .map(_ => import(_)),
+  )
+  return files.some(_ => _.only)
 }
 
-export function run() {
+export async function run() {
   // [filename, absolute dirname, contents][]
-  const modules = readdirSync(dir)
+  const filenames = readdirSync(E2E_TEST_DIR)
     .filter(_ => !_.includes('.ignore.'))
     .filter(_ => /^.*\.js$/.test(_))
-    .map(_ => [_, require(join(dir, _))]) as [string, TestCase][]
+    .map(_ => resolve(E2E_TEST_DIR, _))
+  const files = await Promise.all(filenames.map(_ => import(_) as Promise<TestCase>))
+  const modules = zip(
+    filenames.map(_ => basename(_)),
+    files,
+  )
 
   // exporting `const only=true` will only run that test
   // exporting `const exclude=true` will not run that test
-  const only = find(modules, _ => Boolean(_[1].only))
+  const only = find(modules, _ => Boolean(_[1]!.only))
   if (only) {
-    runOne(only[1], only[0])
+    runOne(only[1]!, only[0]!)
   } else {
-    modules.filter(_ => !_[1].exclude).forEach(_ => runOne(_[1], _[0]))
+    modules.filter(_ => !_[1]!.exclude).forEach(_ => runOne(_[1]!, _[0]!))
   }
 }
 
