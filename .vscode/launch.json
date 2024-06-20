@@ -5,7 +5,7 @@
         "type": "node",
         "request": "launch",
         "name": "Launch Program",
-        "program": "${workspaceRoot}/node_modules/.bin/ava ./dist/test/test.js",
+        "program": "${workspaceRoot}/node_modules/.bin/ava ./dist-esm/test/test.js",
         "cwd": "${workspaceRoot}"
     },
     {

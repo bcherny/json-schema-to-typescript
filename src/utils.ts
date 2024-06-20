@@ -1,6 +1,6 @@
-import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
+import {deburr, isPlainObject, trim, upperFirst} from 'lodash-es'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
-import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
+import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema.js'
 import {JSONSchema4} from 'json-schema'
 import yaml from 'js-yaml'
 
@@ -208,7 +208,7 @@ export function error(...messages: any[]): void {
   if (!process.env.VERBOSE) {
     return console.error(messages)
   }
-  console.error(getStyledTextForLogging('red')?.('error'), ...messages)
+  getStyledTextForLogging('red').then(text => console.error(text?.('error'), ...messages))
 }
 
 type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'white' | 'yellow'
@@ -221,31 +221,35 @@ export function log(style: LogStyle, title: string, ...messages: unknown[]): voi
   if (messages.length > 1 && typeof messages[messages.length - 1] !== 'string') {
     lastMessage = messages.splice(messages.length - 1, 1)
   }
-  console.info(require('cli-color').whiteBright.bgCyan('debug'), getStyledTextForLogging(style)?.(title), ...messages)
-  if (lastMessage) {
-    console.dir(lastMessage, {depth: 6, maxArrayLength: 6})
-  }
+  import('cli-color').then(color => {
+    getStyledTextForLogging(style).then(text => {
+      console.info(color.whiteBright.bgCyan('debug'), text?.(title), ...messages)
+      if (lastMessage) {
+        console.dir(lastMessage, {depth: 6, maxArrayLength: 6})
+      }
+    })
+  })
 }
 
-function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | undefined {
+function getStyledTextForLogging(style: LogStyle): Promise<((text: string) => string) | undefined> {
   if (!process.env.VERBOSE) {
-    return
+    return Promise.resolve(undefined)
   }
   switch (style) {
     case 'blue':
-      return require('cli-color').whiteBright.bgBlue
+      return import('cli-color').then(color => color.whiteBright.bgBlue)
     case 'cyan':
-      return require('cli-color').whiteBright.bgCyan
+      return import('cli-color').then(color => color.whiteBright.bgCyan)
     case 'green':
-      return require('cli-color').whiteBright.bgGreen
+      return import('cli-color').then(color => color.whiteBright.bgGreen)
     case 'magenta':
-      return require('cli-color').whiteBright.bgMagenta
+      return import('cli-color').then(color => color.whiteBright.bgMagenta)
     case 'red':
-      return require('cli-color').whiteBright.bgRedBright
+      return import('cli-color').then(color => color.whiteBright.bgRedBright)
     case 'white':
-      return require('cli-color').black.bgWhite
+      return import('cli-color').then(color => color.black.bgWhite)
     case 'yellow':
-      return require('cli-color').whiteBright.bgYellow
+      return import('cli-color').then(color => color.whiteBright.bgYellow)
   }
 }
 

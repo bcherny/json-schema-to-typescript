@@ -1,7 +1,7 @@
-import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
-import {Options} from './'
-import {DereferencedPaths} from './resolver'
+import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema.js'
+import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils.js'
+import {Options} from './index.js'
+import {DereferencedPaths} from './resolver.js'
 import {isDeepStrictEqual} from 'util'
 
 type Rule = (

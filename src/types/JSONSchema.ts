@@ -1,5 +1,5 @@
 import {JSONSchema4, JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {isPlainObject, memoize} from 'lodash'
+import {isPlainObject, memoize} from 'lodash-es'
 
 export type SchemaType =
   | 'ALL_OF'

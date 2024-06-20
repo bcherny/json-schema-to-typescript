@@ -2,19 +2,24 @@
   "name": "json-schema-to-typescript",
   "version": "14.0.5",
   "description": "compile json schema to typescript typings",
-  "main": "dist/src/index.js",
-  "bin": {
-    "json2ts": "dist/src/cli.js"
+  "main": "dist-cjs/src/index.js",
+  "exports": {
+    "require": "./dist-cjs/src/index.js",
+    "import": "./dist-esm/src/index.js"
   },
-  "typings": "dist/src/index.d.ts",
+  "bin": {
+    "json2ts": "dist-esm/src/cli.js"
+  },
+  "type": "module",
+  "typings": "dist-esm/src/index.d.ts",
   "engines": {
     "node": ">=16.0.0"
   },
   "scripts": {
     "build": "npm run lint && npm run clean && npm run build:browser && npm run build:server",
-    "build:browser": "browserify src/index.ts -s jstt -p tsify > dist/bundle.js",
-    "build:server": "tsc -d",
-    "clean": "shx rm -rf dist && mkdir dist",
+    "build:browser": "browserify src/index.ts -s jstt -p tsify > dist-esm/bundle.js",
+    "build:server": "tsc -p ./tsconfig.cjs.json -d && tsc -p ./tsconfig.esm.json -d",
+    "clean": "shx rm -rf dist-cjs && shx rm -rf dist-esm",
     "format": "prettier \"{src,test}/*.ts\" --write",
     "format-check": "prettier \"{src,test}/*.ts\" --check",
     "lint": "eslint src/*.ts test/*.ts",
@@ -23,7 +28,7 @@
     "stresstest": "seq 1 10 | xargs -I{} npm test",
     "prepublishOnly": "npm test",
     "pre-test": "npm run clean && npm run format-check && npm run build:server",
-    "watch": "tsc -w",
+    "watch": "tsc -p ./tsconfig.esm.json -w",
     "watch:test": "ava -w"
   },
   "repository": {
@@ -50,12 +55,12 @@
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.5.5",
     "@types/json-schema": "^7.0.15",
-    "@types/lodash": "^4.17.0",
+    "@types/lodash-es": "^4.17.12",
     "cli-color": "^2.0.4",
     "glob": "^10.3.12",
     "is-glob": "^4.0.3",
     "js-yaml": "^4.1.0",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "minimist": "^1.2.8",
     "mkdirp": "^3.0.1",
     "node-fetch": "^3.3.2",
@@ -85,7 +90,7 @@
   },
   "ava": {
     "files": [
-      "./dist/test/test.js"
+      "./dist-esm/test/test.js"
     ],
     "snapshotDir": "./test/__snapshots__"
   },

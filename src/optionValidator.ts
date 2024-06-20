@@ -1,4 +1,4 @@
-import {Options} from '.'
+import {Options} from './index.js'
 
 export function validateOptions({maxItems}: Partial<Options>): void {
   if (maxItems !== undefined && maxItems < -1) {

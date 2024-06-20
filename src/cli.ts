@@ -6,8 +6,8 @@ import * as mkdirp from 'mkdirp'
 import {glob} from 'glob'
 import isGlob from 'is-glob'
 import {join, resolve, dirname} from 'path'
-import {compile, DEFAULT_OPTIONS, Options} from './index'
-import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
+import {compile, DEFAULT_OPTIONS, Options} from './index.js'
+import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils.js'
 
 main(
   minimist(process.argv.slice(2), {
@@ -161,7 +161,7 @@ async function readStream(stream: NodeJS.ReadStream): Promise<string> {
 }
 
 function printHelp() {
-  const pkg = require('../../package.json')
+  const pkg = JSON.parse(readFileSync('../../package.json', 'utf8'))
 
   process.stdout.write(
     `

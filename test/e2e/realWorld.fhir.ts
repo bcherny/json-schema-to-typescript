@@ -1,4 +1,4 @@
-import {Options} from '../../src'
+import {Options} from '../../src/index.js'
 
 export const input = {
   $schema: 'http://json-schema.org/draft-06/schema#',

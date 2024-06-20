@@ -1,5 +1,5 @@
-import {isPlainObject} from 'lodash'
-import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
+import {isPlainObject} from 'lodash-es'
+import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema.js'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.

@@ -1,5 +1,5 @@
 import test from 'ava'
-import {compileFromFile} from '../src'
+import {compileFromFile} from '../src/index.js'
 
 export function run() {
   test('compileFromFile should resolve refs from cwd option', async t =>

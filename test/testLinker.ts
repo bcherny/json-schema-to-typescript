@@ -1,7 +1,7 @@
 import test from 'ava'
-import {link} from '../src/linker'
-import {Parent} from '../src/types/JSONSchema'
-import {input} from './e2e/basics'
+import {link} from '../src/linker.js'
+import {Parent} from '../src/types/JSONSchema.js'
+import {input} from './e2e/basics.js'
 
 export function run() {
   test("linker should link to each node's parent schema", t => {
