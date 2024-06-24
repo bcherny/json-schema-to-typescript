@@ -23,6 +23,27 @@ function isArrayType(schema: LinkedJSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
 
+rules.set('Simplify intersection+schemas to intersection', schema => {
+  if (schema.allOf && (schema.properties || schema.patternProperties || schema.required)) {
+    const newCase: LinkedJSONSchema = {
+      [Parent]: schema,
+      properties: schema.properties,
+      additionalProperties: schema.additionalProperties,
+      patternProperties: schema.patternProperties,
+      required: schema.required,
+    }
+    if (schema.allOf.some(_ => _.additionalProperties === false)) {
+      newCase.additionalProperties = false
+    }
+    schema.allOf.push(newCase)
+    delete schema.properties
+    delete schema.patternProperties
+    delete schema.required
+    delete schema.type
+    // leave additionalProperties as-is
+  }
+})
+
 rules.set('Remove `type=["null"]` if `enum=[null]`', schema => {
   if (
     Array.isArray(schema.enum) &&
