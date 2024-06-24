@@ -2,7 +2,7 @@ import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
-import {typesOfSchema} from './typesOfSchema'
+import {applySchemaTyping} from './applySchemaTyping'
 import {
   AST,
   T_ANY,
@@ -15,23 +15,22 @@ import {
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
   TIntersection,
 } from './types/AST'
-import {
-  getRootSchema,
-  isBoolean,
-  isPrimitive,
-  JSONSchema as LinkedJSONSchema,
+import type {
   JSONSchemaWithDefinitions,
+  LinkedJSONSchema,
+  NormalizedJSONSchema,
   SchemaSchema,
   SchemaType,
 } from './types/JSONSchema'
-import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
+import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {generateName, log, maybeStripDefault} from './utils'
 
-export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
+export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
 export type UsedNames = Set<string>
 
 export function parse(
-  schema: LinkedJSONSchema | JSONSchema4Type,
+  schema: NormalizedJSONSchema | JSONSchema4Type,
   options: Options,
   keyName?: string,
   processed: Processed = new Map(),
@@ -45,7 +44,7 @@ export function parse(
     return parseLiteral(schema, keyName)
   }
 
-  const types = typesOfSchema(schema)
+  const types = schema[Types]
   if (types.length === 1) {
     const ast = parseAsTypeWithCache(schema, types[0], options, keyName, processed, usedNames)
     log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
@@ -54,13 +53,13 @@ export function parse(
 
   // Be careful to first process the intersection before processing its params,
   // so that it gets first pick for standalone name.
+  const intersectionSchema = schema[Intersection]
+  if (!intersectionSchema) {
+    throw new ReferenceError('Expected intersection schema. Please file an issue on GitHub.')
+  }
+
   const ast = parseAsTypeWithCache(
-    {
-      $id: schema.$id,
-      allOf: [],
-      description: schema.description,
-      title: schema.title,
-    },
+    intersectionSchema,
     'ALL_OF',
     options,
     keyName,
@@ -71,7 +70,7 @@ export function parse(
   ast.params = types.map(type =>
     // We hoist description (for comment) and id/title (for standaloneName)
     // to the parent intersection type, so we remove it from the children.
-    parseAsTypeWithCache(maybeStripNameHints(schema), type, options, keyName, processed, usedNames),
+    parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames),
   )
 
   log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
@@ -79,7 +78,7 @@ export function parse(
 }
 
 function parseAsTypeWithCache(
-  schema: LinkedJSONSchema,
+  schema: NormalizedJSONSchema,
   type: SchemaType,
   options: Options,
   keyName?: string,
@@ -131,7 +130,7 @@ function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined): AST
 }
 
 function parseNonLiteral(
-  schema: LinkedJSONSchema,
+  schema: NormalizedJSONSchema,
   type: SchemaType,
   options: Options,
   keyName: string | undefined,
@@ -289,7 +288,9 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
-          return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
+          maybeStripDefault(member)
+          applySchemaTyping(member)
+          return parse(member, options, undefined, processed, usedNames)
         }),
         type: 'UNION',
       }
