@@ -1,6 +1,7 @@
 import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
+import {applySchemaTyping} from './applySchemaTyping'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
 
@@ -219,6 +220,22 @@ rules.set('Transform const to singleton enum', schema => {
   if (schema.const !== undefined) {
     schema.enum = [schema.const]
     delete schema.const
+  }
+})
+
+// Precalculation of the schema types is necessary because the ALL_OF type
+// is implemented in a way that mutates the schema object. Detection of the
+// NAMED_SCHEMA type relies on the presence of the $id property, which is
+// hoisted to a parent schema object during the ALL_OF type implementation,
+// and becomes unavailable if the same schema is used in multiple places.
+//
+// Precalculation of the `ALL_OF` intersection schema is necessary because
+// the intersection schema needs to participate in the schema cache during
+// the parsing step, so it cannot be re-calculated every time the schema
+// is encountered.
+rules.set('Pre-calculate schema types and intersections', schema => {
+  if (schema !== null && typeof schema === 'object') {
+    applySchemaTyping(schema)
   }
 })
 

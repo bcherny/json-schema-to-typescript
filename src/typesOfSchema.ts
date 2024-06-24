@@ -9,26 +9,26 @@ import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
  * types). The spec leaves it up to implementations to decide what to do with this
  * loosely-defined behavior.
  */
-export function typesOfSchema(schema: JSONSchema): readonly [SchemaType, ...SchemaType[]] {
+export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
   // tsType is an escape hatch that supercedes all other directives
   if (schema.tsType) {
-    return ['CUSTOM_TYPE']
+    return new Set(['CUSTOM_TYPE'])
   }
 
   // Collect matched types
-  const matchedTypes: SchemaType[] = []
+  const matchedTypes = new Set<SchemaType>()
   for (const [schemaType, f] of Object.entries(matchers)) {
     if (f(schema)) {
-      matchedTypes.push(schemaType as SchemaType)
+      matchedTypes.add(schemaType as SchemaType)
     }
   }
 
   // Default to an unnamed schema
-  if (!matchedTypes.length) {
-    return ['UNNAMED_SCHEMA']
+  if (!matchedTypes.size) {
+    matchedTypes.add('UNNAMED_SCHEMA')
   }
 
-  return matchedTypes as [SchemaType, ...SchemaType[]]
+  return matchedTypes
 }
 
 const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
