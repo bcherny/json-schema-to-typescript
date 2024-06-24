@@ -3,18 +3,8 @@ import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {applySchemaTyping} from './applySchemaTyping'
-import {
-  AST,
-  T_ANY,
-  T_ANY_ADDITIONAL_PROPERTIES,
-  TInterface,
-  TInterfaceParam,
-  TNamedInterface,
-  TTuple,
-  T_UNKNOWN,
-  T_UNKNOWN_ADDITIONAL_PROPERTIES,
-  TIntersection,
-} from './types/AST'
+import type {AST, TInterface, TInterfaceParam, TIntersection, TNamedInterface, TTuple} from './types/AST'
+import {T_ANY, T_ANY_ADDITIONAL_PROPERTIES, T_UNKNOWN, T_UNKNOWN_ADDITIONAL_PROPERTIES} from './types/AST'
 import type {
   JSONSchemaWithDefinitions,
   LinkedJSONSchema,
@@ -44,37 +34,28 @@ export function parse(
     return parseLiteral(schema, keyName)
   }
 
+  const intersection = schema[Intersection]
   const types = schema[Types]
-  if (types.length === 1) {
-    const ast = parseAsTypeWithCache(schema, types[0], options, keyName, processed, usedNames)
-    log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
+
+  if (intersection) {
+    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames) as TIntersection
+
+    types.forEach(type => {
+      ast.params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames))
+    })
+
+    log('blue', 'parser', 'Types:', [...types], 'Input:', schema, 'Output:', ast)
     return ast
   }
 
-  // Be careful to first process the intersection before processing its params,
-  // so that it gets first pick for standalone name.
-  const intersectionSchema = schema[Intersection]
-  if (!intersectionSchema) {
-    throw new ReferenceError('Expected intersection schema. Please file an issue on GitHub.')
+  if (types.size === 1) {
+    const type = [...types][0]
+    const ast = parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames)
+    log('blue', 'parser', 'Type:', type, 'Input:', schema, 'Output:', ast)
+    return ast
   }
 
-  const ast = parseAsTypeWithCache(
-    intersectionSchema,
-    'ALL_OF',
-    options,
-    keyName,
-    processed,
-    usedNames,
-  ) as TIntersection
-
-  ast.params = types.map(type =>
-    // We hoist description (for comment) and id/title (for standaloneName)
-    // to the parent intersection type, so we remove it from the children.
-    parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames),
-  )
-
-  log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
-  return ast
+  throw new ReferenceError('Expected intersection schema. Please file an issue on GitHub.')
 }
 
 function parseAsTypeWithCache(

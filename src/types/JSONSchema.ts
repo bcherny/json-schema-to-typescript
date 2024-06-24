@@ -75,7 +75,7 @@ export const Intersection = Symbol('Intersection')
 
 export interface NormalizedJSONSchema extends LinkedJSONSchema {
   [Intersection]?: NormalizedJSONSchema
-  [Types]: readonly [SchemaType, ...SchemaType[]]
+  [Types]: ReadonlySet<SchemaType>
   additionalItems?: boolean | NormalizedJSONSchema
   additionalProperties: boolean | NormalizedJSONSchema
   extends?: string[]
