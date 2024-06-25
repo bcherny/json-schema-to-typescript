@@ -24,6 +24,7 @@ export type AST =
 
 export interface AbstractAST {
   comment?: string
+  isExternalSchema: boolean
   keyName?: string
   standaloneName?: string
   type: AST_TYPE
@@ -154,18 +155,22 @@ export interface TCustomType extends AbstractAST {
 
 export const T_ANY: TAny = {
   type: 'ANY',
+  isExternalSchema: false,
 }
 
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   keyName: '[k: string]',
   type: 'ANY',
+  isExternalSchema: false,
 }
 
 export const T_UNKNOWN: TUnknown = {
   type: 'UNKNOWN',
+  isExternalSchema: false,
 }
 
 export const T_UNKNOWN_ADDITIONAL_PROPERTIES: TUnknown & ASTWithName = {
   keyName: '[k: string]',
   type: 'UNKNOWN',
+  isExternalSchema: false,
 }

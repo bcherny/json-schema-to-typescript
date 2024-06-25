@@ -35,7 +35,10 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
   }
 
   processed.add(ast)
-  let type = ''
+
+  if (ast.isExternalSchema && !options.declareExternallyReferenced) {
+    return ''
+  }
 
   switch (ast.type) {
     case 'ENUM':
@@ -46,7 +49,7 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
     case 'INTERSECTION':
       return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
     case 'TUPLE':
-      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      let type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
       if (ast.spreadParam) {
         type += declareEnums(ast.spreadParam, options, processed)
       }
@@ -66,15 +69,17 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
   processed.add(ast)
   let type = ''
 
+  if (ast.isExternalSchema && !options.declareExternallyReferenced) {
+    return ''
+  }
+
   switch (ast.type) {
     case 'ARRAY':
       type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
       break
     case 'INTERFACE':
       type = [
-        hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-          generateStandaloneInterface(ast, options),
+        hasStandaloneName(ast) && generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
           .filter(Boolean)
@@ -108,6 +113,10 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
 
   processed.add(ast)
 
+  if (ast.isExternalSchema && !options.declareExternallyReferenced) {
+    return ''
+  }
+
   switch (ast.type) {
     case 'ARRAY':
       return [
@@ -120,11 +129,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       return ''
     case 'INTERFACE':
       return getSuperTypesAndParams(ast)
-        .map(
-          ast =>
-            (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-            declareNamedTypes(ast, options, rootASTName, processed),
-        )
+        .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
         .filter(Boolean)
         .join('\n')
     case 'INTERSECTION':

@@ -1,4 +1,4 @@
-import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {IsExternalSchema, JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
 import {DereferencedPaths} from './resolver'
@@ -73,6 +73,27 @@ rules.set('Transform id to $id', (schema, fileName) => {
   }
 })
 
+rules.set(
+  'Add an ExternalRef flag to anything that needs it',
+  (schema, _fileName, _options, _key, dereferencedPaths) => {
+    if (!isSchemaLike(schema)) {
+      return
+    }
+
+    // Top-level schema
+    if (!schema[Parent]) {
+      return
+    }
+
+    const dereferencedName = dereferencedPaths.get(schema)
+    Object.defineProperty(schema, IsExternalSchema, {
+      enumerable: false,
+      value: dereferencedName && !dereferencedName.startsWith('#'),
+      writable: false,
+    })
+  },
+)
+
 rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _key, dereferencedPaths) => {
   if (!isSchemaLike(schema)) {
     return
@@ -94,10 +115,6 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
   const dereferencedName = dereferencedPaths.get(schema)
   if (!schema.$id && !schema.title && dereferencedName) {
     schema.$id = toSafeString(justName(dereferencedName))
-  }
-
-  if (dereferencedName) {
-    dereferencedPaths.delete(schema)
   }
 })
 
