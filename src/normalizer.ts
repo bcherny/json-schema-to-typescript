@@ -1,11 +1,11 @@
-import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {JSONSchemaTypeName, AnnotatedJSONSchema, NormalizedJSONSchema, JSONSchema, Parent} from './types/JSONSchema'
 import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
 
 type Rule = (
-  schema: LinkedJSONSchema,
+  schema: AnnotatedJSONSchema,
   fileName: string,
   options: Options,
   key: string | null,
@@ -13,16 +13,16 @@ type Rule = (
 ) => void
 const rules = new Map<string, Rule>()
 
-function hasType(schema: LinkedJSONSchema, type: JSONSchemaTypeName) {
+function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
-function isObjectType(schema: LinkedJSONSchema) {
+function isObjectType(schema: JSONSchema) {
   return schema.properties !== undefined || hasType(schema, 'object') || hasType(schema, 'any')
 }
-function isArrayType(schema: LinkedJSONSchema) {
+function isArrayType(schema: JSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
-function isEnumTypeWithoutTsEnumNames(schema: LinkedJSONSchema) {
+function isEnumTypeWithoutTsEnumNames(schema: JSONSchema) {
   return schema.type === 'string' && schema.enum !== undefined && schema.tsEnumNames === undefined
 }
 
@@ -232,7 +232,7 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
 })
 
 export function normalize(
-  rootSchema: LinkedJSONSchema,
+  rootSchema: AnnotatedJSONSchema,
   dereferencedPaths: DereferencedPaths,
   filename: string,
   options: Options,

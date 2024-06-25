@@ -1,11 +1,11 @@
 import test from 'ava'
-import {link} from '../src/linker'
+import {annotate} from '../src/annotator'
 import {Parent} from '../src/types/JSONSchema'
 import {input} from './e2e/basics'
 
 export function run() {
-  test("linker should link to each node's parent schema", t => {
-    const schema = link(input) as any
+  test("annotator should link to each node's parent schema", t => {
+    const schema = annotate(input, new WeakMap()) as any
     t.is(schema[Parent], null)
     t.is(schema.properties[Parent], schema)
     t.is(schema.properties.firstName[Parent], schema.properties)

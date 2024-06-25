@@ -8,9 +8,9 @@ TODO use an external validation library
 
 Resolves referenced schemas (in the file, on the local filesystem, or over the network).
 
-#### 3. Linker
+#### 3. Annotator
 
-Adds links back from each node in a schema to its parent (available via the `Parent` symbol on each node), for convenience.
+Annotates the JSON schema with metadata that will be used later on. For example, this step adds links back from each node in a schema to its parent (available via the `Metadata` symbol on each node), for convenience.
 
 #### 4. Normalizer
 

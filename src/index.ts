@@ -13,9 +13,9 @@ import {dereference} from './resolver'
 import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
-import {link} from './linker'
+import {annotate} from './annotator'
 import {validateOptions} from './optionValidator'
-import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
+import {AnnotatedJSONSchema} from './types/JSONSchema'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
@@ -35,7 +35,7 @@ export interface Options {
   /**
    * Custom function to provide a type name for a given schema
    */
-  customName?: (schema: LinkedJSONSchema, keyNameFromDefinition: string | undefined) => string | undefined
+  customName?: (schema: AnnotatedJSONSchema, keyNameFromDefinition: string | undefined) => string | undefined
   /**
    * Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s.
    */
@@ -159,12 +159,12 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     }
   }
 
-  const linked = link(dereferencedSchema)
+  const annotated = annotate(dereferencedSchema, dereferencedPaths)
   if (process.env.VERBOSE) {
-    log('green', 'linker', time(), '✅ No change')
+    log('green', 'annotater', time(), '✅ No change')
   }
 
-  const errors = validate(linked, name)
+  const errors = validate(annotated, name)
   if (errors.length) {
     errors.forEach(_ => error(_))
     throw new ValidationError()
@@ -173,7 +173,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     log('green', 'validator', time(), '✅ No change')
   }
 
-  const normalized = normalize(linked, dereferencedPaths, name, _options)
+  const normalized = normalize(annotated, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
   const parsed = parse(normalized, _options)

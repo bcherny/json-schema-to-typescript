@@ -1,5 +1,5 @@
 import test from 'ava'
-import {link} from '../src/linker'
+import {annotate} from '../src/annotator'
 import {pathTransform, generateName, isSchemaLike} from '../src/utils'
 
 export function run() {
@@ -22,20 +22,23 @@ export function run() {
     t.is(generateName('a', usedNames), 'A3')
   })
   test('isSchemaLike', t => {
-    const schema = link({
-      title: 'Example Schema',
-      type: 'object',
-      properties: {
-        firstName: {
-          type: 'string',
+    const schema = annotate(
+      {
+        title: 'Example Schema',
+        type: 'object',
+        properties: {
+          firstName: {
+            type: 'string',
+          },
+          lastName: {
+            id: 'lastName',
+            type: 'string',
+          },
         },
-        lastName: {
-          id: 'lastName',
-          type: 'string',
-        },
+        required: ['firstName', 'lastName'],
       },
-      required: ['firstName', 'lastName'],
-    })
+      new WeakMap(),
+    )
     t.is(isSchemaLike(schema), true)
     t.is(isSchemaLike([]), false)
     t.is(isSchemaLike(schema.properties), false)
