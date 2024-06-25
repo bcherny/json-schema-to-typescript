@@ -1,0 +1,16 @@
+{
+  "name": "Add tsEnumNames to enum types (2)",
+  "in": {
+    "$id": "foo",
+    "type": "string",
+    "enum": ["foo", "bar"]
+  },
+  "options": {
+    "inferStringEnumKeysFromValues": false
+  },
+  "out": {
+    "$id": "foo",
+    "type": "string",
+    "enum": [ "foo", "bar" ]
+  }
+}
