@@ -40,6 +40,7 @@ export interface JSONSchema extends JSONSchema4 {
   deprecated?: boolean
 }
 
+export const IsExternalSchema = Symbol('IsExternalSchema')
 export const Parent = Symbol('Parent')
 
 export interface LinkedJSONSchema extends JSONSchema {
@@ -77,6 +78,10 @@ export interface LinkedJSONSchema extends JSONSchema {
  */
 export interface NormalizedJSONSchema extends Omit<LinkedJSONSchema, 'definitions' | 'id'> {
   [Parent]: NormalizedJSONSchema | null
+  /**
+   * Indicates whether this schema was an external $ref.
+   */
+  [IsExternalSchema]: boolean
 
   additionalItems?: boolean | NormalizedJSONSchema
   additionalProperties: boolean | NormalizedJSONSchema

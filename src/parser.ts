@@ -25,6 +25,7 @@ import {
   Parent,
   SchemaSchema,
   SchemaType,
+  IsExternalSchema,
 } from './types/JSONSchema'
 import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
 
@@ -56,22 +57,17 @@ export function parse(
 
   // Be careful to first process the intersection before processing its params,
   // so that it gets first pick for standalone name.
-  const ast = parseAsTypeWithCache(
-    {
-      [Parent]: schema[Parent],
-      $id: schema.$id,
-      additionalProperties: schema.additionalProperties,
-      allOf: [],
-      description: schema.description,
-      required: schema.required,
-      title: schema.title,
-    },
-    'ALL_OF',
-    options,
-    keyName,
-    processed,
-    usedNames,
-  ) as TIntersection
+  const allOf: NormalizedJSONSchema = {
+    [IsExternalSchema]: schema[IsExternalSchema],
+    [Parent]: schema[Parent],
+    $id: schema.$id,
+    allOf: [],
+    description: schema.description,
+    title: schema.title,
+    additionalProperties: schema.additionalProperties,
+    required: schema.required,
+  }
+  const ast = parseAsTypeWithCache(allOf, 'ALL_OF', options, keyName, processed, usedNames) as TIntersection
 
   ast.params = types.map(type =>
     // We hoist description (for comment) and id/title (for standaloneName)
@@ -116,12 +112,14 @@ function parseAsTypeWithCache(
 function parseBooleanSchema(schema: boolean, keyName: string | undefined, options: Options): AST {
   if (schema) {
     return {
+      isExternalSchema: false,
       keyName,
       type: options.unknownAny ? 'UNKNOWN' : 'ANY',
     }
   }
 
   return {
+    isExternalSchema: false,
     keyName,
     type: 'NEVER',
   }
@@ -129,6 +127,7 @@ function parseBooleanSchema(schema: boolean, keyName: string | undefined, option
 
 function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined): AST {
   return {
+    isExternalSchema: false,
     keyName,
     params: schema,
     type: 'LITERAL',
@@ -151,6 +150,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -161,6 +161,7 @@ function parseNonLiteral(
         ...(options.unknownAny ? T_UNKNOWN : T_ANY),
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
       }
@@ -168,6 +169,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -177,6 +179,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'BOOLEAN',
@@ -185,6 +188,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         params: schema.tsType!,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -194,6 +198,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)!,
         params: (schema as EnumJSONSchema).enum!.map((_, n) => ({
@@ -208,6 +213,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'NEVER',
@@ -216,6 +222,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'NULL',
@@ -224,6 +231,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'NUMBER',
@@ -231,6 +239,7 @@ function parseNonLiteral(
     case 'OBJECT':
       return {
         comment: schema.description,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'OBJECT',
@@ -240,6 +249,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
@@ -251,6 +261,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'STRING',
@@ -263,6 +274,7 @@ function parseNonLiteral(
         const arrayType: TTuple = {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isExternalSchema: schema[IsExternalSchema],
           keyName,
           maxItems,
           minItems,
@@ -280,6 +292,7 @@ function parseNonLiteral(
         return {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isExternalSchema: schema[IsExternalSchema],
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
           params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
@@ -290,6 +303,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
@@ -307,6 +321,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: (schema as EnumJSONSchema).enum!.map(_ => parseLiteral(_, undefined)),
@@ -323,6 +338,7 @@ function parseNonLiteral(
         return {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isExternalSchema: schema[IsExternalSchema],
           keyName,
           maxItems: schema.maxItems,
           minItems,
@@ -338,6 +354,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isExternalSchema: schema[IsExternalSchema],
         keyName,
         params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -374,6 +391,7 @@ function newInterface(
   return {
     comment: schema.description,
     deprecated: schema.deprecated,
+    isExternalSchema: schema[IsExternalSchema],
     keyName,
     params: parseSchema(schema, options, processed, usedNames, name),
     standaloneName: name,
