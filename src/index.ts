@@ -41,10 +41,6 @@ export interface Options {
    */
   cwd: string
   /**
-   * Declare external schemas referenced via `$ref`?
-   */
-  declareExternallyReferenced: boolean
-  /**
    * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
    */
   enableConstEnums: boolean
@@ -93,7 +89,6 @@ export const DEFAULT_OPTIONS: Options = {
 * and run json-schema-to-typescript to regenerate this file.
 */`,
   cwd: process.cwd(),
-  declareExternallyReferenced: true,
   enableConstEnums: true,
   format: true,
   ignoreMinAndMaxItems: false,

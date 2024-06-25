@@ -9,7 +9,3 @@ export const input = {
   required: ['foo'],
   additionalProperties: false,
 }
-
-export const options = {
-  declareExternallyReferenced: true,
-}

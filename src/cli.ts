@@ -18,7 +18,6 @@ main(
     },
     boolean: [
       'additionalProperties',
-      'declareExternallyReferenced',
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
@@ -179,8 +178,6 @@ Boolean values can be set to false using the 'no-' prefix.
       Default value for additionalProperties, when it is not explicitly set
   --cwd=XXX
       Root directory for resolving $ref
-  --declareExternallyReferenced
-      Declare external schemas referenced via '$ref'?
   --enableConstEnums
       Prepend enums with 'const'?
   --format

@@ -72,9 +72,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
       break
     case 'INTERFACE':
       type = [
-        hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-          generateStandaloneInterface(ast, options),
+        hasStandaloneName(ast) && generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
           .filter(Boolean)
@@ -120,11 +118,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       return ''
     case 'INTERFACE':
       return getSuperTypesAndParams(ast)
-        .map(
-          ast =>
-            (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-            declareNamedTypes(ast, options, rootASTName, processed),
-        )
+        .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
         .filter(Boolean)
         .join('\n')
     case 'INTERSECTION':
