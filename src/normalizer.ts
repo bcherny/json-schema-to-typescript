@@ -105,20 +105,11 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
     return
   }
 
-  // Sub-schemas with references
-  if (!isArrayType(schema) && !isObjectType(schema)) {
-    return
-  }
-
   // We'll infer from $id and title downstream
   // TODO: Normalize upstream
   const dereferencedName = dereferencedPaths.get(schema)
   if (!schema.$id && !schema.title && dereferencedName) {
-    schema.$id = toSafeString(justName(dereferencedName))
-  }
-
-  if (dereferencedName) {
-    dereferencedPaths.delete(schema)
+    schema.title = toSafeString(justName(dereferencedName))
   }
 })
 
