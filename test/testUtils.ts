@@ -22,23 +22,20 @@ export function run() {
     t.is(generateName('a', usedNames), 'A3')
   })
   test('isSchemaLike', t => {
-    const schema = annotate(
-      {
-        title: 'Example Schema',
-        type: 'object',
-        properties: {
-          firstName: {
-            type: 'string',
-          },
-          lastName: {
-            id: 'lastName',
-            type: 'string',
-          },
+    const schema = annotate({
+      title: 'Example Schema',
+      type: 'object',
+      properties: {
+        firstName: {
+          type: 'string',
         },
-        required: ['firstName', 'lastName'],
+        lastName: {
+          id: 'lastName',
+          type: 'string',
+        },
       },
-      new WeakMap(),
-    )
+      required: ['firstName', 'lastName'],
+    })
     t.is(isSchemaLike(schema), true)
     t.is(isSchemaLike([]), false)
     t.is(isSchemaLike(schema.properties), false)

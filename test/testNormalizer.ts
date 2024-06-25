@@ -21,12 +21,7 @@ export function run() {
     .map(_ => [_, require(_)] as [string, JSONTestCase])
     .forEach(([filename, json]: [string, JSONTestCase]) => {
       test(json.name, t => {
-        const normalized = normalize(
-          annotate(json.in, new WeakMap()),
-          new WeakMap(),
-          filename,
-          json.options ?? DEFAULT_OPTIONS,
-        )
+        const normalized = normalize(annotate(json.in), filename, json.options ?? DEFAULT_OPTIONS)
         t.deepEqual(json.out, normalized)
       })
     })

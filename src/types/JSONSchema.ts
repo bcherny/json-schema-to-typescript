@@ -1,5 +1,5 @@
 import {JSONSchema4, JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {isPlainObject, memoize} from 'lodash'
+import {isPlainObject} from 'lodash'
 
 export type SchemaType =
   | 'ALL_OF'
@@ -40,9 +40,22 @@ export interface JSONSchema extends JSONSchema4 {
   deprecated?: boolean
 }
 
+export const IsSchema = Symbol('IsSchema')
 export const Parent = Symbol('Parent')
+export const Ref = Symbol('Ref')
 
-export interface AnnotatedJSONSchema extends JSONSchema {
+export interface DereferencedJSONSchema extends JSONSchema {
+  /**
+   * The original $ref that was dereferenced, if there was one.
+   */
+  [Ref]: string | undefined
+}
+
+export interface AnnotatedJSONSchema extends DereferencedJSONSchema {
+  /**
+   * Whether the given object is a JSONSchema (as opposed to a part of a schema, like a property)
+   */
+  [IsSchema]: boolean
   [Parent]: AnnotatedJSONSchema
 
   additionalItems?: boolean | AnnotatedJSONSchema
@@ -112,23 +125,9 @@ export interface SchemaSchema extends NormalizedJSONSchema {
   required: string[]
 }
 
-export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {
-  $defs: {
-    [k: string]: NormalizedJSONSchema
-  }
-}
-
 export interface CustomTypeJSONSchema extends NormalizedJSONSchema {
   tsType: string
 }
-
-export const getRootSchema = memoize((schema: NormalizedJSONSchema): NormalizedJSONSchema => {
-  const parent = schema[Parent]
-  if (!parent) {
-    return schema
-  }
-  return getRootSchema(parent)
-})
 
 export function isBoolean(schema: AnnotatedJSONSchema | JSONSchemaType): schema is boolean {
   return schema === true || schema === false

@@ -1,41 +1,57 @@
 import {isPlainObject} from 'lodash'
-import {DereferencedPaths} from './resolver'
-import {AnnotatedJSONSchema, JSONSchema, Parent, isAnnotated} from './types/JSONSchema'
+import {AnnotatedJSONSchema, IsSchema, JSONSchema, Parent, isAnnotated} from './types/JSONSchema'
+import {isSchemaLike} from './utils'
 
-/**
- * Traverses over the schema, assigning to each
- * node metadata that will be used downstream.
- */
-export function annotate(
-  schema: JSONSchema,
-  dereferencedPaths: DereferencedPaths,
-  parent: JSONSchema | null = null,
-): AnnotatedJSONSchema {
-  if (!Array.isArray(schema) && !isPlainObject(schema)) {
-    return schema as AnnotatedJSONSchema
-  }
+const annotators = new Set<(schema: JSONSchema, parent: JSONSchema | null) => void>()
 
-  // Handle cycles
-  if (isAnnotated(schema)) {
-    return schema
-  }
-
-  // Add a reference to this schema's parent
+annotators.add(function annotateParent(schema, parent) {
   Object.defineProperty(schema, Parent, {
     enumerable: false,
     value: parent,
     writable: false,
   })
+})
 
-  // Arrays
-  if (Array.isArray(schema)) {
-    schema.forEach(child => annotate(child, dereferencedPaths, schema))
+annotators.add(function annotateSchemas(schema) {
+  Object.defineProperty(schema, IsSchema, {
+    enumerable: false,
+    value: isSchemaLike(schema),
+    writable: false,
+  })
+})
+
+/**
+ * Traverses over the schema, assigning to each
+ * node metadata that will be used downstream.
+ */
+export function annotate(schema: JSONSchema): AnnotatedJSONSchema {
+  function go(s: JSONSchema, parent: JSONSchema | null): void {
+    if (!Array.isArray(s) && !isPlainObject(s)) {
+      return
+    }
+
+    // Handle cycles
+    if (isAnnotated(s)) {
+      return
+    }
+
+    // Run annotators
+    annotators.forEach(f => {
+      f(s, parent)
+    })
+
+    // Handle arrays
+    if (Array.isArray(s)) {
+      s.forEach(_ => go(_, s))
+    }
+
+    // Handle objects
+    for (const key in s) {
+      go(s[key], s)
+    }
   }
 
-  // Objects
-  for (const key in schema) {
-    annotate(schema[key], dereferencedPaths, schema)
-  }
+  go(schema, null)
 
   return schema as AnnotatedJSONSchema
 }

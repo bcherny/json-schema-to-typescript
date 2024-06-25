@@ -35,7 +35,7 @@ export interface Options {
   /**
    * Custom function to provide a type name for a given schema
    */
-  customName?: (schema: AnnotatedJSONSchema, keyNameFromDefinition: string | undefined) => string | undefined
+  customName?: (schema: AnnotatedJSONSchema) => string | undefined
   /**
    * Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s.
    */
@@ -150,7 +150,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   // Initial clone to avoid mutating the input
   const _schema = cloneDeep(schema)
 
-  const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
+  const dereferencedSchema = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
@@ -159,7 +159,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     }
   }
 
-  const annotated = annotate(dereferencedSchema, dereferencedPaths)
+  const annotated = annotate(dereferencedSchema)
   if (process.env.VERBOSE) {
     log('green', 'annotater', time(), '✅ No change')
   }
@@ -173,7 +173,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     log('green', 'validator', time(), '✅ No change')
   }
 
-  const normalized = normalize(annotated, dereferencedPaths, name, _options)
+  const normalized = normalize(annotated, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
   const parsed = parse(normalized, _options)
