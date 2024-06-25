@@ -2,9 +2,13 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 14.1.0
+
+- 3e2e1e9 Added `inferStringEnumKeysFromValues` option (#578)
+
 ## 14.0.5
 
-- b7fee29 Added .taml support for CLI (#598)
+- b7fee29 Added .yaml support for CLI (#598)
 
 ## 14.0.2
 
