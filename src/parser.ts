@@ -16,22 +16,24 @@ import {
   TIntersection,
 } from './types/AST'
 import {
+  EnumJSONSchema,
   getRootSchema,
   isBoolean,
   isPrimitive,
-  JSONSchema as LinkedJSONSchema,
   JSONSchemaWithDefinitions,
+  NormalizedJSONSchema,
+  Parent,
   SchemaSchema,
   SchemaType,
 } from './types/JSONSchema'
 import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
 
-export type Processed = Map<LinkedJSONSchema, Map<SchemaType, AST>>
+export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
 export type UsedNames = Set<string>
 
 export function parse(
-  schema: LinkedJSONSchema | JSONSchema4Type,
+  schema: NormalizedJSONSchema | JSONSchema4Type,
   options: Options,
   keyName?: string,
   processed: Processed = new Map(),
@@ -56,9 +58,12 @@ export function parse(
   // so that it gets first pick for standalone name.
   const ast = parseAsTypeWithCache(
     {
+      [Parent]: schema[Parent],
       $id: schema.$id,
+      additionalProperties: schema.additionalProperties,
       allOf: [],
       description: schema.description,
+      required: schema.required,
       title: schema.title,
     },
     'ALL_OF',
@@ -79,7 +84,7 @@ export function parse(
 }
 
 function parseAsTypeWithCache(
-  schema: LinkedJSONSchema,
+  schema: NormalizedJSONSchema,
   type: SchemaType,
   options: Options,
   keyName?: string,
@@ -131,7 +136,7 @@ function parseLiteral(schema: JSONSchema4Type, keyName: string | undefined): AST
 }
 
 function parseNonLiteral(
-  schema: LinkedJSONSchema,
+  schema: NormalizedJSONSchema,
   type: SchemaType,
   options: Options,
   keyName: string | undefined,
@@ -191,7 +196,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)!,
-        params: schema.enum!.map((_, n) => ({
+        params: (schema as EnumJSONSchema).enum!.map((_, n) => ({
           ast: parseLiteral(_, undefined),
           keyName: schema.tsEnumNames![n],
         })),
@@ -288,7 +293,12 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
-          const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
+          const member: NormalizedJSONSchema = {
+            ...omit(schema, '$id', 'description', 'title'),
+            type,
+            additionalProperties: schema.additionalProperties,
+            required: schema.required,
+          }
           return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
         }),
         type: 'UNION',
@@ -299,7 +309,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.enum!.map(_ => parseLiteral(_, undefined)),
+        params: (schema as EnumJSONSchema).enum!.map(_ => parseLiteral(_, undefined)),
         type: 'UNION',
       }
     case 'UNNAMED_SCHEMA':
@@ -340,7 +350,7 @@ function parseNonLiteral(
  * Compute a schema name using a series of fallbacks
  */
 function standaloneName(
-  schema: LinkedJSONSchema,
+  schema: NormalizedJSONSchema,
   keyNameFromDefinition: string | undefined,
   usedNames: UsedNames,
   options: Options,
@@ -478,12 +488,12 @@ via the \`definition\` "${key}".`
   }
 }
 
-type Definitions = {[k: string]: LinkedJSONSchema}
+type Definitions = {[k: string]: NormalizedJSONSchema}
 
 function getDefinitions(
-  schema: LinkedJSONSchema,
+  schema: NormalizedJSONSchema,
   isSchema = true,
-  processed = new Set<LinkedJSONSchema>(),
+  processed = new Set<NormalizedJSONSchema>(),
 ): Definitions {
   if (processed.has(schema)) {
     return {}
@@ -518,6 +528,6 @@ const getDefinitionsMemoized = memoize(getDefinitions)
 /**
  * TODO: Reduce rate of false positives
  */
-function hasDefinitions(schema: LinkedJSONSchema): schema is JSONSchemaWithDefinitions {
+function hasDefinitions(schema: NormalizedJSONSchema): schema is JSONSchemaWithDefinitions {
   return '$defs' in schema
 }

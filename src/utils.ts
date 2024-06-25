@@ -1,6 +1,6 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
-import {JSONSchema, LinkedJSONSchema, Parent} from './types/JSONSchema'
+import {JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {JSONSchema4} from 'json-schema'
 import yaml from 'js-yaml'
 
@@ -338,7 +338,7 @@ export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
  *
  * Mutates `schema`.
  */
-export function maybeStripNameHints(schema: JSONSchema): JSONSchema {
+export function maybeStripNameHints(schema: NormalizedJSONSchema): NormalizedJSONSchema {
   if ('$id' in schema) {
     delete schema.$id
   }
