@@ -286,6 +286,43 @@ rules.set('Add an $id to each named enum', schema => {
   schema.$id = toSafeString(justName(keyName))
 })
 
+rules.set('Make implicit unions explicit', schema => {
+  if (!Array.isArray(schema.type)) {
+    return
+  }
+
+  // TODO: Optimize this case too
+  if (schema.oneOf) {
+    return
+  }
+
+  const oneOf = schema.type.map(t => {
+    switch (t) {
+      case 'object': {
+        const s: AnnotatedJSONSchema = {
+          [IsSchema]: true,
+          [Parent]: schema,
+          [Ref]: schema[Ref],
+        }
+        move(schema, s, 'patternProperties')
+        move(schema, s, 'properties')
+        move(schema, s, 'required')
+        if (schema[Ref]) {
+          delete schema[Ref]
+        }
+        return s
+      }
+    }
+  })
+})
+
+function move<A extends object>(from: A, to: A, key: keyof A): void {
+  if (key in from) {
+    to[key] = from[key]
+    delete from[key]
+  }
+}
+
 export function normalize(rootSchema: AnnotatedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
   rules.forEach(rule => traverse(rootSchema, (schema, key) => rule(schema, filename, options, key)))
   return rootSchema as NormalizedJSONSchema
