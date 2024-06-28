@@ -1,28 +1,30 @@
-import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {
+  JSONSchemaTypeName,
+  AnnotatedJSONSchema,
+  NormalizedJSONSchema,
+  JSONSchema,
+  Parent,
+  Ref,
+  IsSchema,
+} from './types/JSONSchema'
+import {appendToDescription, escapeBlockComment, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
-import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
+import {typesOfSchema} from './typesOfSchema'
 
-type Rule = (
-  schema: LinkedJSONSchema,
-  fileName: string,
-  options: Options,
-  key: string | null,
-  dereferencedPaths: DereferencedPaths,
-) => void
+type Rule = (schema: AnnotatedJSONSchema, fileName: string, options: Options, key: string | null) => void
 const rules = new Map<string, Rule>()
 
-function hasType(schema: LinkedJSONSchema, type: JSONSchemaTypeName) {
+function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
-function isObjectType(schema: LinkedJSONSchema) {
+function isObjectType(schema: JSONSchema) {
   return schema.properties !== undefined || hasType(schema, 'object') || hasType(schema, 'any')
 }
-function isArrayType(schema: LinkedJSONSchema) {
+function isArrayType(schema: JSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
-function isEnumTypeWithoutTsEnumNames(schema: LinkedJSONSchema) {
+function isEnumTypeWithoutTsEnumNames(schema: JSONSchema) {
   return schema.type === 'string' && schema.enum !== undefined && schema.tsEnumNames === undefined
 }
 
@@ -62,9 +64,10 @@ rules.set('Default additionalProperties', (schema, _, options) => {
 })
 
 rules.set('Transform id to $id', (schema, fileName) => {
-  if (!isSchemaLike(schema)) {
+  if (!schema[IsSchema]) {
     return
   }
+
   if (schema.id && schema.$id && schema.id !== schema.$id) {
     throw ReferenceError(
       `Schema must define either id or $id, not both. Given id=${schema.id}, $id=${schema.$id} in ${fileName}`,
@@ -76,32 +79,28 @@ rules.set('Transform id to $id', (schema, fileName) => {
   }
 })
 
-rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _key, dereferencedPaths) => {
-  if (!isSchemaLike(schema)) {
+rules.set('Add an $id to each top-level schema', (schema, fileName) => {
+  if (schema.$id || schema[Parent]) {
     return
   }
 
-  // Top-level schema
-  if (!schema.$id && !schema[Parent]) {
-    schema.$id = toSafeString(justName(fileName))
+  if (!schema[IsSchema]) {
     return
   }
 
-  // Sub-schemas with references
-  if (!isArrayType(schema) && !isObjectType(schema)) {
+  schema.$id = toSafeString(justName(fileName))
+})
+
+rules.set('Add an $id to each referenced schema', schema => {
+  if (schema.$id) {
     return
   }
 
-  // We'll infer from $id and title downstream
-  // TODO: Normalize upstream
-  const dereferencedName = dereferencedPaths.get(schema)
-  if (!schema.$id && !schema.title && dereferencedName) {
-    schema.$id = toSafeString(justName(dereferencedName))
+  if (!schema[Ref]) {
+    return
   }
 
-  if (dereferencedName) {
-    dereferencedPaths.delete(schema)
-  }
+  schema.$id = toSafeString(justName(schema[Ref]))
 })
 
 rules.set('Escape closing JSDoc comment', schema => {
@@ -218,6 +217,35 @@ rules.set('Transform definitions to $defs', (schema, fileName) => {
   }
 })
 
+rules.set(
+  "Add an $id to each $def that doesn't have one, if unreachableDefinitions is enabled",
+  (schema, _, options) => {
+    if (!options.unreachableDefinitions) {
+      return
+    }
+
+    if (schema.$id) {
+      return
+    }
+
+    const parent = schema[Parent]
+    if (!parent) {
+      return
+    }
+
+    const grandparent = parent[Parent]
+    if (!grandparent) {
+      return
+    }
+
+    if (Object.keys(grandparent).find(_ => grandparent[_] === parent) !== '$defs') {
+      return
+    }
+
+    schema.$id = toSafeString(Object.keys(parent).find(_ => parent[_] === schema)!)
+  },
+)
+
 rules.set('Transform const to singleton enum', schema => {
   if (schema.const !== undefined) {
     schema.enum = [schema.const]
@@ -231,12 +259,71 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   }
 })
 
-export function normalize(
-  rootSchema: LinkedJSONSchema,
-  dereferencedPaths: DereferencedPaths,
-  filename: string,
-  options: Options,
-): NormalizedJSONSchema {
-  rules.forEach(rule => traverse(rootSchema, (schema, key) => rule(schema, filename, options, key, dereferencedPaths)))
+rules.set('Add an $id to each named enum', schema => {
+  if (!schema[IsSchema]) {
+    return
+  }
+
+  if (schema.$id) {
+    return
+  }
+
+  if (!typesOfSchema(schema).includes('NAMED_ENUM')) {
+    return
+  }
+
+  const parent = schema[Parent]
+  const keyName = Object.keys(parent).find(_ => parent[_] === schema)
+
+  // Special case: generate nicer names for additionalProperties enums
+  if (parent[IsSchema] && keyName === 'additionalProperties') {
+    const grandparent = parent[Parent]
+    const parentKeyName = Object.keys(grandparent).find(_ => grandparent[_] === parent)!
+    schema.$id = toSafeString(parentKeyName) + toSafeString(keyName)
+    return
+  }
+
+  schema.$id = toSafeString(justName(keyName))
+})
+
+rules.set('Make implicit unions explicit', schema => {
+  if (!Array.isArray(schema.type)) {
+    return
+  }
+
+  // TODO: Optimize this case too
+  if (schema.oneOf) {
+    return
+  }
+
+  const oneOf = schema.type.map(t => {
+    switch (t) {
+      case 'object': {
+        const s: AnnotatedJSONSchema = {
+          [IsSchema]: true,
+          [Parent]: schema,
+          [Ref]: schema[Ref],
+        }
+        move(schema, s, 'patternProperties')
+        move(schema, s, 'properties')
+        move(schema, s, 'required')
+        if (schema[Ref]) {
+          delete schema[Ref]
+        }
+        return s
+      }
+    }
+  })
+})
+
+function move<A extends object>(from: A, to: A, key: keyof A): void {
+  if (key in from) {
+    to[key] = from[key]
+    delete from[key]
+  }
+}
+
+export function normalize(rootSchema: AnnotatedJSONSchema, filename: string, options: Options): NormalizedJSONSchema {
+  rules.forEach(rule => traverse(rootSchema, (schema, key) => rule(schema, filename, options, key)))
   return rootSchema as NormalizedJSONSchema
 }

@@ -1,4 +1,4 @@
-import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
+import {JSONSchema, AnnotatedJSONSchema} from './types/JSONSchema'
 import {traverse} from './utils'
 
 type Rule = (schema: JSONSchema) => boolean | void
@@ -42,7 +42,7 @@ rules.set('deprecated must be a boolean', schema => {
   return typeOfDeprecated === 'boolean' || typeOfDeprecated === 'undefined'
 })
 
-export function validate(schema: LinkedJSONSchema, filename: string): string[] {
+export function validate(schema: AnnotatedJSONSchema, filename: string): string[] {
   const errors: string[] = []
   rules.forEach((rule, ruleName) => {
     traverse(schema, (schema, key) => {

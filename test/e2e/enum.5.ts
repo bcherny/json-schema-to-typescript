@@ -28,7 +28,7 @@ export const input = {
     },
     impliedIntegerEnum: {
       enum: [-1, 0, 1],
-    }
+    },
   },
   required: [
     'stringEnum',
@@ -36,11 +36,11 @@ export const input = {
     'booleanEnum',
     'impliedBooleanEnum',
     'integerEnum',
-    'impliedIntegerEnum'
+    'impliedIntegerEnum',
   ],
   additionalProperties: false,
 }
 
 export const options = {
-  inferStringEnumKeysFromValues: true
+  inferStringEnumKeysFromValues: true,
 }

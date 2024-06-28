@@ -1,5 +1,5 @@
 import {JSONSchema4, JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {isPlainObject, memoize} from 'lodash'
+import {isPlainObject} from 'lodash'
 
 export type SchemaType =
   | 'ALL_OF'
@@ -40,34 +40,43 @@ export interface JSONSchema extends JSONSchema4 {
   deprecated?: boolean
 }
 
+export const IsSchema = Symbol('IsSchema')
 export const Parent = Symbol('Parent')
+export const Ref = Symbol('Ref')
 
-export interface LinkedJSONSchema extends JSONSchema {
+export interface DereferencedJSONSchema extends JSONSchema {
   /**
-   * A reference to this schema's parent node, for convenience.
-   * `null` when this is the root schema.
+   * The original $ref that was dereferenced, if there was one.
    */
-  [Parent]: LinkedJSONSchema | null
+  [Ref]: string | undefined
+}
 
-  additionalItems?: boolean | LinkedJSONSchema
-  additionalProperties?: boolean | LinkedJSONSchema
-  items?: LinkedJSONSchema | LinkedJSONSchema[]
+export interface AnnotatedJSONSchema extends DereferencedJSONSchema {
+  /**
+   * Whether the given object is a JSONSchema (as opposed to a part of a schema, like a property)
+   */
+  [IsSchema]: boolean
+  [Parent]: AnnotatedJSONSchema
+
+  additionalItems?: boolean | AnnotatedJSONSchema
+  additionalProperties?: boolean | AnnotatedJSONSchema
+  items?: AnnotatedJSONSchema | AnnotatedJSONSchema[]
   definitions?: {
-    [k: string]: LinkedJSONSchema
+    [k: string]: AnnotatedJSONSchema
   }
   properties?: {
-    [k: string]: LinkedJSONSchema
+    [k: string]: AnnotatedJSONSchema
   }
   patternProperties?: {
-    [k: string]: LinkedJSONSchema
+    [k: string]: AnnotatedJSONSchema
   }
   dependencies?: {
-    [k: string]: LinkedJSONSchema | string[]
+    [k: string]: AnnotatedJSONSchema | string[]
   }
-  allOf?: LinkedJSONSchema[]
-  anyOf?: LinkedJSONSchema[]
-  oneOf?: LinkedJSONSchema[]
-  not?: LinkedJSONSchema
+  allOf?: AnnotatedJSONSchema[]
+  anyOf?: AnnotatedJSONSchema[]
+  oneOf?: AnnotatedJSONSchema[]
+  not?: AnnotatedJSONSchema
 }
 
 /**
@@ -75,8 +84,8 @@ export interface LinkedJSONSchema extends JSONSchema {
  *
  * Note: `definitions` and `id` are removed by the normalizer. Use `$defs` and `$id` instead.
  */
-export interface NormalizedJSONSchema extends Omit<LinkedJSONSchema, 'definitions' | 'id'> {
-  [Parent]: NormalizedJSONSchema | null
+export interface NormalizedJSONSchema extends Omit<AnnotatedJSONSchema, 'definitions' | 'id'> {
+  [Parent]: NormalizedJSONSchema
 
   additionalItems?: boolean | NormalizedJSONSchema
   additionalProperties: boolean | NormalizedJSONSchema
@@ -116,32 +125,22 @@ export interface SchemaSchema extends NormalizedJSONSchema {
   required: string[]
 }
 
-export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {
-  $defs: {
-    [k: string]: NormalizedJSONSchema
-  }
-}
-
 export interface CustomTypeJSONSchema extends NormalizedJSONSchema {
   tsType: string
 }
 
-export const getRootSchema = memoize((schema: NormalizedJSONSchema): NormalizedJSONSchema => {
-  const parent = schema[Parent]
-  if (!parent) {
-    return schema
-  }
-  return getRootSchema(parent)
-})
-
-export function isBoolean(schema: LinkedJSONSchema | JSONSchemaType): schema is boolean {
+export function isBoolean(schema: AnnotatedJSONSchema | JSONSchemaType): schema is boolean {
   return schema === true || schema === false
 }
 
-export function isPrimitive(schema: LinkedJSONSchema | JSONSchemaType): schema is JSONSchemaType {
+export function isPrimitive(schema: AnnotatedJSONSchema | JSONSchemaType): schema is JSONSchemaType {
   return !isPlainObject(schema)
 }
 
 export function isCompound(schema: JSONSchema): boolean {
   return Array.isArray(schema.type) || 'anyOf' in schema || 'oneOf' in schema
+}
+
+export function isAnnotated(schema: JSONSchema): schema is AnnotatedJSONSchema {
+  return schema.hasOwnProperty(Parent)
 }

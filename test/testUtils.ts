@@ -1,5 +1,5 @@
 import test from 'ava'
-import {link} from '../src/linker'
+import {annotate} from '../src/annotator'
 import {pathTransform, generateName, isSchemaLike} from '../src/utils'
 
 export function run() {
@@ -22,7 +22,7 @@ export function run() {
     t.is(generateName('a', usedNames), 'A3')
   })
   test('isSchemaLike', t => {
-    const schema = link({
+    const schema = annotate({
       title: 'Example Schema',
       type: 'object',
       properties: {

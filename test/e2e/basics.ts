@@ -1,4 +1,6 @@
-export const input = {
+import {JSONSchema} from '../../src/types/JSONSchema'
+
+export const input: JSONSchema = {
   title: 'Example Schema',
   type: 'object',
   properties: {

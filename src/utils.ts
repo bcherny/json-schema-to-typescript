@@ -1,6 +1,6 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
-import {JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {JSONSchema, AnnotatedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {JSONSchema4} from 'json-schema'
 import yaml from 'js-yaml'
 
@@ -51,30 +51,10 @@ const BLACKLISTED_KEYS = new Set([
   'not',
 ])
 
-function traverseObjectKeys(
-  obj: Record<string, LinkedJSONSchema>,
-  callback: (schema: LinkedJSONSchema, key: string | null) => void,
-  processed: Set<LinkedJSONSchema>,
-) {
-  Object.keys(obj).forEach(k => {
-    if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, processed, k)
-    }
-  })
-}
-
-function traverseArray(
-  arr: LinkedJSONSchema[],
-  callback: (schema: LinkedJSONSchema, key: string | null) => void,
-  processed: Set<LinkedJSONSchema>,
-) {
-  arr.forEach((s, k) => traverse(s, callback, processed, k.toString()))
-}
-
-export function traverse(
-  schema: LinkedJSONSchema,
-  callback: (schema: LinkedJSONSchema, key: string | null) => void,
-  processed = new Set<LinkedJSONSchema>(),
+export function traverse<A extends JSONSchema>(
+  schema: A,
+  callback: (schema: A, key: string | null) => void,
+  processed = new Set<A>(),
   key?: string,
 ): void {
   // Handle recursive schemas
@@ -86,49 +66,49 @@ export function traverse(
   callback(schema, key ?? null)
 
   if (schema.anyOf) {
-    traverseArray(schema.anyOf, callback, processed)
+    traverseArray(schema.anyOf as any) // TODO
   }
   if (schema.allOf) {
-    traverseArray(schema.allOf, callback, processed)
+    traverseArray(schema.allOf as any) // TODO
   }
   if (schema.oneOf) {
-    traverseArray(schema.oneOf, callback, processed)
+    traverseArray(schema.oneOf as any) // TODO
   }
   if (schema.properties) {
-    traverseObjectKeys(schema.properties, callback, processed)
+    traverseObject(schema.properties as any) // TODO
   }
   if (schema.patternProperties) {
-    traverseObjectKeys(schema.patternProperties, callback, processed)
+    traverseObject(schema.patternProperties as any) // TODO
   }
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-    traverse(schema.additionalProperties, callback, processed)
+    traverse(schema.additionalProperties as any, callback, processed) // TODO
   }
   if (schema.items) {
     const {items} = schema
     if (Array.isArray(items)) {
-      traverseArray(items, callback, processed)
+      traverseArray(items as any) // TODO
     } else {
-      traverse(items, callback, processed)
+      traverse(items as any, callback, processed) // TODO
     }
   }
   if (schema.additionalItems && typeof schema.additionalItems === 'object') {
-    traverse(schema.additionalItems, callback, processed)
+    traverse(schema.additionalItems as any, callback, processed) // TODO
   }
   if (schema.dependencies) {
     if (Array.isArray(schema.dependencies)) {
-      traverseArray(schema.dependencies, callback, processed)
+      traverseArray(schema.dependencies)
     } else {
-      traverseObjectKeys(schema.dependencies as LinkedJSONSchema, callback, processed)
+      traverseObject(schema.dependencies as JSONSchema)
     }
   }
   if (schema.definitions) {
-    traverseObjectKeys(schema.definitions, callback, processed)
+    traverseObject(schema.definitions as any) // TODO
   }
   if (schema.$defs) {
-    traverseObjectKeys(schema.$defs, callback, processed)
+    traverseObject(schema.$defs)
   }
   if (schema.not) {
-    traverse(schema.not, callback, processed)
+    traverse(schema.not as any, callback, processed) // TODO
   }
 
   // technically you can put definitions on any key
@@ -137,9 +117,21 @@ export function traverse(
     .forEach(key => {
       const child = schema[key]
       if (child && typeof child === 'object') {
-        traverseObjectKeys(child, callback, processed)
+        traverseObject(child)
       }
     })
+
+  function traverseArray(arr: A[]) {
+    arr.forEach((s, k) => traverse(s, callback, processed, k.toString()))
+  }
+
+  function traverseObject(obj: Record<string, A>) {
+    Object.keys(obj).forEach(k => {
+      if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
+        traverse(obj[k], callback, processed, k)
+      }
+    })
+  }
 }
 
 /**
@@ -289,7 +281,7 @@ export function pathTransform(outputPath: string, inputPath: string, filePath: s
  *
  * Mutates `schema`.
  */
-export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
+export function maybeStripDefault(schema: JSONSchema): JSONSchema {
   if (!('default' in schema)) {
     return schema
   }
@@ -358,7 +350,7 @@ export function appendToDescription(existingDescription: string | undefined, ...
   return values.join('\n')
 }
 
-export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
+export function isSchemaLike(schema: any): schema is AnnotatedJSONSchema {
   if (!isPlainObject(schema)) {
     return false
   }
