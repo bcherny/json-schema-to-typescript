@@ -338,10 +338,12 @@ export function appendToDescription(existingDescription: string | undefined, ...
   return values.join('\n')
 }
 
-export function isSchemaLike(schema: LinkedJSONSchema) {
+export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
   if (!isPlainObject(schema)) {
     return false
   }
+
+  // top-level schema
   const parent = schema[Parent]
   if (parent === null) {
     return true

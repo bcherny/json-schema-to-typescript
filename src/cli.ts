@@ -183,6 +183,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Declare external schemas referenced via '$ref'?
   --enableConstEnums
       Prepend enums with 'const'?
+  --inferStringEnumKeysFromValues
+      Create enums from JSON enums instead of union types
   --format
       Format code? Set this to false to improve performance.
   --maxItems

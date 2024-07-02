@@ -6,6 +6,7 @@ import {applySchemaTyping} from './applySchemaTyping'
 import type {AST, TInterface, TInterfaceParam, TIntersection, TNamedInterface, TTuple} from './types/AST'
 import {T_ANY, T_ANY_ADDITIONAL_PROPERTIES, T_UNKNOWN, T_UNKNOWN_ADDITIONAL_PROPERTIES} from './types/AST'
 import type {
+  EnumJSONSchema,
   JSONSchemaWithDefinitions,
   LinkedJSONSchema,
   NormalizedJSONSchema,
@@ -171,7 +172,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)!,
-        params: schema.enum!.map((_, n) => ({
+        params: (schema as EnumJSONSchema).enum!.map((_, n) => ({
           ast: parseLiteral(_, undefined),
           keyName: schema.tsEnumNames![n],
         })),
@@ -281,7 +282,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.enum!.map(_ => parseLiteral(_, undefined)),
+        params: (schema as EnumJSONSchema).enum!.map(_ => parseLiteral(_, undefined)),
         type: 'UNION',
       }
     case 'UNNAMED_SCHEMA':
@@ -322,7 +323,7 @@ function parseNonLiteral(
  * Compute a schema name using a series of fallbacks
  */
 function standaloneName(
-  schema: LinkedJSONSchema,
+  schema: NormalizedJSONSchema,
   keyNameFromDefinition: string | undefined,
   usedNames: UsedNames,
   options: Options,
@@ -460,12 +461,12 @@ via the \`definition\` "${key}".`
   }
 }
 
-type Definitions = {[k: string]: LinkedJSONSchema}
+type Definitions = {[k: string]: NormalizedJSONSchema}
 
 function getDefinitions(
-  schema: LinkedJSONSchema,
+  schema: NormalizedJSONSchema,
   isSchema = true,
-  processed = new Set<LinkedJSONSchema>(),
+  processed = new Set<NormalizedJSONSchema>(),
 ): Definitions {
   if (processed.has(schema)) {
     return {}
@@ -500,6 +501,6 @@ const getDefinitionsMemoized = memoize(getDefinitions)
 /**
  * TODO: Reduce rate of false positives
  */
-function hasDefinitions(schema: LinkedJSONSchema): schema is JSONSchemaWithDefinitions {
+function hasDefinitions(schema: NormalizedJSONSchema): schema is JSONSchemaWithDefinitions {
   return '$defs' in schema
 }

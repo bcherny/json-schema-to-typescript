@@ -49,6 +49,10 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
+   * Create enums from JSON enums with eponymous keys
+   */
+  inferStringEnumKeysFromValues: boolean
+  /**
    * Format code? Set this to `false` to improve performance.
    */
   format: boolean
@@ -95,6 +99,7 @@ export const DEFAULT_OPTIONS: Options = {
   cwd: process.cwd(),
   declareExternallyReferenced: true,
   enableConstEnums: true,
+  inferStringEnumKeysFromValues: false,
   format: true,
   ignoreMinAndMaxItems: false,
   maxItems: 20,
