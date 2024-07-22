@@ -2,6 +2,10 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 15.0.0
+
+- 62cc052 Fixed bug where intersection schemas didn't generate complete types. Improved output readability for intersection types (#603)
+
 ## 14.1.0
 
 - 3e2e1e9 Added `inferStringEnumKeysFromValues` option (#578)
