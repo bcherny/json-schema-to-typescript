@@ -1,6 +1,6 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
-import {JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {Intersection, JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {JSONSchema4} from 'json-schema'
 import yaml from 'js-yaml'
 
@@ -71,6 +71,26 @@ function traverseArray(
   arr.forEach((s, k) => traverse(s, callback, processed, k.toString()))
 }
 
+function traverseIntersection(
+  schema: LinkedJSONSchema,
+  callback: (schema: LinkedJSONSchema, key: string | null) => void,
+  processed: Set<LinkedJSONSchema>,
+) {
+  if (typeof schema !== 'object' || !schema) {
+    return
+  }
+
+  const r = schema as unknown as Record<string | symbol, unknown>
+  const intersection = r[Intersection] as NormalizedJSONSchema | undefined
+  if (!intersection) {
+    return
+  }
+
+  if (Array.isArray(intersection.allOf)) {
+    traverseArray(intersection.allOf, callback, processed)
+  }
+}
+
 export function traverse(
   schema: LinkedJSONSchema,
   callback: (schema: LinkedJSONSchema, key: string | null) => void,
@@ -130,6 +150,7 @@ export function traverse(
   if (schema.not) {
     traverse(schema.not, callback, processed)
   }
+  traverseIntersection(schema, callback, processed)
 
   // technically you can put definitions on any key
   Object.keys(schema)
@@ -328,26 +349,6 @@ export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
       break
   }
   delete schema.default
-  return schema
-}
-
-/**
- * Removes the schema's `$id`, `name`, and `description` properties
- * if they exist.
- * Useful when parsing intersections.
- *
- * Mutates `schema`.
- */
-export function maybeStripNameHints(schema: NormalizedJSONSchema): NormalizedJSONSchema {
-  if ('$id' in schema) {
-    delete schema.$id
-  }
-  if ('description' in schema) {
-    delete schema.description
-  }
-  if ('name' in schema) {
-    delete schema.name
-  }
   return schema
 }
 

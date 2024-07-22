@@ -70,13 +70,18 @@ export interface LinkedJSONSchema extends JSONSchema {
   not?: LinkedJSONSchema
 }
 
+export const Types = Symbol('Types')
+export const Intersection = Symbol('Intersection')
+
 /**
  * Normalized JSON schema.
  *
  * Note: `definitions` and `id` are removed by the normalizer. Use `$defs` and `$id` instead.
  */
 export interface NormalizedJSONSchema extends Omit<LinkedJSONSchema, 'definitions' | 'id'> {
+  [Intersection]?: NormalizedJSONSchema
   [Parent]: NormalizedJSONSchema | null
+  [Types]: ReadonlySet<SchemaType>
 
   additionalItems?: boolean | NormalizedJSONSchema
   additionalProperties: boolean | NormalizedJSONSchema

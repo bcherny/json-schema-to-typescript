@@ -2,31 +2,19 @@ import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
-import {typesOfSchema} from './typesOfSchema'
-import {
-  AST,
-  T_ANY,
-  T_ANY_ADDITIONAL_PROPERTIES,
-  TInterface,
-  TInterfaceParam,
-  TNamedInterface,
-  TTuple,
-  T_UNKNOWN,
-  T_UNKNOWN_ADDITIONAL_PROPERTIES,
-  TIntersection,
-} from './types/AST'
-import {
+import {applySchemaTyping} from './applySchemaTyping'
+import type {AST, TInterface, TInterfaceParam, TIntersection, TNamedInterface, TTuple} from './types/AST'
+import {T_ANY, T_ANY_ADDITIONAL_PROPERTIES, T_UNKNOWN, T_UNKNOWN_ADDITIONAL_PROPERTIES} from './types/AST'
+import type {
   EnumJSONSchema,
-  getRootSchema,
-  isBoolean,
-  isPrimitive,
   JSONSchemaWithDefinitions,
+  LinkedJSONSchema,
   NormalizedJSONSchema,
-  Parent,
   SchemaSchema,
   SchemaType,
 } from './types/JSONSchema'
-import {generateName, log, maybeStripDefault, maybeStripNameHints} from './utils'
+import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {generateName, log, maybeStripDefault} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -47,40 +35,28 @@ export function parse(
     return parseLiteral(schema, keyName)
   }
 
-  const types = typesOfSchema(schema)
-  if (types.length === 1) {
-    const ast = parseAsTypeWithCache(schema, types[0], options, keyName, processed, usedNames)
-    log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
+  const intersection = schema[Intersection]
+  const types = schema[Types]
+
+  if (intersection) {
+    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames) as TIntersection
+
+    types.forEach(type => {
+      ast.params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames))
+    })
+
+    log('blue', 'parser', 'Types:', [...types], 'Input:', schema, 'Output:', ast)
     return ast
   }
 
-  // Be careful to first process the intersection before processing its params,
-  // so that it gets first pick for standalone name.
-  const ast = parseAsTypeWithCache(
-    {
-      [Parent]: schema[Parent],
-      $id: schema.$id,
-      additionalProperties: schema.additionalProperties,
-      allOf: [],
-      description: schema.description,
-      required: schema.required,
-      title: schema.title,
-    },
-    'ALL_OF',
-    options,
-    keyName,
-    processed,
-    usedNames,
-  ) as TIntersection
+  if (types.size === 1) {
+    const type = [...types][0]
+    const ast = parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames)
+    log('blue', 'parser', 'Type:', type, 'Input:', schema, 'Output:', ast)
+    return ast
+  }
 
-  ast.params = types.map(type =>
-    // We hoist description (for comment) and id/title (for standaloneName)
-    // to the parent intersection type, so we remove it from the children.
-    parseAsTypeWithCache(maybeStripNameHints(schema), type, options, keyName, processed, usedNames),
-  )
-
-  log('blue', 'parser', 'Types:', types, 'Input:', schema, 'Output:', ast)
-  return ast
+  throw new ReferenceError('Expected intersection schema. Please file an issue on GitHub.')
 }
 
 function parseAsTypeWithCache(
@@ -293,13 +269,10 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
-          const member: NormalizedJSONSchema = {
-            ...omit(schema, '$id', 'description', 'title'),
-            type,
-            additionalProperties: schema.additionalProperties,
-            required: schema.required,
-          }
-          return parse(maybeStripDefault(member as any), options, undefined, processed, usedNames)
+          const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
+          maybeStripDefault(member)
+          applySchemaTyping(member)
+          return parse(member, options, undefined, processed, usedNames)
         }),
         type: 'UNION',
       }
