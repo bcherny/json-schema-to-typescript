@@ -49,6 +49,16 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
+   * Define overrides for HTTP schema ids to map it to file system.
+   *
+   * @example
+   * {
+   *    "http://schemas1.example.org/": "file:///home/me/my-project1/src/schemas/",
+   *    "http://schemas2.example.org/": "file:///home/me/my-project2/src/schemas/"
+   * }
+   */
+  overrideHttpId: {[key: string]: string} | null
+  /**
    * Create enums from JSON enums with eponymous keys
    */
   inferStringEnumKeysFromValues: boolean
@@ -101,6 +111,7 @@ export const DEFAULT_OPTIONS: Options = {
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
   format: true,
+  overrideHttpId: null,
   ignoreMinAndMaxItems: false,
   maxItems: 20,
   strictIndexSignatures: false,

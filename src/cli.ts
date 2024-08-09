@@ -15,6 +15,7 @@ main(
       help: ['h'],
       input: ['i'],
       output: ['o'],
+      overrideHttpId: ['m'],
     },
     boolean: [
       'additionalProperties',
@@ -40,6 +41,8 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
+  const overrideHttpId: {[key: string]: string} = parseOverrideHttpIdArgs(argv.overrideHttpId)
+
   const ISGLOB = isGlob(argIn)
   const ISDIR = isDir(argIn)
 
@@ -52,11 +55,11 @@ async function main(argv: minimist.ParsedArgs) {
   try {
     // Process input as either glob, directory, or single file
     if (ISGLOB) {
-      await processGlob(argIn, argOut, argv as Partial<Options>)
+      await processGlob(argIn, argOut, {...argv, overrideHttpId} as Partial<Options>)
     } else if (ISDIR) {
-      await processDir(argIn, argOut, argv as Partial<Options>)
+      await processDir(argIn, argOut, {...argv, overrideHttpId} as Partial<Options>)
     } else {
-      const result = await processFile(argIn, argv as Partial<Options>)
+      const result = await processFile(argIn, {...argv, overrideHttpId} as Partial<Options>)
       outputResult(result, argOut)
     }
   } catch (e) {
@@ -160,6 +163,19 @@ async function readStream(stream: NodeJS.ReadStream): Promise<string> {
   return Buffer.concat(chunks).toString('utf8')
 }
 
+function parseOverrideHttpIdArgs(overrideHttpId: any) {
+  const overrideHttpIdArg: {[key: string]: string} =
+    typeof overrideHttpId === 'string' ? {'0': overrideHttpId} : overrideHttpId
+  const result: {[key: string]: string} = {}
+  if (overrideHttpIdArg !== null) {
+    for (const [, value] of Object.entries(overrideHttpIdArg)) {
+      const [originalSchemaUrl, overrideSchemaUrl] = value.split(' ')
+      result[originalSchemaUrl] = overrideSchemaUrl
+    }
+  }
+  return Object.freeze(result)
+}
+
 function printHelp() {
   const pkg = require('../../package.json')
 
@@ -192,6 +208,12 @@ Boolean values can be set to false using the 'no-' prefix.
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
       performance, or set it to -1 to ignore minItems and maxItems.
+  --overrideHttpId
+      Define overrides for HTTP schema ids to map it to file system.
+      --overrideHttpId=http://schemas.example.org/ file:///home/me/my-project/src/schemas/
+      or
+      --overrideHttpId.1=http://schemas1.example.org/ file:///home/me/my-project1/src/schemas/
+      --overrideHttpId.2=http://schemas2.example.org/ file:///home/me/my-project2/src/schemas/
   --style.XXX=YYY
       Prettier configuration
   --unknownAny
