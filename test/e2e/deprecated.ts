@@ -24,7 +24,23 @@ export const input = {
     description: {
       type: 'string',
     },
+    myDefinedObject: {
+      $ref: '#/$defs/schema/myDefinedSchema',
+    },
   },
   additionalProperties: false,
   required: ['firstName'],
+  $defs: {
+    schema: {
+      myDefinedSchema: {
+        type: 'object',
+        properties: {
+          deprecated: {
+            type: 'boolean',
+            description: 'A property named deprecated should be fine',
+          },
+        },
+      },
+    },
+  },
 }

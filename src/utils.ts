@@ -158,7 +158,7 @@ export function traverse(
     .forEach(key => {
       const child = schema[key]
       if (child && typeof child === 'object') {
-        traverseObjectKeys(child, callback, processed)
+        traverse(child, callback, processed)
       }
     })
 }
