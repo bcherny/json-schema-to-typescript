@@ -3,7 +3,7 @@
 import minimist from 'minimist'
 import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync} from 'fs'
 import * as mkdirp from 'mkdirp'
-import {glob} from 'glob'
+import {glob} from 'tinyglobby'
 import isGlob from 'is-glob'
 import {join, resolve, dirname} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
@@ -71,7 +71,7 @@ function isDir(path: string): boolean {
 }
 
 async function processGlob(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
-  const files = await glob(argIn) // execute glob pattern match
+  const files = await glob([argIn]) // execute glob pattern match
 
   if (files.length === 0) {
     throw ReferenceError(
