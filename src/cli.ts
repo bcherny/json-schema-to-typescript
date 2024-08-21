@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 import minimist from 'minimist'
-import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync} from 'fs'
-import * as mkdirp from 'mkdirp'
+import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSync} from 'fs'
 import {glob} from 'glob'
 import isGlob from 'is-glob'
 import {join, resolve, dirname} from 'path'
@@ -119,7 +118,7 @@ function outputResult(result: string, outputPath: string | undefined): void {
     process.stdout.write(result)
   } else {
     if (!isDir(dirname(outputPath))) {
-      mkdirp.sync(dirname(outputPath))
+      mkdirSync(dirname(outputPath), {recursive: true})
     }
     return writeFileSync(outputPath, result)
   }

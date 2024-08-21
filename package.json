@@ -55,7 +55,6 @@
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
-    "mkdirp": "^3.0.1",
     "prettier": "^3.2.5"
   },
   "devDependencies": {
