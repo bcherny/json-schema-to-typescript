@@ -50,7 +50,6 @@
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.5.5",
     "@types/json-schema": "^7.0.15",
-    "@types/lodash": "^4.17.0",
     "glob": "^10.3.12",
     "is-glob": "^4.0.3",
     "js-yaml": "^4.1.0",
@@ -63,6 +62,7 @@
     "@types/cli-color": "^2.0.6",
     "@types/is-glob": "^4.0.4",
     "@types/js-yaml": "^4.0.9",
+    "@types/lodash": "^4.17.0",
     "@types/minimist": "^1.2.5",
     "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
