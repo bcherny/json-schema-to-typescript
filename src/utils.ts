@@ -6,7 +6,7 @@ import yaml from 'js-yaml'
 import type {Format} from 'cli-color'
 
 // TODO: pull out into a separate package
-export function Try<T>(fn: () => T, err: (e: Error) => any): T {
+export function Try<T>(fn: () => T, err: (e: Error) => T): T {
   try {
     return fn()
   } catch (e) {
@@ -226,7 +226,7 @@ export function generateName(from: string, usedNames: Set<string>) {
   return name
 }
 
-export function error(...messages: any[]): void {
+export function error(...messages: string[]): void {
   if (!process.env.VERBOSE) {
     return console.error(messages)
   }
