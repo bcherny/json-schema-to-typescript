@@ -19,6 +19,7 @@ main(
       'additionalProperties',
       'declareExternallyReferenced',
       'enableConstEnums',
+      'exactOptionalPropertyTypes',
       'format',
       'ignoreMinAndMaxItems',
       'strictIndexSignatures',
