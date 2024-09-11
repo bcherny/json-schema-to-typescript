@@ -8,7 +8,7 @@ import {join, resolve, dirname} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
 import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
-import { merge } from 'lodash'
+import {merge} from 'lodash'
 
 main(
   minimist(process.argv.slice(2), {
@@ -168,7 +168,7 @@ function parseRefOptions(argv: minimist.ParsedArgs) {
     // argv default value already contains predefined $refOptions key
     if (argv.refOptions) {
       const parsedRefOptions: Partial<$RefOptions> = JSON.parse(argv.refOptions)
-      merge(argv, { $refOptions: parsedRefOptions })
+      merge(argv, {$refOptions: parsedRefOptions})
     }
   } catch (e) {
     error("Couldn't parse argument --refOptions, make sure it's a valid JSON string.")
