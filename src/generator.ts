@@ -157,6 +157,10 @@ function generateTypeUnmemoized(ast: AST, options: Options): string {
     return `${type} | undefined`
   }
 
+  if (options.readonly && ast.type === 'ARRAY') {
+    return `readonly ${type}`
+  }
+
   return type
 }
 export const generateType = memoize(generateTypeUnmemoized)
@@ -305,6 +309,7 @@ function generateInterface(ast: TInterface, options: Options): string {
       .map(
         ([isRequired, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+          (options.readonly ? 'readonly ' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
