@@ -2,7 +2,7 @@
 
 import minimist from 'minimist'
 import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSync} from 'fs'
-import {glob} from 'glob'
+import {glob} from 'tinyglobby'
 import isGlob from 'is-glob'
 import {join, resolve, dirname} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
