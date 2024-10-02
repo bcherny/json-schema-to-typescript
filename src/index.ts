@@ -53,6 +53,12 @@ export interface Options {
    */
   inferStringEnumKeysFromValues: boolean
   /**
+   * Generate all properties and array types as readonly.
+   * When true, all properties in interfaces will be prefixed with 'readonly',
+   * array types will be generated as 'readonly T[]', and index signatures will be readonly.
+   */
+  readonly: boolean
+  /**
    * Format code? Set this to `false` to improve performance.
    */
   format: boolean
@@ -100,6 +106,7 @@ export const DEFAULT_OPTIONS: Options = {
   declareExternallyReferenced: true,
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
+  readonly: false,
   format: true,
   ignoreMinAndMaxItems: false,
   maxItems: 20,
