@@ -70,7 +70,7 @@ function isDir(path: string): boolean {
 }
 
 async function processGlob(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
-  const files = await glob(argIn) // execute glob pattern match
+  const files = await glob(argIn, {expandDirectories: false}) // execute glob pattern match
 
   if (files.length === 0) {
     throw ReferenceError(
