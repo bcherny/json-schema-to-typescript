@@ -3,7 +3,6 @@ import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {Intersection, JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {JSONSchema4} from 'json-schema'
 import yaml from 'js-yaml'
-import type {Format} from 'cli-color'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -243,7 +242,7 @@ export function log(style: LogStyle, title: string, ...messages: unknown[]): voi
   if (messages.length > 1 && typeof messages[messages.length - 1] !== 'string') {
     lastMessage = messages.splice(messages.length - 1, 1)
   }
-  console.info(color()?.whiteBright.bgCyan('debug'), getStyledTextForLogging(style)?.(title), ...messages)
+  console.info(color()?.bgCyan(color()?.whiteBright('debug')), getStyledTextForLogging(style)?.(title), ...messages)
   if (lastMessage) {
     console.dir(lastMessage, {depth: 6, maxArrayLength: 6})
   }
@@ -253,21 +252,23 @@ function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | 
   if (!process.env.VERBOSE) {
     return
   }
+  const pc = color()
+  if (!pc) return
   switch (style) {
     case 'blue':
-      return color()?.whiteBright.bgBlue
+      return text => pc.bgBlue(pc.whiteBright(text))
     case 'cyan':
-      return color()?.whiteBright.bgCyan
+      return text => pc.bgCyan(pc.whiteBright(text))
     case 'green':
-      return color()?.whiteBright.bgGreen
+      return text => pc.bgGreen(pc.whiteBright(text))
     case 'magenta':
-      return color()?.whiteBright.bgMagenta
+      return text => pc.bgMagenta(pc.whiteBright(text))
     case 'red':
-      return color()?.whiteBright.bgRedBright
+      return text => pc.bgRedBright(pc.whiteBright(text))
     case 'white':
-      return color()?.black.bgWhite
+      return text => pc.bgWhite(pc.black(text))
     case 'yellow':
-      return color()?.whiteBright.bgYellow
+      return text => pc.bgYellow(pc.whiteBright(text))
   }
 }
 
@@ -413,10 +414,10 @@ function isYaml(filename: string) {
   return filename.endsWith('.yaml') || filename.endsWith('.yml')
 }
 
-function color(): Format {
-  let cliColor
+function color() {
+  let pc
   try {
-    cliColor = require('cli-color')
+    pc = require('picocolors')
   } catch {}
-  return cliColor
+  return pc
 }
