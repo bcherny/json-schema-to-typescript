@@ -51,12 +51,12 @@
     "@apidevtools/json-schema-ref-parser": "^11.5.5",
     "@types/json-schema": "^7.0.15",
     "@types/lodash": "^4.17.7",
-    "glob": "^10.3.12",
     "is-glob": "^4.0.3",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "tinyglobby": "^0.2.9"
   },
   "devDependencies": {
     "@types/cli-color": "^2.0.6",
