@@ -85,6 +85,10 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Emit all types as readonly
+   */
+  readonly: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -115,6 +119,7 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
+  readonly: false,
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
