@@ -546,6 +546,7 @@ function generateInterface(ast: TInterface, options: Options): string {
           (hasComment(commented) && !ast.standaloneName
             ? generateComment(commented.comment, commented.deprecated) + '\n'
             : '') +
+          (options.readonly ? 'readonly ' : '') +
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +

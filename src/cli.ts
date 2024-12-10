@@ -31,6 +31,7 @@ main(
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
+      'readonly',
     ],
     default: defaultOptions,
     string: ['bannerComment', 'cwd'],
@@ -212,6 +213,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Output unknown type instead of any type
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
+  --readonly
+      Emits all types as readonly
 `,
   )
 }

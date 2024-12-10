@@ -149,7 +149,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s |
-
+| readonly | boolean | `false` | Emit all types as `readonly` |
 ## Tests
 
 This repo uses [bun](https://bun.sh) (1.3.9 or later) to install dependencies and run its scripts and tests, so install it first:
