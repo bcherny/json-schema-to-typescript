@@ -305,6 +305,7 @@ function generateInterface(ast: TInterface, options: Options): string {
       .map(
         ([isRequired, keyName, ast, type]) =>
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+          (options.readonly ? 'readonly ' : '') +
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
