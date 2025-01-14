@@ -329,13 +329,20 @@ function generateComment(comment?: string, deprecated?: boolean): string {
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
+  const containsSpecialCharacters = (key: string): boolean => /[^a-zA-Z0-9_]/.test(key)
+
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
     'export ' +
     (options.enableConstEnums ? 'const ' : '') +
     `enum ${toSafeString(ast.standaloneName)} {` +
     '\n' +
-    ast.params.map(({ast, keyName}) => keyName + ' = ' + generateType(ast, options)).join(',\n') +
+    ast.params
+      .map(
+        ({ast, keyName}) =>
+          (containsSpecialCharacters(keyName) ? `"${keyName}"` : keyName) + ' = ' + generateType(ast, options),
+      )
+      .join(',\n') +
     '\n' +
     '}'
   )
