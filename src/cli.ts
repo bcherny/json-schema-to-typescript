@@ -2,8 +2,7 @@
 
 import minimist from 'minimist'
 import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSync} from 'fs'
-import {glob} from 'tinyglobby'
-import isGlob from 'is-glob'
+import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
@@ -39,7 +38,7 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
-  const ISGLOB = isGlob(argIn)
+  const ISGLOB = argIn && isDynamicPattern(argIn)
   const ISDIR = isDir(argIn)
 
   if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
