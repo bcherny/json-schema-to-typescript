@@ -6,6 +6,8 @@ import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
+import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
+import {merge} from 'lodash'
 
 main(
   minimist(process.argv.slice(2), {
@@ -25,7 +27,7 @@ main(
       'unreachableDefinitions',
     ],
     default: DEFAULT_OPTIONS,
-    string: ['bannerComment', 'cwd'],
+    string: ['bannerComment', 'cwd', 'refOptions'],
   }),
 )
 
@@ -35,6 +37,7 @@ async function main(argv: minimist.ParsedArgs) {
     process.exit(0)
   }
 
+  parseRefOptions(argv)
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
@@ -156,6 +159,20 @@ async function readStream(stream: NodeJS.ReadStream): Promise<string> {
   const chunks: Uint8Array[] = []
   for await (const chunk of stream) chunks.push(chunk)
   return Buffer.concat(chunks).toString('utf8')
+}
+
+function parseRefOptions(argv: minimist.ParsedArgs) {
+  try {
+    // Parse --refOptions CLI argument and merge with default value
+    // argv default value already contains predefined $refOptions key
+    if (argv.refOptions) {
+      const parsedRefOptions: Partial<$RefOptions> = JSON.parse(argv.refOptions)
+      merge(argv, {$refOptions: parsedRefOptions})
+    }
+  } catch (e) {
+    error("Couldn't parse argument --refOptions, make sure it's a valid JSON string.")
+    throw e
+  }
 }
 
 function printHelp() {

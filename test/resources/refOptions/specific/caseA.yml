@@ -1,0 +1,14 @@
+$schema: https://json-schema.org/draft/2020-12
+$id: test/resources/refOptions/specific/caseA.yml
+type: object
+allOf:
+  - $ref: test/resources/refOptions/common.yml
+  - properties:
+      module:
+        type: string
+        const: caseA
+      is_old:
+        type: boolean
+        description: The age of the object
+    required:
+      - module
