@@ -329,7 +329,7 @@ function generateComment(comment?: string, deprecated?: boolean): string {
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
-  const containsSpecialCharacters = (key: string): boolean => /[^a-zA-Z0-9_]/.test(key)
+  const containsSpecialCharacters = (key: string): boolean => /^[0-9]/.test(key) || /[^a-zA-Z0-9_]/.test(key)
 
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
