@@ -329,7 +329,7 @@ function generateComment(comment?: string, deprecated?: boolean): string {
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
-  const containsSpecialCharacters = (key: string): boolean => /^[0-9]/.test(key) || /[^a-zA-Z0-9_]/.test(key)
+  const needsEscaping = (key: string): boolean => /^[0-9]/.test(key) || /[^a-zA-Z0-9_]/.test(key)
 
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
@@ -338,10 +338,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
     `enum ${toSafeString(ast.standaloneName)} {` +
     '\n' +
     ast.params
-      .map(
-        ({ast, keyName}) =>
-          (containsSpecialCharacters(keyName) ? `"${keyName}"` : keyName) + ' = ' + generateType(ast, options),
-      )
+      .map(({ast, keyName}) => (needsEscaping(keyName) ? `"${keyName}"` : keyName) + ' = ' + generateType(ast, options))
       .join(',\n') +
     '\n' +
     '}'
