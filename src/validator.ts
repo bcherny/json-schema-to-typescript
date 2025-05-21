@@ -39,6 +39,9 @@ rules.set('When minItems exists, minItems >= 0', schema => {
 
 rules.set('deprecated must be a boolean', schema => {
   const typeOfDeprecated = typeof schema.deprecated
+  if (schema.properties && 'deprecated' in schema.properties) {
+    return true
+  }
   return typeOfDeprecated === 'boolean' || typeOfDeprecated === 'undefined'
 })
 

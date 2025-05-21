@@ -24,6 +24,11 @@ export const input = {
     description: {
       type: 'string',
     },
+    // https://github.com/bcherny/json-schema-to-typescript/issues/626
+    deprecated: {
+      default: false,
+      type: 'boolean',
+    },
   },
   additionalProperties: false,
   required: ['firstName'],
