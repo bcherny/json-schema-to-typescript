@@ -137,6 +137,30 @@ export function run() {
     })
     rimraf.sync('./test/resources/MultiSchema2/out')
   })
+
+  test('--refOptions - JSON string error', t => {
+    t.throws(() => execSync('node dist/src/cli.js --refOptions "{invalid}" --input ./test/resources/refOptions'))
+  })
+
+  test('--refOptions - referenced base URI, default externalReferenceResolution', t => {
+    t.throws(() => execSync('node dist/src/cli.js --input ./test/resources/refOptions'))
+  })
+
+  test('--refOptions - referenced base URI, unknown externalReferenceResolution', t => {
+    t.throws(() =>
+      execSync(
+        'node dist/src/cli.js --refOptions "{\\"dereference\\": {\\"externalReferenceResolution\\": \\"...\\"}}" --input ./test/resources/refOptions',
+      ),
+    )
+  })
+
+  test('--refOptions - referenced base URI, root externalReferenceResolution', t => {
+    t.notThrows(() =>
+      execSync(
+        'node dist/src/cli.js --refOptions "{\\"dereference\\": {\\"externalReferenceResolution\\": \\"root\\"}}" --input ./test/resources/refOptions',
+      ),
+    )
+  })
 }
 
 function getPaths(path: string, paths: string[] = []) {
