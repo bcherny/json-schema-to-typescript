@@ -44,6 +44,8 @@ export interface Options {
    * Declare external schemas referenced via `$ref`?
    */
   declareExternallyReferenced: boolean
+  mirrorDir: boolean
+  outDir: string | undefined
   /**
    * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
    */
@@ -114,6 +116,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false,
   },
   unreachableDefinitions: false,
+  mirrorDir: false,
+  outDir: undefined,
   unknownAny: true,
 }
 
@@ -136,6 +140,10 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
+
+  if (_options.mirrorDir && !_options.outDir) {
+    throw new Error('if you pass mirrorDir: true, you must also pass outDir')
+  }
 
   const start = Date.now()
   function time() {

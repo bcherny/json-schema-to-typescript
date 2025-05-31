@@ -23,6 +23,7 @@ main(
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
+      'mirrorDir',
     ],
     default: DEFAULT_OPTIONS,
     string: ['bannerComment', 'cwd'],

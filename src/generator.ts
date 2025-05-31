@@ -73,7 +73,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
     case 'INTERFACE':
       type = [
         hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+          (ast.standaloneName === rootASTName || options.declareExternallyReferenced || options.mirrorDir) &&
           generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
@@ -349,6 +349,17 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 }
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
+  if (options.mirrorDir) {
+    return (
+      (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+      `import type { ${toSafeString(ast.standaloneName)} } ` +
+      (ast.superTypes.length > 0
+        ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
+        : '') +
+      generateInterface(ast, options)
+    )
+  }
+
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
     `export interface ${toSafeString(ast.standaloneName)} ` +

@@ -1,0 +1,14 @@
+{
+  "title": "Referencing",
+  "type": "object",
+  "properties": {
+    "foo": {
+      "$ref": "ReferencedType.json"
+    },
+    "bar": {
+      "$ref": "./inner-dir/ReferencedTypeInInnerDir.json"
+    }
+  },
+  "required": ["foo", "bar"],
+  "additionalProperties": false
+}

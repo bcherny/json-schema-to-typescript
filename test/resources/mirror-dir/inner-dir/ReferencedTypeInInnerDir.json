@@ -1,0 +1,14 @@
+{
+  "id": "http://dummy.com/api/example-schema",
+  "title": "Example Schema",
+  "type": "object",
+  "properties": {
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    }
+  },
+  "required": ["firstName", "lastName"]
+}
