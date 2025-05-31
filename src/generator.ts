@@ -15,8 +15,11 @@ import {
   T_UNKNOWN,
 } from './types/AST'
 import {log, toSafeString} from './utils'
+import {DereferencedPaths} from './resolver'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
+export function generate(ast: AST, dereferencedPaths: DereferencedPaths, options = DEFAULT_OPTIONS): string {
+  console.log(`XXX dereferencedPaths`, dereferencedPaths)
+  console.log(`XXX ast`, ast)
   return (
     [
       options.bannerComment,
@@ -107,6 +110,8 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   }
 
   processed.add(ast)
+
+  // if (options.mirrorDir && ast.
 
   switch (ast.type) {
     case 'ARRAY':
@@ -349,19 +354,24 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 }
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
+  console.log(`XXX ast`, ast)
+  const lines: string[] = []
+
+  if (hasComment(ast)) {
+    lines.push(generateComment(ast.comment, ast.deprecated))
+  }
+
   if (options.mirrorDir) {
-    return (
-      (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
-      `import type { ${toSafeString(ast.standaloneName)} } ` +
-      (ast.superTypes.length > 0
-        ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
-        : '') +
-      generateInterface(ast, options)
-    )
+    for (const param of ast.params) {
+      if (param.ast.standaloneName && param.referencePath) {
+        lines.push(
+          `import type ${toSafeString(param.ast.standaloneName)} from '${param.referencePath!.replace(/json$/, 'ts')}';`,
+        )
+      }
+    }
   }
 
   return (
-    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
     `export interface ${toSafeString(ast.standaloneName)} ` +
     (ast.superTypes.length > 0
       ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `

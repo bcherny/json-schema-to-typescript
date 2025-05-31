@@ -95,6 +95,7 @@ export interface TInterfaceParam {
   isRequired: boolean
   isPatternProperty: boolean
   isUnreachableDefinition: boolean
+  referencePath: string | null
 }
 
 export interface TIntersection extends AbstractAST {

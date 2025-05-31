@@ -159,6 +159,11 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const _schema = cloneDeep(schema)
 
   const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
+  for (const key of dereferencedPaths) {
+    console.log(key, dereferencedPaths.get(key))
+  }
+  console.log(`XXX dereferencedPaths`, dereferencedPaths)
+  console.log(`XXX dereferencedSchema`, dereferencedSchema)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
@@ -184,13 +189,13 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const normalized = normalize(linked, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
-  const parsed = parse(normalized, _options)
+  const parsed = parse(normalized, _options, dereferencedPaths)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed, _options)
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
-  const generated = generate(optimized, _options)
+  const generated = generate(optimized, dereferencedPaths, _options)
   log('magenta', 'generator', time(), '✅ Result:', generated)
 
   const formatted = await format(generated, _options)
