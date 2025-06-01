@@ -59,8 +59,6 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
     return ''
   }
 
-  debugger
-
   processed.add(ast)
   let type = ''
 
@@ -353,9 +351,6 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 
   if (options.useTypeImports) {
     for (const param of ast.params) {
-      console.log(`XXX ast.standaloneName`, ast.standaloneName)
-      console.log(`XXX param`, param)
-      debugger
       if (param.ast.standaloneName && param.referencePath) {
         const dir = dirname(param.referencePath)
         const nameWithoutExt = basename(param.referencePath, extname(param.referencePath))
@@ -370,8 +365,6 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
       }
     }
   }
-
-  console.log(`XXX lines`, lines)
 
   lines.push(
     `export interface ${toSafeString(ast.standaloneName)} ` +
