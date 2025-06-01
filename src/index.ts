@@ -159,8 +159,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   for (const key of dereferencedPaths) {
     console.log(key, dereferencedPaths.get(key))
   }
-  console.log(`XXX dereferencedPaths`, dereferencedPaths)
-  console.log(`XXX dereferencedSchema`, dereferencedSchema)
+
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
@@ -194,7 +193,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const optimized = optimize(parsed, _options)
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
-  const generated = generate(optimized, dereferencedPaths, _options)
+  const generated = generate(optimized, _options)
   log('magenta', 'generator', time(), '✅ Result:', generated)
 
   const formatted = await format(generated, _options)

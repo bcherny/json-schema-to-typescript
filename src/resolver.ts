@@ -16,7 +16,6 @@ export async function dereference(
     dereference: {
       ...$refOptions.dereference,
       onDereference($ref: string, schema: JSONSchema) {
-        console.log(`XXX $ref`, $ref)
         dereferencedPaths.set(schema, $ref)
       },
     },

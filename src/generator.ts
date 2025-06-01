@@ -16,12 +16,8 @@ import {
 } from './types/AST'
 import {log, toSafeString} from './utils'
 import {basename, dirname, extname, join} from 'path'
-import {DereferencedPaths} from './resolver'
 
-export function generate(ast: AST, dereferencedPaths: DereferencedPaths, options = DEFAULT_OPTIONS): string {
-  console.log(`XXX dereferencedPaths`, dereferencedPaths)
-  console.log(`XXX ast`, ast)
-
+export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   const namedTypes = declareNamedTypes(ast, options, ast.standaloneName!)
   const namedInterfaces = declareNamedInterfaces(ast, options, ast.standaloneName!)
   const enums = declareEnums(ast, options)
@@ -347,7 +343,6 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 }
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
-  console.log(`XXX ast`, ast)
   const lines: string[] = []
 
   if (hasComment(ast)) {
