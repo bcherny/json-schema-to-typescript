@@ -188,7 +188,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
-        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options)!,
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)!,
         params: (schema as EnumJSONSchema).enum!.map((_, n) => ({
           ast: parseLiteral(_, undefined),

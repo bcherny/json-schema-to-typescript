@@ -190,8 +190,6 @@ function generateRawType(ast: AST, options: Options): string {
       return ast.params
     case 'STRING':
       return 'string'
-    case 'ENUM':
-      return 'enum'
     case 'TUPLE':
       return (() => {
         const minItems = ast.minItems
