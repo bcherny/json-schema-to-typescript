@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import minimist from 'minimist'
+import {cloneDeep} from 'lodash'
 import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSync} from 'fs'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
@@ -102,7 +103,10 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
         return [file, await processFile(file, argv)] as const
       } else {
         const outputPath = pathTransform(argOut, argIn, file)
-        return [file, await processFile(file, argv), outputPath] as const
+        // get argv with cwd corrected. We want to resolve relevant to dir.
+        const opts = cloneDeep(argv)
+        opts.cwd = resolve(dirname(outputPath))
+        return [file, await processFile(file, opts), outputPath] as const
       }
     }),
   )
