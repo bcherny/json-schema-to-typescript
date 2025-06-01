@@ -20,16 +20,12 @@ import {DereferencedPaths} from './resolver'
 export function generate(ast: AST, dereferencedPaths: DereferencedPaths, options = DEFAULT_OPTIONS): string {
   console.log(`XXX dereferencedPaths`, dereferencedPaths)
   console.log(`XXX ast`, ast)
-  return (
-    [
-      options.bannerComment,
-      declareNamedTypes(ast, options, ast.standaloneName!),
-      declareNamedInterfaces(ast, options, ast.standaloneName!),
-      declareEnums(ast, options),
-    ]
-      .filter(Boolean)
-      .join('\n\n') + '\n'
-  ) // trailing newline
+
+  const namedTypes = declareNamedTypes(ast, options, ast.standaloneName!)
+  const namedInterfaces = declareNamedInterfaces(ast, options, ast.standaloneName!)
+  const enums = declareEnums(ast, options)
+
+  return [options.bannerComment, namedTypes, namedInterfaces, enums].filter(Boolean).join('\n\n') + '\n' // trailing newline
 }
 
 function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
@@ -74,17 +70,15 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
       type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
       break
     case 'INTERFACE':
-      type = [
+      const topLevelAst =
         hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced || options.mirrorDir) &&
-          generateStandaloneInterface(ast, options),
-        getSuperTypesAndParams(ast)
-          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n'),
-      ]
+        (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+        generateStandaloneInterface(ast, options)
+      const superTypesAndParams = getSuperTypesAndParams(ast)
+        .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
         .filter(Boolean)
         .join('\n')
+      type = [topLevelAst, superTypesAndParams].filter(Boolean).join('\n')
       break
     case 'INTERSECTION':
     case 'TUPLE':
@@ -110,8 +104,6 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   }
 
   processed.add(ast)
-
-  // if (options.mirrorDir && ast.
 
   switch (ast.type) {
     case 'ARRAY':
@@ -365,19 +357,21 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
     for (const param of ast.params) {
       if (param.ast.standaloneName && param.referencePath) {
         lines.push(
-          `import type ${toSafeString(param.ast.standaloneName)} from '${param.referencePath!.replace(/json$/, 'ts')}';`,
+          `import type { ${toSafeString(param.ast.standaloneName)} } from '${param.referencePath!.replace(/json$/, 'ts')}';`,
         )
       }
     }
   }
 
-  return (
+  lines.push(
     `export interface ${toSafeString(ast.standaloneName)} ` +
-    (ast.superTypes.length > 0
-      ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
-      : '') +
-    generateInterface(ast, options)
+      (ast.superTypes.length > 0
+        ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
+        : '') +
+      generateInterface(ast, options),
   )
+
+  return lines.join('\n') + '\n'
 }
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {

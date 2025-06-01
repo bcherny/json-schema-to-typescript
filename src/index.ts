@@ -172,6 +172,8 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     }
   }
 
+  debugger
+
   const linked = link(dereferencedSchema)
   if (process.env.VERBOSE) {
     log('green', 'linker', time(), '✅ No change')
