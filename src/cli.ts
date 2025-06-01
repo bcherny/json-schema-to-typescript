@@ -114,7 +114,8 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
     }),
   )
 
-  const ext = argv.outFileExt ?? '.d.ts'
+  const ext = argv.useTypeImports ? '.ts' : '.d.ts'
+  console.log(`XXX ext`, ext)
 
   // careful to do this serially
   results.forEach(([file, result, outputPath]) =>

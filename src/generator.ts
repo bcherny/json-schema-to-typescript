@@ -353,7 +353,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
     lines.push(generateComment(ast.comment, ast.deprecated))
   }
 
-  if (options.mirrorDir) {
+  if (options.useTypeImports) {
     for (const param of ast.params) {
       if (param.ast.standaloneName && param.referencePath) {
         lines.push(
