@@ -15,6 +15,7 @@ import {
   T_UNKNOWN,
 } from './types/AST'
 import {log, toSafeString} from './utils'
+import {basename, dirname, extname, join} from 'path'
 import {DereferencedPaths} from './resolver'
 
 export function generate(ast: AST, dereferencedPaths: DereferencedPaths, options = DEFAULT_OPTIONS): string {
@@ -356,9 +357,10 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
   if (options.useTypeImports) {
     for (const param of ast.params) {
       if (param.ast.standaloneName && param.referencePath) {
-        lines.push(
-          `import type { ${toSafeString(param.ast.standaloneName)} } from '${param.referencePath!.replace(/json$/, 'ts')}';`,
-        )
+        const dir = dirname(param.referencePath)
+        const nameWithoutExt = basename(param.referencePath, extname(param.referencePath))
+        const importPath = './' + join(dir, `${nameWithoutExt}.ts`)
+        lines.push(`import type { ${toSafeString(param.ast.standaloneName)} } from '${importPath}';`)
       }
     }
   }
