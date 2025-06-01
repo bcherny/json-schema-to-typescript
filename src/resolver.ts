@@ -2,7 +2,7 @@ import {$RefParser, ParserOptions as $RefOptions} from '@apidevtools/json-schema
 import {JSONSchema} from './types/JSONSchema'
 import {log} from './utils'
 
-export type DereferencedPaths = Map<JSONSchema, string>
+export type DereferencedPaths = WeakMap<JSONSchema, string>
 
 export async function dereference(
   schema: JSONSchema,
@@ -10,7 +10,7 @@ export async function dereference(
 ): Promise<{dereferencedPaths: DereferencedPaths; dereferencedSchema: JSONSchema}> {
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const parser = new $RefParser()
-  const dereferencedPaths: DereferencedPaths = new Map()
+  const dereferencedPaths: DereferencedPaths = new WeakMap()
   const dereferencedSchema = (await parser.dereference(cwd, schema, {
     ...$refOptions,
     dereference: {
