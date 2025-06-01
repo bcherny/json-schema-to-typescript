@@ -86,8 +86,6 @@ rules.set('Add $refPath to schema', (schema, _fileName, _options, _key, derefere
     return
   }
 
-  // We'll infer from $id and title downstream
-  // TODO: Normalize upstream
   const refPath = dereferencedPaths.get(schema)
   if (refPath) {
     schema.$refPath = refPath
@@ -116,10 +114,6 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
   if (!schema.$id && !schema.title && dereferencedName) {
     schema.$id = toSafeString(justName(dereferencedName))
   }
-
-  // if (dereferencedName) {
-  //   dereferencedPaths.delete(schema)
-  // }
 })
 
 rules.set('Escape closing JSDoc comment', schema => {

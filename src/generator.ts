@@ -67,15 +67,17 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
       type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
       break
     case 'INTERFACE':
-      const topLevelAst =
+      type = [
         hasStandaloneName(ast) &&
-        (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-        generateStandaloneInterface(ast, options)
-      const superTypesAndParams = getSuperTypesAndParams(ast)
-        .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
+          (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+          generateStandaloneInterface(ast, options),
+        getSuperTypesAndParams(ast)
+          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
+          .filter(Boolean)
+          .join('\n'),
+      ]
         .filter(Boolean)
         .join('\n')
-      type = [topLevelAst, superTypesAndParams].filter(Boolean).join('\n')
       break
     case 'INTERSECTION':
     case 'TUPLE':

@@ -24,7 +24,7 @@ main(
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
-      'mirrorDir',
+      'useTypeImports',
     ],
     default: DEFAULT_OPTIONS,
     string: ['bannerComment', 'cwd'],
