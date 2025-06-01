@@ -1,6 +1,6 @@
 {
   "id": "http://dummy.com/api/example-schema",
-  "title": "Referenced Type In Inner Dir",
+  "title": "Example Schema",
   "type": "object",
   "properties": {
     "firstName": {

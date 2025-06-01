@@ -205,11 +205,17 @@ export function toSafeString(string: string) {
   )
 }
 
-export function generateName(from: string, usedNames: Set<string>) {
+export function generateNameNonUnique(from: string): string {
   let name = toSafeString(from)
   if (!name) {
     name = 'NoName'
   }
+
+  return name
+}
+
+export function generateName(from: string, usedNames: Set<string>) {
+  let name = generateNameNonUnique(from)
 
   // increment counter until we find a free name
   if (usedNames.has(name)) {

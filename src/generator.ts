@@ -59,6 +59,8 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
     return ''
   }
 
+  debugger
+
   processed.add(ast)
   let type = ''
 
@@ -190,6 +192,8 @@ function generateRawType(ast: AST, options: Options): string {
       return ast.params
     case 'STRING':
       return 'string'
+    case 'ENUM':
+      return 'enum'
     case 'TUPLE':
       return (() => {
         const minItems = ast.minItems
@@ -349,14 +353,25 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 
   if (options.useTypeImports) {
     for (const param of ast.params) {
+      console.log(`XXX ast.standaloneName`, ast.standaloneName)
+      console.log(`XXX param`, param)
+      debugger
       if (param.ast.standaloneName && param.referencePath) {
         const dir = dirname(param.referencePath)
         const nameWithoutExt = basename(param.referencePath, extname(param.referencePath))
+        // If we needed to rename due to name clashes, import with the original
+        // name.
+        const importInBrackets =
+          param.ast.originalName && param.ast.originalName !== param.ast.standaloneName
+            ? `${param.ast.originalName} as ${param.ast.standaloneName}`
+            : param.ast.standaloneName
         const importPath = './' + join(dir, `${nameWithoutExt}.ts`)
-        lines.push(`import type { ${toSafeString(param.ast.standaloneName)} } from '${importPath}';`)
+        lines.push(`import type { ${importInBrackets} } from '${importPath}';`)
       }
     }
   }
+
+  console.log(`XXX lines`, lines)
 
   lines.push(
     `export interface ${toSafeString(ast.standaloneName)} ` +

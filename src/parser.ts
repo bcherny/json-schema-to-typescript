@@ -14,7 +14,7 @@ import type {
   SchemaType,
 } from './types/JSONSchema'
 import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
-import {generateName, log, maybeStripDefault} from './utils'
+import {generateName, generateNameNonUnique, log, maybeStripDefault} from './utils'
 import {DereferencedPaths} from './resolver'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
@@ -140,6 +140,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: schema.allOf!.map(_ => parse(_, options, dereferencedPaths, undefined, processed, usedNames)),
         type: 'INTERSECTION',
@@ -150,6 +151,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
       }
     case 'ANY_OF':
@@ -157,6 +159,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: schema.anyOf!.map(_ => parse(_, options, dereferencedPaths, undefined, processed, usedNames)),
         type: 'UNION',
@@ -166,6 +169,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'BOOLEAN',
       }
@@ -175,6 +179,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         params: schema.tsType!,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'CUSTOM_TYPE',
       }
@@ -183,6 +188,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)!,
         params: (schema as EnumJSONSchema).enum!.map((_, n) => ({
           ast: parseLiteral(_, undefined),
@@ -197,6 +203,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'NEVER',
       }
@@ -205,6 +212,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'NULL',
       }
@@ -213,6 +221,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'NUMBER',
       }
@@ -220,6 +229,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'OBJECT',
         deprecated: schema.deprecated,
@@ -229,6 +239,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: schema.oneOf!.map(_ => parse(_, options, dereferencedPaths, undefined, processed, usedNames)),
         type: 'UNION',
@@ -240,6 +251,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'STRING',
       }
@@ -254,6 +266,7 @@ function parseNonLiteral(
           keyName,
           maxItems,
           minItems,
+          originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
           params: schema.items.map(_ => parse(_, options, dereferencedPaths, undefined, processed, usedNames)),
           type: 'TUPLE',
@@ -276,6 +289,7 @@ function parseNonLiteral(
           comment: schema.description,
           deprecated: schema.deprecated,
           keyName,
+          originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
           params: parse(
             schema.items!,
@@ -293,6 +307,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
@@ -307,6 +322,7 @@ function parseNonLiteral(
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: (schema as EnumJSONSchema).enum!.map(_ => parseLiteral(_, undefined)),
         type: 'UNION',
@@ -337,6 +353,7 @@ function parseNonLiteral(
           params: Array(Math.max(maxItems, minItems) || 0).fill(params),
           // if there is no maximum, then add a spread item to collect the rest
           spreadParam: maxItems >= 0 ? undefined : params,
+          originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
           type: 'TUPLE',
         }
@@ -347,9 +364,22 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         params,
+        originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'ARRAY',
       }
+  }
+}
+
+function getOriginalName(
+  schema: NormalizedJSONSchema,
+  keyNameFromDefinition: string | undefined,
+  options: Options,
+): string | undefined {
+  const fullName =
+    options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+  if (fullName) {
+    return generateNameNonUnique(fullName)
   }
 }
 
@@ -362,8 +392,7 @@ function standaloneName(
   usedNames: UsedNames,
   options: Options,
 ): string | undefined {
-  const name =
-    options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+  const name = getOriginalName(schema, keyNameFromDefinition, options)
   if (name) {
     return generateName(name, usedNames)
   }
@@ -384,6 +413,7 @@ function newInterface(
     deprecated: schema.deprecated,
     keyName,
     params: parseSchema(schema, options, processed, usedNames, name, dereferencedPaths),
+    originalName: getOriginalName(schema, keyNameFromDefinition ?? keyName, options),
     standaloneName: name,
     superTypes: parseSuperTypes(schema, options, processed, usedNames, dereferencedPaths),
     type: 'INTERFACE',

@@ -26,13 +26,14 @@ export interface AbstractAST {
   comment?: string
   keyName?: string
   standaloneName?: string
+  originalName?: string
   type: AST_TYPE
   deprecated?: boolean
 }
 
 export type ASTWithComment = AST & {comment: string}
 export type ASTWithName = AST & {keyName: string}
-export type ASTWithStandaloneName = AST & {standaloneName: string}
+export type ASTWithStandaloneName = AST & {standaloneName: string; originalName: string | null}
 
 export function hasComment(ast: AST): ast is ASTWithComment {
   return (
@@ -62,6 +63,7 @@ export interface TBoolean extends AbstractAST {
 }
 
 export interface TEnum extends AbstractAST {
+  originalName: string | undefined
   standaloneName: string
   type: 'ENUM'
   params: TEnumParam[]
@@ -80,6 +82,7 @@ export interface TInterface extends AbstractAST {
 
 export interface TNamedInterface extends AbstractAST {
   standaloneName: string
+  originalName: string | undefined
   type: 'INTERFACE'
   params: TInterfaceParam[]
   superTypes: TNamedInterface[]
