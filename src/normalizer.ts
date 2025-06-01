@@ -117,9 +117,9 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
     schema.$id = toSafeString(justName(dereferencedName))
   }
 
-  // if (dereferencedName) {
-  //   dereferencedPaths.delete(schema)
-  // }
+  if (dereferencedName) {
+    dereferencedPaths.delete(schema)
+  }
 })
 
 rules.set('Escape closing JSDoc comment', schema => {

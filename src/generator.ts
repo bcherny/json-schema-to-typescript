@@ -360,10 +360,6 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
     }
   }
 
-  if (lines.length > 0) {
-    lines.push('\n')
-  }
-
   lines.push(
     `export interface ${toSafeString(ast.standaloneName)} ` +
       (ast.superTypes.length > 0

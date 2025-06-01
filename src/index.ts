@@ -156,9 +156,6 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const _schema = cloneDeep(schema)
 
   const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
-  for (const key of dereferencedPaths) {
-    console.log(key, dereferencedPaths.get(key))
-  }
 
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
