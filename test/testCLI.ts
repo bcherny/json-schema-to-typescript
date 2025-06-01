@@ -137,6 +137,17 @@ export function run() {
     })
     rimraf.sync('./test/resources/MultiSchema2/out')
   })
+
+  test('type imports', t => {
+    execSync(
+      'node dist/src/cli.js --useTypeImports --declareExternallyReferenced false -i ./test/resources/mirror-dir -o ./test/resources/mirror-dir/out',
+    )
+    getPaths('./test/resources/mirror-dir/out').forEach(file => {
+      t.snapshot(file)
+      t.snapshot(readFileSync(file, 'utf-8'))
+      unlinkSync(file)
+    })
+  })
 }
 
 function getPaths(path: string, paths: string[] = []) {
