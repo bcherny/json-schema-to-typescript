@@ -104,8 +104,11 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
       } else {
         const outputPath = pathTransform(argOut, argIn, file)
         // get argv with cwd corrected. We want to resolve relevant to dir.
+        debugger
         const opts = cloneDeep(argv)
-        opts.cwd = resolve(dirname(outputPath))
+        const dirPath = resolve(dirname(file))
+        opts.cwd = resolve(dirPath)
+        console.log(`XXX opts`, opts)
         return [file, await processFile(file, opts), outputPath] as const
       }
     }),
