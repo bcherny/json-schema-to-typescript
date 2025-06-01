@@ -46,6 +46,7 @@ export interface Options {
   declareExternallyReferenced: boolean
   mirrorDir: boolean
   outDir: string | undefined
+  outFileExt: string | undefined
   /**
    * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
    */
@@ -118,6 +119,7 @@ export const DEFAULT_OPTIONS: Options = {
   unreachableDefinitions: false,
   mirrorDir: false,
   outDir: undefined,
+  outFileExt: undefined,
   unknownAny: true,
 }
 
