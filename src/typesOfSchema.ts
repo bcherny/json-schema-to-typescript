@@ -36,7 +36,9 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     return 'allOf' in schema
   },
   ANY(schema) {
-    if (Object.keys(schema).length === 0) {
+    // We add a single key. Remove that one.
+    const nativeKeys = Object.keys(schema).filter(key => key !== '$refPath')
+    if (nativeKeys.length === 0) {
       // The empty schema {} validates any value
       // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1
       return true
