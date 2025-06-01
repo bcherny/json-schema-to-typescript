@@ -347,7 +347,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   const lines: string[] = []
 
-  hasComment(ast) ? lines.push(generateComment(ast.comment, ast.deprecated)) : lines.push('')
+  hasComment(ast) ? lines.push(generateComment(ast.comment, ast.deprecated) + '\n') : lines.push('')
 
   if (options.useTypeImports) {
     for (const param of ast.params) {
@@ -374,7 +374,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
       generateInterface(ast, options),
   )
 
-  return lines.join('\n') + '\n'
+  return lines.join('')
 }
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
