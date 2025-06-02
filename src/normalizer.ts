@@ -77,21 +77,6 @@ rules.set('Transform id to $id', (schema, fileName) => {
   }
 })
 
-rules.set('Add $refPath to schema', (schema, _fileName, _options, _key, dereferencedPaths) => {
-  if (!isSchemaLike(schema)) {
-    return
-  }
-
-  if (schema.$refPath) {
-    return
-  }
-
-  const refPath = dereferencedPaths.get(schema)
-  if (refPath) {
-    schema.$refPath = refPath
-  }
-})
-
 rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _key, dereferencedPaths) => {
   if (!isSchemaLike(schema)) {
     return
