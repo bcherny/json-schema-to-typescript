@@ -187,6 +187,9 @@ Boolean values can be set to false using the 'no-' prefix.
       Root directory for resolving $ref
   --declareExternallyReferenced
       Declare external schemas referenced via '$ref'?
+  --useTypeImports
+      Access external schemas referenced via '$ref' using 'import type'? This
+      requires --declareExternallyReferenced=false.
   --enableConstEnums
       Prepend enums with 'const'?
   --inferStringEnumKeysFromValues

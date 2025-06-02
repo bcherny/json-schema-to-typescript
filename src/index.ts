@@ -102,6 +102,7 @@ export const DEFAULT_OPTIONS: Options = {
 */`,
   cwd: process.cwd(),
   declareExternallyReferenced: true,
+  useTypeImports: false,
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
   format: true,
@@ -118,7 +119,6 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false,
   },
   unreachableDefinitions: false,
-  useTypeImports: false,
   unknownAny: true,
 }
 
@@ -140,7 +140,10 @@ function parseAsJSONSchema(filename: string): JSONSchema4 {
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
   validateOptions(options)
 
-  const _options = merge({}, DEFAULT_OPTIONS, options)
+  // useTypeImports implies declareExternallyReferenced = false
+  const optionOverrides = options.useTypeImports ? {declareExternallyReferenced: false} : {}
+
+  const _options = merge({}, DEFAULT_OPTIONS, options, optionOverrides)
 
   const start = Date.now()
   function time() {
