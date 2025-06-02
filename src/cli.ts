@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import minimist from 'minimist'
+import {cloneDeep} from 'lodash'
 import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSync} from 'fs'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
@@ -23,6 +24,7 @@ main(
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
+      'useTypeImports',
     ],
     default: DEFAULT_OPTIONS,
     string: ['bannerComment', 'cwd'],
@@ -101,7 +103,11 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
         return [file, await processFile(file, argv)] as const
       } else {
         const outputPath = pathTransform(argOut, argIn, file)
-        return [file, await processFile(file, argv), outputPath] as const
+        // get argv with cwd corrected. We want to resolve relevant to dir.
+        const opts = cloneDeep(argv)
+        const dirPath = resolve(dirname(file))
+        opts.cwd = resolve(dirPath)
+        return [file, await processFile(file, opts), outputPath] as const
       }
     }),
   )
@@ -179,6 +185,9 @@ Boolean values can be set to false using the 'no-' prefix.
       Root directory for resolving $ref
   --declareExternallyReferenced
       Declare external schemas referenced via '$ref'?
+  --useTypeImports
+      Access external schemas referenced via '$ref' using 'import type'? This
+      requires --declareExternallyReferenced=false.
   --enableConstEnums
       Prepend enums with 'const'?
   --inferStringEnumKeysFromValues

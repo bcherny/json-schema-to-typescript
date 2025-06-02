@@ -45,6 +45,10 @@ export interface Options {
    */
   declareExternallyReferenced: boolean
   /**
+   * Use `import type` instead of redeclaring.
+   */
+  useTypeImports: boolean
+  /**
    * Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)?
    */
   enableConstEnums: boolean
@@ -98,6 +102,7 @@ export const DEFAULT_OPTIONS: Options = {
 */`,
   cwd: process.cwd(),
   declareExternallyReferenced: true,
+  useTypeImports: false,
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
   format: true,
@@ -135,7 +140,10 @@ function parseAsJSONSchema(filename: string): JSONSchema4 {
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
   validateOptions(options)
 
-  const _options = merge({}, DEFAULT_OPTIONS, options)
+  // useTypeImports implies declareExternallyReferenced = false
+  const optionOverrides = options.useTypeImports ? {declareExternallyReferenced: false} : {}
+
+  const _options = merge({}, DEFAULT_OPTIONS, options, optionOverrides)
 
   const start = Date.now()
   function time() {
@@ -151,6 +159,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const _schema = cloneDeep(schema)
 
   const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
+
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
@@ -176,7 +185,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const normalized = normalize(linked, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
-  const parsed = parse(normalized, _options)
+  const parsed = parse(normalized, _options, dereferencedPaths)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed, _options)

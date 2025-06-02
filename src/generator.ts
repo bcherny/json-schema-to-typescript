@@ -15,6 +15,7 @@ import {
   T_UNKNOWN,
 } from './types/AST'
 import {log, toSafeString} from './utils'
+import {basename, dirname, extname, join} from 'path'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (
@@ -349,14 +350,36 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 }
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
-  return (
-    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+  const lines: string[] = []
+
+  hasComment(ast) ? lines.push(generateComment(ast.comment, ast.deprecated) + '\n') : lines.push('')
+
+  if (options.useTypeImports) {
+    for (const param of ast.params) {
+      if (param.ast.standaloneName && param.referencePath) {
+        const dir = dirname(param.referencePath)
+        const nameWithoutExt = basename(param.referencePath, extname(param.referencePath))
+        // If we needed to rename due to name clashes, import with the original
+        // name.
+        const importInBrackets =
+          param.ast.originalName && param.ast.originalName !== param.ast.standaloneName
+            ? `${param.ast.originalName} as ${param.ast.standaloneName}`
+            : param.ast.standaloneName
+        const importPath = './' + join(dir, `${nameWithoutExt}.ts`)
+        lines.push(`import type { ${importInBrackets} } from '${importPath}';`)
+      }
+    }
+  }
+
+  lines.push(
     `export interface ${toSafeString(ast.standaloneName)} ` +
-    (ast.superTypes.length > 0
-      ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
-      : '') +
-    generateInterface(ast, options)
+      (ast.superTypes.length > 0
+        ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
+        : '') +
+      generateInterface(ast, options),
   )
+
+  return lines.join('')
 }
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
