@@ -18,11 +18,16 @@ import {log, toSafeString} from './utils'
 import {basename, dirname, extname, join} from 'path'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
-  const namedTypes = declareNamedTypes(ast, options, ast.standaloneName!)
-  const namedInterfaces = declareNamedInterfaces(ast, options, ast.standaloneName!)
-  const enums = declareEnums(ast, options)
-
-  return [options.bannerComment, namedTypes, namedInterfaces, enums].filter(Boolean).join('\n\n') + '\n' // trailing newline
+  return (
+    [
+      options.bannerComment,
+      declareNamedTypes(ast, options, ast.standaloneName!),
+      declareNamedInterfaces(ast, options, ast.standaloneName!),
+      declareEnums(ast, options),
+    ]
+      .filter(Boolean)
+      .join('\n\n') + '\n'
+  ) // trailing newline
 }
 
 function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
