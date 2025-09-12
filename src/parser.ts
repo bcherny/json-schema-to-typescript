@@ -15,6 +15,7 @@ import type {
 } from './types/JSONSchema'
 import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
 import {generateName, log, maybeStripDefault} from './utils'
+import {generateType} from './generator'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -157,15 +158,42 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'BOOLEAN',
       }
-    case 'CUSTOM_TYPE':
+    case 'CUSTOM_TYPE': {
+      let customType: string
+
+      if (schema.tsType) {
+        customType = schema.tsType
+      } else if (options.parserExtensions && schema.type && typeof schema.type === 'string') {
+        const extension = options.parserExtensions[schema.type]
+        if (extension) {
+          // Create a compilation callback for nested schemas
+          const compileSchema = (nestedSchema: any): string => {
+            // Clone the schema to avoid modifying the original
+            const clonedSchema = {...nestedSchema}
+            if (!clonedSchema[Types]) {
+              applySchemaTyping(clonedSchema, options)
+            }
+            const ast = parse(clonedSchema, options, undefined, processed, usedNames)
+            return generateType(ast, options)
+          }
+
+          customType = extension(schema, compileSchema)
+        } else {
+          customType = 'any'
+        }
+      } else {
+        customType = 'any'
+      }
+
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
-        params: schema.tsType!,
+        params: customType,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'CUSTOM_TYPE',
       }
+    }
     case 'NAMED_ENUM':
       return {
         comment: schema.description,
@@ -271,7 +299,7 @@ function parseNonLiteral(
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
           maybeStripDefault(member)
-          applySchemaTyping(member)
+          applySchemaTyping(member, options)
           return parse(member, options, undefined, processed, usedNames)
         }),
         type: 'UNION',

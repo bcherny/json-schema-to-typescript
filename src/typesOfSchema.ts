@@ -1,5 +1,6 @@
 import {isPlainObject} from 'lodash'
 import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
+import {Options} from './'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
@@ -9,10 +10,16 @@ import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
  * types). The spec leaves it up to implementations to decide what to do with this
  * loosely-defined behavior.
  */
-export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
+export function typesOfSchema(schema: JSONSchema, options?: Options): Set<SchemaType> {
   // tsType is an escape hatch that supercedes all other directives
   if (schema.tsType) {
     return new Set(['CUSTOM_TYPE'])
+  }
+
+  if (options?.parserExtensions && schema.type && typeof schema.type === 'string') {
+    if (schema.type in options.parserExtensions) {
+      return new Set(['CUSTOM_TYPE'])
+    }
   }
 
   // Collect matched types

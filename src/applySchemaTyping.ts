@@ -1,9 +1,10 @@
 import type {LinkedJSONSchema} from './types/JSONSchema'
 import {Intersection, Parent, Types} from './types/JSONSchema'
 import {typesOfSchema} from './typesOfSchema'
+import {Options} from './'
 
-export function applySchemaTyping(schema: LinkedJSONSchema) {
-  const types = typesOfSchema(schema)
+export function applySchemaTyping(schema: LinkedJSONSchema, options?: Options) {
+  const types = typesOfSchema(schema, options)
 
   Object.defineProperty(schema, Types, {
     enumerable: false,
