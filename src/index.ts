@@ -85,6 +85,13 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Custom parser extensions for unsupported schema types
+   */
+  parserExtensions?: Record<
+    string,
+    (schema: Record<string, unknown>, compileSchema: (schema: Record<string, unknown>) => string) => string
+  >
 }
 
 export const DEFAULT_OPTIONS: Options = {

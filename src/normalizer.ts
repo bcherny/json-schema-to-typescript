@@ -242,9 +242,9 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
 // the intersection schema needs to participate in the schema cache during
 // the parsing step, so it cannot be re-calculated every time the schema
 // is encountered.
-rules.set('Pre-calculate schema types and intersections', schema => {
+rules.set('Pre-calculate schema types and intersections', (schema, _fileName, options) => {
   if (schema !== null && typeof schema === 'object') {
-    applySchemaTyping(schema)
+    applySchemaTyping(schema, options)
   }
 })
 
