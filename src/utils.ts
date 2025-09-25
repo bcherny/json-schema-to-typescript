@@ -208,15 +208,15 @@ export function toSafeString(string: string) {
 export function generateName(from: string, usedNames: Set<string>) {
   let name = toSafeString(from)
   if (!name) {
-    name = 'NoName'
+    name = 'NoName' as any
   }
 
   // increment counter until we find a free name
   if (usedNames.has(name)) {
     let counter = 1
-    let nameWithCounter = `${name}${counter}`
+    let nameWithCounter = `${name}${counter}` as any
     while (usedNames.has(nameWithCounter)) {
-      nameWithCounter = `${name}${counter}`
+      nameWithCounter = `${name}${counter}` as any
       counter++
     }
     name = nameWithCounter
