@@ -182,7 +182,7 @@ export function stripExtension(filename: string): string {
  * Convert a string that might contain spaces or special characters to one that
  * can safely be used as a TypeScript interface or enum name.
  */
-export function toSafeString(string: string) {
+export function toSafeString(string: string): string {
   // identifiers in javaScript/ts:
   // First character: a-zA-Z | _ | $
   // Rest: a-zA-Z | _ | $ | 0-9
@@ -202,21 +202,21 @@ export function toSafeString(string: string) {
       .replace(/\s+([a-zA-Z])/g, match => trim(match.toUpperCase()))
       // remove remaining whitespace
       .replace(/\s/g, ''),
-  )
+  ) as string
 }
 
-export function generateName(from: string, usedNames: Set<string>) {
+export function generateName(from: string, usedNames: Set<string>): string {
   let name = toSafeString(from)
   if (!name) {
-    name = 'NoName' as any
+    name = 'NoName'
   }
 
   // increment counter until we find a free name
   if (usedNames.has(name)) {
     let counter = 1
-    let nameWithCounter = `${name}${counter}` as any
+    let nameWithCounter = `${name}${counter}`
     while (usedNames.has(nameWithCounter)) {
-      nameWithCounter = `${name}${counter}` as any
+      nameWithCounter = `${name}${counter}`
       counter++
     }
     name = nameWithCounter
