@@ -20,7 +20,7 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (
     [
       options.bannerComment,
-      declareNamedTypes(ast, options, ast.standaloneName!),
+      declareNamedTypes(ast, options, ast.standaloneName!, new Set(), new Set()),
       declareNamedInterfaces(ast, options, ast.standaloneName!),
       declareEnums(ast, options),
     ]
@@ -101,18 +101,33 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
   return type
 }
 
-function declareNamedTypes(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+function declareNamedTypes(
+  ast: AST,
+  options: Options,
+  rootASTName: string,
+  processed = new Set<AST>(),
+  outputtedNames = new Set<string>(),
+): string {
   if (processed.has(ast)) {
     return ''
   }
 
   processed.add(ast)
 
+  // Helper to generate standalone type only if name hasn't been used
+  const generateStandaloneTypeOnce = (ast: ASTWithStandaloneName): string | undefined => {
+    if (outputtedNames.has(ast.standaloneName)) {
+      return undefined
+    }
+    outputtedNames.add(ast.standaloneName)
+    return generateStandaloneType(ast, options)
+  }
+
   switch (ast.type) {
     case 'ARRAY':
       return [
-        declareNamedTypes(ast.params, options, rootASTName, processed),
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
+        declareNamedTypes(ast.params, options, rootASTName, processed, outputtedNames),
+        hasStandaloneName(ast) ? generateStandaloneTypeOnce(ast) : undefined,
       ]
         .filter(Boolean)
         .join('\n')
@@ -123,7 +138,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         .map(
           ast =>
             (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-            declareNamedTypes(ast, options, rootASTName, processed),
+            declareNamedTypes(ast, options, rootASTName, processed, outputtedNames),
         )
         .filter(Boolean)
         .join('\n')
@@ -131,20 +146,20 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
     case 'TUPLE':
     case 'UNION':
       return [
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
+        hasStandaloneName(ast) ? generateStandaloneTypeOnce(ast) : undefined,
         ast.params
-          .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
+          .map(ast => declareNamedTypes(ast, options, rootASTName, processed, outputtedNames))
           .filter(Boolean)
           .join('\n'),
         'spreadParam' in ast && ast.spreadParam
-          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
+          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed, outputtedNames)
           : undefined,
       ]
         .filter(Boolean)
         .join('\n')
     default:
       if (hasStandaloneName(ast)) {
-        return generateStandaloneType(ast, options)
+        return generateStandaloneTypeOnce(ast) || ''
       }
       return ''
   }
