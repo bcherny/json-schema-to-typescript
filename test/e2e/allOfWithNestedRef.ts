@@ -1,44 +1,44 @@
-// Minimal real-world test case extracted from TypeScript's tsconfig.json schema
-// Demonstrates property duplication bug where compilerOptions.types appears twice
-// in the generated CompilerOptions type due to allOf with overlapping definitions
+// Tests allOf with nested $ref that creates redundant intersections
+// Pattern: Schema A defines property X, Schema B references A and also defines X with allOf
+// This creates A & (A | null) which should simplify to A | null
 export const input = {
   allOf: [
     {
-      $ref: '#/definitions/compilerOptionsDefinition',
+      $ref: '#/definitions/baseDefinition',
     },
     {
-      $ref: '#/definitions/tsNodeDefinition',
+      $ref: '#/definitions/extendedDefinition',
     },
   ],
   definitions: {
-    compilerOptionsDefinition: {
+    baseDefinition: {
       properties: {
-        compilerOptions: {
+        sharedProperty: {
           type: ['object', 'null'],
           properties: {
-            types: {
+            foo: {
               type: ['array', 'null'],
               items: {
                 type: ['string', 'null'],
               },
             },
-            target: {
+            bar: {
               type: ['string', 'null'],
             },
           },
         },
       },
     },
-    tsNodeDefinition: {
+    extendedDefinition: {
       properties: {
-        'ts-node': {
+        extendedProperty: {
           type: ['object', 'null'],
           properties: {
-            compilerOptions: {
+            sharedProperty: {
               type: ['object', 'null'],
               allOf: [
                 {
-                  $ref: '#/definitions/compilerOptionsDefinition/properties/compilerOptions',
+                  $ref: '#/definitions/baseDefinition/properties/sharedProperty',
                 },
               ],
               properties: {},
