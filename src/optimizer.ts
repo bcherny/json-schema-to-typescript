@@ -59,9 +59,85 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
         optimizedAST.params = params
       }
 
-      return Object.assign(optimizedAST, {
-        params: optimizedAST.params.map(_ => optimize(_, options, processed)),
-      })
+      // For INTERSECTION: simplify A & (A | null) -> A | null
+      // Also handle cases where intersection contains duplicate types
+      if (ast.type === 'INTERSECTION') {
+        // First, handle the A & (A | null) -> A | null pattern
+        if (optimizedAST.params.length === 2) {
+          const [first, second] = optimizedAST.params
+
+          // Check if one is INTERFACE and the other is UNION containing that INTERFACE
+          if (first.type === 'INTERFACE' && second.type === 'UNION') {
+            const firstType = generateType(first, options)
+            // Look for an interface member in the union that matches first
+            for (const unionParam of second.params) {
+              if (unionParam.type === 'INTERFACE') {
+                const unionParamType = generateType(unionParam, options)
+                if (firstType === unionParamType) {
+                  // Found a match - check if the rest of the union is just adding null or similar
+                  const otherMembers = second.params.filter(_ => _ !== unionParam)
+                  if (otherMembers.length > 0) {
+                    log('cyan', 'optimizer', 'A & (A | ...) -> A | ...', optimizedAST)
+                    // Preserve standaloneName, keyName, comment from the intersection
+                    return {
+                      ...second,
+                      standaloneName: optimizedAST.standaloneName,
+                      keyName: optimizedAST.keyName,
+                      comment: optimizedAST.comment,
+                      deprecated: optimizedAST.deprecated,
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Check the reverse: (A | ...) & A -> A | ...
+          if (second.type === 'INTERFACE' && first.type === 'UNION') {
+            const secondType = generateType(second, options)
+            // Look for an interface member in the union that matches second
+            for (const unionParam of first.params) {
+              if (unionParam.type === 'INTERFACE') {
+                const unionParamType = generateType(unionParam, options)
+                if (secondType === unionParamType) {
+                  // Found a match - check if the rest of the union is just adding null or similar
+                  const otherMembers = first.params.filter(_ => _ !== unionParam)
+                  if (otherMembers.length > 0) {
+                    log('cyan', 'optimizer', '(A | ...) & A -> A | ...', optimizedAST)
+                    // Preserve standaloneName, keyName, comment from the intersection
+                    return {
+                      ...first,
+                      standaloneName: optimizedAST.standaloneName,
+                      keyName: optimizedAST.keyName,
+                      comment: optimizedAST.comment,
+                      deprecated: optimizedAST.deprecated,
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // Second, handle intersections with more than 2 members that contain duplicates
+        // This handles cases like A & B & A & B -> A & B
+        if (optimizedAST.params.length > 2) {
+          const uniqueParams = uniqBy(optimizedAST.params, _ => generateType(_, options))
+          if (uniqueParams.length < optimizedAST.params.length) {
+            log('cyan', 'optimizer', 'Intersection with duplicates simplified', optimizedAST)
+            optimizedAST.params = uniqueParams
+
+            // If we're left with just 1 param, return it directly
+            if (uniqueParams.length === 1) {
+              log('cyan', 'optimizer', 'Single-member intersection unwrapped', optimizedAST)
+              return uniqueParams[0]
+            }
+          }
+        }
+      }
+
+      // Params were already optimized at line 27, so just return
+      return optimizedAST
     default:
       return ast
   }
