@@ -592,7 +592,7 @@ function parseSchema(
     ast: parse(value, options, key, processed, usedNames),
     isIndexSignature: false,
     isPatternProperty: false,
-    isRequired: isRequired(schema, key, value),
+    isRequired: isRequired(schema, key, value) || (options.removeOptionalIfDefaultExists && 'default' in value),
     isUnreachableDefinition: false,
     keyName: key,
   }))
