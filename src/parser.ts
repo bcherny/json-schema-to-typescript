@@ -383,7 +383,7 @@ function parseSchema(
   let asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
     ast: parse(value, options, key, processed, usedNames),
     isPatternProperty: false,
-    isRequired: includes(schema.required || [], key),
+    isRequired: includes(schema.required || [], key) || (options.removeOptionalIfDefaultExists && 'default' in value),
     isUnreachableDefinition: false,
     keyName: key,
   }))
@@ -404,7 +404,10 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
         return {
           ast,
           isPatternProperty: !singlePatternProperty,
-          isRequired: singlePatternProperty || includes(schema.required || [], key),
+          isRequired:
+            singlePatternProperty ||
+            includes(schema.required || [], key) ||
+            (options.removeOptionalIfDefaultExists && 'default' in value),
           isUnreachableDefinition: false,
           keyName: singlePatternProperty ? '[k: string]' : key,
         }
@@ -422,7 +425,8 @@ via the \`definition\` "${key}".`
         return {
           ast,
           isPatternProperty: false,
-          isRequired: includes(schema.required || [], key),
+          isRequired:
+            includes(schema.required || [], key) || (options.removeOptionalIfDefaultExists && 'default' in value),
           isUnreachableDefinition: true,
           keyName: key,
         }
