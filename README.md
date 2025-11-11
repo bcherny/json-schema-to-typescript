@@ -110,7 +110,7 @@ json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 To invoke json-schema-to-typescript from your TypeScript or JavaScript program, import it and call `compile` or `compileFromFile`.
 
 ```js
-import { compile, compileFromFile } from 'json-schema-to-typescript'
+import { compile, compileFromFile, compileSync } from 'json-schema-to-typescript'
 
 // compile from file
 compileFromFile('foo.json')
@@ -122,6 +122,9 @@ let mySchema = {
 }
 compile(mySchema, 'MySchema')
   .then(ts => ...)
+
+// or, compile a JS object synchronously, if there are not remote refs
+const ts = compileSync(mySchema, 'MySchema')
 ```
 
 See [server demo](example) and [browser demo](https://github.com/bcherny/json-schema-to-typescript-browser) for full examples.
