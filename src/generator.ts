@@ -58,17 +58,32 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
   }
 }
 
-function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+function declareNamedInterfaces(
+  ast: AST,
+  options: Options,
+  rootASTName: string,
+  processed = new Set<AST>(),
+  emittedNames = new Set<string>(),
+): string {
   if (processed.has(ast)) {
     return ''
   }
 
   processed.add(ast)
+
+  // Skip if we've already emitted an interface with this standaloneName
+  if (hasStandaloneName(ast) && emittedNames.has(ast.standaloneName)) {
+    return ''
+  }
+  if (hasStandaloneName(ast)) {
+    emittedNames.add(ast.standaloneName)
+  }
+
   let type = ''
 
   switch (ast.type) {
     case 'ARRAY':
-      type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
+      type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed, emittedNames)
       break
     case 'INTERFACE':
       type = [
@@ -76,7 +91,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
           (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
           generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
-          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
+          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed, emittedNames))
           .filter(Boolean)
           .join('\n'),
       ]
@@ -87,11 +102,11 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
     case 'TUPLE':
     case 'UNION':
       type = ast.params
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, processed))
+        .map(_ => declareNamedInterfaces(_, options, rootASTName, processed, emittedNames))
         .filter(Boolean)
         .join('\n')
       if (ast.type === 'TUPLE' && ast.spreadParam) {
-        type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed)
+        type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed, emittedNames)
       }
       break
     default:
@@ -101,17 +116,31 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
   return type
 }
 
-function declareNamedTypes(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+function declareNamedTypes(
+  ast: AST,
+  options: Options,
+  rootASTName: string,
+  processed = new Set<AST>(),
+  emittedNames = new Set<string>(),
+): string {
   if (processed.has(ast)) {
     return ''
   }
 
   processed.add(ast)
 
+  // Skip if we've already emitted a type with this standaloneName
+  if (hasStandaloneName(ast) && emittedNames.has(ast.standaloneName)) {
+    return ''
+  }
+  if (hasStandaloneName(ast)) {
+    emittedNames.add(ast.standaloneName)
+  }
+
   switch (ast.type) {
     case 'ARRAY':
       return [
-        declareNamedTypes(ast.params, options, rootASTName, processed),
+        declareNamedTypes(ast.params, options, rootASTName, processed, emittedNames),
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
       ]
         .filter(Boolean)
@@ -123,7 +152,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         .map(
           ast =>
             (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-            declareNamedTypes(ast, options, rootASTName, processed),
+            declareNamedTypes(ast, options, rootASTName, processed, emittedNames),
         )
         .filter(Boolean)
         .join('\n')
@@ -133,11 +162,11 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       return [
         hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
         ast.params
-          .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
+          .map(ast => declareNamedTypes(ast, options, rootASTName, processed, emittedNames))
           .filter(Boolean)
           .join('\n'),
         'spreadParam' in ast && ast.spreadParam
-          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
+          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed, emittedNames)
           : undefined,
       ]
         .filter(Boolean)
