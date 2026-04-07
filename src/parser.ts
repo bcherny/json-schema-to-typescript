@@ -366,23 +366,15 @@ function standaloneName(
     return undefined
   }
 
-  // Use title + structural hash as the deduplication key. If we've seen a schema with this
-  // exact same title AND structure before, reuse the same generated name. This handles the case
-  // where identical schemas appear multiple times in a oneOf/anyOf, while still allowing
-  // different schemas with the same title to get different names.
-  if (schema.title) {
-    const structuralHash = getSchemaStructuralHash(schema as unknown as Record<string, unknown>)
-    const cacheKey = `${schema.title}::${structuralHash}`
-    const existingName = schemaHashToName.get(cacheKey)
-    if (existingName) {
-      return existingName
-    }
-    const generatedName = generateName(name, usedNames)
-    schemaHashToName.set(cacheKey, generatedName)
-    return generatedName
+  const structuralHash = getSchemaStructuralHash(schema as unknown as Record<string, unknown>)
+  const cacheKey = `${name}::${structuralHash}`
+  const existingName = schemaHashToName.get(cacheKey)
+  if (existingName) {
+    return existingName
   }
-
-  return generateName(name, usedNames)
+  const generatedName = generateName(name, usedNames)
+  schemaHashToName.set(cacheKey, generatedName)
+  return generatedName
 }
 
 function newInterface(
