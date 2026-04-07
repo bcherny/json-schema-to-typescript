@@ -29,30 +29,44 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   ) // trailing newline
 }
 
-function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
+function declareEnums(
+  ast: AST,
+  options: Options,
+  processed = new Set<AST>(),
+  emittedNames = new Set<string>(),
+): string {
   if (processed.has(ast)) {
     return ''
   }
 
   processed.add(ast)
+  if (hasStandaloneName(ast) && emittedNames.has(ast.standaloneName)) {
+    return ''
+  }
+  if (hasStandaloneName(ast)) {
+    emittedNames.add(ast.standaloneName)
+  }
   let type = ''
 
   switch (ast.type) {
     case 'ENUM':
       return generateStandaloneEnum(ast, options) + '\n'
     case 'ARRAY':
-      return declareEnums(ast.params, options, processed)
+      return declareEnums(ast.params, options, processed, emittedNames)
     case 'UNION':
     case 'INTERSECTION':
-      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed, emittedNames), '')
     case 'TUPLE':
-      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed, emittedNames), '')
       if (ast.spreadParam) {
-        type += declareEnums(ast.spreadParam, options, processed)
+        type += declareEnums(ast.spreadParam, options, processed, emittedNames)
       }
       return type
     case 'INTERFACE':
-      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      return getSuperTypesAndParams(ast).reduce(
+        (prev, ast) => prev + declareEnums(ast, options, processed, emittedNames),
+        '',
+      )
     default:
       return ''
   }
