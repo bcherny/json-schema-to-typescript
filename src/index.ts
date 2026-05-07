@@ -85,6 +85,19 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Schema keys to exclude from the structural hash used to deduplicate $ref types.
+   * When the same $ref appears on multiple properties that differ only in these keys,
+   * they will share a single type declaration instead of generating suffixed duplicates
+   * (MoneySchema, MoneySchema1…). The excluded keys are preserved as JSDoc on the
+   * property itself.
+   *
+   * Common value: `['description']` — property-level descriptions are annotation only
+   * and should not fork a new type declaration.
+   *
+   * Default: `[]` (preserves existing behavior).
+   */
+  deduplicateRefsIgnoringKeys: string[]
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -115,6 +128,7 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
+  deduplicateRefsIgnoringKeys: [],
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {

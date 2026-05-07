@@ -205,6 +205,76 @@ export function toSafeString(string: string) {
   )
 }
 
+/**
+ * Generate a stable hash from a schema's structure to identify identical schemas.
+ * This is used for deduplicating types in the generated TypeScript output.
+ */
+export function getSchemaStructuralHash(schema: Record<string, unknown>, ignoreKeys: string[] = []): string {
+  if (!schema || typeof schema !== 'object') {
+    return JSON.stringify(schema)
+  }
+
+  // Create a stable representation by sorting keys and including structural properties
+  const structuralProps: Record<string, unknown> = {}
+
+  // Keys that define the structure of a schema.
+  // `title` and `$id` differentiate schemas with the same structure but different semantic meaning.
+  // Keys listed in `ignoreKeys` are excluded from the hash so that properties differing only in
+  // those keys (e.g. `description`) share a single type declaration instead of forking duplicates.
+  const structuralKeys = [
+    'type',
+    'title',
+    '$id',
+    'description',
+    'properties',
+    'required',
+    'additionalProperties',
+    'items',
+    'enum',
+    'const',
+    'allOf',
+    'anyOf',
+    'oneOf',
+    'not',
+    'minItems',
+    'maxItems',
+    'minLength',
+    'maxLength',
+    'pattern',
+    'minimum',
+    'maximum',
+    'exclusiveMinimum',
+    'exclusiveMaximum',
+    'multipleOf',
+    'minProperties',
+    'maxProperties',
+    'patternProperties',
+    'dependencies',
+    'format',
+    'nullable',
+    'tsEnumNames',
+  ]
+
+  const ignoreSet = new Set(ignoreKeys)
+  for (const key of structuralKeys) {
+    if (key in schema && !ignoreSet.has(key)) {
+      structuralProps[key] = schema[key]
+    }
+  }
+
+  // Sort keys for stable stringification, with circular reference handling
+  const seen = new WeakSet()
+  return JSON.stringify(structuralProps, (_key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return '[Circular]'
+      }
+      seen.add(value)
+    }
+    return value
+  })
+}
+
 export function generateName(from: string, usedNames: Set<string>) {
   let name = toSafeString(from)
   if (!name) {
