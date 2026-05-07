@@ -366,7 +366,10 @@ function standaloneName(
     return undefined
   }
 
-  const structuralHash = getSchemaStructuralHash(schema as unknown as Record<string, unknown>)
+  const structuralHash = getSchemaStructuralHash(
+    schema as unknown as Record<string, unknown>,
+    options.deduplicateRefsIgnoringKeys,
+  )
   const cacheKey = `${name}::${structuralHash}`
   const existingName = schemaHashToName.get(cacheKey)
   if (existingName) {

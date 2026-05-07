@@ -209,7 +209,7 @@ export function toSafeString(string: string) {
  * Generate a stable hash from a schema's structure to identify identical schemas.
  * This is used for deduplicating types in the generated TypeScript output.
  */
-export function getSchemaStructuralHash(schema: Record<string, unknown>): string {
+export function getSchemaStructuralHash(schema: Record<string, unknown>, ignoreKeys: string[] = []): string {
   if (!schema || typeof schema !== 'object') {
     return JSON.stringify(schema)
   }
@@ -217,8 +217,10 @@ export function getSchemaStructuralHash(schema: Record<string, unknown>): string
   // Create a stable representation by sorting keys and including structural properties
   const structuralProps: Record<string, unknown> = {}
 
-  // Keys that define the structure of a schema
-  // Include title and $id to differentiate schemas with same structure but different semantic meaning
+  // Keys that define the structure of a schema.
+  // `title` and `$id` differentiate schemas with the same structure but different semantic meaning.
+  // Keys listed in `ignoreKeys` are excluded from the hash so that properties differing only in
+  // those keys (e.g. `description`) share a single type declaration instead of forking duplicates.
   const structuralKeys = [
     'type',
     'title',
@@ -253,8 +255,9 @@ export function getSchemaStructuralHash(schema: Record<string, unknown>): string
     'tsEnumNames',
   ]
 
+  const ignoreSet = new Set(ignoreKeys)
   for (const key of structuralKeys) {
-    if (key in schema) {
+    if (key in schema && !ignoreSet.has(key)) {
       structuralProps[key] = schema[key]
     }
   }
