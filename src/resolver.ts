@@ -54,6 +54,24 @@ function liftAnnotationSiblingsOfRef(schema: unknown, processed = new WeakSet<ob
   }
 }
 
+// json-schema-ref-parser parses external files via pluggable parsers. Wrap
+// the JSON and YAML parsers so the lift transform also applies to schemas
+// loaded from disk or HTTP — without it, sibling-annotated $refs in external
+// files would still be merged.
+function makeLiftingParser(basePlugin: any) {
+  return {
+    ...basePlugin,
+    order: typeof basePlugin.order === 'number' ? basePlugin.order - 1 : 50,
+    async parse(file: any) {
+      const data = await basePlugin.parse.call(this, file)
+      if (data && typeof data === 'object') {
+        liftAnnotationSiblingsOfRef(data)
+      }
+      return data
+    },
+  }
+}
+
 export async function dereference(
   schema: JSONSchema,
   {cwd, $refOptions}: {cwd: string; $refOptions: $RefOptions},
@@ -62,8 +80,15 @@ export async function dereference(
   liftAnnotationSiblingsOfRef(schema)
   const parser = new $RefParser()
   const dereferencedPaths: DereferencedPaths = new WeakMap()
+  const {default: jsonParser} = await import('@apidevtools/json-schema-ref-parser/dist/lib/parsers/json.js')
+  const {default: yamlParser} = await import('@apidevtools/json-schema-ref-parser/dist/lib/parsers/yaml.js')
   const dereferencedSchema = (await parser.dereference(cwd, schema, {
     ...$refOptions,
+    parse: {
+      ...$refOptions.parse,
+      json: makeLiftingParser(jsonParser),
+      yaml: makeLiftingParser(yamlParser),
+    },
     dereference: {
       ...$refOptions.dereference,
       onDereference($ref: string, schema: JSONSchema) {
