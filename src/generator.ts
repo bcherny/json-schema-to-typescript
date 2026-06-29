@@ -340,7 +340,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
     ast.params
       .map(
         ({ast, keyName}) =>
-          (containsSpecialCharacters(keyName) ? `"${keyName}"` : keyName) + ' = ' + generateType(ast, options),
+          (containsSpecialCharacters(keyName) ? JSON.stringify(keyName) : keyName) + ' = ' + generateType(ast, options),
       )
       .join(',\n') +
     '\n' +
