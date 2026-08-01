@@ -329,7 +329,11 @@ function generateComment(comment?: string, deprecated?: boolean): string {
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
-  const containsSpecialCharacters = (key: string): boolean => /[^a-zA-Z0-9_]/.test(key)
+  // Anything that is not a bare TypeScript identifier has to be quoted. Testing
+  // for the valid shape (rather than for "special characters") also covers the
+  // empty string and names that begin with a digit, both of which are legal
+  // enum *values* but not legal identifiers.
+  const isValidIdentifier = (key: string): boolean => /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
 
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
@@ -340,7 +344,9 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
     ast.params
       .map(
         ({ast, keyName}) =>
-          (containsSpecialCharacters(keyName) ? `"${keyName}"` : keyName) + ' = ' + generateType(ast, options),
+          // JSON.stringify, not string interpolation: the key may itself contain
+          // quotes or backslashes that need escaping.
+          (isValidIdentifier(keyName) ? keyName : JSON.stringify(keyName)) + ' = ' + generateType(ast, options),
       )
       .join(',\n') +
     '\n' +
