@@ -2,7 +2,7 @@ import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {Intersection, JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {JSONSchema4} from 'json-schema'
-import yaml from 'js-yaml'
+import {load as loadYaml, YAML11_SCHEMA} from 'js-yaml'
 import type {Format} from 'cli-color'
 
 // TODO: pull out into a separate package
@@ -182,7 +182,7 @@ export function stripExtension(filename: string): string {
  * Convert a string that might contain spaces or special characters to one that
  * can safely be used as a TypeScript interface or enum name.
  */
-export function toSafeString(string: string) {
+export function toSafeString(string: string): string {
   // identifiers in javaScript/ts:
   // First character: a-zA-Z | _ | $
   // Rest: a-zA-Z | _ | $ | 0-9
@@ -394,7 +394,10 @@ export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
 export function parseFileAsJSONSchema(filename: string | null, contents: string): JSONSchema4 {
   if (filename != null && isYaml(filename)) {
     return Try(
-      () => yaml.load(contents.toString()) as JSONSchema4,
+      // js-yaml@5 defaults to the YAML 1.2 core schema, which drops merge keys
+      // (`<<`), timestamps, and YAML 1.1 scalar syntax. Keep parsing YAML 1.1 so
+      // that schemas that worked with js-yaml@4 keep working.
+      () => loadYaml(contents.toString(), {schema: YAML11_SCHEMA}) as JSONSchema4,
       () => {
         throw new TypeError(`Error parsing YML in file "${filename}"`)
       },
