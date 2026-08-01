@@ -50,12 +50,41 @@ jobs:
     - name: Run the built CLI under bun
       run: bun dist/src/cli.js test/resources/Schema.yaml
 
+  # package.json claims node >=16, but ava 8 needs >=22, so the suite can't run
+  # on the older versions. Build on a current node, then exercise the built
+  # package on every version the package claims to support.
+  engines:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v5
+    - name: Use Node.js 24.x to build
+      uses: actions/setup-node@v5
+      with:
+        node-version: 24.x
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Build
+      run: npm run build:server
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v5
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Smoke-test the built package
+      run: node test/smoke.cjs
+
   # Aggregate check. Branch protection requires this one job instead of each
   # matrix job by name, so the matrix can change without editing the required
   # status checks.
   ci-ok:
     if: always()
-    needs: [build, bun]
+    needs: [build, bun, engines]
     runs-on: ubuntu-latest
     steps:
     - name: Fail if any matrix job did not succeed
