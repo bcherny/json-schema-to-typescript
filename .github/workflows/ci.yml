@@ -38,4 +38,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Fail if any matrix job did not succeed
-      run: ${{ !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+      # Checking for success (rather than for failure/cancellation) also catches
+      # `skipped`, which would otherwise satisfy branch protection with no tests run.
+      run: '[ "${{ needs.build.result }}" = "success" ]'
