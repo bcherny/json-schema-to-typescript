@@ -166,18 +166,32 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'CUSTOM_TYPE',
       }
-    case 'NAMED_ENUM':
+    case 'NAMED_ENUM': {
+      const enumName = standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)
+      // A TypeScript enum declaration requires a name. In positions that supply
+      // none (an `anyOf`/`oneOf` branch, say) fall back to a union of literals
+      // rather than emitting a nameless `export enum { ... }`, which is invalid.
+      if (!enumName) {
+        return {
+          comment: schema.description,
+          deprecated: schema.deprecated,
+          keyName,
+          params: (schema as EnumJSONSchema).enum!.map(_ => parseLiteral(_, undefined)),
+          type: 'UNION',
+        }
+      }
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)!,
+        standaloneName: enumName,
         params: (schema as EnumJSONSchema).enum!.map((_, n) => ({
           ast: parseLiteral(_, undefined),
           keyName: schema.tsEnumNames![n],
         })),
         type: 'ENUM',
       }
+    }
     case 'NAMED_SCHEMA':
       return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName)
     case 'NEVER':
