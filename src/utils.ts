@@ -2,7 +2,7 @@ import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {Intersection, JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {JSONSchema4} from 'json-schema'
-import {load as loadYaml, YAML11_SCHEMA} from 'js-yaml'
+import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
 import type {Format} from 'cli-color'
 
 // TODO: pull out into a separate package
@@ -391,13 +391,23 @@ export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
   return true
 }
 
+/**
+ * js-yaml@5 loads with CORE_SCHEMA by default, which drops the extra tags that
+ * js-yaml@4's default schema carried. Re-add exactly those tags so that YAML
+ * schemas keep parsing the way they did under js-yaml@4.
+ *
+ * Note that YAML11_SCHEMA is NOT the right choice here: on top of these tags it
+ * also enables the YAML 1.1 scalar notations, under which `y`, `n`, `yes`, `no`,
+ * `on` and `off` resolve to booleans, `0777` is octal, and `12:30` is
+ * sexagesimal. That silently rewrites property names (a property called `y`
+ * becomes `true`) and enum values, which js-yaml@4 never did.
+ */
+const JS_YAML_4_SCHEMA = CORE_SCHEMA.withTags(mergeTag, timestampTag, binaryTag, omapTag, pairsTag, setTag)
+
 export function parseFileAsJSONSchema(filename: string | null, contents: string): JSONSchema4 {
   if (filename != null && isYaml(filename)) {
     return Try(
-      // js-yaml@5 defaults to the YAML 1.2 core schema, which drops merge keys
-      // (`<<`), timestamps, and YAML 1.1 scalar syntax. Keep parsing YAML 1.1 so
-      // that schemas that worked with js-yaml@4 keep working.
-      () => loadYaml(contents.toString(), {schema: YAML11_SCHEMA}) as JSONSchema4,
+      () => loadYaml(contents.toString(), {schema: JS_YAML_4_SCHEMA}) as JSONSchema4,
       () => {
         throw new TypeError(`Error parsing YML in file "${filename}"`)
       },
