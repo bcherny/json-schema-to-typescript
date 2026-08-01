@@ -29,6 +29,27 @@ jobs:
       env:
         CI: true
 
+  # Bun is not a supported target, but plenty of users run json2ts under it, so
+  # this job catches breakage early. bun install migrates package-lock.json, so
+  # the versions it resolves match the node jobs without a second lockfile.
+  bun:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+    - name: Use Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+    - name: Install dependencies
+      run: bun install
+    - name: Run tests
+      run: bun run test
+      env:
+        CI: true
+    - name: Run the built CLI under bun
+      run: bun dist/src/cli.js test/resources/Schema.yaml
+
   # package.json claims node >=16, but ava 8 needs >=22, so the suite can't run
   # on the older versions. Build on a current node, then exercise the built
   # package on every version the package claims to support.
@@ -63,7 +84,7 @@ jobs:
   # status checks.
   ci-ok:
     if: always()
-    needs: [build, engines]
+    needs: [build, bun, engines]
     runs-on: ubuntu-latest
     steps:
     - name: Fail if any matrix job did not succeed

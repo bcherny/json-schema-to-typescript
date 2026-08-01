@@ -9,6 +9,8 @@
 !.yarn/versions
 npm-debug.log
 node_modules
+# bun install migrates package-lock.json, so this is generated, never committed
+bun.lock
 *.js
 *.map
 dist/
