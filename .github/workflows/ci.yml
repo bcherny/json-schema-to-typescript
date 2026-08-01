@@ -1,6 +1,9 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
 
 jobs:
   build:
@@ -9,13 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x, 17.x, 18.x, 19.x, 20.x, 21.x]
+        node-version: [22.x, 24.x]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -25,3 +28,14 @@ jobs:
       run: npm test
       env:
         CI: true
+
+  # Aggregate check. Branch protection requires this one job instead of each
+  # matrix job by name, so the matrix can change without editing the required
+  # status checks.
+  ci-ok:
+    if: always()
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Fail if any matrix job did not succeed
+      run: ${{ !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}

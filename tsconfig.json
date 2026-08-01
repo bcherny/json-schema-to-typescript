@@ -6,8 +6,7 @@
       "DOM",
       "es2015"
     ],
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node20",
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
