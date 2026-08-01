@@ -24,7 +24,15 @@ function isArrayType(schema: LinkedJSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
 function isEnumTypeWithoutTsEnumNames(schema: LinkedJSONSchema) {
-  return schema.type === 'string' && schema.enum !== undefined && schema.tsEnumNames === undefined
+  return (
+    schema.type === 'string' &&
+    schema.enum !== undefined &&
+    // A TypeScript enum member's value must be a string or a number, so only
+    // string values can be turned into enum members. Mixed enums (`["a", null]`)
+    // stay unions instead of becoming `null = null`, which does not compile.
+    schema.enum.every(value => typeof value === 'string') &&
+    schema.tsEnumNames === undefined
+  )
 }
 
 rules.set('Remove `type=["null"]` if `enum=[null]`', schema => {
