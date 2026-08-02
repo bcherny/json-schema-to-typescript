@@ -50,6 +50,17 @@ suite('CLI', () => {
     ).toMatchSnapshot()
   })
 
+  test('file in (-i), style boolean with explicit false value, pipe out', () => {
+    const expected = execSync('node dist/src/cli.js -i ./test/resources/Enum.json --no-style.singleQuote').toString()
+
+    expect(execSync('node dist/src/cli.js -i ./test/resources/Enum.json --style.singleQuote false').toString()).toBe(
+      expected,
+    )
+    expect(execSync('node dist/src/cli.js -i ./test/resources/Enum.json --style.singleQuote=false').toString()).toBe(
+      expected,
+    )
+  })
+
   test('file in (-i), pipe out (absolute path)', () => {
     expect(execSync(`node dist/src/cli.js -i ${__dirname}/resources/ReferencedType.json`).toString()).toMatchSnapshot()
   })
