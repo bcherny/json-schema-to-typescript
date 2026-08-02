@@ -111,12 +111,15 @@ suite('CLI', () => {
       `node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.{json,yaml,yml}" -o ./test/resources/MultiSchema/out`,
     )
 
-    readdirSync('./test/resources/MultiSchema/out').forEach(f => {
-      const path = `./test/resources/MultiSchema/out/${f}`
-      expect(path).toMatchSnapshot()
-      expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
-      unlinkSync(path)
-    })
+    // sort to ensure a stable order across environments
+    readdirSync('./test/resources/MultiSchema/out')
+      .sort()
+      .forEach(f => {
+        const path = `./test/resources/MultiSchema/out/${f}`
+        expect(path).toMatchSnapshot()
+        expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
+        unlinkSync(path)
+      })
     rimraf.sync('./test/resources/MultiSchema/out')
   })
 
@@ -130,12 +133,15 @@ suite('CLI', () => {
     execSync(
       `node dist/src/cli.js -i "./test/resources/MultiSchema/**/*.{json,yaml,yml}" -o ./test/resources/MultiSchema/foo/bar/out`,
     )
-    readdirSync('./test/resources/MultiSchema/foo/bar/out').forEach(f => {
-      const path = `./test/resources/MultiSchema/foo/bar/out/${f}`
-      expect(path).toMatchSnapshot()
-      expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
-      unlinkSync(path)
-    })
+    // sort to ensure a stable order across environments
+    readdirSync('./test/resources/MultiSchema/foo/bar/out')
+      .sort()
+      .forEach(f => {
+        const path = `./test/resources/MultiSchema/foo/bar/out/${f}`
+        expect(path).toMatchSnapshot()
+        expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
+        unlinkSync(path)
+      })
     rimraf.sync('./test/resources/MultiSchema/foo')
   })
 
