@@ -166,8 +166,17 @@ export function traverse(
 
 /**
  * Eg. `foo/bar/baz.json` => `baz`
+ *
+ * `$ref`s that point into a document (eg `other.json#/definitions/v1.Foo` or
+ * `#/definitions/v1.Foo`) are not file paths, so the part after `#` is a JSON
+ * Pointer, not a filename with an extension: any `.` it contains is part of the
+ * name and must not be stripped as though it were a file extension.
  */
 export function justName(filename = ''): string {
+  const hashIndex = filename.indexOf('#')
+  if (hashIndex !== -1) {
+    return basename(filename.slice(hashIndex + 1))
+  }
   return stripExtension(basename(filename))
 }
 
