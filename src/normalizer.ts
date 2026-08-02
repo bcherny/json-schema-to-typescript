@@ -227,15 +227,24 @@ rules.set('Transform definitions to $defs', (schema, fileName) => {
   }
 })
 
+// Schemas that were rewritten by the rule below, so that the `tsEnumNames`
+// inference rule can tell them apart from hand-written enums.
+const schemasNormalizedFromConst = new WeakSet<LinkedJSONSchema>()
+
 rules.set('Transform const to singleton enum', schema => {
   if (schema.const !== undefined) {
     schema.enum = [schema.const]
+    schemasNormalizedFromConst.add(schema)
     delete schema.const
   }
 })
 
 rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
-  if (isEnumTypeWithoutTsEnumNames(schema) && options.inferStringEnumKeysFromValues) {
+  if (
+    isEnumTypeWithoutTsEnumNames(schema) &&
+    options.inferStringEnumKeysFromValues &&
+    !schemasNormalizedFromConst.has(schema)
+  ) {
     schema.tsEnumNames = schema.enum?.map(String)
   }
 })
