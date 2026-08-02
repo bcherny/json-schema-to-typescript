@@ -72,7 +72,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     return schema === false
   },
   NULL(schema) {
-    return schema.type === 'null'
+    // `type: null` isn't valid JSON-Schema (`type` must be a string or an
+    // array of strings), but it's an easy mistake to make (eg. an unquoted
+    // `null` in YAML), and the most plausible intent is `type: "null"`.
+    return schema.type === 'null' || schema.type === null
   },
   NUMBER(schema) {
     if ('enum' in schema) {
