@@ -22,6 +22,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    # `bun test` is the test runner. The node version above is still what the
+    # CLI tests shell out to, so the matrix keeps exercising the built package
+    # on each supported node.
+    - name: Use Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
     - name: Install dependencies
       run: npm ci
     - name: Run tests
@@ -29,9 +36,10 @@ jobs:
       env:
         CI: true
 
-  # Bun is not a supported target, but plenty of users run json2ts under it, so
-  # this job catches breakage early. bun install migrates package-lock.json, so
-  # the versions it resolves match the node jobs without a second lockfile.
+  # Bun is not a supported target for the published package, but plenty of users
+  # run json2ts under it, so this job catches breakage early. bun install
+  # migrates package-lock.json, so the versions it resolves match the node jobs
+  # without a second lockfile.
   bun:
     runs-on: ubuntu-latest
 
@@ -50,9 +58,10 @@ jobs:
     - name: Run the built CLI under bun
       run: bun dist/src/cli.js test/resources/Schema.yaml
 
-  # package.json claims node >=16, but ava 8 needs >=22, so the suite can't run
-  # on the older versions. Build on a current node, then exercise the built
-  # package on every version the package claims to support.
+  # package.json claims node >=16, but the test suite runs under bun rather than
+  # node, so it can't cover the older versions on its own. Build on a current
+  # node, then exercise the built package on every version the package claims to
+  # support.
   engines:
     runs-on: ubuntu-latest
 

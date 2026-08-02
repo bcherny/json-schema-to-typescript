@@ -4,8 +4,9 @@
     {
         "type": "node",
         "request": "launch",
-        "name": "Launch Program",
-        "program": "${workspaceRoot}/node_modules/.bin/ava ./dist/test/test.js",
+        "name": "Run tests",
+        "runtimeExecutable": "bun",
+        "runtimeArgs": ["test"],
         "cwd": "${workspaceRoot}"
     },
     {

@@ -1,9 +1,10 @@
-import test from 'ava'
+import {describe, expect, test} from 'bun:test'
 import {readdirSync} from 'fs'
 import {join} from 'path'
 import {JSONSchema, Options, DEFAULT_OPTIONS} from '../src'
 import {link} from '../src/linker'
 import {normalize} from '../src/normalizer'
+import {hasOnly} from './e2eCases'
 
 interface JSONTestCase {
   name: string
@@ -12,17 +13,19 @@ interface JSONTestCase {
   options?: Options
 }
 
-const normalizerDir = __dirname + '/../../test/normalizer'
+const normalizerDir = join(__dirname, 'normalizer')
 
-export function run() {
+const suite = hasOnly() ? describe.skip : describe
+
+suite('normalizer', () => {
   readdirSync(normalizerDir)
     .filter(_ => /^.*\.json$/.test(_))
     .map(_ => join(normalizerDir, _))
     .map(_ => [_, require(_)] as [string, JSONTestCase])
     .forEach(([filename, json]: [string, JSONTestCase]) => {
-      test(json.name, t => {
+      test(json.name, () => {
         const normalized = normalize(link(json.in), new WeakMap(), filename, json.options ?? DEFAULT_OPTIONS)
-        t.deepEqual(json.out, normalized)
+        expect(json.out).toEqual(normalized)
       })
     })
-}
+})

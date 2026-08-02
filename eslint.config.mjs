@@ -13,7 +13,7 @@ export default [
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 2020,
-        project: './tsconfig.json',
+        project: ['./tsconfig.json', './tsconfig.test.json'],
         sourceType: 'module',
       },
     },

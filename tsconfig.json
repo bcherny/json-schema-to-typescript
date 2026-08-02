@@ -11,15 +11,23 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",
+    // Tests are no longer compiled (see tsconfig.test.json), so pin the root to
+    // keep emitting dist/src/* rather than flattening it to dist/*.
+    "rootDir": ".",
     "preserveConstEnums": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "target": "es6",
+    "types": [
+      "node"
+    ],
     "forceConsistentCasingInFileNames": false
   },
   "exclude": [
+    "dist",
     "example",
-    "node_modules"
+    "node_modules",
+    "test"
   ]
 }

@@ -1,0 +1,18 @@
+{
+  // Tests run straight from TypeScript source under `bun test`, so they are
+  // never emitted -- this config exists to type-check them (and the source they
+  // import) with bun's globals in scope.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": [
+      "bun",
+      "node"
+    ]
+  },
+  "exclude": [
+    "dist",
+    "example",
+    "node_modules"
+  ]
+}
