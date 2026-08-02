@@ -332,15 +332,18 @@ function generateInterface(ast: TInterface, options: Options): string {
   // signature's type (e.g. `{foo: string; [k: string]: number}` is invalid). When
   // patternProperties/additionalProperties produces an index signature alongside named
   // properties, widen the index signature's type to also cover the named properties'
-  // types so the generated interface actually typechecks. (Skipped for `any`/`unknown`
-  // index signatures, since those already accept every named property's type.)
+  // types so the generated interface actually typechecks. (Skipped when the index
+  // signature is effectively `any`/`unknown` -- whether via a literal ANY/UNKNOWN AST or
+  // a `tsType` override that renders as `any`/`unknown` -- since those already accept
+  // every named property's type.)
   const indexSignature = params.find(_ => _.keyName === '[k: string]')
+  const indexSignatureOwnType = indexSignature ? generateRawType(indexSignature.ast, options) : undefined
   const indexSignatureType =
-    indexSignature && indexSignature.ast.type !== 'ANY' && indexSignature.ast.type !== 'UNKNOWN'
+    indexSignature && indexSignatureOwnType !== 'any' && indexSignatureOwnType !== 'unknown'
       ? (() => {
           const memberTypes = uniq(
             [
-              generateRawType(indexSignature.ast, options),
+              indexSignatureOwnType!,
               ...params
                 .filter(_ => _ !== indexSignature)
                 // optional properties are checked against the index signature as `T | undefined`
