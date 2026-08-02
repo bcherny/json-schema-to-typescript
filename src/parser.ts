@@ -1,5 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
+import {findKey, includes, isPlainObject, map, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {applySchemaTyping} from './applySchemaTyping'
@@ -14,6 +14,7 @@ import type {
   SchemaType,
 } from './types/JSONSchema'
 import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {memoize} from './memoize'
 import {generateName, log, maybeStripDefault} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>

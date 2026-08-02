@@ -17,7 +17,10 @@ import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
 
-export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
+// These are all interfaces, so re-export them as types -- transpilers that
+// compile a file at a time (bun, esbuild) can't tell on their own, and fail to
+// resolve the re-export at runtime.
+export type {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
 
 export interface Options {
   /**

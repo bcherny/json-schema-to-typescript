@@ -150,6 +150,8 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 
 ## Tests
 
+Tests run under [bun](https://bun.sh), so install it first:
+
 ```sh
 $ npm test
 ```

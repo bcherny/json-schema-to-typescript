@@ -3,7 +3,7 @@ import {get as httpGet} from 'http'
 import {get as httpsGet} from 'https'
 import {join} from 'path'
 
-const CACHE_DIR = 'test/__fixtures__'
+const CACHE_DIR = '__fixtures__'
 
 // Gets a URL, with read-through cache
 // TODO: Pull this out into its own NPM module
@@ -27,7 +27,7 @@ function getFromFilesystem(url: string): object | undefined {
 }
 
 function getFilepath(url: string): string {
-  return join(__dirname, '../../', CACHE_DIR, url.replace(/[:\/\\]/g, '-'))
+  return join(__dirname, CACHE_DIR, url.replace(/[:\/\\]/g, '-'))
 }
 
 function writeToFilesystem(url: string, data: object): void {

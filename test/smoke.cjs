@@ -1,5 +1,5 @@
-// package.json declares `engines.node: >=16`, but the dev toolchain (ava 8)
-// requires node >=22, so the test suite can't run on the oldest supported
+// package.json declares `engines.node: >=16`, but the test suite runs under
+// bun rather than node, so it doesn't say anything about the oldest supported
 // versions. This script exercises the *built* package instead — the artifact
 // that actually ships — and CI runs it on every node version we claim to
 // support, so the declared floor stays honest.
