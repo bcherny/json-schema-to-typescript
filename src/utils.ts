@@ -201,7 +201,10 @@ export function toSafeString(string: string): string {
       // uppercase first letter after whitespace
       .replace(/\s+([a-zA-Z])/g, match => trim(match.toUpperCase()))
       // remove remaining whitespace
-      .replace(/\s/g, ''),
+      .replace(/\s/g, '')
+      // strip any leading digits: they're valid elsewhere in an identifier, but
+      // never as the first character (this can be exposed after prior chars are stripped above)
+      .replace(/^\d+/, ''),
   )
 }
 
