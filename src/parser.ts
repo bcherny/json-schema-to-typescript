@@ -397,6 +397,7 @@ function parseSchema(
 ): TInterfaceParam[] {
   let asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
     ast: parse(value, options, key, processed, usedNames),
+    isIndexSignature: false,
     isPatternProperty: false,
     isRequired: includes(schema.required || [], key),
     isUnreachableDefinition: false,
@@ -418,6 +419,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
         return {
           ast,
+          isIndexSignature: singlePatternProperty,
           isPatternProperty: !singlePatternProperty,
           isRequired: singlePatternProperty || includes(schema.required || [], key),
           isUnreachableDefinition: false,
@@ -436,6 +438,7 @@ via the \`definition\` "${key}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
         return {
           ast,
+          isIndexSignature: false,
           isPatternProperty: false,
           isRequired: includes(schema.required || [], key),
           isUnreachableDefinition: true,
@@ -454,6 +457,7 @@ via the \`definition\` "${key}".`
       }
       return asts.concat({
         ast: options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
+        isIndexSignature: true,
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,
@@ -468,6 +472,7 @@ via the \`definition\` "${key}".`
     default:
       return asts.concat({
         ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
+        isIndexSignature: true,
         isPatternProperty: false,
         isRequired: true,
         isUnreachableDefinition: false,

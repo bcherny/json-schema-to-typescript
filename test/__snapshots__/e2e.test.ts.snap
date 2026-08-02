@@ -11,7 +11,7 @@ exports[`patternProperties.2.ts 1`] = `
 export interface Parent {
   a?: number;
   b?: string;
-  [k: string]: Child | number | undefined | string;
+  [k: string]: Child | number | string | undefined;
 }
 /**
  * This interface was referenced by \`Parent\`'s JSON-Schema definition
@@ -129216,7 +129216,7 @@ export type JSONSchemaForNPMPackageJsonFiles = {
          * This interface was referenced by \`undefined\`'s JSON-Schema definition
          * via the \`patternProperty\` "^\\./".
          */
-        [k: string]: (PackageExportsEntry | PackageExportsFallback) | undefined;
+        [k: string]: PackageExportsEntry | PackageExportsFallback | undefined;
       }
     | PackageExportsEntryObject1
     | PackageExportsFallback1;
@@ -129346,17 +129346,7 @@ export type JSONSchemaForNPMPackageJsonFiles = {
     prerestart?: ScriptsRestart;
     restart?: ScriptsRestart;
     postrestart?: ScriptsRestart;
-    [k: string]:
-      | string
-      | undefined
-      | ScriptsPublishAfter
-      | ScriptsInstallAfter
-      | ScriptsUninstallBefore
-      | ScriptsVersionBefore
-      | ScriptsTest
-      | ScriptsStop
-      | ScriptsStart
-      | ScriptsRestart;
+    [k: string]: string | undefined;
   };
   /**
    * A 'config' hash can be used to set configuration parameters used in package scripts that persist across upgrades.
@@ -129558,7 +129548,7 @@ export interface PackageExportsEntryObject {
    * This interface was referenced by \`PackageExportsEntryObject1\`'s JSON-Schema definition
    * via the \`patternProperty\` "^(?![\\.0-9]).".
    */
-  [k: string]: (PackageExportsEntry | PackageExportsFallback) | undefined;
+  [k: string]: PackageExportsEntry | PackageExportsFallback | undefined;
 }
 /**
  * The module path that is resolved when the module specifier matches "name", shadows the "main" field.
@@ -129589,7 +129579,7 @@ export interface PackageExportsEntryObject1 {
    * This interface was referenced by \`PackageExportsEntryObject1\`'s JSON-Schema definition
    * via the \`patternProperty\` "^(?![\\.0-9]).".
    */
-  [k: string]: (PackageExportsEntry | PackageExportsFallback) | undefined;
+  [k: string]: PackageExportsEntry | PackageExportsFallback | undefined;
 }
 /**
  * Dependencies are specified with a simple hash of package name to version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL.
@@ -173596,7 +173586,7 @@ ttlAsIso8601?: string
  */
 export interface OperationsMonitoringProperties {
 events?: ({
-[k: string]: ("None" | "Error" | "Information" | "Error, Information")
+[k: string]: "None" | "Error" | "Information" | "Error, Information"
 } | string)
 [k: string]: unknown
 }
@@ -173844,7 +173834,7 @@ ttlAsIso8601?: string
  */
 export interface OperationsMonitoringProperties1 {
 events?: ({
-[k: string]: ("None" | "Error" | "Information" | "Error, Information")
+[k: string]: "None" | "Error" | "Information" | "Error, Information"
 } | string)
 [k: string]: unknown
 }
@@ -174312,7 +174302,7 @@ ttlAsIso8601?: string
  */
 export interface OperationsMonitoringProperties2 {
 events?: ({
-[k: string]: ("None" | "Error" | "Information" | "Error, Information")
+[k: string]: "None" | "Error" | "Information" | "Error, Information"
 } | string)
 [k: string]: unknown
 }
@@ -174784,7 +174774,7 @@ ttlAsIso8601?: string
  */
 export interface OperationsMonitoringProperties3 {
 events?: ({
-[k: string]: ("None" | "Error" | "Information" | "Error, Information")
+[k: string]: "None" | "Error" | "Information" | "Error, Information"
 } | string)
 [k: string]: unknown
 }
@@ -440591,11 +440581,11 @@ export interface StrictIndexSignatures {
   };
   [k: string]:
     | string
-    | undefined
     | {
         maybe?: string;
         [k: string]: Leaf | string | undefined;
-      };
+      }
+    | undefined;
 }
 export interface Leaf {
   maybe?: string;

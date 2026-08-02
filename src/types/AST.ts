@@ -95,6 +95,9 @@ export interface TInterfaceParam {
   isRequired: boolean
   isPatternProperty: boolean
   isUnreachableDefinition: boolean
+  // True for the synthesized `[k: string]` index signature param, as opposed to a
+  // named property that happens to be called "[k: string]".
+  isIndexSignature: boolean
 }
 
 export interface TIntersection extends AbstractAST {
