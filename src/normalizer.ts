@@ -164,7 +164,25 @@ rules.set('Remove maxItems if it is big enough to likely cause OOMs', (schema, _
   }
   const {maxItems, minItems} = schema
   // minItems is guaranteed to be a number after the previous rule runs
-  if (maxItems !== undefined && maxItems - (minItems as number) > options.maxItems) {
+  if (maxItems === undefined) {
+    return
+  }
+  // A tuple isn't expanded in isolation: it's expanded once for every combination of
+  // its enclosing bounded arrays, so nested bounded arrays multiply together (an array
+  // of N arrays of M items can emit up to N*M item combinations). Fold in that
+  // multiplier so we don't only catch schemas that are too big on their own while
+  // missing ones that are only too big once nested. Ancestors are already normalized
+  // by the time we get here, since rules traverse parent-first.
+  let ancestorMultiplier = 1
+  let child: LinkedJSONSchema = schema
+  let parent = schema[Parent]
+  while (parent && isArrayType(parent) && parent.items === child) {
+    const {maxItems: parentMaxItems, minItems: parentMinItems} = parent
+    ancestorMultiplier *= typeof parentMaxItems === 'number' ? parentMaxItems : (parentMinItems as number) || 1
+    child = parent
+    parent = parent[Parent]
+  }
+  if ((maxItems - (minItems as number)) * ancestorMultiplier > options.maxItems) {
     delete schema.maxItems
   }
 })
