@@ -1,4 +1,4 @@
-import {omit} from 'lodash'
+import {omit, uniq} from 'lodash'
 import {memoize} from './memoize'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -293,12 +293,73 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
 
+/**
+ * Splits a generated type string on its top-level `|` characters (i.e. those not nested
+ * inside `()`, `{}`, `[]`, `<>`, or a string literal). Used to flatten type strings that
+ * may already be unions (e.g. a `tsType` override) so duplicate members can be detected
+ * when widening an index signature's type.
+ */
+function splitUnionMembers(type: string): string[] {
+  const members: string[] = []
+  let depth = 0
+  let quote = ''
+  let start = 0
+  for (let i = 0; i < type.length; i++) {
+    const c = type[i]
+    if (quote) {
+      if (c === quote && type[i - 1] !== '\\') {
+        quote = ''
+      }
+    } else if (c === '"' || c === "'") {
+      quote = c
+    } else if (c === '(' || c === '{' || c === '[' || c === '<') {
+      depth++
+    } else if (c === ')' || c === '}' || c === ']' || c === '>') {
+      depth--
+    } else if (c === '|' && depth === 0) {
+      members.push(type.slice(start, i).trim())
+      start = i + 1
+    }
+  }
+  members.push(type.slice(start).trim())
+  return members
+}
+
 function generateInterface(ast: TInterface, options: Options): string {
+  const params = ast.params.filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
+
+  // TypeScript requires that every named property's type be assignable to an index
+  // signature's type (e.g. `{foo: string; [k: string]: number}` is invalid). When
+  // patternProperties/additionalProperties produces an index signature alongside named
+  // properties, widen the index signature's type to also cover the named properties'
+  // types so the generated interface actually typechecks. (Skipped for `any`/`unknown`
+  // index signatures, since those already accept every named property's type.)
+  const indexSignature = params.find(_ => _.keyName === '[k: string]')
+  const indexSignatureType =
+    indexSignature && indexSignature.ast.type !== 'ANY' && indexSignature.ast.type !== 'UNKNOWN'
+      ? (() => {
+          const memberTypes = uniq(
+            [
+              generateRawType(indexSignature.ast, options),
+              ...params
+                .filter(_ => _ !== indexSignature)
+                // optional properties are checked against the index signature as `T | undefined`
+                .flatMap(_ =>
+                  _.isRequired ? [generateType(_.ast, options)] : [generateType(_.ast, options), 'undefined'],
+                ),
+            ].flatMap(splitUnionMembers),
+          )
+          if (options.strictIndexSignatures && !memberTypes.includes('undefined')) {
+            memberTypes.push('undefined')
+          }
+          return memberTypes.join(' | ')
+        })()
+      : undefined
+
   return (
     `{` +
     '\n' +
-    ast.params
-      .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
+    params
       .map(
         ({isRequired, keyName, ast}) =>
           [isRequired, keyName, ast, generateType(ast, options)] as [boolean, string, AST, string],
@@ -309,7 +370,7 @@ function generateInterface(ast: TInterface, options: Options): string {
           escapeKeyName(keyName) +
           (isRequired ? '' : '?') +
           ': ' +
-          type,
+          (keyName === '[k: string]' && indexSignatureType !== undefined ? indexSignatureType : type),
       )
       .join('\n') +
     '\n' +
