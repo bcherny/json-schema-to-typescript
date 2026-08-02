@@ -369,11 +369,66 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (
     (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
-    `export type ${toSafeString(ast.standaloneName)} = ${generateType(
-      omit<AST>(ast, 'standaloneName') as AST /* TODO */,
-      options,
-    )}`
+    `export type ${toSafeString(ast.standaloneName)} = ${generateType(referenceAnonymousCycles(omit<AST>(ast, 'standaloneName') as AST /* TODO */, ast.standaloneName), options)}`
   )
+}
+
+function referenceAnonymousCycles(
+  ast: AST,
+  standaloneName: string,
+  processed = new Map<AST, AST>(),
+  processing = new Set<AST>(),
+): AST {
+  if (processing.has(ast) && !hasStandaloneName(ast)) {
+    return {
+      params: standaloneName,
+      type: 'REFERENCE',
+    }
+  }
+
+  if (hasStandaloneName(ast)) {
+    return ast
+  }
+
+  const cached = processed.get(ast)
+  if (cached) {
+    return cached
+  }
+
+  processing.add(ast)
+
+  const reference = (ast: AST) => referenceAnonymousCycles(ast, standaloneName, processed, processing)
+  let next: AST
+
+  switch (ast.type) {
+    case 'ARRAY':
+      next = {...ast, params: reference(ast.params)}
+      break
+    case 'INTERFACE':
+      next = {
+        ...ast,
+        params: ast.params.map(param => ({...param, ast: reference(param.ast)})),
+        superTypes: ast.superTypes.map(reference) as TNamedInterface[],
+      }
+      break
+    case 'INTERSECTION':
+    case 'UNION':
+      next = {...ast, params: ast.params.map(reference)}
+      break
+    case 'TUPLE':
+      next = {
+        ...ast,
+        params: ast.params.map(reference),
+        spreadParam: ast.spreadParam && reference(ast.spreadParam),
+      }
+      break
+    default:
+      next = ast
+  }
+
+  processing.delete(ast)
+  processed.set(ast, next)
+  return next
 }
 
 function escapeKeyName(keyName: string): string {

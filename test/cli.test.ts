@@ -58,6 +58,12 @@ suite('CLI', () => {
     expect(execSync('node dist/src/cli.js ./test/resources/Schema.yaml').toString()).toMatchSnapshot()
   })
 
+  test('file in with external oneOf reference to recursive oneOf schema', () => {
+    expect(
+      execSync('node ../../../dist/src/cli.js a.json', {cwd: './test/resources/issue-614'}).toString(),
+    ).toMatchSnapshot()
+  })
+
   test('pipe in, file out (--output)', () => {
     execSync('node dist/src/cli.js --output ./ReferencedType.d.ts', {
       input: readFileSync('./test/resources/ReferencedType.json'),

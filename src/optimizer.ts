@@ -1,7 +1,7 @@
 import {uniqBy} from 'lodash'
 import {Options} from '.'
 import {generateType} from './generator'
-import {AST, T_ANY, T_UNKNOWN} from './types/AST'
+import {AST, hasStandaloneName, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'
 
 export function optimize(ast: AST, options: Options, processed = new Set<AST>()): AST {
@@ -37,6 +37,10 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       if (optimizedAST.params.some(_ => _.type === 'UNKNOWN')) {
         log('cyan', 'optimizer', '[A, B, C, Unknown] -> Unknown', optimizedAST)
         return T_UNKNOWN
+      }
+
+      if (hasAnonymousCycle(optimizedAST)) {
+        return optimizedAST
       }
 
       // [A (named), A] -> [A (named)]
@@ -75,4 +79,39 @@ function omitStandaloneName<A extends AST>(ast: A): A {
     default:
       return {...ast, standaloneName: undefined}
   }
+}
+
+function hasAnonymousCycle(ast: AST, processed = new Set<AST>(), processing = new Set<AST>()): boolean {
+  if (processing.has(ast)) {
+    return !hasStandaloneName(ast)
+  }
+
+  if (processed.has(ast)) {
+    return false
+  }
+
+  processing.add(ast)
+
+  const check = (ast: AST) => hasAnonymousCycle(ast, processed, processing)
+  let result = false
+
+  switch (ast.type) {
+    case 'ARRAY':
+      result = check(ast.params)
+      break
+    case 'INTERFACE':
+      result = ast.params.some(param => check(param.ast)) || ast.superTypes.some(check)
+      break
+    case 'INTERSECTION':
+    case 'UNION':
+      result = ast.params.some(check)
+      break
+    case 'TUPLE':
+      result = ast.params.some(check) || Boolean(ast.spreadParam && check(ast.spreadParam))
+      break
+  }
+
+  processing.delete(ast)
+  processed.add(ast)
+  return result
 }
