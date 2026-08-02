@@ -1,4 +1,5 @@
 import {JSONSchema4Type} from 'json-schema'
+import {omit} from 'lodash'
 
 export type AST_TYPE = AST['type']
 
@@ -44,6 +45,17 @@ export function hasComment(ast: AST): ast is ASTWithComment {
 
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
   return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
+}
+
+// TODO: More clearly disambiguate standalone names vs. aliased names instead.
+// Note: enums are kept as-is — an ENUM without its standaloneName is unrenderable.
+export function omitStandaloneName<A extends AST>(ast: A): A {
+  switch (ast.type) {
+    case 'ENUM':
+      return ast
+    default:
+      return omit(ast, 'standaloneName') as A
+  }
 }
 
 ////////////////////////////////////////////     types

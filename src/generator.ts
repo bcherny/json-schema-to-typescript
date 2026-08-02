@@ -6,6 +6,7 @@ import {
   ASTWithStandaloneName,
   hasComment,
   hasStandaloneName,
+  omitStandaloneName,
   T_ANY,
   TArray,
   TEnum,
@@ -152,16 +153,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   }
 }
 
-function generateTypeUnmemoized(ast: AST, options: Options): string {
-  const type = generateRawType(ast, options)
-
-  if (options.strictIndexSignatures && ast.keyName === '[k: string]') {
-    return `${type} | undefined`
-  }
-
-  return type
-}
-export const generateType = memoize(generateTypeUnmemoized)
+export const generateType = memoize(generateRawType)
 
 function generateRawType(ast: AST, options: Options): string {
   log('magenta', 'generator', ast)
@@ -294,21 +286,15 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
 
-/**
- * True for types that already accept every other type, making index-signature
- * widening unnecessary. Checks the AST (not the rendered string) so named aliases
- * of `any`/`unknown` are recognized too; `tsType` overrides are compared textually
- * since they are opaque.
- */
-function isAnyOrUnknown(ast: AST): boolean {
-  if (ast.type === 'ANY' || ast.type === 'UNKNOWN') {
-    return true
-  }
-  if (ast.type === 'CUSTOM_TYPE') {
-    const type = ast.params.trim()
-    return type === 'any' || type === 'unknown'
-  }
-  return false
+// `any`/`unknown` accept every other type, making index-signature widening
+// unnecessary. Checked on the AST (which covers named aliases, since the name is
+// metadata on the same node); `tsType` overrides are compared textually since they
+// are opaque.
+function isAny(ast: AST): boolean {
+  return ast.type === 'ANY' || (ast.type === 'CUSTOM_TYPE' && ast.params.trim() === 'any')
+}
+function isUnknown(ast: AST): boolean {
+  return ast.type === 'UNKNOWN' || (ast.type === 'CUSTOM_TYPE' && ast.params.trim() === 'unknown')
 }
 
 /**
@@ -328,6 +314,11 @@ function getIndexSignatureSiblings(
         continue
       }
       visited.add(superType)
+      // the parser casts `extends` schemas to TNamedInterface unchecked, so a
+      // non-object supertype has no params to collect
+      if (superType.type !== 'INTERFACE') {
+        continue
+      }
       siblings.push(
         ...superType.params.filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition && !_.isIndexSignature),
       )
@@ -361,6 +352,10 @@ const LEAF_TYPES = new Set<AST['type']>([
  * Operates on ASTs rather than generated strings so members are deduplicated and
  * rendered by the normal generator machinery. Returns undefined when no widening is
  * needed and the index signature should render its own type as usual.
+ *
+ * Known limitation: when a supertype declares its own index signature, widening the
+ * subtype's can make the two incompatible (TS2430) — that case needs narrowing, not
+ * widening, and is out of scope here.
  */
 function generateIndexSignatureType(
   indexSignature: TInterfaceParam,
@@ -368,7 +363,7 @@ function generateIndexSignatureType(
   superTypes: TNamedInterface[],
   options: Options,
 ): string | undefined {
-  if (isAnyOrUnknown(indexSignature.ast)) {
+  if (isAny(indexSignature.ast) || isUnknown(indexSignature.ast)) {
     return undefined
   }
 
@@ -379,10 +374,15 @@ function generateIndexSignatureType(
       ast.params.forEach(addMember)
       return
     }
-    // also flatten tsType unions, but only when provably safe to split: nothing
-    // but identifier characters, whitespace, and `|` (no brackets, quotes,
+    // also flatten anonymous tsType unions, but only when provably safe to split:
+    // nothing but identifier characters, whitespace, and `|` (no brackets, quotes,
     // arrows, or other constructs that would require real parsing)
-    if (ast.type === 'CUSTOM_TYPE' && ast.params.includes('|') && /^[\w$.\s|]+$/.test(ast.params)) {
+    if (
+      ast.type === 'CUSTOM_TYPE' &&
+      !hasStandaloneName(ast) &&
+      ast.params.includes('|') &&
+      /^[\w$.\s|]+$/.test(ast.params)
+    ) {
       for (const member of ast.params.split('|')) {
         const trimmed = member.trim()
         if (trimmed) {
@@ -397,7 +397,7 @@ function generateIndexSignatureType(
   addMember(indexSignature.ast)
   let needsUndefined = options.strictIndexSignatures
   for (const sibling of getIndexSignatureSiblings(params, indexSignature, superTypes)) {
-    if (sibling.ast.type === 'ANY') {
+    if (isAny(sibling.ast)) {
       // `any` (even when optional) is assignable to every index signature type
       continue
     }
@@ -410,11 +410,17 @@ function generateIndexSignatureType(
     addMember(sibling.ast)
   }
 
-  if (memberASTs.some(_ => _.type === 'UNKNOWN')) {
+  if (memberASTs.some(isUnknown)) {
     // `unknown` absorbs every other member
-    return 'unknown'
+    return options.strictIndexSignatures ? 'unknown | undefined' : 'unknown'
   }
 
+  // degenerate index signature type (e.g. an empty anyOf): render it as-is
+  if (memberASTs.length === 0) {
+    return undefined
+  }
+
+  // nothing to widen: keep the memoized as-is rendering
   if (memberASTs.length === 1 && !needsUndefined) {
     return undefined
   }
@@ -422,18 +428,17 @@ function generateIndexSignatureType(
   const seen = new Set<string>()
   const members: string[] = []
   for (const memberAST of memberASTs) {
-    // render via generateRawType when the AST carries the index signature's keyName,
-    // which would otherwise re-apply the strictIndexSignatures suffix handled below
-    const type =
-      memberAST.keyName === '[k: string]' ? generateRawType(memberAST, options) : generateType(memberAST, options)
+    const type = generateType(memberAST, options)
     // a named alias of a leaf type (e.g. `type Foo = string`) also covers its
     // underlying type, so dedupe against both renderings. Restricted to leaf types
     // because structurally rendering a compound type's body can re-enter an
     // in-flight render for self-referential schemas (memoization only caches
-    // completed renders, so it cannot break such cycles).
+    // completed renders, so it cannot break such cycles). (generateRawType, not
+    // generateType: the name-stripped copy is a fresh object, so memoization
+    // can't help anyway.)
     const underlying =
       hasStandaloneName(memberAST) && LEAF_TYPES.has(memberAST.type)
-        ? generateRawType(omit<AST>(memberAST, 'standaloneName') as AST, options)
+        ? generateRawType(omitStandaloneName(memberAST), options)
         : type
     if (seen.has(type) || seen.has(underlying)) {
       continue
@@ -465,8 +470,12 @@ function generateInterface(ast: TInterface, options: Options): string {
     params
       .map(param => {
         const {isRequired, isIndexSignature, keyName, ast} = param
+        // the widened type handles strictIndexSignatures itself; the fallback path
+        // (widening skipped or unneeded) appends `| undefined` here
         const type =
-          param === indexSignature && indexSignatureType !== undefined ? indexSignatureType : generateType(ast, options)
+          param === indexSignature && indexSignatureType !== undefined
+            ? indexSignatureType
+            : generateType(ast, options) + (isIndexSignature && options.strictIndexSignatures ? ' | undefined' : '')
         return (
           (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +

@@ -23,37 +23,53 @@ const COMPILER_OPTIONS: ts.CompilerOptions = {
   skipLibCheck: true,
 }
 
-// One host for all test cases: virtualFiles overlays the generated source, and
-// reusing the previous program lets TypeScript share parsed lib files.
-const virtualFiles = new Map<string, string>()
-const host = ts.createCompilerHost(COMPILER_OPTIONS)
-const readFile = host.readFile.bind(host)
-const fileExists = host.fileExists.bind(host)
-host.readFile = f => virtualFiles.get(f) ?? readFile(f)
-host.fileExists = f => virtualFiles.has(f) || fileExists(f)
-let oldProgram: ts.Program | undefined
+const cases = getTestCases().filter(
+  ([name, testCase]) =>
+    !testCase.error && testCase.options?.declareExternallyReferenced !== false && !REFERENCES_EXTERNAL_TYPES.has(name),
+)
 
-function typecheck(fileName: string, source: string): string[] {
-  virtualFiles.set(fileName, source)
-  const program = ts.createProgram([fileName], COMPILER_OPTIONS, host, oldProgram)
-  oldProgram = program
-  return ts.getPreEmitDiagnostics(program).map(d => {
-    const message = ts.flattenDiagnosticMessageText(d.messageText, '\n')
-    const location = d.file && d.start !== undefined ? `:${d.file.getLineAndCharacterOfPosition(d.start).line + 1}` : ''
-    return `TS${d.code}${location}: ${message}`
-  })
+function fileName(name: string): string {
+  return `${stripExtension(name)}.generated.ts`
 }
 
-for (const [name, testCase] of getTestCases()) {
-  if (
-    testCase.error ||
-    testCase.options?.declareExternallyReferenced === false ||
-    REFERENCES_EXTERNAL_TYPES.has(name)
-  ) {
-    continue
+// Compile every fixture up front and typecheck them all in a single program:
+// per-program setup would otherwise dominate (~90ms × 100+ cases). Each generated
+// file contains exports, so it's a module and can't collide with the others.
+const setup = (async () => {
+  const sources = new Map<string, string>()
+  const compileErrors = new Map<string, unknown>()
+  for (const [name, testCase] of cases) {
+    try {
+      sources.set(fileName(name), await compile(testCase.input, stripExtension(name), getOptions(testCase)))
+    } catch (e) {
+      compileErrors.set(fileName(name), e)
+    }
   }
+
+  const host = ts.createCompilerHost(COMPILER_OPTIONS)
+  const readFile = host.readFile.bind(host)
+  const fileExists = host.fileExists.bind(host)
+  host.readFile = f => sources.get(f) ?? readFile(f)
+  host.fileExists = f => sources.has(f) || fileExists(f)
+  const program = ts.createProgram([...sources.keys()], COMPILER_OPTIONS, host)
+  return {program, compileErrors}
+})()
+
+for (const [name] of cases) {
   test(`typecheck ${name}`, async () => {
-    const output = await compile(testCase.input, stripExtension(name), getOptions(testCase))
-    expect(typecheck(`${stripExtension(name)}.generated.ts`, output)).toEqual([])
+    const {program, compileErrors} = await setup
+    const file = fileName(name)
+    if (compileErrors.has(file)) {
+      throw compileErrors.get(file)
+    }
+    const sourceFile = program.getSourceFile(file)
+    expect(sourceFile).toBeDefined()
+    const diagnostics = ts.getPreEmitDiagnostics(program, sourceFile).map(d => {
+      const message = ts.flattenDiagnosticMessageText(d.messageText, '\n')
+      const location =
+        d.file && d.start !== undefined ? `:${d.file.getLineAndCharacterOfPosition(d.start).line + 1}` : ''
+      return `TS${d.code}${location}: ${message}`
+    })
+    expect(diagnostics).toEqual([])
   })
 }
