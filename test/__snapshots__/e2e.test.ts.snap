@@ -5138,9 +5138,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -5473,9 +5471,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -6596,9 +6592,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -7250,9 +7244,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -7972,9 +7964,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -8430,9 +8420,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A reference from one resource to another.
@@ -8712,9 +8700,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A reference to a code defined by a terminology system.
@@ -9613,9 +9599,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -10036,9 +10020,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -10688,9 +10670,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -11378,9 +11358,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -12770,9 +12748,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -13591,9 +13567,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -13989,9 +13963,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -14401,9 +14373,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -15144,9 +15114,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -15726,9 +15694,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -18468,9 +18434,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -20593,9 +20557,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -21237,9 +21199,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -22207,9 +22167,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -22724,9 +22682,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -23308,9 +23264,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -23692,9 +23646,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -24265,9 +24217,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -24543,9 +24493,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -25369,9 +25317,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -26063,9 +26009,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -26950,9 +26894,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -29989,9 +29931,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -30655,9 +30595,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -31539,9 +31477,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -32529,9 +32465,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -33045,9 +32979,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A reference from one resource to another.
@@ -33986,9 +33918,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * The characteristics, operational status and capabilities of a medical-related component of a medical device.
@@ -35137,9 +35067,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -35600,9 +35528,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -36259,9 +36185,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -36662,9 +36586,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -37062,9 +36984,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -37460,9 +37380,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -38220,9 +38138,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -39237,9 +39153,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -40287,9 +40201,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -40565,9 +40477,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -40871,9 +40781,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -41182,9 +41090,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -41715,9 +41621,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -42274,9 +42178,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -42745,9 +42647,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -43588,9 +43488,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -44673,9 +44571,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -49039,9 +48935,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -49726,9 +49620,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -50060,9 +49952,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -50708,9 +50598,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -51295,9 +51183,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -51898,9 +51784,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -52383,9 +52267,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -52946,9 +52828,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -53814,9 +53694,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -54791,9 +54669,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -55176,9 +55052,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A reference from one resource to another.
@@ -55727,9 +55601,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -56910,9 +56782,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -57919,9 +57789,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -58695,9 +58563,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -59174,9 +59040,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -59454,9 +59318,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -59963,9 +59825,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -60670,9 +60530,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -61721,9 +61579,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -62520,9 +62376,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -63059,9 +62913,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -63520,9 +63372,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -64208,9 +64058,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -64947,9 +64795,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -66501,9 +66347,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -67526,9 +67370,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -67951,9 +67793,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -68950,9 +68790,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A reference from one resource to another.
@@ -69584,9 +69422,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -70005,9 +69841,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -70351,9 +70185,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -70906,9 +70738,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -71226,9 +71056,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -71519,9 +71347,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -71988,9 +71814,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -72600,9 +72424,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -72906,9 +72728,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -73398,9 +73218,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A reference to a code defined by a terminology system.
@@ -74106,9 +73924,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -75547,9 +75363,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -75981,9 +75795,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -77071,9 +76883,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -78259,9 +78069,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -78956,9 +78764,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -79609,9 +79415,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A collection of error, warning, or information messages that result from a system action.
@@ -79895,9 +79699,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -80346,9 +80148,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -82275,9 +82075,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -82975,9 +82773,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -83418,9 +83214,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -84204,9 +83998,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -84656,9 +84448,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -86261,9 +86051,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -86580,9 +86368,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -87061,9 +86847,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -87769,9 +87553,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A time period defined by a start and end date and optionally time.
@@ -88285,9 +88067,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -89658,9 +89438,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -90425,9 +90203,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -90776,9 +90552,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -91872,9 +91646,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -92558,9 +92330,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -93646,9 +93416,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -94126,9 +93894,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -94458,9 +94224,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A reference from one resource to another.
@@ -95165,9 +94929,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -96019,9 +95781,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -96337,9 +96097,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -96843,9 +96601,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -97429,9 +97185,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -97718,9 +97472,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -98558,9 +98310,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -99432,9 +99182,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -107634,9 +107382,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -110251,9 +109997,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -110553,9 +110297,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -110944,9 +110686,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -111538,9 +111278,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -112464,9 +112202,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -112876,9 +112612,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -113524,9 +113258,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -114378,9 +114110,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -116303,9 +116033,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -116787,9 +116515,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -117453,9 +117179,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -121243,9 +120967,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -122150,9 +121872,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
@@ -123002,9 +122722,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -125274,9 +124992,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -126361,9 +126077,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
@@ -127139,9 +126853,7 @@ _status?: Element150
 /**
  * The actual narrative content, a stripped down version of XHTML.
  */
-div: {
-[k: string]: unknown
-}
+div: unknown
 }
 /**
  * Base definition for all elements in a resource.
@@ -212996,12 +212708,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 [k: string]: unknown
 }
 /**
@@ -215128,12 +214835,7 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 [k: string]: unknown
 }
 /**
@@ -216678,12 +216380,7 @@ tags?: ({
  * The etag of the zone.
  */
 etag?: string
-/**
- * The properties of the zone.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (DnsZones_TXTChildResource | DnsZones_SRVChildResource | DnsZones_SOAChildResource | DnsZones_PTRChildResource | DnsZones_NSChildResource | DnsZones_MXChildResource | DnsZones_CNAMEChildResource | DnsZones_CAAChildResource | DnsZones_AAAAChildResource | DnsZones_AChildResource)[]
 [k: string]: unknown
 }
@@ -217733,12 +217430,7 @@ tags?: ({
  * The etag of the zone.
  */
 etag?: string
-/**
- * The properties of the zone.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (DnsZones_TXTChildResource1 | DnsZones_SRVChildResource1 | DnsZones_SOAChildResource1 | DnsZones_PTRChildResource1 | DnsZones_NSChildResource1 | DnsZones_MXChildResource1 | DnsZones_CNAMEChildResource1 | DnsZones_CAAChildResource1 | DnsZones_AAAAChildResource1 | DnsZones_AChildResource1)[]
 [k: string]: unknown
 }
@@ -219827,12 +219519,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 [k: string]: unknown
 }
 /**
@@ -231991,12 +231678,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -232016,12 +231698,7 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -232041,12 +231718,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -232066,12 +231738,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -233053,12 +232720,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 [k: string]: unknown
 }
 /**
@@ -234746,12 +234408,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -236227,12 +235884,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 [k: string]: unknown
 }
 /**
@@ -237526,12 +237178,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -237899,12 +237546,7 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the DDoS protection plan.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -239318,9 +238960,7 @@ tags?: ({
  * A unique read-only string that changes whenever the resource is updated.
  */
 etag?: string
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (NetworkWatchersConnectionMonitorsChildResource | NetworkWatchersPacketCapturesChildResource)[]
 [k: string]: unknown
 }
@@ -241575,12 +241215,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -242236,12 +241871,7 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the DDoS protection plan.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -243605,9 +243235,7 @@ tags?: ({
  * A unique read-only string that changes whenever the resource is updated.
  */
 etag?: string
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (NetworkWatchersConnectionMonitorsChildResource1 | NetworkWatchersPacketCapturesChildResource1)[]
 [k: string]: unknown
 }
@@ -245672,12 +245300,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -246337,12 +245960,7 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the DDoS protection plan.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -247738,9 +247356,7 @@ tags?: ({
  * A unique read-only string that changes whenever the resource is updated.
  */
 etag?: string
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (NetworkWatchersConnectionMonitorsChildResource2 | NetworkWatchersPacketCapturesChildResource2)[]
 [k: string]: unknown
 }
@@ -249120,12 +248736,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -249364,12 +248975,7 @@ routeFilter?: (SubResource19 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig4 | string)
-/**
- * The ExpressRoute connection.
- */
-expressRouteConnection?: ({
-[k: string]: unknown
-} | string)
+expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
  */
@@ -252737,12 +252343,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -252981,12 +252582,7 @@ routeFilter?: (SubResource20 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig5 | string)
-/**
- * The ExpressRoute connection.
- */
-expressRouteConnection?: ({
-[k: string]: unknown
-} | string)
+expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
  */
@@ -255802,12 +255398,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -255827,12 +255418,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -256075,12 +255661,7 @@ routeFilter?: (SubResource21 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig6 | string)
-/**
- * The ExpressRoute connection.
- */
-expressRouteConnection?: ({
-[k: string]: unknown
-} | string)
+expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
  */
@@ -259114,12 +258695,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -259373,12 +258949,7 @@ routeFilter?: (SubResource22 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig7 | string)
-/**
- * The ExpressRoute connection.
- */
-expressRouteConnection?: ({
-[k: string]: unknown
-} | string)
+expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
  */
@@ -292637,12 +292208,7 @@ routeFilter?: (SubResource28 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig13 | string)
-/**
- * The ExpressRoute connection.
- */
-expressRouteConnection?: ({
-[k: string]: unknown
-} | string)
+expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
  */
@@ -298736,12 +298302,7 @@ tags?: ({
  * The ETag of the Private DNS zone.
  */
 etag?: string
-/**
- * The properties of the Private DNS zone.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (PrivateDnsZonesVirtualNetworkLinksChildResource | PrivateDnsZones_AChildResource | PrivateDnsZones_AAAAChildResource | PrivateDnsZones_CNAMEChildResource | PrivateDnsZones_MXChildResource | PrivateDnsZones_PTRChildResource | PrivateDnsZones_SOAChildResource | PrivateDnsZones_SRVChildResource | PrivateDnsZones_TXTChildResource)[]
 [k: string]: unknown
 }
@@ -300512,12 +300073,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -301167,12 +300723,7 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the DDoS protection plan.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -301263,12 +300814,7 @@ gatewayManagerEtag?: string
  * Authorization in an ExpressRouteCircuit resource.
  */
 export interface ExpressRouteCircuitAuthorization16 {
-/**
- * Properties of the express route circuit authorization.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -301495,12 +301041,7 @@ export interface ExpressRouteCircuitsAuthorizationsChildResource16 {
 name: string
 type: "authorizations"
 apiVersion: "2019-11-01"
-/**
- * Properties of the express route circuit authorization.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -301510,12 +301051,7 @@ export interface ExpressRouteCircuitsAuthorizations17 {
 name: string
 type: "Microsoft.Network/expressRouteCircuits/authorizations"
 apiVersion: "2019-11-01"
-/**
- * Properties of the express route circuit authorization.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -302159,12 +301695,7 @@ publicIPPrefix?: (SubResource31 | string)
  * Pool of backend IP addresses.
  */
 export interface BackendAddressPool23 {
-/**
- * Properties of load balancer backend address pool.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 /**
  * The name of the resource that is unique within the set of backend address pools used by the load balancer. This name can be used to access the resource.
  */
@@ -302979,12 +302510,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the network watcher.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (NetworkWatchersFlowLogsChildResource | NetworkWatchersConnectionMonitorsChildResource5 | NetworkWatchersPacketCapturesChildResource8)[]
 [k: string]: unknown
 }
@@ -314018,12 +313544,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -314684,12 +314205,7 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the DDoS protection plan.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -314780,12 +314296,7 @@ gatewayManagerEtag?: string
  * Authorization in an ExpressRouteCircuit resource.
  */
 export interface ExpressRouteCircuitAuthorization18 {
-/**
- * Properties of the express route circuit authorization.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -315026,12 +314537,7 @@ export interface ExpressRouteCircuitsAuthorizationsChildResource18 {
 name: string
 type: "authorizations"
 apiVersion: "2020-03-01"
-/**
- * Properties of the express route circuit authorization.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -315041,12 +314547,7 @@ export interface ExpressRouteCircuitsAuthorizations19 {
 name: string
 type: "Microsoft.Network/expressRouteCircuits/authorizations"
 apiVersion: "2020-03-01"
-/**
- * Properties of the express route circuit authorization.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -315749,12 +315250,7 @@ publicIPPrefix?: (SubResource33 | string)
  * Pool of backend IP addresses.
  */
 export interface BackendAddressPool25 {
-/**
- * Properties of load balancer backend address pool.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 /**
  * The name of the resource that is unique within the set of backend address pools used by the load balancer. This name can be used to access the resource.
  */
@@ -316662,12 +316158,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the network watcher.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (NetworkWatchersFlowLogsChildResource2 | NetworkWatchersConnectionMonitorsChildResource7 | NetworkWatchersPacketCapturesChildResource10)[]
 [k: string]: unknown
 }
@@ -328139,12 +327630,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the application security group.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -328847,12 +328333,7 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the DDoS protection plan.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -328943,12 +328424,7 @@ gatewayManagerEtag?: string
  * Authorization in an ExpressRouteCircuit resource.
  */
 export interface ExpressRouteCircuitAuthorization20 {
-/**
- * Properties of the express route circuit authorization.
- */
-properties?: ({
-[k: string]: unknown
-} | string)
+properties?: unknown
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -329189,12 +328665,7 @@ export interface ExpressRouteCircuitsAuthorizationsChildResource20 {
 name: string
 type: "authorizations"
 apiVersion: "2020-05-01"
-/**
- * Properties of the express route circuit authorization.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -329204,12 +328675,7 @@ export interface ExpressRouteCircuitsAuthorizations21 {
 name: string
 type: "Microsoft.Network/expressRouteCircuits/authorizations"
 apiVersion: "2020-05-01"
-/**
- * Properties of the express route circuit authorization.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 [k: string]: unknown
 }
 /**
@@ -331138,12 +330604,7 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
-/**
- * Properties of the network watcher.
- */
-properties: ({
-[k: string]: unknown
-} | string)
+properties: unknown
 resources?: (NetworkWatchersFlowLogsChildResource4 | NetworkWatchersConnectionMonitorsChildResource9 | NetworkWatchersPacketCapturesChildResource12)[]
 [k: string]: unknown
 }
@@ -347479,9 +346940,7 @@ parameters: (ArmTemplateParameter[] | string)
 /**
  * The Json object containing the ARM template to deploy
  */
-template: {
-[k: string]: unknown
-}
+template: unknown
 [k: string]: unknown
 }
 /**
@@ -397341,9 +396800,7 @@ displayName?: string
 /**
  * Required if a parameter is used in policy rule.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition.
  */
@@ -397399,9 +396856,7 @@ notScopes?: (string[] | string)
 /**
  * Required if a parameter is used in policy rule.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition.
  */
@@ -397471,9 +396926,7 @@ notScopes?: (string[] | string)
 /**
  * Required if a parameter is used in policy rule.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition or policy set definition being assigned.
  */
@@ -397561,9 +397014,7 @@ notScopes?: (string[] | string)
 /**
  * Required if a parameter is used in policy rule.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition or policy set definition being assigned.
  */
@@ -397651,9 +397102,7 @@ notScopes?: (string[] | string)
 /**
  * Required if a parameter is used in policy rule.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition or policy set definition being assigned.
  */
@@ -397745,9 +397194,7 @@ notScopes?: (string[] | string)
 /**
  * Required if a parameter is used in policy rule.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition or policy set definition being assigned.
  */
@@ -397839,9 +397286,7 @@ notScopes?: (string[] | string)
 /**
  * The parameter values for the policy rule. The keys are the parameter names.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition or policy set definition being assigned.
  */
@@ -397933,9 +397378,7 @@ notScopes?: (string[] | string)
 /**
  * The parameter values for the policy rule. The keys are the parameter names.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition or policy set definition being assigned.
  */
@@ -398079,9 +397522,7 @@ notScopes?: (string[] | string)
 /**
  * The parameter values for the policy rule. The keys are the parameter names.
  */
-parameters?: {
-[k: string]: unknown
-}
+parameters?: unknown
 /**
  * The ID of the policy definition or policy set definition being assigned.
  */
@@ -444949,6 +444390,24 @@ exports[`nullType.ts 1`] = `
 
 export interface NullType {
   nullProp: null;
+}
+"
+`;
+
+exports[`untypedPropertyWithDescription.ts 1`] = `
+"/* eslint-disable */
+/**
+ * This file was automatically generated by json-schema-to-typescript.
+ * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
+ * and run json-schema-to-typescript to regenerate this file.
+ */
+
+export interface Foo {
+  /**
+   * Foo is untyped, should allow anything
+   */
+  foo?: unknown;
+  [k: string]: unknown;
 }
 "
 `;
