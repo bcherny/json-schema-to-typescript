@@ -126,7 +126,9 @@ function outputResult(result: string, outputPath: string | undefined): void {
 async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
   const {filename, contents} = await readInput(argIn)
   const schema = parseFileAsJSONSchema(filename, contents)
-  return compile(schema, argIn, argv)
+  // filename is null when input comes from stdin (no file to derive a name from), so fall
+  // back to the same placeholder name used elsewhere for schemas without a derivable name.
+  return compile(schema, filename ?? 'NoName', argv)
 }
 
 function getPaths(path: string, paths: string[] = []) {
