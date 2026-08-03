@@ -143,8 +143,20 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     }
     return 'enum' in schema
   },
-  UNNAMED_SCHEMA() {
-    return false // Explicitly handled as the default case
+  UNNAMED_SCHEMA(schema) {
+    // Mirrors NAMED_SCHEMA above: a schema's own `properties`/`patternProperties`
+    // are a real type even without a `$id`, so they get intersected with any
+    // sibling `allOf`/`anyOf`/`oneOf` instead of being silently dropped. Guarded
+    // to schemas that are objects (or untyped) so it doesn't fire on a `UNION`
+    // member that was assigned a non-object `type` but still carries the
+    // parent's `properties` (see the `UNION` case in `parser.ts`). Schemas that
+    // don't otherwise match anything still fall through to the default case at
+    // the bottom of `typesOfSchema`.
+    return (
+      (schema.type === undefined || schema.type === 'object') &&
+      !('$id' in schema) &&
+      ('patternProperties' in schema || 'properties' in schema)
+    )
   },
   UNTYPED_ARRAY(schema) {
     return schema.type === 'array' && !('items' in schema)
