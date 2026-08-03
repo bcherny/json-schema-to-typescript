@@ -1,5 +1,5 @@
 import {readFileSync} from 'fs'
-import {JSONSchema4} from 'json-schema'
+import {JSONSchema4, JSONSchema6, JSONSchema7} from 'json-schema'
 import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
 import {cloneDeep, endsWith, merge} from 'lodash'
 import {dirname} from 'path'
@@ -135,7 +135,11 @@ function parseAsJSONSchema(filename: string): JSONSchema4 {
   return parseFileAsJSONSchema(filename, contents.toString())
 }
 
-export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
+export async function compile(
+  schema: JSONSchema4 | JSONSchema6 | JSONSchema7,
+  name: string,
+  options: Partial<Options> = {},
+): Promise<string> {
   validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
@@ -150,8 +154,11 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     _options.cwd += '/'
   }
 
-  // Initial clone to avoid mutating the input
-  const _schema = cloneDeep(schema)
+  // Initial clone to avoid mutating the input. Downstream code reads schema
+  // keys generically rather than validating them against a specific draft's
+  // shape (e.g. `exclusiveMaximum` is never interpreted as a boolean vs. a
+  // number), so this cast doesn't change runtime behavior -- see #359.
+  const _schema = cloneDeep(schema) as JSONSchema4
 
   const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
