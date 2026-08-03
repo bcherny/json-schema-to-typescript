@@ -36,9 +36,13 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     return 'allOf' in schema
   },
   ANY(schema) {
-    if (Object.keys(schema).length === 0) {
-      // The empty schema {} validates any value
-      // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1
+    // Keys that carry no type-constraining information of their own: `$id`
+    // is added to the root schema by the normalizer purely to identify it,
+    // and `description` is a plain annotation. A schema left with only these
+    // (or nothing at all) doesn't constrain its value's type, so - like `{}`
+    // - it validates any value.
+    // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1
+    if (Object.keys(schema).every(key => key === '$id' || key === 'description')) {
       return true
     }
     return schema.type === 'any'
