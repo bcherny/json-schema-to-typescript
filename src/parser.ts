@@ -20,7 +20,16 @@ import type {
   SchemaSchema,
   SchemaType,
 } from './types/JSONSchema'
-import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {
+  ExternallyReferenced,
+  Intersection,
+  Parent,
+  Shared,
+  Types,
+  getRootSchema,
+  isBoolean,
+  isPrimitive,
+} from './types/JSONSchema'
 import {memoize} from './memoize'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
@@ -1067,8 +1076,23 @@ const getDefinitionKeysMemoized = memoize((definitions: Definitions): Map<Normal
   return keys
 })
 
-/** The (first) key `schema` is held under in `definitions`, if any */
+/**
+ * The (first) key `schema` is held under in `definitions`, if any. Ordinarily that is
+ * the root schema's map; but a schema pulled in through a $ref to a separate file keeps
+ * its own `definitions` nested wherever it landed in the referencing document, so the
+ * maps of externally-referenced ancestors are checked first, nearest first (see #143).
+ */
 function definitionKeyOf(schema: NormalizedJSONSchema): string | undefined {
+  let ancestor = schema[Parent]
+  while (ancestor && ancestor[Parent]) {
+    if (ancestor[ExternallyReferenced]) {
+      const key = getDefinitionKeysMemoized(getDefinitionsMemoized(ancestor)).get(schema)
+      if (key !== undefined) {
+        return key
+      }
+    }
+    ancestor = ancestor[Parent]
+  }
   return getDefinitionKeysMemoized(getDefinitionsMemoized(getRootSchema(schema))).get(schema)
 }
 
