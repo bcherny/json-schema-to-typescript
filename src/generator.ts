@@ -283,7 +283,18 @@ function generateRawType(ast: AST, options: Options): string {
  * Generate a Union or Intersection
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
-  const members = (ast as TUnion).params.map(_ => generateType(_, options))
+  const members = (ast as TUnion).params.map(_ => {
+    const type = generateType(_, options)
+    // An anonymous object-literal member (eg. an `oneOf`/`anyOf` branch with its
+    // own `description` but no name of its own) would otherwise have its comment
+    // silently dropped: a named member's comment is printed on its own
+    // declaration (see generateStandaloneInterface), and non-object members
+    // (string, number, ...) have no declaration site for a leading comment to
+    // meaningfully attach to, so only INTERFACE members are handled here.
+    return _.type === 'INTERFACE' && hasComment(_) && !hasStandaloneName(_)
+      ? generateComment(_.comment, _.deprecated) + '\n' + type
+      : type
+  })
   const separator = ast.type === 'UNION' ? '|' : '&'
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
 }
