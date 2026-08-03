@@ -112,7 +112,13 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
   // We'll infer from $id and title downstream
   // TODO: Normalize upstream
   const dereferencedName = dereferencedPaths.get(schema)
-  if (!schema.$id && !schema.title && dereferencedName) {
+  // `tsType` (see typesOfSchema.ts) supersedes the schema's own shape, so naming this
+  // schema after the $ref path it was dereferenced from is misleading here: when `$ref`
+  // has sibling keywords, the ref-resolution library merges the referenced schema into a
+  // new object (not the definitions entry it looks like it came from) before this rule
+  // runs, so the derived $id collides with -- or stands in for -- the real definition's
+  // own name instead of being treated as the opaque, unnamed override `tsType` calls for.
+  if (!schema.$id && !schema.title && !schema.tsType && dereferencedName) {
     schema.$id = toSafeString(justName(dereferencedName))
   }
 
