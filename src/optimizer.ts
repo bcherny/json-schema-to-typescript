@@ -1,7 +1,7 @@
 import {uniqBy} from 'lodash'
 import {Options} from '.'
 import {generateType} from './generator'
-import {AST, T_ANY, T_UNKNOWN} from './types/AST'
+import {AST, omitStandaloneName, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'
 
 export function optimize(ast: AST, options: Options, processed = new Set<AST>()): AST {
@@ -64,15 +64,5 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       })
     default:
       return ast
-  }
-}
-
-// TODO: More clearly disambiguate standalone names vs. aliased names instead.
-function omitStandaloneName<A extends AST>(ast: A): A {
-  switch (ast.type) {
-    case 'ENUM':
-      return ast
-    default:
-      return {...ast, standaloneName: undefined}
   }
 }
