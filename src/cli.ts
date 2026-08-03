@@ -24,7 +24,10 @@ main(
       'unknownAny',
       'unreachableDefinitions',
     ],
-    default: DEFAULT_OPTIONS,
+    // Omit `cwd` from the defaults: it needs to default to each input file's own
+    // directory (computed per-file in processFile), not to the directory json2ts
+    // was launched from.
+    default: {...DEFAULT_OPTIONS, cwd: undefined},
     string: ['bannerComment', 'cwd'],
   }),
 )
@@ -126,7 +129,10 @@ function outputResult(result: string, outputPath: string | undefined): void {
 async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
   const {filename, contents} = await readInput(argIn)
   const schema = parseFileAsJSONSchema(filename, contents)
-  return compile(schema, argIn, argv)
+  // Resolve relative $refs against the input file's own directory, unless the
+  // caller explicitly passed --cwd. (argIn is falsy when reading from stdin.)
+  const cwd = argv.cwd ?? (argIn ? dirname(resolve(process.cwd(), argIn)) : undefined)
+  return compile(schema, argIn, {...argv, cwd})
 }
 
 function getPaths(path: string, paths: string[] = []) {

@@ -145,6 +145,25 @@ suite('CLI', () => {
     rimraf.sync('./test/resources/MultiSchema/foo')
   })
 
+  test('files in (-i), files out (-o), glob matches across sibling directories with relative $refs', () => {
+    // Regression test for #505: relative $refs must resolve against each matched
+    // file's own directory, not against the directory json2ts was launched from.
+    execSync(
+      `node dist/src/cli.js -i "./test/resources/MultiSchemaGlob/*-spec/json-schema/*.json" -o ./test/resources/MultiSchemaGlob/out`,
+    )
+
+    // sort to ensure a stable order across environments
+    readdirSync('./test/resources/MultiSchemaGlob/out')
+      .sort()
+      .forEach(f => {
+        const path = `./test/resources/MultiSchemaGlob/out/${f}`
+        expect(path).toMatchSnapshot()
+        expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
+        unlinkSync(path)
+      })
+    rimraf.sync('./test/resources/MultiSchemaGlob/out')
+  })
+
   test('files in (-i), files out (-o) matching nested dir', () => {
     execSync(
       `node dist/src/cli.js -i "./test/resources/../../test/resources/MultiSchema2/" -o ./test/resources/MultiSchema2/out`,
