@@ -91,6 +91,13 @@ suite('CLI', () => {
     readFileSync('./test/resources/ReferencedTypeWithoutID.json', 'utf-8'),
   )
 
+  cliTest(
+    'pipe in (schema without title or ID), pipe out',
+    'node dist/src/cli.js',
+    ({stdout}) => expect(stdout).toMatchSnapshot(),
+    readFileSync('./test/resources/NoTitleOrID.json', 'utf-8'),
+  )
+
   cliTest('file in (no flags), pipe out', 'node dist/src/cli.js ./test/resources/ReferencedType.json', ({stdout}) =>
     expect(stdout).toMatchSnapshot(),
   )
