@@ -76,7 +76,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
     case 'INTERFACE':
       type = [
         hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+          (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition) &&
           generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
@@ -125,7 +125,9 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       return getSuperTypesAndParams(ast)
         .map(
           ast =>
-            (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+            (ast.standaloneName === rootASTName ||
+              options.declareExternallyReferenced ||
+              ast.isUnreachableDefinition) &&
             declareNamedTypes(ast, options, rootASTName, processed),
         )
         .filter(Boolean)

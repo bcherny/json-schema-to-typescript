@@ -436,6 +436,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
 via the \`definition\` "${key}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+        ast.isUnreachableDefinition = true
         return {
           ast,
           isIndexSignature: false,

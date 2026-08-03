@@ -29,6 +29,11 @@ export interface AbstractAST {
   standaloneName?: string
   type: AST_TYPE
   deprecated?: boolean
+  /**
+   * Set on ASTs produced from `unreachableDefinitions`, so the generator knows to declare
+   * them even though they aren't the root type and aren't reachable via `$ref`.
+   */
+  isUnreachableDefinition?: boolean
 }
 
 export type ASTWithComment = AST & {comment: string}
