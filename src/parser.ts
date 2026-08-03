@@ -60,6 +60,33 @@ export function parse(
   throw new ReferenceError('Expected intersection schema. Please file an issue on GitHub.')
 }
 
+/**
+ * Parse the root schema's `$defs` that aren't referenced anywhere else in the
+ * schema, so they still get declared. This only looks at the root schema's
+ * own `$defs` (not those of nested schemas), and should be called once, on
+ * the root schema, regardless of its type.
+ */
+export function parseUnreachableDefinitions(
+  rootSchema: NormalizedJSONSchema,
+  rootASTName: string,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST[] {
+  if (!options.unreachableDefinitions) {
+    return []
+  }
+
+  return map(rootSchema.$defs, (value, key: string) => {
+    const ast = parse(value, options, key, processed, usedNames)
+    const comment = `This interface was referenced by \`${rootASTName}\`'s JSON-Schema
+via the \`definition\` "${key}".`
+    ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+    ast.isUnreachableDefinition = true
+    return ast
+  })
+}
+
 function parseAsTypeWithCache(
   schema: NormalizedJSONSchema,
   type: SchemaType,
@@ -424,26 +451,6 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
           isRequired: singlePatternProperty || includes(schema.required || [], key),
           isUnreachableDefinition: false,
           keyName: singlePatternProperty ? '[k: string]' : key,
-        }
-      }),
-    )
-  }
-
-  if (options.unreachableDefinitions) {
-    asts = asts.concat(
-      map(schema.$defs, (value, key: string) => {
-        const ast = parse(value, options, key, processed, usedNames)
-        const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
-via the \`definition\` "${key}".`
-        ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
-        ast.isUnreachableDefinition = true
-        return {
-          ast,
-          isIndexSignature: false,
-          isPatternProperty: false,
-          isRequired: includes(schema.required || [], key),
-          isUnreachableDefinition: true,
-          keyName: key,
         }
       }),
     )
