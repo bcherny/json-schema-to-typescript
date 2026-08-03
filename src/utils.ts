@@ -287,7 +287,7 @@ function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | 
  * escape block comments in schema descriptions so that they don't unexpectedly close JSDoc comments in generated typescript interfaces
  */
 export function escapeBlockComment(schema: JSONSchema) {
-  const replacer = '* /'
+  const replacer = '*\\/'
   if (schema === null || typeof schema !== 'object') {
     return
   }
