@@ -135,7 +135,43 @@ function parseAsJSONSchema(filename: string): JSONSchema4 {
   return parseFileAsJSONSchema(filename, contents.toString())
 }
 
-export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
+export async function compile(
+  schema: JSONSchema4,
+  name: string,
+  options: Partial<Options> & {
+    dereferenced?: Awaited<ReturnType<typeof dereference>>
+  } = {},
+): Promise<string> {
+  validateOptions(options)
+
+  const _options = merge({}, DEFAULT_OPTIONS, options)
+
+  const start = Date.now()
+  function time() {
+    return `(${Date.now() - start}ms)`
+  }
+
+  // normalize options
+  if (!endsWith(_options.cwd, '/')) {
+    _options.cwd += '/'
+  }
+
+  // Initial clone to avoid mutating the input
+  const _schema = cloneDeep(schema)
+  const dereferenced = await dereference(_schema, _options)
+  const generated = compileSync(schema, name, {...options, dereferenced})
+
+  const formatted = await format(generated, _options)
+  log('white', 'formatter', time(), '✅ Result:', formatted)
+
+  return formatted
+}
+
+export function compileSync(
+  schema: JSONSchema4,
+  name: string,
+  options: Partial<Options> & {dereferenced?: Awaited<ReturnType<typeof dereference>>} = {},
+): string {
   validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
@@ -153,7 +189,10 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   // Initial clone to avoid mutating the input
   const _schema = cloneDeep(schema)
 
-  const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
+  const {dereferencedPaths, dereferencedSchema} = options.dereferenced || {
+    dereferencedPaths: new WeakMap(),
+    dereferencedSchema: _schema,
+  }
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
@@ -188,10 +227,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const generated = generate(optimized, _options)
   log('magenta', 'generator', time(), '✅ Result:', generated)
 
-  const formatted = await format(generated, _options)
-  log('white', 'formatter', time(), '✅ Result:', formatted)
-
-  return formatted
+  return generated
 }
 
 export class ValidationError extends Error {}
