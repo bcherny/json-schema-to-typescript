@@ -145,6 +145,17 @@ suite('CLI', () => {
     rimraf.sync('./test/resources/MultiSchema/foo')
   })
 
+  test('extra positional arguments (e.g. from an unquoted glob) error out instead of overwriting a file', () => {
+    const outFile = './test/resources/MultiSchema/out.d.ts'
+    expect(() =>
+      execSync(
+        `node dist/src/cli.js -i ./test/resources/MultiSchema/a.json ./test/resources/MultiSchema/b.yaml -o ${outFile}`,
+        {stdio: 'pipe'},
+      ),
+    ).toThrow()
+    expect(existsSync(outFile)).toBe(false)
+  })
+
   test('files in (-i), files out (-o) matching nested dir', () => {
     execSync(
       `node dist/src/cli.js -i "./test/resources/../../test/resources/MultiSchema2/" -o ./test/resources/MultiSchema2/out`,
