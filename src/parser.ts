@@ -177,6 +177,33 @@ function subtrees(ast: AST): AST[] {
   }
 }
 
+/**
+ * Parse the root schema's `$defs` that aren't referenced anywhere else in the
+ * schema, so they still get declared. This only looks at the root schema's
+ * own `$defs` (not those of nested schemas), and should be called once, on
+ * the root schema, regardless of its type.
+ */
+export function parseUnreachableDefinitions(
+  rootSchema: NormalizedJSONSchema,
+  rootASTName: string,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST[] {
+  if (!options.unreachableDefinitions) {
+    return []
+  }
+
+  return map(rootSchema.$defs, (value, key: string) => {
+    const ast = parse(value, options, key, processed, usedNames)
+    const comment = `This interface was referenced by \`${rootASTName}\`'s JSON-Schema
+via the \`definition\` "${key}".`
+    ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+    ast.isUnreachableDefinition = true
+    return ast
+  })
+}
+
 function parseAsTypeWithCache(
   schema: NormalizedJSONSchema,
   type: SchemaType,
@@ -613,24 +640,6 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
     }
   })
 
-  const unreachableDefinitions: TInterfaceParam[] = !options.unreachableDefinitions
-    ? []
-    : map(schema.$defs, (value, key: string) => {
-        const ast = parse(value, options, key, processed, usedNames)
-        const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
-via the \`definition\` "${key}".`
-        ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
-        ast.isUnreachableDefinition = true
-        return {
-          ast,
-          isIndexSignature: false,
-          isPatternProperty: false,
-          isRequired: isRequired(schema, key, value),
-          isUnreachableDefinition: true,
-          keyName: key,
-        }
-      })
-
   // TypeScript cannot constrain keys by regex, so patternProperties are folded into the one
   // string index signature, typed as the union of their value types:
   let declaredOnly: TInterfaceParam[] = [] // listed only so that their named types get declared
@@ -656,7 +665,7 @@ via the \`definition\` "${key}".`
   }
 
   if (!indexSignatureMembers.length && schema.additionalProperties === false) {
-    return asts.concat(unreachableDefinitions)
+    return asts
   }
 
   const members = indexSignatureMembers.map(_ => _.ast)
@@ -697,11 +706,7 @@ via the \`definition\` "${key}".`
   if (indexSignatureMembers.length > 1) {
     declaredOnly = indexSignatureMembers
   }
-  // Declaration order as on master: types from patternProperties before unreachable definitions,
-  // a signature that comes from additionalProperties alone after them.
-  return patternProperties.length
-    ? asts.concat(indexSignatureParam, declaredOnly, unreachableDefinitions)
-    : asts.concat(unreachableDefinitions, indexSignatureParam)
+  return asts.concat(indexSignatureParam, declaredOnly)
 }
 
 type Definitions = {[k: string]: NormalizedJSONSchema}
