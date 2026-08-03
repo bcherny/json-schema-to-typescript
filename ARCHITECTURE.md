@@ -22,7 +22,7 @@ Parses JSONSchema to an intermediate representation for easy code generation.
 
 #### 6. Optimizer
 
-Optimizes the IR to produce concise and readable TypeScript in step (6).
+Optimizes the IR to produce concise and readable TypeScript in step (7).
 
 #### 7. Generator
 
