@@ -50,6 +50,21 @@ suite('CLI', () => {
     ).toMatchSnapshot()
   })
 
+  test('file in (-i), Prettier config, pipe out', () => {
+    const result = execSync('node dist/src/cli.js -i ./test/resources/prettier/Enum.json').toString()
+
+    expect(result).toContain('    fstype?: "ext3" | "ext4" | "btrfs"')
+    expect(result).not.toContain(';')
+  })
+
+  test('file in (-i), style flags override Prettier config, pipe out', () => {
+    const result = execSync(
+      'node dist/src/cli.js -i ./test/resources/prettier/Enum.json --style.singleQuote --style.semi',
+    ).toString()
+
+    expect(result).toContain("    fstype?: 'ext3' | 'ext4' | 'btrfs';")
+  })
+
   test('file in (-i), pipe out (absolute path)', () => {
     expect(execSync(`node dist/src/cli.js -i ${__dirname}/resources/ReferencedType.json`).toString()).toMatchSnapshot()
   })

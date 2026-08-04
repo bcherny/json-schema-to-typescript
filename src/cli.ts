@@ -4,6 +4,7 @@ import minimist from 'minimist'
 import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSync} from 'fs'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
+import {resolveConfig} from 'prettier'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
 
@@ -24,7 +25,7 @@ main(
       'unknownAny',
       'unreachableDefinitions',
     ],
-    default: DEFAULT_OPTIONS,
+    default: {...DEFAULT_OPTIONS, style: {}},
     string: ['bannerComment', 'cwd'],
   }),
 )
@@ -126,7 +127,13 @@ function outputResult(result: string, outputPath: string | undefined): void {
 async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
   const {filename, contents} = await readInput(argIn)
   const schema = parseFileAsJSONSchema(filename, contents)
-  return compile(schema, argIn, argv)
+  const configPath = resolve(process.cwd(), filename || 'stdin.json')
+  const prettierConfig = (await resolveConfig(configPath)) || {}
+
+  return compile(schema, argIn, {
+    ...argv,
+    style: {...prettierConfig, ...argv.style},
+  })
 }
 
 function getPaths(path: string, paths: string[] = []) {

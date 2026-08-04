@@ -9,16 +9,16 @@ exports[`CLI pipe in, pipe out 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -32,16 +32,16 @@ exports[`CLI pipe in (schema without ID), pipe out 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -55,16 +55,16 @@ exports[`CLI file in (no flags), pipe out 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -78,16 +78,16 @@ exports[`CLI file in (--input), pipe out 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -101,16 +101,16 @@ exports[`CLI file in (-i), pipe out 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -124,15 +124,15 @@ exports[`CLI file in (-i), unreachable definitions flag, pipe out 1`] = `
  */
 
 export interface DefinitionsOnly {
-  [k: string]: unknown;
+  [k: string]: unknown
 }
 /**
  * This interface was referenced by \`DefinitionsOnly\`'s JSON-Schema
  * via the \`definition\` "DummyPerson".
  */
 export interface DummyPerson {
-  age?: number;
-  [k: string]: unknown;
+  age?: number
+  [k: string]: unknown
 }
 "
 `;
@@ -161,16 +161,16 @@ exports[`CLI file in (-i), pipe out (absolute path) 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -184,16 +184,16 @@ exports[`CLI file in (yaml), pipe out 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -207,16 +207,16 @@ exports[`CLI pipe in, file out (--output) 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -230,16 +230,16 @@ exports[`CLI pipe in, file out (-o) 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -253,16 +253,16 @@ exports[`CLI file in (no flags), file out (no flags) 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -276,16 +276,16 @@ exports[`CLI file in (-i), file out (-o) 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -299,16 +299,16 @@ exports[`CLI file in (--input), file out (--output) 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
-  [k: string]: unknown;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
+  [k: string]: unknown
 }
 "
 `;
@@ -322,16 +322,16 @@ exports[`CLI --unknownAny 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: any[];
-  likesDogs?: boolean;
-  [k: string]: any;
+  age?: number
+  height?: number
+  favoriteFoods?: any[]
+  likesDogs?: boolean
+  [k: string]: any
 }
 "
 `;
@@ -345,15 +345,15 @@ exports[`CLI --additionalProperties 1`] = `
  */
 
 export interface ExampleSchema {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
   /**
    * Age in years
    */
-  age?: number;
-  height?: number;
-  favoriteFoods?: unknown[];
-  likesDogs?: boolean;
+  age?: number
+  height?: number
+  favoriteFoods?: unknown[]
+  likesDogs?: boolean
 }
 "
 `;
@@ -369,8 +369,8 @@ exports[`CLI files in (-i), files out (-o) 2`] = `
  */
 
 export interface ASchema {
-  f: string;
-  g?: number;
+  f: string
+  g?: number
 }
 "
 `;
@@ -386,9 +386,9 @@ exports[`CLI files in (-i), files out (-o) 4`] = `
  */
 
 export interface BSchema {
-  x?: string;
-  y: number;
-  [k: string]: unknown;
+  x?: string
+  y: number
+  [k: string]: unknown
 }
 "
 `;
@@ -402,8 +402,8 @@ exports[`CLI files in (-i), pipe out 1`] = `
  */
 
 export interface ASchema {
-  f: string;
-  g?: number;
+  f: string
+  g?: number
 }
 /* eslint-disable */
 /**
@@ -413,9 +413,9 @@ export interface ASchema {
  */
 
 export interface BSchema {
-  x?: string;
-  y: number;
-  [k: string]: unknown;
+  x?: string
+  y: number
+  [k: string]: unknown
 }
 "
 `;
@@ -431,8 +431,8 @@ exports[`CLI files in (-i), files out (-o) nested dir does not exist 2`] = `
  */
 
 export interface ASchema {
-  f: string;
-  g?: number;
+  f: string
+  g?: number
 }
 "
 `;
@@ -448,9 +448,9 @@ exports[`CLI files in (-i), files out (-o) nested dir does not exist 4`] = `
  */
 
 export interface BSchema {
-  x?: string;
-  y: number;
-  [k: string]: unknown;
+  x?: string
+  y: number
+  [k: string]: unknown
 }
 "
 `;
@@ -466,9 +466,9 @@ exports[`CLI files in (-i), files out (-o) matching nested dir 2`] = `
  */
 
 export interface BSchema {
-  x?: string;
-  y: number;
-  [k: string]: unknown;
+  x?: string
+  y: number
+  [k: string]: unknown
 }
 "
 `;
@@ -483,7 +483,7 @@ exports[`CLI files in (-i), files out (-o) matching nested dir 4`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type ESchema = string;
+export type ESchema = string
 "
 `;
 
@@ -498,8 +498,8 @@ exports[`CLI files in (-i), files out (-o) matching nested dir 6`] = `
  */
 
 export interface ASchema {
-  f: string;
-  g?: number;
+  f: string
+  g?: number
 }
 "
 `;
@@ -515,8 +515,8 @@ exports[`CLI files in (-i), files out (-o) matching nested dir 8`] = `
  */
 
 export interface CSchema {
-  f: string;
-  g?: number;
+  f: string
+  g?: number
 }
 "
 `;
@@ -532,8 +532,8 @@ exports[`CLI files in (-i), files out (-o) matching nested dir 10`] = `
  */
 
 export interface DSchema {
-  f: string;
-  g?: number;
+  f: string
+  g?: number
 }
 "
 `;
