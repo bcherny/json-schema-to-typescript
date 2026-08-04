@@ -5,13 +5,14 @@ import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSy
 import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
+import {resolveConfig} from 'prettier'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
 
 // cwd is deliberately left out of the CLI defaults: processFile() computes a
 // per-file cwd (the directory of the file being compiled) unless the user
 // passes --cwd explicitly, so argv.cwd must stay unset until then.
-const defaultOptions = omit(DEFAULT_OPTIONS, 'cwd')
+const defaultOptions = {...omit(DEFAULT_OPTIONS, 'cwd'), style: {}}
 
 main(
   minimist(process.argv.slice(2), {
@@ -135,7 +136,14 @@ async function processFile(argIn: string, argv: Partial<Options>): Promise<strin
   // Resolve $refs relative to the directory of the file being compiled, not
   // process.cwd(), unless the user explicitly passed --cwd (see #324).
   const cwd = filename ? dirname(resolve(process.cwd(), filename)) : undefined
-  return compile(schema, argIn, cwd ? {cwd, ...argv} : argv)
+  const configPath = resolve(process.cwd(), filename || 'stdin.json')
+  const prettierConfig = (await resolveConfig(configPath)) || {}
+
+  return compile(schema, argIn, {
+    ...(cwd ? {cwd} : {}),
+    ...argv,
+    style: {...prettierConfig, ...argv.style},
+  })
 }
 
 function getPaths(path: string, paths: string[] = []) {

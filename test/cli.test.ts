@@ -118,6 +118,21 @@ suite('CLI', () => {
   )
 
   cliTest(
+    'file in (-i), Prettier config, pipe out',
+    'node dist/src/cli.js -i ./test/resources/prettier/Enum.json',
+    ({stdout}) => {
+      expect(stdout).toContain('    fstype?: "ext3" | "ext4" | "btrfs"')
+      expect(stdout).not.toContain(';')
+    },
+  )
+
+  cliTest(
+    'file in (-i), style flags override Prettier config, pipe out',
+    'node dist/src/cli.js -i ./test/resources/prettier/Enum.json --style.singleQuote --style.semi',
+    ({stdout}) => expect(stdout).toContain("    fstype?: 'ext3' | 'ext4' | 'btrfs';"),
+  )
+
+  cliTest(
     'file in (-i), pipe out (absolute path)',
     `node dist/src/cli.js -i ${__dirname}/resources/ReferencedType.json`,
     ({stdout}) => expect(stdout).toMatchSnapshot(),
