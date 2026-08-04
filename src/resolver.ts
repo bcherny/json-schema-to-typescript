@@ -6,7 +6,7 @@ import {
   getJsonSchemaRefParserDefaultOptions,
 } from '@apidevtools/json-schema-ref-parser'
 import {prenormalizeDocument} from './prenormalizer'
-import {isBoolean, JSONSchema} from './types/JSONSchema'
+import {JSONSchema} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
@@ -24,11 +24,12 @@ export async function dereference(
     dereference: {
       ...$refOptions.dereference,
       onDereference($ref: string, schema: JSONSchema) {
-        // Boolean schemas (`true`/`false`) aren't valid WeakMap keys, and aren't schema-like anyway.
-        if (isBoolean(schema)) {
-          return
+        // The target of a $ref need not be an object: it can be a boolean schema (`true`/`false`),
+        // or -- for a pointer into a keyword's value -- any JSON value. Only objects can be WeakMap
+        // keys, and only objects are named after the path they were referenced by.
+        if (schema !== null && typeof schema === 'object') {
+          dereferencedPaths.set(schema, $ref)
         }
-        dereferencedPaths.set(schema, $ref)
       },
     },
   })) as any // TODO: fix types
