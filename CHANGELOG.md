@@ -2,6 +2,10 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## Next
+
+- New (CLI): Automatically load the closest Prettier configuration for generated output; explicit `--style.*` flags still take precedence. A configuration that cannot be loaded, such as one with invalid syntax or a missing plugin, now fails the CLI run (#217, #729)
+
 ## 16.0.0
 
 This release collects the fixes and small features merged since 15.0.4. Several of them correct types that were previously emitted wrong, so existing schemas may generate different output; hence the major version.
