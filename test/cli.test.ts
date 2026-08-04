@@ -56,7 +56,8 @@ const expectFile = (path: string) => () => {
 // Everything the file-writing tests below create, for afterAll to clear when a
 // filtered run spawned them all but only ran some.
 const OUTPUTS = [
-  ...[1, 2, 3, 4, 5].map(n => `./ReferencedType.${n}.d.ts`),
+  ...[1, 2, 3, 4, 5].map(n => `./test/resources/ReferencedType.${n}.d.ts`),
+  './test/resources/prettier-output/Enum.d.ts',
   './test/resources/MultiSchema/out',
   './test/resources/MultiSchema/foo',
   './test/resources/MultiSchemaRefs/response/out',
@@ -118,6 +119,31 @@ suite('CLI', () => {
   )
 
   cliTest(
+    'file in (-i), Prettier config, pipe out',
+    'node dist/src/cli.js -i ./test/resources/prettier/Enum.json',
+    ({stdout}) => {
+      expect(stdout).toContain('    fstype?: "ext3" | "ext4" | "btrfs"')
+      expect(stdout).not.toContain(';')
+    },
+  )
+
+  cliTest(
+    'file in (-i), style flags override Prettier config, pipe out',
+    'node dist/src/cli.js -i ./test/resources/prettier/Enum.json --style.singleQuote --style.semi',
+    ({stdout}) => expect(stdout).toContain("    fstype?: 'ext3' | 'ext4' | 'btrfs';"),
+  )
+
+  cliTest(
+    'file in (-i), output Prettier config takes precedence',
+    'node dist/src/cli.js -i ./test/resources/prettier/Enum.json -o ./test/resources/prettier-output/Enum.d.ts',
+    () => {
+      const path = './test/resources/prettier-output/Enum.d.ts'
+      expect(readFileSync(path, 'utf-8')).toContain("  fstype?: 'ext3' | 'ext4' | 'btrfs';")
+      unlinkSync(path)
+    },
+  )
+
+  cliTest(
     'file in (-i), pipe out (absolute path)',
     `node dist/src/cli.js -i ${__dirname}/resources/ReferencedType.json`,
     ({stdout}) => expect(stdout).toMatchSnapshot(),
@@ -129,34 +155,34 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, file out (--output)',
-    'node dist/src/cli.js --output ./ReferencedType.1.d.ts',
-    expectFile('./ReferencedType.1.d.ts'),
+    'node dist/src/cli.js --output ./test/resources/ReferencedType.1.d.ts',
+    expectFile('./test/resources/ReferencedType.1.d.ts'),
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
   )
 
   cliTest(
     'pipe in, file out (-o)',
-    'node dist/src/cli.js -o ./ReferencedType.2.d.ts',
-    expectFile('./ReferencedType.2.d.ts'),
+    'node dist/src/cli.js -o ./test/resources/ReferencedType.2.d.ts',
+    expectFile('./test/resources/ReferencedType.2.d.ts'),
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
   )
 
   cliTest(
     'file in (no flags), file out (no flags)',
-    'node dist/src/cli.js ./test/resources/ReferencedType.json ./ReferencedType.3.d.ts',
-    expectFile('./ReferencedType.3.d.ts'),
+    'node dist/src/cli.js ./test/resources/ReferencedType.json ./test/resources/ReferencedType.3.d.ts',
+    expectFile('./test/resources/ReferencedType.3.d.ts'),
   )
 
   cliTest(
     'file in (-i), file out (-o)',
-    'node dist/src/cli.js -i ./test/resources/ReferencedType.json -o ./ReferencedType.4.d.ts',
-    expectFile('./ReferencedType.4.d.ts'),
+    'node dist/src/cli.js -i ./test/resources/ReferencedType.json -o ./test/resources/ReferencedType.4.d.ts',
+    expectFile('./test/resources/ReferencedType.4.d.ts'),
   )
 
   cliTest(
     'file in (--input), file out (--output)',
-    'node dist/src/cli.js --input ./test/resources/ReferencedType.json --output ./ReferencedType.5.d.ts',
-    expectFile('./ReferencedType.5.d.ts'),
+    'node dist/src/cli.js --input ./test/resources/ReferencedType.json --output ./test/resources/ReferencedType.5.d.ts',
+    expectFile('./test/resources/ReferencedType.5.d.ts'),
   )
 
   cliTest(

@@ -98,6 +98,8 @@ json2ts -i schemas/ -o types/
 
 You can pass any of the options described below (including style options) as CLI flags. Boolean values can be set to false using the `no-` prefix.
 
+The CLI automatically loads the closest [Prettier configuration](https://prettier.io/docs/configuration) for the generated output file (or the input file when writing to stdout). Explicit `--style.*` flags take precedence over discovered settings. This does not affect the programmatic API.
+
 ```sh
 # generate code for definitions that aren't referenced
 json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
