@@ -494,6 +494,16 @@ function generateInterface(ast: TInterface, options: Options): string {
   )
 }
 
+function generateDefaultComment(defaultValue: unknown): string {
+  if (defaultValue !== null && typeof defaultValue === 'object') {
+    // The default value is not a primitive, so we need to format it.
+    // But we can't do that here because Prettier is asynchronous,
+    // so we encode the value and expand it later in the formatter.
+    return ` * @default [[__PRETTIFY_DEFAULT_JSON__:${encodeURIComponent(JSON.stringify(defaultValue))}]]`
+  }
+  return ` * @default ${JSON.stringify(defaultValue)}`
+}
+
 function generateComment(comment?: string, deprecated?: boolean, defaultValue?: unknown): string {
   const commentLines = ['/**']
   if (deprecated) {
@@ -503,7 +513,7 @@ function generateComment(comment?: string, deprecated?: boolean, defaultValue?: 
     commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
   }
   if (defaultValue !== undefined) {
-    commentLines.push(` * @default ${JSON.stringify(defaultValue)}`)
+    commentLines.push(generateDefaultComment(defaultValue))
   }
   commentLines.push(' */')
   return commentLines.join('\n')
