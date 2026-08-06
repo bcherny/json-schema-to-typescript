@@ -479,7 +479,9 @@ function generateInterface(ast: TInterface, options: Options): string {
             ? indexSignatureType
             : generateType(ast, options) + (isIndexSignature && options.strictIndexSignatures ? ' | undefined' : '')
         return (
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+          (hasComment(ast) && !ast.standaloneName
+            ? generateComment(ast.comment, ast.deprecated, ast.default) + '\n'
+            : '') +
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +
@@ -492,10 +494,23 @@ function generateInterface(ast: TInterface, options: Options): string {
   )
 }
 
-function generateComment(comment?: string, deprecated?: boolean): string {
+function generateDefaultComment(defaultValue: unknown): string {
+  if (defaultValue !== null && typeof defaultValue === 'object') {
+    // The default value is not a primitive, so we need to format it.
+    // But we can't do that here because Prettier is asynchronous,
+    // so we encode the value and expand it later in the formatter.
+    return ` * @default [[__PRETTIFY_DEFAULT_JSON__:${encodeURIComponent(JSON.stringify(defaultValue))}]]`
+  }
+  return ` * @default ${JSON.stringify(defaultValue)}`
+}
+
+function generateComment(comment?: string, deprecated?: boolean, defaultValue?: unknown): string {
   const commentLines = ['/**']
   if (deprecated) {
     commentLines.push(' * @deprecated')
+  }
+  if (defaultValue !== undefined) {
+    commentLines.push(generateDefaultComment(defaultValue))
   }
   if (typeof comment !== 'undefined') {
     commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
@@ -512,7 +527,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
   const isValidIdentifier = (key: string): boolean => /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
 
   return (
-    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated, ast.default) + '\n' : '') +
     'export ' +
     (options.enableConstEnums ? 'const ' : '') +
     `enum ${toSafeString(ast.standaloneName)} {` +
@@ -532,7 +547,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (
-    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated, ast.default) + '\n' : '') +
     `export interface ${toSafeString(ast.standaloneName)} ` +
     (ast.superTypes.length > 0
       ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
@@ -543,7 +558,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
   return (
-    (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated, ast.default) + '\n' : '') +
     `export type ${toSafeString(ast.standaloneName)} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
       options,
