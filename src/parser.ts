@@ -127,6 +127,7 @@ function parseNonLiteral(
     case 'ALL_OF':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -137,6 +138,7 @@ function parseNonLiteral(
       return {
         ...(options.unknownAny ? T_UNKNOWN : T_ANY),
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -144,6 +146,7 @@ function parseNonLiteral(
     case 'ANY_OF':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -153,6 +156,7 @@ function parseNonLiteral(
     case 'BOOLEAN':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -161,6 +165,7 @@ function parseNonLiteral(
     case 'CUSTOM_TYPE':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         params: schema.tsType!,
@@ -175,6 +180,7 @@ function parseNonLiteral(
       if (!enumName) {
         return {
           comment: schema.description,
+          default: schema.default,
           deprecated: schema.deprecated,
           keyName,
           params: (schema as EnumJSONSchema).enum!.map(_ => parseLiteral(_, undefined)),
@@ -183,6 +189,7 @@ function parseNonLiteral(
       }
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: enumName,
@@ -198,6 +205,7 @@ function parseNonLiteral(
     case 'NEVER':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -206,6 +214,7 @@ function parseNonLiteral(
     case 'NULL':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -214,6 +223,7 @@ function parseNonLiteral(
     case 'NUMBER':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -222,6 +232,7 @@ function parseNonLiteral(
     case 'OBJECT':
       return {
         comment: schema.description,
+        default: schema.default,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         type: 'OBJECT',
@@ -230,6 +241,7 @@ function parseNonLiteral(
     case 'ONE_OF':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -241,6 +253,7 @@ function parseNonLiteral(
     case 'STRING':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -253,6 +266,7 @@ function parseNonLiteral(
         const maxItems = schema.maxItems!
         const arrayType: TTuple = {
           comment: schema.description,
+          default: schema.default,
           deprecated: schema.deprecated,
           keyName,
           maxItems,
@@ -270,6 +284,7 @@ function parseNonLiteral(
       } else {
         return {
           comment: schema.description,
+          default: schema.default,
           deprecated: schema.deprecated,
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -280,6 +295,7 @@ function parseNonLiteral(
     case 'UNION':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -294,6 +310,7 @@ function parseNonLiteral(
     case 'UNNAMED_ENUM':
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -310,6 +327,7 @@ function parseNonLiteral(
       if (minItems > 0 || maxItems >= 0) {
         return {
           comment: schema.description,
+          default: schema.default,
           deprecated: schema.deprecated,
           keyName,
           maxItems: schema.maxItems,
@@ -325,6 +343,7 @@ function parseNonLiteral(
 
       return {
         comment: schema.description,
+        default: schema.default,
         deprecated: schema.deprecated,
         keyName,
         params,
@@ -361,6 +380,7 @@ function newInterface(
   const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)!
   return {
     comment: schema.description,
+    default: schema.default,
     deprecated: schema.deprecated,
     keyName,
     params: parseSchema(schema, options, processed, usedNames, name),
