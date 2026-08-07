@@ -20,6 +20,7 @@ main(
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
+      'noExports',
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
@@ -194,6 +195,9 @@ Boolean values can be set to false using the 'no-' prefix.
       Prettier configuration
   --unknownAny
       Output unknown type instead of any type
+  --noExports
+      Omit export keyword from generated types, producing ambient declarations
+      for use in plain JavaScript projects with IDE type hints
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
 `,

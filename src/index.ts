@@ -88,6 +88,12 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
+  /**
+   * Omit `export` keyword from generated types, producing ambient declarations instead.
+   * Useful for generating `.d.ts` files for plain JavaScript projects where IDEs
+   * can pick up type hints without explicit exports.
+   */
+  noExports: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -118,6 +124,7 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
+  noExports: false,
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
