@@ -3,7 +3,6 @@ import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {Intersection, JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
-import type {Format} from 'cli-color'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -242,10 +241,26 @@ export function error(...messages: any[]): void {
   if (!process.env.VERBOSE) {
     return console.error(messages)
   }
-  console.error(getStyledTextForLogging('red')?.('error'), ...messages)
+  console.error(stylize('red', 'error'), ...messages)
 }
 
 type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'white' | 'yellow'
+
+// SGR parameters (foreground; background) per log style, matching the colors we
+// used to get from cli-color.
+const LOG_STYLES: Record<LogStyle, string> = {
+  blue: '97;44',
+  cyan: '97;46',
+  green: '97;42',
+  magenta: '97;45',
+  red: '97;101',
+  white: '30;47',
+  yellow: '97;43',
+}
+
+function stylize(style: LogStyle, text: string): string {
+  return `\x1b[${LOG_STYLES[style]}m${text}\x1b[0m`
+}
 
 export function log(style: LogStyle, title: string, ...messages: unknown[]): void {
   if (!process.env.VERBOSE) {
@@ -255,31 +270,9 @@ export function log(style: LogStyle, title: string, ...messages: unknown[]): voi
   if (messages.length > 1 && typeof messages[messages.length - 1] !== 'string') {
     lastMessage = messages.splice(messages.length - 1, 1)
   }
-  console.info(color()?.whiteBright.bgCyan('debug'), getStyledTextForLogging(style)?.(title), ...messages)
+  console.info(stylize('cyan', 'debug'), stylize(style, title), ...messages)
   if (lastMessage) {
     console.dir(lastMessage, {depth: 6, maxArrayLength: 6})
-  }
-}
-
-function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | undefined {
-  if (!process.env.VERBOSE) {
-    return
-  }
-  switch (style) {
-    case 'blue':
-      return color()?.whiteBright.bgBlue
-    case 'cyan':
-      return color()?.whiteBright.bgCyan
-    case 'green':
-      return color()?.whiteBright.bgGreen
-    case 'magenta':
-      return color()?.whiteBright.bgMagenta
-    case 'red':
-      return color()?.whiteBright.bgRedBright
-    case 'white':
-      return color()?.black.bgWhite
-    case 'yellow':
-      return color()?.whiteBright.bgYellow
   }
 }
 
@@ -436,12 +429,4 @@ export function parseFileAsJSONSchema(filename: string | null, contents: string)
 
 function isYaml(filename: string) {
   return filename.endsWith('.yaml') || filename.endsWith('.yml')
-}
-
-function color(): Format {
-  let cliColor
-  try {
-    cliColor = require('cli-color')
-  } catch {}
-  return cliColor
 }
