@@ -42,6 +42,15 @@ export function parse(
   if (intersection) {
     const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames) as TIntersection
 
+    // A cyclic schema can re-enter `parse` for this same intersection while the call
+    // above us is still building it. In that case we get back the empty placeholder
+    // that `parseAsTypeWithCache` caches to break cycles, and `params` doesn't exist
+    // yet. That call fills it in -- with these very same types -- once it unwinds, and
+    // it fills in this exact object, so returning the reference as-is is correct.
+    if (ast.params === undefined) {
+      return ast
+    }
+
     types.forEach(type => {
       ast.params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames))
     })
