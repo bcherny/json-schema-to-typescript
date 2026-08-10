@@ -108,4 +108,58 @@ suite('default keyword', () => {
 
     expect(output).toContain(['* @default [', '*   { foo_bar: 1 },', '*   null,', '*   "testing"', '* ]'].join('\n'))
   })
+
+  test('does not generate @default comments when enableDefaultComments is false', async () => {
+    const output = await compile(
+      {
+        title: 'NoDefaults',
+        type: 'object',
+        properties: {
+          stringValue: {
+            type: 'string',
+            default: 'hello',
+          },
+          numberValue: {
+            type: 'number',
+            default: 3,
+          },
+        },
+      },
+      'NoDefaults',
+      {enableDefaultComments: false},
+    )
+
+    expect(output).not.toContain('@default')
+  })
+
+  test('does not prettify object/array @default values when prettifyDefaultComments is false', async () => {
+    const output = normalizeCommentIndentation(
+      await compile(
+        {
+          title: 'NonPrettifiedDefaults',
+          type: 'object',
+          default: {
+            enabled: true,
+            nested: {key: 'value'},
+          },
+          properties: {
+            config: {
+              type: 'object',
+              default: {a: 1, b: 2},
+            },
+            values: {
+              type: 'array',
+              default: [1, 2, 3],
+            },
+          },
+        },
+        'NonPrettifiedDefaults',
+        {prettifyDefaultComments: false},
+      ),
+    )
+
+    expect(output).toContain('* @default {"enabled":true,"nested":{"key":"value"}}')
+    expect(output).toContain('* @default {"a":1,"b":2}')
+    expect(output).toContain('* @default [1,2,3]')
+  })
 })

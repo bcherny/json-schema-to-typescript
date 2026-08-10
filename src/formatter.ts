@@ -34,7 +34,7 @@ async function expandDefaultComments(code: string): Promise<string> {
 }
 
 export async function format(code: string, options: Options): Promise<string> {
-  const expandedDefaults = await expandDefaultComments(code)
+  const expandedDefaults = options.prettifyDefaultComments ? await expandDefaultComments(code) : code
   if (!options.format) {
     return expandedDefaults
   }

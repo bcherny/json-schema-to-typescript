@@ -52,6 +52,10 @@ export interface Options {
    */
   enableConstEnums: boolean
   /**
+   * Generate `@default` JSDoc comments for properties with a `default` value in the JSON Schema.
+   */
+  enableDefaultComments: boolean
+  /**
    * Create enums from JSON enums with eponymous keys
    */
   inferStringEnumKeysFromValues: boolean
@@ -70,6 +74,11 @@ export interface Options {
    * `minItems` and `maxItems`.
    */
   maxItems: number
+  /**
+   * Prettify object and array `@default` values into multi-line JSDoc comments.
+   * When disabled, complex defaults are emitted as a single-line JSON string.
+   */
+  prettifyDefaultComments: boolean
   /**
    * Append all index signatures with `| undefined` so that they are strictly typed.
    *
@@ -102,10 +111,12 @@ export const DEFAULT_OPTIONS: Options = {
   cwd: process.cwd(),
   declareExternallyReferenced: true,
   enableConstEnums: true,
+  enableDefaultComments: true,
   inferStringEnumKeysFromValues: false,
   format: true,
   ignoreMinAndMaxItems: false,
   maxItems: 20,
+  prettifyDefaultComments: true,
   strictIndexSignatures: false,
   style: {
     bracketSpacing: false,
