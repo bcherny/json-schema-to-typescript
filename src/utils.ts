@@ -50,6 +50,9 @@ const BLACKLISTED_KEYS = new Set([
   'anyOf',
   'oneOf',
   'not',
+  'if',
+  'then',
+  'else',
 ])
 
 function traverseObjectKeys(
@@ -150,6 +153,15 @@ export function traverse(
   }
   if (schema.not) {
     traverse(schema.not, callback, processed)
+  }
+  if (schema.if) {
+    traverse(schema.if, callback, processed)
+  }
+  if (schema.then) {
+    traverse(schema.then, callback, processed)
+  }
+  if (schema.else) {
+    traverse(schema.else, callback, processed)
   }
   traverseIntersection(schema, callback, processed)
 
