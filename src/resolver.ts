@@ -38,7 +38,7 @@ function resolveRootRef(schema: JSONSchema): void {
   while (isPlainObject(schema) && typeof schema.$ref === 'string' && schema.$ref.startsWith('#/')) {
     const pointer = schema.$ref
     if (seenPointers.has(pointer)) {
-      break // circular root $ref; let $RefParser report its usual error
+      break // circular root $ref; fall through to the same crash this had before this fix
     }
     seenPointers.add(pointer)
 
@@ -50,7 +50,9 @@ function resolveRootRef(schema: JSONSchema): void {
           return undefined
         }
         const key = safeDecodeURIComponent(segment.replace(/~1/g, '/').replace(/~0/g, '~'))
-        return (node as Record<string, unknown>)[key]
+        // Only an own property is a real JSON Pointer match -- otherwise a segment
+        // like `__proto__` would resolve via the prototype chain instead of failing.
+        return Object.prototype.hasOwnProperty.call(node, key) ? (node as Record<string, unknown>)[key] : undefined
       }, documentRoot)
 
     if (!isPlainObject(target)) {
@@ -60,9 +62,9 @@ function resolveRootRef(schema: JSONSchema): void {
     delete schema.$ref
     for (const [key, value] of Object.entries(target as Record<string, unknown>)) {
       if (key === '$ref') {
-        ;(schema as Record<string, unknown>)[key] = value
+        setOwn(schema, key, value)
       } else if (!claimedKeys.has(key)) {
-        ;(schema as Record<string, unknown>)[key] = value
+        setOwn(schema, key, value)
         claimedKeys.add(key)
       }
     }
@@ -78,6 +80,14 @@ function safeDecodeURIComponent(segment: string): string {
   } catch {
     return segment
   }
+}
+
+// Schema keys are attacker/document-controlled and may include names like
+// `__proto__`: plain `obj[key] = value` assignment goes through the prototype
+// chain's setters, so a `__proto__` key would reassign obj's actual prototype
+// instead of setting a data property. Define the property directly instead.
+function setOwn(obj: object, key: string, value: unknown): void {
+  Object.defineProperty(obj, key, {value, writable: true, enumerable: true, configurable: true})
 }
 
 export async function dereference(
