@@ -28,11 +28,11 @@ function resolveRootRef(schema: JSONSchema): void {
   // an earlier hop could shadow a same-named container (e.g. its own nested
   // `definitions`) and cause a later hop to resolve against the wrong one.
   const documentRoot: JSONSchema = {...schema}
-  // The root's own keys (besides `$ref`) win over same-named keys pulled in from a
-  // resolved target, preserving however this library already treats a `$ref`
-  // combined with sibling keywords at the root -- this loop's only job is to stop
-  // the root from still being a bare `$ref` by the time $RefParser sees it.
-  const originalKeys = new Set(Object.keys(schema).filter(key => key !== '$ref'))
+  // A key wins over any same-named key pulled in from a hop further down the chain,
+  // starting with the root's own keys and then growing as each hop's keys are
+  // claimed -- so the closest schema to the root always wins ties, matching how
+  // $RefParser itself merges a `$ref` with sibling keywords everywhere else.
+  const claimedKeys = new Set(Object.keys(schema).filter(key => key !== '$ref'))
 
   const seenPointers = new Set<string>()
   while (isPlainObject(schema) && typeof schema.$ref === 'string' && schema.$ref.startsWith('#/')) {
@@ -49,7 +49,7 @@ function resolveRootRef(schema: JSONSchema): void {
         if (!isPlainObject(node) && !Array.isArray(node)) {
           return undefined
         }
-        const key = decodeURIComponent(segment.replace(/~1/g, '/').replace(/~0/g, '~'))
+        const key = safeDecodeURIComponent(segment.replace(/~1/g, '/').replace(/~0/g, '~'))
         return (node as Record<string, unknown>)[key]
       }, documentRoot)
 
@@ -59,10 +59,24 @@ function resolveRootRef(schema: JSONSchema): void {
 
     delete schema.$ref
     for (const [key, value] of Object.entries(target as Record<string, unknown>)) {
-      if (key === '$ref' || !originalKeys.has(key)) {
+      if (key === '$ref') {
         ;(schema as Record<string, unknown>)[key] = value
+      } else if (!claimedKeys.has(key)) {
+        ;(schema as Record<string, unknown>)[key] = value
+        claimedKeys.add(key)
       }
     }
+  }
+}
+
+// A JSON Pointer segment isn't guaranteed to be a valid percent-encoding (it may
+// contain a literal, unescaped `%`), so fall back to the raw segment rather than
+// letting decodeURIComponent throw.
+function safeDecodeURIComponent(segment: string): string {
+  try {
+    return decodeURIComponent(segment)
+  } catch {
+    return segment
   }
 }
 
