@@ -20,8 +20,7 @@ export async function dereference(
       },
     },
   })) as any // TODO: fix types
-  resolveNamedAnchors(dereferencedSchema)
-  return {dereferencedPaths, dereferencedSchema}
+  return {dereferencedPaths, dereferencedSchema: resolveNamedAnchors(dereferencedSchema)}
 }
 
 // A JSON Pointer fragment always starts with "#/" (or is exactly "#"); anything
@@ -29,6 +28,10 @@ export async function dereference(
 function isAnchorRef($ref: string): boolean {
   return $ref.startsWith('#') && $ref !== '#' && !$ref.startsWith('#/')
 }
+
+// These keywords hold plain data, never a nested schema, so `$id`/`$ref` found
+// underneath them must not be treated as anchors/anchor-refs.
+const NON_SCHEMA_KEYS = new Set(['enum', 'const', 'default', 'examples'])
 
 /**
  * @apidevtools/json-schema-ref-parser only resolves `$ref`s that are JSON Pointers
@@ -41,9 +44,10 @@ function isAnchorRef($ref: string): boolean {
  * Find every such anchor in the already-dereferenced schema, and rewrite any matching
  * `$ref` in place to point at the same schema node -- the same substitution the
  * ref-parser itself performs for an ordinary (possibly circular) JSON Pointer `$ref`,
- * which the rest of the pipeline already knows how to handle.
+ * which the rest of the pipeline already knows how to handle. Returns the (possibly
+ * new) root schema, in case the root itself was a named-anchor `$ref`.
  */
-function resolveNamedAnchors(schema: JSONSchema): void {
+function resolveNamedAnchors(schema: JSONSchema): JSONSchema {
   const anchors = new Map<string, JSONSchema>()
   eachSchemaNode(schema, node => {
     if (typeof node.$id === 'string' && isAnchorRef(node.$id) && !anchors.has(node.$id)) {
@@ -51,18 +55,40 @@ function resolveNamedAnchors(schema: JSONSchema): void {
     }
   })
   if (!anchors.size) {
-    return
+    return schema
   }
+
+  // An anchor's own node can itself be an alias for another anchor
+  // (`$id: "#b", $ref: "#a"`); follow those chains up front so every map entry
+  // ends up pointing at a concrete (non-`$ref`) node.
+  function resolveChain($ref: string, seen = new Set<string>()): JSONSchema {
+    const node = anchors.get($ref)!
+    if (typeof node.$ref === 'string' && anchors.has(node.$ref) && !seen.has($ref)) {
+      return resolveChain(node.$ref, seen.add($ref))
+    }
+    return node
+  }
+  for (const name of anchors.keys()) {
+    anchors.set(name, resolveChain(name))
+  }
+
+  let resolvedRoot = schema
   eachSchemaNode(schema, (node, replace) => {
     if (typeof node.$ref === 'string' && anchors.has(node.$ref)) {
-      replace(anchors.get(node.$ref)!)
+      const target = anchors.get(node.$ref)!
+      if (node === schema) {
+        resolvedRoot = target
+      }
+      replace(target)
     }
   })
+  return resolvedRoot
 }
 
 /**
  * Walks every object/array reachable from `schema`, invoking `visit` on each plain
- * object node. `replace` swaps the node out in its parent container, in place.
+ * object node found in a schema-bearing position. `replace` swaps the node out in
+ * its parent container, in place (a no-op for the root node, which has no parent).
  */
 function eachSchemaNode(
   schema: unknown,
@@ -85,6 +111,9 @@ function eachSchemaNode(
   }
 
   for (const childKey of Object.keys(schema)) {
+    if (NON_SCHEMA_KEYS.has(childKey)) {
+      continue
+    }
     eachSchemaNode((schema as any)[childKey], visit, seen, schema, childKey)
   }
 }
