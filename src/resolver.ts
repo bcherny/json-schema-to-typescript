@@ -89,6 +89,12 @@ function resolveNamedAnchors(schema: JSONSchema): JSONSchema {
  * Walks every object/array reachable from `schema`, invoking `visit` on each plain
  * object node found in a schema-bearing position. `replace` swaps the node out in
  * its parent container, in place (a no-op for the root node, which has no parent).
+ *
+ * The same node object can be reachable from more than one parent/key (eg. two
+ * schemas sharing a `$ref` node via a YAML alias, or a node the ref-parser already
+ * folded into a cycle), so `visit` runs for every occurrence. Only the recursion
+ * into a node's children is guarded against repeating -- via `seen` -- to keep
+ * cycles from looping forever.
  */
 function eachSchemaNode(
   schema: unknown,
@@ -97,10 +103,9 @@ function eachSchemaNode(
   parent?: any,
   key?: string,
 ): void {
-  if (!schema || typeof schema !== 'object' || seen.has(schema)) {
+  if (!schema || typeof schema !== 'object') {
     return
   }
-  seen.add(schema)
 
   if (!Array.isArray(schema)) {
     visit(schema as JSONSchema, nextNode => {
@@ -109,6 +114,11 @@ function eachSchemaNode(
       }
     })
   }
+
+  if (seen.has(schema)) {
+    return
+  }
+  seen.add(schema)
 
   for (const childKey of Object.keys(schema)) {
     if (NON_SCHEMA_KEYS.has(childKey)) {
