@@ -354,9 +354,11 @@ function parseNonLiteral(
 // as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently
 // renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
 // swallowing members whose current (separately unimplemented) behavior other schemas rely on.
+// (`$ref` is deliberately omitted: by the time this runs, the resolver has already replaced
+// every `$ref` node, so `case 'REFERENCE'` above never fires and no schema here can carry one.)
+// Keep this in sync with the keywords `typesOfSchema.ts`'s matchers check.
 const RECOGNIZED_ALL_OF_MEMBER_KEYWORDS = new Set([
   '$id',
-  '$ref',
   'additionalProperties',
   'allOf',
   'anyOf',
