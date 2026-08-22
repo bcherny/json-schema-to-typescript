@@ -130,7 +130,21 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        // An `allOf` member made up entirely of keywords this tool doesn't implement (eg.
+        // `if`/`then`/`else`, `not`) doesn't match any of the type matchers in `typesOfSchema`,
+        // so it falls back to `newInterface`, which synthesizes a bare `{[k: string]: unknown}`
+        // for it. Intersecting with that contributes no information, so drop it rather than
+        // cluttering the output. Restricted to members with no keyword this tool does recognize,
+        // so it never touches a member whose emptiness is due to its *own* type (eg. a bare
+        // `{type: 'object'}`, or `{required: [...]}` with no matching `properties`) -- those stay
+        // exactly as before.
+        params: schema
+          .allOf!.map(memberSchema => ({
+            ast: parse(memberSchema, options, undefined, processed, usedNames),
+            memberSchema,
+          }))
+          .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
+          .map(({ast}) => ast),
         type: 'INTERSECTION',
       }
     case 'ANY':
@@ -332,6 +346,55 @@ function parseNonLiteral(
         type: 'ARRAY',
       }
   }
+}
+
+// Keywords that some matcher in `typesOfSchema`, or the `additionalProperties`/`required`
+// normalizer rules, actually keys off of. An `allOf` member made up exclusively of keywords
+// outside this list (eg. `if`/`then`/`else`, `not`) is one this tool has no notion of at all,
+// as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently
+// renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
+// swallowing members whose current (separately unimplemented) behavior other schemas rely on.
+const RECOGNIZED_ALL_OF_MEMBER_KEYWORDS = new Set([
+  '$id',
+  '$ref',
+  'additionalProperties',
+  'allOf',
+  'anyOf',
+  'const',
+  'default',
+  'enum',
+  'extends',
+  'items',
+  'oneOf',
+  'patternProperties',
+  'properties',
+  'required',
+  'tsEnumNames',
+  'tsType',
+  'type',
+])
+
+function hasNoRecognizedKeywords(schema: NormalizedJSONSchema): boolean {
+  return Object.keys(schema).every(key => !RECOGNIZED_ALL_OF_MEMBER_KEYWORDS.has(key))
+}
+
+/**
+ * True for a parsed AST that carries no information beyond the synthesized
+ * `[k: string]: unknown`/`any` index signature `parseSchema` adds by default -- ie. an interface
+ * with no properties, patternProperties, superTypes, comment, or standalone name of its own.
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/369
+ */
+function isVacuousInterface(ast: AST): boolean {
+  return (
+    ast.type === 'INTERFACE' &&
+    ast.standaloneName === undefined &&
+    ast.comment === undefined &&
+    !ast.deprecated &&
+    ast.superTypes.length === 0 &&
+    ast.params.length === 1 &&
+    ast.params[0].isIndexSignature &&
+    (ast.params[0].ast.type === 'ANY' || ast.params[0].ast.type === 'UNKNOWN')
+  )
 }
 
 /**
