@@ -104,6 +104,10 @@ export async function dereference(
     dereference: {
       ...$refOptions.dereference,
       onDereference($ref: string, schema: JSONSchema) {
+        // schema may be a boolean (`true`/`false` schema), which isn't a valid WeakMap key
+        if (schema === null || typeof schema !== 'object') {
+          return
+        }
         dereferencedPaths.set(schema, $ref)
         // A $ref into a separate file (as opposed to a `#/...` pointer within
         // the current document) brings in a schema that keeps its own
