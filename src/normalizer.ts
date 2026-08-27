@@ -1,4 +1,11 @@
-import {JSONSchema, JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {
+  getRootSchema,
+  JSONSchema,
+  JSONSchemaTypeName,
+  LinkedJSONSchema,
+  NormalizedJSONSchema,
+  Parent,
+} from './types/JSONSchema'
 import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
 import {link} from './linker'
@@ -258,42 +265,80 @@ rules.set('Transform const to singleton enum', schema => {
   }
 })
 
-// Keywords that describe the property or definition rather than its values, so they
-// stay on the outer schema when `nullable` moves everything else into an `anyOf`
-const NULLABLE_OUTER_KEYS = new Set(['$id', 'title', 'description', 'deprecated'])
+rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
+  if (
+    isEnumTypeWithoutTsEnumNames(schema) &&
+    options.inferStringEnumKeysFromValues &&
+    !schemasNormalizedFromConst.has(schema)
+  ) {
+    schema.tsEnumNames = schema.enum?.map(String)
+  }
+})
+
+// Keywords that describe the property or definition rather than its values (or that host
+// other schemas), so they stay on the outer schema when `nullable` moves everything else
+// into an `anyOf`
+const NULLABLE_OUTER_KEYS = new Set(['$defs', '$id', '$schema', 'definitions', 'deprecated', 'description', 'title'])
 
 /**
  * OpenAPI 3.0 `nullable: true` becomes `anyOf: [<schema>, {type: 'null'}]`, which the
  * parser already turns into `X | null` for every shape of schema (typed or untyped,
- * enum, const, allOf, array...). Schemas whose `type` or `enum` already allow null are
- * left as they are, so null is only ever added once. The schema is rewritten in place,
- * so every reference to it sees the union. Returns whether it did rewrite.
+ * enum, const, allOf, array...). Schemas whose `type` or `enum` already allow null, and
+ * schemas that constrain nothing (only annotations next to `nullable`), are left as they
+ * are. The schema is rewritten in place, so every reference to it sees the union.
+ *
+ * A TypeScript enum (`enum` + `tsEnumNames`) cannot be an anonymous union member, so it
+ * takes its `title` with it, or else is named after `enumName` (the key or definition it
+ * sits under) - the name the parser would have given it in place.
+ *
+ * Returns the schema that moved into the `anyOf`, if any.
  */
-function normalizeNullable(schema: JSONSchema): boolean {
-  if (schema.nullable !== true) {
-    return false
+function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSchema | undefined {
+  if (schema.nullable !== true || Object.keys(schema).every(_ => _ === 'nullable' || NULLABLE_OUTER_KEYS.has(_))) {
+    return
   }
   delete schema.nullable
   if (hasType(schema, 'null') || (Array.isArray(schema.enum) && schema.enum.includes(null))) {
-    return false
+    return
   }
+  const isNamedEnum = 'enum' in schema && 'tsEnumNames' in schema
   const inner: JSONSchema = {}
   for (const key of Object.keys(schema)) {
-    if (!NULLABLE_OUTER_KEYS.has(key)) {
+    if (!NULLABLE_OUTER_KEYS.has(key) || (isNamedEnum && key === 'title')) {
       inner[key] = schema[key]
       delete schema[key]
     }
   }
+  if (isNamedEnum && !inner.title && enumName) {
+    inner.$id = enumName
+  }
   schema.anyOf = [inner, {type: 'null'}]
-  return true
+  return inner
 }
 
 // Runs this late so that the schema has already been named from its `$ref` path, had
-// its object defaults filled in and its `const` turned into an `enum` (all of which
-// look at keywords that move into the `anyOf`), and before types are pre-calculated.
-rules.set('Transform `nullable` to anyOf with null', schema => {
-  if (normalizeNullable(schema)) {
-    link(schema.anyOf!, schema)
+// its object defaults filled in, its `const` turned into an `enum` and its `tsEnumNames`
+// inferred (all of which look at keywords that move into the `anyOf`), and before types
+// are pre-calculated.
+rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, dereferencedPaths) => {
+  // The name a TypeScript enum gets in this position: the definition it was dereferenced
+  // from, else the key it sits under (unless that is just an index into anyOf/items)
+  const dereferencedName = dereferencedPaths.get(schema)
+  const enumName = dereferencedName ? justName(dereferencedName) : key && isNaN(+key) ? key : undefined
+  const inner = normalizeNullable(schema, enumName)
+  if (!inner) {
+    return
+  }
+  link(schema.anyOf!, schema)
+  // A nullable enum that is itself a definition keeps the definition's name (and so its
+  // `enum` declaration); references to it become `Name | null`
+  if ('tsEnumNames' in inner) {
+    const $defs = getRootSchema(schema as NormalizedJSONSchema).$defs ?? {}
+    for (const name of Object.keys($defs)) {
+      if ($defs[name] === schema) {
+        $defs[name] = inner as NormalizedJSONSchema
+      }
+    }
   }
 })
 
@@ -312,16 +357,6 @@ export function normalizeNullableRefs(schema: JSONSchema): void {
     }
   })
 }
-
-rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
-  if (
-    isEnumTypeWithoutTsEnumNames(schema) &&
-    options.inferStringEnumKeysFromValues &&
-    !schemasNormalizedFromConst.has(schema)
-  ) {
-    schema.tsEnumNames = schema.enum?.map(String)
-  }
-})
 
 // Precalculation of the schema types is necessary because the ALL_OF type
 // is implemented in a way that mutates the schema object. Detection of the
