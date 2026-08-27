@@ -25,6 +25,7 @@ export type AST =
 
 export interface AbstractAST {
   comment?: string
+  default?: unknown
   keyName?: string
   standaloneName?: string
   type: AST_TYPE
@@ -40,9 +41,10 @@ export type ASTWithComment = AST & {comment: string}
 export type ASTWithName = AST & {keyName: string}
 export type ASTWithStandaloneName = AST & {standaloneName: string}
 
-export function hasComment(ast: AST): ast is ASTWithComment {
+export function hasComment(ast: AST, options?: {enableDefaultComments?: boolean}): ast is ASTWithComment {
   return (
     ('comment' in ast && ast.comment != null && ast.comment !== '') ||
+    (options?.enableDefaultComments !== false && 'default' in ast && ast.default !== undefined) ||
     // Compare to true because ast.deprecated might be undefined
     ('deprecated' in ast && ast.deprecated === true)
   )

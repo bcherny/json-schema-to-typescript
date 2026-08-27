@@ -49,5 +49,7 @@ export function getTestCases(): [string, TestCase][] {
 }
 
 export function getOptions(testCase: TestCase): Options {
-  return merge(testCase.options, {$refOptions: {resolve: {http: httpWithCacheResolver}}})
+  return merge({enableDefaultComments: false}, testCase.options, {
+    $refOptions: {resolve: {http: httpWithCacheResolver}},
+  })
 }

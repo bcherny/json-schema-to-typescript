@@ -18,8 +18,10 @@ main(
       'additionalProperties',
       'declareExternallyReferenced',
       'enableConstEnums',
+      'enableDefaultComments',
       'format',
       'ignoreMinAndMaxItems',
+      'prettifyDefaultComments',
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
@@ -181,6 +183,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Declare external schemas referenced via '$ref'?
   --enableConstEnums
       Prepend enums with 'const'?
+  --enableDefaultComments
+      Generate @default JSDoc comments for properties with a default value
   --inferStringEnumKeysFromValues
       Create enums from JSON enums instead of union types
   --format
@@ -190,6 +194,8 @@ Boolean values can be set to false using the 'no-' prefix.
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
       performance, or set it to -1 to ignore minItems and maxItems.
+  --prettifyDefaultComments
+      Prettify object/array @default values. Disable to emit single-line JSON.
   --style.XXX=YYY
       Prettier configuration
   --unknownAny
