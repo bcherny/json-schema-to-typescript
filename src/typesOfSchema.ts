@@ -1,6 +1,11 @@
 import {isPlainObject} from 'lodash'
 import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
 
+// Keywords that only annotate a schema (eg. for documentation) without constraining
+// the values it matches. A schema made up of nothing but these keywords doesn't
+// restrict its type any more than the empty schema does.
+const ANNOTATION_ONLY_KEYWORDS = ['description', 'title', 'deprecated']
+
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
  *
@@ -36,8 +41,9 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     return 'allOf' in schema
   },
   ANY(schema) {
-    if (Object.keys(schema).length === 0) {
-      // The empty schema {} validates any value
+    if (Object.keys(schema).every(key => ANNOTATION_ONLY_KEYWORDS.includes(key))) {
+      // The empty schema {} validates any value, and a schema made up of only
+      // annotation keywords (eg. `description`) is no more constrained than that.
       // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1
       return true
     }
