@@ -129478,13 +129478,7 @@ export type JSONSchemaForNPMPackageJsonFiles = {
 /**
  * A person who has been involved in creating or maintaining this package.
  */
-export type Person = {
-  name: string;
-  url?: string;
-  email?: string;
-  [k: string]: unknown;
-} & Person1;
-export type Person1 =
+export type Person =
   | {
       name: string;
       url?: string;
@@ -445498,66 +445492,7 @@ exports[`realWorld.jsonschema.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type CoreSchemaMetaSchema = {
-  $id?: string;
-  $schema?: string;
-  $ref?: string;
-  $comment?: string;
-  title?: string;
-  description?: string;
-  default?: unknown;
-  readOnly?: boolean;
-  writeOnly?: boolean;
-  examples?: unknown[];
-  multipleOf?: number;
-  maximum?: number;
-  exclusiveMaximum?: number;
-  minimum?: number;
-  exclusiveMinimum?: number;
-  maxLength?: NonNegativeInteger;
-  minLength?: NonNegativeIntegerDefault0;
-  pattern?: string;
-  additionalItems?: CoreSchemaMetaSchema;
-  items?: CoreSchemaMetaSchema | SchemaArray;
-  maxItems?: NonNegativeInteger;
-  minItems?: NonNegativeIntegerDefault0;
-  uniqueItems?: boolean;
-  contains?: CoreSchemaMetaSchema;
-  maxProperties?: NonNegativeInteger;
-  minProperties?: NonNegativeIntegerDefault0;
-  required?: StringArray;
-  additionalProperties?: CoreSchemaMetaSchema;
-  definitions?: {
-    [k: string]: CoreSchemaMetaSchema;
-  };
-  properties?: {
-    [k: string]: CoreSchemaMetaSchema;
-  };
-  patternProperties?: {
-    [k: string]: CoreSchemaMetaSchema;
-  };
-  dependencies?: {
-    [k: string]: CoreSchemaMetaSchema | StringArray;
-  };
-  propertyNames?: CoreSchemaMetaSchema;
-  const?: unknown;
-  /**
-   * @minItems 1
-   */
-  enum?: [unknown, ...unknown[]];
-  type?: SimpleTypes | [SimpleTypes, ...SimpleTypes[]];
-  format?: string;
-  contentMediaType?: string;
-  contentEncoding?: string;
-  if?: CoreSchemaMetaSchema;
-  then?: CoreSchemaMetaSchema;
-  else?: CoreSchemaMetaSchema;
-  allOf?: SchemaArray;
-  anyOf?: SchemaArray;
-  oneOf?: SchemaArray;
-  not?: CoreSchemaMetaSchema;
-  [k: string]: unknown;
-} & (
+export type CoreSchemaMetaSchema =
   | {
       $id?: string;
       $schema?: string;
@@ -445618,8 +445553,7 @@ export type CoreSchemaMetaSchema = {
       not?: CoreSchemaMetaSchema;
       [k: string]: unknown;
     }
-  | boolean
-);
+  | boolean;
 export type NonNegativeInteger = number;
 export type NonNegativeIntegerDefault0 = NonNegativeInteger;
 /**
@@ -446112,17 +446046,7 @@ output?: string
  */
 exit_code?: number
 [k: string]: unknown
-} & ({
-/**
- * output of the postdeploy script
- */
-output?: string
-/**
- * The exit code of the postdeploy script
- */
-exit_code?: number
-[k: string]: unknown
-} | null))
+} | null)
 /**
  * buildpacks executed for this build, in order
  */
@@ -446136,19 +446060,13 @@ url?: string
 /**
  * release resulting from the build
  */
-export type Release = ({
+export type Release = (null | {
 /**
  * unique identifier of release
  */
 id?: string
 [k: string]: unknown
-} & (null | {
-/**
- * unique identifier of release
- */
-id?: string
-[k: string]: unknown
-}))
+})
 /**
  * price information for this dyno size
  */
@@ -446172,17 +446090,7 @@ id?: string
  */
 name?: string
 [k: string]: unknown
-} & ({
-/**
- * unique identifier of add-on
- */
-id?: string
-/**
- * globally unique name of the add-on
- */
-name?: string
-[k: string]: unknown
-} | null))
+} | null)
 /**
  * The scope of access OAuth authorization allows
  */
