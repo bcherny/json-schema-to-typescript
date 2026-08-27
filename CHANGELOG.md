@@ -17,14 +17,14 @@ May change emitted types for existing schemas:
 
 Fixes for output that did not compile:
 
-- 107dd42 Bugfix: Index signatures from `patternProperties`/`additionalProperties` are widened to cover sibling named properties, so the interface typechecks (TS2411) (#704, fixes #671)
+- 107dd42 Bugfix: Index signatures from `patternProperties`/`additionalProperties` are widened to cover sibling named properties, so the interface typechecks (TS2411). Index signatures that already typechecked are emitted type-equivalent to before (#704, fixes #671)
 - a2234d3 Bugfix: `inferStringEnumKeysFromValues` no longer produces invalid enum members for non-string, empty or digit-leading values (#694, fixes #657)
-- 377c6a1 Bugfix: A named enum (`tsEnumNames`) in a position with no name no longer emits a nameless `enum` declaration (#693)
-- c44faed Bugfix: Generated type names can no longer start with a digit or collapse to an empty name (#698)
+- 377c6a1 Bugfix: A named enum (`tsEnumNames`) in a position with no name no longer emits a nameless `enum` declaration; it degrades to a union of literals (#693, fixes #691)
+- c44faed Bugfix: Generated type names can no longer start with a digit or collapse to an empty name (#698, fixes #640)
 
 Other:
 
-- 9219636 Updated runtime dependencies: js-yaml 4 -> 5 (YAML files parse as before, #689), prettier ^3.9, @apidevtools/json-schema-ref-parser ^11.9 (#686)
+- 9219636 Updated runtime dependencies: js-yaml 4 -> 5 (YAML files parse as before, #689), prettier ^3.9 (short unions that fit on one line are no longer wrapped; users on the existing `^3.2.5` range may already see this), @apidevtools/json-schema-ref-parser ^11.9 (#686)
 - a5834aa Removed the `is-glob` dependency (#643)
 
 ## 15.0.4
