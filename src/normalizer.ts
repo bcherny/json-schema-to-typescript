@@ -267,6 +267,45 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   }
 })
 
+// A member has no way to be typed on its own if none of the keywords that
+// `typesOfSchema` matches on are present. Left alone, such a member falls
+// through to the generic `UNNAMED_SCHEMA` default instead of picking up the
+// `type` its parent already declared.
+function hasOwnType(schema: LinkedJSONSchema): boolean {
+  return (
+    'type' in schema ||
+    '$ref' in schema ||
+    'enum' in schema ||
+    'properties' in schema ||
+    'patternProperties' in schema ||
+    'items' in schema ||
+    'allOf' in schema ||
+    'anyOf' in schema ||
+    'oneOf' in schema ||
+    'tsType' in schema ||
+    'default' in schema
+  )
+}
+
+rules.set('Inherit parent `type` into untyped `anyOf`/`oneOf` members', schema => {
+  const {type} = schema
+  if (typeof type !== 'string') {
+    return
+  }
+  const inherit = (member: LinkedJSONSchema) => {
+    // `anyOf`/`oneOf` members are typed as `LinkedJSONSchema`, but a boolean
+    // schema (`true`/`false`) can still show up here at runtime.
+    if (typeof member !== 'object' || !member) {
+      return
+    }
+    if (!hasOwnType(member)) {
+      member.type = type
+    }
+  }
+  schema.anyOf?.forEach(inherit)
+  schema.oneOf?.forEach(inherit)
+})
+
 // Precalculation of the schema types is necessary because the ALL_OF type
 // is implemented in a way that mutates the schema object. Detection of the
 // NAMED_SCHEMA type relies on the presence of the $id property, which is
