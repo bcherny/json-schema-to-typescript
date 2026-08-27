@@ -401,7 +401,7 @@ function parseSchema(
   usedNames: UsedNames,
   parentSchemaName: string,
 ): TInterfaceParam[] {
-  let asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
+  const asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
     ast: parse(value, options, key, processed, usedNames),
     isIndexSignature: false,
     isPatternProperty: false,
@@ -426,9 +426,9 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
     }
   })
 
-  if (options.unreachableDefinitions) {
-    asts = asts.concat(
-      map(schema.$defs, (value, key: string) => {
+  const unreachableDefinitions: TInterfaceParam[] = !options.unreachableDefinitions
+    ? []
+    : map(schema.$defs, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
 via the \`definition\` "${key}".`
@@ -442,16 +442,15 @@ via the \`definition\` "${key}".`
           isUnreachableDefinition: true,
           keyName: key,
         }
-      }),
-    )
-  }
+      })
 
   // TypeScript cannot constrain keys by regex, so patternProperties are folded into the one
   // string index signature, typed as the union of their value types:
+  let declaredOnly: TInterfaceParam[] = [] // listed only so that their named types get declared
   let indexSignatureMembers: TInterfaceParam[]
   switch (schema.additionalProperties) {
     case true: // already admits every value; the patterns are listed only to get their named types declared
-      asts = asts.concat(patternProperties)
+      declaredOnly = patternProperties
       indexSignatureMembers = []
       break
     case undefined: // validate against the patterns alone, as if it were `false`
@@ -470,7 +469,7 @@ via the \`definition\` "${key}".`
   }
 
   if (!indexSignatureMembers.length && schema.additionalProperties === false) {
-    return asts
+    return asts.concat(unreachableDefinitions)
   }
 
   const members = indexSignatureMembers.map(_ => _.ast)
@@ -496,19 +495,26 @@ via the \`definition\` "${key}".`
 
   // pass "true" for isRequired because in TS, properties
   // defined via index signatures are already optional
-  asts = asts.concat({
+  const indexSignatureParam: TInterfaceParam = {
     ast: indexSignature,
     isIndexSignature: true,
     isPatternProperty: false,
     isRequired: true,
     isUnreachableDefinition: false,
     keyName: '[k: string]',
-  })
+  }
 
   // The members of a union are also listed as non-rendered params, so that their named types are
   // still declared when the optimizer collapses it (e.g. `X | unknown` to `unknown`). They go
   // after the index signature: the optimizer rewrites only the first param that holds a given AST.
-  return indexSignatureMembers.length > 1 ? asts.concat(indexSignatureMembers) : asts
+  if (indexSignatureMembers.length > 1) {
+    declaredOnly = indexSignatureMembers
+  }
+  // Declaration order as on master: types from patternProperties before unreachable definitions,
+  // a signature that comes from additionalProperties alone after them.
+  return patternProperties.length
+    ? asts.concat(indexSignatureParam, declaredOnly, unreachableDefinitions)
+    : asts.concat(unreachableDefinitions, indexSignatureParam)
 }
 
 type Definitions = {[k: string]: NormalizedJSONSchema}
