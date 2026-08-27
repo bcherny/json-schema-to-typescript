@@ -66,10 +66,11 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   },
   NAMED_SCHEMA(schema) {
     // 8.2.1. The presence of "$id" in a subschema indicates that the subschema constitutes a distinct schema resource within a single schema document.
-    // Guarded against an array `type`: such a schema is a `UNION`, whose members
-    // are re-parsed one `type` at a time with the `properties` still attached (see
-    // the `UNION` case in `parser.ts`), so also matching here would intersect the
-    // object shape with that union and make its non-object members unreachable.
+    // Guarded against an array `type` (narrower than the guard on UNNAMED_SCHEMA
+    // below, on purpose): such a schema is a `UNION`, whose members are re-parsed
+    // one `type` at a time with the `properties` still attached (see the `UNION`
+    // case in `parser.ts`), so also matching here would intersect the object shape
+    // with that union and make its non-object members unreachable.
     return '$id' in schema && !Array.isArray(schema.type) && ('patternProperties' in schema || 'properties' in schema)
   },
   NEVER(schema: JSONSchema | boolean) {
