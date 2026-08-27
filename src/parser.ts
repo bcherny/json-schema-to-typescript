@@ -4,7 +4,13 @@ import {format} from 'util'
 import {Options} from './'
 import {applySchemaTyping} from './applySchemaTyping'
 import type {AST, TInterface, TInterfaceParam, TIntersection, TNamedInterface, TTuple} from './types/AST'
-import {T_ANY, T_ANY_ADDITIONAL_PROPERTIES, T_UNKNOWN, T_UNKNOWN_ADDITIONAL_PROPERTIES} from './types/AST'
+import {
+  hasStandaloneName,
+  T_ANY,
+  T_ANY_ADDITIONAL_PROPERTIES,
+  T_UNKNOWN,
+  T_UNKNOWN_ADDITIONAL_PROPERTIES,
+} from './types/AST'
 import type {
   EnumJSONSchema,
   JSONSchemaWithDefinitions,
@@ -404,26 +410,33 @@ function parseSchema(
     keyName: key,
   }))
 
-  let singlePatternProperty = false
+  // TypeScript cannot constrain keys by regex, so patternProperties are folded into the
+  // string index signature, typed as the union of every pattern's value type (plus
+  // additionalProperties' type, when that is a schema; when it is not set, the patterns
+  // alone are validated against, as if it were `false`). Only an explicit
+  // `additionalProperties: true` already admits every value: then the patterns are kept
+  // solely so that their named types are still declared, for documentation.
+  const indexSignatureMembers: AST[] = []
   if (schema.patternProperties) {
-    // partially support patternProperties. in the case that
-    // additionalProperties is not set, and there is only a single
-    // value definition, we can validate against that.
-    singlePatternProperty = !schema.additionalProperties && Object.keys(schema.patternProperties).length === 1
-
+    const isIndexSignatureMember = schema.additionalProperties !== true
     asts = asts.concat(
       map(schema.patternProperties, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
 via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+        if (isIndexSignatureMember) {
+          indexSignatureMembers.push(ast)
+        }
+        // Also kept as a (non-rendered) param, so the pattern's named types are declared
+        // even when the optimizer collapses the index signature union (e.g. to `unknown`).
         return {
           ast,
-          isIndexSignature: singlePatternProperty,
-          isPatternProperty: !singlePatternProperty,
-          isRequired: singlePatternProperty || includes(schema.required || [], key),
+          isIndexSignature: false,
+          isPatternProperty: true,
+          isRequired: includes(schema.required || [], key),
           isUnreachableDefinition: false,
-          keyName: singlePatternProperty ? '[k: string]' : key,
+          keyName: key,
         }
       }),
     )
@@ -449,37 +462,41 @@ via the \`definition\` "${key}".`
     )
   }
 
-  // handle additionalProperties
-  switch (schema.additionalProperties) {
-    case undefined:
-    case true:
-      if (singlePatternProperty) {
-        return asts
-      }
-      return asts.concat({
-        ast: options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
-        isIndexSignature: true,
-        isPatternProperty: false,
-        isRequired: true,
-        isUnreachableDefinition: false,
-        keyName: '[k: string]',
-      })
-
-    case false:
-      return asts
-
-    // pass "true" as the last param because in TS, properties
-    // defined via index signatures are already optional
-    default:
-      return asts.concat({
-        ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
-        isIndexSignature: true,
-        isPatternProperty: false,
-        isRequired: true,
-        isUnreachableDefinition: false,
-        keyName: '[k: string]',
-      })
+  if (typeof schema.additionalProperties === 'object') {
+    indexSignatureMembers.push(parse(schema.additionalProperties, options, '[k: string]', processed, usedNames))
+  } else if (schema.additionalProperties !== false && !indexSignatureMembers.length) {
+    // `additionalProperties: true`, or not set and no patternProperties to go by
+    indexSignatureMembers.push(options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES)
   }
+
+  if (!indexSignatureMembers.length) {
+    return asts
+  }
+
+  // pass "true" for isRequired because in TS, properties
+  // defined via index signatures are already optional
+  return asts.concat({
+    ast:
+      indexSignatureMembers.length === 1
+        ? indexSignatureMembers[0]
+        : {
+            // Members with a standalone name carry their comment on their own declaration;
+            // the others' comments (which name their pattern) go on the index signature.
+            comment:
+              indexSignatureMembers
+                .filter(_ => !hasStandaloneName(_) && _.comment)
+                .map(_ => _.comment)
+                .join('\n\n') || undefined,
+            keyName: '[k: string]',
+            type: 'UNION',
+            params: indexSignatureMembers,
+          },
+    isIndexSignature: true,
+    isPatternProperty: false,
+    isRequired: true,
+    isUnreachableDefinition: false,
+    keyName: '[k: string]',
+  })
 }
 
 type Definitions = {[k: string]: NormalizedJSONSchema}

@@ -397,6 +397,12 @@ function generateIndexSignatureType(
   }
 
   addMember(indexSignature.ast)
+  if (memberASTs.some(isAny)) {
+    // an `any` among the index signature's own members (the parser unions
+    // patternProperties and additionalProperties into it) absorbs the others
+    return options.strictIndexSignatures ? 'any | undefined' : 'any'
+  }
+
   let needsUndefined = options.strictIndexSignatures
   for (const sibling of getIndexSignatureSiblings(params, indexSignature, superTypes)) {
     if (isAny(sibling.ast)) {

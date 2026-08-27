@@ -128717,7 +128717,9 @@ export interface Tag {
    */
   [k: string]: unknown;
 }
-export interface Paths {}
+export interface Paths {
+  [k: string]: unknown;
+}
 /**
  * This interface was referenced by \`Paths\`'s JSON-Schema definition
  * via the \`patternProperty\` "^\\/".
@@ -128728,6 +128730,7 @@ export interface PathItem {
   description?: string;
   servers?: Server[];
   parameters?: (Parameter | Reference)[];
+  [k: string]: unknown;
 }
 /**
  * Example and examples are mutually exclusive
@@ -128870,6 +128873,7 @@ export interface RequestBody {
 }
 export interface Responses {
   default?: Response | Reference;
+  [k: string]: unknown;
 }
 export interface Response {
   description: string;
@@ -128904,7 +128908,7 @@ export interface Link {
   [k: string]: unknown;
 }
 export interface Callback {
-  [k: string]: PathItem;
+  [k: string]: unknown;
 }
 export interface Components {
   schemas?: {
@@ -129249,6 +129253,18 @@ export type JSONSchemaForNPMPackageJsonFiles = {
        * Maps all file paths to the file paths specified in the array.
        */
       "*"?: string[];
+      /**
+       * Maps the file path matching the property key to the file paths specified in the array.
+       *
+       * This interface was referenced by \`undefined\`'s JSON-Schema definition
+       * via the \`patternProperty\` "^[^*]+$".
+       *
+       * Maps file paths matching the pattern specified in property key to file paths specified in the array.
+       *
+       * This interface was referenced by \`undefined\`'s JSON-Schema definition
+       * via the \`patternProperty\` "^[^*]*\\*[^*]*$".
+       */
+      [k: string]: string[] | undefined;
     };
   };
   /**
@@ -130396,7 +130412,7 @@ exports[`patternProperties.6.ts 1`] = `
 export type StringChild = string;
 
 export interface Parent {
-  [k: string]: number;
+  [k: string]: StringChild | number;
 }
 "
 `;
@@ -440268,7 +440284,9 @@ export interface Tag {
    */
   [k: string]: unknown;
 }
-export interface Paths {}
+export interface Paths {
+  [k: string]: unknown;
+}
 /**
  * This interface was referenced by \`Paths\`'s JSON-Schema definition
  * via the \`patternProperty\` "^\\/".
@@ -440279,6 +440297,7 @@ export interface PathItem {
   description?: string;
   servers?: Server[];
   parameters?: (Parameter | Reference)[];
+  [k: string]: unknown;
 }
 /**
  * Example and examples are mutually exclusive
@@ -440421,6 +440440,7 @@ export interface RequestBody {
 }
 export interface Responses {
   default?: Response | Reference;
+  [k: string]: unknown;
 }
 export interface Response {
   description: string;
@@ -440455,7 +440475,7 @@ export interface Link {
   [k: string]: unknown;
 }
 export interface Callback {
-  [k: string]: PathItem;
+  [k: string]: unknown;
 }
 export interface Components {
   schemas?: {
