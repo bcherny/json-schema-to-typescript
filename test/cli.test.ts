@@ -1,6 +1,6 @@
 import {describe, expect, test} from 'bun:test'
-import {execSync} from 'child_process'
-import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
+import {execSync, spawnSync} from 'child_process'
+import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync, mkdirSync, copyFileSync} from 'fs'
 import {resolve, posix} from 'path'
 import * as rimraf from 'rimraf'
 import {hasOnly} from './e2eCases'
@@ -145,7 +145,32 @@ suite('CLI', () => {
     rimraf.sync('./test/resources/MultiSchema/foo')
   })
 
-  // @see https://github.com/bcherny/json-schema-to-typescript/issues/505
+  // @see https://github.com/bcherny/json-schema-to-typescript/issues/505 (as filed: `json2ts -i *.json` gives "no output")
+  // An unquoted glob is expanded by the shell, so the CLI receives `-i A.json B.json C.json`.
+  // On master the positionals win: B.json is taken as the input and C.json as the *output*,
+  // so A is ignored, nothing is printed, the exit code is 0, and C.json is overwritten with
+  // B's generated TypeScript. Whether extra inputs should all be compiled or rejected with a
+  // hint to quote the glob is a maintainer decision; this test only asserts the invariant
+  // both options share: an input schema is never overwritten, and the run does not silently
+  // succeed while dropping inputs.
+  test('files in (-i with shell-expanded glob): never overwrites a matched schema', () => {
+    const dir = './test/resources/PositionalInputs/tmp'
+    mkdirSync(dir, {recursive: true})
+    const files = ['A', 'B', 'C'].map(_ => {
+      copyFileSync(`./test/resources/PositionalInputs/${_}.json`, `${dir}/${_}.json`)
+      return `${dir}/${_}.json`
+    })
+    const original = readFileSync(files[2], 'utf-8')
+
+    const {status, stdout} = spawnSync('node', ['dist/src/cli.js', '-i', ...files], {encoding: 'utf-8'})
+    const cAfter = readFileSync(files[2], 'utf-8')
+    rimraf.sync(dir)
+
+    expect(cAfter).toBe(original)
+    expect(status !== 0 || ['A', 'B', 'C'].every(_ => stdout.includes(`interface ${_} `))).toBe(true)
+  })
+
+  // @see https://github.com/bcherny/json-schema-to-typescript/issues/505 (as confirmed in the thread)
   // Relative $refs must resolve against each glob-matched file's own directory,
   // not against the directory json2ts was launched from. On master item.json's
   // `../../common-spec/json-schema/common.json` is resolved against the repo root, the
