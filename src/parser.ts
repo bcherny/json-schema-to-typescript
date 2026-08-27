@@ -410,29 +410,21 @@ function parseSchema(
     keyName: key,
   }))
 
-  const patternProperties: AST[] = []
-  if (schema.patternProperties) {
-    asts = asts.concat(
-      map(schema.patternProperties, (value, key: string) => {
-        const ast = parse(value, options, key, processed, usedNames)
-        const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
+  // rendered through the index signature (below), not as params of their own
+  const patternProperties: TInterfaceParam[] = map(schema.patternProperties, (value, key: string) => {
+    const ast = parse(value, options, key, processed, usedNames)
+    const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
 via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
-        ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
-        patternProperties.push(ast)
-        // Rendered through the index signature (below); also kept as a non-rendered param so
-        // that the pattern's named types are declared even when it is left out of the index
-        // signature (`additionalProperties: true`) or the optimizer collapses the union.
-        return {
-          ast,
-          isIndexSignature: false,
-          isPatternProperty: true,
-          isRequired: includes(schema.required || [], key),
-          isUnreachableDefinition: false,
-          keyName: key,
-        }
-      }),
-    )
-  }
+    ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+    return {
+      ast,
+      isIndexSignature: false,
+      isPatternProperty: true,
+      isRequired: includes(schema.required || [], key),
+      isUnreachableDefinition: false,
+      keyName: key,
+    }
+  })
 
   if (options.unreachableDefinitions) {
     asts = asts.concat(
@@ -456,52 +448,67 @@ via the \`definition\` "${key}".`
 
   // TypeScript cannot constrain keys by regex, so patternProperties are folded into the one
   // string index signature, typed as the union of their value types:
-  const anyValue = options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES
-  let indexSignatureMembers: AST[]
+  let indexSignatureMembers: TInterfaceParam[]
   switch (schema.additionalProperties) {
-    case true: // already admits every value (named pattern types are still declared)
-      indexSignatureMembers = [anyValue]
+    case true: // already admits every value; the patterns are listed only to get their named types declared
+      asts = asts.concat(patternProperties)
+      indexSignatureMembers = []
       break
     case undefined: // validate against the patterns alone, as if it were `false`
-      indexSignatureMembers = patternProperties.length ? patternProperties : [anyValue]
-      break
     case false:
       indexSignatureMembers = patternProperties
       break
     default:
-      indexSignatureMembers = patternProperties.concat(
-        parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
-      )
+      indexSignatureMembers = patternProperties.concat({
+        ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
+        isIndexSignature: false,
+        isPatternProperty: true,
+        isRequired: false,
+        isUnreachableDefinition: false,
+        keyName: '[k: string]',
+      })
   }
 
-  if (!indexSignatureMembers.length) {
+  if (!indexSignatureMembers.length && schema.additionalProperties === false) {
     return asts
+  }
+
+  const members = indexSignatureMembers.map(_ => _.ast)
+  let indexSignature: AST
+  if (!members.length) {
+    indexSignature = options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES
+  } else if (members.length === 1) {
+    indexSignature = members[0]
+  } else {
+    indexSignature = {
+      // Members with a standalone name carry their comment on their own declaration;
+      // the others' comments (which name their pattern) go on the index signature.
+      comment:
+        members
+          .filter(_ => !hasStandaloneName(_) && _.comment)
+          .map(_ => _.comment)
+          .join('\n\n') || undefined,
+      keyName: '[k: string]',
+      type: 'UNION',
+      params: members,
+    }
   }
 
   // pass "true" for isRequired because in TS, properties
   // defined via index signatures are already optional
-  return asts.concat({
-    ast:
-      indexSignatureMembers.length === 1
-        ? indexSignatureMembers[0]
-        : {
-            // Members with a standalone name carry their comment on their own declaration;
-            // the others' comments (which name their pattern) go on the index signature.
-            comment:
-              indexSignatureMembers
-                .filter(_ => !hasStandaloneName(_) && _.comment)
-                .map(_ => _.comment)
-                .join('\n\n') || undefined,
-            keyName: '[k: string]',
-            type: 'UNION',
-            params: indexSignatureMembers,
-          },
+  asts = asts.concat({
+    ast: indexSignature,
     isIndexSignature: true,
     isPatternProperty: false,
     isRequired: true,
     isUnreachableDefinition: false,
     keyName: '[k: string]',
   })
+
+  // The members of a union are also listed as non-rendered params, so that their named types are
+  // still declared when the optimizer collapses it (e.g. `X | unknown` to `unknown`). They go
+  // after the index signature: the optimizer rewrites only the first param that holds a given AST.
+  return indexSignatureMembers.length > 1 ? asts.concat(indexSignatureMembers) : asts
 }
 
 type Definitions = {[k: string]: NormalizedJSONSchema}
