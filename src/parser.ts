@@ -410,26 +410,18 @@ function parseSchema(
     keyName: key,
   }))
 
-  // TypeScript cannot constrain keys by regex, so patternProperties are folded into the
-  // string index signature, typed as the union of every pattern's value type (plus
-  // additionalProperties' type, when that is a schema; when it is not set, the patterns
-  // alone are validated against, as if it were `false`). Only an explicit
-  // `additionalProperties: true` already admits every value: then the patterns are kept
-  // solely so that their named types are still declared, for documentation.
-  const indexSignatureMembers: AST[] = []
+  const patternProperties: AST[] = []
   if (schema.patternProperties) {
-    const isIndexSignatureMember = schema.additionalProperties !== true
     asts = asts.concat(
       map(schema.patternProperties, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
 via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
         ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
-        if (isIndexSignatureMember) {
-          indexSignatureMembers.push(ast)
-        }
-        // Also kept as a (non-rendered) param, so the pattern's named types are declared
-        // even when the optimizer collapses the index signature union (e.g. to `unknown`).
+        patternProperties.push(ast)
+        // Rendered through the index signature (below); also kept as a non-rendered param so
+        // that the pattern's named types are declared even when it is left out of the index
+        // signature (`additionalProperties: true`) or the optimizer collapses the union.
         return {
           ast,
           isIndexSignature: false,
@@ -462,11 +454,24 @@ via the \`definition\` "${key}".`
     )
   }
 
-  if (typeof schema.additionalProperties === 'object') {
-    indexSignatureMembers.push(parse(schema.additionalProperties, options, '[k: string]', processed, usedNames))
-  } else if (schema.additionalProperties !== false && !indexSignatureMembers.length) {
-    // `additionalProperties: true`, or not set and no patternProperties to go by
-    indexSignatureMembers.push(options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES)
+  // TypeScript cannot constrain keys by regex, so patternProperties are folded into the one
+  // string index signature, typed as the union of their value types:
+  const anyValue = options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES
+  let indexSignatureMembers: AST[]
+  switch (schema.additionalProperties) {
+    case true: // already admits every value (named pattern types are still declared)
+      indexSignatureMembers = [anyValue]
+      break
+    case undefined: // validate against the patterns alone, as if it were `false`
+      indexSignatureMembers = patternProperties.length ? patternProperties : [anyValue]
+      break
+    case false:
+      indexSignatureMembers = patternProperties
+      break
+    default:
+      indexSignatureMembers = patternProperties.concat(
+        parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
+      )
   }
 
   if (!indexSignatureMembers.length) {
