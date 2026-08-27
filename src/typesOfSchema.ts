@@ -59,7 +59,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'boolean') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'boolean') {
+    // Only infer BOOLEAN from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'boolean') {
       return true
     }
     return false
@@ -90,7 +93,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'integer' || schema.type === 'number') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'number') {
+    // Only infer NUMBER from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'number') {
       return true
     }
     return false
@@ -120,7 +126,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'string') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'string') {
+    // Only infer STRING from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'string') {
       return true
     }
     return false
