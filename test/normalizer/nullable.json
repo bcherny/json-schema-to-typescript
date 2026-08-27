@@ -49,6 +49,22 @@
       "notNullable": {
         "type": "string",
         "nullable": false
+      },
+      "namedEnum": {
+        "type": "string",
+        "enum": [
+          "a",
+          "b"
+        ],
+        "tsEnumNames": [
+          "A",
+          "B"
+        ],
+        "nullable": true
+      },
+      "annotationOnly": {
+        "description": "constrains nothing, stays as it is",
+        "nullable": true
       }
     },
     "required": [],
@@ -121,6 +137,29 @@
       "notNullable": {
         "type": "string",
         "nullable": false
+      },
+      "namedEnum": {
+        "anyOf": [
+          {
+            "type": "string",
+            "enum": [
+              "a",
+              "b"
+            ],
+            "tsEnumNames": [
+              "A",
+              "B"
+            ],
+            "$id": "namedEnum"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "annotationOnly": {
+        "description": "constrains nothing, stays as it is",
+        "nullable": true
       }
     },
     "required": [],
