@@ -26,6 +26,15 @@ suite('CLI', () => {
     ).toMatchSnapshot()
   })
 
+  test('pipe in (schema without title or ID), pipe out', () => {
+    expect(
+      execSync('node dist/src/cli.js', {
+        encoding: 'utf-8',
+        input: readFileSync('./test/resources/NoTitleOrID.json'),
+      }).toString(),
+    ).toMatchSnapshot()
+  })
+
   test('file in (no flags), pipe out', () => {
     expect(execSync('node dist/src/cli.js ./test/resources/ReferencedType.json').toString()).toMatchSnapshot()
   })
