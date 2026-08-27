@@ -12,7 +12,15 @@ import type {
   SchemaSchema,
   SchemaType,
 } from './types/JSONSchema'
-import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {
+  ExternallyReferenced,
+  Intersection,
+  Parent,
+  Types,
+  getRootSchema,
+  isBoolean,
+  isPrimitive,
+} from './types/JSONSchema'
 import {memoize} from './memoize'
 import {generateName, log, maybeStripDefault} from './utils'
 
@@ -146,8 +154,7 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
-  const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
-  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
+  const keyNameFromDefinition = findKeyNameFromDefinitions(schema)
 
   switch (type) {
     case 'ALL_OF':
@@ -622,6 +629,32 @@ function getDefinitions(
 }
 
 const getDefinitionsMemoized = memoize(getDefinitions)
+
+/**
+ * Finds the key `schema` was declared under in the nearest enclosing
+ * `definitions`/`$defs` map, so it can be named after that key instead of
+ * inlined.
+ *
+ * Ordinarily that's the map at the absolute root of the compiled schema. But
+ * a schema pulled in through a $ref to a separate file keeps its own
+ * `definitions` nested wherever it lands once merged into the referencing
+ * document, instead of at the merged document's root. So before falling back
+ * to the absolute root, also check the root of every externally-referenced
+ * ancestor, nearest first (see #143).
+ */
+function findKeyNameFromDefinitions(schema: NormalizedJSONSchema): string | undefined {
+  let ancestor = schema[Parent]
+  while (ancestor && ancestor[Parent]) {
+    if (ancestor[ExternallyReferenced]) {
+      const match = findKey(getDefinitionsMemoized(ancestor), _ => _ === schema)
+      if (match !== undefined) {
+        return match
+      }
+    }
+    ancestor = ancestor[Parent]
+  }
+  return findKey(getDefinitionsMemoized(getRootSchema(schema as any)), _ => _ === schema) // TODO
+}
 
 /**
  * TODO: Reduce rate of false positives

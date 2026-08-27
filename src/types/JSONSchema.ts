@@ -26,6 +26,8 @@ export type SchemaType =
 export type JSONSchemaTypeName = JSONSchema4TypeName
 export type JSONSchemaType = JSONSchema4Type
 
+export const ExternallyReferenced = Symbol('ExternallyReferenced')
+
 export interface JSONSchema extends JSONSchema4 {
   /**
    * schema extension to support numeric enums
@@ -39,6 +41,13 @@ export interface JSONSchema extends JSONSchema4 {
    * property exists at least in https://json-schema.org/draft/2019-09/json-schema-validation.html#rfc.section.9.3
    */
   deprecated?: boolean
+  /**
+   * Set during dereferencing on the root of a schema pulled in through a $ref
+   * to a separate file. Such a schema keeps its own `definitions`/`$defs` map
+   * nested wherever it lands once merged into the referencing document,
+   * instead of at the merged document's root.
+   */
+  [ExternallyReferenced]?: true
 }
 
 export const Parent = Symbol('Parent')

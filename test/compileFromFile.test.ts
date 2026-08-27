@@ -20,4 +20,9 @@ suite('compileFromFile', () => {
 
   test('compileFromFile should default cwd to the schema directory when options is an empty object', async () =>
     expect(await compileFromFile('./test/resources/cwdDefault/schema.json', {})).toMatchSnapshot())
+
+  test('compileFromFile should hoist named definitions reached through an external file $ref (#143)', async () =>
+    expect(
+      await compileFromFile('./test/resources/other/array.schema.json', {cwd: './test/resources/other'}),
+    ).toMatchSnapshot())
 })
