@@ -182,6 +182,17 @@ function parseNonLiteral(
       }
     case 'NAMED_ENUM': {
       const enumName = standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)
+      // An enum with no allowed values can never be satisfied, so it's equivalent
+      // to `never` rather than a union of zero members (which isn't valid TS).
+      if ((schema as EnumJSONSchema).enum!.length === 0) {
+        return {
+          comment: schema.description,
+          deprecated: schema.deprecated,
+          keyName,
+          standaloneName: enumName,
+          type: 'NEVER',
+        }
+      }
       // A TypeScript enum declaration requires a name. In positions that supply
       // none (an `anyOf`/`oneOf` branch, say) fall back to a union of literals
       // rather than emitting a nameless `export enum { ... }`, which is invalid.
@@ -316,6 +327,17 @@ function parseNonLiteral(
         type: 'UNION',
       }
     case 'UNNAMED_ENUM':
+      // An enum with no allowed values can never be satisfied, so it's equivalent
+      // to `never` rather than a union of zero members (which isn't valid TS).
+      if ((schema as EnumJSONSchema).enum!.length === 0) {
+        return {
+          comment: schema.description,
+          deprecated: schema.deprecated,
+          keyName,
+          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
+          type: 'NEVER',
+        }
+      }
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
