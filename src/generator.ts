@@ -478,8 +478,11 @@ function generateInterface(ast: TInterface, options: Options): string {
           param === indexSignature && indexSignatureType !== undefined
             ? indexSignatureType
             : generateType(ast, options) + (isIndexSignature && options.strictIndexSignatures ? ' | undefined' : '')
+        const commented = withItemsComment(ast)
         return (
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+          (hasComment(commented) && !ast.standaloneName
+            ? generateComment(commented.comment, commented.deprecated) + '\n'
+            : '') +
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +
@@ -490,6 +493,47 @@ function generateInterface(ast: TInterface, options: Options): string {
     '\n' +
     '}'
   )
+}
+
+/**
+ * An inline (non-standalone) item schema is rendered mid-expression (`T[]`,
+ * `[T, ...T[]]`), where no statement line can carry a JSDoc block of its own, so
+ * its description is surfaced in the comment of the declaration the array type is
+ * attached to - a standalone type alias or an interface property - under an
+ * "Items:" label. This is the one place that decides where item descriptions go
+ * (#660).
+ */
+function withItemsComment<A extends AST>(ast: A): A {
+  const itemsComment = getItemsComment(ast)
+  if (itemsComment === undefined) {
+    return ast
+  }
+  return {...ast, comment: ast.comment ? ast.comment + '\n\n' + itemsComment : itemsComment}
+}
+
+function getItemsComment(ast: AST): string | undefined {
+  let members: AST[]
+  switch (ast.type) {
+    case 'ARRAY':
+      members = [ast.params]
+      break
+    case 'TUPLE':
+      members = ast.spreadParam ? [...ast.params, ast.spreadParam] : ast.params
+      break
+    default:
+      return undefined
+  }
+  // Named item types are declared separately with their own comment. Nested array
+  // types are skipped too: the normalizer appends `@minItems`/`@maxItems` block
+  // tags to their descriptions, which would read as tags of this declaration.
+  const comments = new Set(
+    members.map(_ => (hasStandaloneName(_) || _.type === 'ARRAY' || _.type === 'TUPLE' ? undefined : _.comment)),
+  )
+  // Every member has to carry the same description (for a tuple: one `items` schema
+  // that minItems/maxItems expanded). Distinct positional descriptions have no
+  // agreed rendering and are left out, as before.
+  const [comment] = comments
+  return comments.size === 1 && comment ? 'Items: ' + comment : undefined
 }
 
 function generateComment(comment?: string, deprecated?: boolean): string {
@@ -542,8 +586,9 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 }
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
+  const commented = withItemsComment(ast)
   return (
-    (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasComment(commented) ? generateComment(commented.comment) + '\n' : '') +
     `export type ${toSafeString(ast.standaloneName)} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
       options,
