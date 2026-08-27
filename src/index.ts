@@ -120,7 +120,7 @@ export const DEFAULT_OPTIONS: Options = {
   unknownAny: true,
 }
 
-export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+export function compileFromFile(filename: string, options: Partial<Options> = {}): Promise<string> {
   const schema = parseAsJSONSchema(filename)
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
