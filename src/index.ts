@@ -6,7 +6,7 @@ import {dirname} from 'path'
 import {Options as PrettierOptions} from 'prettier'
 import {format} from './formatter'
 import {generate} from './generator'
-import {normalize} from './normalizer'
+import {normalize, normalizeNullableRefs} from './normalizer'
 import {optimize} from './optimizer'
 import {parse} from './parser'
 import {dereference} from './resolver'
@@ -152,6 +152,9 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
 
   // Initial clone to avoid mutating the input
   const _schema = cloneDeep(schema)
+
+  // The one normalization that cannot wait until after dereferencing (see there)
+  normalizeNullableRefs(_schema)
 
   const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
