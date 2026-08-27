@@ -21,13 +21,27 @@ import {
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
+export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string {
+  const rootASTName = ast.standaloneName!
+  const asts = [ast, ...unreachableDefinitions]
+  const typesProcessed = new Set<AST>()
+  const interfacesProcessed = new Set<AST>()
+  const enumsProcessed = new Set<AST>()
   return (
     [
       options.bannerComment,
-      declareNamedTypes(ast, options, ast.standaloneName!),
-      declareNamedInterfaces(ast, options, ast.standaloneName!),
-      declareEnums(ast, options),
+      asts
+        .map(_ => declareNamedTypes(_, options, rootASTName, typesProcessed))
+        .filter(Boolean)
+        .join('\n'),
+      asts
+        .map(_ => declareNamedInterfaces(_, options, rootASTName, interfacesProcessed))
+        .filter(Boolean)
+        .join('\n'),
+      asts
+        .map(_ => declareEnums(_, options, enumsProcessed))
+        .filter(Boolean)
+        .join('\n'),
     ]
       .filter(Boolean)
       .join('\n\n') + '\n'
