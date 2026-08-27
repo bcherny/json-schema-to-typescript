@@ -412,9 +412,12 @@ function generateIndexSignatureType(
     addMember(sibling.ast)
   }
 
-  if (memberASTs.some(isUnknown)) {
-    // `unknown` absorbs every other member
-    return options.strictIndexSignatures ? 'unknown | undefined' : 'unknown'
+  // `unknown` absorbs every other member; so does an `any` among the index
+  // signature's own members that the optimizer did not already collapse (a
+  // `tsType: 'any'` patternProperty, say)
+  const top = memberASTs.some(isAny) ? 'any' : memberASTs.some(isUnknown) ? 'unknown' : undefined
+  if (top) {
+    return options.strictIndexSignatures ? `${top} | undefined` : top
   }
 
   // degenerate index signature type (e.g. an empty anyOf): render it as-is
