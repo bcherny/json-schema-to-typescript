@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'bun:test'
-import {execSync} from 'child_process'
+import {execSync, spawnSync} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
 import {resolve, posix} from 'path'
 import * as rimraf from 'rimraf'
@@ -9,12 +9,13 @@ const suite = hasOnly() ? describe.skip : describe
 
 suite('CLI', () => {
   test('pipe in, pipe out', () => {
-    expect(
-      execSync('node dist/src/cli.js', {
-        encoding: 'utf-8',
-        input: readFileSync('./test/resources/ReferencedType.json'),
-      }).toString(),
-    ).toMatchSnapshot()
+    // stderr must stay clean too: no warnings (e.g. Node deprecation notices) for a plain stdin run
+    const {stdout, stderr} = spawnSync('node', ['dist/src/cli.js'], {
+      encoding: 'utf-8',
+      input: readFileSync('./test/resources/ReferencedType.json'),
+    })
+    expect(stderr).toBe('')
+    expect(stdout).toMatchSnapshot()
   })
 
   test('pipe in (schema without ID), pipe out', () => {
