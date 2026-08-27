@@ -439990,7 +439990,9 @@ export type NumberChild = number;
  */
 export type StringChild = string;
 
-export interface Parent {}
+export interface Parent {
+  [k: string]: NumberChild | StringChild;
+}
 "
 `;
 
