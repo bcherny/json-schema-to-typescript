@@ -27,6 +27,11 @@ export const input = {
       type: 'array',
       items: {type: 'string', description: 'First line\nSecond line'},
     },
+    emails: {
+      type: 'array',
+      description: 'An @ inside a word is not a JSDoc tag, so this is still surfaced',
+      items: {type: 'string', description: 'Formatted as someone@example.com'},
+    },
     inlineObjects: {
       type: 'array',
       items: {

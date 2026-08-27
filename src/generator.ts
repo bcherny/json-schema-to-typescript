@@ -533,7 +533,13 @@ function getItemsComment(ast: AST): string | undefined {
   // that minItems/maxItems expanded). Distinct positional descriptions have no
   // agreed rendering and are left out, as before.
   const [comment] = comments
-  return comments.size === 1 && comment ? 'Items: ' + comment : undefined
+  // TypeScript reads a JSDoc block tag (`@word` at line start or after whitespace)
+  // anywhere in a comment as a tag of the declaration the comment sits on, so a
+  // tagged item description (e.g. `@deprecated`) is not hoisted onto the array.
+  if (comments.size !== 1 || !comment || /(^|\s)@\w/.test(comment)) {
+    return undefined
+  }
+  return 'Items: ' + comment
 }
 
 function generateComment(comment?: string, deprecated?: boolean): string {
