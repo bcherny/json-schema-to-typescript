@@ -1,0 +1,129 @@
+{
+  "name": "Transform `nullable` to anyOf with null",
+  "in": {
+    "$id": "Nullable",
+    "type": "object",
+    "properties": {
+      "typed": {
+        "type": "string",
+        "nullable": true,
+        "description": "stays outside",
+        "title": "Typed"
+      },
+      "untyped": {
+        "properties": {
+          "b": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "nullable": true
+      },
+      "enum": {
+        "type": "string",
+        "enum": [
+          "a",
+          "b"
+        ],
+        "nullable": true
+      },
+      "enumWithNull": {
+        "type": "string",
+        "enum": [
+          "a",
+          null
+        ],
+        "nullable": true
+      },
+      "constNull": {
+        "const": null,
+        "nullable": true
+      },
+      "typeWithNull": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "nullable": true
+      },
+      "notNullable": {
+        "type": "string",
+        "nullable": false
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  },
+  "out": {
+    "$id": "Nullable",
+    "type": "object",
+    "properties": {
+      "typed": {
+        "description": "stays outside",
+        "title": "Typed",
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "untyped": {
+        "anyOf": [
+          {
+            "properties": {
+              "b": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": []
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "enum": {
+        "anyOf": [
+          {
+            "type": "string",
+            "enum": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "enumWithNull": {
+        "type": "string",
+        "enum": [
+          "a",
+          null
+        ]
+      },
+      "constNull": {
+        "enum": [
+          null
+        ]
+      },
+      "typeWithNull": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "notNullable": {
+        "type": "string",
+        "nullable": false
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

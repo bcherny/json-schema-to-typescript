@@ -1,6 +1,7 @@
-import {JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {JSONSchema, JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
 import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
 import {Options} from './'
+import {link} from './linker'
 import {applySchemaTyping} from './applySchemaTyping'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
@@ -14,7 +15,7 @@ type Rule = (
 ) => void
 const rules = new Map<string, Rule>()
 
-function hasType(schema: LinkedJSONSchema, type: JSONSchemaTypeName) {
+function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
 function isObjectType(schema: LinkedJSONSchema) {
@@ -256,6 +257,61 @@ rules.set('Transform const to singleton enum', schema => {
     delete schema.const
   }
 })
+
+// Keywords that describe the property or definition rather than its values, so they
+// stay on the outer schema when `nullable` moves everything else into an `anyOf`
+const NULLABLE_OUTER_KEYS = new Set(['$id', 'title', 'description', 'deprecated'])
+
+/**
+ * OpenAPI 3.0 `nullable: true` becomes `anyOf: [<schema>, {type: 'null'}]`, which the
+ * parser already turns into `X | null` for every shape of schema (typed or untyped,
+ * enum, const, allOf, array...). Schemas whose `type` or `enum` already allow null are
+ * left as they are, so null is only ever added once. The schema is rewritten in place,
+ * so every reference to it sees the union. Returns whether it did rewrite.
+ */
+function normalizeNullable(schema: JSONSchema): boolean {
+  if (schema.nullable !== true) {
+    return false
+  }
+  delete schema.nullable
+  if (hasType(schema, 'null') || (Array.isArray(schema.enum) && schema.enum.includes(null))) {
+    return false
+  }
+  const inner: JSONSchema = {}
+  for (const key of Object.keys(schema)) {
+    if (!NULLABLE_OUTER_KEYS.has(key)) {
+      inner[key] = schema[key]
+      delete schema[key]
+    }
+  }
+  schema.anyOf = [inner, {type: 'null'}]
+  return true
+}
+
+// Runs this late so that the schema has already been named from its `$ref` path, had
+// its object defaults filled in and its `const` turned into an `enum` (all of which
+// look at keywords that move into the `anyOf`), and before types are pre-calculated.
+rules.set('Transform `nullable` to anyOf with null', schema => {
+  if (normalizeNullable(schema)) {
+    link(schema.anyOf!, schema)
+  }
+})
+
+/**
+ * `nullable` next to a `$ref` has to be rewritten before dereferencing, while it still
+ * visibly belongs to the referencing schema: the ref parser folds `$ref` siblings into a
+ * copy of the target, where it would read as if the target itself were nullable (and
+ * the copy would be emitted as a second, identical type). Everything else waits for the
+ * rule above, which also reaches schemas in other files, once dereferencing has pulled
+ * them in.
+ */
+export function normalizeNullableRefs(schema: JSONSchema): void {
+  traverse(schema as LinkedJSONSchema, node => {
+    if (node.$ref) {
+      normalizeNullable(node)
+    }
+  })
+}
 
 rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   if (
