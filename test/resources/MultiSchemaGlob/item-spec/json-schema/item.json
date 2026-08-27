@@ -1,0 +1,1 @@
+{"title":"Item","properties":{"loc":{"$ref":"../../common-spec/json-schema/common.json#/definitions/Point"}}}

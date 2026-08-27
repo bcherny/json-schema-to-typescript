@@ -145,6 +145,30 @@ suite('CLI', () => {
     rimraf.sync('./test/resources/MultiSchema/foo')
   })
 
+  // @see https://github.com/bcherny/json-schema-to-typescript/issues/505
+  // Relative $refs must resolve against each glob-matched file's own directory,
+  // not against the directory json2ts was launched from. On master item.json's
+  // `../../common-spec/json-schema/common.json` is resolved against the repo root, the
+  // CLI exits 1 with `ResolverError: Error opening file "<parent of repo>/common-spec/json-schema/common.json"`,
+  // so execSync throws and this test fails. Same fixture and test as PR #713 (whose
+  // src change is the same as #742's).
+  test('files in (-i), files out (-o), glob matches across sibling directories with relative $refs', () => {
+    execSync(
+      `node dist/src/cli.js -i "./test/resources/MultiSchemaGlob/*-spec/json-schema/*.json" -o ./test/resources/MultiSchemaGlob/out`,
+    )
+
+    // sort to ensure a stable order across environments
+    readdirSync('./test/resources/MultiSchemaGlob/out')
+      .sort()
+      .forEach(f => {
+        const path = `./test/resources/MultiSchemaGlob/out/${f}`
+        expect(path).toMatchSnapshot()
+        expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
+        unlinkSync(path)
+      })
+    rimraf.sync('./test/resources/MultiSchemaGlob/out')
+  })
+
   test('files in (-i), files out (-o) matching nested dir', () => {
     execSync(
       `node dist/src/cli.js -i "./test/resources/../../test/resources/MultiSchema2/" -o ./test/resources/MultiSchema2/out`,
