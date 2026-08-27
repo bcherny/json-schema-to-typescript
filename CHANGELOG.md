@@ -2,6 +2,39 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## 16.0.0
+
+This release collects the bug fixes merged since 15.0.4. Several of them correct types that were previously emitted wrong, so existing schemas may generate different output; hence the major version.
+
+May change emitted types for existing schemas:
+
+- d8618e5 Bugfix: `properties`/`patternProperties` on a nested schema were dropped when combined with `oneOf`/`anyOf`/`allOf`; they are now intersected with the compound type (#708, fixes #630)
+- 4eee0f1 Bugfix: `$ref`s to definitions with dotted names (eg. `#/definitions/v1.ManagedFieldsEntry`) were truncated at the first dot (`V1`); the full name is now used (`V1ManagedFieldsEntry`) (#705, fixes #645)
+- 7a3dd8e Bugfix: Nested arrays with `minItems`/`maxItems` are capped by the cumulative product of their bounds against `maxItems`, falling back to an unbounded array instead of hanging or emitting enormous tuple unions (#703, fixes #690)
+- 34a692c Bugfix: `type: null` (the JSON null value) is treated as `type: "null"` instead of as an untyped object (#702, fixes #667)
+- 0f9d309 Bugfix: `unreachableDefinitions` now declares definitions even when `declareExternallyReferenced` is off (#706, fixes #652)
+- 1900e1f Bugfix: With `inferStringEnumKeysFromValues`, a `const` is emitted as a literal type again rather than a single-member enum (#701, fixes #666)
+
+Fixes for output that did not compile:
+
+- 107dd42 Bugfix: Index signatures from `patternProperties`/`additionalProperties` are widened to cover sibling named properties, so the interface typechecks (TS2411) (#704, fixes #671)
+- a2234d3 Bugfix: `inferStringEnumKeysFromValues` no longer produces invalid enum members for non-string, empty or digit-leading values (#694, fixes #657)
+- 377c6a1 Bugfix: A named enum (`tsEnumNames`) in a position with no name no longer emits a nameless `enum` declaration (#693)
+- c44faed Bugfix: Generated type names can no longer start with a digit or collapse to an empty name (#698)
+
+Other:
+
+- 9219636 Updated runtime dependencies: js-yaml 4 -> 5 (YAML files parse as before, #689), prettier ^3.9, @apidevtools/json-schema-ref-parser ^11.9 (#686)
+- a5834aa Removed the `is-glob` dependency (#643)
+
+## 15.0.4
+
+- 18831cb Bugfix: Quote enum keys that contain special characters (#648)
+
+## 15.0.1 - 15.0.3
+
+- Dependency housekeeping, no change to generated output: removed mkdirp and an unused dependency, moved cli-color to devDependencies, switched CLI globbing to tinyglobby (#617, #618, #625, #639)
+
 ## 15.0.0
 
 - 62cc052 Fixed bug where intersection schemas didn't generate complete types. Improved output readability for intersection types (#603)
