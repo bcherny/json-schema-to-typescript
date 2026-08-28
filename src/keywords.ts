@@ -209,12 +209,15 @@ export const TYPE_SHAPING_KEYWORDS = keywordsWhere(({typed}) => typed === true)
 
 /**
  * Keywords that give a schema a shape of its own: the ones that decide its type (`Keyword.typed`)
- * and the ones that hold subschemas, implemented (`properties`) or not (`not`, `if`) -- a schema
- * made up of only the latter is one this tool has no notion of. A schema with none of either --
- * only bounds on values (`pattern`, `maximum`), annotations, `format`, `nullable`, or keys this
- * tool has never heard of -- says nothing about which type a value is: it is the empty schema.
+ * and the ones that apply subschemas to the instance, implemented (`properties`) or not (`not`,
+ * `if`) -- a schema made up of only the latter is one this tool has no notion of. A schema with
+ * none of either -- only bounds on values (`pattern`, `maximum`), annotations, `format`,
+ * `nullable`, definitions for other schemas to use (`$defs`), or keys this tool has never heard
+ * of -- says nothing about which type a value is: it is the empty schema.
  */
-export const STRUCTURAL_KEYWORDS = keywordsWhere(({holds, typed}) => typed === true || holdsSchemas(holds))
+export const STRUCTURAL_KEYWORDS = keywordsWhere(
+  ({holds, meta, typed}) => typed === true || (holdsSchemas(holds) && meta !== true),
+)
 
 /** @see Keyword.annotation */
 export const ANNOTATION_KEYWORDS = keywordsWhere(({annotation}) => annotation === true)

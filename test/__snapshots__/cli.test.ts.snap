@@ -123,9 +123,8 @@ exports[`CLI file in (-i), unreachable definitions flag, pipe out 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface DefinitionsOnly {
-  [k: string]: unknown;
-}
+export type DefinitionsOnly = unknown;
+
 /**
  * This interface was referenced by \`DefinitionsOnly\`'s JSON-Schema
  * via the \`definition\` "DummyPerson".
