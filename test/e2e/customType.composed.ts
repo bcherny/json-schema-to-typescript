@@ -20,6 +20,10 @@ export const input = {
     constructors: {type: 'array', items: {tsType: 'new () => Date'}},
     readonlyFunctions: {type: 'array', items: {tsType: '() => void'}, readOnly: true},
     formatted: {type: 'array', items: {type: 'string', format: 'date-time'}},
+    // a one-member anyOf/oneOf is transparent: its member is still the array element
+    unionInOneMemberAnyOf: {type: 'array', items: {anyOf: [{tsType: 'Date | RegExp'}]}},
+    // a trailing line comment must not swallow the closing parenthesis
+    commented: {type: 'array', items: {tsType: 'Date // as returned by the API'}},
     // array elements that are one operand already: a name, a qualified name or a one-level generic is
     // printed as written; anything else gets a pair of parentheses the formatter drops again
     names: {type: 'array', items: {tsType: 'Date'}},
@@ -39,6 +43,8 @@ export const input = {
     functionOrNull: {anyOf: [{tsType: '(x: number) => string'}, {type: 'null'}]},
     unionOfNamesOrNull: {anyOf: [{tsType: 'Date | RegExp'}, {type: 'null'}]},
     unionAndEnum: {allOf: [{tsType: 'string | number'}, {enum: ['a', 1]}]},
+    unionInOneMemberAnyOfAndEnum: {allOf: [{anyOf: [{tsType: 'string | number'}]}, {enum: ['a', 1]}]},
+    commentedFunctionOrNull: {anyOf: [{tsType: '(x: number) => string // sync'}, {type: 'null'}]},
     formattedOrNull: {anyOf: [{type: 'string', format: 'date-time'}, {type: 'null'}]},
   },
 }

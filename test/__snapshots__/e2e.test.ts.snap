@@ -368623,6 +368623,8 @@ export interface Composed {
   constructors?: (new () => Date)[];
   readonly readonlyFunctions?: readonly (() => void)[];
   formatted?: (Date | string)[];
+  unionInOneMemberAnyOf?: (Date | RegExp)[];
+  commented?: Date[]; // as returned by the API
   names?: Date[];
   qualified?: Intl.NumberFormat[];
   generics?: Map<string, Array<number>>[];
@@ -368636,6 +368638,10 @@ export interface Composed {
   functionOrNull?: ((x: number) => string) | null;
   unionOfNamesOrNull?: Date | RegExp | null;
   unionAndEnum?: (string | number) & ("a" | 1);
+  unionInOneMemberAnyOfAndEnum?: (string | number) & ("a" | 1);
+  commentedFunctionOrNull?:
+    | ((x: number) => string) // sync
+    | null;
   formattedOrNull?: Date | string | null;
 }
 "

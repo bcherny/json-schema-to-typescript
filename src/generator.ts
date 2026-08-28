@@ -301,7 +301,7 @@ function readonlyModifier(isReadOnly: boolean | undefined, options: Options): st
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
   const members = (ast as TUnion).params.map(_ => {
-    const type = operand(_, generateType(_, options), ast.type === 'UNION')
+    const type = operand(_, generateType(_, options), ast.type === 'UNION' && ast.params.length > 1)
     // An anonymous object-literal member (eg. an `oneOf`/`anyOf` branch with its
     // own `description` but no name of its own) would otherwise have its comment
     // silently dropped: a named member's comment is printed on its own
@@ -365,7 +365,11 @@ function operand(ast: AST, type: string, inUnion = false): string {
   if (ast.type !== 'CUSTOM_TYPE' || TYPE_REFERENCE.test(type)) {
     return type
   }
-  return inUnion && customUnionMembers(type) ? type : `(${type})`
+  if (inUnion && customUnionMembers(type)) {
+    return type
+  }
+  // a `//` comment on its last line would swallow the closing parenthesis
+  return /\/\/[^\n]*$/.test(type) ? `(${type}\n)` : `(${type})`
 }
 const TYPE_REFERENCE = /^[\w$.]+(<[^<>]*>)?(\[\])*$/
 
