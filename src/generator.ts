@@ -1,4 +1,3 @@
-import {omit} from 'lodash'
 import {memoize} from './memoize'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -205,8 +204,6 @@ function generateRawType(ast: AST, options: Options): string {
       return 'null'
     case 'OBJECT':
       return 'object'
-    case 'REFERENCE':
-      return ast.params
     case 'STRING':
       return 'string'
     case 'TUPLE':
@@ -395,7 +392,6 @@ const LEAF_TYPES = new Set<AST['type']>([
   'NULL',
   'NUMBER',
   'OBJECT',
-  'REFERENCE',
   'STRING',
 ])
 
@@ -654,10 +650,7 @@ function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): s
   const commented = withItemsComment(ast)
   return (
     (hasComment(commented) ? generateComment(commented.comment) + '\n' : '') +
-    `export type ${toSafeString(ast.standaloneName)} = ${generateType(
-      omit<AST>(ast, 'standaloneName') as AST /* TODO */,
-      options,
-    )}`
+    `export type ${toSafeString(ast.standaloneName)} = ${generateType(omitStandaloneName(ast), options)}`
   )
 }
 
