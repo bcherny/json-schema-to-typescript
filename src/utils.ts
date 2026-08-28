@@ -12,7 +12,15 @@ import {memoize} from './memoize'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
 import type {Format} from 'cli-color'
-import {CONTAINER_KEYWORDS, JSON_DATA_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
+import {
+  ANNOTATION_KEYWORDS,
+  CONTAINER_KEYWORDS,
+  HASHED_SUBSCHEMA_KEYWORDS,
+  JSON_DATA_KEYWORDS,
+  NOT_SCANNED_FOR_DEFINITIONS,
+  SUBSCHEMA_KEYWORDS,
+} from './keywords'
+import {createHash} from 'crypto'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -247,6 +255,173 @@ export function generateName(from: string, usedNames: Set<string>) {
 
   usedNames.add(name)
   return name
+}
+
+/**
+ * Annotation-only keywords that never affect the emitted type structure, excluded from the
+ * structural hash (`ANNOTATION_KEYWORDS` from the keyword table, plus OpenAPI's singular
+ * `example`). Every other key (including unknown ones) contributes to the hash, so the worst
+ * case is a missed dedupe, never an incorrect one.
+ */
+export const DEFAULT_SCHEMA_HASH_IGNORE_KEYS: ReadonlySet<string> = new Set([...ANNOTATION_KEYWORDS, 'example'])
+
+/**
+ * Dereferenced schemas are DAGs with heavy sharing and true cycles (eg. fhir), so each
+ * object is reduced bottom-up to a fixed-size SHA-1 digest, memoized per object -- O(nodes)
+ * work and memory. `seen` tracks the active ancestor path; back-edges digest as a stable
+ * identity marker so results are entry-point independent and safe to cache.
+ */
+interface HashContext {
+  ignore: ReadonlySet<string>
+  seen: WeakSet<object>
+  depth: number
+  schemaCache: WeakMap<object, string>
+  plainCache: WeakMap<object, string>
+}
+
+// Past this depth sub-objects digest as their identity marker, bounding stack usage.
+const MAX_HASH_DEPTH = 512
+
+// Stable per-object markers for cycle back-references: same object -> same marker, so
+// distinct-but-equal cyclic objects can at worst miss a dedupe, never collide.
+const cyclicIds = new WeakMap<object, number>()
+let nextCyclicId = 1
+function cyclicMarker(obj: object): string {
+  let cyclicId = cyclicIds.get(obj)
+  if (cyclicId === undefined) {
+    cyclicId = nextCyclicId++
+    cyclicIds.set(obj, cyclicId)
+  }
+  return `[Cyclic#${cyclicId}]`
+}
+
+/** Digest a canonical description down to a fixed-size token. */
+function digest(kind: string, payload: string): string {
+  return createHash('sha1').update(kind).update(payload).digest('hex')
+}
+
+function isSchemaObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/**
+ * Digest a non-schema value (eg. `enum`, `const`, `default`). Keys are sorted but nothing
+ * is stripped: a `default` object may contain a key literally named "description".
+ */
+function serializePlainForHash(value: unknown, ctx: HashContext): string {
+  if (value === null || typeof value !== 'object') {
+    return value === undefined ? 'null' : JSON.stringify(value)
+  }
+  const cached = ctx.plainCache.get(value)
+  if (cached !== undefined) {
+    return cached
+  }
+  if (ctx.seen.has(value) || ctx.depth >= MAX_HASH_DEPTH) {
+    return cyclicMarker(value)
+  }
+  ctx.seen.add(value)
+  ctx.depth++
+  let serialized: string
+  if (Array.isArray(value)) {
+    serialized = digest('PA', value.map(item => serializePlainForHash(item, ctx)).join(','))
+  } else {
+    const parts: string[] = []
+    for (const key of Object.keys(value as Record<string, unknown>).sort()) {
+      parts.push(`${JSON.stringify(key)}:${serializePlainForHash((value as Record<string, unknown>)[key], ctx)}`)
+    }
+    serialized = digest('PO', parts.join(','))
+  }
+  ctx.seen.delete(value)
+  ctx.depth--
+  ctx.plainCache.set(value, serialized)
+  return serialized
+}
+
+// Schemas recurse with deny-list stripping; booleans (eg. `additionalProperties: false`),
+// `dependencies`' string arrays and other non-schema values pass through unchanged.
+function serializeSubschemaForHash(value: unknown, ctx: HashContext): string {
+  if (isSchemaObject(value)) {
+    return serializeSchemaForHash(value, ctx)
+  }
+  return serializePlainForHash(value, ctx)
+}
+
+/**
+ * Recursively digest a schema into a fixed-size token. Deny-listed annotation keys are
+ * stripped at every schema level; non-schema values are digested verbatim.
+ */
+function serializeSchemaForHash(schema: Record<string, unknown>, ctx: HashContext): string {
+  const cached = ctx.schemaCache.get(schema)
+  if (cached !== undefined) {
+    return cached
+  }
+  if (ctx.seen.has(schema) || ctx.depth >= MAX_HASH_DEPTH) {
+    return cyclicMarker(schema)
+  }
+  ctx.seen.add(schema)
+  ctx.depth++
+
+  const parts: string[] = []
+  for (const key of Object.keys(schema).sort()) {
+    if (ctx.ignore.has(key)) {
+      continue
+    }
+    const value = schema[key]
+    const holds = HASHED_SUBSCHEMA_KEYWORDS.get(key)
+
+    if (holds === undefined) {
+      parts.push(`${JSON.stringify(key)}:${serializePlainForHash(value, ctx)}`)
+    } else if (holds === 'schemaMap') {
+      if (isSchemaObject(value)) {
+        const mapped: string[] = []
+        for (const name of Object.keys(value).sort()) {
+          mapped.push(`${JSON.stringify(name)}:${serializeSubschemaForHash(value[name], ctx)}`)
+        }
+        parts.push(`${JSON.stringify(key)}:{${mapped.join(',')}}`)
+      } else {
+        parts.push(`${JSON.stringify(key)}:${serializePlainForHash(value, ctx)}`)
+      }
+    } else if (Array.isArray(value)) {
+      parts.push(`${JSON.stringify(key)}:[${value.map(item => serializeSubschemaForHash(item, ctx)).join(',')}]`)
+    } else {
+      parts.push(`${JSON.stringify(key)}:${serializeSubschemaForHash(value, ctx)}`)
+    }
+  }
+
+  ctx.seen.delete(schema)
+  ctx.depth--
+  const serialized = digest('S', parts.join(','))
+  ctx.schemaCache.set(schema, serialized)
+  return serialized
+}
+
+// Digest caches for the default-ignoreKeys case, safe to share across compiles.
+const defaultSchemaCache = new WeakMap<object, string>()
+const defaultPlainCache = new WeakMap<object, string>()
+
+/**
+ * Generate a stable hash of a schema's structure, used to deduplicate generated types.
+ * `ignoreKeys` adds annotation keys to exclude, on top of DEFAULT_SCHEMA_HASH_IGNORE_KEYS.
+ */
+export function getSchemaStructuralHash(schema: Record<string, unknown>, ignoreKeys?: Set<string> | string[]): string {
+  if (!schema || typeof schema !== 'object') {
+    return JSON.stringify(schema)
+  }
+
+  let ignore = DEFAULT_SCHEMA_HASH_IGNORE_KEYS
+  if (ignoreKeys) {
+    ignore = new Set([...DEFAULT_SCHEMA_HASH_IGNORE_KEYS, ...ignoreKeys])
+  }
+
+  const ctx: HashContext = {
+    ignore,
+    seen: new WeakSet<object>(),
+    depth: 0,
+    schemaCache: ignoreKeys ? new WeakMap() : defaultSchemaCache,
+    plainCache: ignoreKeys ? new WeakMap() : defaultPlainCache,
+  }
+
+  return serializeSchemaForHash(schema, ctx)
 }
 
 export function error(...messages: any[]): void {

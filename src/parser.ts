@@ -24,7 +24,7 @@ import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimiti
 import {memoize} from './memoize'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
-import {generateName, justName, log, maybeStripDefault} from './utils'
+import {generateName, getSchemaStructuralHash, justName, log, maybeStripDefault} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -815,8 +815,14 @@ function nameOf(
   return options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
 }
 
+// The name generated for each (requested name, structural hash) pair, per `usedNames` set,
+// so structurally identical schemas asking for the same name share one declaration.
+const dedupedNames = memoize<UsedNames, [], Map<string, string>>(() => new Map())
+
 /**
- * Compute a schema name using a series of fallbacks
+ * Compute a schema name using a series of fallbacks. Structurally identical schemas that
+ * resolve to the same name reuse the previously generated name instead of getting a
+ * numbered suffix.
  */
 function standaloneName(
   schema: NormalizedJSONSchema,
@@ -825,9 +831,18 @@ function standaloneName(
   options: Options,
 ): string | undefined {
   const name = nameOf(schema, keyNameFromDefinition, options)
-  if (name) {
-    return generateName(name, usedNames)
+  if (!name) {
+    return undefined
   }
+  const names = dedupedNames(usedNames)
+  const cacheKey = `${name}::${getSchemaStructuralHash(schema as unknown as Record<string, unknown>)}`
+  const existingName = names.get(cacheKey)
+  if (existingName) {
+    return existingName
+  }
+  const generatedName = generateName(name, usedNames)
+  names.set(cacheKey, generatedName)
+  return generatedName
 }
 
 const CLOSED_EMPTY_OBJECT_PARAM: TInterfaceParam = {
