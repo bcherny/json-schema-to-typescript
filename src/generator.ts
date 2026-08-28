@@ -1,4 +1,3 @@
-import {omit} from 'lodash'
 import {memoize} from './memoize'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -651,10 +650,7 @@ function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): s
   const commented = withItemsComment(ast)
   return (
     (hasComment(commented) ? generateComment(commented.comment) + '\n' : '') +
-    `export type ${toSafeString(ast.standaloneName)} = ${generateType(
-      omit<AST>(ast, 'standaloneName') as AST /* TODO */,
-      options,
-    )}`
+    `export type ${toSafeString(ast.standaloneName)} = ${generateType(omitStandaloneName(ast), options)}`
   )
 }
 
