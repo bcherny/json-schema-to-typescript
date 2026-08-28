@@ -58,6 +58,10 @@ export interface LinkedJSONSchema extends JSONSchema {
 
   additionalItems?: boolean | LinkedJSONSchema
   additionalProperties?: boolean | LinkedJSONSchema
+  /**
+   * @see https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.2.4
+   */
+  unevaluatedProperties?: boolean | LinkedJSONSchema
   items?: LinkedJSONSchema | LinkedJSONSchema[]
   definitions?: {
     [k: string]: LinkedJSONSchema
