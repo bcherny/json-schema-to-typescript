@@ -24,56 +24,65 @@ import {log, toSafeString} from './utils'
 export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string {
   const rootASTName = ast.standaloneName!
   const asts = [ast, ...unreachableDefinitions]
+
+  // Each walk appends the declarations it finds to one list, which is joined once at the end
+  // (joining at every level of the walk would copy a large output many times over)
+  const types: string[] = []
+  const interfaces: string[] = []
+  const enums: string[][] = []
   const typesProcessed = new Set<AST>()
   const interfacesProcessed = new Set<AST>()
   const enumsProcessed = new Set<AST>()
+  asts.forEach(_ => {
+    declareNamedTypes(_, options, rootASTName, typesProcessed, types)
+    declareNamedInterfaces(_, options, rootASTName, interfacesProcessed, interfaces)
+    const enumsInAST: string[] = []
+    declareEnums(_, options, enumsProcessed, enumsInAST)
+    if (enumsInAST.length) {
+      enums.push(enumsInAST)
+    }
+  })
+
   return (
     [
       options.bannerComment,
-      asts
-        .map(_ => declareNamedTypes(_, options, rootASTName, typesProcessed))
-        .filter(Boolean)
-        .join('\n'),
-      asts
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, interfacesProcessed))
-        .filter(Boolean)
-        .join('\n'),
-      asts
-        .map(_ => declareEnums(_, options, enumsProcessed))
-        .filter(Boolean)
-        .join('\n'),
+      types.join('\n'),
+      interfaces.join('\n'),
+      // every enum declaration ends with a newline of its own, so consecutive ASTs' enums are a blank line apart
+      enums.length ? enums.map(_ => _.join('\n')).join('\n\n') + '\n' : '',
     ]
       .filter(Boolean)
       .join('\n\n') + '\n'
   ) // trailing newline
 }
 
-function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
+function declareEnums(ast: AST, options: Options, processed: Set<AST>, declarations: string[]): void {
   if (processed.has(ast)) {
-    return ''
+    return
   }
 
   processed.add(ast)
-  let type = ''
 
   switch (ast.type) {
     case 'ENUM':
-      return generateStandaloneEnum(ast, options) + '\n'
+      declarations.push(generateStandaloneEnum(ast, options))
+      break
     case 'ARRAY':
-      return declareEnums(ast.params, options, processed)
+      declareEnums(ast.params, options, processed, declarations)
+      break
     case 'UNION':
     case 'INTERSECTION':
-      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      ast.params.forEach(ast => declareEnums(ast, options, processed, declarations))
+      break
     case 'TUPLE':
-      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      ast.params.forEach(ast => declareEnums(ast, options, processed, declarations))
       if (ast.spreadParam) {
-        type += declareEnums(ast.spreadParam, options, processed)
+        declareEnums(ast.spreadParam, options, processed, declarations)
       }
-      return type
+      break
     case 'INTERFACE':
-      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-    default:
-      return ''
+      getSuperTypesAndParams(ast).forEach(ast => declareEnums(ast, options, processed, declarations))
+      break
   }
 }
 
@@ -89,86 +98,82 @@ function shouldDeclare(ast: AST, options: Options, rootASTName: string): ast is 
   )
 }
 
-function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+function declareNamedInterfaces(
+  ast: AST,
+  options: Options,
+  rootASTName: string,
+  processed: Set<AST>,
+  declarations: string[],
+): void {
   if (processed.has(ast)) {
-    return ''
+    return
   }
 
   processed.add(ast)
-  let type = ''
 
   switch (ast.type) {
     case 'ARRAY':
-      type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
+      declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed, declarations)
       break
     case 'INTERFACE':
-      type = [
-        shouldDeclare(ast, options, rootASTName) && generateStandaloneInterface(ast, options),
-        getSuperTypesAndParams(ast)
-          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n'),
-      ]
-        .filter(Boolean)
-        .join('\n')
+      if (shouldDeclare(ast, options, rootASTName)) {
+        declarations.push(generateStandaloneInterface(ast, options))
+      }
+      getSuperTypesAndParams(ast).forEach(ast =>
+        declareNamedInterfaces(ast, options, rootASTName, processed, declarations),
+      )
       break
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
-      type = [...ast.params, ...(ast.type === 'TUPLE' && ast.spreadParam ? [ast.spreadParam] : [])]
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, processed))
-        .filter(Boolean)
-        .join('\n')
+      ast.params.forEach(_ => declareNamedInterfaces(_, options, rootASTName, processed, declarations))
+      if (ast.type === 'TUPLE' && ast.spreadParam) {
+        declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed, declarations)
+      }
       break
-    default:
-      type = ''
   }
-
-  return type
 }
 
-function declareNamedTypes(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+function declareNamedTypes(
+  ast: AST,
+  options: Options,
+  rootASTName: string,
+  processed: Set<AST>,
+  declarations: string[],
+): void {
   if (processed.has(ast)) {
-    return ''
+    return
   }
 
   processed.add(ast)
 
   switch (ast.type) {
     case 'ARRAY':
-      return [
-        declareNamedTypes(ast.params, options, rootASTName, processed),
-        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
-      ]
-        .filter(Boolean)
-        .join('\n')
+      declareNamedTypes(ast.params, options, rootASTName, processed, declarations)
+      if (shouldDeclare(ast, options, rootASTName)) {
+        declarations.push(generateStandaloneType(ast, options))
+      }
+      break
     case 'ENUM':
-      return ''
+      break
     case 'INTERFACE':
-      return getSuperTypesAndParams(ast)
-        .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
-        .filter(Boolean)
-        .join('\n')
+      getSuperTypesAndParams(ast).forEach(ast => declareNamedTypes(ast, options, rootASTName, processed, declarations))
+      break
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
-      return [
-        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
-        ast.params
-          .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n'),
-        'spreadParam' in ast && ast.spreadParam
-          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
-          : undefined,
-      ]
-        .filter(Boolean)
-        .join('\n')
+      if (shouldDeclare(ast, options, rootASTName)) {
+        declarations.push(generateStandaloneType(ast, options))
+      }
+      ast.params.forEach(ast => declareNamedTypes(ast, options, rootASTName, processed, declarations))
+      if ('spreadParam' in ast && ast.spreadParam) {
+        declareNamedTypes(ast.spreadParam, options, rootASTName, processed, declarations)
+      }
+      break
     default:
       if (shouldDeclare(ast, options, rootASTName)) {
-        return generateStandaloneType(ast, options)
+        declarations.push(generateStandaloneType(ast, options))
       }
-      return ''
   }
 }
 
