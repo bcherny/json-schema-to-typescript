@@ -19,7 +19,7 @@ Every schema × `format` setting runs in a fresh child process (`node --expose-g
 | column | meaning |
 |---|---|
 | median ms / min ms | wall-clock of one `compile()` call (`performance.now()`), median and minimum of the timed runs |
-| peak heap MB | the largest V8 heap seen right after a run (`v8.getHeapStatistics().total_heap_size`: what the engine had to commit for that compile; it shrinks lazily, so this tracks the high-water mark) |
+| peak heap MB | the largest V8 heap seen right after a run (`v8.getHeapStatistics().total_heap_size`: what the engine had to commit for that compile; it shrinks lazily, so this tracks the high-water mark). Under bun this is JavaScriptCore's figure from its `node:v8` shim: comparable bun-to-bun, not with node's |
 | max RSS MB | the kernel's peak resident set size for the whole child process (`process.resourceUsage().maxRSS`), runtime and loaded modules included |
 | output md5 | first 8 hex digits of the generated TypeScript's md5: must not change across a performance-only change |
 

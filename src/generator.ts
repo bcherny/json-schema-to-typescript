@@ -29,7 +29,7 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinit
   const processed = new Set<AST>()
   for (const root of [ast, ...unreachableDefinitions]) {
     const enumsBefore = enums.length
-    declare(root, options, rootASTName, processed, declarations)
+    collectDeclarations(root, options, rootASTName, processed, declarations)
     // the enums found under each root AST have always been followed by a newline of their own
     if (enums.length > enumsBefore) {
       enums[enums.length - 1] += '\n'
@@ -50,7 +50,7 @@ type Declarations = {enums: string[]; interfaces: string[]; types: string[]}
  * alias follows the declarations found in its items; any other declaration precedes the ones
  * found beneath it.
  */
-function declare(
+function collectDeclarations(
   ast: AST,
   options: Options,
   rootASTName: string,
@@ -64,7 +64,7 @@ function declare(
 
   switch (ast.type) {
     case 'ARRAY':
-      declare(ast.params, options, rootASTName, processed, declarations)
+      collectDeclarations(ast.params, options, rootASTName, processed, declarations)
       if (shouldDeclare(ast, options, rootASTName)) {
         declarations.types.push(generateStandaloneType(ast, options))
       }
@@ -82,7 +82,7 @@ function declare(
         declarations.types.push(generateStandaloneType(ast, options))
       }
   }
-  childASTs(ast).forEach(child => declare(child, options, rootASTName, processed, declarations))
+  childASTs(ast).forEach(child => collectDeclarations(child, options, rootASTName, processed, declarations))
 }
 
 function childASTs(ast: AST): AST[] {

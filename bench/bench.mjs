@@ -11,7 +11,7 @@
 
 import {spawnSync} from 'node:child_process'
 import {createHash} from 'node:crypto'
-import {existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync} from 'node:fs'
+import {existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
 import {createRequire} from 'node:module'
 import {cpus, tmpdir, totalmem} from 'node:os'
 import {dirname, join, resolve} from 'node:path'
@@ -57,6 +57,9 @@ async function main(opts) {
   const only = opts.only ? String(opts.only).split(',') : null
   const cases = CASES.filter(c => !only || only.includes(c.name))
   const profileDir = opts.profile ? join(HERE, 'profiles') : null
+  if (profileDir && isBun) {
+    throw new Error('--profile needs node (it relies on V8 flags: --cpu-prof, --heap-prof)')
+  }
   if (profileDir) {
     mkdirSync(profileDir, {recursive: true})
   }
@@ -68,62 +71,23 @@ async function main(opts) {
   // The child gets each case as a plain JSON file, so that loading it (transpiling a test/e2e
   // module takes longer than some compiles) stays out of the process being measured
   const caseDir = mkdtempSync(join(tmpdir(), 'jstt-bench-'))
-  for (const c of cases) {
-    writeFileSync(join(caseDir, `${c.name}.json`), JSON.stringify(loadCase(c)))
-  }
-
   const results = []
-  for (const format of formats) {
+  try {
     for (const c of cases) {
-      const execArgs = []
-      if (!isBun) {
-        execArgs.push('--expose-gc', '--max-old-space-size=4096')
-        if (opts.profile === 'cpu') {
-          execArgs.push(
-            '--cpu-prof',
-            '--cpu-prof-dir',
-            profileDir,
-            '--cpu-prof-name',
-            `${c.name}.format-${format}.cpuprofile`,
-          )
-        }
-        if (opts.profile === 'heap') {
-          execArgs.push(
-            '--heap-prof',
-            '--heap-prof-dir',
-            profileDir,
-            '--heap-prof-name',
-            `${c.name}.format-${format}.heapprofile`,
-          )
-        }
-      }
-      const childArgs = [
-        '--child',
-        join(caseDir, `${c.name}.json`),
-        '--format',
-        String(format),
-        '--runs',
-        String(opts.runs),
-      ]
-      const r = spawnSync(process.execPath, [...execArgs, SELF, ...(opts.src ? ['--src'] : []), ...childArgs], {
-        cwd: ROOT,
-        encoding: 'utf8',
-        maxBuffer: 1 << 26,
-        env: childEnv(),
-      })
-      const line = r.stdout.split('\n').find(_ => _.startsWith('{"name"'))
-      if (r.status !== 0 || !line) {
-        console.error(r.stdout, r.stderr)
-        throw new Error(`case ${c.name} (format: ${format}) failed`)
-      }
-      results.push(JSON.parse(line))
+      writeFileSync(join(caseDir, `${c.name}.json`), JSON.stringify(loadCase(c)))
     }
-    printTable(
-      format,
-      results.filter(_ => _.format === format),
-    )
+    for (const format of formats) {
+      for (const c of cases) {
+        results.push(runCase(c, format, opts, caseDir, profileDir))
+      }
+      printTable(
+        format,
+        results.filter(_ => _.format === format),
+      )
+    }
+  } finally {
+    rmSync(caseDir, {recursive: true, force: true})
   }
-
   if (opts.json) {
     writeFileSync(
       opts.json,
@@ -134,6 +98,52 @@ async function main(opts) {
   if (profileDir) {
     console.log(`profiles in ${profileDir}`)
   }
+}
+
+/** One case × format setting in a fresh child process; returns the child's result line, parsed */
+function runCase(c, format, opts, caseDir, profileDir) {
+  const execArgs = []
+  if (!isBun) {
+    execArgs.push('--expose-gc', '--max-old-space-size=4096')
+    if (opts.profile === 'cpu') {
+      execArgs.push(
+        '--cpu-prof',
+        '--cpu-prof-dir',
+        profileDir,
+        '--cpu-prof-name',
+        `${c.name}.format-${format}.cpuprofile`,
+      )
+    }
+    if (opts.profile === 'heap') {
+      execArgs.push(
+        '--heap-prof',
+        '--heap-prof-dir',
+        profileDir,
+        '--heap-prof-name',
+        `${c.name}.format-${format}.heapprofile`,
+      )
+    }
+  }
+  const childArgs = [
+    '--child',
+    join(caseDir, `${c.name}.json`),
+    '--format',
+    String(format),
+    '--runs',
+    String(opts.runs),
+  ]
+  const r = spawnSync(process.execPath, [...execArgs, SELF, ...(opts.src ? ['--src'] : []), ...childArgs], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    maxBuffer: 1 << 26,
+    env: childEnv(),
+  })
+  const line = r.stdout.split('\n').find(_ => _.startsWith('{"name"'))
+  if (r.status !== 0 || !line) {
+    console.error(r.stdout, r.stderr)
+    throw new Error(`case ${c.name} (format: ${format}) failed`)
+  }
+  return JSON.parse(line)
 }
 
 async function child(opts) {
