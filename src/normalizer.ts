@@ -3,8 +3,7 @@ import {appendToDescription, escapeBlockComment, hasType, isSchemaLike, justName
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
-import {applySchemaTyping} from './applySchemaTyping'
-import {hasOwnType} from './typesOfSchema'
+import {applySchemaTyping, hasOwnType} from './typesOfSchema'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
 
