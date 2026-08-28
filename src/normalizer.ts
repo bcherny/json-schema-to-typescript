@@ -1,4 +1,12 @@
-import {DefinitionKey, isBoolean, isPrimitive, LinkedJSONSchema, NormalizedJSONSchema, Shared} from './types/JSONSchema'
+import {
+  DefinitionKey,
+  isBoolean,
+  isPrimitive,
+  LinkedJSONSchema,
+  markShared,
+  NormalizedJSONSchema,
+  Shared,
+} from './types/JSONSchema'
 import {formatTypeOf, hasType, isSchemaLike, justName, log, narrowType, toSafeString, traverse} from './utils'
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
@@ -74,20 +82,25 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
     return
   }
   // The copies and lists this rule makes. Whatever one of them holds that was not made here, the
-  // original holds too: `settle` marks that `[Shared]`, for later visits of this rule and the parser.
+  // original holds too; `settle` marks that `[Shared]` where anyone looks -- on members (the parser)
+  // and on their `anyOf`/`oneOf` lists (this rule, when it gets to the copy).
   const made = new Set<object>()
   const copyOf = (member: LinkedJSONSchema, change?: Partial<LinkedJSONSchema>): LinkedJSONSchema => {
     const copy = {...member, ...change}
     made.add(copy)
     return copy
   }
-  const settle = (members: LinkedMembers) =>
+  const settle = (members: SharedMembers) =>
     members.forEach(member => {
-      if (made.has(members) && !made.has(member)) {
-        markShared(member)
-      }
       if (made.has(member)) {
-        ;[member.anyOf, member.oneOf].forEach(list => list && !made.has(list) && markShared(list))
+        if (member.anyOf && !made.has(member.anyOf)) {
+          markShared(member.anyOf)
+        }
+        if (member.oneOf && !made.has(member.oneOf)) {
+          markShared(member.oneOf)
+        }
+      } else if (made.has(members) && typeof member === 'object') {
+        markShared(member)
       }
     })
   // Narrows `owner[key]` to what a value of the parent `type` can match; says whether it changed.
@@ -96,7 +109,7 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
   // its lists with the original. Otherwise the owner gets a narrowed list of its own and the
   // other holder keeps the one it had. `seen` stops a member that contains itself.
   const constrain = (owner: LinkedJSONSchema, key: 'anyOf' | 'oneOf', seen: Set<LinkedJSONSchema>) => {
-    const members: LinkedMembers | undefined = owner[key]
+    const members: SharedMembers | undefined = owner[key]
     if (!members) {
       return false
     }
@@ -156,11 +169,12 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
     }
     if (owned) {
       members.splice(0, members.length, ...constrained)
+      settle(members)
     } else {
       made.add(constrained)
       owner[key] = constrained
+      settle(constrained)
     }
-    settle(owner[key]!)
     if (!constrained.length) {
       log('yellow', 'normalizer', `No ${key} member is compatible with the parent type (${type}): emits never`, owner)
     }
@@ -171,14 +185,8 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
   constrain(schema, 'oneOf', seen)
 })
 
-/** An `anyOf`/`oneOf` list, knowing whether another schema holds it too (see `markShared`, resolver.ts) */
-type LinkedMembers = LinkedJSONSchema[] & {readonly [Shared]?: true}
-
-function markShared(node: LinkedJSONSchema | LinkedMembers | boolean): void {
-  if (typeof node === 'object') {
-    Object.defineProperty(node, Shared, {enumerable: false, value: true, writable: false})
-  }
-}
+/** An `anyOf`/`oneOf` list, knowing whether another schema holds it too (see `markSharedNodes`, resolver.ts) */
+type SharedMembers = LinkedJSONSchema[] & {readonly [Shared]?: true}
 
 rules.set('Add empty `required` property if none is defined', schema => {
   if (isObjectType(schema) && !('required' in schema)) {

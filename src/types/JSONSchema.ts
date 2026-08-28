@@ -57,6 +57,10 @@ export interface JSONSchema extends JSONSchema4 {
 }
 
 export const Shared = Symbol('Shared')
+/** Marks a node held in more than one place (see `markSharedNodes`, resolver.ts) */
+export function markShared(node: object): void {
+  Object.defineProperty(node, Shared, {enumerable: false, value: true, writable: false})
+}
 /**
  * Where a schema node was read from: the file (as the resolver addressed it) and the
  * JSON Pointer inside that file. Only stamped when compiling a set of files together

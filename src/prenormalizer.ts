@@ -5,8 +5,8 @@ import {META_KEYWORDS, TYPE_RELEVANT_KEYWORDS} from './keywords'
 
 /**
  * Rewrites that have to happen on the raw document, before it goes to the ref-parser --
- * each rule below says why it cannot wait for the normalizer. Rules work on plain JSON
- * (there is no `Parent` link yet) and change the schema in place.
+ * each rule below says why it cannot wait for the normalizer. Rules work on the plain JSON,
+ * before dereferencing, and change the schema in place.
  */
 type Rule = (schema: JSONSchema, document: JSONSchema) => void
 const rules = new Map<string, Rule>()
@@ -210,11 +210,11 @@ function setOwn(obj: object, key: string, value: unknown): void {
 export function prenormalizeDocument<T>(document: T): T {
   if (isPlainObject(document)) {
     // Every rule per node, wherever the ref parser will look for a `$ref`: `traverse` knows where
-    // subschemas live (and reads no `Parent` links, so a raw document is fine despite its parameter
-    // type) but not positions this tool has no keyword for, such as OpenAPI's
-    // `components/schemas/Pet/properties/owner`; `eachSchemaNode` reaches those, and skips only
-    // what sits under an instance-data keyword -- or a property that happens to be named like
-    // one, hence both walks. The rules are idempotent, and see the subschemas they create.
+    // subschemas live (a raw document is fine despite its parameter type) but not positions this
+    // tool has no keyword for, such as OpenAPI's `components/schemas/Pet/properties/owner`;
+    // `eachSchemaNode` reaches those, and skips only what sits under an instance-data keyword --
+    // or a property that happens to be named like one, hence both walks. The rules are
+    // idempotent, and see the subschemas they create.
     const apply = (schema: JSONSchema) => rules.forEach(rule => rule(schema, document as JSONSchema))
     traverse(document as LinkedJSONSchema, apply)
     eachSchemaNode(document, apply)

@@ -2,7 +2,7 @@ import {describe, expect, test} from 'bun:test'
 import {$RefParser} from '@apidevtools/json-schema-ref-parser'
 import {cloneDeep} from 'lodash'
 import {prenormalize} from '../src/prenormalizer'
-import {dereferenceInDocument, inDocumentTargets, markShared} from '../src/resolver'
+import {dereferenceInDocument, inDocumentTargets, markSharedNodes} from '../src/resolver'
 import {JSONSchema, Shared} from '../src/types/JSONSchema'
 import {getTestCases, hasOnly} from './e2eCases'
 
@@ -48,13 +48,13 @@ suite('resolver', () => {
 
   test('a node held in two places is marked shared; one held twice by the same object is not', () => {
     const shared: JSONSchema = {type: 'string'}
-    const schema = markShared({properties: {a: shared, b: shared}, anyOf: [shared]}) as any
+    const schema = markSharedNodes({properties: {a: shared, b: shared}, anyOf: [shared]}) as any
     expect(schema.properties.a[Shared]).toBe(true)
     expect(schema.properties[Shared]).toBe(undefined)
     expect(schema.anyOf[Shared]).toBe(undefined)
-    expect((markShared({properties: {a: shared, b: shared}}) as any).properties[Shared]).toBe(undefined)
+    expect((markSharedNodes({properties: {a: shared, b: shared}}) as any).properties[Shared]).toBe(undefined)
     const twice: JSONSchema = {type: 'number'}
-    expect((markShared({properties: {a: twice, b: twice}}) as any).properties.a[Shared]).toBe(undefined)
+    expect((markSharedNodes({properties: {a: twice, b: twice}}) as any).properties.a[Shared]).toBe(undefined)
   })
 })
 

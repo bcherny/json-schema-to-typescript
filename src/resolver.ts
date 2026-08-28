@@ -8,7 +8,7 @@ import {
 } from '@apidevtools/json-schema-ref-parser'
 import {isObjectLike, isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
-import {DefinitionKey, JSONSchema, LinkedJSONSchema, SchemaSource, Shared, Source} from './types/JSONSchema'
+import {DefinitionKey, JSONSchema, LinkedJSONSchema, SchemaSource, Source, markShared} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
@@ -86,7 +86,7 @@ export async function dereference(
     })) as JSONSchema
     tagExternalDefinitions(externalDocuments, dereferencedSchema)
   }
-  return {dereferencedPaths, dereferencedSchema: markShared(resolveNamedAnchors(dereferencedSchema))}
+  return {dereferencedPaths, dereferencedSchema: markSharedNodes(resolveNamedAnchors(dereferencedSchema))}
 }
 
 /**
@@ -95,7 +95,7 @@ export async function dereference(
  * for one of those places is made on a copy. An object met again under the object or array it was
  * first found in (`{a: x, b: x}`) does not count.
  */
-export function markShared(schema: JSONSchema): LinkedJSONSchema {
+export function markSharedNodes(schema: JSONSchema): LinkedJSONSchema {
   const holders = new Map<object, object | null>()
   const visit = (node: object, holder: object | null) => {
     if (!isPlainObject(node) && !Array.isArray(node)) {
@@ -103,7 +103,7 @@ export function markShared(schema: JSONSchema): LinkedJSONSchema {
     }
     if (holders.has(node)) {
       if (holders.get(node) !== holder) {
-        Object.defineProperty(node, Shared, {enumerable: false, value: true, writable: false})
+        markShared(node)
       }
       return
     }
