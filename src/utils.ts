@@ -258,8 +258,19 @@ export function error(...messages: any[]): void {
 
 type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'white' | 'yellow'
 
+/**
+ * Whether `log()` prints: the VERBOSE environment variable, re-read at the start of every
+ * `compile()` (`readVerbose`) rather than on every call -- `log()` is called for every schema
+ * node and every generated type, and a `process.env` read is not free.
+ */
+let verbose = Boolean(process.env.VERBOSE)
+
+export function readVerbose(): void {
+  verbose = Boolean(process.env.VERBOSE)
+}
+
 export function log(style: LogStyle, title: string, ...messages: unknown[]): void {
-  if (!process.env.VERBOSE) {
+  if (!verbose) {
     return
   }
   let lastMessage = null
