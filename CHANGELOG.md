@@ -4,16 +4,8 @@
 
 ## Next
 
-Changes emitted types and exported names for existing schemas (major):
-
-- Breaking: A `$ref` with sibling annotations (`description`, `title`, `default`, `examples`, `deprecated`, `readOnly`, vendor keywords...) resolves to the referenced type instead of declaring a numbered copy of it (`Foo1`, `Foo2`...) or inlining it; the property carries its own `description`/`deprecated` as JSDoc, and a sibling `title` no longer names a type. Siblings that affect the type (`type`, `enum`, `properties`, `required`, `items`, `tsType`...) behave as before. Schemas that reference one definition from many documented properties emit far fewer declarations (the FHIR fixture: 5153 -> 679), so **exported names change**: the numbered copies vanish and the numbering of any that remain shifts (a survivor such as `Foo1` may now denote what used to be `Foo2`) -- code that imports `FooN` names has to be re-checked (fixes #193, #334, #363, #472)
-
-New and fixed:
-
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
-- Bugfix: `default` next to `allOf` no longer adds `& string`/`& number`/`& boolean` to the intersection
-- Bugfix: A one-member `anyOf`/`allOf` around a schema that accepts any value keeps the member's name and the description of the property holding it, instead of collapsing to a bare `unknown`
 
 ## 16.0.0
 
