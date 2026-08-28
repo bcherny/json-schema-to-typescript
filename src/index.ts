@@ -1,5 +1,5 @@
 import {readFileSync} from 'fs'
-import {JSONSchema4} from 'json-schema'
+import {JSONSchema4, JSONSchema6, JSONSchema7} from 'json-schema'
 import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
 import {cloneDeep, endsWith, merge} from 'lodash'
 import {dirname} from 'path'
@@ -11,12 +11,13 @@ import {optimize} from './optimizer'
 import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference} from './resolver'
 import {prenormalize} from './prenormalizer'
-import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
+import {error, stripExtension, Try, log, parseFileAsJSONSchema, readVerbose} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
+import {AST} from './types/AST'
 
 // These are all interfaces, so re-export them as types -- transpilers that
 // compile a file at a time (bun, esbuild) can't tell on their own, and fail to
@@ -25,9 +26,11 @@ export type {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSche
 
 export interface Options {
   /**
-   * [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s
+   * [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s.
+   * `dereference.maxDepth` (default 500) bounds how deep dereferencing may nest before it is reported as a
+   * `$ref` cycle; raise it for schemas that genuinely nest or chain `$ref`s deeper than that.
    */
-  $refOptions: $RefOptions
+  $refOptions: $RefOptions & {dereference?: {maxDepth?: number}}
   /**
    * Default value for additionalProperties, when it is not explicitly set.
    */
@@ -103,6 +106,11 @@ export interface Options {
    */
   unreachableDefinitions: boolean
   /**
+   * Append `| undefined` to the type of every optional property, for consumers that compile with
+   * TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes).
+   */
+  undefinedOptionalProperties: boolean
+  /**
    * Generate unknown type instead of any
    */
   unknownAny: boolean
@@ -138,10 +146,11 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false,
   },
   unreachableDefinitions: false,
+  undefinedOptionalProperties: false,
   unknownAny: true,
 }
 
-export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+export function compileFromFile(filename: string, options: Partial<Options> = {}): Promise<string> {
   const schema = parseAsJSONSchema(filename)
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
@@ -156,11 +165,16 @@ function parseAsJSONSchema(filename: string): JSONSchema4 {
   return parseFileAsJSONSchema(filename, contents.toString())
 }
 
-export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
+export async function compile(
+  schema: JSONSchema4 | JSONSchema6 | JSONSchema7,
+  name: string,
+  options: Partial<Options> = {},
+): Promise<string> {
   validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
+  readVerbose()
   const start = Date.now()
   function time() {
     return `(${Date.now() - start}ms)`
@@ -171,8 +185,11 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     _options.cwd += '/'
   }
 
-  // Initial clone to avoid mutating the input
-  const _schema = cloneDeep(schema)
+  // Initial clone to avoid mutating the input. Downstream code reads schema
+  // keys generically rather than validating them against a specific draft's
+  // shape (e.g. `exclusiveMaximum` is never interpreted as a boolean vs. a
+  // number), so this cast doesn't change runtime behavior -- see #359.
+  const _schema = cloneDeep(schema) as JSONSchema4
 
   // Rewrites that have to see the raw document, before dereferencing (see ./prenormalizer)
   prenormalize(_schema)
@@ -220,12 +237,16 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   nameAnonymousRecursiveTypes([parsed, ...unreachableDefinitions], processed, dereferencedPaths, usedNames)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
-  const optimized = optimize(parsed, _options)
-  const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options))
+  const optimizerMemo = new Map<AST, AST>()
+  const optimized = optimize(parsed, _options, optimizerMemo)
+  const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options, optimizerMemo))
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
   const generated = generate(optimized, _options, optimizedUnreachableDefinitions)
-  log('magenta', 'generator', time(), '✅ Result:', generated)
+  if (process.env.VERBOSE) {
+    // (the guard spares joining the whole file when nobody is reading)
+    log('magenta', 'generator', time(), '✅ Result:', generated.join(''))
+  }
 
   const formatted = await format(generated, _options)
   log('white', 'formatter', time(), '✅ Result:', formatted)

@@ -65,6 +65,19 @@ rules.set('Transform `nullable` next to a `$ref` to anyOf with null', schema => 
 })
 
 /**
+ * `unevaluatedProperties` next to a `$ref` also counts what the target evaluates, and the ref
+ * parser is about to merge the two into a copy that can drop the target's `properties` (#613):
+ * the normalizer's fold into `additionalProperties` would then close the object over keys that
+ * were never emitted. Until `$ref` siblings are emitted as an intersection, drop the keyword
+ * here, while the `$ref` is still visible, and leave the object open as it was before.
+ */
+rules.set('Drop `unevaluatedProperties` next to a `$ref`', schema => {
+  if (schema.$ref) {
+    delete schema.unevaluatedProperties
+  }
+})
+
+/**
  * $RefParser can't correctly dereference a schema whose root is itself a
  * `$ref`: it leaves `$ref: "#"` behind on the root instead of resolving it,
  * which trips the parser's "Refs should have been resolved by the resolver!"
