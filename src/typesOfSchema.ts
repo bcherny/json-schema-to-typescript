@@ -1,10 +1,6 @@
 import {isPlainObject} from 'lodash'
+import {STRUCTURAL_KEYWORDS} from './keywords'
 import {Intersection, isCompound, JSONSchema, LinkedJSONSchema, Parent, SchemaType, Types} from './types/JSONSchema'
-
-// Keywords that only annotate a schema (eg. for documentation) without constraining
-// the values it matches. A schema made up of nothing but these keywords doesn't
-// restrict its type any more than the empty schema does.
-const ANNOTATION_ONLY_KEYWORDS = ['description', 'title', 'deprecated']
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
@@ -28,9 +24,12 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
     }
   }
 
-  // Default to an unnamed schema
+  // A schema no matcher recognizes is an object if any of its keywords gives it a shape (one
+  // this tool doesn't implement: `not`, `if`), and otherwise -- only bounds on values
+  // (`pattern`, `maximum`), annotations, or keys this tool doesn't know -- says nothing about
+  // which type a value is, like the empty schema
   if (!matchedTypes.size) {
-    matchedTypes.add('UNNAMED_SCHEMA')
+    matchedTypes.add(isShapeless(schema) ? 'ANY' : 'UNNAMED_SCHEMA')
   }
 
   return matchedTypes
@@ -38,10 +37,15 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
 
 /**
  * Whether any matcher recognizes the schema. One that none does has no way to be
- * typed on its own: it only gets the `UNNAMED_SCHEMA` default.
+ * typed on its own: it only gets the default at the bottom of `typesOfSchema`.
  */
 export function hasOwnType(schema: JSONSchema): boolean {
   return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
+}
+
+/** No keyword of the schema gives it a shape (see `STRUCTURAL_KEYWORDS`) */
+export function isShapeless(schema: JSONSchema): boolean {
+  return Object.keys(schema).every(key => !STRUCTURAL_KEYWORDS.has(key))
 }
 
 /**
@@ -87,13 +91,7 @@ const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) 
     return 'allOf' in schema
   },
   ANY(schema) {
-    if (Object.keys(schema).every(key => ANNOTATION_ONLY_KEYWORDS.includes(key))) {
-      // The empty schema {} validates any value, and a schema made up of only
-      // annotation keywords (eg. `description`) is no more constrained than that.
-      // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1
-      return true
-    }
-    return schema.type === 'any'
+    return schema.type === 'any' // for the empty schema and its likes, see `typesOfSchema`
   },
   ANY_OF(schema) {
     return 'anyOf' in schema
