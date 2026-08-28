@@ -42,6 +42,7 @@ export interface JSONSchema extends JSONSchema4 {
 }
 
 export const Parent = Symbol('Parent')
+export const Shared = Symbol('Shared')
 
 export interface LinkedJSONSchema extends JSONSchema {
   /**
@@ -49,6 +50,11 @@ export interface LinkedJSONSchema extends JSONSchema {
    * `null` when this is the root schema.
    */
   [Parent]: LinkedJSONSchema | null
+  /**
+   * Set on a schema that is reachable from more than one parent node (the
+   * target of a `$ref`, usually), whose `Parent` is just the first one found.
+   */
+  [Shared]?: true
 
   additionalItems?: boolean | LinkedJSONSchema
   additionalProperties?: boolean | LinkedJSONSchema

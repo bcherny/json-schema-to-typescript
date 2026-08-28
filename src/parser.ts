@@ -19,7 +19,7 @@ import type {
   SchemaSchema,
   SchemaType,
 } from './types/JSONSchema'
-import {Intersection, Parent, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
 import {memoize} from './memoize'
 import {DereferencedPaths} from './resolver'
 import {generateName, justName, log, maybeStripDefault} from './utils'
@@ -541,7 +541,9 @@ function parseMember(
 ): AST {
   const properties = isRequiredOnly(member) && !isNamed(member, options) && findDeclaredProperties(schema, options)
   if (properties) {
-    const keys = (member.required as string[]).filter(key => Object.prototype.hasOwnProperty.call(properties, key))
+    const keys = [...new Set(member.required as string[])].filter(key =>
+      Object.prototype.hasOwnProperty.call(properties, key),
+    )
     if (keys.length) {
       return {
         comment: member.description,
@@ -600,10 +602,11 @@ function findDeclaredProperties(schema: NormalizedJSONSchema, options: Options):
 }
 
 /**
- * The schema whose `allOf`/`anyOf`/`oneOf` `schema` is a member of -- provided `schema` is inlined
- * there: a named schema is declared once, however many set operations refer to it, so it has no
- * one enclosing schema. The intersection `applySchemaTyping` split off of a schema stands for
- * that schema (and kept its `allOf` array, whose parent is still that schema).
+ * The schema whose `allOf`/`anyOf`/`oneOf` `schema` is a member of, provided `schema` is inlined
+ * there and only there. A named schema (declared once, however many set operations refer to it) or
+ * a shared one (dereferenced into more than one place, and parsed once for all of them) has no one
+ * enclosing schema. The intersection `applySchemaTyping` split off of a schema stands for that
+ * schema, and kept its `allOf` array, whose parent is still that schema.
  */
 function enclosingSchema(schema: NormalizedJSONSchema, options: Options): NormalizedJSONSchema | undefined {
   const parent = schema[Parent]
@@ -614,6 +617,7 @@ function enclosingSchema(schema: NormalizedJSONSchema, options: Options): Normal
   const members: unknown = parent
   if (
     owner &&
+    !schema[Shared] &&
     !isNamed(schema, options) &&
     (owner.allOf === members ||
       owner.anyOf === members ||

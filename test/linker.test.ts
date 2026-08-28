@@ -1,6 +1,6 @@
 import {describe, expect, test} from 'bun:test'
 import {link} from '../src/linker'
-import {Parent} from '../src/types/JSONSchema'
+import {Parent, Shared} from '../src/types/JSONSchema'
 import {input} from './e2e/basics'
 import {hasOnly} from './e2eCases'
 
@@ -18,5 +18,14 @@ suite('linker', () => {
     expect(schema.properties.favoriteFoods[Parent]).toBe(schema.properties)
     expect(schema.properties.likesDogs[Parent]).toBe(schema.properties)
     expect(schema.required[Parent]).toBe(schema)
+    expect(schema.properties.firstName[Shared]).toBe(undefined)
+  })
+
+  test('linker should keep the first parent of a node it meets twice, and mark the node shared', () => {
+    const shared = {type: 'string'}
+    const schema = link({properties: {a: shared, b: shared}, anyOf: [shared]}) as any
+    expect(schema.properties.a[Parent]).toBe(schema.properties)
+    expect(schema.properties.a[Shared]).toBe(true)
+    expect(schema.properties[Shared]).toBe(undefined)
   })
 })
