@@ -24,7 +24,7 @@ import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimiti
 import {memoize} from './memoize'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
-import {generateName, justName, log, maybeStripDefault} from './utils'
+import {admitsType, generateName, justName, log, maybeStripDefault, narrowType} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -487,11 +487,22 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: (schema.type as JSONSchema4TypeName[]).map(type => {
+        params: (schema.type as JSONSchema4TypeName[]).flatMap(type => {
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
+          // The schema's `anyOf`/`oneOf` hold within each of its types (`typesOfSchema` leaves
+          // them to this case): keep the members a value of this type can match, narrowed to
+          // it, and leave out a type that no member admits
+          for (const key of ['anyOf', 'oneOf'] as const) {
+            if (key in member) {
+              member[key] = member[key]!.flatMap(_ => narrowMember(_, type, options))
+              if (!member[key]!.length) {
+                return []
+              }
+            }
+          }
           maybeStripDefault(member)
           applySchemaTyping(member)
-          return parse(member, options, undefined, processed, usedNames)
+          return [parse(member, options, undefined, processed, usedNames)]
         }),
         type: 'UNION',
       }
@@ -813,6 +824,26 @@ function nameOf(
   options: Options,
 ): string | undefined {
   return options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+}
+
+/**
+ * `member` (of an `anyOf`/`oneOf`) as it applies to a value of the given `type`: left out if it
+ * admits no such value, a copy typed `type` if that is narrower than its own `type` -- unless it
+ * is a declaration of its own, shared, or already split into an intersection -- else as it is.
+ */
+function narrowMember(member: LinkedJSONSchema, type: JSONSchema4TypeName, options: Options): LinkedJSONSchema[] {
+  if (!admitsType(member, type)) {
+    return []
+  }
+  const narrowed = narrowType(member, type)
+  const normalized = member as NormalizedJSONSchema
+  if (!narrowed || isNamed(normalized, options) || normalized[Shared] || normalized[Intersection]) {
+    return [member]
+  }
+  const copy: LinkedJSONSchema = {...member, type: narrowed}
+  Object.defineProperty(copy, Parent, {enumerable: false, value: member[Parent]})
+  applySchemaTyping(copy)
+  return [copy]
 }
 
 /**

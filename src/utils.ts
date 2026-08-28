@@ -332,6 +332,55 @@ export function hasType(schema: JSONSchema, type: JSONSchemaTypeName): boolean {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
 
+type TypeKeyword = JSONSchemaTypeName | JSONSchemaTypeName[]
+
+/**
+ * What is left of `schema`'s `type` once a schema of type `bound` must hold too (`integer` being
+ * the whole-number part of `number`): `false` if no type is left, the narrower `type` if some of
+ * it goes, `undefined` if `bound` takes nothing away (or `schema` declares no `type` to narrow).
+ */
+export function narrowType(schema: JSONSchema | boolean, bound: TypeKeyword): TypeKeyword | false | undefined {
+  if (typeof schema !== 'object' || !schema || schema.type === undefined || schema.type === 'any') {
+    return undefined
+  }
+  const bounds: readonly JSONSchemaTypeName[] = Array.isArray(bound) ? bound : [bound]
+  if (bounds.includes('any')) {
+    return undefined
+  }
+  const types: readonly JSONSchemaTypeName[] = Array.isArray(schema.type) ? schema.type : [schema.type]
+  const narrowed = types.flatMap((type): JSONSchemaTypeName[] =>
+    bounds.includes(type) || (type === 'integer' && bounds.includes('number'))
+      ? [type]
+      : type === 'number' && bounds.includes('integer')
+        ? ['integer']
+        : [],
+  )
+  if (!narrowed.length) {
+    return false
+  }
+  if (narrowed.length === types.length && narrowed.every((type, i) => type === types[i])) {
+    return undefined
+  }
+  return narrowed.length === 1 ? narrowed[0] : narrowed
+}
+
+/**
+ * Whether a value of type `bound` can match `schema` as far as `type`s go: its own, or failing
+ * that those of its `anyOf`/`oneOf` members (a boolean schema admits everything or nothing).
+ */
+export function admitsType(schema: JSONSchema | boolean, bound: TypeKeyword, seen = new Set<JSONSchema>()): boolean {
+  if (typeof schema !== 'object' || !schema || seen.has(schema)) {
+    return schema !== false
+  }
+  if (schema.type !== undefined) {
+    return narrowType(schema, bound) !== false
+  }
+  seen.add(schema)
+  return (['anyOf', 'oneOf'] as const).every(
+    key => schema[key]?.some(member => admitsType(member, bound, seen)) ?? true,
+  )
+}
+
 /**
  * Removes the schema's `default` property if it doesn't match the schema's `type` property.
  * Useful when parsing unions.

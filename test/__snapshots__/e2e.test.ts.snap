@@ -130042,7 +130042,6 @@ exports[`deep.ts 1`] = `
 export interface Deep {
   foo:
     | (
-        | number
         | Foo
         | Bar
         | {
@@ -130201,12 +130200,10 @@ exports[`oneOfTypedMembersUnderObjectType.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type OneOfTypedMembersUnderObjectType =
-  | string
-  | {
-      a?: string;
-      [k: string]: unknown;
-    };
+export type OneOfTypedMembersUnderObjectType = {
+  a?: string;
+  [k: string]: unknown;
+};
 "
 `;
 
@@ -130218,7 +130215,7 @@ exports[`anyOfTypedMembersUnderArrayType.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type AnyOfTypedMembersUnderArrayType = (string | number[]) & unknown[];
+export type AnyOfTypedMembersUnderArrayType = number[] & unknown[];
 "
 `;
 
@@ -130230,56 +130227,20 @@ exports[`typedMembersUnderParentType.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Str = string;
-
 export interface TypedMembersUnderParentType {
   integerUnderNumber?: number;
-  numberUnderInteger?: number & (number | string);
-  typeArrayMember?: ((string | null) | number) & string;
-  noMemberLeft?: null;
-  nestedCombinator?:
-    | string
-    | {
-        b?: boolean;
-        [k: string]: unknown;
-      };
-  refToStringUnderObject?: Str | Obj;
-  typeArrayParent?: (
-    | string
-    | null
-    | {
-        c?: string;
-        [k: string]: unknown;
-      }
-  ) &
-    (
-      | (
-          | string
-          | null
-          | {
-              c?: string;
-              [k: string]: unknown;
-            }
-        )
-      | (null &
-          (
-            | string
-            | null
-            | {
-                c?: string;
-                [k: string]: unknown;
-              }
-          ))
-      | (boolean &
-          (
-            | string
-            | null
-            | {
-                c?: string;
-                [k: string]: unknown;
-              }
-          ))
-    );
+  numberUnderInteger?: number;
+  typeArrayMember?: string;
+  noMemberLeft?: never;
+  nestedCombinator?: {
+    b?: boolean;
+    [k: string]: unknown;
+  };
+  refToStringUnderObject?: Obj;
+  typeArrayParent?: {
+    c?: string;
+    [k: string]: unknown;
+  } | null;
   requiredOnlyMembers?: (
     | {
         d: string;
@@ -130307,7 +130268,7 @@ exports[`oneOfRefsUnderNullableObjectType.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type OneOfRefsUnderNullableObjectType = (A | B) & ((A | B) | (null & (A | B)));
+export type OneOfRefsUnderNullableObjectType = A | B;
 
 export interface A {
   x: string;
@@ -130326,14 +130287,10 @@ exports[`anyOfRefsUnderNullableObjectTypeWithProperties.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type AnyOfRefsUnderNullableObjectTypeWithProperties = (A | B) &
-  (
-    | ((A | B) & {
-        p?: string;
-        [k: string]: unknown;
-      })
-    | ((A | B) & null)
-  );
+export type AnyOfRefsUnderNullableObjectTypeWithProperties = (A | B) & {
+  p?: string;
+  [k: string]: unknown;
+};
 
 export interface A {
   x: string;
@@ -442588,7 +442545,7 @@ exports[`ref.8a.ts 1`] = `
 
 export type ReferencingNonInterface = ExampleScalarSchema | ExampleCombinedSchema;
 export type ExampleScalarSchema = string;
-export type ExampleCombinedSchema = string | number;
+export type ExampleCombinedSchema = never;
 "
 `;
 
@@ -447806,7 +447763,7 @@ exports[`ref.6a.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type ExampleCombinedSchema = string | number;
+export type ExampleCombinedSchema = never;
 
 export interface ReferencingCombined {
   foo: ExampleCombinedSchema;
