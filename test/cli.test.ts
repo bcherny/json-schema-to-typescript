@@ -102,6 +102,15 @@ suite('CLI', () => {
     expect(stdout).toMatchSnapshot(),
   )
 
+  // The file name is the fallback type name, and `2024` has no identifier characters left
+  // once the leading digits are stripped: the root used to get an empty name and the CLI
+  // printed nothing but the banner comment.
+  cliTest(
+    'file in (untitled schema, digits-only file name), pipe out',
+    'node dist/src/cli.js ./test/resources/DigitsOnlyName/2024.json',
+    ({stdout}) => expect(stdout).toMatchSnapshot(),
+  )
+
   cliTest(
     'file in (--input), pipe out',
     'node dist/src/cli.js --input ./test/resources/ReferencedType.json',

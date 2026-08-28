@@ -5,6 +5,9 @@ import {hasOnly} from './e2eCases'
 const suite = hasOnly() ? describe.skip : describe
 
 suite('compileFromFile', () => {
+  test('compileFromFile should fall back to a placeholder name when the file name has no identifier characters', async () =>
+    expect(await compileFromFile('./test/resources/DigitsOnlyName/2024.json')).toMatchSnapshot())
+
   test('compileFromFile should resolve refs from cwd option', async () =>
     expect(
       await compileFromFile('./test/resources/other/ReferencingType.json', {cwd: './test/resources'}),

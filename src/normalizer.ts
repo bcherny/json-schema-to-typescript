@@ -178,9 +178,11 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
     return
   }
 
-  // Top-level schema
+  // Top-level schema. A name with no usable identifier characters (stdin, or a file
+  // called `2024.json`) gets the same placeholder generateName() uses, rather than an
+  // empty `$id` -- which would leave the root type undeclared and the output empty.
   if (!schema.$id && !schema[Parent]) {
-    schema.$id = toSafeString(justName(fileName))
+    schema.$id = toSafeString(justName(fileName)) || 'NoName'
     return
   }
 
