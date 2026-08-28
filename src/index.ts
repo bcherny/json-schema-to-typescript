@@ -17,6 +17,7 @@ import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
+import {AST} from './types/AST'
 
 // These are all interfaces, so re-export them as types -- transpilers that
 // compile a file at a time (bun, esbuild) can't tell on their own, and fail to
@@ -236,8 +237,9 @@ export async function compile(
   nameAnonymousRecursiveTypes([parsed, ...unreachableDefinitions], processed, dereferencedPaths, usedNames)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
-  const optimized = optimize(parsed, _options)
-  const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options))
+  const optimizerMemo = new Map<AST, AST>()
+  const optimized = optimize(parsed, _options, optimizerMemo)
+  const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options, optimizerMemo))
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
   const generated = generate(optimized, _options, optimizedUnreachableDefinitions)
