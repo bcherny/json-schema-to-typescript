@@ -556,3 +556,60 @@ export interface DSchema {
 }
 "
 `;
+
+exports[`CLI directory in, --imports: shared types are imported from the module that declares them 1`] = `"test/resources/Imports/out/a.d.ts"`;
+
+exports[`CLI directory in, --imports: shared types are imported from the module that declares them 2`] = `
+"import type {B} from "./b";
+import type {Thing} from "./common";
+
+export interface A {
+  thing?: Thing;
+  partner?: B;
+}
+"
+`;
+
+exports[`CLI directory in, --imports: shared types are imported from the module that declares them 3`] = `"test/resources/Imports/out/b.d.ts"`;
+
+exports[`CLI directory in, --imports: shared types are imported from the module that declares them 4`] = `
+"import type {A} from "./a";
+import type {Tag} from "./common";
+
+export interface B {
+  thing?: Thing;
+  owner?: A;
+}
+/**
+ * B's own note about its thing
+ */
+export interface Thing {
+  id: string;
+  tags?: Tag[];
+}
+"
+`;
+
+exports[`CLI directory in, --imports: shared types are imported from the module that declares them 5`] = `"test/resources/Imports/out/common.d.ts"`;
+
+exports[`CLI directory in, --imports: shared types are imported from the module that declares them 6`] = `
+"/**
+ * This interface was referenced by \`Common\`'s JSON-Schema
+ * via the \`definition\` "tag".
+ */
+export type Tag = "red" | "green";
+
+/**
+ * Shared definitions; no properties of its own
+ */
+export interface Common {}
+/**
+ * This interface was referenced by \`Common\`'s JSON-Schema
+ * via the \`definition\` "thing".
+ */
+export interface Thing {
+  id: string;
+  tags?: Tag[];
+}
+"
+`;

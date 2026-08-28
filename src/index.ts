@@ -17,6 +17,10 @@ import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
+import {AST} from './types/AST'
+import {compileSchemas} from './modules'
+
+export {compileSchemas, type ModuleInput} from './modules'
 
 // These are all interfaces, so re-export them as types -- transpilers that
 // compile a file at a time (bun, esbuild) can't tell on their own, and fail to
@@ -131,6 +135,21 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
+/**
+ * Compiles a set of schema files into a set of modules that import the types they share
+ * from one another instead of each declaring a copy (see `compileSchemas`). Returns the
+ * TypeScript for each file, in order; writes nothing.
+ */
+export function compileFiles(
+  files: {filename: string; outputPath: string}[],
+  options: Partial<Options> = DEFAULT_OPTIONS,
+): Promise<string[]> {
+  return compileSchemas(
+    files.map(_ => ({..._, schema: parseAsJSONSchema(_.filename)})),
+    options,
+  )
+}
+
 function parseAsJSONSchema(filename: string): JSONSchema4 {
   const contents = Try(
     () => readFileSync(filename),
@@ -142,6 +161,29 @@ function parseAsJSONSchema(filename: string): JSONSchema4 {
 }
 
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
+  const {ast, unreachableDefinitions, options: _options, time} = await compileToAST(schema, name, options)
+
+  const generated = generate(ast, _options, unreachableDefinitions)
+  log('magenta', 'generator', time(), '✅ Result:', generated)
+
+  const formatted = await format(generated, _options)
+  log('white', 'formatter', time(), '✅ Result:', formatted)
+
+  return formatted
+}
+
+/**
+ * Every phase up to the generator. `sourceFile` (the absolute path `schema` was read
+ * from) is passed only when compiling a set of files together: see `compileFiles`.
+ *
+ * @internal
+ */
+export async function compileToAST(
+  schema: JSONSchema4,
+  name: string,
+  options: Partial<Options>,
+  sourceFile?: string,
+): Promise<{ast: AST; unreachableDefinitions: AST[]; options: Options; time(): string}> {
   validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
@@ -163,7 +205,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   prenormalize(_schema)
   log('yellow', 'prenormalizer', time(), '✅ Result:', _schema)
 
-  const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
+  const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options, sourceFile)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
@@ -209,13 +251,7 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options))
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
-  const generated = generate(optimized, _options, optimizedUnreachableDefinitions)
-  log('magenta', 'generator', time(), '✅ Result:', generated)
-
-  const formatted = await format(generated, _options)
-  log('white', 'formatter', time(), '✅ Result:', formatted)
-
-  return formatted
+  return {ast: optimized, unreachableDefinitions: optimizedUnreachableDefinitions, options: _options, time}
 }
 
 export class ValidationError extends Error {}

@@ -61,6 +61,7 @@ const OUTPUTS = [
   './test/resources/MultiSchema/foo',
   './test/resources/MultiSchemaRefs/response/out',
   './test/resources/MultiSchema2/out',
+  './test/resources/Imports/out',
 ]
 
 suite('CLI', () => {
@@ -241,6 +242,19 @@ suite('CLI', () => {
         unlinkSync(file)
       })
       rimraf.sync('./test/resources/MultiSchema2/out')
+    },
+  )
+
+  cliTest(
+    'directory in, --imports: shared types are imported from the module that declares them',
+    'node dist/src/cli.js -i ./test/resources/Imports -o ./test/resources/Imports/out --imports --no-bannerComment',
+    () => {
+      getPaths('./test/resources/Imports/out').forEach(file => {
+        expect(file).toMatchSnapshot()
+        expect(readFileSync(file, 'utf-8')).toMatchSnapshot()
+        unlinkSync(file)
+      })
+      rimraf.sync('./test/resources/Imports/out')
     },
   )
 })

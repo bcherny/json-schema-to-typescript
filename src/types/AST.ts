@@ -1,4 +1,5 @@
 import {JSONSchema4Type} from 'json-schema'
+import type {SchemaSource} from './JSONSchema'
 import {omit} from 'lodash'
 
 export type AST_TYPE = AST['type']
@@ -34,6 +35,12 @@ export interface AbstractAST {
    * them even though they aren't the root type and aren't reachable via `$ref`.
    */
   isUnreachableDefinition?: boolean
+  /**
+   * The file and JSON Pointer this type's schema was read from. Only set in `imports`
+   * mode, where the generator uses it to import a type its own file declares instead of
+   * declaring a copy.
+   */
+  source?: SchemaSource
 }
 
 export type ASTWithComment = AST & {comment: string}

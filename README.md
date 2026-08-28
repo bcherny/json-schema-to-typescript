@@ -105,6 +105,25 @@ json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
 json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 ```
 
+#### Compiling a directory of schemas that reference each other (experimental)
+
+By default each input file is compiled on its own, so a type that several files `$ref` is declared again in each output file. With `--imports`, a directory or glob is compiled as one set of modules: a type that lives in another file of the set is imported from that file's module instead, and each file's `definitions` are always declared so that there is something to import.
+
+```sh
+json2ts -i schemas/ -o types/ --imports
+```
+
+```ts
+// types/a.d.ts
+import type {Thing} from "./common";
+
+export interface A {
+  thing?: Thing;
+}
+```
+
+Files outside the set (and remote `$ref`s) are still declared inline. The same is available programmatically as `compileFiles([{filename: 'schemas/a.json', outputPath: 'types/a.d.ts'}, ...], options)` (or `compileSchemas`, for schemas already in memory), which returns the TypeScript for each input and writes nothing; output paths are only used to compute import specifiers.
+
 ### API
 
 To invoke json-schema-to-typescript from your TypeScript or JavaScript program, import it and call `compile` or `compileFromFile`.

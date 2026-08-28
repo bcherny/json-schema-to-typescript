@@ -1,5 +1,5 @@
 import type {LinkedJSONSchema} from './types/JSONSchema'
-import {Intersection, Parent, Types} from './types/JSONSchema'
+import {Intersection, Parent, Source, Types} from './types/JSONSchema'
 import {typesOfSchema} from './typesOfSchema'
 
 export function applySchemaTyping(schema: LinkedJSONSchema) {
@@ -26,6 +26,8 @@ export function applySchemaTyping(schema: LinkedJSONSchema) {
   // also hoiested to the new intersection schema.
   const intersection = {
     [Parent]: schema,
+    // The intersection stands for the schema as a whole, so it is what other files import
+    ...(schema[Source] && {[Source]: schema[Source]}),
     [Types]: new Set(['ALL_OF']),
     $id: schema.$id,
     description: schema.description,

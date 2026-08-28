@@ -21,8 +21,29 @@ import {
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string {
-  const rootASTName = ast.standaloneName!
+/**
+ * Hooks for compiling a set of files into a set of modules (`imports` mode): the linker
+ * decides which named types this file imports rather than declares, and hears about
+ * every type it does declare.
+ */
+export interface ModuleLinker {
+  /** True if `ast` is declared by another module; it is then neither declared nor descended into here */
+  imports(ast: ASTWithStandaloneName): boolean
+  declared?(ast: ASTWithStandaloneName): void
+}
+
+interface Scope {
+  rootASTName: string
+  linker?: ModuleLinker
+}
+
+export function generate(
+  ast: AST,
+  options = DEFAULT_OPTIONS,
+  unreachableDefinitions: AST[] = [],
+  linker?: ModuleLinker,
+): string {
+  const scope: Scope = {rootASTName: ast.standaloneName!, linker}
   const asts = [ast, ...unreachableDefinitions]
   const typesProcessed = new Set<AST>()
   const interfacesProcessed = new Set<AST>()
@@ -31,15 +52,15 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinit
     [
       options.bannerComment,
       asts
-        .map(_ => declareNamedTypes(_, options, rootASTName, typesProcessed))
+        .map(_ => declareNamedTypes(_, options, scope, typesProcessed))
         .filter(Boolean)
         .join('\n'),
       asts
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, interfacesProcessed))
+        .map(_ => declareNamedInterfaces(_, options, scope, interfacesProcessed))
         .filter(Boolean)
         .join('\n'),
       asts
-        .map(_ => declareEnums(_, options, enumsProcessed))
+        .map(_ => declareEnums(_, options, scope, enumsProcessed))
         .filter(Boolean)
         .join('\n'),
     ]
@@ -48,7 +69,7 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinit
   ) // trailing newline
 }
 
-function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
+function declareEnums(ast: AST, options: Options, scope: Scope, processed = new Set<AST>()): string {
   if (processed.has(ast)) {
     return ''
   }
@@ -56,22 +77,26 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
   processed.add(ast)
   let type = ''
 
+  if (isImported(ast, scope)) {
+    return ''
+  }
+
   switch (ast.type) {
     case 'ENUM':
-      return generateStandaloneEnum(ast, options) + '\n'
+      return declared(ast, scope, generateStandaloneEnum(ast, options)) + '\n'
     case 'ARRAY':
-      return declareEnums(ast.params, options, processed)
+      return declareEnums(ast.params, options, scope, processed)
     case 'UNION':
     case 'INTERSECTION':
-      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, scope, processed), '')
     case 'TUPLE':
-      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, scope, processed), '')
       if (ast.spreadParam) {
-        type += declareEnums(ast.spreadParam, options, processed)
+        type += declareEnums(ast.spreadParam, options, scope, processed)
       }
       return type
     case 'INTERFACE':
-      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, scope, processed), '')
     default:
       return ''
   }
@@ -82,14 +107,32 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
  * declared, as are unreachable definitions (when `unreachableDefinitions` is on). Everything
  * else is reachable via a `$ref`, so it's only declared when `declareExternallyReferenced` is on.
  */
-function shouldDeclare(ast: AST, options: Options, rootASTName: string): ast is ASTWithStandaloneName {
+function shouldDeclare(ast: AST, options: Options, scope: Scope): ast is ASTWithStandaloneName {
   return (
     hasStandaloneName(ast) &&
-    (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition === true)
+    (ast.standaloneName === scope.rootASTName ||
+      options.declareExternallyReferenced ||
+      ast.isUnreachableDefinition === true)
   )
 }
 
-function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+/** A declaration on its way out, for the linker (if any) to hear about */
+function declared(ast: ASTWithStandaloneName, scope: Scope, declaration: string): string {
+  scope.linker?.declared?.(ast)
+  return declaration
+}
+
+/** In `imports` mode: a named type that another module declares (the root type never is) */
+function isImported(ast: AST, scope: Scope): boolean {
+  return (
+    scope.linker !== undefined &&
+    hasStandaloneName(ast) &&
+    ast.standaloneName !== scope.rootASTName &&
+    scope.linker.imports(ast)
+  )
+}
+
+function declareNamedInterfaces(ast: AST, options: Options, scope: Scope, processed = new Set<AST>()): string {
   if (processed.has(ast)) {
     return ''
   }
@@ -97,15 +140,19 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
   processed.add(ast)
   let type = ''
 
+  if (isImported(ast, scope)) {
+    return ''
+  }
+
   switch (ast.type) {
     case 'ARRAY':
-      type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
+      type = declareNamedInterfaces((ast as TArray).params, options, scope, processed)
       break
     case 'INTERFACE':
       type = [
-        shouldDeclare(ast, options, rootASTName) && generateStandaloneInterface(ast, options),
+        shouldDeclare(ast, options, scope) && declared(ast, scope, generateStandaloneInterface(ast, options)),
         getSuperTypesAndParams(ast)
-          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
+          .map(ast => declareNamedInterfaces(ast, options, scope, processed))
           .filter(Boolean)
           .join('\n'),
       ]
@@ -116,11 +163,11 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
     case 'TUPLE':
     case 'UNION':
       type = ast.params
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, processed))
+        .map(_ => declareNamedInterfaces(_, options, scope, processed))
         .filter(Boolean)
         .join('\n')
       if (ast.type === 'TUPLE' && ast.spreadParam) {
-        type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed)
+        type += declareNamedInterfaces(ast.spreadParam, options, scope, processed)
       }
       break
     default:
@@ -130,18 +177,22 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
   return type
 }
 
-function declareNamedTypes(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
+function declareNamedTypes(ast: AST, options: Options, scope: Scope, processed = new Set<AST>()): string {
   if (processed.has(ast)) {
     return ''
   }
 
   processed.add(ast)
 
+  if (isImported(ast, scope)) {
+    return ''
+  }
+
   switch (ast.type) {
     case 'ARRAY':
       return [
-        declareNamedTypes(ast.params, options, rootASTName, processed),
-        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
+        declareNamedTypes(ast.params, options, scope, processed),
+        shouldDeclare(ast, options, scope) ? declared(ast, scope, generateStandaloneType(ast, options)) : undefined,
       ]
         .filter(Boolean)
         .join('\n')
@@ -149,27 +200,27 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       return ''
     case 'INTERFACE':
       return getSuperTypesAndParams(ast)
-        .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
+        .map(ast => declareNamedTypes(ast, options, scope, processed))
         .filter(Boolean)
         .join('\n')
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
       return [
-        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
+        shouldDeclare(ast, options, scope) ? declared(ast, scope, generateStandaloneType(ast, options)) : undefined,
         ast.params
-          .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
+          .map(ast => declareNamedTypes(ast, options, scope, processed))
           .filter(Boolean)
           .join('\n'),
         'spreadParam' in ast && ast.spreadParam
-          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
+          ? declareNamedTypes(ast.spreadParam, options, scope, processed)
           : undefined,
       ]
         .filter(Boolean)
         .join('\n')
     default:
-      if (shouldDeclare(ast, options, rootASTName)) {
-        return generateStandaloneType(ast, options)
+      if (shouldDeclare(ast, options, scope)) {
+        return declared(ast, scope, generateStandaloneType(ast, options))
       }
       return ''
   }

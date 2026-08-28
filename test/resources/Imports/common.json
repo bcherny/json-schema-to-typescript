@@ -1,0 +1,23 @@
+{
+  "title": "Common",
+  "description": "Shared definitions; no properties of its own",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "thing": {
+      "title": "Thing",
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "tags": {"type": "array", "items": {"$ref": "#/definitions/tag"}}
+      },
+      "required": ["id"],
+      "additionalProperties": false
+    },
+    "tag": {
+      "title": "Tag",
+      "type": "string",
+      "enum": ["red", "green"]
+    }
+  }
+}

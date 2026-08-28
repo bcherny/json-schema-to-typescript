@@ -1,0 +1,122 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`compileFiles Imports: test/resources/Imports/a.json 1`] = `
+"import type {B} from "./b";
+import type {Thing} from "./common";
+
+export interface A {
+  thing?: Thing;
+  partner?: B;
+}
+"
+`;
+
+exports[`compileFiles Imports: test/resources/Imports/b.json 1`] = `
+"import type {A} from "./a";
+import type {Tag} from "./common";
+
+export interface B {
+  thing?: Thing;
+  owner?: A;
+}
+/**
+ * B's own note about its thing
+ */
+export interface Thing {
+  id: string;
+  tags?: Tag[];
+}
+"
+`;
+
+exports[`compileFiles Imports: test/resources/Imports/common.json 1`] = `
+"/**
+ * This interface was referenced by \`Common\`'s JSON-Schema
+ * via the \`definition\` "tag".
+ */
+export type Tag = "red" | "green";
+
+/**
+ * Shared definitions; no properties of its own
+ */
+export interface Common {}
+/**
+ * This interface was referenced by \`Common\`'s JSON-Schema
+ * via the \`definition\` "thing".
+ */
+export interface Thing {
+  id: string;
+  tags?: Tag[];
+}
+"
+`;
+
+exports[`compileFiles extends: test/resources/extends/Circle.json 1`] = `
+"import type {Shape} from "./shapes/Shape";
+
+/**
+ * A Circle
+ */
+export interface Circle extends Shape {
+  type: "circle";
+  radius: number;
+}
+"
+`;
+
+exports[`compileFiles extends: test/resources/extends/Shape.json 1`] = `
+"/**
+ * A Shape
+ */
+export interface Shape {
+  type: string;
+  id: string;
+}
+"
+`;
+
+exports[`compileFiles extends: test/resources/extends/Square.json 1`] = `
+"import type {Shape} from "./shapes/Shape";
+
+/**
+ * A Square
+ */
+export interface Square extends Shape {
+  type: "square";
+  height: number;
+  width: number;
+}
+"
+`;
+
+exports[`compileFiles cycle: test/resources/cycle.3.json 1`] = `
+"import type {Cycle4} from "./cycle.4";
+
+export interface Cycle3 {
+  foo?: Cycle4;
+}
+"
+`;
+
+exports[`compileFiles cycle: test/resources/cycle.4.json 1`] = `
+"import type {Cycle3} from "./cycle.3";
+
+export interface Cycle4 {
+  foo?: number;
+  bar?: Cycle3;
+  [k: string]: unknown;
+}
+"
+`;
+
+exports[`compileFiles outsideTheSet: test/resources/MultiSchemaRefs/response/Referencing.json 1`] = `
+"export interface Referencing {
+  inner?: Referenced;
+  [k: string]: unknown;
+}
+export interface Referenced {
+  id: string;
+  [k: string]: unknown;
+}
+"
+`;

@@ -5,7 +5,7 @@ import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSy
 import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
-import {compile, DEFAULT_OPTIONS, Options} from './index'
+import {compile, compileFiles, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
 
 // cwd is deliberately left out of the CLI defaults: processFile() computes a
@@ -26,6 +26,7 @@ main(
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
+      'imports',
       'removeOptionalIfDefaultExists',
       'style.singleQuote',
       'strictIndexSignatures',
@@ -85,39 +86,37 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
     )
   }
 
-  // we can do this concurrently for perf
-  const results = await Promise.all(
-    files.map(async file => {
-      return [file, await processFile(file, argv)] as const
-    }),
+  await processFiles(
+    files.map(file => [file, argOut && `${argOut}/${justName(file)}.d.ts`]),
+    argv,
   )
-
-  // careful to do this serially
-  results.forEach(([file, result]) => {
-    const outputPath = argOut && `${argOut}/${justName(file)}.d.ts`
-    outputResult(result, outputPath)
-  })
 }
 
 async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
-  const files = getPaths(argIn)
-
-  // we can do this concurrently for perf
-  const results = await Promise.all(
-    files.map(async file => {
-      if (!argOut) {
-        return [file, await processFile(file, argv)] as const
-      } else {
-        const outputPath = pathTransform(argOut, argIn, file)
-        return [file, await processFile(file, argv), outputPath] as const
-      }
-    }),
+  await processFiles(
+    getPaths(argIn).map(file => [file, argOut && `${pathTransform(argOut, argIn, file)}/${justName(file)}.d.ts`]),
+    argv,
   )
+}
 
+/**
+ * Compiles each file to its output path (or stdout) -- one file at a time, or, with
+ * `--imports`, as one set of modules that import shared types from each other.
+ */
+async function processFiles(files: [string, string | undefined][], argv: Partial<Options> & {imports?: boolean}) {
+  let results: (readonly [string, string | undefined])[]
+  if (argv.imports) {
+    const compiled = await compileFiles(
+      files.map(([file, out]) => ({filename: file, outputPath: out ?? file})),
+      argv,
+    )
+    results = files.map(([, out], i) => [compiled[i], out] as const)
+  } else {
+    // we can do this concurrently for perf
+    results = await Promise.all(files.map(async ([file, out]) => [await processFile(file, argv), out] as const))
+  }
   // careful to do this serially
-  results.forEach(([file, result, outputPath]) =>
-    outputResult(result, outputPath ? `${outputPath}/${justName(file)}.d.ts` : undefined),
-  )
+  results.forEach(([result, out]) => outputResult(result, out))
 }
 
 function outputResult(result: string, outputPath: string | undefined): void {
@@ -196,6 +195,10 @@ Boolean values can be set to false using the 'no-' prefix.
       Create enums from JSON enums instead of union types
   --format
       Format code? Set this to false to improve performance.
+  --imports
+      When IN_FILE is a directory or glob: import types that live in another of the
+      compiled files from that file's module, instead of declaring a copy in each.
+      (Experimental; off by default.)
   --maxItems
       Maximum number of unioned tuples to emit when representing bounded-size
       array types, before falling back to emitting unbounded arrays. Increase

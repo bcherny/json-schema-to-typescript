@@ -5,8 +5,9 @@ import {
   Plugin,
   getJsonSchemaRefParserDefaultOptions,
 } from '@apidevtools/json-schema-ref-parser'
+import {isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
-import {JSONSchema} from './types/JSONSchema'
+import {JSONSchema, SchemaSource, Source} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
@@ -14,13 +15,25 @@ export type DereferencedPaths = WeakMap<JSONSchema, string>
 export async function dereference(
   schema: JSONSchema,
   {cwd, $refOptions}: {cwd: string; $refOptions: $RefOptions},
+  /**
+   * The absolute path `schema` counts as read from, when compiling a set of files together
+   * (`imports` mode). The schema is then registered with the ref-parser under that path
+   * rather than under `cwd` -- so a `$ref` in another file that leads back to this one
+   * resolves to this very object instead of a second copy read from disk -- and every node
+   * of every document gets stamped with the file and JSON Pointer it was read from (its
+   * `Source`), before any `$ref` is inlined.
+   */
+  sourceFile?: string,
 ): Promise<{dereferencedPaths: DereferencedPaths; dereferencedSchema: JSONSchema}> {
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const parser = new $RefParser()
   const dereferencedPaths: DereferencedPaths = new WeakMap()
-  const dereferencedSchema = (await parser.dereference(cwd, schema, {
+  if (sourceFile !== undefined) {
+    stampSource(schema, fileKey(sourceFile))
+  }
+  const dereferencedSchema = (await parser.dereference(sourceFile ?? cwd, schema, {
     ...$refOptions,
-    parse: prenormalizingParsers($refOptions.parse),
+    parse: prenormalizingParsers($refOptions.parse, sourceFile !== undefined),
     dereference: {
       ...$refOptions.dereference,
       onDereference($ref: string, schema: JSONSchema) {
@@ -37,7 +50,10 @@ export async function dereference(
  * gets the same pre-dereference rewrites as the schema being compiled, before its own
  * `$ref`s are resolved.
  */
-function prenormalizingParsers(configured: $RefOptions['parse'] = {}): $RefOptions['parse'] {
+function prenormalizingParsers(configured: $RefOptions['parse'] = {}, stamp = false): $RefOptions['parse'] {
+  const prepare = stamp
+    ? (document: unknown, file: FileInfo) => stampSource(prenormalizeDocument(document), fileKey(file.url))
+    : prenormalizeDocument
   const defaults = getJsonSchemaRefParserDefaultOptions().parse
   const parsers: $RefOptions['parse'] = {...defaults, ...configured}
   for (const [name, options] of Object.entries(parsers)) {
@@ -51,10 +67,9 @@ function prenormalizingParsers(configured: $RefOptions['parse'] = {}): $RefOptio
       // A parser may return its result (or a promise of it), or hand it to `callback`. (Not
       // `parse.call`: the ref-parser passes a third argument the `Plugin` type leaves out.)
       parse(this: Plugin, file: FileInfo, callback?: ParserCallback, ...rest: unknown[]) {
-        const tap: ParserCallback | undefined =
-          callback && ((error, data) => callback(error, prenormalizeDocument(data)))
+        const tap: ParserCallback | undefined = callback && ((error, data) => callback(error, prepare(data, file)))
         const result: unknown = Reflect.apply(parse, this, [file, tap, ...rest])
-        return isThenable(result) ? result.then(prenormalizeDocument) : prenormalizeDocument(result)
+        return isThenable(result) ? result.then(_ => prepare(_, file)) : prepare(result, file)
       },
     }
   }
@@ -62,6 +77,47 @@ function prenormalizingParsers(configured: $RefOptions['parse'] = {}): $RefOptio
 }
 
 type ParserCallback = (error: Error | null, data: any) => any
+
+/**
+ * One spelling per file, whichever way it was addressed: the ref-parser hands parsers an
+ * encoded, forward-slashed path (or a URL), the CLI hands us a filesystem path.
+ */
+export function fileKey(urlOrPath: string): string {
+  let key = urlOrPath.replace(/^file:\/\//i, '')
+  try {
+    key = decodeURI(key)
+  } catch {}
+  key = key.replace(/\\/g, '/')
+  // Windows: '/C:/x' (from a file URL) and 'c:\x' both become 'C:/x'
+  return key.replace(/^\/?([a-zA-Z]):\//, (_, drive: string) => `${drive.toUpperCase()}:/`)
+}
+
+/**
+ * Stamps every object in a freshly parsed document with the file it came from and its
+ * JSON Pointer within that file. Runs before dereferencing, so a node reached later
+ * through an inlined `$ref` still says where it really lives. First stamp wins.
+ */
+function stampSource<T>(document: T, file: string): T {
+  function go(node: unknown, pointer: string): void {
+    if (Array.isArray(node)) {
+      node.forEach((item, i) => go(item, `${pointer}/${i}`))
+      return
+    }
+    if (!isPlainObject(node) || Object.prototype.hasOwnProperty.call(node, Source)) {
+      return
+    }
+    const value: SchemaSource = {file, pointer}
+    Object.defineProperty(node, Source, {enumerable: false, value, writable: false})
+    for (const key of Object.keys(node as object)) {
+      const child = (node as Record<string, unknown>)[key]
+      if (child !== null && typeof child === 'object') {
+        go(child, `${pointer}/${key.replace(/~/g, '~0').replace(/\//g, '~1')}`)
+      }
+    }
+  }
+  go(document, '')
+  return document
+}
 
 function isThenable(value: unknown): value is PromiseLike<unknown> {
   return typeof (value as PromiseLike<unknown>)?.then === 'function'
