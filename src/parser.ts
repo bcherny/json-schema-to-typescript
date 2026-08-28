@@ -720,14 +720,27 @@ function parseRequired(
  * interface, or an intersection with one): more members required of that type exclude nothing
  * the schema allows.
  */
+const OBJECT_TYPES: ReadonlySet<SchemaType> = new Set([
+  'ALL_OF',
+  'ANY_OF',
+  'NAMED_SCHEMA',
+  'OBJECT',
+  'ONE_OF',
+  'UNNAMED_SCHEMA',
+])
+
 function isObjectSchema(schema: NormalizedJSONSchema, seen = new Set<NormalizedJSONSchema>()): boolean {
   if (!isPlainObject(schema) || seen.has(schema) || !isObjectOnly(schema)) {
     return false
   }
   seen.add(schema)
-  // an `anyOf`/`oneOf` branch that may match something other than objects makes the whole schema
-  // so (it renders as a union with that branch in it), unless its `type` says otherwise
-  if ([schema.anyOf, schema.oneOf].some(branches => branches?.some(branch => !isObjectSchema(branch, new Set(seen))))) {
+  // a schema that also renders as something other than an object type (an enum, an array by its
+  // `items`, a `tsType`...), or whose `anyOf`/`oneOf` has a branch that may match something other
+  // than objects, is objects-only only if its `type` says so
+  if (
+    [...schema[Types]].some(type => !OBJECT_TYPES.has(type)) ||
+    [schema.anyOf, schema.oneOf].some(branches => branches?.some(branch => !isObjectSchema(branch, new Set(seen))))
+  ) {
     return schema.type === 'object'
   }
   return (
