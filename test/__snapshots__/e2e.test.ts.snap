@@ -374646,6 +374646,17 @@ export interface AnyForUnimplementedApplicators {
     b?: number;
     [k: string]: unknown;
   };
+  /**
+   * A \`oneOf\` (or \`anyOf\`) with a branch that says nothing accepts anything, whatever the other branches say
+   */
+  inOneOf?: unknown;
+  /**
+   * Next to \`properties\`, such an \`anyOf\` adds nothing: no picked branches, just the object
+   */
+  anyOfBesideProperties?: {
+    a?: string;
+    [k: string]: unknown;
+  };
   viaRef?: NotNull;
   viaRefInAllOf?: NotNull;
   viaRefAmongOthers?: string;

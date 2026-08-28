@@ -43,6 +43,17 @@ export const input = {
       properties: {a: {type: 'string'}, b: {type: 'number'}},
       allOf: [{not: {required: ['c']}}, {oneOf: [{required: ['a']}, {required: ['b']}]}],
     },
+    inOneOf: {
+      description:
+        'A `oneOf` (or `anyOf`) with a branch that says nothing accepts anything, whatever the other branches say',
+      oneOf: [{type: 'string'}, {not: {type: 'string'}}],
+    },
+    anyOfBesideProperties: {
+      description: 'Next to `properties`, such an `anyOf` adds nothing: no picked branches, just the object',
+      type: 'object',
+      properties: {a: {type: 'string'}},
+      anyOf: [{required: ['a']}, {not: {required: ['a']}}],
+    },
     viaRef: {$ref: '#/definitions/notNull'},
     viaRefInAllOf: {allOf: [{$ref: '#/definitions/notNull'}]},
     viaRefAmongOthers: {allOf: [{$ref: '#/definitions/notNull'}, {type: 'string'}]},
