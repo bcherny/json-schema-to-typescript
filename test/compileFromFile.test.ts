@@ -17,4 +17,10 @@ suite('compileFromFile', () => {
     expect(
       await compileFromFile('./test/resources/other/ReferencingType.yml', {cwd: './test/resources'}),
     ).toMatchSnapshot())
+
+  test('compileFromFile should default cwd to the schema directory when no options are passed', async () =>
+    expect(await compileFromFile('./test/resources/cwdDefault/schema.json')).toMatchSnapshot())
+
+  test('compileFromFile should default cwd to the schema directory when options is an empty object', async () =>
+    expect(await compileFromFile('./test/resources/cwdDefault/schema.json', {})).toMatchSnapshot())
 })
