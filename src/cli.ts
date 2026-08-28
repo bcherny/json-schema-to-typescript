@@ -2,10 +2,16 @@
 
 import minimist from 'minimist'
 import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSync} from 'fs'
+import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
+
+// cwd is deliberately left out of the CLI defaults: processFile() computes a
+// per-file cwd (the directory of the file being compiled) unless the user
+// passes --cwd explicitly, so argv.cwd must stay unset until then.
+const defaultOptions = omit(DEFAULT_OPTIONS, 'cwd')
 
 main(
   minimist(process.argv.slice(2), {
@@ -24,7 +30,7 @@ main(
       'unknownAny',
       'unreachableDefinitions',
     ],
-    default: DEFAULT_OPTIONS,
+    default: defaultOptions,
     string: ['bannerComment', 'cwd'],
   }),
 )
@@ -39,7 +45,7 @@ async function main(argv: minimist.ParsedArgs) {
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
   const ISGLOB = argIn && isDynamicPattern(argIn)
-  const ISDIR = isDir(argIn)
+  const ISDIR = !!argIn && isDir(argIn)
 
   if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
     throw new ReferenceError(
@@ -126,7 +132,10 @@ function outputResult(result: string, outputPath: string | undefined): void {
 async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
   const {filename, contents} = await readInput(argIn)
   const schema = parseFileAsJSONSchema(filename, contents)
-  return compile(schema, argIn, argv)
+  // Resolve $refs relative to the directory of the file being compiled, not
+  // process.cwd(), unless the user explicitly passed --cwd (see #324).
+  const cwd = filename ? dirname(resolve(process.cwd(), filename)) : undefined
+  return compile(schema, argIn, cwd ? {cwd, ...argv} : argv)
 }
 
 function getPaths(path: string, paths: string[] = []) {

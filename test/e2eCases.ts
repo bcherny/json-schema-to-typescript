@@ -5,7 +5,7 @@ import {join} from 'path'
 import {JSONSchema, Options} from '../src'
 import {getWithCache} from './http'
 
-const dir = join(__dirname, 'e2e')
+export const E2E_DIR = join(__dirname, 'e2e')
 
 export type TestCase = {
   input: JSONSchema
@@ -23,12 +23,16 @@ const httpWithCacheResolver = {
   },
 }
 
+export function loadTestCase(name: string): TestCase {
+  return require(join(E2E_DIR, name))
+}
+
 // [filename, contents][]
 function getModules(): [string, TestCase][] {
-  return readdirSync(dir)
+  return readdirSync(E2E_DIR)
     .filter(_ => !_.includes('.ignore.'))
     .filter(_ => /^.*\.ts$/.test(_))
-    .map(_ => [_, require(join(dir, _))]) as [string, TestCase][]
+    .map(_ => [_, loadTestCase(_)]) as [string, TestCase][]
 }
 
 /**

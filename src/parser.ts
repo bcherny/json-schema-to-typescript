@@ -1,10 +1,16 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map, omit} from 'lodash'
+import {includes, isPlainObject, map, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {applySchemaTyping} from './applySchemaTyping'
 import type {AST, TInterface, TInterfaceParam, TIntersection, TNamedInterface, TTuple} from './types/AST'
-import {T_ANY, T_ANY_ADDITIONAL_PROPERTIES, T_UNKNOWN, T_UNKNOWN_ADDITIONAL_PROPERTIES} from './types/AST'
+import {
+  hasStandaloneName,
+  T_ANY,
+  T_ANY_ADDITIONAL_PROPERTIES,
+  T_UNKNOWN,
+  T_UNKNOWN_ADDITIONAL_PROPERTIES,
+} from './types/AST'
 import type {
   EnumJSONSchema,
   JSONSchemaWithDefinitions,
@@ -15,7 +21,8 @@ import type {
 } from './types/JSONSchema'
 import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
 import {memoize} from './memoize'
-import {generateName, log, maybeStripDefault} from './utils'
+import {DereferencedPaths} from './resolver'
+import {generateName, justName, log, maybeStripDefault} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -58,6 +65,116 @@ export function parse(
   }
 
   throw new ReferenceError('Expected intersection schema. Please file an issue on GitHub.')
+}
+
+/**
+ * A schema that refers back to itself can only be emitted as a named declaration:
+ * an anonymous type has no way to mention itself, so the generator would try to
+ * inline it forever. Recursive schemas usually have a name by the time they get
+ * here (a `title`, an `$id`, a key in `definitions`), but not always -- eg. a
+ * self-referencing `oneOf` that lives outside of `definitions`, or the copy the
+ * resolver makes of a definition wherever a `$ref` to it carries sibling keywords.
+ *
+ * Guarantees that every reference cycle in the AST passes through a named type, by
+ * naming anonymous types where it has to: after the `$ref` they were dereferenced
+ * from when there is one, else after the closest property key or `$ref` above them.
+ */
+export function nameAnonymousRecursiveTypes(
+  ast: AST,
+  processed: Processed,
+  dereferencedPaths: DereferencedPaths,
+  usedNames: UsedNames,
+): void {
+  const refNames = new Map<AST, string>()
+  processed.forEach((asts, schema) => {
+    const name = justName(dereferencedPaths.get(schema))
+    if (name) {
+      asts.forEach(_ => refNames.set(_, name))
+    }
+  })
+
+  // The generator emits a named type by reference (and declares it separately), and
+  // inlines everything else -- so it recurses forever exactly when some cycle is made
+  // of anonymous types only. Walk the AST the same way: a named type ends the current
+  // path and becomes a root of its own, so an edge that leads back into the current
+  // path (past its root) closes an all-anonymous cycle. Name one of that edge's two
+  // ends; every cycle through the edge contains both. A type named part-way through a
+  // walk can hide a second cycle that shares its path but not that type, so walk
+  // again until a walk finds nothing to name (one extra walk, in practice).
+  let named: boolean
+  do {
+    named = false
+    const done = new Set<AST>()
+    const roots = [ast]
+    const path: AST[] = []
+    const visit = (node: AST): void => {
+      if (done.has(node)) {
+        return
+      }
+      if (path.length && hasStandaloneName(node)) {
+        roots.push(node)
+        return
+      }
+      const index = path.indexOf(node)
+      if (index > -1) {
+        if (!path.slice(index).some(hasStandaloneName)) {
+          const target = pickEnd(node, path[path.length - 1])
+          target.standaloneName = generateName(refNames.get(target) ?? keyOf(target) ?? closestName(path), usedNames)
+          named = true
+        }
+        return
+      }
+      path.push(node)
+      subtrees(node).forEach(visit)
+      path.pop()
+      done.add(node)
+    }
+    while (roots.length) {
+      visit(roots.pop()!)
+    }
+  } while (named)
+
+  // Prefer the end that was reached through a `$ref` (the resolver's copies share
+  // their children with the original, so a cycle through a copy is often entered at
+  // a child rather than at the copy), then the end that isn't a list, so that the
+  // alias reads `type Foo = string | Foo[]` rather than naming the array.
+  function pickEnd(node: AST, source: AST): AST {
+    if (refNames.has(node) !== refNames.has(source)) {
+      return refNames.has(node) ? node : source
+    }
+    return isList(node) && !isList(source) ? source : node
+  }
+
+  // Last resort is the root the walk started from: the schema itself or a named type
+  function closestName(path: AST[]): string {
+    const above = [...path].reverse()
+    return above.map(_ => refNames.get(_)).find(Boolean) ?? above.map(keyOf).find(Boolean) ?? path[0].standaloneName!
+  }
+}
+
+/** A node's property key -- ignoring the placeholder that array items get */
+function keyOf(ast: AST): string | undefined {
+  return ast.keyName?.includes('{keyNameFromDefinition}') ? undefined : ast.keyName
+}
+
+function isList(ast: AST): boolean {
+  return ast.type === 'ARRAY' || ast.type === 'TUPLE'
+}
+
+function subtrees(ast: AST): AST[] {
+  switch (ast.type) {
+    case 'ARRAY':
+      return [ast.params]
+    case 'INTERFACE':
+      return ast.params.map(_ => _.ast).concat(ast.superTypes)
+    case 'INTERSECTION':
+    case 'UNION':
+      return ast.params
+    case 'TUPLE':
+      return ast.spreadParam ? ast.params.concat(ast.spreadParam) : ast.params
+    default:
+      return []
+  }
 }
 
 function parseAsTypeWithCache(
@@ -121,7 +238,7 @@ function parseNonLiteral(
   usedNames: UsedNames,
 ): AST {
   const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
-  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
+  const keyNameFromDefinition = getDefinitionKeysMemoized(definitions).get(schema)
 
   switch (type) {
     case 'ALL_OF':
@@ -130,7 +247,21 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        // An `allOf` member made up entirely of keywords this tool doesn't implement (eg.
+        // `if`/`then`/`else`, `not`) doesn't match any of the type matchers in `typesOfSchema`,
+        // so it falls back to `newInterface`, which synthesizes a bare `{[k: string]: unknown}`
+        // for it. Intersecting with that contributes no information, so drop it rather than
+        // cluttering the output. Restricted to members with no keyword this tool does recognize,
+        // so it never touches a member whose emptiness is due to its *own* type (eg. a bare
+        // `{type: 'object'}`, or `{required: [...]}` with no matching `properties`) -- those stay
+        // exactly as before.
+        params: schema
+          .allOf!.map(memberSchema => ({
+            ast: parse(memberSchema, options, undefined, processed, usedNames),
+            memberSchema,
+          }))
+          .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
+          .map(({ast}) => ast),
         type: 'INTERSECTION',
       }
     case 'ANY':
@@ -334,6 +465,57 @@ function parseNonLiteral(
   }
 }
 
+// Keywords that some matcher in `typesOfSchema`, or the `additionalProperties`/`required`
+// normalizer rules, actually keys off of. An `allOf` member made up exclusively of keywords
+// outside this list (eg. `if`/`then`/`else`, `not`) is one this tool has no notion of at all,
+// as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently
+// renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
+// swallowing members whose current (separately unimplemented) behavior other schemas rely on.
+// (`$ref` is deliberately omitted: by the time this runs, the resolver has already replaced
+// every `$ref` node, so `case 'REFERENCE'` above never fires and no schema here can carry one.)
+// Keep this in sync with the keywords `typesOfSchema.ts`'s matchers check.
+const RECOGNIZED_ALL_OF_MEMBER_KEYWORDS = new Set([
+  '$id',
+  'additionalProperties',
+  'allOf',
+  'anyOf',
+  'const',
+  'default',
+  'enum',
+  'extends',
+  'items',
+  'oneOf',
+  'patternProperties',
+  'properties',
+  'required',
+  'tsEnumNames',
+  'tsType',
+  'type',
+])
+
+function hasNoRecognizedKeywords(schema: NormalizedJSONSchema): boolean {
+  return Object.keys(schema).every(key => !RECOGNIZED_ALL_OF_MEMBER_KEYWORDS.has(key))
+}
+
+/**
+ * True for a parsed AST that carries no information beyond the synthesized
+ * `[k: string]: unknown`/`any` index signature `parseSchema` adds by default -- ie. an interface
+ * with no properties, patternProperties, superTypes, comment, or standalone name of its own.
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/369
+ */
+function isVacuousInterface(ast: AST): boolean {
+  return (
+    ast.type === 'INTERFACE' &&
+    ast.standaloneName === undefined &&
+    ast.comment === undefined &&
+    !ast.deprecated &&
+    ast.superTypes.length === 0 &&
+    ast.params.length === 1 &&
+    ast.params[0].isIndexSignature &&
+    (ast.params[0].ast.type === 'ANY' || ast.params[0].ast.type === 'UNKNOWN')
+  )
+}
+
 /**
  * Compute a schema name using a series of fallbacks
  */
@@ -386,6 +568,17 @@ function parseSuperTypes(
 }
 
 /**
+ * Draft 4+ lists an object's required properties on the object schema (`required: [...]`).
+ * Draft 3 instead flagged each property schema (`required: true`), and some generators still
+ * emit that form. Support both, reading the draft 3 form only when it is strictly `true` so
+ * that a property's own `required` array (which of *its* properties are required) is never
+ * mistaken for the flag.
+ */
+function isRequired(parentSchema: SchemaSchema, key: string, propertySchema: NormalizedJSONSchema): boolean {
+  return propertySchema.required === true || (parentSchema.required !== true && includes(parentSchema.required, key))
+}
+
+/**
  * Helper to parse schema properties into params on the parent schema's type
  */
 function parseSchema(
@@ -395,43 +588,34 @@ function parseSchema(
   usedNames: UsedNames,
   parentSchemaName: string,
 ): TInterfaceParam[] {
-  let asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
+  const asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
     ast: parse(value, options, key, processed, usedNames),
     isIndexSignature: false,
     isPatternProperty: false,
-    isRequired: includes(schema.required || [], key),
+    isRequired: isRequired(schema, key, value),
     isUnreachableDefinition: false,
     keyName: key,
   }))
 
-  let singlePatternProperty = false
-  if (schema.patternProperties) {
-    // partially support patternProperties. in the case that
-    // additionalProperties is not set, and there is only a single
-    // value definition, we can validate against that.
-    singlePatternProperty = !schema.additionalProperties && Object.keys(schema.patternProperties).length === 1
-
-    asts = asts.concat(
-      map(schema.patternProperties, (value, key: string) => {
-        const ast = parse(value, options, key, processed, usedNames)
-        const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
+  // rendered through the index signature (below), not as params of their own
+  const patternProperties: TInterfaceParam[] = map(schema.patternProperties, (value, key: string) => {
+    const ast = parse(value, options, key, processed, usedNames)
+    const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
 via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
-        ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
-        return {
-          ast,
-          isIndexSignature: singlePatternProperty,
-          isPatternProperty: !singlePatternProperty,
-          isRequired: singlePatternProperty || includes(schema.required || [], key),
-          isUnreachableDefinition: false,
-          keyName: singlePatternProperty ? '[k: string]' : key,
-        }
-      }),
-    )
-  }
+    ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+    return {
+      ast,
+      isIndexSignature: false,
+      isPatternProperty: true,
+      isRequired: isRequired(schema, key, value),
+      isUnreachableDefinition: false,
+      keyName: key,
+    }
+  })
 
-  if (options.unreachableDefinitions) {
-    asts = asts.concat(
-      map(schema.$defs, (value, key: string) => {
+  const unreachableDefinitions: TInterfaceParam[] = !options.unreachableDefinitions
+    ? []
+    : map(schema.$defs, (value, key: string) => {
         const ast = parse(value, options, key, processed, usedNames)
         const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
 via the \`definition\` "${key}".`
@@ -441,45 +625,83 @@ via the \`definition\` "${key}".`
           ast,
           isIndexSignature: false,
           isPatternProperty: false,
-          isRequired: includes(schema.required || [], key),
+          isRequired: isRequired(schema, key, value),
           isUnreachableDefinition: true,
           keyName: key,
         }
-      }),
-    )
-  }
+      })
 
-  // handle additionalProperties
+  // TypeScript cannot constrain keys by regex, so patternProperties are folded into the one
+  // string index signature, typed as the union of their value types:
+  let declaredOnly: TInterfaceParam[] = [] // listed only so that their named types get declared
+  let indexSignatureMembers: TInterfaceParam[]
   switch (schema.additionalProperties) {
-    case undefined:
-    case true:
-      if (singlePatternProperty) {
-        return asts
-      }
-      return asts.concat({
-        ast: options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
-        isIndexSignature: true,
-        isPatternProperty: false,
-        isRequired: true,
-        isUnreachableDefinition: false,
-        keyName: '[k: string]',
-      })
-
+    case true: // already admits every value; the patterns are listed only to get their named types declared
+      declaredOnly = patternProperties
+      indexSignatureMembers = []
+      break
+    case undefined: // validate against the patterns alone, as if it were `false`
     case false:
-      return asts
-
-    // pass "true" as the last param because in TS, properties
-    // defined via index signatures are already optional
+      indexSignatureMembers = patternProperties
+      break
     default:
-      return asts.concat({
+      indexSignatureMembers = patternProperties.concat({
         ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
-        isIndexSignature: true,
-        isPatternProperty: false,
-        isRequired: true,
+        isIndexSignature: false,
+        isPatternProperty: true,
+        isRequired: false,
         isUnreachableDefinition: false,
         keyName: '[k: string]',
       })
   }
+
+  if (!indexSignatureMembers.length && schema.additionalProperties === false) {
+    return asts.concat(unreachableDefinitions)
+  }
+
+  const members = indexSignatureMembers.map(_ => _.ast)
+  let indexSignature: AST
+  if (!members.length) {
+    indexSignature = options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES
+  } else if (members.length === 1) {
+    indexSignature = members[0]
+  } else {
+    indexSignature = {
+      // Members with a standalone name carry their comment on their own declaration;
+      // the others' comments (which name their pattern) go on the index signature.
+      comment:
+        members
+          .filter(_ => !hasStandaloneName(_) && _.comment)
+          .map(_ => _.comment)
+          .join('\n\n') || undefined,
+      keyName: '[k: string]',
+      type: 'UNION',
+      params: members,
+    }
+  }
+
+  // pass "true" for isRequired because in TS, properties
+  // defined via index signatures are already optional
+  const indexSignatureParam: TInterfaceParam = {
+    ast: indexSignature,
+    isIndexSignature: true,
+    isPatternProperty: false,
+    isRequired: true,
+    isUnreachableDefinition: false,
+    keyName: '[k: string]',
+  }
+
+  // The members of a union are also listed as non-rendered params, so that their named types are
+  // still declared when the optimizer collapses it (e.g. `X | unknown` to `unknown`). They go
+  // after the index signature: the optimizer rewrites only the first param that holds a given AST.
+  if (indexSignatureMembers.length > 1) {
+    declaredOnly = indexSignatureMembers
+  }
+  // Declaration order as on master: types from patternProperties before unreachable definitions,
+  // a signature that comes from additionalProperties alone after them.
+  return patternProperties.length
+    ? asts.concat(indexSignatureParam, declaredOnly, unreachableDefinitions)
+    : asts.concat(unreachableDefinitions, indexSignatureParam)
 }
 
 type Definitions = {[k: string]: NormalizedJSONSchema}
@@ -518,6 +740,20 @@ function getDefinitions(
 }
 
 const getDefinitionsMemoized = memoize(getDefinitions)
+
+/**
+ * Reverse index of `getDefinitions`: schema -> the first definition key that holds it,
+ * built once per definitions object instead of scanning every key for every parsed node.
+ */
+const getDefinitionKeysMemoized = memoize((definitions: Definitions): Map<NormalizedJSONSchema, string> => {
+  const keys = new Map<NormalizedJSONSchema, string>()
+  for (const key of Object.keys(definitions)) {
+    if (!keys.has(definitions[key])) {
+      keys.set(definitions[key], key)
+    }
+  }
+  return keys
+})
 
 /**
  * TODO: Reduce rate of false positives

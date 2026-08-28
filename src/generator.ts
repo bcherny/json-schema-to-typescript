@@ -8,6 +8,7 @@ import {
   hasStandaloneName,
   omitStandaloneName,
   T_ANY,
+  T_ANY_ADDITIONAL_PROPERTIES,
   TArray,
   TEnum,
   TInterface,
@@ -16,6 +17,7 @@ import {
   TNamedInterface,
   TUnion,
   T_UNKNOWN,
+  T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
@@ -296,7 +298,32 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
       : type
   })
   const separator = ast.type === 'UNION' ? '|' : '&'
+  if (members.length === 0) {
+    // A union of nothing accepts nothing (`never`). An intersection of nothing (eg. every
+    // `allOf` member turned out to contribute no information) constrains nothing -- render it
+    // exactly like the `{[k: string]: unknown}` a single vacuous member would otherwise have
+    // produced, so it still dedupes against an identical sibling rather than showing up as a
+    // spurious, differently-spelled extra member.
+    return ast.type === 'UNION' ? 'never' : generateInterface(vacuousInterface(options), options)
+  }
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
+}
+
+function vacuousInterface(options: Options): TInterface {
+  return {
+    params: [
+      {
+        ast: options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
+        isIndexSignature: true,
+        isPatternProperty: false,
+        isRequired: true,
+        isUnreachableDefinition: false,
+        keyName: '[k: string]',
+      },
+    ],
+    superTypes: [],
+    type: 'INTERFACE',
+  }
 }
 
 // `any`/`unknown` accept every other type, making index-signature widening
@@ -423,9 +450,12 @@ function generateIndexSignatureType(
     addMember(sibling.ast)
   }
 
-  if (memberASTs.some(isUnknown)) {
-    // `unknown` absorbs every other member
-    return options.strictIndexSignatures ? 'unknown | undefined' : 'unknown'
+  // `unknown` absorbs every other member; so does an `any` among the index
+  // signature's own members that the optimizer did not already collapse (a
+  // `tsType: 'any'` patternProperty, say)
+  const top = memberASTs.some(isAny) ? 'any' : memberASTs.some(isUnknown) ? 'unknown' : undefined
+  if (top) {
+    return options.strictIndexSignatures ? `${top} | undefined` : top
   }
 
   // degenerate index signature type (e.g. an empty anyOf): render it as-is
@@ -489,8 +519,11 @@ function generateInterface(ast: TInterface, options: Options): string {
           param === indexSignature && indexSignatureType !== undefined
             ? indexSignatureType
             : generateType(ast, options) + (isIndexSignature && options.strictIndexSignatures ? ' | undefined' : '')
+        const commented = withItemsComment(ast)
         return (
-          (hasComment(ast) && !ast.standaloneName ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
+          (hasComment(commented) && !ast.standaloneName
+            ? generateComment(commented.comment, commented.deprecated) + '\n'
+            : '') +
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +
@@ -501,6 +534,53 @@ function generateInterface(ast: TInterface, options: Options): string {
     '\n' +
     '}'
   )
+}
+
+/**
+ * An inline (non-standalone) item schema is rendered mid-expression (`T[]`,
+ * `[T, ...T[]]`), where no statement line can carry a JSDoc block of its own, so
+ * its description is surfaced in the comment of the declaration the array type is
+ * attached to - a standalone type alias or an interface property - under an
+ * "Items:" label. This is the one place that decides where item descriptions go
+ * (#660).
+ */
+function withItemsComment<A extends AST>(ast: A): A {
+  const itemsComment = getItemsComment(ast)
+  if (itemsComment === undefined) {
+    return ast
+  }
+  return {...ast, comment: ast.comment ? ast.comment + '\n\n' + itemsComment : itemsComment}
+}
+
+function getItemsComment(ast: AST): string | undefined {
+  let members: AST[]
+  switch (ast.type) {
+    case 'ARRAY':
+      members = [ast.params]
+      break
+    case 'TUPLE':
+      members = ast.spreadParam ? [...ast.params, ast.spreadParam] : ast.params
+      break
+    default:
+      return undefined
+  }
+  // Named item types are declared separately with their own comment. Nested array
+  // types are skipped too: the normalizer appends `@minItems`/`@maxItems` block
+  // tags to their descriptions, which would read as tags of this declaration.
+  const comments = new Set(
+    members.map(_ => (hasStandaloneName(_) || _.type === 'ARRAY' || _.type === 'TUPLE' ? undefined : _.comment)),
+  )
+  // Every member has to carry the same description (for a tuple: one `items` schema
+  // that minItems/maxItems expanded). Distinct positional descriptions have no
+  // agreed rendering and are left out, as before.
+  const [comment] = comments
+  // TypeScript reads a JSDoc block tag (`@word` at line start or after whitespace)
+  // anywhere in a comment as a tag of the declaration the comment sits on, so a
+  // tagged item description (e.g. `@deprecated`) is not hoisted onto the array.
+  if (comments.size !== 1 || !comment || /(^|\s)@\w/.test(comment)) {
+    return undefined
+  }
+  return 'Items: ' + comment
 }
 
 function generateComment(comment?: string, deprecated?: boolean): string {
@@ -553,8 +633,9 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 }
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
+  const commented = withItemsComment(ast)
   return (
-    (hasComment(ast) ? generateComment(ast.comment) + '\n' : '') +
+    (hasComment(commented) ? generateComment(commented.comment) + '\n' : '') +
     `export type ${toSafeString(ast.standaloneName)} = ${generateType(
       omit<AST>(ast, 'standaloneName') as AST /* TODO */,
       options,
