@@ -130087,6 +130087,14 @@ export interface AdditionalItems {
    */
   schemaMinItems1MaxItems4?:
     [string] | [string, number] | [string, number, boolean] | [string, number, boolean, boolean];
+  /**
+   * @maxItems 2
+   */
+  listTrueMaxItems2?: [] | [string] | [string, string];
+  /**
+   * @maxItems 2
+   */
+  listSchemaMaxItems2?: [] | [string] | [string, string];
 }
 "
 `;

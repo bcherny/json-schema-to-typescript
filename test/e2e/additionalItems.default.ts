@@ -21,6 +21,10 @@ export const input = {
     ...cases('MaxItems1', {maxItems: 1}),
     ...cases('MaxItems4', {maxItems: 4}),
     ...cases('MinItems1MaxItems4', {minItems: 1, maxItems: 4}),
+    // List-form `items`: the spec ignores `additionalItems` here, so a stray one must not add a
+    // rest element past `maxItems`
+    listTrueMaxItems2: {type: 'array', items: {type: 'string'}, additionalItems: true, maxItems: 2},
+    listSchemaMaxItems2: {type: 'array', items: {type: 'string'}, additionalItems: {type: 'number'}, maxItems: 2},
   },
   additionalProperties: false,
 }
