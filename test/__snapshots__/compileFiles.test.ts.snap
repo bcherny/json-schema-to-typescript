@@ -13,18 +13,14 @@ export interface A {
 
 exports[`compileFiles memo: test/resources/Imports/memo/b.json 1`] = `
 "import type {A} from "./a.js";
-import type {Tag} from "./common.js";
+import type {Thing} from "./common.js";
 
 export interface B {
+  /**
+   * B's own note about its thing
+   */
   thing?: Thing;
   owner?: A;
-}
-/**
- * B's own note about its thing
- */
-export interface Thing {
-  id: string;
-  tags?: Tag[];
 }
 "
 `;
@@ -509,146 +505,9 @@ export type ProxyResourceBase = ARMResourceBase & {
   /**
    * Location to deploy resource to
    */
-  location?:
-    | string
-    | (
-        | "East Asia"
-        | "Southeast Asia"
-        | "Central US"
-        | "East US"
-        | "East US 2"
-        | "West US"
-        | "North Central US"
-        | "South Central US"
-        | "North Europe"
-        | "West Europe"
-        | "Japan West"
-        | "Japan East"
-        | "Brazil South"
-        | "Australia East"
-        | "Australia Southeast"
-        | "Central India"
-        | "West India"
-        | "South India"
-        | "Canada Central"
-        | "Canada East"
-        | "West Central US"
-        | "West US 2"
-        | "UK South"
-        | "UK West"
-        | "Korea Central"
-        | "Korea South"
-        | "global"
-      );
+  location?: ResourceLocations;
   [k: string]: unknown;
 };
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceBase".
- */
-export type ResourceBase = ARMResourceBase & {
-  /**
-   * Location to deploy resource to
-   */
-  location?:
-    | string
-    | (
-        | "East Asia"
-        | "Southeast Asia"
-        | "Central US"
-        | "East US"
-        | "East US 2"
-        | "West US"
-        | "North Central US"
-        | "South Central US"
-        | "North Europe"
-        | "West Europe"
-        | "Japan West"
-        | "Japan East"
-        | "Brazil South"
-        | "Australia East"
-        | "Australia Southeast"
-        | "Central India"
-        | "West India"
-        | "South India"
-        | "Canada Central"
-        | "Canada East"
-        | "West Central US"
-        | "West US 2"
-        | "UK South"
-        | "UK West"
-        | "Korea Central"
-        | "Korea South"
-        | "global"
-      );
-  /**
-   * Name-value pairs to add to the resource
-   */
-  tags?: {
-    [k: string]: unknown;
-  };
-  copy?: ResourceCopy;
-  comments?: string;
-  [k: string]: unknown;
-};
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceBaseExternal".
- */
-export type ResourceBaseExternal = ARMResourceBase & {
-  /**
-   * Location to deploy resource to
-   */
-  location?:
-    | string
-    | (
-        | "East Asia"
-        | "Southeast Asia"
-        | "Central US"
-        | "East US"
-        | "East US 2"
-        | "West US"
-        | "North Central US"
-        | "South Central US"
-        | "North Europe"
-        | "West Europe"
-        | "Japan West"
-        | "Japan East"
-        | "Brazil South"
-        | "Australia East"
-        | "Australia Southeast"
-        | "Central India"
-        | "West India"
-        | "South India"
-        | "Canada Central"
-        | "Canada East"
-        | "West Central US"
-        | "West US 2"
-        | "UK South"
-        | "UK West"
-        | "Korea Central"
-        | "Korea South"
-        | "global"
-      );
-  /**
-   * Name-value pairs to add to the resource
-   */
-  tags?: {
-    [k: string]: unknown;
-  };
-  copy?: ResourceCopy;
-  comments?: string;
-  [k: string]: unknown;
-} & {
-  plan: unknown;
-};
-/**
- * Kind of resource
- *
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceKind".
- */
-export type ResourceKind = string;
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "resourceLocations".
@@ -684,6 +543,53 @@ export type ResourceLocations =
       | "Korea South"
       | "global"
     );
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceBase".
+ */
+export type ResourceBase = ARMResourceBase & {
+  /**
+   * Location to deploy resource to
+   */
+  location?: ResourceLocations;
+  /**
+   * Name-value pairs to add to the resource
+   */
+  tags?: {
+    [k: string]: unknown;
+  };
+  copy?: ResourceCopy;
+  comments?: string;
+  [k: string]: unknown;
+};
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceBaseExternal".
+ */
+export type ResourceBaseExternal = ARMResourceBase & {
+  /**
+   * Location to deploy resource to
+   */
+  location?: ResourceLocations;
+  /**
+   * Name-value pairs to add to the resource
+   */
+  tags?: {
+    [k: string]: unknown;
+  };
+  copy?: ResourceCopy;
+  comments?: string;
+  [k: string]: unknown;
+} & {
+  plan: unknown;
+};
+/**
+ * Kind of resource
+ *
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceKind".
+ */
+export type ResourceKind = string;
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "numberOrExpression".

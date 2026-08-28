@@ -627,18 +627,14 @@ exports[`CLI directory in, --imports: shared types are imported from the module 
 
 exports[`CLI directory in, --imports: shared types are imported from the module that declares them 4`] = `
 "import type {A} from "./a.js";
-import type {Tag} from "./common.js";
+import type {Thing} from "./common.js";
 
 export interface B {
+  /**
+   * B's own note about its thing
+   */
   thing?: Thing;
   owner?: A;
-}
-/**
- * B's own note about its thing
- */
-export interface Thing {
-  id: string;
-  tags?: Tag[];
 }
 "
 `;
