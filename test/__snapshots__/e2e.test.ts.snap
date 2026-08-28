@@ -128582,21 +128582,24 @@ export type ParameterLocation =
       style?: "matrix" | "label" | "simple";
       required: true;
       [k: string]: unknown;
-    } /**
+    }
+  /**
    * Parameter in query
    */
   | {
       in?: "query";
       style?: "form" | "spaceDelimited" | "pipeDelimited" | "deepObject";
       [k: string]: unknown;
-    } /**
+    }
+  /**
    * Parameter in header
    */
   | {
       in?: "header";
       style?: "simple";
       [k: string]: unknown;
-    } /**
+    }
+  /**
    * Parameter in cookie
    */
   | {
@@ -128662,7 +128665,8 @@ export type HTTPSecurityScheme1 =
   | {
       scheme?: "bearer";
       [k: string]: unknown;
-    } /**
+    }
+  /**
    * Non Bearer
    */
   | {
@@ -130981,7 +130985,8 @@ export type DatabaseAccountsApisDatabasesSettingsChildResource = ({
 apiVersion: "2015-04-08"
 type: "settings"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.DocumentDB/databaseAccounts/apis/databases/settings
  */
 {
@@ -131653,13 +131658,15 @@ export type AutomationAccountsRunbooksDraftChildResource = ({
 apiVersion: "2015-10-31"
 type: "draft"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Automation/automationAccounts/runbooks/draft
  */
 {
 name: "content"
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Automation/automationAccounts/runbooks/draft
  */
 {
@@ -131683,13 +131690,15 @@ export type AutomationAccountsRunbooksDraftChildResource1 = ({
 apiVersion: "2018-06-30"
 type: "draft"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Automation/automationAccounts/runbooks/draft
  */
 {
 name: "content"
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Automation/automationAccounts/runbooks/draft
  */
 {
@@ -132004,7 +132013,8 @@ export type ServicePortalsettingsChildResource = ({
 apiVersion: "2017-03-01"
 type: "portalsettings"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132014,7 +132024,8 @@ name: "signin"
  */
 properties: (PortalSigninSettingProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132024,7 +132035,8 @@ name: "signup"
  */
 properties: (PortalSignupSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132042,7 +132054,8 @@ export type ServicePortalsettingsChildResource1 = ({
 apiVersion: "2018-01-01"
 type: "portalsettings"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132052,7 +132065,8 @@ name: "signin"
  */
 properties: (PortalSigninSettingProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132062,7 +132076,8 @@ name: "signup"
  */
 properties: (PortalSignupSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132080,7 +132095,8 @@ export type ServicePortalsettingsChildResource2 = ({
 apiVersion: "2018-06-01-preview"
 type: "portalsettings"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132090,7 +132106,8 @@ name: "signin"
  */
 properties: (PortalSigninSettingProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132100,7 +132117,8 @@ name: "signup"
  */
 properties: (PortalSignupSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132118,7 +132136,8 @@ export type ServicePortalsettingsChildResource3 = ({
 apiVersion: "2019-01-01"
 type: "portalsettings"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132128,7 +132147,8 @@ name: "signin"
  */
 properties: (PortalSigninSettingProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -132138,7 +132158,8 @@ name: "signup"
  */
 properties: (PortalSignupSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.ApiManagement/service/portalsettings
  */
 {
@@ -135305,7 +135326,8 @@ export type ClustersExtensionsChildResource = ({
 apiVersion: "2015-03-01-preview"
 type: "extensions"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.HDInsight/clusters/extensions
  */
 {
@@ -135319,7 +135341,8 @@ primaryKey?: string
  */
 workspaceId?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.HDInsight/clusters/extensions
  */
 {
@@ -135345,7 +135368,8 @@ export type ClustersExtensions = ({
 apiVersion: "2015-03-01-preview"
 type: "Microsoft.HDInsight/clusters/extensions"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.HDInsight/clusters/extensions
  */
 {
@@ -135359,7 +135383,8 @@ primaryKey?: string
  */
 workspaceId?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.HDInsight/clusters/extensions
  */
 {
@@ -135385,7 +135410,8 @@ export type ClustersExtensionsChildResource1 = ({
 apiVersion: "2018-06-01-preview"
 type: "extensions"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.HDInsight/clusters/extensions
  */
 {
@@ -135399,7 +135425,8 @@ primaryKey?: string
  */
 workspaceId?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.HDInsight/clusters/extensions
  */
 {
@@ -135425,7 +135452,8 @@ export type ClustersExtensions1 = ({
 apiVersion: "2018-06-01-preview"
 type: "Microsoft.HDInsight/clusters/extensions"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.HDInsight/clusters/extensions
  */
 {
@@ -135439,7 +135467,8 @@ primaryKey?: string
  */
 workspaceId?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.HDInsight/clusters/extensions
  */
 {
@@ -136634,7 +136663,8 @@ export type SitesConfigChildResource = ({
 apiVersion: "2015-08-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -136663,7 +136693,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -136692,7 +136723,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -136726,7 +136758,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -136760,7 +136793,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -136902,7 +136936,8 @@ twitterConsumerSecret?: string
  */
 unauthenticatedClientAction?: (("RedirectToLoginPage" | "AllowAnonymous") | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -136936,7 +136971,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -136965,7 +137001,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137002,7 +137039,8 @@ export type SitesConfig = ({
 apiVersion: "2015-08-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137031,7 +137069,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137060,7 +137099,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137094,7 +137134,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137128,7 +137169,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137270,7 +137312,8 @@ twitterConsumerSecret?: string
  */
 unauthenticatedClientAction?: (("RedirectToLoginPage" | "AllowAnonymous") | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137299,7 +137342,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137336,7 +137380,8 @@ export type SitesSlotsConfigChildResource = ({
 apiVersion: "2015-08-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137365,7 +137410,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137399,7 +137445,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137433,7 +137480,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137575,7 +137623,8 @@ twitterConsumerSecret?: string
  */
 unauthenticatedClientAction?: (("RedirectToLoginPage" | "AllowAnonymous") | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137609,7 +137658,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137638,7 +137688,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137675,7 +137726,8 @@ export type SitesSlotsConfig = ({
 apiVersion: "2015-08-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137704,7 +137756,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137738,7 +137791,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137772,7 +137826,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137914,7 +137969,8 @@ twitterConsumerSecret?: string
  */
 unauthenticatedClientAction?: (("RedirectToLoginPage" | "AllowAnonymous") | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137943,7 +137999,8 @@ tags?: ({
  */
 type?: string
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -137980,7 +138037,8 @@ export type SitesConfigChildResource1 = ({
 apiVersion: "2016-08-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -137996,7 +138054,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138010,7 +138069,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138024,7 +138084,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138040,7 +138101,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair1
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138054,7 +138116,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138070,7 +138133,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138084,7 +138148,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138099,7 +138164,8 @@ name: "slotConfigNames"
  */
 properties: (SlotConfigNames | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138121,7 +138187,8 @@ export type SitesConfig1 = ({
 apiVersion: "2016-08-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138137,7 +138204,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138151,7 +138219,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138165,7 +138234,8 @@ name: string
  */
 properties: (BackupRequestProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138181,7 +138251,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair1
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138195,7 +138266,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138209,7 +138281,8 @@ name: string
  */
 properties: (PushSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138224,7 +138297,8 @@ name: string
  */
 properties: (SlotConfigNames | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138246,7 +138320,8 @@ export type SitesSlotsConfigChildResource1 = ({
 apiVersion: "2016-08-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138262,7 +138337,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138276,7 +138352,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138290,7 +138367,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138306,7 +138384,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair1
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138320,7 +138399,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138336,7 +138416,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138350,7 +138431,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138372,7 +138454,8 @@ export type SitesSlotsConfig1 = ({
 apiVersion: "2016-08-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138388,7 +138471,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138402,7 +138486,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138416,7 +138501,8 @@ name: string
  */
 properties: (BackupRequestProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138432,7 +138518,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair1
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138446,7 +138533,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138460,7 +138548,8 @@ name: string
  */
 properties: (PushSettingsProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138482,7 +138571,8 @@ export type SitesConfigChildResource2 = ({
 apiVersion: "2018-02-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138498,7 +138588,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138512,7 +138603,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138528,7 +138620,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138542,7 +138635,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138558,7 +138652,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair2
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138572,7 +138667,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138588,7 +138684,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138602,7 +138699,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138618,7 +138716,8 @@ name: "slotConfigNames"
  */
 properties: (SlotConfigNames1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138640,7 +138739,8 @@ export type SitesConfig2 = ({
 apiVersion: "2018-02-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138656,7 +138756,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138670,7 +138771,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138686,7 +138788,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138700,7 +138803,8 @@ name: string
  */
 properties: (BackupRequestProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138716,7 +138820,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair2
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138730,7 +138835,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138744,7 +138850,8 @@ name: string
  */
 properties: (PushSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138760,7 +138867,8 @@ name: string
  */
 properties: (SlotConfigNames1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -138782,7 +138890,8 @@ export type SitesSlotsConfigChildResource2 = ({
 apiVersion: "2018-02-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138798,7 +138907,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138812,7 +138922,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138828,7 +138939,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138842,7 +138954,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138858,7 +138971,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair2
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138872,7 +138986,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138888,7 +139003,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138902,7 +139018,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138924,7 +139041,8 @@ export type SitesSlotsConfig2 = ({
 apiVersion: "2018-02-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138940,7 +139058,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138954,7 +139073,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138970,7 +139090,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -138984,7 +139105,8 @@ name: string
  */
 properties: (BackupRequestProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139000,7 +139122,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair2
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139014,7 +139137,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139028,7 +139152,8 @@ name: string
  */
 properties: (PushSettingsProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139050,7 +139175,8 @@ export type SitesConfigChildResource3 = ({
 apiVersion: "2018-11-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139066,7 +139192,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139080,7 +139207,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139096,7 +139224,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue1
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139110,7 +139239,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139126,7 +139256,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair3
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139140,7 +139271,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139156,7 +139288,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139170,7 +139303,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139186,7 +139320,8 @@ name: "slotConfigNames"
  */
 properties: (SlotConfigNames2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139208,7 +139343,8 @@ export type SitesConfig3 = ({
 apiVersion: "2018-11-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139224,7 +139360,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139238,7 +139375,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139254,7 +139392,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue1
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139268,7 +139407,8 @@ name: string
  */
 properties: (BackupRequestProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139284,7 +139424,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair3
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139298,7 +139439,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139312,7 +139454,8 @@ name: string
  */
 properties: (PushSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139328,7 +139471,8 @@ name: string
  */
 properties: (SlotConfigNames2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139350,7 +139494,8 @@ export type SitesSlotsConfigChildResource3 = ({
 apiVersion: "2018-11-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139366,7 +139511,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139380,7 +139526,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139396,7 +139543,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue1
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139410,7 +139558,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139426,7 +139575,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair3
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139440,7 +139590,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139456,7 +139607,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139470,7 +139622,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139492,7 +139645,8 @@ export type SitesSlotsConfig3 = ({
 apiVersion: "2018-11-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139508,7 +139662,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139522,7 +139677,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139538,7 +139694,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue1
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139552,7 +139709,8 @@ name: string
  */
 properties: (BackupRequestProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139568,7 +139726,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair3
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139582,7 +139741,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139596,7 +139756,8 @@ name: string
  */
 properties: (PushSettingsProperties2 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139618,7 +139779,8 @@ export type SitesBasicPublishingCredentialsPoliciesChildResource = ({
 apiVersion: "2019-08-01"
 type: "basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -139632,7 +139794,8 @@ name: "ftp"
  */
 properties: (CsmPublishingCredentialsPoliciesEntityProperties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -139654,7 +139817,8 @@ export type SitesConfigChildResource4 = ({
 apiVersion: "2019-08-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139670,7 +139834,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139684,7 +139849,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139700,7 +139866,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue2
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139714,7 +139881,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139730,7 +139898,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair4
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139744,7 +139913,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139760,7 +139930,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139774,7 +139945,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139790,7 +139962,8 @@ name: "slotConfigNames"
  */
 properties: (SlotConfigNames3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139812,7 +139985,8 @@ export type SitesBasicPublishingCredentialsPolicies = ({
 apiVersion: "2019-08-01"
 type: "Microsoft.Web/sites/basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -139834,7 +140008,8 @@ export type SitesConfig4 = ({
 apiVersion: "2019-08-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139850,7 +140025,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139864,7 +140040,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139880,7 +140057,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue2
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139894,7 +140072,8 @@ name: string
  */
 properties: (BackupRequestProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139910,7 +140089,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair4
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139924,7 +140104,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139938,7 +140119,8 @@ name: string
  */
 properties: (PushSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139954,7 +140136,8 @@ name: string
  */
 properties: (SlotConfigNames3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -139976,7 +140159,8 @@ export type SitesSlotsConfigChildResource4 = ({
 apiVersion: "2019-08-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -139992,7 +140176,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140006,7 +140191,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140022,7 +140208,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue2
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140036,7 +140223,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140052,7 +140240,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair4
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140066,7 +140255,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140082,7 +140272,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140096,7 +140287,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140118,7 +140310,8 @@ export type SitesSlotsConfig4 = ({
 apiVersion: "2019-08-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140134,7 +140327,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140148,7 +140342,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140164,7 +140359,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue2
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140178,7 +140374,8 @@ name: string
  */
 properties: (BackupRequestProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140194,7 +140391,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair4
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140208,7 +140406,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140222,7 +140421,8 @@ name: string
  */
 properties: (PushSettingsProperties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140244,7 +140444,8 @@ export type SitesBasicPublishingCredentialsPoliciesChildResource1 = ({
 apiVersion: "2020-06-01"
 type: "basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -140258,7 +140459,8 @@ name: "ftp"
  */
 properties: (CsmPublishingCredentialsPoliciesEntityProperties1 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -140280,7 +140482,8 @@ export type SitesConfigChildResource5 = ({
 apiVersion: "2020-06-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140296,7 +140499,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140310,7 +140514,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140324,7 +140529,8 @@ name: "authsettingsV2"
  */
 properties: (SiteAuthSettingsV2Properties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140340,7 +140546,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue3
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140354,7 +140561,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140370,7 +140578,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair5
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140384,7 +140593,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140400,7 +140610,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140414,7 +140625,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140430,7 +140642,8 @@ name: "slotConfigNames"
  */
 properties: (SlotConfigNames4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140452,7 +140665,8 @@ export type SitesBasicPublishingCredentialsPolicies1 = ({
 apiVersion: "2020-06-01"
 type: "Microsoft.Web/sites/basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -140474,7 +140688,8 @@ export type SitesConfig5 = ({
 apiVersion: "2020-06-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140490,7 +140705,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140504,7 +140720,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140518,7 +140735,8 @@ name: string
  */
 properties: (SiteAuthSettingsV2Properties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140534,7 +140752,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue3
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140548,7 +140767,8 @@ name: string
  */
 properties: (BackupRequestProperties5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140564,7 +140784,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair5
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140578,7 +140799,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140592,7 +140814,8 @@ name: string
  */
 properties: (PushSettingsProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140608,7 +140831,8 @@ name: string
  */
 properties: (SlotConfigNames4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140630,7 +140854,8 @@ export type SitesSlotsConfigChildResource5 = ({
 apiVersion: "2020-06-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140646,7 +140871,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140660,7 +140886,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140674,7 +140901,8 @@ name: "authsettingsV2"
  */
 properties: (SiteAuthSettingsV2Properties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140690,7 +140918,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue3
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140704,7 +140933,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140720,7 +140950,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair5
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140734,7 +140965,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140750,7 +140982,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140764,7 +140997,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140786,7 +141020,8 @@ export type SitesSlotsConfig5 = ({
 apiVersion: "2020-06-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140802,7 +141037,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140816,7 +141052,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140830,7 +141067,8 @@ name: string
  */
 properties: (SiteAuthSettingsV2Properties | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140846,7 +141084,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue3
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140860,7 +141099,8 @@ name: string
  */
 properties: (BackupRequestProperties5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140876,7 +141116,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair5
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140890,7 +141131,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140904,7 +141146,8 @@ name: string
  */
 properties: (PushSettingsProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -140926,7 +141169,8 @@ export type SitesBasicPublishingCredentialsPoliciesChildResource2 = ({
 apiVersion: "2020-09-01"
 type: "basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -140944,7 +141188,8 @@ properties: (CsmPublishingCredentialsPoliciesEntityProperties2 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -140970,7 +141215,8 @@ export type SitesConfigChildResource6 = ({
 apiVersion: "2020-09-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -140990,7 +141236,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141008,7 +141255,8 @@ properties: (SiteAuthSettingsProperties5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141026,7 +141274,8 @@ properties: (SiteAuthSettingsV2Properties1 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141046,7 +141295,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141064,7 +141314,8 @@ properties: (BackupRequestProperties6 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141084,7 +141335,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141102,7 +141354,8 @@ properties: (SiteLogsConfigProperties6 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141122,7 +141375,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141140,7 +141394,8 @@ properties: (PushSettingsProperties5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141160,7 +141415,8 @@ properties: (SlotConfigNames5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141186,7 +141442,8 @@ export type SitesBasicPublishingCredentialsPolicies2 = ({
 apiVersion: "2020-09-01"
 type: "Microsoft.Web/sites/basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -141212,7 +141469,8 @@ export type SitesConfig6 = ({
 apiVersion: "2020-09-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141232,7 +141490,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141250,7 +141509,8 @@ properties: (SiteAuthSettingsProperties5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141268,7 +141528,8 @@ properties: (SiteAuthSettingsV2Properties1 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141288,7 +141549,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141306,7 +141568,8 @@ properties: (BackupRequestProperties6 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141326,7 +141589,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141344,7 +141608,8 @@ properties: (SiteLogsConfigProperties6 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141362,7 +141627,8 @@ properties: (PushSettingsProperties5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141382,7 +141648,8 @@ properties: (SlotConfigNames5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141408,7 +141675,8 @@ export type SitesSlotsConfigChildResource6 = ({
 apiVersion: "2020-09-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141428,7 +141696,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141446,7 +141715,8 @@ properties: (SiteAuthSettingsProperties5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141464,7 +141734,8 @@ properties: (SiteAuthSettingsV2Properties1 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141484,7 +141755,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141502,7 +141774,8 @@ properties: (BackupRequestProperties6 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141522,7 +141795,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141540,7 +141814,8 @@ properties: (SiteLogsConfigProperties6 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141560,7 +141835,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141578,7 +141854,8 @@ properties: (PushSettingsProperties5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141604,7 +141881,8 @@ export type SitesSlotsConfig6 = ({
 apiVersion: "2020-09-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141624,7 +141902,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141642,7 +141921,8 @@ properties: (SiteAuthSettingsProperties5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141660,7 +141940,8 @@ properties: (SiteAuthSettingsV2Properties1 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141680,7 +141961,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141698,7 +141980,8 @@ properties: (BackupRequestProperties6 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141718,7 +142001,8 @@ properties: ({
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141736,7 +142020,8 @@ properties: (SiteLogsConfigProperties6 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141754,7 +142039,8 @@ properties: (PushSettingsProperties5 | string)
  */
 systemData?: (SystemData5 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -141780,7 +142066,8 @@ export type SitesBasicPublishingCredentialsPoliciesChildResource3 = ({
 apiVersion: "2020-10-01"
 type: "basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -141798,7 +142085,8 @@ properties: (CsmPublishingCredentialsPoliciesEntityProperties3 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -141824,7 +142112,8 @@ export type SitesConfigChildResource7 = ({
 apiVersion: "2020-10-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141844,7 +142133,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141862,7 +142152,8 @@ properties: (SiteAuthSettingsProperties6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141880,7 +142171,8 @@ properties: (SiteAuthSettingsV2Properties2 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141900,7 +142192,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141918,7 +142211,8 @@ properties: (BackupRequestProperties7 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141938,7 +142232,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141956,7 +142251,8 @@ properties: (SiteLogsConfigProperties7 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141976,7 +142272,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -141994,7 +142291,8 @@ properties: (PushSettingsProperties6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142014,7 +142312,8 @@ properties: (SlotConfigNames6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142040,7 +142339,8 @@ export type SitesBasicPublishingCredentialsPolicies3 = ({
 apiVersion: "2020-10-01"
 type: "Microsoft.Web/sites/basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -142066,7 +142366,8 @@ export type SitesConfig7 = ({
 apiVersion: "2020-10-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142086,7 +142387,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142104,7 +142406,8 @@ properties: (SiteAuthSettingsProperties6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142122,7 +142425,8 @@ properties: (SiteAuthSettingsV2Properties2 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142142,7 +142446,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142160,7 +142465,8 @@ properties: (BackupRequestProperties7 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142180,7 +142486,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142198,7 +142505,8 @@ properties: (SiteLogsConfigProperties7 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142216,7 +142524,8 @@ properties: (PushSettingsProperties6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142236,7 +142545,8 @@ properties: (SlotConfigNames6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142262,7 +142572,8 @@ export type SitesSlotsConfigChildResource7 = ({
 apiVersion: "2020-10-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142282,7 +142593,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142300,7 +142612,8 @@ properties: (SiteAuthSettingsProperties6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142318,7 +142631,8 @@ properties: (SiteAuthSettingsV2Properties2 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142338,7 +142652,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142356,7 +142671,8 @@ properties: (BackupRequestProperties7 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142376,7 +142692,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142394,7 +142711,8 @@ properties: (SiteLogsConfigProperties7 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142414,7 +142732,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142432,7 +142751,8 @@ properties: (PushSettingsProperties6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142458,7 +142778,8 @@ export type SitesSlotsConfig7 = ({
 apiVersion: "2020-10-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142478,7 +142799,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142496,7 +142818,8 @@ properties: (SiteAuthSettingsProperties6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142514,7 +142837,8 @@ properties: (SiteAuthSettingsV2Properties2 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142534,7 +142858,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142552,7 +142877,8 @@ properties: (BackupRequestProperties7 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142572,7 +142898,8 @@ properties: ({
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142590,7 +142917,8 @@ properties: (SiteLogsConfigProperties7 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142608,7 +142936,8 @@ properties: (PushSettingsProperties6 | string)
  */
 systemData?: (SystemData6 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -142634,7 +142963,8 @@ export type SitesBasicPublishingCredentialsPoliciesChildResource4 = ({
 apiVersion: "2020-12-01"
 type: "basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -142648,7 +142978,8 @@ name: "ftp"
  */
 properties: (CsmPublishingCredentialsPoliciesEntityProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -142670,7 +143001,8 @@ export type SitesConfigChildResource8 = ({
 apiVersion: "2020-12-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142686,7 +143018,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142700,7 +143033,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142714,7 +143048,8 @@ name: "authsettingsV2"
  */
 properties: (SiteAuthSettingsV2Properties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142730,7 +143065,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue6
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142744,7 +143080,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties8 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142760,7 +143097,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair8
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142774,7 +143112,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties8 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142790,7 +143129,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142804,7 +143144,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142820,7 +143161,8 @@ name: "slotConfigNames"
  */
 properties: (SlotConfigNames7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142842,7 +143184,8 @@ export type SitesBasicPublishingCredentialsPolicies4 = ({
 apiVersion: "2020-12-01"
 type: "Microsoft.Web/sites/basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.Web/sites/basicPublishingCredentialsPolicies
  */
 {
@@ -142864,7 +143207,8 @@ export type SitesConfig8 = ({
 apiVersion: "2020-12-01"
 type: "Microsoft.Web/sites/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142880,7 +143224,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142894,7 +143239,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142908,7 +143254,8 @@ name: string
  */
 properties: (SiteAuthSettingsV2Properties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142924,7 +143271,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue6
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142938,7 +143286,8 @@ name: string
  */
 properties: (BackupRequestProperties8 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142954,7 +143303,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair8
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142968,7 +143318,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties8 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142982,7 +143333,8 @@ name: string
  */
 properties: (PushSettingsProperties7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -142998,7 +143350,8 @@ name: string
  */
 properties: (SlotConfigNames7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/config
  */
 {
@@ -143020,7 +143373,8 @@ export type SitesSlotsBasicPublishingCredentialsPoliciesChildResource = ({
 apiVersion: "2020-12-01"
 type: "basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/basicPublishingCredentialsPolicies
  */
 {
@@ -143034,7 +143388,8 @@ name: "ftp"
  */
 properties: (CsmPublishingCredentialsPoliciesEntityProperties4 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/basicPublishingCredentialsPolicies
  */
 {
@@ -143056,7 +143411,8 @@ export type SitesSlotsConfigChildResource8 = ({
 apiVersion: "2020-12-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143072,7 +143428,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143086,7 +143443,8 @@ name: "authsettings"
  */
 properties: (SiteAuthSettingsProperties7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143100,7 +143458,8 @@ name: "authsettingsV2"
  */
 properties: (SiteAuthSettingsV2Properties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143116,7 +143475,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue6
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143130,7 +143490,8 @@ name: "backup"
  */
 properties: (BackupRequestProperties8 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143146,7 +143507,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair8
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143160,7 +143522,8 @@ name: "logs"
  */
 properties: (SiteLogsConfigProperties8 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143176,7 +143539,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143190,7 +143554,8 @@ name: "pushsettings"
  */
 properties: (PushSettingsProperties7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143212,7 +143577,8 @@ export type SitesSlotsBasicPublishingCredentialsPolicies = ({
 apiVersion: "2020-12-01"
 type: "Microsoft.Web/sites/slots/basicPublishingCredentialsPolicies"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.Web/sites/slots/basicPublishingCredentialsPolicies
  */
 {
@@ -143234,7 +143600,8 @@ export type SitesSlotsConfig8 = ({
 apiVersion: "2020-12-01"
 type: "Microsoft.Web/sites/slots/config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143250,7 +143617,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143264,7 +143632,8 @@ name: string
  */
 properties: (SiteAuthSettingsProperties7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143278,7 +143647,8 @@ name: string
  */
 properties: (SiteAuthSettingsV2Properties3 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143294,7 +143664,8 @@ properties: ({
 [k: string]: AzureStorageInfoValue6
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143308,7 +143679,8 @@ name: string
  */
 properties: (BackupRequestProperties8 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143324,7 +143696,8 @@ properties: ({
 [k: string]: ConnStringValueTypePair8
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143338,7 +143711,8 @@ name: string
  */
 properties: (SiteLogsConfigProperties8 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143352,7 +143726,8 @@ name: string
  */
 properties: (PushSettingsProperties7 | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/sites/slots/config
  */
 {
@@ -143374,7 +143749,8 @@ export type StaticSitesConfigChildResource4 = ({
 apiVersion: "2020-12-01"
 type: "config"
 [k: string]: unknown
-} & (/**
+} & (
+/**
  * Microsoft.Web/staticSites/config
  */
 {
@@ -143390,7 +143766,8 @@ properties: ({
 [k: string]: string
 } | string)
 [k: string]: unknown
-} | /**
+} | 
+/**
  * Microsoft.Web/staticSites/config
  */
 {
@@ -143414,7 +143791,8 @@ export type StaticSitesBuildsConfig4 = ({
 apiVersion: "2020-12-01"
 type: "Microsoft.Web/staticSites/builds/config"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.Web/staticSites/builds/config
  */
 {
@@ -143438,7 +143816,8 @@ export type StaticSitesConfig4 = ({
 apiVersion: "2020-12-01"
 type: "Microsoft.Web/staticSites/config"
 [k: string]: unknown
-} & /**
+} & 
+/**
  * Microsoft.Web/staticSites/config
  */
 {
@@ -214670,7 +215049,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties?: (/**
+properties?: (
+/**
  * Application security group properties.
  */
 {
@@ -216805,7 +217185,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties?: (/**
+properties?: (
+/**
  * Application security group properties.
  */
 {
@@ -218358,7 +218739,8 @@ etag?: string
 /**
  * The properties of the zone.
  */
-properties: (/**
+properties: (
+/**
  * Represents the properties of the zone.
  */
 {
@@ -219416,7 +219798,8 @@ etag?: string
 /**
  * The properties of the zone.
  */
-properties: (/**
+properties: (
+/**
  * Represents the properties of the zone.
  */
 {
@@ -221513,7 +221896,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties?: (/**
+properties?: (
+/**
  * Application security group properties.
  */
 {
@@ -233680,7 +234064,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -233708,7 +234093,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -233736,7 +234122,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -233764,7 +234151,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -234754,7 +235142,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties?: (/**
+properties?: (
+/**
  * Application security group properties.
  */
 {
@@ -236450,7 +236839,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -237934,7 +238324,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties?: (/**
+properties?: (
+/**
  * Application security group properties.
  */
 {
@@ -239236,7 +239627,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -239612,7 +240004,8 @@ tags?: ({
 /**
  * Properties of the DDoS protection plan.
  */
-properties: (/**
+properties: (
+/**
  * DDoS protection plan properties.
  */
 {
@@ -241031,7 +241424,8 @@ tags?: ({
  * A unique read-only string that changes whenever the resource is updated.
  */
 etag?: string
-properties: (/**
+properties: (
+/**
  * The network watcher properties.
  */
 {
@@ -243294,7 +243688,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -243958,7 +244353,8 @@ tags?: ({
 /**
  * Properties of the DDoS protection plan.
  */
-properties: (/**
+properties: (
+/**
  * DDoS protection plan properties.
  */
 {
@@ -245327,7 +245723,8 @@ tags?: ({
  * A unique read-only string that changes whenever the resource is updated.
  */
 etag?: string
-properties: (/**
+properties: (
+/**
  * The network watcher properties.
  */
 {
@@ -247400,7 +247797,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -248068,7 +248466,8 @@ tags?: ({
 /**
  * Properties of the DDoS protection plan.
  */
-properties: (/**
+properties: (
+/**
  * DDoS protection plan properties.
  */
 {
@@ -249469,7 +249868,8 @@ tags?: ({
  * A unique read-only string that changes whenever the resource is updated.
  */
 etag?: string
-properties: (/**
+properties: (
+/**
  * The network watcher properties.
  */
 {
@@ -250857,7 +251257,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -251104,7 +251505,8 @@ ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig4 | string)
 /**
  * The ExpressRoute connection.
  */
-expressRouteConnection?: (/**
+expressRouteConnection?: (
+/**
  * The ID of the ExpressRouteConnection.
  */
 {
@@ -254480,7 +254882,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -254727,7 +255130,8 @@ ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig5 | string)
 /**
  * The ExpressRoute connection.
  */
-expressRouteConnection?: (/**
+expressRouteConnection?: (
+/**
  * The ID of the ExpressRouteConnection.
  */
 {
@@ -257551,7 +257955,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -257579,7 +257984,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -257830,7 +258236,8 @@ ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig6 | string)
 /**
  * The ExpressRoute connection.
  */
-expressRouteConnection?: (/**
+expressRouteConnection?: (
+/**
  * The ID of the ExpressRouteConnection.
  */
 {
@@ -260872,7 +261279,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -261134,7 +261542,8 @@ ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig7 | string)
 /**
  * The ExpressRoute connection.
  */
-expressRouteConnection?: (/**
+expressRouteConnection?: (
+/**
  * The ID of the ExpressRouteConnection.
  */
 {
@@ -294401,7 +294810,8 @@ ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig13 | string)
 /**
  * The ExpressRoute connection.
  */
-expressRouteConnection?: (/**
+expressRouteConnection?: (
+/**
  * The ID of the ExpressRouteConnection.
  */
 {
@@ -300503,7 +300913,8 @@ etag?: string
 /**
  * The properties of the Private DNS zone.
  */
-properties: (/**
+properties: (
+/**
  * Represents the properties of the Private DNS zone.
  */
 {
@@ -302282,7 +302693,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -302940,7 +303352,8 @@ tags?: ({
 /**
  * Properties of the DDoS protection plan.
  */
-properties: (/**
+properties: (
+/**
  * DDoS protection plan properties.
  */
 {
@@ -303039,7 +303452,8 @@ export interface ExpressRouteCircuitAuthorization16 {
 /**
  * Properties of the express route circuit authorization.
  */
-properties?: (/**
+properties?: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -303274,7 +303688,8 @@ apiVersion: "2019-11-01"
 /**
  * Properties of the express route circuit authorization.
  */
-properties: (/**
+properties: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -303292,7 +303707,8 @@ apiVersion: "2019-11-01"
 /**
  * Properties of the express route circuit authorization.
  */
-properties: (/**
+properties: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -303944,7 +304360,8 @@ export interface BackendAddressPool23 {
 /**
  * Properties of load balancer backend address pool.
  */
-properties?: (/**
+properties?: (
+/**
  * Properties of the backend address pool.
  */
 {
@@ -304767,7 +305184,8 @@ tags?: ({
 /**
  * Properties of the network watcher.
  */
-properties: (/**
+properties: (
+/**
  * The network watcher properties.
  */
 {
@@ -315809,7 +316227,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -316478,7 +316897,8 @@ tags?: ({
 /**
  * Properties of the DDoS protection plan.
  */
-properties: (/**
+properties: (
+/**
  * DDoS protection plan properties.
  */
 {
@@ -316577,7 +316997,8 @@ export interface ExpressRouteCircuitAuthorization18 {
 /**
  * Properties of the express route circuit authorization.
  */
-properties?: (/**
+properties?: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -316826,7 +317247,8 @@ apiVersion: "2020-03-01"
 /**
  * Properties of the express route circuit authorization.
  */
-properties: (/**
+properties: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -316844,7 +317266,8 @@ apiVersion: "2020-03-01"
 /**
  * Properties of the express route circuit authorization.
  */
-properties: (/**
+properties: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -317555,7 +317978,8 @@ export interface BackendAddressPool25 {
 /**
  * Properties of load balancer backend address pool.
  */
-properties?: (/**
+properties?: (
+/**
  * Properties of the backend address pool.
  */
 {
@@ -318471,7 +318895,8 @@ tags?: ({
 /**
  * Properties of the network watcher.
  */
-properties: (/**
+properties: (
+/**
  * The network watcher properties.
  */
 {
@@ -329951,7 +330376,8 @@ tags?: ({
 /**
  * Properties of the application security group.
  */
-properties: (/**
+properties: (
+/**
  * Application security group properties.
  */
 {
@@ -330662,7 +331088,8 @@ tags?: ({
 /**
  * Properties of the DDoS protection plan.
  */
-properties: (/**
+properties: (
+/**
  * DDoS protection plan properties.
  */
 {
@@ -330761,7 +331188,8 @@ export interface ExpressRouteCircuitAuthorization20 {
 /**
  * Properties of the express route circuit authorization.
  */
-properties?: (/**
+properties?: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -331010,7 +331438,8 @@ apiVersion: "2020-05-01"
 /**
  * Properties of the express route circuit authorization.
  */
-properties: (/**
+properties: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -331028,7 +331457,8 @@ apiVersion: "2020-05-01"
 /**
  * Properties of the express route circuit authorization.
  */
-properties: (/**
+properties: (
+/**
  * Properties of ExpressRouteCircuitAuthorization.
  */
 {
@@ -332965,7 +333395,8 @@ tags?: ({
 /**
  * Properties of the network watcher.
  */
-properties: (/**
+properties: (
+/**
  * The network watcher properties.
  */
 {
@@ -441671,21 +442102,24 @@ export type ParameterLocation =
       style?: "matrix" | "label" | "simple";
       required: true;
       [k: string]: unknown;
-    } /**
+    }
+  /**
    * Parameter in query
    */
   | {
       in?: "query";
       style?: "form" | "spaceDelimited" | "pipeDelimited" | "deepObject";
       [k: string]: unknown;
-    } /**
+    }
+  /**
    * Parameter in header
    */
   | {
       in?: "header";
       style?: "simple";
       [k: string]: unknown;
-    } /**
+    }
+  /**
    * Parameter in cookie
    */
   | {
@@ -441751,7 +442185,8 @@ export type HTTPSecurityScheme1 =
   | {
       scheme?: "bearer";
       [k: string]: unknown;
-    } /**
+    }
+  /**
    * Non Bearer
    */
   | {
@@ -442496,7 +442931,8 @@ exports[`refWithCycle.refWithDescription.ts 1`] = `
  * THIS IS PROBLEMATIC
  */
 export type Logical =
-  | string /**
+  | string
+  /**
    * oneOf object
    */
   | {
@@ -442513,7 +442949,8 @@ export interface RefWithCycle {
      * workflows when
      */
     when?:
-      | string /**
+      | string
+      /**
        * oneOf object
        */
       | {

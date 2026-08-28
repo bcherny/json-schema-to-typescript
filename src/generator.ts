@@ -292,9 +292,11 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
     // silently dropped: a named member's comment is printed on its own
     // declaration (see generateStandaloneInterface), and non-object members
     // (string, number, ...) have no declaration site for a leading comment to
-    // meaningfully attach to, so only INTERFACE members are handled here.
+    // meaningfully attach to, so only INTERFACE members are handled here. The
+    // leading newline keeps the formatter from attaching the comment to the end
+    // of the previous member (`} /** ... */ | {`).
     return _.type === 'INTERFACE' && hasComment(_) && !hasStandaloneName(_)
-      ? generateComment(_.comment, _.deprecated) + '\n' + type
+      ? '\n' + generateComment(_.comment, _.deprecated) + '\n' + type
       : type
   })
   const separator = ast.type === 'UNION' ? '|' : '&'
