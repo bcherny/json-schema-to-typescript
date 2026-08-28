@@ -1,4 +1,4 @@
-import {JSONSchema, Parent, LinkedJSONSchema} from './types/JSONSchema'
+import {JSONSchema, Parent, LinkedJSONSchema, Shared} from './types/JSONSchema'
 import {isPlainObject} from 'lodash'
 import {JSONSchema4Type} from 'json-schema'
 
@@ -11,8 +11,11 @@ export function link(schema: JSONSchema4Type | JSONSchema, parent: JSONSchema4Ty
     return schema as LinkedJSONSchema
   }
 
-  // Handle cycles
+  // Handle cycles, and nodes shared any other way: keep the first parent, note that it's not the only one
   if ((schema as JSONSchema).hasOwnProperty(Parent)) {
+    if ((schema as LinkedJSONSchema)[Parent] !== parent) {
+      Object.defineProperty(schema, Shared, {enumerable: false, value: true, writable: false})
+    }
     return schema as LinkedJSONSchema
   }
 

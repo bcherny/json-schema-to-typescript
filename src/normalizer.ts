@@ -20,7 +20,26 @@ type Rule = (
   key: string | null,
   dereferencedPaths: DereferencedPaths,
 ) => void
-const rules = new Map<string, Rule>()
+
+// Rules run in the order they are set: each rule sees a schema only after every rule before it
+// has run on that schema and on the schemas above it. That is all most rules need, so
+// consecutive rules share one walk over the schema (walking a large dereferenced schema costs
+// far more than any rule does). A rule gets a walk of its own -- `startNewPass()` above it --
+// when sharing one would be observable: it reads or compares schemas other than the one it is
+// given and its ancestors (so the rules before it must have finished everywhere), it adds
+// schemas that the rules before it never saw, or it removes or moves a key that `traverse`
+// descends through (`traverse` follows every key not on its blacklist, `const` and `extends`
+// included, and visits an `allOf` moved into the intersection last), which would change what
+// the rules sharing its walk visit and in which order.
+const passes: Rule[][] = [[]]
+const rules = {
+  set(_name: string, rule: Rule) {
+    passes[passes.length - 1].push(rule)
+  },
+}
+function startNewPass() {
+  passes.push([])
+}
 
 function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
@@ -70,6 +89,22 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
   if (schema.required === false) {
     schema.required = []
   }
+})
+
+// `unevaluatedProperties` (draft 2019-09+) constrains the keys no other keyword
+// accounted for. Where a schema declares its properties inline, that is the same set
+// `additionalProperties` covers, so fold it into the handling we already have rather
+// than teaching the parser a second way to say the same thing. An explicit
+// `additionalProperties` is the narrower constraint, so it wins.
+rules.set('Treat `unevaluatedProperties` as `additionalProperties`', schema => {
+  // `traverse` also visits boolean schemas, where `in` would throw.
+  if (typeof schema !== 'object' || schema === null || schema.unevaluatedProperties === undefined) {
+    return
+  }
+  if (schema.additionalProperties === undefined) {
+    schema.additionalProperties = schema.unevaluatedProperties
+  }
+  delete schema.unevaluatedProperties
 })
 
 rules.set('Default additionalProperties', (schema, _, options) => {
@@ -195,6 +230,10 @@ rules.set('Remove maxItems if it is big enough to likely cause OOMs', (schema, _
   }
 })
 
+// The rule above compares each ancestor's `items` with the schema below it, so it has to have
+// run everywhere before this one rewrites any `items` into a tuple
+startNewPass()
+
 rules.set('Normalize schema.items', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     return
@@ -232,6 +271,10 @@ rules.set('Remove extends, if it is empty', schema => {
   }
 })
 
+// Wrapping `extends` in an array makes the walk descend into the wrapped schema, which the
+// rules above never visited on its own
+startNewPass()
+
 rules.set('Make extends always an array, if it is defined', schema => {
   if (schema.extends == null) {
     return
@@ -240,6 +283,10 @@ rules.set('Make extends always an array, if it is defined', schema => {
     schema.extends = [schema.extends]
   }
 })
+
+// Compares the whole `definitions` and `$defs` subtrees, so no other rule may be part-way through
+// rewriting them
+startNewPass()
 
 rules.set('Transform definitions to $defs', (schema, fileName) => {
   if (schema.definitions && schema.$defs && !isDeepStrictEqual(schema.definitions, schema.$defs)) {
@@ -256,6 +303,10 @@ rules.set('Transform definitions to $defs', (schema, fileName) => {
 // Schemas that were rewritten by the rule below, so that the `tsEnumNames`
 // inference rule can tell them apart from hand-written enums.
 const schemasNormalizedFromConst = new WeakSet<LinkedJSONSchema>()
+
+// Deleting `const` stops the walk from descending into an object-valued `const`, which the rules
+// above do visit (`enum` is on the traversal blacklist, `const` is not)
+startNewPass()
 
 rules.set('Transform const to singleton enum', schema => {
   if (schema.const !== undefined) {
@@ -319,7 +370,10 @@ function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSchema | 
 // Runs this late so that the schema has already been named from its `$ref` path, had
 // its object defaults filled in, its `const` turned into an `enum` and its `tsEnumNames`
 // inferred (all of which look at keywords that move into the `anyOf`), and before types
-// are pre-calculated.
+// are pre-calculated. It adds the `anyOf` members to the tree, which only this rule and the
+// ones after it get to see.
+startNewPass()
+
 rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, dereferencedPaths) => {
   // The name a TypeScript enum gets in this position: the definition it was dereferenced
   // from, else the key it sits under (unless that is just an index into anyOf/items)
@@ -368,6 +422,12 @@ export function normalizeNullableRefs(schema: JSONSchema): void {
 // the intersection schema needs to participate in the schema cache during
 // the parsing step, so it cannot be re-calculated every time the schema
 // is encountered.
+//
+// `applySchemaTyping` moves a typed schema's `allOf` into its intersection, which `traverse`
+// visits after everything else rather than first; in a shared walk that would change the order
+// in which the rule above reaches a schema used in two places, and so the `key` it names it by.
+startNewPass()
+
 rules.set('Pre-calculate schema types and intersections', schema => {
   if (schema !== null && typeof schema === 'object') {
     applySchemaTyping(schema)
@@ -380,6 +440,12 @@ export function normalize(
   filename: string,
   options: Options,
 ): NormalizedJSONSchema {
-  rules.forEach(rule => traverse(rootSchema, (schema, key) => rule(schema, filename, options, key, dereferencedPaths)))
+  passes.forEach(pass =>
+    traverse(rootSchema, (schema, key) => {
+      for (const rule of pass) {
+        rule(schema, filename, options, key, dereferencedPaths)
+      }
+    }),
+  )
   return rootSchema as NormalizedJSONSchema
 }

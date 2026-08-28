@@ -141,7 +141,8 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | inferStringEnumKeysFromValues | boolean | `false` | Create enums from JSON enums with eponymous keys |
 | format | boolean | `true` | Format code? Set this to `false` to improve performance. |
 | ignoreMinAndMaxItems | boolean | `false` | Ignore maxItems and minItems for `array` types, preventing tuples being generated. |
-| maxItems | number | `20` | Maximum number of unioned tuples to emit when representing bounded-size array types, before falling back to emitting unbounded arrays. Increase this to improve precision of emitted types, decrease it to improve performance, or set it to `-1` to ignore `maxItems`.
+| maxItems | number | `20` | Maximum number of unioned tuples to emit when representing bounded-size array types, before falling back to emitting unbounded arrays. Increase this to improve precision of emitted types, decrease it to improve performance, or set it to `-1` to ignore `maxItems`. |
+| removeOptionalIfDefaultExists | boolean | `false` | Remove the optional modifier when a property has a default value. |
 | strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |

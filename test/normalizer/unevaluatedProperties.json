@@ -1,0 +1,62 @@
+{
+  "name": "Treat `unevaluatedProperties` as `additionalProperties`",
+  "in": {
+    "$id": "foo",
+    "type": "object",
+    "properties": {
+      "closed": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "string"
+          }
+        },
+        "unevaluatedProperties": false
+      },
+      "constrained": {
+        "type": "object",
+        "unevaluatedProperties": {
+          "type": "number"
+        }
+      },
+      "additionalPropertiesWins": {
+        "type": "object",
+        "additionalProperties": true,
+        "unevaluatedProperties": false
+      },
+      "booleanSchema": true
+    },
+    "unevaluatedProperties": true
+  },
+  "out": {
+    "$id": "foo",
+    "type": "object",
+    "properties": {
+      "closed": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "string"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "constrained": {
+        "type": "object",
+        "required": [],
+        "additionalProperties": {
+          "type": "number"
+        }
+      },
+      "additionalPropertiesWins": {
+        "type": "object",
+        "required": [],
+        "additionalProperties": true
+      },
+      "booleanSchema": true
+    },
+    "required": [],
+    "additionalProperties": true
+  }
+}

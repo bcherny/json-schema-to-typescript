@@ -26,6 +26,7 @@ main(
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
+      'removeOptionalIfDefaultExists',
       'style.singleQuote',
       'strictIndexSignatures',
       'unknownAny',
@@ -200,6 +201,8 @@ Boolean values can be set to false using the 'no-' prefix.
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
       performance, or set it to -1 to ignore minItems and maxItems.
+  --removeOptionalIfDefaultExists
+      Remove the optional modifier when a property has a default value
   --style.XXX=YYY
       Prettier configuration
   --unknownAny
