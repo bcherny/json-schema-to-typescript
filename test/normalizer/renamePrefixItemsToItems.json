@@ -3,29 +3,32 @@
   "in": {
     "additionalProperties": false,
     "$id": "RenamePrefixItems",
-    "properties":{
+    "properties": {
       "a": {
         "description": "Test prefixItems",
-        "prefixItems": [true, false],
-        "items":false
+        "prefixItems": [
+          true,
+          false
+        ],
+        "items": false
       }
     },
     "required": []
-    },
+  },
   "out": {
     "additionalProperties": false,
     "$id": "RenamePrefixItems",
     "properties": {
       "a": {
         "description": "Test prefixItems",
-        "items": [true, false],
+        "items": [
+          true,
+          false
+        ],
         "additionalItems": false,
         "minItems": 0
       }
     },
     "required": []
-  },
-  "options": {
-    "usePrefixItems": true
   }
 }
