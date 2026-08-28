@@ -4,6 +4,10 @@
 // nothing and the typed index signature was lost (`dict` was `{id: unknown; [k: string]:
 // unknown}`, `tagged` the bare union of its members). `additionalProperties: true` or `{}` says
 // nothing the members do not already allow, so `open` stays the plain union.
+// The rule is the one `properties`/`patternProperties` already follow — an object keyword gives an
+// untyped schema an object type of its own — so it also applies where they already did and a
+// typed `additionalProperties` did not: `besideEnum` pins that corner (the object type intersected
+// with the enum's members, exactly what `{properties: {…}, enum: […]}` emits today).
 export const input = {
   title: 'AdditionalPropertiesBesideAnyOf',
   type: 'object',
@@ -30,6 +34,10 @@ export const input = {
       type: 'object',
       additionalProperties: {},
       oneOf: [{properties: {a: {type: 'number'}}}, {properties: {b: {type: 'number'}}}],
+    },
+    besideEnum: {
+      additionalProperties: {type: 'string'},
+      enum: [{a: 'x'}, 'none'],
     },
   },
   additionalProperties: false,

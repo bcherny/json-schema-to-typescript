@@ -51054,6 +51054,9 @@ export interface AdditionalPropertiesBesideAnyOf {
         b?: number;
         [k: string]: unknown;
       };
+  besideEnum?: ({a: "x"} | "none") & {
+    [k: string]: string;
+  };
 }
 "
 `;
