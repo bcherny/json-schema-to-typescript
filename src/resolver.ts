@@ -99,9 +99,9 @@ function isWholeDocumentRef($ref: string): boolean {
 /**
  * A schema brought in by a $ref to a separate document keeps its own `definitions`/`$defs`,
  * but once dereferenced into the referencing document that map sits somewhere below the
- * root, where the parser does not look for names. Record on each of its entries the key it
- * is held under, so the parser names it as it would when compiling that document on its
- * own (see #143). Only documents referenced as a whole are considered; a definition reached
+ * root, so its entries are not among the root's `$defs` that `normalize` names. Record on
+ * each of them the key it is held under, so the parser names it as it would when compiling
+ * that document on its own (see #143). Only documents referenced as a whole are considered; a definition reached
  * solely through `file.json#/definitions/X` pointers is named as before.
  */
 function tagExternalDefinitions(documents: Set<JSONSchema>, rootSchema: JSONSchema) {
@@ -122,7 +122,8 @@ function tagExternalDefinitions(documents: Set<JSONSchema>, rootSchema: JSONSche
       ) {
         continue
       }
-      Object.defineProperty(entry, DefinitionKey, {enumerable: false, value: key, writable: false})
+      // configurable: the root document's own `$defs` key takes precedence (see `normalize`)
+      Object.defineProperty(entry, DefinitionKey, {configurable: true, enumerable: false, value: key})
     }
   }
 }

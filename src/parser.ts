@@ -12,18 +12,7 @@ import {
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
 import type {EnumJSONSchema, LinkedJSONSchema, NormalizedJSONSchema, SchemaSchema, SchemaType} from './types/JSONSchema'
-import {
-  DefinitionKey,
-  Intersection,
-  Parent,
-  Shared,
-  Source,
-  Types,
-  getRootSchema,
-  isBoolean,
-  isPrimitive,
-} from './types/JSONSchema'
-import {memoize} from './memoize'
+import {DefinitionKey, Intersection, Parent, Shared, Source, Types, isBoolean, isPrimitive} from './types/JSONSchema'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
 import {admitsType, formatTypeOf, generateName, justName, log, narrowType} from './utils'
@@ -302,7 +291,7 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
-  const keyNameFromDefinition = definitionKeyOf(schema)
+  const keyNameFromDefinition = schema[DefinitionKey]
 
   switch (type) {
     case 'ALL_OF': {
@@ -999,7 +988,7 @@ function intersectionOwner(schema: NormalizedJSONSchema): NormalizedJSONSchema |
 
 /** True for a schema `standaloneName` will name (by a title or id since hoisted onto its intersection, maybe) */
 function isNamed(schema: NormalizedJSONSchema, options: Options): boolean {
-  return Boolean(nameOf(schema[Intersection] ?? schema, definitionKeyOf(schema), options))
+  return Boolean(nameOf(schema[Intersection] ?? schema, schema[DefinitionKey], options))
 }
 
 /** The name a schema asks for, before it is made unique */
@@ -1257,29 +1246,4 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
   return patternProperties.length
     ? asts.concat(indexSignatureParam, declaredOnly, unreachableDefinitions)
     : asts.concat(unreachableDefinitions, indexSignatureParam)
-}
-
-/**
- * The key each of the root schema's definitions is held under (the first one, for a schema held
- * under several), collected once per root schema rather than searched for every node parsed.
- */
-const definitionKeys = memoize((rootSchema: NormalizedJSONSchema): Map<NormalizedJSONSchema, string> => {
-  const keys = new Map<NormalizedJSONSchema, string>()
-  const definitions = rootSchema.$defs ?? {}
-  for (const key of Object.keys(definitions)) {
-    if (!keys.has(definitions[key])) {
-      keys.set(definitions[key], key)
-    }
-  }
-  return keys
-})
-
-/**
- * The (first) key `schema` is held under in its root schema's definitions, if any;
- * failing that, the key it has in the `definitions` of the separate file it was
- * dereferenced from (see resolver.ts, #143). The root's own map wins so that a
- * single-document schema is named exactly as before.
- */
-function definitionKeyOf(schema: NormalizedJSONSchema): string | undefined {
-  return definitionKeys(getRootSchema(schema)).get(schema) ?? schema[DefinitionKey]
 }
