@@ -304,30 +304,41 @@ function parseNonLiteral(
   const keyNameFromDefinition = definitionKeyOf(schema)
 
   switch (type) {
-    case 'ALL_OF':
+    case 'ALL_OF': {
+      const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
+      // An `allOf` member made up entirely of keywords this tool doesn't implement (eg.
+      // `if`/`then`/`else`, `not`) doesn't match any of the type matchers in `typesOfSchema`,
+      // so it falls back to `newInterface`, which synthesizes a bare `{[k: string]: unknown}`
+      // for it. Intersecting with that contributes no information, so drop it rather than
+      // cluttering the output. Restricted to members with no keyword this tool does recognize,
+      // so it never touches a member whose emptiness is due to its *own* type (eg. a bare
+      // `{type: 'object'}`, or `{required: [...]}` with no matching `properties`) -- those stay
+      // exactly as before.
+      const members = schema
+        .allOf!.map(memberSchema => ({
+          ast: parseMember(memberSchema, schema, options, processed, usedNames),
+          memberSchema,
+        }))
+        .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        // An `allOf` member made up entirely of keywords this tool doesn't implement (eg.
-        // `if`/`then`/`else`, `not`) doesn't match any of the type matchers in `typesOfSchema`,
-        // so it falls back to `newInterface`, which synthesizes a bare `{[k: string]: unknown}`
-        // for it. Intersecting with that contributes no information, so drop it rather than
-        // cluttering the output. Restricted to members with no keyword this tool does recognize,
-        // so it never touches a member whose emptiness is due to its *own* type (eg. a bare
-        // `{type: 'object'}`, or `{required: [...]}` with no matching `properties`) -- those stay
-        // exactly as before.
-        params: schema
-          .allOf!.map(memberSchema => ({
-            ast: parseMember(memberSchema, schema, options, processed, usedNames),
-            memberSchema,
-          }))
-          .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
+        standaloneName: name,
+        params: members
           .map(({ast}) => ast)
-          .concat(parseRequired(schema, options, processed, usedNames)),
+          .concat(
+            parseRequired(
+              schema,
+              members.some(({memberSchema}) => isObjectSchema(memberSchema)),
+              options,
+              processed,
+              usedNames,
+            ),
+          ),
         type: 'INTERSECTION',
       }
+    }
     case 'ANY':
       return {
         ...(options.unknownAny ? T_UNKNOWN : T_ANY),
@@ -654,11 +665,15 @@ function parseBranches(
  * declared nowhere is added too, with the type the schema gives any value at that key
  * (`unknown`, usually: see `valueType`) -- unless the schema has an interface of its own to list
  * it in (see `parseSchema`), or may match something other than objects (see `parseBranches`).
+ * And when no actual member renders as an object type (they were dropped as vacuous, or print
+ * as `unknown`), the extra member is all there is to the intersection, so it is the interface a
+ * plain object schema gets, index signature and all, rather than a pick that would read as closed.
  *
  * @see https://github.com/bcherny/json-schema-to-typescript/issues/395
  */
 function parseRequired(
   schema: NormalizedJSONSchema,
+  besideObjects: boolean,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
@@ -666,10 +681,16 @@ function parseRequired(
   // the intersection `applySchemaTyping` split off of a schema took its `allOf` along, but not its `required`
   const owner = intersectionOwner(schema) ?? schema
   const keys = undeclaredRequired(owner)
-  // the keys declared nowhere too, unless the owner has an interface of its own to list them or may match non-objects
-  const takesRest = keys.length > 0 && !declaresInterface(owner) && isObjectSchema(owner)
+  const declarations = new Map(keys.map(key => [key, findDeclaration(schema, key, options)]))
+  // the keys declared nowhere too, unless the owner has an interface of its own to list them or
+  // may match something other than objects
+  const takesRest =
+    keys.some(key => declarations.get(key) === undefined) && !declaresInterface(owner) && isObjectSchema(owner)
+  if (takesRest && !besideObjects) {
+    return [interfaceOf(parseSchema(owner as SchemaSchema, options, processed, usedNames, ''))]
+  }
   const params = requireKeys(keys, key => {
-    const declaration = findDeclaration(schema, key, options)
+    const declaration = declarations.get(key)
     if (declaration !== undefined) {
       return parse(declaration, options, key, processed, usedNames)
     }

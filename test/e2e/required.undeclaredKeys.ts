@@ -95,6 +95,13 @@ export const input = {
       type: 'object',
       required: ['b', 'b'],
     },
+    // next to an allOf whose members all vanish from the output: rendered like a plain object,
+    // index signature included, not as a lone `{a: unknown}`
+    vacuousAllOf: {
+      type: 'object',
+      required: ['a'],
+      allOf: [{not: {required: ['b']}}, {description: 'words'}],
+    },
   },
   required: ['root'],
   additionalProperties: false,

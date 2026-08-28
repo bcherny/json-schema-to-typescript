@@ -128331,6 +128331,7 @@ export type SchemaXORContent =
     }
   | {
       content: unknown;
+      [k: string]: unknown;
     };
 /**
  * Parameter location
@@ -441956,6 +441957,7 @@ export type SchemaXORContent =
     }
   | {
       content: unknown;
+      [k: string]: unknown;
     };
 /**
  * Parameter location
@@ -448235,6 +448237,10 @@ export interface UndeclaredKeys {
     | string;
   duplicate?: {
     b: unknown;
+    [k: string]: unknown;
+  };
+  vacuousAllOf?: {
+    a: unknown;
     [k: string]: unknown;
   };
 }
