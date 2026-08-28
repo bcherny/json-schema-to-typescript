@@ -185,12 +185,9 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const processed: Processed = new Map()
   const usedNames: UsedNames = new Set()
   const parsed = parse(normalized, _options, undefined, processed, usedNames)
-  nameAnonymousRecursiveTypes(parsed, processed, dereferencedPaths, usedNames)
-  log('blue', 'parser', time(), '✅ Result:', parsed)
-
   // Definitions that aren't referenced anywhere in the schema still need to be
-  // declared. This is handled once, here, for the root schema, regardless of
-  // its type -- rather than in the parser, which only visits object schemas.
+  // declared. An object root declares them while its interface is parsed; for
+  // any other kind of root they are parsed here and handed to the generator.
   const unreachableDefinitions = parseUnreachableDefinitions(
     normalized,
     parsed.standaloneName!,
@@ -198,6 +195,8 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
     processed,
     usedNames,
   )
+  nameAnonymousRecursiveTypes([parsed, ...unreachableDefinitions], processed, dereferencedPaths, usedNames)
+  log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed, _options)
   const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options))
