@@ -117,6 +117,7 @@
             "type": "string"
           }
         ],
+        "additionalItems": false,
         "maxItems": 2,
         "minItems": 0
       },
@@ -139,6 +140,7 @@
             "type": "string"
           }
         ],
+        "additionalItems": false,
         "minItems": 2,
         "maxItems": 5
       },
@@ -149,6 +151,7 @@
             "type": "string"
           }
         ],
+        "additionalItems": true,
         "maxItems": 1,
         "minItems": 0
       },
@@ -168,6 +171,7 @@
             "required": []
           }
         ],
+        "additionalItems": false,
         "maxItems": 1,
         "minItems": 0
       },
@@ -180,6 +184,7 @@
                 "type": "string"
               }
             ],
+            "additionalItems": false,
             "maxItems": 1,
             "minItems": 0
           },
@@ -193,6 +198,7 @@
                 "type": "number"
               }
             ],
+            "additionalItems": false,
             "maxItems": 2,
             "minItems": 0
           }

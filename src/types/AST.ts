@@ -1,5 +1,4 @@
 import {JSONSchema4Type} from 'json-schema'
-import {omit} from 'lodash'
 
 export type AST_TYPE = AST['type']
 
@@ -16,7 +15,6 @@ export type AST =
   | TNumber
   | TNull
   | TObject
-  | TReference
   | TString
   | TTuple
   | TUnion
@@ -58,8 +56,11 @@ export function omitStandaloneName<A extends AST>(ast: A): A {
   switch (ast.type) {
     case 'ENUM':
       return ast
-    default:
-      return omit(ast, 'standaloneName') as A
+    default: {
+      const unnamed = {...ast}
+      delete unnamed.standaloneName
+      return unnamed
+    }
   }
 }
 
@@ -95,11 +96,8 @@ export interface TInterface extends AbstractAST {
   superTypes: TNamedInterface[]
 }
 
-export interface TNamedInterface extends AbstractAST {
+export interface TNamedInterface extends TInterface {
   standaloneName: string
-  type: 'INTERFACE'
-  params: TInterfaceParam[]
-  superTypes: TNamedInterface[]
 }
 
 export interface TNever extends AbstractAST {
@@ -137,11 +135,6 @@ export interface TNull extends AbstractAST {
 
 export interface TObject extends AbstractAST {
   type: 'OBJECT'
-}
-
-export interface TReference extends AbstractAST {
-  type: 'REFERENCE'
-  params: string
 }
 
 export interface TString extends AbstractAST {
