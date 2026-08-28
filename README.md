@@ -148,6 +148,8 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | formatTypes | `Record<string, string>` | `{}` | Map from a string schema's [`format`](https://json-schema.org/understanding-json-schema/reference/string#format) to the TypeScript type to emit for it, verbatim, like `tsType` (which still takes precedence, as do `enum` and `const`). Eg. `{ 'date-time': 'Date' }` turns `{ "type": "string", "format": "date-time" }` into `Date` instead of `string`; `nullable`, arrays and `$ref`s follow (`Date \| null`, `Date[]`). Formats you don't list stay `string`. For a type of your own, add its `import` via `bannerComment`. CLI: `--formatTypes.date-time=Date`. |
 | ignoreMinAndMaxItems | boolean | `false` | Ignore maxItems and minItems for `array` types, preventing tuples being generated. |
 | maxItems | number | `20` | Maximum number of unioned tuples to emit when representing bounded-size array types, before falling back to emitting unbounded arrays. Increase this to improve precision of emitted types, decrease it to improve performance, or set it to `-1` to ignore `maxItems`. |
+| readonly | boolean | `false` | Mark every property and index signature `readonly`, and emit every array and tuple type as `readonly T[]`. |
+| readonlyKeyword | boolean | `false` | Map the schema's [`readOnly: true`](https://json-schema.org/draft-07/json-schema-validation#rfc.section.10.3) annotation to TypeScript's `readonly`: an annotated property gets the `readonly` modifier, and an annotated array or tuple is emitted as `readonly T[]`. |
 | removeOptionalIfDefaultExists | boolean | `false` | Remove the optional modifier when a property has a default value. |
 | strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
@@ -204,6 +206,7 @@ $ bun run test
 - [x] literal objects in enum ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L236))
 - [x] referencing schema by id ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L331))
 - [x] custom typescript types via `tsType`
+- [x] `readOnly` → `readonly` properties and arrays (`readonlyKeyword` option)
 
 ## Custom schema properties:
 

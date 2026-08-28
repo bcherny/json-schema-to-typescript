@@ -27,6 +27,8 @@ main(
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
+      'readonly',
+      'readonlyKeyword',
       'removeOptionalIfDefaultExists',
       'strictIndexSignatures',
       'undefinedOptionalProperties',
@@ -160,7 +162,9 @@ async function processFile(argIn: string, outputPath: string | undefined, argv: 
   // Resolve $refs relative to the directory of the file being compiled, not
   // process.cwd(), unless the user explicitly passed --cwd (see #324).
   const cwd = filename ? dirname(resolve(process.cwd(), filename)) : undefined
-  return compile(schema, argIn, {
+  // filename is null when input comes from stdin (no file to derive a name from), so fall
+  // back to the same placeholder name used elsewhere for schemas without a derivable name.
+  return compile(schema, filename ?? 'NoName', {
     ...(cwd ? {cwd} : {}),
     ...argv,
     style: {...prettierConfig, ...argv.style},
@@ -233,6 +237,11 @@ Boolean values can be set to false using the 'no-' prefix.
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
       performance, or set it to -1 to ignore minItems and maxItems.
+  --readonly
+      Mark every property and index signature readonly, and every array type readonly T[]
+  --readonlyKeyword
+      Mark properties annotated readOnly: true as readonly, and emit readOnly
+      arrays and tuples as readonly T[]
   --removeOptionalIfDefaultExists
       Remove the optional modifier when a property has a default value
   --style.XXX=YYY

@@ -26,9 +26,11 @@ export type {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSche
 
 export interface Options {
   /**
-   * [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s
+   * [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s.
+   * `dereference.maxDepth` (default 500) bounds how deep dereferencing may nest before it is reported as a
+   * `$ref` cycle; raise it for schemas that genuinely nest or chain `$ref`s deeper than that.
    */
-  $refOptions: $RefOptions
+  $refOptions: $RefOptions & {dereference?: {maxDepth?: number}}
   /**
    * Default value for additionalProperties, when it is not explicitly set.
    */
@@ -86,6 +88,15 @@ export interface Options {
    */
   maxItems: number
   /**
+   * Mark every property and index signature `readonly`, and every array and tuple type `readonly T[]`.
+   */
+  readonly: boolean
+  /**
+   * Map the schema's `readOnly: true` [annotation](https://json-schema.org/draft-07/json-schema-validation#rfc.section.10.3)
+   * to TypeScript's `readonly`: an annotated property gets the `readonly` modifier, an annotated array or tuple becomes `readonly T[]`.
+   */
+  readonlyKeyword: boolean
+  /**
    * Remove the optional modifier when a property has a default value.
    */
   removeOptionalIfDefaultExists: boolean
@@ -132,6 +143,8 @@ export const DEFAULT_OPTIONS: Options = {
   formatTypes: {},
   ignoreMinAndMaxItems: false,
   maxItems: 20,
+  readonly: false,
+  readonlyKeyword: false,
   removeOptionalIfDefaultExists: false,
   strictIndexSignatures: false,
   style: {
