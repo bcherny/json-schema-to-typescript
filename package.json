@@ -10,7 +10,6 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "packageManager": "bun@1.4.0",
   "scripts": {
     "build": "bun run lint && bun run clean && bun run build:browser && bun run build:server",
     "build:browser": "browserify src/index.ts -s jstt -p [ tsify -m commonjs ] > dist/bundle.js",

@@ -11,7 +11,7 @@ that show up in practice, not what happens at 10,000 levels of nesting.
 ## Running it
 
 ```bash
-npm run build:server                       # the harness runs against dist/
+bun run build:server                       # the harness runs against dist/
 node test/fuzz/fuzz.js --seeds 300 --out findings.json
 ```
 
@@ -58,4 +58,4 @@ on 50 seeds is shrunk once.
   filesystem.
 - These files are `.js` on purpose. The repository's `.gitignore` excludes `*.js`,
   so they were added with `git add -f`; keeping them out of the TypeScript build
-  means the harness cannot break `npm test`.
+  means the harness cannot break `bun run test`.

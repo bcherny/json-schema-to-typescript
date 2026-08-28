@@ -1,6 +1,6 @@
 # Contributing
 
-- Install dependencies with `bun install` ([bun](https://bun.sh) is this repo's package manager, script runner and test runner)
+- Install dependencies with `bun install` ([bun](https://bun.sh) is this repo's package manager, script runner and test runner; CI uses the version in `.bun-version`)
 - Be sure to add a test for each change you make
 
 ## Tips
