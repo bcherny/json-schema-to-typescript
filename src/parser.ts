@@ -19,7 +19,7 @@ import type {
   SchemaSchema,
   SchemaType,
 } from './types/JSONSchema'
-import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {Intersection, Parent, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
 import {memoize} from './memoize'
 import {DereferencedPaths} from './resolver'
 import {generateName, justName, log, maybeStripDefault} from './utils'
@@ -237,8 +237,7 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
-  const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
-  const keyNameFromDefinition = getDefinitionKeysMemoized(definitions).get(schema)
+  const keyNameFromDefinition = definitionKeyOf(schema)
 
   switch (type) {
     case 'ALL_OF':
@@ -257,7 +256,7 @@ function parseNonLiteral(
         // exactly as before.
         params: schema
           .allOf!.map(memberSchema => ({
-            ast: parse(memberSchema, options, undefined, processed, usedNames),
+            ast: parseMember(memberSchema, schema, options, processed, usedNames),
             memberSchema,
           }))
           .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
@@ -278,7 +277,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        params: schema.anyOf!.map(_ => parseMember(_, schema, options, processed, usedNames)),
         type: 'UNION',
       }
     case 'BOOLEAN':
@@ -364,7 +363,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        params: schema.oneOf!.map(_ => parseMember(_, schema, options, processed, usedNames)),
         type: 'UNION',
       }
     case 'REFERENCE':
@@ -517,6 +516,129 @@ function isVacuousInterface(ast: AST): boolean {
 }
 
 /**
+ * Parses one member of the `allOf`/`anyOf`/`oneOf` on `schema`.
+ *
+ * A member that only lists `required` keys -- the "factoring" pattern, where the properties
+ * are declared once on the enclosing object and each branch says which of them it needs --
+ * has no `properties` of its own to apply that list to, so parsed in isolation it would come
+ * out as a bare `{[k: string]: unknown}` and its `required` would be lost. Instead, such a
+ * member borrows the declarations of the keys it lists from the closest enclosing schema that
+ * has `properties`, and becomes a pick of those with every key required (`{a: A}`); the caller
+ * intersects the set operation with that schema's own (all-optional) interface, so the result
+ * reads `({a: A} | {b: B}) & {a?: A; b?: B}`. Keys that aren't declared there are skipped, as
+ * `required` keys with no matching property are everywhere else; a member with nothing left to
+ * pick, or one that says anything else about itself (its own `properties`, a `title`, a
+ * non-object `type`, ...), is parsed on its own, as before.
+ *
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/513
+ */
+function parseMember(
+  member: NormalizedJSONSchema,
+  schema: NormalizedJSONSchema,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST {
+  const properties = isRequiredOnly(member) && !isNamed(member, options) && findDeclaredProperties(schema, options)
+  if (properties) {
+    const keys = (member.required as string[]).filter(key => Object.prototype.hasOwnProperty.call(properties, key))
+    if (keys.length) {
+      return {
+        comment: member.description,
+        deprecated: member.deprecated,
+        params: keys.map(key => ({
+          ast: parse(properties[key], options, key, processed, usedNames),
+          isIndexSignature: false,
+          isPatternProperty: false,
+          isRequired: true,
+          isUnreachableDefinition: false,
+          keyName: key,
+        })),
+        superTypes: [],
+        type: 'INTERFACE',
+      }
+    }
+  }
+  return parse(member, options, undefined, processed, usedNames)
+}
+
+// Keywords that never affect what a schema validates
+const ANNOTATION_KEYWORDS = new Set(['$comment', 'deprecated', 'description', 'examples', 'readOnly', 'writeOnly'])
+
+/**
+ * True for a schema that says nothing but which keys are `required` (draft 4+ style) -- give or
+ * take annotations, and the `type: 'object'` that is implied anyway (along with the boolean
+ * `additionalProperties` the normalizer defaults next to it).
+ */
+function isRequiredOnly(schema: NormalizedJSONSchema): boolean {
+  return (
+    Array.isArray(schema.required) &&
+    schema.required.length > 0 &&
+    Object.keys(schema).every(
+      key =>
+        key === 'required' ||
+        (key === 'type' && schema.type === 'object') ||
+        (key === 'additionalProperties' && typeof schema.additionalProperties === 'boolean') ||
+        ANNOTATION_KEYWORDS.has(key),
+    )
+  )
+}
+
+/**
+ * The `properties` a required-only member of `schema`'s `allOf`/`anyOf`/`oneOf` refers to:
+ * `schema`'s own or, when `schema` is itself just a member of an enclosing set operation, that
+ * schema's -- and so on out, for as long as the schemas on the way are objects (or don't say).
+ */
+function findDeclaredProperties(schema: NormalizedJSONSchema, options: Options): NormalizedJSONSchema['properties'] {
+  let node: NormalizedJSONSchema | undefined = schema
+  while (node && (node.type === undefined || node.type === 'object')) {
+    if (node.properties) {
+      return node.properties
+    }
+    node = enclosingSchema(node, options)
+  }
+}
+
+/**
+ * The schema whose `allOf`/`anyOf`/`oneOf` `schema` is a member of -- provided `schema` is inlined
+ * there: a named schema is declared once, however many set operations refer to it, so it has no
+ * one enclosing schema. The intersection `applySchemaTyping` split off of a schema stands for
+ * that schema (and kept its `allOf` array, whose parent is still that schema).
+ */
+function enclosingSchema(schema: NormalizedJSONSchema, options: Options): NormalizedJSONSchema | undefined {
+  const parent = schema[Parent]
+  if (parent && parent[Intersection] === schema) {
+    return parent
+  }
+  const owner = parent?.[Parent]
+  const members: unknown = parent
+  if (
+    owner &&
+    !isNamed(schema, options) &&
+    (owner.allOf === members ||
+      owner.anyOf === members ||
+      owner.oneOf === members ||
+      owner[Intersection]?.allOf === members)
+  ) {
+    return owner
+  }
+}
+
+/** True for a schema `standaloneName` will name (by a title or id since hoisted onto its intersection, maybe) */
+function isNamed(schema: NormalizedJSONSchema, options: Options): boolean {
+  return Boolean(nameOf(schema[Intersection] ?? schema, definitionKeyOf(schema), options))
+}
+
+/** The name a schema asks for, before it is made unique */
+function nameOf(
+  schema: NormalizedJSONSchema,
+  keyNameFromDefinition: string | undefined,
+  options: Options,
+): string | undefined {
+  return options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+}
+
+/**
  * Compute a schema name using a series of fallbacks
  */
 function standaloneName(
@@ -525,8 +647,7 @@ function standaloneName(
   usedNames: UsedNames,
   options: Options,
 ): string | undefined {
-  const name =
-    options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+  const name = nameOf(schema, keyNameFromDefinition, options)
   if (name) {
     return generateName(name, usedNames)
   }
@@ -754,6 +875,11 @@ const getDefinitionKeysMemoized = memoize((definitions: Definitions): Map<Normal
   }
   return keys
 })
+
+/** The (first) key `schema` is held under in `definitions`, if any */
+function definitionKeyOf(schema: NormalizedJSONSchema): string | undefined {
+  return getDefinitionKeysMemoized(getDefinitionsMemoized(getRootSchema(schema))).get(schema)
+}
 
 /**
  * TODO: Reduce rate of false positives
