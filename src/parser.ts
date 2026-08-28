@@ -17,7 +17,7 @@ import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimiti
 import {memoize} from './memoize'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
-import {generateName, justName, log, maybeStripDefault} from './utils'
+import {generateName, justName, log} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -490,7 +490,6 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
         params: (schema.type as JSONSchema4TypeName[]).map(type => {
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
-          maybeStripDefault(member)
           applySchemaTyping(member)
           return parse(member, options, undefined, processed, usedNames)
         }),
