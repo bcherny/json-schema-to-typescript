@@ -24,7 +24,10 @@ export async function dereference(
     dereference: {
       ...$refOptions.dereference,
       onDereference($ref: string, schema: JSONSchema) {
-        dereferencedPaths.set(schema, $ref)
+        // schema may be a boolean (`true`/`false` schema), which isn't a valid WeakMap key
+        if (schema !== null && typeof schema === 'object') {
+          dereferencedPaths.set(schema, $ref)
+        }
       },
     },
   })) as any // TODO: fix types
