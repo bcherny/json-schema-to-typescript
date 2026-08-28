@@ -14,11 +14,14 @@ on:
   push:
     branches: [master]
 
-# One run at a time, in push order: a second push waits for the first rather
-# than cancelling a publish half way through.
+# One run at a time, in push order, and every run waits its turn: without
+# `queue: max` GitHub keeps only the newest waiting run and marks the others
+# cancelled, which litters master with cancelled runs whenever several pull
+# requests are merged within a few seconds of each other.
 concurrency:
   group: publish
   cancel-in-progress: false
+  queue: max
 
 permissions:
   contents: read
