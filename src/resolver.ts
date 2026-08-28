@@ -23,6 +23,7 @@ export async function dereference(
     parse: prenormalizingParsers($refOptions.parse),
     dereference: {
       ...$refOptions.dereference,
+      excludedPathMatcher: depthLimitedPathMatcher($refOptions.dereference),
       onDereference($ref: string, schema: JSONSchema) {
         dereferencedPaths.set(schema, $ref)
       },
@@ -62,6 +63,34 @@ function prenormalizingParsers(configured: $RefOptions['parse'] = {}): $RefOptio
 }
 
 type ParserCallback = (error: Error | null, data: any) => any
+
+/**
+ * The ref-parser cannot see one kind of cycle: a `$ref` with sibling keywords that points back at
+ * its own container, when that container was itself entered through such a `$ref`. It merges the
+ * target into a fresh object on every visit, so its "seen this object" checks never fire and it
+ * nests without end (`#/a/b/b/b/…`) -- a stack overflow at best and, with a self-referencing `$ref`
+ * nearby, hours of CPU first. So bound the nesting, as ref-parser releases from 15.3 on do
+ * themselves (`dereference.maxDepth`, same default; real schemas stay under 100), from the one hook
+ * that sees every path the crawl visits -- which otherwise stays the caller's.
+ */
+function depthLimitedPathMatcher(options: $RefOptions['dereference']): (pathFromRoot: string) => boolean {
+  const {excludedPathMatcher, maxDepth = 500} = (options ?? {}) as {
+    excludedPathMatcher?: (path: string) => boolean
+    maxDepth?: number
+  }
+  const shortEnough = 2 * maxDepth // "#" and then at least "/x" per level: most paths stop here
+  return path => {
+    const levels = path.length > shortEnough ? path.split('/') : undefined
+    if (levels && levels.length - 1 > maxDepth) {
+      throw new ReferenceError(
+        `$ref nesting goes deeper than ${maxDepth} levels at ${levels.slice(0, 7).join('/')}/… -- almost ` +
+          'certainly a "$ref" with sibling keywords that leads back to its own parent, a cycle the ref ' +
+          'resolver cannot detect. (If the schema really nests this deep, raise $refOptions.dereference.maxDepth.)',
+      )
+    }
+    return excludedPathMatcher?.(path) ?? false
+  }
+}
 
 function isThenable(value: unknown): value is PromiseLike<unknown> {
   return typeof (value as PromiseLike<unknown>)?.then === 'function'
