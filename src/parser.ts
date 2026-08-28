@@ -1,5 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {findKey, includes, isPlainObject, map, omit} from 'lodash'
+import {includes, isPlainObject, map, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {applySchemaTyping} from './applySchemaTyping'
@@ -127,7 +127,7 @@ function parseNonLiteral(
   usedNames: UsedNames,
 ): AST {
   const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
-  const keyNameFromDefinition = findKey(definitions, _ => _ === schema)
+  const keyNameFromDefinition = getDefinitionKeysMemoized(definitions).get(schema)
 
   switch (type) {
     case 'ALL_OF':
@@ -629,6 +629,20 @@ function getDefinitions(
 }
 
 const getDefinitionsMemoized = memoize(getDefinitions)
+
+/**
+ * Reverse index of `getDefinitions`: schema -> the first definition key that holds it,
+ * built once per definitions object instead of scanning every key for every parsed node.
+ */
+const getDefinitionKeysMemoized = memoize((definitions: Definitions): Map<NormalizedJSONSchema, string> => {
+  const keys = new Map<NormalizedJSONSchema, string>()
+  for (const key of Object.keys(definitions)) {
+    if (!keys.has(definitions[key])) {
+      keys.set(definitions[key], key)
+    }
+  }
+  return keys
+})
 
 /**
  * TODO: Reduce rate of false positives
