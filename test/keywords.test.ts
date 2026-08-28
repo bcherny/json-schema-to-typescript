@@ -1,5 +1,6 @@
 import {describe, expect, test} from 'bun:test'
 import {
+  ANNOTATION_KEYWORDS,
   CONTAINER_KEYWORDS,
   JSON_DATA_KEYWORDS,
   KEYWORDS,
@@ -26,6 +27,7 @@ suite('keywords', () => {
       ['properties', 'schemaMap'],
       ['patternProperties', 'schemaMap'],
       ['additionalProperties', 'schemaOrBoolean'],
+      ['unevaluatedProperties', 'schemaOrBoolean'],
       ['items', 'schemaOrSchemaArray'],
       ['additionalItems', 'schemaOrBoolean'],
       ['dependencies', 'schemaMap'],
@@ -62,6 +64,7 @@ suite('keywords', () => {
         'minProperties',
         'required',
         'additionalProperties',
+        'unevaluatedProperties',
         'definitions',
         'properties',
         'patternProperties',
@@ -124,6 +127,12 @@ suite('keywords', () => {
         'tsType',
         'type',
       ].sort(),
+    )
+  })
+
+  test("the parser overlooks the annotations it always has in a required-only member (parser.ts's former ANNOTATION_KEYWORDS)", () => {
+    expect([...ANNOTATION_KEYWORDS].sort()).toEqual(
+      ['$comment', 'deprecated', 'description', 'examples', 'readOnly', 'writeOnly'].sort(),
     )
   })
 

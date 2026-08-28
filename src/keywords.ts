@@ -45,6 +45,12 @@ interface Keyword {
    * put when a schema's constraints are moved into a subschema of it.
    */
   meta?: true
+  /**
+   * Says nothing about which values validate or which type to emit: at most it surfaces in the
+   * emitted type's comment (`title` can name the type and `default` implies one, so neither is
+   * one of these).
+   */
+  annotation?: true
 }
 
 export const KEYWORDS = {
@@ -56,6 +62,7 @@ export const KEYWORDS = {
   properties: {holds: 'schemaMap', typed: true},
   patternProperties: {holds: 'schemaMap', typed: true},
   additionalProperties: {holds: 'schemaOrBoolean', typed: true},
+  unevaluatedProperties: {holds: 'schemaOrBoolean'}, // 2019-09; the normalizer folds it into `additionalProperties`
   items: {holds: 'schemaOrSchemaArray', typed: true},
   additionalItems: {holds: 'schemaOrBoolean'},
   dependencies: {holds: 'schemaMap'}, // or, per name, a string array
@@ -64,17 +71,20 @@ export const KEYWORDS = {
   not: {holds: 'schema'},
   extends: {holds: 'schemaOrSchemaArray', typed: true}, // draft 3
 
-  // Identity and documentation
+  // Identity, documentation and other annotations
   id: {holds: 'data', meta: true}, // draft 4
   $id: {holds: 'data', typed: true, meta: true},
   $schema: {holds: 'data', meta: true},
+  $comment: {holds: 'data', annotation: true},
   title: {holds: 'data', meta: true},
-  description: {holds: 'data', meta: true},
-  deprecated: {holds: 'data', meta: true},
+  description: {holds: 'data', meta: true, annotation: true},
+  deprecated: {holds: 'data', meta: true, annotation: true},
+  readOnly: {holds: 'data', annotation: true},
+  writeOnly: {holds: 'data', annotation: true},
 
   // Instance data
   default: {holds: 'json', typed: true},
-  examples: {holds: 'json'},
+  examples: {holds: 'json', annotation: true},
   enum: {holds: 'json', typed: true},
   const: {holds: 'json', typed: true},
 
@@ -135,7 +145,17 @@ const LEGACY = {
    * ...and its definitions scan still descends into these. Observable for `const`, `examples`
    * and `extends`, whose object values get walked (and normalized) as if they were definitions.
    */
-  scannedForDefinitions: new Set<KeywordName>(['extends', 'deprecated', 'examples', 'const', 'tsType', 'tsEnumNames']),
+  scannedForDefinitions: new Set<KeywordName>([
+    'extends',
+    '$comment',
+    'deprecated',
+    'readOnly',
+    'writeOnly',
+    'examples',
+    'const',
+    'tsType',
+    'tsEnumNames',
+  ]),
   /**
    * Observable. `isSchemaLike` also counts these as containers whose direct children are not
    * schemas: `not` holds nothing but a schema, and since `isSchemaLike` matches by identity, a
@@ -184,3 +204,6 @@ export const META_KEYWORDS = keywordsWhere(({meta}, name) => meta === true && !L
 
 /** @see Keyword.typed */
 export const TYPE_SHAPING_KEYWORDS = keywordsWhere(({typed}) => typed === true)
+
+/** @see Keyword.annotation */
+export const ANNOTATION_KEYWORDS = keywordsWhere(({annotation}) => annotation === true)

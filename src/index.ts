@@ -71,6 +71,10 @@ export interface Options {
    */
   maxItems: number
   /**
+   * Remove the optional modifier when a property has a default value.
+   */
+  removeOptionalIfDefaultExists: boolean
+  /**
    * Append all index signatures with `| undefined` so that they are strictly typed.
    *
    * This is required to be compatible with `strictNullChecks`.
@@ -106,6 +110,7 @@ export const DEFAULT_OPTIONS: Options = {
   format: true,
   ignoreMinAndMaxItems: false,
   maxItems: 20,
+  removeOptionalIfDefaultExists: false,
   strictIndexSignatures: false,
   style: {
     bracketSpacing: false,
