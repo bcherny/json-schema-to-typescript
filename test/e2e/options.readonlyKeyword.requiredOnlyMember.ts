@@ -12,3 +12,7 @@ export const input = {
   additionalProperties: false,
   anyOf: [{required: ['id']}, {required: ['etag', 'name']}],
 }
+
+export const options = {
+  readonlyKeyword: true,
+}

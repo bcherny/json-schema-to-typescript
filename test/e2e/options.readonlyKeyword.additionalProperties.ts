@@ -27,3 +27,7 @@ export const input = {
   },
   additionalProperties: false,
 }
+
+export const options = {
+  readonlyKeyword: true,
+}

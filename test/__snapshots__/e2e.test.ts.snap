@@ -448364,35 +448364,35 @@ export type Actions = ({
 /**
  * a unique identifier
  */
-readonly id?: string
+id?: string
 /**
  * the display text shown in Dashboard
  */
-readonly label?: string
+label?: string
 /**
  * identifier of the action to take that is sent via SSO
  */
-readonly action?: string
+action?: string
 /**
  * absolute URL to use instead of an action
  */
-readonly url?: string
+url?: string
 /**
  * if the action requires the user to own the app
  */
-readonly requires_owner?: boolean
+requires_owner?: boolean
 [k: string]: unknown
-} & readonly {
+} & {
 [k: string]: unknown
 }[])
 /**
  * config vars exposed to the owning app by this add-on
  */
-export type ConfigVars = readonly string[]
+export type ConfigVars = string[]
 /**
  * errors associated with invalid app.json manifest file
  */
-export type ManifestErrors = readonly string[]
+export type ManifestErrors = string[]
 /**
  * result of postdeploy script
  */
@@ -448400,11 +448400,11 @@ export type Postdeploy = ({
 /**
  * output of the postdeploy script
  */
-readonly output?: string
+output?: string
 /**
  * The exit code of the postdeploy script
  */
-readonly exit_code?: number
+exit_code?: number
 [k: string]: unknown
 } | null)
 /**
@@ -448424,7 +448424,7 @@ export type Release = (null | {
 /**
  * unique identifier of release
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 })
 /**
@@ -448444,17 +448444,17 @@ export type Addon = ({
 /**
  * unique identifier of add-on
  */
-readonly id?: string
+id?: string
 /**
  * globally unique name of the add-on
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 } | null)
 /**
  * The scope of access OAuth authorization allows
  */
-export type Scope = readonly string[]
+export type Scope = string[]
 /**
  * the compliance regimes applied to an add-on plan
  */
@@ -448462,7 +448462,7 @@ export type Compliance = (null | ("HIPAA" | "PCI")[])
 /**
  * potential IPs from which outbound network traffic will originate
  */
-export type Sources = readonly string[]
+export type Sources = string[]
 /**
  * Which pipeline uuids the user has dismissed the GitHub banner for
  */
@@ -448551,15 +448551,15 @@ export interface HerokuPlatformAPIAccountFeature {
 /**
  * when account feature was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * description of account feature
  */
-readonly description?: string
+description?: string
 /**
  * documentation URL of account feature
  */
-readonly doc_url?: string
+doc_url?: string
 /**
  * whether or not account feature has been enabled
  */
@@ -448567,27 +448567,27 @@ enabled?: boolean
 /**
  * unique identifier of account feature
  */
-readonly id?: string
+id?: string
 /**
  * unique name of account feature
  */
-readonly name?: string
+name?: string
 /**
  * state of account feature
  */
-readonly state?: string
+state?: string
 /**
  * when account feature was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * user readable feature name
  */
-readonly display_name?: string
+display_name?: string
 /**
  * e-mail to send feedback about the feature
  */
-readonly feedback_email?: string
+feedback_email?: string
 [k: string]: unknown
 }
 /**
@@ -448605,7 +448605,7 @@ beta?: boolean
 /**
  * when account was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique email address of account
  */
@@ -448613,11 +448613,11 @@ email?: string
 /**
  * whether the user is federated and belongs to an Identity Provider
  */
-readonly federated?: boolean
+federated?: boolean
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 /**
  * Identity Provider details for federated users.
  */
@@ -448625,12 +448625,12 @@ identity_provider?: ({
 /**
  * unique identifier of this identity provider
  */
-readonly id?: string
+id?: string
 organization?: {
 /**
  * unique name of organization
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 [k: string]: unknown
@@ -448638,7 +448638,7 @@ readonly name?: string
 /**
  * when account last authorized with Heroku
  */
-readonly last_login?: (string | null)
+last_login?: (string | null)
 /**
  * full name of the account owner
  */
@@ -448646,27 +448646,27 @@ name?: (string | null)
 /**
  * SMS number of account
  */
-readonly sms_number?: (string | null)
+sms_number?: (string | null)
 /**
  * when account was suspended
  */
-readonly suspended_at?: (string | null)
+suspended_at?: (string | null)
 /**
  * when account became delinquent
  */
-readonly delinquent_at?: (string | null)
+delinquent_at?: (string | null)
 /**
  * whether two-factor auth is enabled on the account
  */
-readonly two_factor_authentication?: boolean
+two_factor_authentication?: boolean
 /**
  * when account was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * whether account has been verified with billing information
  */
-readonly verified?: boolean
+verified?: boolean
 /**
  * organization selected by default
  */
@@ -448674,11 +448674,11 @@ default_organization?: ({
 /**
  * unique identifier of organization
  */
-readonly id?: string
+id?: string
 /**
  * unique name of organization
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 } | null)
 [k: string]: unknown
@@ -448700,11 +448700,11 @@ addon?: {
 /**
  * unique identifier of add-on
  */
-readonly id: string
+id: string
 /**
  * globally unique name of the add-on
  */
-readonly name: string
+name: string
 /**
  * billing application associated with this add-on
  */
@@ -448712,7 +448712,7 @@ app: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 /**
  * unique name of app
  */
@@ -448726,11 +448726,11 @@ plan?: {
 /**
  * unique identifier of this plan
  */
-readonly id?: string
+id?: string
 /**
  * unique name of this plan
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 }
@@ -448741,7 +448741,7 @@ app?: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 /**
  * unique name of app
  */
@@ -448751,27 +448751,27 @@ name?: string
 /**
  * when add-on attachment was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of this add-on attachment
  */
-readonly id?: string
+id?: string
 /**
  * unique name for this add-on attachment to this app
  */
-readonly name?: string
+name?: string
 /**
  * attachment namespace
  */
-readonly namespace?: (null | string)
+namespace?: (null | string)
 /**
  * when add-on attachment was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * URL for logging into web interface of add-on in attached app context
  */
-readonly web_url?: (null | string)
+web_url?: (null | string)
 [k: string]: unknown
 }
 /**
@@ -448795,23 +448795,23 @@ export interface HerokuPlatformAPIAddOnPlanAction {
 /**
  * a unique identifier
  */
-readonly id?: string
+id?: string
 /**
  * the display text shown in Dashboard
  */
-readonly label?: string
+label?: string
 /**
  * identifier of the action to take that is sent via SSO
  */
-readonly action?: string
+action?: string
 /**
  * absolute URL to use instead of an action
  */
-readonly url?: string
+url?: string
 /**
  * if the action requires the user to own the app
  */
-readonly requires_owner?: boolean
+requires_owner?: boolean
 [k: string]: unknown
 }
 /**
@@ -448821,11 +448821,11 @@ export interface HerokuPlatformAPIAddOnRegionCapability {
 /**
  * unique identifier of this add-on-region-capability
  */
-readonly id?: string
+id?: string
 /**
  * whether the add-on can be installed to a Space
  */
-readonly supports_private_networking?: boolean
+supports_private_networking?: boolean
 addon_service?: HerokuPlatformAPIAddOnService
 region?: HerokuPlatformAPIRegion
 [k: string]: unknown
@@ -448837,39 +448837,39 @@ export interface HerokuPlatformAPIAddOnService {
 /**
  * npm package name of the add-on service's Heroku CLI plugin
  */
-readonly cli_plugin_name?: (string | null)
+cli_plugin_name?: (string | null)
 /**
  * when add-on-service was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * human-readable name of the add-on service provider
  */
-readonly human_name?: string
+human_name?: string
 /**
  * unique identifier of this add-on-service
  */
-readonly id?: string
+id?: string
 /**
  * unique name of this add-on-service
  */
-readonly name?: string
+name?: string
 /**
  * release status for add-on service
  */
-readonly state?: ("alpha" | "beta" | "ga" | "shutdown")
+state?: ("alpha" | "beta" | "ga" | "shutdown")
 /**
  * whether or not apps can have access to more than one instance of this add-on at the same time
  */
-readonly supports_multiple_installations?: boolean
+supports_multiple_installations?: boolean
 /**
  * whether or not apps can have access to add-ons billed to a different app
  */
-readonly supports_sharing?: boolean
+supports_sharing?: boolean
 /**
  * when add-on-service was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -448879,36 +448879,36 @@ export interface HerokuPlatformAPIRegion {
 /**
  * country where the region exists
  */
-readonly country?: string
+country?: string
 /**
  * when region was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * description of region
  */
-readonly description?: string
+description?: string
 /**
  * unique identifier of region
  */
-readonly id?: string
+id?: string
 /**
  * area in the country where the region exists
  */
-readonly locale?: string
+locale?: string
 /**
  * unique name of region
  */
-readonly name?: string
+name?: string
 /**
  * whether or not region is available for creating a Private Space
  */
-readonly private_capable?: boolean
-readonly provider?: Provider
+private_capable?: boolean
+provider?: Provider
 /**
  * when region was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -448918,18 +448918,18 @@ export interface Provider {
 /**
  * name of provider
  */
-readonly name?: string
+name?: string
 /**
  * region name used by provider
  */
-readonly region?: string
+region?: string
 [k: string]: unknown
 }
 /**
  * Add-ons represent add-ons that have been provisioned and attached to one or more apps.
  */
 export interface HerokuPlatformAPIAddOn {
-readonly actions?: Actions
+actions?: Actions
 /**
  * identity of add-on service
  */
@@ -448937,11 +448937,11 @@ addon_service?: {
 /**
  * unique identifier of this add-on-service
  */
-readonly id?: string
+id?: string
 /**
  * unique name of this add-on-service
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
@@ -448951,26 +448951,26 @@ app?: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 /**
  * unique name of app
  */
 name?: string
 [k: string]: unknown
 }
-readonly config_vars?: ConfigVars
+config_vars?: ConfigVars
 /**
  * when add-on was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of add-on
  */
-readonly id?: string
+id?: string
 /**
  * globally unique name of the add-on
  */
-readonly name?: string
+name?: string
 /**
  * identity of add-on plan
  */
@@ -448978,29 +448978,29 @@ plan?: {
 /**
  * unique identifier of this plan
  */
-readonly id?: string
+id?: string
 /**
  * unique name of this plan
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * id of this add-on with its provider
  */
-readonly provider_id?: string
+provider_id?: string
 /**
  * state in the add-on's lifecycle
  */
-readonly state?: ("provisioning" | "provisioned" | "deprovisioned")
+state?: ("provisioning" | "provisioned" | "deprovisioned")
 /**
  * when add-on was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * URL for logging into web interface of add-on (e.g. a dashboard)
  */
-readonly web_url?: (null | string)
+web_url?: (null | string)
 [k: string]: unknown
 }
 /**
@@ -449010,15 +449010,15 @@ export interface HerokuPlatformAPIAppFeature {
 /**
  * when app feature was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * description of app feature
  */
-readonly description?: string
+description?: string
 /**
  * documentation URL of app feature
  */
-readonly doc_url?: string
+doc_url?: string
 /**
  * whether or not app feature has been enabled
  */
@@ -449026,27 +449026,27 @@ enabled?: boolean
 /**
  * unique identifier of app feature
  */
-readonly id?: string
+id?: string
 /**
  * unique name of app feature
  */
-readonly name?: string
+name?: string
 /**
  * state of app feature
  */
-readonly state?: string
+state?: string
 /**
  * when app feature was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * user readable feature name
  */
-readonly display_name?: string
+display_name?: string
 /**
  * e-mail to send feedback about the feature
  */
-readonly feedback_email?: string
+feedback_email?: string
 [k: string]: unknown
 }
 /**
@@ -449056,11 +449056,11 @@ export interface HerokuPlatformAPIApplicationFormationSet {
 /**
  * a string representation of the formation set
  */
-readonly description?: string
+description?: string
 /**
  * application process tier
  */
-readonly process_tier?: ("production" | "traditional" | "free" | "hobby" | "private")
+process_tier?: ("production" | "traditional" | "free" | "hobby" | "private")
 /**
  * app being described by the formation-set
  */
@@ -449072,13 +449072,13 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * last time fomation-set was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -449088,23 +449088,23 @@ export interface HerokuSetupAPIAppSetup {
 /**
  * unique identifier of app setup
  */
-readonly id?: string
+id?: string
 /**
  * when app setup was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * when app setup was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * the overall status of app setup
  */
-readonly status?: ("failed" | "pending" | "succeeded")
+status?: ("failed" | "pending" | "succeeded")
 /**
  * reason that app setup has failed
  */
-readonly failure_message?: (string | null)
+failure_message?: (string | null)
 /**
  * identity of app
  */
@@ -449112,7 +449112,7 @@ app?: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 /**
  * unique name of app
  */
@@ -449126,23 +449126,23 @@ build?: (null | {
 /**
  * unique identifier of build
  */
-readonly id?: string
+id?: string
 /**
  * status of build
  */
-readonly status?: ("failed" | "pending" | "succeeded")
+status?: ("failed" | "pending" | "succeeded")
 /**
  * Build process output will be available from this URL as a stream. The stream is available as either \`text/plain\` or \`text/event-stream\`. Clients should be prepared to handle disconnects and can resume the stream by sending a \`Range\` header (for \`text/plain\`) or a \`Last-Event-Id\` header (for \`text/event-stream\`).
  */
-readonly output_stream_url?: string
+output_stream_url?: string
 [k: string]: unknown
 })
-readonly manifest_errors?: ManifestErrors
-readonly postdeploy?: Postdeploy
+manifest_errors?: ManifestErrors
+postdeploy?: Postdeploy
 /**
  * fully qualified success url
  */
-readonly resolved_success_url?: (string | null)
+resolved_success_url?: (string | null)
 [k: string]: unknown
 }
 /**
@@ -449160,17 +449160,17 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * when app transfer was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of app transfer
  */
-readonly id?: string
+id?: string
 /**
  * identity of the owner of the transfer
  */
@@ -449182,7 +449182,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -449196,17 +449196,17 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * the current state of an app transfer
  */
-readonly state?: ("pending" | "accepted" | "declined")
+state?: ("pending" | "accepted" | "declined")
 /**
  * when app transfer was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -449216,11 +449216,11 @@ export interface HerokuPlatformAPIApp {
 /**
  * when app was archived
  */
-readonly archived_at?: (null | string)
+archived_at?: (null | string)
 /**
  * description from buildpack of app
  */
-readonly buildpack_provided_description?: (null | string)
+buildpack_provided_description?: (null | string)
 /**
  * identity of the stack that will be used for new builds
  */
@@ -449228,25 +449228,25 @@ build_stack?: {
 /**
  * unique identifier of stack
  */
-readonly id?: string
+id?: string
 /**
  * unique name of stack
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * when app was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * git repo URL of app
  */
-readonly git_url?: string
+git_url?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 /**
  * maintenance status of app
  */
@@ -449266,7 +449266,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -449276,11 +449276,11 @@ organization?: (null | {
 /**
  * unique identifier of organization
  */
-readonly id?: string
+id?: string
 /**
  * unique name of organization
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 })
 /**
@@ -449290,25 +449290,25 @@ region?: {
 /**
  * unique identifier of region
  */
-readonly id?: string
+id?: string
 /**
  * unique name of region
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * when app was released
  */
-readonly released_at?: (null | string)
+released_at?: (null | string)
 /**
  * git repo size in bytes of app
  */
-readonly repo_size?: (number | null)
+repo_size?: (number | null)
 /**
  * slug size in bytes of app
  */
-readonly slug_size?: (number | null)
+slug_size?: (number | null)
 /**
  * identity of space
  */
@@ -449316,7 +449316,7 @@ space?: (null | {
 /**
  * unique identifier of space
  */
-readonly id?: string
+id?: string
 /**
  * unique name of space
  */
@@ -449324,7 +449324,7 @@ name?: string
 /**
  * true if this space has shield enabled
  */
-readonly shield?: boolean
+shield?: boolean
 [k: string]: unknown
 })
 /**
@@ -449334,21 +449334,21 @@ stack?: {
 /**
  * unique identifier of stack
  */
-readonly id?: string
+id?: string
 /**
  * unique name of stack
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * when app was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * web URL of app
  */
-readonly web_url?: string
+web_url?: string
 [k: string]: unknown
 }
 /**
@@ -449362,21 +449362,21 @@ build?: {
 /**
  * unique identifier of build
  */
-readonly id?: string
+id?: string
 /**
  * status of build
  */
-readonly status?: ("failed" | "pending" | "succeeded")
+status?: ("failed" | "pending" | "succeeded")
 /**
  * Build process output will be available from this URL as a stream. The stream is available as either \`text/plain\` or \`text/event-stream\`. Clients should be prepared to handle disconnects and can resume the stream by sending a \`Range\` header (for \`text/plain\`) or a \`Last-Event-Id\` header (for \`text/event-stream\`).
  */
-readonly output_stream_url?: string
+output_stream_url?: string
 [k: string]: unknown
 }
 /**
  * status from the build
  */
-readonly exit_code?: number
+exit_code?: number
 /**
  * A list of all the lines of a build's output. This has been replaced by the \`output_stream_url\` attribute on the build resource.
  */
@@ -449390,11 +449390,11 @@ export interface Line {
 /**
  * The output stream where the line was sent.
  */
-readonly stream?: ("STDOUT" | "STDERR")
+stream?: ("STDOUT" | "STDERR")
 /**
  * A line of output from the build.
  */
-readonly line?: string
+line?: string
 [k: string]: unknown
 }
 /**
@@ -449408,24 +449408,24 @@ app?: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 buildpacks?: Buildpacks
 /**
  * when build was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of build
  */
-readonly id?: string
+id?: string
 /**
  * Build process output will be available from this URL as a stream. The stream is available as either \`text/plain\` or \`text/event-stream\`. Clients should be prepared to handle disconnects and can resume the stream by sending a \`Range\` header (for \`text/plain\`) or a \`Last-Event-Id\` header (for \`text/event-stream\`).
  */
-readonly output_stream_url?: string
+output_stream_url?: string
 source_blob?: SourceBlob
-readonly release?: Release
+release?: Release
 /**
  * slug created by this build
  */
@@ -449433,17 +449433,17 @@ slug?: ({
 /**
  * unique identifier of slug
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 } | null)
 /**
  * status of build
  */
-readonly status?: ("failed" | "pending" | "succeeded")
+status?: ("failed" | "pending" | "succeeded")
 /**
  * when build was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * user that started the build
  */
@@ -449451,7 +449451,7 @@ user?: {
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 /**
  * unique email address of account
  */
@@ -449467,15 +449467,15 @@ export interface SourceBlob {
 /**
  * an optional checksum of the gzipped tarball for verifying its integrity
  */
-readonly checksum?: (null | string)
+checksum?: (null | string)
 /**
  * URL where gzipped tar archive of source code for build was downloaded.
  */
-readonly url?: string
+url?: string
 /**
  * Version of the gzipped tarball.
  */
-readonly version?: (string | null)
+version?: (string | null)
 [k: string]: unknown
 }
 /**
@@ -449485,7 +449485,7 @@ export interface HerokuPlatformAPIBuildpackInstallations {
 /**
  * determines the order in which the buildpacks will execute
  */
-readonly ordinal?: number
+ordinal?: number
 /**
  * buildpack
  */
@@ -449517,26 +449517,26 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * when collaborator was created
  */
-readonly created_at: string
+created_at: string
 /**
  * unique identifier of collaborator
  */
-readonly id: string
+id: string
 permissions?: HerokuPlatformAPIOrganizationAppPermission[]
 /**
  * role in the organization
  */
-readonly role?: ("admin" | "collaborator" | "member" | "owner" | null)
+role?: ("admin" | "collaborator" | "member" | "owner" | null)
 /**
  * when collaborator was updated
  */
-readonly updated_at: string
+updated_at: string
 /**
  * identity of collaborated account
  */
@@ -449548,11 +449548,11 @@ email?: string
 /**
  * whether the user is federated and belongs to an Identity Provider
  */
-readonly federated?: boolean
+federated?: boolean
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 }
@@ -449563,11 +449563,11 @@ export interface HerokuPlatformAPIOrganizationAppPermission {
 /**
  * The name of the app permission.
  */
-readonly name?: string
+name?: string
 /**
  * A description of what the app permission allows.
  */
-readonly description?: string
+description?: string
 [k: string]: unknown
 }
 /**
@@ -449629,37 +449629,37 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * canonical name record, the address to point a domain at
  */
-readonly cname?: (null | string)
+cname?: (null | string)
 /**
  * when domain was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * full hostname
  */
-readonly hostname?: string
+hostname?: string
 /**
  * unique identifier of this domain
  */
-readonly id?: string
+id?: string
 /**
  * type of domain name
  */
-readonly kind?: ("heroku" | "custom")
+kind?: ("heroku" | "custom")
 /**
  * when domain was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * status of this record's cname
  */
-readonly status?: string
+status?: string
 [k: string]: unknown
 }
 /**
@@ -449669,32 +449669,32 @@ export interface HerokuPlatformAPIDynoSize {
 /**
  * minimum vCPUs, non-dedicated may get more depending on load
  */
-readonly compute?: number
-readonly cost?: Cost
+compute?: number
+cost?: Cost
 /**
  * whether this dyno will be dedicated to one user
  */
-readonly dedicated?: boolean
+dedicated?: boolean
 /**
  * unit of consumption for Heroku Enterprise customers
  */
-readonly dyno_units?: number
+dyno_units?: number
 /**
  * unique identifier of this dyno size
  */
-readonly id?: string
+id?: string
 /**
  * amount of RAM in GB
  */
-readonly memory?: number
+memory?: number
 /**
  * the name of this dyno-size
  */
-readonly name?: string
+name?: string
 /**
  * whether this dyno can only be provisioned in a private space
  */
-readonly private_space_only?: boolean
+private_space_only?: boolean
 [k: string]: unknown
 }
 /**
@@ -449704,7 +449704,7 @@ export interface HerokuPlatformAPIDyno {
 /**
  * a URL to stream output from for attached processes or null for non-attached processes
  */
-readonly attach_url?: (string | null)
+attach_url?: (string | null)
 /**
  * command used to start this process
  */
@@ -449712,15 +449712,15 @@ command?: string
 /**
  * when dyno was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of this dyno
  */
-readonly id?: string
+id?: string
 /**
  * the name of this process on this dyno
  */
-readonly name?: string
+name?: string
 /**
  * app release of the dyno
  */
@@ -449728,11 +449728,11 @@ release?: {
 /**
  * unique identifier of release
  */
-readonly id?: string
+id?: string
 /**
  * unique version assigned to the release
  */
-readonly version?: number
+version?: number
 [k: string]: unknown
 }
 /**
@@ -449746,7 +449746,7 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -449756,7 +449756,7 @@ size?: string
 /**
  * current status of process (either: crashed, down, idle, starting, or up)
  */
-readonly state?: string
+state?: string
 /**
  * type of process
  */
@@ -449764,7 +449764,7 @@ type?: string
 /**
  * when process last changed state
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -449774,7 +449774,7 @@ export interface HerokuPlatformAPIEvent {
 /**
  * the operation performed on the resource
  */
-readonly action?: ("create" | "destroy" | "update")
+action?: ("create" | "destroy" | "update")
 /**
  * user that performed the operation
  */
@@ -449786,18 +449786,18 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * when the event was created
  */
-readonly created_at?: string
-readonly data?: Data
+created_at?: string
+data?: Data
 /**
  * unique identifier of an event
  */
-readonly id?: string
+id?: string
 /**
  * data fields that were changed during update with previous values
  */
@@ -449807,23 +449807,23 @@ previous_data?: {
 /**
  * when the event was published
  */
-readonly published_at?: (null | string)
+published_at?: (null | string)
 /**
  * the type of resource affected
  */
-readonly resource?: ("addon" | "addon-attachment" | "app" | "app-setup" | "app-transfer" | "build" | "collaborator" | "domain" | "dyno" | "failed-event" | "formation" | "formation-set" | "inbound-ruleset" | "organization" | "release" | "space" | "user")
+resource?: ("addon" | "addon-attachment" | "app" | "app-setup" | "app-transfer" | "build" | "collaborator" | "domain" | "dyno" | "failed-event" | "formation" | "formation-set" | "inbound-ruleset" | "organization" | "release" | "space" | "user")
 /**
  * a numeric string representing the event's sequence
  */
-readonly sequence?: (null | string)
+sequence?: (null | string)
 /**
  * when the event was updated (same as created)
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * the event's API version string
  */
-readonly version?: string
+version?: string
 [k: string]: unknown
 }
 /**
@@ -449833,27 +449833,27 @@ export interface HerokuPlatformAPIFailedEvent {
 /**
  * The attempted operation performed on the resource.
  */
-readonly action?: ("create" | "destroy" | "update" | "unknown")
+action?: ("create" | "destroy" | "update" | "unknown")
 /**
  * An HTTP status code.
  */
-readonly code?: (number | null)
+code?: (number | null)
 /**
  * ID of error raised.
  */
-readonly error_id?: (string | null)
+error_id?: (string | null)
 /**
  * A detailed error message.
  */
-readonly message?: string
+message?: string
 /**
  * The HTTP method type of the failed action.
  */
-readonly method?: ("DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT")
+method?: ("DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT")
 /**
  * The path of the attempted operation.
  */
-readonly path?: string
+path?: string
 /**
  * The related resource of the failed action.
  */
@@ -449861,11 +449861,11 @@ resource?: ({
 /**
  * Unique identifier of a resource.
  */
-readonly id?: string
+id?: string
 /**
  * the type of resource affected
  */
-readonly name?: ("addon" | "addon-attachment" | "app" | "app-setup" | "app-transfer" | "build" | "collaborator" | "domain" | "dyno" | "failed-event" | "formation" | "formation-set" | "inbound-ruleset" | "organization" | "release" | "space" | "user")
+name?: ("addon" | "addon-attachment" | "app" | "app-setup" | "app-transfer" | "build" | "collaborator" | "domain" | "dyno" | "failed-event" | "formation" | "formation-set" | "inbound-ruleset" | "organization" | "release" | "space" | "user")
 [k: string]: unknown
 } | null)
 [k: string]: unknown
@@ -449885,7 +449885,7 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -449895,11 +449895,11 @@ command?: string
 /**
  * when process type was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of this process type
  */
-readonly id?: string
+id?: string
 /**
  * number of processes to maintain
  */
@@ -449911,11 +449911,11 @@ size?: string
 /**
  * type of process to maintain
  */
-readonly type?: string
+type?: string
 /**
  * when dyno type was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -449925,11 +449925,11 @@ export interface HerokuPlatformAPIInboundRuleset {
 /**
  * unique identifier of an inbound-ruleset
  */
-readonly id?: string
+id?: string
 /**
  * when inbound-ruleset was created
  */
-readonly created_at?: string
+created_at?: string
 rules?: Rule[]
 /**
  * unique email address of account
@@ -449958,15 +449958,15 @@ export interface HerokuPlatformAPIOrganization {
 /**
  * unique identifier of organization
  */
-readonly id?: string
+id?: string
 /**
  * when the organization was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * whether charges incurred by the org are paid by credit card.
  */
-readonly credit_card_collections?: boolean
+credit_card_collections?: boolean
 /**
  * whether to use this organization when none is specified
  */
@@ -449974,27 +449974,27 @@ default?: boolean
 /**
  * upper limit of members allowed in an organization.
  */
-readonly membership_limit?: (number | null)
+membership_limit?: (number | null)
 /**
  * unique name of organization
  */
-readonly name?: string
+name?: string
 /**
  * whether the org is provisioned licenses by salesforce.
  */
-readonly provisioned_licenses?: boolean
+provisioned_licenses?: boolean
 /**
  * role in the organization
  */
-readonly role?: ("admin" | "collaborator" | "member" | "owner" | null)
+role?: ("admin" | "collaborator" | "member" | "owner" | null)
 /**
  * type of organization.
  */
-readonly type?: ("enterprise" | "team")
+type?: ("enterprise" | "team")
 /**
  * when the organization was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -450018,25 +450018,25 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * when release was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * description of changes in this release
  */
-readonly description?: string
+description?: string
 /**
  * unique identifier of release
  */
-readonly id?: string
+id?: string
 /**
  * when release was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * slug running in this release
  */
@@ -450044,13 +450044,13 @@ slug?: ({
 /**
  * unique identifier of slug
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 } | null)
 /**
  * current status of the release
  */
-readonly status?: ("failed" | "pending" | "succeeded")
+status?: ("failed" | "pending" | "succeeded")
 /**
  * user that created the release
  */
@@ -450058,7 +450058,7 @@ user?: {
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 /**
  * unique email address of account
  */
@@ -450068,11 +450068,11 @@ email?: string
 /**
  * unique version assigned to the release
  */
-readonly version?: number
+version?: number
 /**
  * indicates this release as being the current one for the app
  */
-readonly current?: boolean
+current?: boolean
 [k: string]: unknown
 }
 /**
@@ -450082,11 +450082,11 @@ export interface HerokuPlatformAPISpace {
 /**
  * when space was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of space
  */
-readonly id?: string
+id?: string
 /**
  * unique name of space
  */
@@ -450098,7 +450098,7 @@ organization?: {
 /**
  * unique name of organization
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
@@ -450108,25 +450108,25 @@ region?: {
 /**
  * unique identifier of region
  */
-readonly id?: string
+id?: string
 /**
  * unique name of region
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * true if this space has shield enabled
  */
-readonly shield?: boolean
+shield?: boolean
 /**
  * availability of this space
  */
-readonly state?: ("allocating" | "allocated" | "deleting")
+state?: ("allocating" | "allocated" | "deleting")
 /**
  * when space was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -450146,7 +450146,7 @@ certificate?: string
 /**
  * when provider record was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * URL identifier provided by the identity provider
  */
@@ -450154,7 +450154,7 @@ entity_id?: string
 /**
  * unique identifier of this identity provider
  */
-readonly id?: string
+id?: string
 /**
  * single log out URL for this identity provider
  */
@@ -450170,13 +450170,13 @@ organization?: (null | {
 /**
  * unique name of organization
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 })
 /**
  * when the identity provider record was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -450186,11 +450186,11 @@ export interface HerokuPlatformAPIInvitation {
 /**
  * if the invitation requires verification
  */
-readonly verification_required?: boolean
+verification_required?: boolean
 /**
  * when invitation was created
  */
-readonly created_at?: string
+created_at?: string
 user?: {
 /**
  * unique email address of account
@@ -450199,7 +450199,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 [k: string]: unknown
@@ -450250,43 +450250,43 @@ export interface HerokuPlatformAPIInvoice {
 /**
  * total charges on this invoice
  */
-readonly charges_total?: number
+charges_total?: number
 /**
  * when invoice was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * total credits on this invoice
  */
-readonly credits_total?: number
+credits_total?: number
 /**
  * unique identifier of this invoice
  */
-readonly id?: string
+id?: string
 /**
  * human readable invoice number
  */
-readonly number?: number
+number?: number
 /**
  * the ending date that the invoice covers
  */
-readonly period_end?: string
+period_end?: string
 /**
  * the starting date that this invoice covers
  */
-readonly period_start?: string
+period_start?: string
 /**
  * payment status for this invoice (pending, successful, failed)
  */
-readonly state?: number
+state?: number
 /**
  * combined total of charges and credits on this invoice
  */
-readonly total?: number
+total?: number
 /**
  * when invoice was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -450296,59 +450296,59 @@ export interface HerokuPlatformAPIKey {
 /**
  * comment on the key
  */
-readonly comment?: string
+comment?: string
 /**
  * when key was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * @deprecated
  * deprecated. Please refer to 'comment' instead
  */
-readonly email?: string
+email?: string
 /**
  * a unique identifying string based on contents
  */
-readonly fingerprint?: string
+fingerprint?: string
 /**
  * unique identifier of this key
  */
-readonly id?: string
+id?: string
 /**
  * full public_key as uploaded
  */
-readonly public_key?: string
+public_key?: string
 /**
  * when key was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
  * [Log drains](https://devcenter.heroku.com/articles/log-drains) provide a way to forward your Heroku logs to an external syslog server for long-term archiving. This external service must be configured to receive syslog packets from Heroku, whereupon its URL can be added to an app using this API. Some add-ons will add a log drain when they are provisioned to an app. These drains can only be removed by removing the add-on.
  */
 export interface HerokuPlatformAPILogDrain {
-readonly addon?: Addon
+addon?: Addon
 /**
  * when log drain was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of this log drain
  */
-readonly id?: string
+id?: string
 /**
  * token associated with the log drain
  */
-readonly token?: string
+token?: string
 /**
  * when log drain was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * url associated with the log drain
  */
-readonly url?: string
+url?: string
 [k: string]: unknown
 }
 /**
@@ -450358,19 +450358,19 @@ export interface HerokuPlatformAPILogSession {
 /**
  * when log connection was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of this log session
  */
-readonly id?: string
+id?: string
 /**
  * URL for log streaming session
  */
-readonly logplex_url?: string
+logplex_url?: string
 /**
  * when log session was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -450384,15 +450384,15 @@ access_token?: (null | {
 /**
  * seconds until OAuth token expires; may be \`null\` for tokens with indefinite lifetime
  */
-readonly expires_in?: (null | number)
+expires_in?: (null | number)
 /**
  * unique identifier of OAuth token
  */
-readonly id?: string
+id?: string
 /**
  * contents of the token to be used for authorization
  */
-readonly token?: string
+token?: string
 [k: string]: unknown
 })
 /**
@@ -450402,21 +450402,21 @@ client?: (null | {
 /**
  * unique identifier of this OAuth client
  */
-readonly id?: string
+id?: string
 /**
  * OAuth client name
  */
-readonly name?: string
+name?: string
 /**
  * endpoint for redirection after authorization with OAuth client
  */
-readonly redirect_uri?: string
+redirect_uri?: string
 [k: string]: unknown
 })
 /**
  * when OAuth authorization was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * this authorization's grant
  */
@@ -450424,21 +450424,21 @@ grant?: (null | {
 /**
  * grant code received from OAuth web application authorization
  */
-readonly code?: string
+code?: string
 /**
  * seconds until OAuth grant expires
  */
-readonly expires_in?: number
+expires_in?: number
 /**
  * unique identifier of OAuth grant
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 })
 /**
  * unique identifier of OAuth authorization
  */
-readonly id?: string
+id?: string
 /**
  * refresh token for this authorization
  */
@@ -450446,22 +450446,22 @@ refresh_token?: (null | {
 /**
  * seconds until OAuth token expires; may be \`null\` for tokens with indefinite lifetime
  */
-readonly expires_in?: (null | number)
+expires_in?: (null | number)
 /**
  * unique identifier of OAuth token
  */
-readonly id?: string
+id?: string
 /**
  * contents of the token to be used for authorization
  */
-readonly token?: string
+token?: string
 [k: string]: unknown
 })
-readonly scope?: Scope
+scope?: Scope
 /**
  * when OAuth authorization was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * authenticated user associated with this authorization
  */
@@ -450469,7 +450469,7 @@ user?: {
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 /**
  * unique email address of account
  */
@@ -450489,31 +450489,31 @@ export interface HerokuPlatformAPIOAuthClient {
 /**
  * when OAuth client was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of this OAuth client
  */
-readonly id?: string
+id?: string
 /**
  * whether the client is still operable given a delinquent account
  */
-readonly ignores_delinquent?: (boolean | null)
+ignores_delinquent?: (boolean | null)
 /**
  * OAuth client name
  */
-readonly name?: string
+name?: string
 /**
  * endpoint for redirection after authorization with OAuth client
  */
-readonly redirect_uri?: string
+redirect_uri?: string
 /**
  * secret used to obtain OAuth authorizations under this client
  */
-readonly secret?: string
+secret?: string
 /**
  * when OAuth client was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -450533,15 +450533,15 @@ access_token?: {
 /**
  * seconds until OAuth token expires; may be \`null\` for tokens with indefinite lifetime
  */
-readonly expires_in?: (null | number)
+expires_in?: (null | number)
 /**
  * unique identifier of OAuth token
  */
-readonly id?: string
+id?: string
 /**
  * contents of the token to be used for authorization
  */
-readonly token?: string
+token?: string
 [k: string]: unknown
 }
 /**
@@ -450551,7 +450551,7 @@ authorization?: {
 /**
  * unique identifier of OAuth authorization
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -450561,13 +450561,13 @@ client?: (null | {
 /**
  * secret used to obtain OAuth authorizations under this client
  */
-readonly secret?: string
+secret?: string
 [k: string]: unknown
 })
 /**
  * when OAuth token was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * grant used on the underlying authorization
  */
@@ -450575,7 +450575,7 @@ grant?: {
 /**
  * grant code received from OAuth web application authorization
  */
-readonly code?: string
+code?: string
 /**
  * type of grant requested, one of \`authorization_code\` or \`refresh_token\`
  */
@@ -450585,7 +450585,7 @@ type?: string
 /**
  * unique identifier of OAuth token
  */
-readonly id?: string
+id?: string
 /**
  * refresh token for this authorization
  */
@@ -450593,15 +450593,15 @@ refresh_token?: {
 /**
  * seconds until OAuth token expires; may be \`null\` for tokens with indefinite lifetime
  */
-readonly expires_in?: (null | number)
+expires_in?: (null | number)
 /**
  * unique identifier of OAuth token
  */
-readonly id?: string
+id?: string
 /**
  * contents of the token to be used for authorization
  */
-readonly token?: string
+token?: string
 [k: string]: unknown
 }
 /**
@@ -450611,13 +450611,13 @@ session?: {
 /**
  * unique identifier of OAuth token
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * when OAuth token was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * Reference to the user associated with this token
  */
@@ -450625,7 +450625,7 @@ user?: {
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 [k: string]: unknown
@@ -450651,25 +450651,25 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * when collaborator was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of collaborator
  */
-readonly id?: string
+id?: string
 /**
  * role in the organization
  */
-readonly role?: ("admin" | "collaborator" | "member" | "owner" | null)
+role?: ("admin" | "collaborator" | "member" | "owner" | null)
 /**
  * when collaborator was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * identity of collaborated account
  */
@@ -450681,11 +450681,11 @@ email?: string
 /**
  * whether the user is federated and belongs to an Identity Provider
  */
-readonly federated?: boolean
+federated?: boolean
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 [k: string]: unknown
@@ -450697,23 +450697,23 @@ export interface HerokuPlatformAPIOrganizationApp {
 /**
  * when app was archived
  */
-readonly archived_at?: (null | string)
+archived_at?: (null | string)
 /**
  * description from buildpack of app
  */
-readonly buildpack_provided_description?: (null | string)
+buildpack_provided_description?: (null | string)
 /**
  * when app was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * git repo URL of app
  */
-readonly git_url?: string
+git_url?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 /**
  * is the current member a collaborator on this app.
  */
@@ -450737,7 +450737,7 @@ organization?: (null | {
 /**
  * unique name of organization
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 })
 /**
@@ -450751,7 +450751,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 })
 /**
@@ -450761,25 +450761,25 @@ region?: {
 /**
  * unique identifier of region
  */
-readonly id?: string
+id?: string
 /**
  * unique name of region
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * when app was released
  */
-readonly released_at?: (null | string)
+released_at?: (null | string)
 /**
  * git repo size in bytes of app
  */
-readonly repo_size?: (number | null)
+repo_size?: (number | null)
 /**
  * slug size in bytes of app
  */
-readonly slug_size?: (number | null)
+slug_size?: (number | null)
 /**
  * identity of space
  */
@@ -450787,7 +450787,7 @@ space?: (null | {
 /**
  * unique identifier of space
  */
-readonly id?: string
+id?: string
 /**
  * unique name of space
  */
@@ -450801,21 +450801,21 @@ stack?: {
 /**
  * unique identifier of stack
  */
-readonly id?: string
+id?: string
 /**
  * unique name of stack
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * when app was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * web URL of app
  */
-readonly web_url?: string
+web_url?: string
 [k: string]: unknown
 }
 /**
@@ -450825,15 +450825,15 @@ export interface HerokuPlatformAPIOrganizationFeature {
 /**
  * when organization feature was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * description of organization feature
  */
-readonly description?: string
+description?: string
 /**
  * documentation URL of organization feature
  */
-readonly doc_url?: string
+doc_url?: string
 /**
  * whether or not organization feature has been enabled
  */
@@ -450841,27 +450841,27 @@ enabled?: boolean
 /**
  * unique identifier of organization feature
  */
-readonly id?: string
+id?: string
 /**
  * unique name of organization feature
  */
-readonly name?: string
+name?: string
 /**
  * state of organization feature
  */
-readonly state?: string
+state?: string
 /**
  * when organization feature was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * user readable feature name
  */
-readonly display_name?: string
+display_name?: string
 /**
  * e-mail to send feedback about the feature
  */
-readonly feedback_email?: string
+feedback_email?: string
 [k: string]: unknown
 }
 /**
@@ -450871,11 +450871,11 @@ export interface HerokuPlatformAPIOrganizationInvitation {
 /**
  * when invitation was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * Unique identifier of an invitation
  */
-readonly id?: string
+id?: string
 invited_by?: {
 /**
  * unique email address of account
@@ -450884,7 +450884,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 /**
  * full name of the account owner
  */
@@ -450895,21 +450895,21 @@ organization?: {
 /**
  * unique identifier of organization
  */
-readonly id?: string
+id?: string
 /**
  * unique name of organization
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * role in the organization
  */
-readonly role?: ("admin" | "collaborator" | "member" | "owner" | null)
+role?: ("admin" | "collaborator" | "member" | "owner" | null)
 /**
  * when invitation was updated
  */
-readonly updated_at?: string
+updated_at?: string
 user?: {
 /**
  * unique email address of account
@@ -450918,7 +450918,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 /**
  * full name of the account owner
  */
@@ -450934,67 +450934,67 @@ export interface HerokuPlatformAPIOrganizationInvoice {
 /**
  * total add-ons charges in on this invoice
  */
-readonly addons_total?: number
+addons_total?: number
 /**
  * total database charges on this invoice
  */
-readonly database_total?: number
+database_total?: number
 /**
  * total charges on this invoice
  */
-readonly charges_total?: number
+charges_total?: number
 /**
  * when invoice was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * total credits on this invoice
  */
-readonly credits_total?: number
+credits_total?: number
 /**
  * The total amount of dyno units consumed across dyno types.
  */
-readonly dyno_units?: number
+dyno_units?: number
 /**
  * unique identifier of this invoice
  */
-readonly id?: string
+id?: string
 /**
  * human readable invoice number
  */
-readonly number?: number
+number?: number
 /**
  * Status of the invoice payment.
  */
-readonly payment_status?: string
+payment_status?: string
 /**
  * the ending date that the invoice covers
  */
-readonly period_end?: string
+period_end?: string
 /**
  * the starting date that this invoice covers
  */
-readonly period_start?: string
+period_start?: string
 /**
  * total platform charges on this invoice
  */
-readonly platform_total?: number
+platform_total?: number
 /**
  * payment status for this invoice (pending, successful, failed)
  */
-readonly state?: number
+state?: number
 /**
  * combined total of charges and credits on this invoice
  */
-readonly total?: number
+total?: number
 /**
  * when invoice was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * The total amount of hours consumed across dyno types.
  */
-readonly weighted_dyno_hours?: number
+weighted_dyno_hours?: number
 [k: string]: unknown
 }
 /**
@@ -451004,31 +451004,31 @@ export interface HerokuPlatformAPIOrganizationMember {
 /**
  * when the membership record was created
  */
-readonly created_at: string
+created_at: string
 /**
  * email address of the organization member
  */
-readonly email: string
+email: string
 /**
  * whether the user is federated and belongs to an Identity Provider
  */
-readonly federated: boolean
+federated: boolean
 /**
  * unique identifier of organization member
  */
-readonly id?: string
+id?: string
 /**
  * role in the organization
  */
-readonly role?: ("admin" | "collaborator" | "member" | "owner" | null)
+role?: ("admin" | "collaborator" | "member" | "owner" | null)
 /**
  * whether the Enterprise organization member has two factor authentication enabled
  */
-readonly two_factor_authentication?: boolean
+two_factor_authentication?: boolean
 /**
  * when the membership record was updated
  */
-readonly updated_at: string
+updated_at: string
 /**
  * user information for the membership
  */
@@ -451040,7 +451040,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 /**
  * full name of the account owner
  */
@@ -451069,11 +451069,11 @@ export interface HerokuPlatformAPIOutboundRuleset {
 /**
  * unique identifier of an outbound-ruleset
  */
-readonly id?: string
+id?: string
 /**
  * when outbound-ruleset was created
  */
-readonly created_at?: string
+created_at?: string
 rules?: Rule1[]
 /**
  * unique email address of account
@@ -451110,7 +451110,7 @@ export interface HerokuPlatformAPIPasswordReset {
 /**
  * when password reset was created
  */
-readonly created_at?: string
+created_at?: string
 user?: {
 /**
  * unique email address of account
@@ -451119,7 +451119,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 [k: string]: unknown
@@ -451135,17 +451135,17 @@ app?: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * when pipeline coupling was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of pipeline coupling
  */
-readonly id?: string
+id?: string
 /**
  * pipeline involved in the coupling
  */
@@ -451153,7 +451153,7 @@ pipeline?: {
 /**
  * unique identifier of pipeline
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -451163,7 +451163,7 @@ stage?: ("test" | "review" | "development" | "staging" | "production")
 /**
  * when pipeline coupling was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -451177,7 +451177,7 @@ app?: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -451187,7 +451187,7 @@ error_message?: (null | string)
 /**
  * unique identifier of promotion target
  */
-readonly id?: string
+id?: string
 /**
  * the promotion which the target belongs to
  */
@@ -451195,7 +451195,7 @@ pipeline_promotion?: {
 /**
  * unique identifier of promotion
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -451205,13 +451205,13 @@ release?: ({
 /**
  * unique identifier of release
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 } | null)
 /**
  * status of promotion
  */
-readonly status?: ("pending" | "succeeded" | "failed")
+status?: ("pending" | "succeeded" | "failed")
 [k: string]: unknown
 }
 /**
@@ -451225,7 +451225,7 @@ created_at?: string
 /**
  * unique identifier of promotion
  */
-readonly id?: string
+id?: string
 /**
  * the pipeline which the promotion belongs to
  */
@@ -451233,7 +451233,7 @@ pipeline?: {
 /**
  * unique identifier of pipeline
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -451247,7 +451247,7 @@ app?: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -451257,7 +451257,7 @@ release?: {
 /**
  * unique identifier of release
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 [k: string]: unknown
@@ -451265,7 +451265,7 @@ readonly id?: string
 /**
  * status of promotion
  */
-readonly status?: ("pending" | "completed")
+status?: ("pending" | "completed")
 /**
  * when promotion was updated
  */
@@ -451279,11 +451279,11 @@ export interface HerokuPlatformAPIPipeline {
 /**
  * when pipeline was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of pipeline
  */
-readonly id?: string
+id?: string
 /**
  * name of pipeline
  */
@@ -451291,7 +451291,7 @@ name?: string
 /**
  * when pipeline was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -451305,46 +451305,46 @@ addon_service?: {
 /**
  * unique identifier of this add-on-service
  */
-readonly id?: string
+id?: string
 /**
  * unique name of this add-on-service
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * when plan was created
  */
-readonly created_at?: string
+created_at?: string
 compliance?: Compliance
 /**
  * whether this plan is the default for its add-on service
  */
-readonly default?: boolean
+default?: boolean
 /**
  * description of plan
  */
-readonly description?: string
+description?: string
 /**
  * human readable name of the add-on plan
  */
-readonly human_name?: string
+human_name?: string
 /**
  * unique identifier of this plan
  */
-readonly id?: string
+id?: string
 /**
  * whether this plan is installable to a Private Spaces app
  */
-readonly installable_inside_private_network?: boolean
+installable_inside_private_network?: boolean
 /**
  * whether this plan is installable to a Common Runtime app
  */
-readonly installable_outside_private_network?: boolean
+installable_outside_private_network?: boolean
 /**
  * unique name of this plan
  */
-readonly name?: string
+name?: string
 /**
  * price
  */
@@ -451352,29 +451352,29 @@ price?: {
 /**
  * price in cents per unit of plan
  */
-readonly cents?: number
+cents?: number
 /**
  * unit of price for plan
  */
-readonly unit?: string
+unit?: string
 [k: string]: unknown
 }
 /**
  * whether this plan is the default for apps in Private Spaces
  */
-readonly space_default?: boolean
+space_default?: boolean
 /**
  * release status for plan
  */
-readonly state?: string
+state?: string
 /**
  * when plan was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * whether this plan is publicly visible
  */
-readonly visible?: boolean
+visible?: boolean
 [k: string]: unknown
 }
 /**
@@ -451384,7 +451384,7 @@ export interface HerokuPlatformAPIRateLimit {
 /**
  * allowed requests remaining in current interval
  */
-readonly remaining?: number
+remaining?: number
 [k: string]: unknown
 }
 /**
@@ -451398,11 +451398,11 @@ blob?: {
 /**
  * method to be used to interact with the slug blob
  */
-readonly method?: string
+method?: string
 /**
  * URL to interact with the slug blob
  */
-readonly url?: string
+url?: string
 [k: string]: unknown
 }
 /**
@@ -451412,7 +451412,7 @@ buildpack_provided_description?: (null | string)
 /**
  * an optional checksum of the slug for verifying its integrity
  */
-readonly checksum?: (null | string)
+checksum?: (null | string)
 /**
  * identification of the code with your version control system (eg: SHA of the git HEAD)
  */
@@ -451424,16 +451424,16 @@ commit_description?: (null | string)
 /**
  * when slug was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of slug
  */
-readonly id?: string
+id?: string
 process_types?: ProcessTypes
 /**
  * size of slug, in bytes
  */
-readonly size?: (number | null)
+size?: (number | null)
 /**
  * identity of slug stack
  */
@@ -451441,17 +451441,17 @@ stack?: {
 /**
  * unique identifier of stack
  */
-readonly id?: string
+id?: string
 /**
  * unique name of stack
  */
-readonly name?: string
+name?: string
 [k: string]: unknown
 }
 /**
  * when slug was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -451471,7 +451471,7 @@ export interface HerokuPlatformAPISMSNumber {
 /**
  * SMS number of account
  */
-readonly sms_number?: (string | null)
+sms_number?: (string | null)
 [k: string]: unknown
 }
 /**
@@ -451489,19 +451489,19 @@ cname?: string
 /**
  * when endpoint was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of this SNI endpoint
  */
-readonly id?: string
+id?: string
 /**
  * unique name for SNI endpoint
  */
-readonly name?: string
+name?: string
 /**
  * when SNI endpoint was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -451515,11 +451515,11 @@ source_blob?: {
 /**
  * URL to download the source
  */
-readonly get_url?: string
+get_url?: string
 /**
  * URL to upload the source
  */
-readonly put_url?: string
+put_url?: string
 [k: string]: unknown
 }
 [k: string]: unknown
@@ -451539,17 +451539,17 @@ name?: string
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
  * when space was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of space
  */
-readonly id?: string
+id?: string
 /**
  * user space permissions
  */
@@ -451561,7 +451561,7 @@ name?: string
 /**
  * when space was updated
  */
-readonly updated_at?: string
+updated_at?: string
 /**
  * identity of user account
  */
@@ -451573,7 +451573,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 [k: string]: unknown
@@ -451585,16 +451585,16 @@ export interface HerokuPlatformAPISpaceNetworkAddressTranslation {
 /**
  * when network address translation for a space was created
  */
-readonly created_at?: string
-readonly sources?: Sources
+created_at?: string
+sources?: Sources
 /**
  * availability of network address translation for a space
  */
-readonly state?: ("disabled" | "updating" | "enabled")
+state?: ("disabled" | "updating" | "enabled")
 /**
  * when network address translation for a space was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -451608,7 +451608,7 @@ app?: {
 /**
  * unique identifier of app
  */
-readonly id?: string
+id?: string
 /**
  * unique name of app
  */
@@ -451626,19 +451626,19 @@ cname?: string
 /**
  * when endpoint was created
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of this SSL endpoint
  */
-readonly id?: string
+id?: string
 /**
  * unique name for SSL endpoint
  */
-readonly name?: string
+name?: string
 /**
  * when endpoint was updated
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -451648,23 +451648,23 @@ export interface HerokuPlatformAPIStack {
 /**
  * when stack was introduced
  */
-readonly created_at?: string
+created_at?: string
 /**
  * unique identifier of stack
  */
-readonly id?: string
+id?: string
 /**
  * unique name of stack
  */
-readonly name?: string
+name?: string
 /**
  * availability of this stack: beta, deprecated or public
  */
-readonly state?: string
+state?: string
 /**
  * when stack was last modified
  */
-readonly updated_at?: string
+updated_at?: string
 [k: string]: unknown
 }
 /**
@@ -451717,13 +451717,13 @@ export interface HerokuPlatformAPIWhitelistedEntity {
 /**
  * when the add-on service was whitelisted
  */
-readonly added_at?: string
-readonly added_by?: AddedBy
-readonly addon_service?: AddonService
+added_at?: string
+added_by?: AddedBy
+addon_service?: AddonService
 /**
  * unique identifier for this whitelisting entity
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -451737,7 +451737,7 @@ email?: string
 /**
  * unique identifier of an account
  */
-readonly id?: string
+id?: string
 [k: string]: unknown
 }
 /**
@@ -451747,15 +451747,15 @@ export interface AddonService {
 /**
  * unique identifier of this add-on-service
  */
-readonly id?: string
+id?: string
 /**
  * unique name of this add-on-service
  */
-readonly name?: string
+name?: string
 /**
  * human-readable name of the add-on service provider
  */
-readonly human_name?: string
+human_name?: string
 [k: string]: unknown
 }
 "
@@ -452273,7 +452273,7 @@ export type Extends = Base1 &
 "
 `;
 
-exports[`readOnly.additionalProperties.ts 1`] = `
+exports[`options.readonlyKeyword.additionalProperties.ts 1`] = `
 "/* eslint-disable */
 /**
  * This file was automatically generated by json-schema-to-typescript.
@@ -452317,99 +452317,21 @@ exports[`readOnly.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-/**
- * A named array type that is readOnly wherever it is used
- */
-export type Tags = readonly string[];
-
 export interface ReadOnly {
-  /**
-   * Assigned by the server
-   */
-  readonly id: string;
-  name: string;
-  age?: number;
-  readonly createdAt?: string;
-  /**
-   * readOnly applies to this property; the members keep their own annotations
-   */
-  readonly address?: {
-    street?: string;
-    readonly postcode?: string;
-  };
-  /**
-   * A readOnly array: both the property and the array type are readonly
-   */
-  readonly history?: readonly {
-    at?: string;
-    [k: string]: unknown;
-  }[];
-  /**
-   * A writable property holding a writable array of readOnly arrays
-   */
-  aliases?: (readonly string[])[];
-  /**
-   * @minItems 2
-   */
-  readonly coordinates?: readonly [number, number];
-  /**
-   * @minItems 1
-   * @maxItems 3
-   */
-  readonly boundedList?: readonly [string] | readonly [string, string] | readonly [string, string, string];
-  readonly tags?: Tags;
-  /**
-   * tsType supplies the type verbatim; the property is still readonly
-   */
-  readonly external?: Map<string, number>;
-  readonly arrayOrString?: readonly number[] | string;
-  readonly "kebab-key"?: boolean;
-  /**
-   * OpenAPI nullable keeps readOnly on the property
-   */
-  readonly nickname?: string | null;
-  readonly previousNames?: readonly string[] | null;
-  /**
-   * This interface was referenced by \`ReadOnly\`'s JSON-Schema definition
-   * via the \`patternProperty\` "^x-".
-   */
-  readonly [k: string]:
-    | string
-    | number
-    | {
-        street?: string;
-        readonly postcode?: string;
-      }
-    | readonly {
-        at?: string;
-        [k: string]: unknown;
-      }[]
-    | (readonly string[])[]
-    | readonly [number, number]
-    | (readonly [string] | readonly [string, string] | readonly [string, string, string])
-    | Tags
-    | Map<string, number>
-    | readonly number[]
-    | boolean
-    | null
-    | readonly string[]
-    | undefined;
-}
-"
-`;
-
-exports[`options.readonlyKeyword.false.ts 1`] = `
-"/* eslint-disable */
-/**
- * This file was automatically generated by json-schema-to-typescript.
- * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
- * and run json-schema-to-typescript to regenerate this file.
- */
-
-export interface ReadonlyKeywordOff {
   id?: string;
   tags?: string[];
-  [k: string]: number | string | string[] | undefined;
+  untypedNullable?: {
+    [k: string]: unknown;
+  } | null;
+  [k: string]:
+    | number
+    | string
+    | string[]
+    | {
+        [k: string]: unknown;
+      }
+    | null
+    | undefined;
 }
 "
 `;
@@ -452460,22 +452382,7 @@ export interface ByPattern {
 "
 `;
 
-exports[`options.readonly.strictIndexSignatures.ts 1`] = `
-"/* eslint-disable */
-/**
- * This file was automatically generated by json-schema-to-typescript.
- * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
- * and run json-schema-to-typescript to regenerate this file.
- */
-
-export interface ReadonlyStrict {
-  readonly maybe?: string;
-  readonly [k: string]: number | string | undefined;
-}
-"
-`;
-
-exports[`readOnly.requiredOnlyMember.ts 1`] = `
+exports[`options.readonlyKeyword.requiredOnlyMember.ts 1`] = `
 "/* eslint-disable */
 /**
  * This file was automatically generated by json-schema-to-typescript.
@@ -452496,5 +452403,118 @@ export type ReadOnlyRequiredOnlyMember = (
   readonly etag?: string;
   name?: string;
 };
+"
+`;
+
+exports[`options.readonlyKeyword.ts 1`] = `
+"/* eslint-disable */
+/**
+ * This file was automatically generated by json-schema-to-typescript.
+ * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
+ * and run json-schema-to-typescript to regenerate this file.
+ */
+
+/**
+ * A named array type that is readOnly wherever it is used
+ */
+export type Tags = readonly string[];
+
+export interface ReadonlyKeyword {
+  /**
+   * Assigned by the server
+   */
+  readonly id: string;
+  name: string;
+  age?: number;
+  readonly createdAt?: string;
+  /**
+   * readOnly applies to this property; the members keep their own annotations
+   */
+  readonly address?: {
+    street?: string;
+    readonly postcode?: string;
+  };
+  /**
+   * A readOnly array: both the property and the array type are readonly
+   */
+  readonly history?: readonly {
+    at?: string;
+    [k: string]: unknown;
+  }[];
+  /**
+   * A writable property holding a writable array of readOnly arrays
+   */
+  aliases?: (readonly string[])[];
+  /**
+   * @minItems 2
+   */
+  readonly coordinates?: readonly [number, number];
+  /**
+   * @minItems 1
+   * @maxItems 3
+   */
+  readonly boundedList?: readonly [string] | readonly [string, string] | readonly [string, string, string];
+  readonly tags?: Tags;
+  /**
+   * tsType supplies the type verbatim; the property is still readonly
+   */
+  readonly external?: Map<string, number>;
+  readonly arrayOrString?: readonly number[] | string;
+  readonly "kebab-key"?: boolean;
+  /**
+   * OpenAPI nullable keeps readOnly on the property
+   */
+  readonly nickname?: string | null;
+  readonly previousNames?: readonly string[] | null;
+  /**
+   * annotation-only but nullable: still \`| null\`
+   */
+  readonly untypedNullable?: {
+    [k: string]: unknown;
+  } | null;
+  /**
+   * This interface was referenced by \`ReadonlyKeyword\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
+  readonly [k: string]:
+    | string
+    | number
+    | {
+        street?: string;
+        readonly postcode?: string;
+      }
+    | readonly {
+        at?: string;
+        [k: string]: unknown;
+      }[]
+    | (readonly string[])[]
+    | readonly [number, number]
+    | (readonly [string] | readonly [string, string] | readonly [string, string, string])
+    | Tags
+    | Map<string, number>
+    | readonly number[]
+    | boolean
+    | null
+    | readonly string[]
+    | {
+        [k: string]: unknown;
+      }
+    | undefined;
+}
+"
+`;
+
+exports[`options.readonly.strictIndexSignatures.ts 1`] = `
+"/* eslint-disable */
+/**
+ * This file was automatically generated by json-schema-to-typescript.
+ * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
+ * and run json-schema-to-typescript to regenerate this file.
+ */
+
+export interface ReadonlyStrict {
+  readonly maybe?: string;
+  readonly [k: string]: number | string | undefined;
+}
 "
 `;

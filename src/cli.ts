@@ -210,9 +210,9 @@ Boolean values can be set to false using the 'no-' prefix.
       performance, or set it to -1 to ignore minItems and maxItems.
   --readonly
       Mark every property and index signature readonly, and every array type readonly T[]
-  --no-readonlyKeyword
-      Ignore the schema's readOnly annotations (by default a readOnly property is
-      marked readonly and a readOnly array becomes readonly T[])
+  --readonlyKeyword
+      Mark properties annotated readOnly: true as readonly, and emit readOnly
+      arrays and tuples as readonly T[]
   --removeOptionalIfDefaultExists
       Remove the optional modifier when a property has a default value
   --style.XXX=YYY

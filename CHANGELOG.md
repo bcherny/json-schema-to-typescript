@@ -4,7 +4,7 @@
 
 ## Next
 
-- Feat: The `readOnly: true` annotation now marks a property `readonly`, and an annotated array or tuple type is emitted as `readonly T[]`; set `readonlyKeyword: false` for the old output. The `readonly` option emits every property, index signature, array and tuple as readonly (#131, #627)
+- Feat: Add a `readonlyKeyword` option mapping the `readOnly: true` annotation to TypeScript's `readonly` (property modifier; `readonly T[]` for annotated arrays and tuples), and a `readonly` option that emits every property, index signature, array and tuple as readonly. Both off by default; no output change unless set (#131, #627)
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
 

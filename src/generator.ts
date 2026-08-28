@@ -303,7 +303,7 @@ function generateRawType(ast: AST, options: Options): string {
 
 /**
  * TypeScript's `readonly` modifier, for a property or an array type: on for everything under the
- * `readonly` option, otherwise driven by the schema's own `readOnly` annotation.
+ * `readonly` option, or driven by the schema's own `readOnly` annotation under `readonlyKeyword`.
  */
 function readonlyModifier(isReadOnly: boolean | undefined, options: Options): string {
   return options.readonly || (options.readonlyKeyword && isReadOnly) ? 'readonly ' : ''

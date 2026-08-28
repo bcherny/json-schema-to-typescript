@@ -82,8 +82,8 @@ export const KEYWORDS = {
   title: {holds: 'data', meta: true},
   description: {holds: 'data', meta: true, annotation: true},
   deprecated: {holds: 'data', meta: true, annotation: true},
-  readOnly: {holds: 'data', meta: true, annotation: true},
-  writeOnly: {holds: 'data', meta: true, annotation: true},
+  readOnly: {holds: 'data', annotation: true},
+  writeOnly: {holds: 'data', annotation: true},
 
   // Instance data
   default: {holds: 'json', typed: true},

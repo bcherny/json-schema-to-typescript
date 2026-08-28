@@ -89,8 +89,8 @@ export interface Options {
    */
   readonly: boolean
   /**
-   * Honor the schema's `readOnly: true` [annotation](https://json-schema.org/draft-07/json-schema-validation#rfc.section.10.3):
-   * an annotated property gets the `readonly` modifier, an annotated array or tuple becomes `readonly T[]`.
+   * Map the schema's `readOnly: true` [annotation](https://json-schema.org/draft-07/json-schema-validation#rfc.section.10.3)
+   * to TypeScript's `readonly`: an annotated property gets the `readonly` modifier, an annotated array or tuple becomes `readonly T[]`.
    */
   readonlyKeyword: boolean
   /**
@@ -136,7 +136,7 @@ export const DEFAULT_OPTIONS: Options = {
   ignoreMinAndMaxItems: false,
   maxItems: 20,
   readonly: false,
-  readonlyKeyword: true,
+  readonlyKeyword: false,
   removeOptionalIfDefaultExists: false,
   strictIndexSignatures: false,
   style: {

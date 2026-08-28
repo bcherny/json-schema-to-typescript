@@ -140,18 +140,18 @@ suite('CLI', () => {
 
   // https://github.com/bcherny/json-schema-to-typescript/issues/131
   cliTest(
-    '--readonlyKeyword is on by default',
+    'readOnly annotations are ignored by default',
     'node dist/src/cli.js -i ./test/resources/ReadOnly.json',
+    ({stdout}) => expect(stdout).not.toContain('readonly'),
+  )
+  cliTest(
+    '--readonlyKeyword',
+    'node dist/src/cli.js -i ./test/resources/ReadOnly.json --readonlyKeyword',
     ({stdout}) => {
       expect(stdout).toContain('readonly id?: string;')
       expect(stdout).toContain('readonly tags?: readonly string[];')
       expect(stdout).not.toContain('readonly name')
     },
-  )
-  cliTest(
-    '--no-readonlyKeyword',
-    'node dist/src/cli.js -i ./test/resources/ReadOnly.json --no-readonlyKeyword',
-    ({stdout}) => expect(stdout).not.toContain('readonly'),
   )
   // https://github.com/bcherny/json-schema-to-typescript/issues/627
   cliTest('--readonly', 'node dist/src/cli.js -i ./test/resources/ReadOnly.json --readonly', ({stdout}) => {
