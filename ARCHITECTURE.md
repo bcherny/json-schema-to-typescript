@@ -31,3 +31,5 @@ Converts the intermediate respresentation to TypeScript code.
 #### 8. Formatter
 
 Formats the code so it is properly indented, etc.
+
+All phases share one table of the JSON-Schema keywords they tell apart, and what each one holds: `src/keywords.ts`.

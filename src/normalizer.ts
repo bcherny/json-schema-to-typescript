@@ -7,6 +7,7 @@ import {
   Parent,
 } from './types/JSONSchema'
 import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {META_KEYWORDS} from './keywords'
 import {Options} from './'
 import {link} from './linker'
 import {applySchemaTyping} from './applySchemaTyping'
@@ -275,17 +276,14 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   }
 })
 
-// Keywords that describe the property or definition rather than its values (or that host
-// other schemas), so they stay on the outer schema when `nullable` moves everything else
-// into an `anyOf`
-const NULLABLE_OUTER_KEYS = new Set(['$defs', '$id', '$schema', 'definitions', 'deprecated', 'description', 'title'])
-
 /**
  * OpenAPI 3.0 `nullable: true` becomes `anyOf: [<schema>, {type: 'null'}]`, which the
  * parser already turns into `X | null` for every shape of schema (typed or untyped,
- * enum, const, allOf, array...). Schemas whose `type` or `enum` already allow null, and
- * schemas that constrain nothing (only annotations next to `nullable`), are left as they
- * are. The schema is rewritten in place, so every reference to it sees the union.
+ * enum, const, allOf, array...). Keywords that describe the property or definition rather
+ * than its values (or that host other schemas) stay on the outer schema. Schemas whose
+ * `type` or `enum` already allow null, and schemas that constrain nothing (only such
+ * keywords next to `nullable`), are left as they are. The schema is rewritten in place,
+ * so every reference to it sees the union.
  *
  * A TypeScript enum (`enum` + `tsEnumNames`) cannot be an anonymous union member, so it
  * takes its `title` with it, or else is named after `enumName` (the key or definition it
@@ -294,7 +292,7 @@ const NULLABLE_OUTER_KEYS = new Set(['$defs', '$id', '$schema', 'definitions', '
  * Returns the schema that moved into the `anyOf`, if any.
  */
 function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSchema | undefined {
-  if (schema.nullable !== true || Object.keys(schema).every(_ => _ === 'nullable' || NULLABLE_OUTER_KEYS.has(_))) {
+  if (schema.nullable !== true || Object.keys(schema).every(_ => _ === 'nullable' || META_KEYWORDS.has(_))) {
     return
   }
   delete schema.nullable
@@ -304,7 +302,7 @@ function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSchema | 
   const isNamedEnum = 'enum' in schema && 'tsEnumNames' in schema
   const inner: JSONSchema = {}
   for (const key of Object.keys(schema)) {
-    if (!NULLABLE_OUTER_KEYS.has(key) || (isNamedEnum && key === 'title')) {
+    if (!META_KEYWORDS.has(key) || (isNamedEnum && key === 'title')) {
       inner[key] = schema[key]
       delete schema[key]
     }

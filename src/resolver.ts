@@ -2,6 +2,7 @@ import {$RefParser, ParserOptions as $RefOptions} from '@apidevtools/json-schema
 import {isPlainObject} from 'lodash'
 import {JSONSchema} from './types/JSONSchema'
 import {log} from './utils'
+import {JSON_DATA_KEYWORDS} from './keywords'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
 
@@ -117,10 +118,6 @@ function isAnchorRef($ref: string): boolean {
   return $ref.startsWith('#') && $ref !== '#' && !$ref.startsWith('#/')
 }
 
-// These keywords hold plain data, never a nested schema, so `$id`/`$ref` found
-// underneath them must not be treated as anchors/anchor-refs.
-const NON_SCHEMA_KEYS = new Set(['enum', 'const', 'default', 'examples'])
-
 /**
  * @apidevtools/json-schema-ref-parser only resolves `$ref`s that are JSON Pointers
  * (`#/...`). It has no support for draft-07 style named anchors, where a subschema
@@ -209,7 +206,9 @@ function eachSchemaNode(
   seen.add(schema)
 
   for (const childKey of Object.keys(schema)) {
-    if (NON_SCHEMA_KEYS.has(childKey)) {
+    // instance data, never a nested schema, so `$id`/`$ref` found underneath must
+    // not be treated as anchors/anchor-refs
+    if (JSON_DATA_KEYWORDS.has(childKey)) {
       continue
     }
     eachSchemaNode((schema as any)[childKey], visit, seen, schema, childKey)
