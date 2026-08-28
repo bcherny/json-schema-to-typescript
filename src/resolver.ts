@@ -7,6 +7,7 @@ import {
 } from '@apidevtools/json-schema-ref-parser'
 import {prenormalizeDocument} from './prenormalizer'
 import {JSONSchema} from './types/JSONSchema'
+import {isObjectLike, isPlainObject} from 'lodash'
 import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
@@ -16,18 +17,23 @@ export async function dereference(
   {cwd, $refOptions}: {cwd: string; $refOptions: $RefOptions},
 ): Promise<{dereferencedPaths: DereferencedPaths; dereferencedSchema: JSONSchema}> {
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
-  const parser = new $RefParser()
   const dereferencedPaths: DereferencedPaths = new WeakMap()
-  const dereferencedSchema = (await parser.dereference(cwd, schema, {
-    ...$refOptions,
-    parse: prenormalizingParsers($refOptions.parse),
-    dereference: {
-      ...$refOptions.dereference,
-      onDereference($ref: string, schema: JSONSchema) {
-        dereferencedPaths.set(schema, $ref)
-      },
-    },
-  })) as any // TODO: fix types
+  const onDereference = ($ref: string, schema: JSONSchema) => {
+    dereferencedPaths.set(schema, $ref)
+  }
+  // `resolve` and `parse` settings only concern other files; any other option can change what $RefParser does
+  const optionsConcernOtherFiles = Object.keys($refOptions).every(_ => _ === 'resolve' || _ === 'parse')
+  const targets = optionsConcernOtherFiles ? inDocumentTargets(schema) : undefined
+  let dereferencedSchema = schema
+  if (targets) {
+    dereferenceInDocument(schema, targets, onDereference)
+  } else {
+    dereferencedSchema = (await new $RefParser().dereference(cwd, schema, {
+      ...$refOptions,
+      parse: prenormalizingParsers($refOptions.parse),
+      dereference: {...$refOptions.dereference, onDereference},
+    })) as JSONSchema
+  }
   return {dereferencedPaths, dereferencedSchema: resolveNamedAnchors(dereferencedSchema)}
 }
 
@@ -62,6 +68,152 @@ function prenormalizingParsers(configured: $RefOptions['parse'] = {}): $RefOptio
 }
 
 type ParserCallback = (error: Error | null, data: any) => any
+
+/*
+ * Most schemas reference nothing outside themselves: every `$ref` is a JSON Pointer into the same
+ * document. For those, $RefParser's generality (URLs and files, parsers, pointers that lead through
+ * other `$ref`s) is all cost -- about a fifth of compile time on a large schema, most of it URL and
+ * pointer string handling. `dereferenceInDocument` does what $RefParser does for that case alone, with
+ * the same result; `inDocumentTargets` decides, conservatively, whether a document is that case, and
+ * everything else goes to $RefParser. (test/resolver.test.ts compares the two.)
+ */
+
+type Ref = {$ref: string; [sibling: string]: unknown}
+
+/** What $RefParser treats as a reference (anything else with a `$ref` key is an ordinary object) */
+function isRef(value: unknown): value is Ref {
+  return isObjectLike(value) && typeof (value as Ref).$ref === 'string' && (value as Ref).$ref !== ''
+}
+
+/**
+ * `#/...` made of characters that neither URL resolution nor pointer decoding would rewrite (so no
+ * `%`, `\`, whitespace, quotes or non-ASCII: pointers with those are left to $RefParser)
+ */
+const PLAIN_POINTER = /^#\/(?:(?!["%<>\\`])[\x21-\x7e])*$/
+
+/**
+ * The target of every distinct `$ref` in the document, provided all of them are plain pointers to an
+ * object in the document that resolve without meeting another `$ref` on the way or at the end (the
+ * cases where $RefParser does more than look up a path). Undefined if any is anything else: a URL
+ * or file, `#`, a named anchor, a pointer through or onto a `$ref`, a missing target.
+ */
+export function inDocumentTargets(root: JSONSchema): Map<string, object> | undefined {
+  if (!isPlainObject(root) || '$ref' in root) {
+    return undefined
+  }
+  const targets = new Map<string, object>()
+  const visited = new Set<unknown>()
+  /** False as soon as it meets a `$ref` that rules the document out */
+  function scan(node: any): boolean {
+    if (!isObjectLike(node) || visited.has(node)) {
+      return true
+    }
+    if (ArrayBuffer.isView(node)) {
+      return false // binary data, which $RefParser doesn't look into: rare, leave the document to it
+    }
+    visited.add(node)
+    if (isRef(node) && !targets.has(node.$ref)) {
+      const target = PLAIN_POINTER.test(node.$ref) && pointerTarget(root, node.$ref)
+      if (!target) {
+        return false
+      }
+      targets.set(node.$ref, target)
+    }
+    return Object.values(node).every(scan) // instance data too, like $RefParser
+  }
+  return scan(root) ? targets : undefined
+}
+
+function isObjectWithoutRef(value: unknown): boolean {
+  return isObjectLike(value) && !('$ref' in (value as object))
+}
+
+function pointerTarget(root: JSONSchema, pointer: string): object | undefined {
+  let node: any = root
+  for (const token of pointer.slice(2).split('/')) {
+    const key = token.replace(/~1/g, '/').replace(/~0/g, '~')
+    if (!isObjectWithoutRef(node) || !Object.prototype.hasOwnProperty.call(node, key)) {
+      return undefined
+    }
+    node = node[key]
+  }
+  return isObjectWithoutRef(node) ? node : undefined
+}
+
+/**
+ * Replaces every `{$ref}` in the document with its target (from `targets`), in place, as $RefParser's
+ * dereference step would: a `$ref` with sibling keywords becomes a new object, the siblings laid over the
+ * target; each replacement is reported to `onDereference`. The bookkeeping is $RefParser's too -- which
+ * objects are done, which are on the path from the root, a cache per pointer that is bypassed while its
+ * target is on that path -- because it decides which objects get shared and which copied.
+ */
+export function dereferenceInDocument(
+  root: JSONSchema,
+  targets: Map<string, object>,
+  onDereference: ($ref: string, schema: JSONSchema) => void,
+): void {
+  type Resolution = {value: object; circular: boolean}
+  const visited = new Set<unknown>()
+  const parents = new Set<unknown>() // the objects on the path from the root to here
+  const cache = new Map<string, Resolution>()
+
+  /** Dereferences everything under `node`; true if something in there refers back to an ancestor */
+  function crawl(node: any): boolean {
+    if (!isObjectLike(node) || visited.has(node)) {
+      return false
+    }
+    visited.add(node)
+    parents.add(node)
+    let circular = false
+    for (const key of Object.keys(node)) {
+      const value = node[key]
+      if (isRef(value)) {
+        const resolution = resolve(value)
+        node[key] = resolution.value
+        onDereference(value.$ref, resolution.value)
+        circular = resolution.circular || circular
+      } else {
+        circular = parents.has(value) || crawl(value) || circular
+      }
+    }
+    parents.delete(node)
+    return circular
+  }
+
+  function resolve(ref: Ref): Resolution {
+    const extended = Object.keys(ref).length > 1 // sibling keywords next to the `$ref`
+    const cached = cache.get(ref.$ref)
+    if (cached && !cached.circular) {
+      return extended ? {value: overlay(cached.value, siblingsOf(ref)), circular: false} : cached // (sic)
+    }
+    const target = targets.get(ref.$ref)!
+    const value = extended ? overlay(siblingsOf(ref), target) : target
+    const resolution = {value, circular: parents.has(target) || crawl(value)}
+    if (!extended) {
+      cache.set(ref.$ref, resolution)
+    }
+    return resolution
+  }
+
+  crawl(root)
+}
+
+function siblingsOf(ref: Ref): object {
+  const siblings: Partial<Ref> = {...ref}
+  delete siblings.$ref
+  return siblings
+}
+
+/** A new object with `first`'s keywords, then those of `second` that it lacks */
+function overlay(first: object, second: object): object {
+  const merged: Record<string, unknown> = {...first}
+  for (const key of Object.keys(second)) {
+    if (!(key in merged)) {
+      merged[key] = (second as typeof merged)[key]
+    }
+  }
+  return merged
+}
 
 function isThenable(value: unknown): value is PromiseLike<unknown> {
   return typeof (value as PromiseLike<unknown>)?.then === 'function'
