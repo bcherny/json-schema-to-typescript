@@ -145,15 +145,14 @@ suite('keywords', () => {
   })
 
   test('typesOfSchema reads a schema with none of these as the empty schema', () => {
+    // not `definitions`/`$defs`: hosting schemas for others to `$ref` says nothing about instances
     expect([...STRUCTURAL_KEYWORDS].sort()).toEqual(
       [
-        '$defs',
         'additionalItems',
         'additionalProperties',
         'allOf',
         'anyOf',
         'const',
-        'definitions',
         'dependencies',
         'else',
         'enum',

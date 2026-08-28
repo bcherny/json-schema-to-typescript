@@ -48,7 +48,8 @@ interface Keyword {
   /**
    * Names, places or documents the schema, or hosts other schemas' definitions -- as opposed
    * to keywords that speak about instance values (constraints, defaults, examples). These stay
-   * put when a schema's constraints are moved into a subschema of it.
+   * put when a schema's constraints are moved into a subschema of it, and the ones that host
+   * definitions give the schema no shape of its own (`STRUCTURAL_KEYWORDS`).
    */
   meta?: true
   /**
@@ -228,12 +229,15 @@ export const TYPE_RELEVANT_KEYWORDS = keywordsWhere(
 
 /**
  * Keywords that give a schema a shape of its own: the ones that decide its type (`Keyword.typed`)
- * and the ones that hold subschemas, implemented (`properties`) or not (`not`, `if`) -- a schema
- * made up of only the latter is one this tool has no notion of. A schema with none of either --
- * only bounds on values (`pattern`, `maximum`), annotations, `format`, `nullable`, or keys this
- * tool has never heard of -- says nothing about which type a value is: it is the empty schema.
+ * and the ones that apply subschemas to the instance, implemented (`properties`) or not (`not`,
+ * `if`) -- a schema made up of only the latter is one this tool has no notion of. A schema with
+ * none of either -- only bounds on values (`pattern`, `maximum`), annotations, `format`,
+ * `nullable`, definitions for other schemas to use (`$defs`), or keys this tool has never heard
+ * of -- says nothing about which type a value is: it is the empty schema.
  */
-export const STRUCTURAL_KEYWORDS = keywordsWhere(({holds, typed}) => typed === true || holdsSchemas(holds))
+export const STRUCTURAL_KEYWORDS = keywordsWhere(
+  ({holds, meta, typed}) => typed === true || (holdsSchemas(holds) && meta !== true),
+)
 
 /** @see Keyword.annotation */
 export const ANNOTATION_KEYWORDS = keywordsWhere(({annotation}) => annotation === true)
