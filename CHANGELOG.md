@@ -4,7 +4,7 @@
 
 ## Next
 
-- Bugfix: A schema with no keyword that shapes a type -- only annotations (`description`, `$comment`, `readOnly`, `examples`), bounds on values (`pattern`, `format`, `minimum`, `maxLength`...), `nullable`, or custom keys -- now emits `unknown`, like the empty schema, instead of an object type `{[k: string]: unknown}` that rejected strings, numbers, booleans and arrays. This includes the empty root schema and `$id`-only schemas (`export type Foo = unknown`). A root or titled `anyOf`/`oneOf`/`allOf` that collapses to `unknown` keeps its name and comment instead of compiling to an empty file (#791, #NNN; fixes #654, #432, #176)
+- Bugfix: A schema with no keyword that shapes a type -- only annotations (`description`, `$comment`, `readOnly`, `examples`), bounds on values (`pattern`, `format`, `minimum`, `maxLength`...), `nullable`, or custom keys -- now emits `unknown`, like the empty schema, instead of an object type `{[k: string]: unknown}` that rejected strings, numbers, booleans and arrays. This includes the empty root schema and `$id`-only schemas (`export type Foo = unknown`). A root or titled `anyOf`/`oneOf`/`allOf` that collapses to `unknown` keeps its name and comment instead of compiling to an empty file (#791, #806; fixes #654, #432, #176)
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
 
