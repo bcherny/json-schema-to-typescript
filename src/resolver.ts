@@ -64,7 +64,7 @@ function tagExternalDefinitions(documents: Set<JSONSchema>, rootSchema: JSONSche
       // another file's entry under the same key is left unnamed (inlined, as before)
       // rather than taking the name or a numbered variant of it, depending on visit order.
       if (
-        key in rootDefinitions ||
+        Object.prototype.hasOwnProperty.call(rootDefinitions, key) ||
         !isPlainObject(entry) ||
         Object.prototype.hasOwnProperty.call(entry, DefinitionKey)
       ) {
