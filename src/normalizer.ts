@@ -1,10 +1,19 @@
 import {getRootSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, hasType, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {
+  appendToDescription,
+  escapeBlockComment,
+  formatTypeOf,
+  hasType,
+  isSchemaLike,
+  justName,
+  toSafeString,
+  traverse,
+} from './utils'
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
 import {applySchemaTyping} from './applySchemaTyping'
-import {hasOwnType} from './typesOfSchema'
+import {hasOwnType, isShapeless} from './typesOfSchema'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
 
@@ -405,6 +414,17 @@ rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, 
     }
   }
 })
+
+rules.set(
+  'With `formatTypes`, a schema that only bounds values is a string if its `format` is mapped',
+  (schema, _, options) => {
+    // `format` alone doesn't make a schema a string (it constrains strings and lets everything
+    // else through), but mapping it to a type says which type the caller wants such values read as
+    if (schema.type === undefined && formatTypeOf(schema, options) !== undefined && isShapeless(schema)) {
+      schema.type = 'string'
+    }
+  },
+)
 
 // Precalculation of the schema types is necessary because the ALL_OF type
 // is implemented in a way that mutates the schema object. Detection of the

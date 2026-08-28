@@ -12,6 +12,7 @@ import {memoize} from './memoize'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
 import type {Format} from 'cli-color'
+import type {Options} from './'
 import {CONTAINER_KEYWORDS, JSON_DATA_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
 
 // TODO: pull out into a separate package
@@ -447,4 +448,11 @@ function color(): Format {
     cliColor = require('cli-color')
   } catch {}
   return cliColor
+}
+
+/** The TypeScript type the `formatTypes` option maps this schema's `format` to, if any */
+export function formatTypeOf(schema: JSONSchema, options: Options): string | undefined {
+  return typeof schema.format === 'string' && Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
+    ? options.formatTypes[schema.format]
+    : undefined
 }

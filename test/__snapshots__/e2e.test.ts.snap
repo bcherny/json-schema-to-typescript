@@ -130268,9 +130268,7 @@ exports[`emptySchema.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface EmptySchema {
-  [k: string]: unknown;
-}
+export type EmptySchema = unknown;
 "
 `;
 
@@ -130466,15 +130464,11 @@ exports[`nullableAnnotationOnly.ts 1`] = `
  */
 
 export interface NullableAnnotationOnly {
-  bare?: {
-    [k: string]: unknown;
-  };
+  bare?: unknown;
   /**
    * Anything, or null
    */
-  described?: {
-    [k: string]: unknown;
-  };
+  described?: unknown;
   allOfMember?: Bar;
 }
 export interface Bar {
@@ -443075,16 +443069,13 @@ exports[`customName.1.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type CustomPrefixDefaa = unknown;
+export type PropbbbTitle = unknown;
+
 export interface FooTitle {
   propaaa?: CustomPrefixDefaa;
   propaab?: CustomPrefixDefaa;
   propbbb?: PropbbbTitle;
-  [k: string]: unknown;
-}
-export interface CustomPrefixDefaa {
-  [k: string]: unknown;
-}
-export interface PropbbbTitle {
   [k: string]: unknown;
 }
 "
@@ -452211,9 +452202,7 @@ export interface FormatTypes {
   id: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
   unmappedFormat?: string;
   inferredFromDefault?: Date;
-  formatWithoutStringType?: {
-    [k: string]: unknown;
-  };
+  formatWithoutStringType?: Date;
   formatOnNumber?: number;
   nullable?: Date | null;
   array?: Date[];
