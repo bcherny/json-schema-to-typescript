@@ -27,6 +27,15 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
         params: ast.params.map(_ => optimize(_, options, processed)),
       })
 
+      // [A & B & Unknown] -> [A & B], since a member that matches anything doesn't narrow an intersection
+      if (optimizedAST.type === 'INTERSECTION') {
+        const constrained = optimizedAST.params.filter(_ => _.type !== 'ANY' && _.type !== 'UNKNOWN')
+        if (constrained.length > 0 && constrained.length < optimizedAST.params.length) {
+          log('cyan', 'optimizer', '[A & B & Unknown] -> [A & B]', optimizedAST)
+          optimizedAST.params = constrained
+        }
+      }
+
       // [A, B, C, Any] -> Any
       if (optimizedAST.params.some(_ => _.type === 'ANY')) {
         log('cyan', 'optimizer', '[A, B, C, Any] -> Any', optimizedAST)

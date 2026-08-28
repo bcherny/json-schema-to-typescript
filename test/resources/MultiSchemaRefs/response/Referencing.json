@@ -1,0 +1,7 @@
+{
+  "title": "Referencing",
+  "type": "object",
+  "properties": {
+    "inner": {"$ref": "../entity/Referenced.json"}
+  }
+}
