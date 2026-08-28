@@ -261,7 +261,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | undefinedOptionalProperties | boolean | `false` | Append `\| undefined` to the type of every optional property (`age?: number \| undefined`), for consumers that compile with TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes). |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
-| $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s |
+| $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s. HTTP(S) `$ref`s to loopback, private-network and internal hosts (`localhost`, `127.*`, `10.*`, `192.168.*`, `*.internal`, `*.corp`, `*.local`…) or to ports such as 8080 and 8443 are refused by default (`Unable to resolve $ref pointer "http://localhost…"`); pass `{resolve: {http: {safeUrlResolver: false}}}` to allow them |
 
 ## Tests
 

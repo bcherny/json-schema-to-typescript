@@ -1,6 +1,7 @@
 import {
   $RefParser,
   FileInfo,
+  JSONParserErrorGroup,
   ParserOptions as $RefOptions,
   Plugin,
   ResolverOptions,
@@ -99,6 +100,9 @@ export async function dereference(
         documents.restore()
       }
       dereferenceInternal(parser, options)
+      if (JSONParserErrorGroup.getParserErrors(parser).length) {
+        throw new JSONParserErrorGroup(parser) // what `continueOnError: true` collected instead of throwing
+      }
     } catch (error) {
       throw tooDeepFromRefParser(error) ?? error
     }
