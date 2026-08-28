@@ -47,6 +47,13 @@ export function parse(
   const types = schema[Types]
 
   if (intersection) {
+    // Re-entered while this schema's intersection is still being parsed (eg. a
+    // picked property's type leads back here): return the placeholder, which
+    // parseAsTypeWithCache fills in place once the outer call finishes.
+    const inProgress = processed.get(intersection)?.get('ALL_OF')
+    if (inProgress && !inProgress.type) {
+      return inProgress
+    }
     const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames) as TIntersection
 
     types.forEach(type => {
