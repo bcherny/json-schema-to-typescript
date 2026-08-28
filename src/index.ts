@@ -11,11 +11,10 @@ import {optimize} from './optimizer'
 import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference} from './resolver'
 import {prenormalize} from './prenormalizer'
-import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
+import {error, stripExtension, log, parseFileAsJSONSchema} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
-import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
 
 // These are all interfaces, so re-export them as types -- transpilers that
@@ -127,22 +126,20 @@ export const DEFAULT_OPTIONS: Options = {
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
-  const schema = parseAsJSONSchema(filename)
+  let contents: string
+  try {
+    contents = readFileSync(filename, 'utf8')
+  } catch {
+    throw new ReferenceError(`Unable to read file "${filename}"`)
+  }
+  const schema = parseFileAsJSONSchema(filename, contents)
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
-function parseAsJSONSchema(filename: string): JSONSchema4 {
-  const contents = Try(
-    () => readFileSync(filename),
-    () => {
-      throw new ReferenceError(`Unable to read file "${filename}"`)
-    },
-  )
-  return parseFileAsJSONSchema(filename, contents.toString())
-}
-
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
-  validateOptions(options)
+  if (options.maxItems !== undefined && options.maxItems < -1) {
+    throw RangeError(`Expected options.maxItems to be >= -1, but was given ${options.maxItems}.`)
+  }
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
@@ -173,18 +170,14 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   }
 
   const linked = link(dereferencedSchema)
-  if (process.env.VERBOSE) {
-    log('green', 'linker', time(), '✅ No change')
-  }
+  log('green', 'linker', time(), '✅ No change')
 
   const errors = validate(linked, name)
   if (errors.length) {
     errors.forEach(_ => error(_))
     throw new ValidationError()
   }
-  if (process.env.VERBOSE) {
-    log('green', 'validator', time(), '✅ No change')
-  }
+  log('green', 'validator', time(), '✅ No change')
 
   const normalized = normalize(linked, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
