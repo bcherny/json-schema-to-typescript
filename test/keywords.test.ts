@@ -34,6 +34,9 @@ suite('keywords', () => {
       ['definitions', 'schemaMap'],
       ['$defs', 'schemaMap'],
       ['not', 'schema'],
+      ['if', 'schema'],
+      ['then', 'schema'],
+      ['else', 'schema'],
     ])
   })
 
@@ -75,6 +78,9 @@ suite('keywords', () => {
         'anyOf',
         'oneOf',
         'not',
+        'if',
+        'then',
+        'else',
       ].sort(),
     )
   })
@@ -97,11 +103,11 @@ suite('keywords', () => {
     )
   })
 
-  test("the resolver skips the instance data it always has (resolver.ts's former NON_SCHEMA_KEYS)", () => {
+  test("the resolver skips the instance data it always has (utils.ts's former NON_SCHEMA_KEYS)", () => {
     expect([...JSON_DATA_KEYWORDS].sort()).toEqual(['enum', 'const', 'default', 'examples'].sort())
   })
 
-  test("`nullable` leaves the keywords outside its anyOf it always has (normalizer.ts's former NULLABLE_OUTER_KEYS)", () => {
+  test("`nullable` leaves the keywords outside its anyOf it always has (prenormalizer.ts's former NULLABLE_OUTER_KEYS)", () => {
     expect([...META_KEYWORDS].sort()).toEqual(
       ['$defs', '$id', '$schema', 'definitions', 'deprecated', 'description', 'title'].sort(),
     )

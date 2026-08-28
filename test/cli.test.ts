@@ -117,6 +117,16 @@ suite('CLI', () => {
     ({stdout}) => expect(stdout).toMatchSnapshot(),
   )
 
+  // https://github.com/bcherny/json-schema-to-typescript/issues/199: an explicit `false` for a
+  // style flag has to reach Prettier as a boolean, however it is spelled
+  for (const flag of ['--no-style.singleQuote', '--style.singleQuote false', '--style.singleQuote=false']) {
+    cliTest(
+      `file in (-i), style boolean with explicit false value (${flag}), pipe out`,
+      `node dist/src/cli.js -i ./test/resources/Enum.json ${flag}`,
+      ({stdout}) => expect(stdout).toContain('fstype?: "ext3" | "ext4" | "btrfs"'),
+    )
+  }
+
   cliTest(
     'file in (-i), pipe out (absolute path)',
     `node dist/src/cli.js -i ${__dirname}/resources/ReferencedType.json`,

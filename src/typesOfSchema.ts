@@ -31,6 +31,14 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
   return matchedTypes
 }
 
+/**
+ * Whether any matcher recognizes the schema. One that none does has no way to be
+ * typed on its own: it only gets the `UNNAMED_SCHEMA` default.
+ */
+export function hasOwnType(schema: JSONSchema): boolean {
+  return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
+}
+
 const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
@@ -53,7 +61,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'boolean') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'boolean') {
+    // Only infer BOOLEAN from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'boolean') {
       return true
     }
     return false
@@ -89,7 +100,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'integer' || schema.type === 'number') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'number') {
+    // Only infer NUMBER from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'number') {
       return true
     }
     return false
@@ -119,7 +133,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'string') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'string') {
+    // Only infer STRING from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'string') {
       return true
     }
     return false

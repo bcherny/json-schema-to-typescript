@@ -1,11 +1,18 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
-import {Intersection, JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {
+  Intersection,
+  JSONSchema,
+  JSONSchemaTypeName,
+  LinkedJSONSchema,
+  NormalizedJSONSchema,
+  Parent,
+} from './types/JSONSchema'
 import {memoize} from './memoize'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
 import type {Format} from 'cli-color'
-import {CONTAINER_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
+import {CONTAINER_KEYWORDS, JSON_DATA_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -110,6 +117,54 @@ export function traverse(
         traverseObjectKeys(child, callback, processed)
       }
     })
+}
+
+/**
+ * Walks every object/array reachable from `schema`, invoking `visit` on each plain
+ * object node found outside instance data (`enum`, `default`...). `replace` swaps the node out in
+ * its parent container, in place (a no-op for the root node, which has no parent).
+ * Where `traverse` knows which keywords hold schemas and visits each node once, this
+ * walk is keyword-agnostic (container objects such as a `properties` map are visited
+ * too) and per occurrence:
+ *
+ * the same node object can be reachable from more than one parent/key (eg. two
+ * schemas sharing a `$ref` node via a YAML alias, or a node the ref-parser already
+ * folded into a cycle), so `visit` runs for every occurrence. Only the recursion
+ * into a node's children is guarded against repeating -- via `seen` -- to keep
+ * cycles from looping forever.
+ */
+export function eachSchemaNode(
+  schema: unknown,
+  visit: (node: JSONSchema, replace: (nextNode: JSONSchema) => void) => void,
+  seen = new Set<unknown>(),
+  parent?: any,
+  key?: string,
+): void {
+  if (!schema || typeof schema !== 'object') {
+    return
+  }
+
+  if (!Array.isArray(schema)) {
+    visit(schema as JSONSchema, nextNode => {
+      if (parent) {
+        parent[key!] = nextNode
+      }
+    })
+  }
+
+  if (seen.has(schema)) {
+    return
+  }
+  seen.add(schema)
+
+  for (const childKey of Object.keys(schema)) {
+    // instance data, never a nested schema, so an `$id`/`$ref` (or anything else) found
+    // underneath is not schema vocabulary
+    if (JSON_DATA_KEYWORDS.has(childKey)) {
+      continue
+    }
+    eachSchemaNode((schema as any)[childKey], visit, seen, schema, childKey)
+  }
 }
 
 /**
@@ -271,6 +326,10 @@ export function pathTransform(outputPath: string, inputPath: string, filePath: s
   const filePathRel = filePathList.filter((f, i) => f !== inPathList[i])
 
   return posix.join(posix.normalize(outputPath), ...filePathRel)
+}
+
+export function hasType(schema: JSONSchema, type: JSONSchemaTypeName): boolean {
+  return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
 
 /**

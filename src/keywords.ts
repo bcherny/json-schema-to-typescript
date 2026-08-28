@@ -69,6 +69,9 @@ export const KEYWORDS = {
   definitions: {holds: 'schemaMap', meta: true},
   $defs: {holds: 'schemaMap', meta: true},
   not: {holds: 'schema'},
+  if: {holds: 'schema'},
+  then: {holds: 'schema'},
+  else: {holds: 'schema'},
   extends: {holds: 'schemaOrSchemaArray', typed: true}, // draft 3
 
   // Identity, documentation and other annotations

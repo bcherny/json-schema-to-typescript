@@ -1,0 +1,5 @@
+{
+  "id": "http://dummy.com/api/example-scalar-schema",
+  "title": "Example Scalar Schema",
+  "type": "string"
+}

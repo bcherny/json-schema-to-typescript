@@ -1,16 +1,10 @@
-import {
-  getRootSchema,
-  JSONSchema,
-  JSONSchemaTypeName,
-  LinkedJSONSchema,
-  NormalizedJSONSchema,
-  Parent,
-} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
-import {META_KEYWORDS} from './keywords'
+import {getRootSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {appendToDescription, escapeBlockComment, hasType, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
 import {applySchemaTyping} from './applySchemaTyping'
+import {hasOwnType} from './typesOfSchema'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
 
@@ -42,9 +36,6 @@ function startNewPass() {
   passes.push([])
 }
 
-function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
-  return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
-}
 function isObjectType(schema: LinkedJSONSchema) {
   return schema.properties !== undefined || hasType(schema, 'object') || hasType(schema, 'any')
 }
@@ -80,6 +71,38 @@ rules.set('Destructure unary types', schema => {
   }
 })
 
+// Left alone, an untyped member falls through to the generic `UNNAMED_SCHEMA` default
+// (an open object) instead of picking up the `type` its parent already declared. Runs
+// this early so that the rules below normalize an inherited `array` like a declared one.
+rules.set(
+  'Inherit parent `type` into untyped `anyOf`/`oneOf` members',
+  (schema, _, _options, _key, dereferencedPaths) => {
+    const {type} = schema
+    // An untyped member already parses as an open object, so an `object` parent has
+    // nothing to add (and its required-only members are the parser's to narrow).
+    if (typeof type !== 'string' || type === 'object') {
+      return
+    }
+    const inherit = (members: LinkedJSONSchema[] | undefined) =>
+      members?.forEach((member, i) => {
+        // `anyOf`/`oneOf` members are typed as `LinkedJSONSchema`, but a boolean
+        // schema (`true`/`false`) can still show up here at runtime.
+        if (typeof member !== 'object' || !member) {
+          return
+        }
+        // A member that was a `$ref` is now the shared definition object itself: leave it
+        // alone so the definition keeps its name and type. Any other member is replaced by a
+        // typed COPY rather than written to, so an object shared by other means (YAML
+        // anchors, programmatic callers) is not retyped everywhere else it appears.
+        if (!hasOwnType(member) && !dereferencedPaths.has(member)) {
+          members[i] = link({...member, type}, members)
+        }
+      })
+    inherit(schema.anyOf)
+    inherit(schema.oneOf)
+  },
+)
+
 rules.set('Add empty `required` property if none is defined', schema => {
   if (isObjectType(schema) && !('required' in schema)) {
     schema.required = []
@@ -112,6 +135,27 @@ rules.set('Default additionalProperties', (schema, _, options) => {
   if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
     schema.additionalProperties = options.additionalProperties
   }
+})
+
+rules.set('Mark every property required when `minProperties` covers them all', schema => {
+  const {minProperties, properties} = schema
+  if (
+    typeof minProperties !== 'number' ||
+    // Anything that lets the object carry keys beyond `properties` breaks the
+    // counting argument below, since `minProperties` could be satisfied by those.
+    schema.additionalProperties !== false ||
+    schema.patternProperties !== undefined ||
+    properties === undefined
+  ) {
+    return
+  }
+  const propertyNames = Object.keys(properties)
+  if (propertyNames.length === 0 || minProperties < propertyNames.length) {
+    return
+  }
+  // No other key can appear, so the object holds at most these properties. Needing
+  // at least this many of them means every one of them has to be present.
+  schema.required = propertyNames
 })
 
 rules.set('Transform id to $id', (schema, fileName) => {
@@ -148,7 +192,13 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
   // We'll infer from $id and title downstream
   // TODO: Normalize upstream
   const dereferencedName = dereferencedPaths.get(schema)
-  if (!schema.$id && !schema.title && dereferencedName) {
+  // `tsType` (see typesOfSchema.ts) supersedes the schema's own shape, so naming this
+  // schema after the $ref path it was dereferenced from is misleading here: when `$ref`
+  // has sibling keywords, the ref-resolution library merges the referenced schema into a
+  // new object (not the definitions entry it looks like it came from) before this rule
+  // runs, so the derived $id collides with -- or stands in for -- the real definition's
+  // own name instead of being treated as the opaque, unnamed override `tsType` calls for.
+  if (!schema.$id && !schema.title && !schema.tsType && dereferencedName) {
     schema.$id = toSafeString(justName(dereferencedName))
   }
 
@@ -327,44 +377,6 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   }
 })
 
-/**
- * OpenAPI 3.0 `nullable: true` becomes `anyOf: [<schema>, {type: 'null'}]`, which the
- * parser already turns into `X | null` for every shape of schema (typed or untyped,
- * enum, const, allOf, array...). Keywords that describe the property or definition rather
- * than its values (or that host other schemas) stay on the outer schema. Schemas whose
- * `type` or `enum` already allow null, and schemas that constrain nothing (only such
- * keywords next to `nullable`), are left as they are. The schema is rewritten in place,
- * so every reference to it sees the union.
- *
- * A TypeScript enum (`enum` + `tsEnumNames`) cannot be an anonymous union member, so it
- * takes its `title` with it, or else is named after `enumName` (the key or definition it
- * sits under) - the name the parser would have given it in place.
- *
- * Returns the schema that moved into the `anyOf`, if any.
- */
-function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSchema | undefined {
-  if (schema.nullable !== true || Object.keys(schema).every(_ => _ === 'nullable' || META_KEYWORDS.has(_))) {
-    return
-  }
-  delete schema.nullable
-  if (hasType(schema, 'null') || (Array.isArray(schema.enum) && schema.enum.includes(null))) {
-    return
-  }
-  const isNamedEnum = 'enum' in schema && 'tsEnumNames' in schema
-  const inner: JSONSchema = {}
-  for (const key of Object.keys(schema)) {
-    if (!META_KEYWORDS.has(key) || (isNamedEnum && key === 'title')) {
-      inner[key] = schema[key]
-      delete schema[key]
-    }
-  }
-  if (isNamedEnum && !inner.title && enumName) {
-    inner.$id = enumName
-  }
-  schema.anyOf = [inner, {type: 'null'}]
-  return inner
-}
-
 // Runs this late so that the schema has already been named from its `$ref` path, had
 // its object defaults filled in, its `const` turned into an `enum` and its `tsEnumNames`
 // inferred (all of which look at keywords that move into the `anyOf`), and before types
@@ -393,22 +405,6 @@ rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, 
     }
   }
 })
-
-/**
- * `nullable` next to a `$ref` has to be rewritten before dereferencing, while it still
- * visibly belongs to the referencing schema: the ref parser folds `$ref` siblings into a
- * copy of the target, where it would read as if the target itself were nullable (and
- * the copy would be emitted as a second, identical type). Everything else waits for the
- * rule above, which also reaches schemas in other files, once dereferencing has pulled
- * them in.
- */
-export function normalizeNullableRefs(schema: JSONSchema): void {
-  traverse(schema as LinkedJSONSchema, node => {
-    if (node.$ref) {
-      normalizeNullable(node)
-    }
-  })
-}
 
 // Precalculation of the schema types is necessary because the ALL_OF type
 // is implemented in a way that mutates the schema object. Detection of the
