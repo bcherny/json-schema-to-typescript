@@ -120,8 +120,9 @@ function holdsSchemas(holds: Holds): holds is SchemaHolds {
  * test/keywords.test.ts are next touched.
  *
  * One old branch is not kept: `traverse` walked an array-valued `dependencies` (not valid in
- * any draft) member by member, booleans included; as the map it has to be, its object members
- * are visited exactly as before and the others no longer reach the callback.
+ * any draft) member by member, whatever the member; as the map it has to be, its plain-object
+ * members are visited exactly as before and the others (booleans, strings, numbers, `null`,
+ * nested arrays) no longer reach the callback.
  */
 const LEGACY = {
   /**
@@ -157,8 +158,9 @@ export const SUBSCHEMA_KEYWORDS: ReadonlyArray<readonly [KeywordName, SchemaHold
 })
 
 /**
- * Every keyword. Definitions can technically sit under any key, so `traverse` also looks for
- * them one level below each key of a schema that is not one of these.
+ * Every keyword (bar the `LEGACY` carve-outs above). Definitions can technically sit under any
+ * key, so `traverse` also looks for them one level below each key of a schema that is not one
+ * of these.
  */
 export const NOT_SCANNED_FOR_DEFINITIONS = keywordsWhere((_, name) => !LEGACY.scannedForDefinitions.has(name))
 
