@@ -131183,7 +131183,7 @@ export interface PrefixItems {
   /**
    * @minItems 1
    */
-  open?: [number] | [number, string];
+  open?: [number] | [number, string, ...unknown[]];
   /**
    * @minItems 2
    */
@@ -131196,7 +131196,7 @@ export interface PrefixItems {
    * @minItems 1
    * @maxItems 3
    */
-  bounded?: [number, ...string[]];
+  bounded?: [number] | [number, string] | [number, string, string];
   /**
    * no \`type\`: \`prefixItems\` alone makes this an array
    *
