@@ -1,0 +1,16 @@
+{
+  "title": "Wrapper",
+  "type": "object",
+  "properties": {
+    "plain": {"$ref": "#/definitions/Plain"},
+    "maybe": {"$ref": "#/definitions/Plain", "nullable": true}
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "Plain": {
+      "type": "object",
+      "properties": {"s": {"type": "string"}},
+      "additionalProperties": false
+    }
+  }
+}
