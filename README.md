@@ -221,7 +221,7 @@ $ bun run test
 
 ## JSON Schema draft support
 
-Every draft goes through the same pipeline; a `$schema` declaration does not change the output. The schema model is draft 4 (`JSONSchema4` from `@types/json-schema`), whose keywords the two lists above cover, with the later-draft keywords below layered on. "Supported" means the keyword shapes the emitted type as the spec intends; keywords that only constrain values have no TypeScript equivalent and are accepted and ignored. As of 16.0.0 (`d86f285`); every row was checked by compiling a one-keyword schema with the CLI.
+Every draft goes through the same pipeline; a `$schema` declaration does not change the output. The schema model is draft 4 (`JSONSchema4` from `@types/json-schema`): the lists above cover its keywords, the table below covers what later drafts added. "Supported" means the keyword shapes the emitted type as the spec intends; keywords that only constrain values have no TypeScript equivalent and are ignored next to a `type` (a subschema made of nothing else still comes out as `{[k: string]: unknown}` rather than `unknown`, #806 pending). As of master `d86f285`, which is ahead of 16.0.0 (there `unevaluatedProperties` is still ignored and `formatTypes` does not exist); every row was checked by compiling a one-keyword schema with the CLI.
 
 | Keyword | Status | Note | Tracking |
 |-|-|-|-|
@@ -237,12 +237,12 @@ Every draft goes through the same pipeline; a `$schema` declaration does not cha
 | `readOnly` | ignored | a `readonly` modifier is #796 (pending) | [#131](https://github.com/bcherny/json-schema-to-typescript/issues/131) |
 | `writeOnly`, `$comment`, `contentMediaType`, `contentEncoding`, new `format`s | not expressible | formats are plain `string` unless mapped with the `formatTypes` option | |
 | **2019-09** | | | |
-| `$defs` | supported | same as `definitions` (a schema may not use both) | |
-| `$anchor` | errors | "Refs should have been resolved by the resolver"; use `$id: "#name"` or a JSON pointer | |
+| `$defs` | supported | same as `definitions` (using both in one schema errors) | |
+| `$anchor` | errors | a `$ref: "#name"` to it fails with "Refs should have been resolved by the resolver"; `$id: "#name"` or a JSON pointer works | |
 | `$id` inside a subschema as a base URI | errors | `$ref`s resolve against the file's location, not against an enclosing `$id` | |
-| `$ref` with sibling keywords | partial | the siblings are applied; other plain `$ref`s to the same definition then get a renamed copy (`Foo1`) | |
+| `$ref` with sibling keywords | partial | merged into a copy of the referenced schema, not intersected with it: a keyword both sides have (eg. `properties`) keeps one side only, and the definition may be emitted twice (`Foo`, `Foo1`). Use `allOf` to get both. Annotation-only siblings stop forking with #803 (pending) | |
 | `$recursiveRef` / `$recursiveAnchor` | ignored | the target is typed `{[k: string]: unknown}` (`unknown` with #806, pending), not the recursive type | |
-| `unevaluatedProperties` | partial | like `additionalProperties` for the schema's own `properties`; not enforced across `allOf`; wrongly closed over `dependentSchemas` / `if` / `then` (#798 pending) | |
+| `unevaluatedProperties` | partial | like `additionalProperties` for the schema's own `properties`; not enforced across `allOf` / `anyOf` / `oneOf`; wrongly closed over properties from a sibling `$ref`, `dependentSchemas` or `if` / `then` (#798 pending) | |
 | `unevaluatedItems`, `dependentSchemas` | ignored | | |
 | `dependentRequired`, `minContains` / `maxContains`, `contentSchema` | not expressible | like draft 4 `dependencies` | [#169](https://github.com/bcherny/json-schema-to-typescript/issues/169) |
 | `deprecated` | supported | `@deprecated` in the JSDoc comment | |
