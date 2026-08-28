@@ -4,30 +4,34 @@ json-schema-to-typescript compiles files from JSONSchema to TypeScript in distin
 
 TODO use an external validation library
 
-#### 2. Dereferencer
+#### 2. Prenormalizer
+
+Rewrites the few things that have to be seen on the raw document, before the dereferencer folds each `$ref`'s sibling keywords into a copy of its target (eg. `nullable` next to a `$ref`, or a root schema that is itself a `$ref`).
+
+#### 3. Dereferencer
 
 Resolves referenced schemas (in the file, on the local filesystem, or over the network).
 
-#### 3. Linker
+#### 4. Linker
 
 Adds links back from each node in a schema to its parent (available via the `Parent` symbol on each node), for convenience.
 
-#### 4. Normalizer
+#### 5. Normalizer
 
 Normalizes input schemas so the parser can make more assumptions about schemas' properties and values.
 
-#### 5. Parser
+#### 6. Parser
 
 Parses JSONSchema to an intermediate representation for easy code generation.
 
-#### 6. Optimizer
+#### 7. Optimizer
 
-Optimizes the IR to produce concise and readable TypeScript in step (6).
+Optimizes the IR to produce concise and readable TypeScript in step (8).
 
-#### 7. Generator
+#### 8. Generator
 
 Converts the intermediate respresentation to TypeScript code.
 
-#### 8. Formatter
+#### 9. Formatter
 
 Formats the code so it is properly indented, etc.

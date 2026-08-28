@@ -6,10 +6,11 @@ import {dirname} from 'path'
 import {Options as PrettierOptions} from 'prettier'
 import {format} from './formatter'
 import {generate} from './generator'
-import {normalize, normalizeNullableRefs} from './normalizer'
+import {normalize} from './normalizer'
 import {optimize} from './optimizer'
 import {nameAnonymousRecursiveTypes, parse, Processed, UsedNames} from './parser'
 import {dereference} from './resolver'
+import {prenormalize} from './prenormalizer'
 import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
@@ -158,8 +159,9 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   // Initial clone to avoid mutating the input
   const _schema = cloneDeep(schema)
 
-  // The one normalization that cannot wait until after dereferencing (see there)
-  normalizeNullableRefs(_schema)
+  // Rewrites that have to see the raw document, before dereferencing (see ./prenormalizer)
+  prenormalize(_schema)
+  log('yellow', 'prenormalizer', time(), '✅ Result:', _schema)
 
   const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
