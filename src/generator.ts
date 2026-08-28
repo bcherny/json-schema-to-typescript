@@ -63,6 +63,18 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
   }
 }
 
+/**
+ * Should we emit a standalone declaration for this AST node? The root type is always
+ * declared, as are unreachable definitions (when `unreachableDefinitions` is on). Everything
+ * else is reachable via a `$ref`, so it's only declared when `declareExternallyReferenced` is on.
+ */
+function shouldDeclare(ast: AST, options: Options, rootASTName: string): ast is ASTWithStandaloneName {
+  return (
+    hasStandaloneName(ast) &&
+    (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition === true)
+  )
+}
+
 function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
   if (processed.has(ast)) {
     return ''
@@ -77,9 +89,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
       break
     case 'INTERFACE':
       type = [
-        hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition) &&
-          generateStandaloneInterface(ast, options),
+        shouldDeclare(ast, options, rootASTName) && generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
           .filter(Boolean)
@@ -117,7 +127,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
     case 'ARRAY':
       return [
         declareNamedTypes(ast.params, options, rootASTName, processed),
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
+        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
       ]
         .filter(Boolean)
         .join('\n')
@@ -125,20 +135,14 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       return ''
     case 'INTERFACE':
       return getSuperTypesAndParams(ast)
-        .map(
-          ast =>
-            (ast.standaloneName === rootASTName ||
-              options.declareExternallyReferenced ||
-              ast.isUnreachableDefinition) &&
-            declareNamedTypes(ast, options, rootASTName, processed),
-        )
+        .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
         .filter(Boolean)
         .join('\n')
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
       return [
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
+        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
         ast.params
           .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
           .filter(Boolean)
@@ -150,7 +154,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         .filter(Boolean)
         .join('\n')
     default:
-      if (hasStandaloneName(ast)) {
+      if (shouldDeclare(ast, options, rootASTName)) {
         return generateStandaloneType(ast, options)
       }
       return ''
