@@ -22,6 +22,9 @@ May change emitted types for existing schemas:
 - 34a692c Bugfix: `type: null` (the JSON null value) is treated as `type: "null"` instead of as an untyped object (#702, fixes #667)
 - 0f9d309 Bugfix: `unreachableDefinitions` now declares definitions even when `declareExternallyReferenced` is off (#706, fixes #652)
 - 1900e1f Bugfix: With `inferStringEnumKeysFromValues`, a `const` is emitted as a literal type again rather than a single-member enum (#701, fixes #666)
+- 606e359 Bugfix: A schema with an array `type` and `properties` (eg. `type: ['object', 'null']`) at the root or as an untitled definition compiled to `A & (A | null)`, making the non-object members unreachable; it now emits `A | null` (#753, supersedes #672)
+- c73ea75 Bugfix: An empty schema inside `allOf` (eg. `allOf: [{$ref: '#/definitions/User'}, {}]`) collapsed the whole intersection to `unknown`; the empty member is now dropped and `User` is kept (#752, fixes #654)
+- 9c50776 Bugfix: The `description` of an inline `items` schema is no longer dropped; it is added to the JSDoc of the array's declaration as an `Items: ...` paragraph (#751, fixes #660)
 
 Fixes for crashes and output that did not compile:
 
@@ -31,9 +34,13 @@ Fixes for crashes and output that did not compile:
 - a2234d3 Bugfix: `inferStringEnumKeysFromValues` no longer produces invalid enum members for non-string, empty or digit-leading values (#694, fixes #657)
 - 377c6a1 Bugfix: A named enum (`tsEnumNames`) in a position with no name no longer emits a nameless `enum` declaration; it degrades to a union of literals (#693, fixes #691)
 - c44faed Bugfix: Generated type names can no longer start with a digit or collapse to an empty name (#698, fixes #640)
+- 8d8a141 Bugfix: Recursive schemas that reach the generator without a name (a self-referencing `$ref` with a sibling keyword such as `description`, a recursive `oneOf` under `components/schemas`, an untitled recursive schema in another file) are given a generated type name instead of overflowing the stack. Schemas that compiled before are unchanged, except that an anonymous recursive union with a `{}`/`true` member now keeps its alias (same type, one extra `export type`) (#760, fixes #482, #614)
 
 Other:
 
+- bf06bbb Bugfix (CLI): Piping a schema on stdin no longer prints a `DEP0187` deprecation warning on Node 24 (#750)
+- 3abde40 Perf: `compile()` no longer scans every definition once per parsed node; schemas with thousands of definitions compile much faster (schemastore's CloudFormation schema: ~54 s -> ~3 s). Generated output is unchanged (#759)
+- b88891c Perf: Formatting large, mostly quote-free outputs is several times faster (prettier is told the output is a `.d.ts`, so it skips its JSX-detection scan); a caller's own `style.filepath` still wins. Generated output is unchanged (#758)
 - 16c2e77 Bugfix (CLI): relative `$ref`s are resolved against each schema file's own directory rather than `process.cwd()`, so a schema passed by path from another directory finds its siblings; an explicit `--cwd` still wins (#742, fixes #324, #680)
 - 9219636 Updated runtime dependencies: js-yaml 4 -> 5 (YAML files parse as before, #689), prettier ^3.9 (short unions that fit on one line are no longer wrapped; users on the existing `^3.2.5` range may already see this), @apidevtools/json-schema-ref-parser ^11.9 (#686)
 - a5834aa Removed the `is-glob` dependency (#643)
