@@ -1,4 +1,5 @@
 {
+  "title": "Enum",
   "type": "object",
   "properties": {
     "fstype": {
