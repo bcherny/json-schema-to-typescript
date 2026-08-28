@@ -129983,7 +129983,7 @@ export type A = string;
 export type B = number;
 
 export interface TupleRef {
-  c?: [] | [A] | [A, B];
+  c?: [] | [A] | [A, B, ...unknown[]];
 }
 "
 `;
@@ -129997,14 +129997,14 @@ exports[`additionalItems.default.ts 1`] = `
  */
 
 export interface AdditionalItems {
-  absent?: [] | [string] | [string, number];
+  absent?: [] | [string] | [string, number, ...unknown[]];
   true?: [] | [string] | [string, number, ...unknown[]];
   false?: [] | [string] | [string, number];
   schema?: [] | [string] | [string, number, ...boolean[]];
   /**
    * @minItems 1
    */
-  absentMinItems1?: [string] | [string, number];
+  absentMinItems1?: [string] | [string, number, ...unknown[]];
   /**
    * @minItems 1
    */
@@ -130040,7 +130040,7 @@ export interface AdditionalItems {
   /**
    * @maxItems 1
    */
-  trueMaxItems1?: [] | [string, ...unknown[]];
+  trueMaxItems1?: [] | [string];
   /**
    * @maxItems 1
    */
@@ -130048,7 +130048,7 @@ export interface AdditionalItems {
   /**
    * @maxItems 1
    */
-  schemaMaxItems1?: [] | [string, ...boolean[]];
+  schemaMaxItems1?: [] | [string];
   /**
    * @maxItems 4
    */
@@ -130056,15 +130056,15 @@ export interface AdditionalItems {
   /**
    * @maxItems 4
    */
-  trueMaxItems4?: [] | [string] | [string, number, ...unknown[]];
+  trueMaxItems4?: [] | [string] | [string, number] | [string, number, unknown] | [string, number, unknown, unknown];
   /**
    * @maxItems 4
    */
-  falseMaxItems4?: [] | [string] | [string, number] | [string, number, unknown] | [string, number, unknown, unknown];
+  falseMaxItems4?: [] | [string] | [string, number];
   /**
    * @maxItems 4
    */
-  schemaMaxItems4?: [] | [string] | [string, number, ...boolean[]];
+  schemaMaxItems4?: [] | [string] | [string, number] | [string, number, boolean] | [string, number, boolean, boolean];
   /**
    * @minItems 1
    * @maxItems 4
@@ -130075,18 +130075,18 @@ export interface AdditionalItems {
    * @minItems 1
    * @maxItems 4
    */
-  trueMinItems1MaxItems4?: [string] | [string, number, ...unknown[]];
+  trueMinItems1MaxItems4?: [string] | [string, number] | [string, number, unknown] | [string, number, unknown, unknown];
   /**
    * @minItems 1
    * @maxItems 4
    */
-  falseMinItems1MaxItems4?:
-    [string] | [string, number] | [string, number, unknown] | [string, number, unknown, unknown];
+  falseMinItems1MaxItems4?: [string] | [string, number];
   /**
    * @minItems 1
    * @maxItems 4
    */
-  schemaMinItems1MaxItems4?: [string] | [string, number, ...boolean[]];
+  schemaMinItems1MaxItems4?:
+    [string] | [string, number] | [string, number, boolean] | [string, number, boolean, boolean];
 }
 "
 `;
@@ -130492,7 +130492,8 @@ export interface ArrayOfSchema {
         {
           bar?: number;
           [k: string]: unknown;
-        }
+        },
+        ...unknown[]
       ];
   [k: string]: unknown;
 }
@@ -441639,7 +441640,8 @@ export interface ArrayMaxMinItems {
     /**
      * @minItems 2
      */
-    withMinItemsLessThanItemLength?: [1, 2] | [1, 2, 3] | [1, 2, 3, 4] | [1, 2, 3, 4, 5] | [1, 2, 3, 4, 5, 6];
+    withMinItemsLessThanItemLength?:
+      [1, 2] | [1, 2, 3] | [1, 2, 3, 4] | [1, 2, 3, 4, 5] | [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @minItems 8
      */
@@ -441691,7 +441693,7 @@ export interface ArrayMaxMinItems {
     /**
      * @minItems 0
      */
-    withMinItems0?: [] | [1] | [1, 2] | [1, 2, 3] | [1, 2, 3, 4] | [1, 2, 3, 4, 5] | [1, 2, 3, 4, 5, 6];
+    withMinItems0?: [] | [1] | [1, 2] | [1, 2, 3] | [1, 2, 3, 4] | [1, 2, 3, 4, 5] | [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @minItems 0
      * @maxItems 0
@@ -447287,47 +447289,47 @@ export interface ArrayMaxMinItems {
     /**
      * @minItems 2
      */
-    withMinItemsLessThanItemLength?: [1, 2, 3, 4, 5, 6];
+    withMinItemsLessThanItemLength?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @minItems 8
      */
-    withMinItemsGreaterThanItemLength?: [1, 2, 3, 4, 5, 6];
+    withMinItemsGreaterThanItemLength?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @maxItems 2
      */
-    withMaxItemsLessThanItemLength?: [1, 2, 3, 4, 5, 6];
+    withMaxItemsLessThanItemLength?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @maxItems 8
      */
-    withMaxItemsGreaterThanItemLength?: [1, 2, 3, 4, 5, 6];
+    withMaxItemsGreaterThanItemLength?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @minItems 4
      * @maxItems 8
      */
-    withMinItemsLessThanItemLength_and_MaxItemsGreaterThanItemLength?: [1, 2, 3, 4, 5, 6];
+    withMinItemsLessThanItemLength_and_MaxItemsGreaterThanItemLength?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @minItems 2
      * @maxItems 4
      */
-    withMinItemsLessThanItemLength_and_MaxItemsLessThanItemLength?: [1, 2, 3, 4, 5, 6];
+    withMinItemsLessThanItemLength_and_MaxItemsLessThanItemLength?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @minItems 8
      * @maxItems 10
      */
-    withMinItemsGreaterThanItemLength_and_MaxItemsGreaterThanItemLength?: [1, 2, 3, 4, 5, 6];
+    withMinItemsGreaterThanItemLength_and_MaxItemsGreaterThanItemLength?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @maxItems 0
      */
-    withMaxItems0?: [1, 2, 3, 4, 5, 6];
+    withMaxItems0?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @minItems 0
      */
-    withMinItems0?: [1, 2, 3, 4, 5, 6];
+    withMinItems0?: [1, 2, 3, 4, 5, 6, ...unknown[]];
     /**
      * @minItems 0
      * @maxItems 0
      */
-    withMinMaxItems0?: [1, 2, 3, 4, 5, 6];
+    withMinMaxItems0?: [1, 2, 3, 4, 5, 6, ...unknown[]];
   };
 }
 "
@@ -447616,7 +447618,7 @@ exports[`arrayOfEnum.ts 1`] = `
 
 export interface ArrayOfEnum {
   namedEnum: NamedEnum[];
-  tuples?: [] | [string] | [string, NamedEnum2];
+  tuples?: [] | [string] | [string, NamedEnum2, ...unknown[]];
 }
 
 export const enum NamedEnum {
@@ -448446,7 +448448,7 @@ export interface ArrayOfType {
   foo?: string[];
   bar?: string[];
   baz?: (string | number)[];
-  moo?: [] | [number] | [number, string];
+  moo?: [] | [number] | [number, string, ...unknown[]];
   [k: string]: unknown;
 }
 "
@@ -451993,7 +451995,7 @@ export interface Trip {
    *
    * @minItems 2
    */
-  positional?: [number, number];
+  positional?: [number, number, ...unknown[]];
 }
 "
 `;
@@ -452126,7 +452128,7 @@ export interface FormatTypes {
   /**
    * @minItems 2
    */
-  tuple?: [Date, \`\${string}-\${string}-\${string}-\${string}-\${string}\`];
+  tuple?: [Date, \`\${string}-\${string}-\${string}-\${string}-\${string}\`, ...unknown[]];
   viaRef?: Timestamp;
   anyOfMember?: Date | number;
   additional?: {
