@@ -1,8 +1,8 @@
 import {expect, test} from 'bun:test'
 import ts from 'typescript'
-import {compile} from '../src'
 import {stripExtension} from '../src/utils'
-import {getOptions, getTestCases} from './e2eCases'
+import {compileTestCase} from './compilePool'
+import {getTestCases} from './e2eCases'
 
 /**
  * The e2e suite only snapshots compile()'s output string. This suite additionally
@@ -38,9 +38,9 @@ function fileName(name: string): string {
 const setup = (async () => {
   const sources = new Map<string, string>()
   const compileErrors = new Map<string, unknown>()
-  for (const [name, testCase] of cases) {
+  for (const [name] of cases) {
     try {
-      sources.set(fileName(name), await compile(testCase.input, stripExtension(name), getOptions(testCase)))
+      sources.set(fileName(name), await compileTestCase(name))
     } catch (e) {
       compileErrors.set(fileName(name), e)
     }
