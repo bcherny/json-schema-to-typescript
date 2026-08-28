@@ -162,13 +162,10 @@ function declareNamedInterfaces(ast: AST, options: Options, scope: Scope, proces
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
-      type = ast.params
+      type = [...ast.params, ...(ast.type === 'TUPLE' && ast.spreadParam ? [ast.spreadParam] : [])]
         .map(_ => declareNamedInterfaces(_, options, scope, processed))
         .filter(Boolean)
         .join('\n')
-      if (ast.type === 'TUPLE' && ast.spreadParam) {
-        type += declareNamedInterfaces(ast.spreadParam, options, scope, processed)
-      }
       break
     default:
       type = ''
@@ -695,13 +692,14 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 }
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
+  const name = toSafeString(ast.standaloneName)
+  const superTypes = ast.superTypes.map(superType => toSafeString(superType.standaloneName))
+  const body = generateInterface(ast, options)
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
-    `export interface ${toSafeString(ast.standaloneName)} ` +
-    (ast.superTypes.length > 0
-      ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
-      : '') +
-    generateInterface(ast, options)
+    (options.declarationStyle === 'type'
+      ? `export type ${name} = ${[...superTypes, body].join(' & ')}`
+      : `export interface ${name} ${superTypes.length > 0 ? `extends ${superTypes.join(', ')} ` : ''}${body}`)
   )
 }
 

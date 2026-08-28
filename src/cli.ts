@@ -34,7 +34,7 @@ main(
       'unreachableDefinitions',
     ],
     default: defaultOptions,
-    string: ['bannerComment', 'cwd'],
+    string: ['bannerComment', 'cwd', 'declarationStyle'],
   }),
 )
 
@@ -187,6 +187,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Default value for additionalProperties, when it is not explicitly set
   --cwd=XXX
       Root directory for resolving $ref
+  --declarationStyle=interface|type
+      Declare object types as interfaces (default) or as type aliases
   --declareExternallyReferenced
       Declare external schemas referenced via '$ref'?
   --enableConstEnums
@@ -195,6 +197,9 @@ Boolean values can be set to false using the 'no-' prefix.
       Create enums from JSON enums instead of union types
   --format
       Format code? Set this to false to improve performance.
+  --formatTypes.FORMAT=TYPE
+      Emit TYPE for strings with the given format (eg.
+      --formatTypes.date-time=Date). Repeat for each format.
   --imports
       When IN_FILE is a directory or glob: import types that live in another of the
       compiled files from that file's module, instead of declaring a copy in each.

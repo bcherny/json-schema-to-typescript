@@ -49,6 +49,12 @@ export interface Options {
    */
   cwd: string
   /**
+   * Declare object types as `interface`s (`export interface A {...}`, supertypes in an
+   * `extends` clause) or as `type` aliases (`export type A = {...}`, supertypes intersected:
+   * `export type B = A & {...}`).
+   */
+  declarationStyle: 'interface' | 'type'
+  /**
    * Declare external schemas referenced via `$ref`?
    */
   declareExternallyReferenced: boolean
@@ -64,6 +70,13 @@ export interface Options {
    * Format code? Set this to `false` to improve performance.
    */
   format: boolean
+  /**
+   * Map from a string schema's [`format`](https://json-schema.org/understanding-json-schema/reference/string#format)
+   * to the TypeScript type to emit for it, eg. `{'date-time': 'Date'}`. Like `tsType`, the type is
+   * emitted verbatim (and `tsType`, `enum` and `const` take precedence). Formats not listed here
+   * stay `string`.
+   */
+  formatTypes: Record<string, string>
   /**
    * Ignore maxItems and minItems for `array` types, preventing tuples being generated.
    */
@@ -109,10 +122,12 @@ export const DEFAULT_OPTIONS: Options = {
 * and run json-schema-to-typescript to regenerate this file.
 */`,
   cwd: process.cwd(),
+  declarationStyle: 'interface',
   declareExternallyReferenced: true,
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
   format: true,
+  formatTypes: {},
   ignoreMinAndMaxItems: false,
   maxItems: 20,
   removeOptionalIfDefaultExists: false,

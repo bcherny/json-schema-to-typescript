@@ -22,6 +22,7 @@ import type {
 } from './types/JSONSchema'
 import {Intersection, Parent, Shared, Source, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
 import {memoize} from './memoize'
+import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
 import {generateName, justName, log, maybeStripDefault} from './utils'
 
@@ -438,14 +439,23 @@ function parseNonLiteral(
       }
     case 'REFERENCE':
       throw Error(format('Refs should have been resolved by the resolver!', schema))
-    case 'STRING':
-      return {
+    case 'STRING': {
+      const ast = {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        type: 'STRING',
       }
+      // The `formatTypes` option maps a string's `format` to TypeScript type text, which is
+      // emitted verbatim just like `tsType` (an explicit `tsType` never gets here: it wins).
+      if (
+        typeof schema.format === 'string' &&
+        Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
+      ) {
+        return {...ast, params: options.formatTypes[schema.format], type: 'CUSTOM_TYPE'}
+      }
+      return {...ast, type: 'STRING'}
+    }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
         // normalised to not be undefined
@@ -534,36 +544,15 @@ function parseNonLiteral(
   }
 }
 
-// Keywords that some matcher in `typesOfSchema`, or the `additionalProperties`/`required`
-// normalizer rules, actually keys off of. An `allOf` member made up exclusively of keywords
-// outside this list (eg. `if`/`then`/`else`, `not`) is one this tool has no notion of at all,
-// as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently
-// renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
-// swallowing members whose current (separately unimplemented) behavior other schemas rely on.
-// (`$ref` is deliberately omitted: by the time this runs, the resolver has already replaced
-// every `$ref` node, so `case 'REFERENCE'` above never fires and no schema here can carry one.)
-// Keep this in sync with the keywords `typesOfSchema.ts`'s matchers check.
-const RECOGNIZED_ALL_OF_MEMBER_KEYWORDS = new Set([
-  '$id',
-  'additionalProperties',
-  'allOf',
-  'anyOf',
-  'const',
-  'default',
-  'enum',
-  'extends',
-  'items',
-  'oneOf',
-  'patternProperties',
-  'properties',
-  'required',
-  'tsEnumNames',
-  'tsType',
-  'type',
-])
-
+// An `allOf` member made up exclusively of keywords that don't shape a type (see `Keyword.typed`
+// in `keywords.ts`; eg. `if`/`then`/`else`, `not`) is one this tool has no notion of at all, as
+// opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently renders
+// no differently -- that distinction keeps `hasNoRecognizedKeywords` from also swallowing members
+// whose current (separately unimplemented) behavior other schemas rely on. (`$ref` needs no
+// recognizing: by the time this runs, the resolver has already replaced every `$ref` node, so
+// `case 'REFERENCE'` above never fires and no schema here can carry one.)
 function hasNoRecognizedKeywords(schema: NormalizedJSONSchema): boolean {
-  return Object.keys(schema).every(key => !RECOGNIZED_ALL_OF_MEMBER_KEYWORDS.has(key))
+  return Object.keys(schema).every(key => !TYPE_SHAPING_KEYWORDS.has(key))
 }
 
 /**
@@ -710,9 +699,6 @@ function pickDeclared(
     return {params, superTypes: [], type: 'INTERFACE'}
   }
 }
-
-// Keywords that never affect what a schema validates
-const ANNOTATION_KEYWORDS = new Set(['$comment', 'deprecated', 'description', 'examples', 'readOnly', 'writeOnly'])
 
 /**
  * True for a schema that says nothing but which keys are `required` (draft 4+ style) -- give or
