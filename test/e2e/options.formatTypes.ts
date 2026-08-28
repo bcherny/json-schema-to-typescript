@@ -2,9 +2,10 @@
 // `formatTypes` maps a string schema's `format` to TypeScript type text. It applies
 // wherever the schema resolves to a string (properties, array and tuple items,
 // `additionalProperties`, `anyOf` members, nullable unions, `$ref`'d definitions,
-// a string inferred from `default`); `tsType`, `enum` and `const` take precedence;
-// formats that aren't listed, and `format` on a schema that isn't a string, are
-// left alone.
+// a string inferred from `default`), and to a schema with no type of its own (a bare
+// `{format: 'date-time'}`, otherwise `unknown`); `tsType`, `enum` and `const` take
+// precedence; formats that aren't listed, and `format` on a schema of another type,
+// are left alone.
 export const input = {
   title: 'FormatTypes',
   type: 'object',

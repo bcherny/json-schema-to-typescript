@@ -151,6 +151,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | removeOptionalIfDefaultExists | boolean | `false` | Remove the optional modifier when a property has a default value. |
 | strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
+| undefinedOptionalProperties | boolean | `false` | Append `\| undefined` to the type of every optional property (`age?: number \| undefined`), for consumers that compile with TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes). |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s |

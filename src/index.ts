@@ -17,6 +17,7 @@ import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
+import {AST} from './types/AST'
 
 // These are all interfaces, so re-export them as types -- transpilers that
 // compile a file at a time (bun, esbuild) can't tell on their own, and fail to
@@ -103,6 +104,11 @@ export interface Options {
    */
   unreachableDefinitions: boolean
   /**
+   * Append `| undefined` to the type of every optional property, for consumers that compile with
+   * TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes).
+   */
+  undefinedOptionalProperties: boolean
+  /**
    * Generate unknown type instead of any
    */
   unknownAny: boolean
@@ -138,6 +144,7 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false,
   },
   unreachableDefinitions: false,
+  undefinedOptionalProperties: false,
   unknownAny: true,
 }
 
@@ -228,12 +235,16 @@ export async function compile(
   nameAnonymousRecursiveTypes([parsed, ...unreachableDefinitions], processed, dereferencedPaths, usedNames)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
-  const optimized = optimize(parsed, _options)
-  const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options))
+  const optimizerMemo = new Map<AST, AST>()
+  const optimized = optimize(parsed, _options, optimizerMemo)
+  const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options, optimizerMemo))
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
   const generated = generate(optimized, _options, optimizedUnreachableDefinitions)
-  log('magenta', 'generator', time(), '✅ Result:', generated)
+  if (process.env.VERBOSE) {
+    // (the guard spares joining the whole file when nobody is reading)
+    log('magenta', 'generator', time(), '✅ Result:', generated.join(''))
+  }
 
   const formatted = await format(generated, _options)
   log('white', 'formatter', time(), '✅ Result:', formatted)
