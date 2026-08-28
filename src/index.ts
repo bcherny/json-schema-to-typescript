@@ -68,7 +68,7 @@ export interface Options {
   inferStringEnumKeysFromValues: boolean
   /**
    * Format the output with Prettier? With `false` it is still indented and readable, and large
-   * schemas compile several times faster in a fraction of the memory.
+   * schemas compile two to three times faster in about half the memory.
    */
   format: boolean
   /**
