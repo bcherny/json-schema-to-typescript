@@ -6,6 +6,8 @@
 // for, as `declarationStyle: 'type'` already prints it. Before, these came out as
 // `interface A extends B` with `type B = unknown` / `string` / `(X | Y)` (TS2312), as TS2411
 // against the `never` index signature, and as `interface E extends  {` for the unnamed base.
+// A base only counts as extendable when it is itself printed as an interface, so a base whose
+// own base is one of the above (`chain`) becomes an intersection too.
 export const input = {
   title: 'Extends',
   type: 'object',
@@ -17,6 +19,7 @@ export const input = {
     inline: {$ref: '#/definitions/extendsInline'},
     mixed: {$ref: '#/definitions/extendsMixed'},
     named: {$ref: '#/definitions/extendsNamed'},
+    chain: {$ref: '#/definitions/extendsChain'},
   },
   additionalProperties: false,
   definitions: {
@@ -67,6 +70,13 @@ export const input = {
       type: 'object',
       extends: {$ref: '#/definitions/base'},
       properties: {g: {type: 'number'}},
+    },
+    // a base that is itself printed as an intersection (its own base is a string) is a type
+    // alias, so it cannot be named in an `extends` clause either: the rule applies transitively
+    extendsChain: {
+      type: 'object',
+      extends: {$ref: '#/definitions/extendsString'},
+      properties: {h: {type: 'number'}},
     },
   },
 }

@@ -48791,6 +48791,7 @@ export interface Extends {
   inline?: ExtendsInline;
   mixed?: ExtendsMixed;
   named?: ExtendsNamed;
+  chain?: ExtendsChain;
 }
 export type ExtendsAny = Empty & {
   a?: number;
@@ -48831,6 +48832,10 @@ export interface ExtendsNamed extends Base {
   g?: number;
   [k: string]: unknown;
 }
+export type ExtendsChain = ExtendsString & {
+  h?: number;
+  [k: string]: unknown;
+};
 "
 `;
 

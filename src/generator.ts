@@ -669,7 +669,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
   // `extends` means an instance also validates against each base schema: an intersection. It is
   // printed as an `interface … extends` clause when every base is something an interface may
   // extend, and as the intersection itself otherwise (or when type aliases were asked for)
-  if (options.declarationStyle === 'type' || !ast.superTypes.every(isExtendable)) {
+  if (options.declarationStyle === 'type' || !ast.superTypes.every(_ => isExtendable(_))) {
     return comment + `export type ${name} = ${[...ast.superTypes.map(_ => generateType(_, options)), body].join(' & ')}`
   }
   const superTypes = ast.superTypes.map(superType => toSafeString(superType.standaloneName))
@@ -678,15 +678,26 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
 
 /**
  * A base an `interface` declaration may name in its `extends` clause: a named object type
- * (not `unknown`, a primitive, or a union: TS2312), and not the closed empty object, whose
+ * (not `unknown`, a primitive, or a union: TS2312), not the closed empty object, whose
  * `never` index signature would reject every property the extending interface declares
- * (TS2411). The parser casts `extends` schemas to TNamedInterface unchecked, hence the checks.
+ * (TS2411), and itself printed as an interface, i.e. its own bases pass the same test (`seen`
+ * guards `extends` cycles). The parser casts `extends` schemas to TNamedInterface unchecked,
+ * hence the checks.
  */
-function isExtendable(superType: AST): boolean {
+function isExtendable(superType: AST, seen = new Set<AST>()): boolean {
+  if (seen.has(superType)) {
+    return true
+  }
+  seen.add(superType)
   return (
     superType.type === 'INTERFACE' &&
     hasStandaloneName(superType) &&
-    !(superType.params.length === 1 && superType.params[0].isIndexSignature && superType.params[0].ast.type === 'NEVER')
+    !(
+      superType.params.length === 1 &&
+      superType.params[0].isIndexSignature &&
+      superType.params[0].ast.type === 'NEVER'
+    ) &&
+    superType.superTypes.every(_ => isExtendable(_, seen))
   )
 }
 
