@@ -151,8 +151,20 @@ function setOwn(obj: object, key: string, value: unknown): void {
   Object.defineProperty(obj, key, {value, writable: true, enumerable: true, configurable: true})
 }
 
+/** Runs the rules over one document (anything else a parser may produce passes through) */
+export function prenormalizeDocument<T>(document: T): T {
+  if (isPlainObject(document)) {
+    // `traverse` reads no `Parent` links, so a raw document is fine despite its parameter type
+    rules.forEach(rule => traverse(document as LinkedJSONSchema, rule))
+  }
+  return document
+}
+
+/**
+ * The schema being compiled gets the rules plus its root `$ref` resolved -- which only the
+ * document handed to $RefParser needs; the files it loads get `prenormalizeDocument` alone.
+ */
 export function prenormalize(schema: JSONSchema): void {
-  // `traverse` reads no `Parent` links, so the raw document is fine despite its parameter type
-  rules.forEach(rule => traverse(schema as LinkedJSONSchema, rule))
+  prenormalizeDocument(schema)
   resolveRootRef(schema)
 }
