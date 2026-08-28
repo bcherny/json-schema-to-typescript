@@ -27,6 +27,7 @@ main(
       'format',
       'ignoreMinAndMaxItems',
       'removeOptionalIfDefaultExists',
+      'style.singleQuote',
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
