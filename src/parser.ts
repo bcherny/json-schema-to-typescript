@@ -12,7 +12,16 @@ import {
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
 import type {EnumJSONSchema, LinkedJSONSchema, NormalizedJSONSchema, SchemaSchema, SchemaType} from './types/JSONSchema'
-import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {
+  DefinitionKey,
+  Intersection,
+  Parent,
+  Shared,
+  Types,
+  getRootSchema,
+  isBoolean,
+  isPrimitive,
+} from './types/JSONSchema'
 import {memoize} from './memoize'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
@@ -1258,7 +1267,12 @@ const definitionKeys = memoize((rootSchema: NormalizedJSONSchema): Map<Normalize
   return keys
 })
 
-/** The (first) key `schema` is held under in its root schema's definitions, if any */
+/**
+ * The (first) key `schema` is held under in its root schema's definitions, if any;
+ * failing that, the key it has in the `definitions` of the separate file it was
+ * dereferenced from (see resolver.ts, #143). The root's own map wins so that a
+ * single-document schema is named exactly as before.
+ */
 function definitionKeyOf(schema: NormalizedJSONSchema): string | undefined {
-  return definitionKeys(getRootSchema(schema)).get(schema)
+  return definitionKeys(getRootSchema(schema)).get(schema) ?? schema[DefinitionKey]
 }

@@ -1,0 +1,9 @@
+{
+  "title": "Single",
+  "type": "object",
+  "properties": { "cost": { "$ref": "#/definitions/Money" } },
+  "definitions": {
+    "Money": { "type": "object", "properties": { "currency": { "$ref": "#/definitions/Currency" } } },
+    "Currency": { "enum": ["USD", "EUR"] }
+  }
+}
