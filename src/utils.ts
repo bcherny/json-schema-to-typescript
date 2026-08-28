@@ -174,6 +174,15 @@ export function justName(filename = ''): string {
   return stripExtension(basename(filename))
 }
 
+/** The name a schema asks for, before `generateName` makes it safe and unique */
+export function nameOf(
+  schema: LinkedJSONSchema,
+  keyNameFromDefinition: string | undefined,
+  options: Options,
+): string | undefined {
+  return options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+}
+
 /**
  * Avoid appending "js" to top-level unnamed schemas
  */

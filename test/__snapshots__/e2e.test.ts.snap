@@ -48834,8 +48834,7 @@ exports[`realWorld.openapi.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Parameter = ExampleXORExamples &
-  SchemaXORContent &
+export type Parameter = SchemaXORContent &
   ParameterLocation & {
     name: string;
     in: string;
@@ -48868,6 +48867,9 @@ export type SchemaXORContent =
       schema: unknown;
       [k: string]: unknown;
     }
+  /**
+   * Some properties are not allowed if content is present
+   */
   | {
       content: unknown;
       [k: string]: unknown;
@@ -48909,7 +48911,7 @@ export type ParameterLocation =
       style?: "form";
       [k: string]: unknown;
     };
-export type MediaType = ExampleXORExamples & {
+export type MediaType = {
   schema?: Schema | Reference;
   example?: unknown;
   examples?: {
@@ -48924,29 +48926,28 @@ export type MediaType = ExampleXORExamples & {
    */
   [k: string]: unknown;
 };
-export type Header = ExampleXORExamples &
-  SchemaXORContent & {
-    description?: string;
-    required?: boolean;
-    deprecated?: boolean;
-    allowEmptyValue?: boolean;
-    style?: "simple";
-    explode?: boolean;
-    allowReserved?: boolean;
-    schema?: Schema | Reference;
-    content?: {
-      [k: string]: MediaType;
-    };
-    example?: unknown;
-    examples?: {
-      [k: string]: Example | Reference;
-    };
-    /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
-     * via the \`patternProperty\` "^x-".
-     */
-    [k: string]: unknown;
+export type Header = SchemaXORContent & {
+  description?: string;
+  required?: boolean;
+  deprecated?: boolean;
+  allowEmptyValue?: boolean;
+  style?: "simple";
+  explode?: boolean;
+  allowReserved?: boolean;
+  schema?: Schema | Reference;
+  content?: {
+    [k: string]: MediaType;
   };
+  example?: unknown;
+  examples?: {
+    [k: string]: Example | Reference;
+  };
+  /**
+   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
+  [k: string]: unknown;
+};
 export type SecurityScheme =
   APIKeySecurityScheme | HTTPSecurityScheme | OAuth2SecurityScheme | OpenIdConnectSecurityScheme;
 export type HTTPSecurityScheme = {
@@ -48972,9 +48973,7 @@ export type HTTPSecurityScheme1 =
    * Non Bearer
    */
   | {
-      scheme?: {
-        [k: string]: unknown;
-      };
+      scheme?: unknown;
       [k: string]: unknown;
     };
 
@@ -49093,12 +49092,6 @@ export interface PathItem {
    * This interface was referenced by \`PathItem\`'s JSON-Schema definition
    * via the \`patternProperty\` "^x-".
    */
-  [k: string]: unknown;
-}
-/**
- * Example and examples are mutually exclusive
- */
-export interface ExampleXORExamples {
   [k: string]: unknown;
 }
 export interface Schema {
@@ -362936,10 +362929,10 @@ exports[`allOf.2.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Demo = {
+export interface Demo {
   hostname?: string;
   enable_subconfig: boolean;
-};
+}
 "
 `;
 
@@ -363049,8 +363042,7 @@ exports[`intersection.3.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Parameter = ExampleXORExamples &
-  SchemaXORContent &
+export type Parameter = SchemaXORContent &
   ParameterLocation & {
     name: string;
     in: string;
@@ -363083,6 +363075,9 @@ export type SchemaXORContent =
       schema: unknown;
       [k: string]: unknown;
     }
+  /**
+   * Some properties are not allowed if content is present
+   */
   | {
       content: unknown;
       [k: string]: unknown;
@@ -363124,7 +363119,7 @@ export type ParameterLocation =
       style?: "form";
       [k: string]: unknown;
     };
-export type MediaType = ExampleXORExamples & {
+export type MediaType = {
   schema?: Schema | Reference;
   example?: unknown;
   examples?: {
@@ -363139,29 +363134,28 @@ export type MediaType = ExampleXORExamples & {
    */
   [k: string]: unknown;
 };
-export type Header = ExampleXORExamples &
-  SchemaXORContent & {
-    description?: string;
-    required?: boolean;
-    deprecated?: boolean;
-    allowEmptyValue?: boolean;
-    style?: "simple";
-    explode?: boolean;
-    allowReserved?: boolean;
-    schema?: Schema | Reference;
-    content?: {
-      [k: string]: MediaType;
-    };
-    example?: unknown;
-    examples?: {
-      [k: string]: Example | Reference;
-    };
-    /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
-     * via the \`patternProperty\` "^x-".
-     */
-    [k: string]: unknown;
+export type Header = SchemaXORContent & {
+  description?: string;
+  required?: boolean;
+  deprecated?: boolean;
+  allowEmptyValue?: boolean;
+  style?: "simple";
+  explode?: boolean;
+  allowReserved?: boolean;
+  schema?: Schema | Reference;
+  content?: {
+    [k: string]: MediaType;
   };
+  example?: unknown;
+  examples?: {
+    [k: string]: Example | Reference;
+  };
+  /**
+   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
+  [k: string]: unknown;
+};
 export type SecurityScheme =
   APIKeySecurityScheme | HTTPSecurityScheme | OAuth2SecurityScheme | OpenIdConnectSecurityScheme;
 export type HTTPSecurityScheme = {
@@ -363187,9 +363181,7 @@ export type HTTPSecurityScheme1 =
    * Non Bearer
    */
   | {
-      scheme?: {
-        [k: string]: unknown;
-      };
+      scheme?: unknown;
       [k: string]: unknown;
     };
 
@@ -363308,12 +363300,6 @@ export interface PathItem {
    * This interface was referenced by \`PathItem\`'s JSON-Schema definition
    * via the \`patternProperty\` "^x-".
    */
-  [k: string]: unknown;
-}
-/**
- * Example and examples are mutually exclusive
- */
-export interface ExampleXORExamples {
   [k: string]: unknown;
 }
 export interface Schema {
@@ -364302,9 +364288,7 @@ exports[`allOf.3.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type AllOfAllVacuous = {
-  [k: string]: unknown;
-};
+export type AllOfAllVacuous = unknown;
 "
 `;
 
@@ -368454,6 +368438,7 @@ export type RequiredOnlyMembers = (
         [k: string]: unknown;
       }
     | {
+        b: B;
         [k: string]: unknown;
       }
   );
@@ -369074,9 +369059,7 @@ exports[`refToBooleanSchema.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface RefToBooleanSchema {
-  [k: string]: unknown;
-}
+export type RefToBooleanSchema = unknown;
 "
 `;
 
@@ -369345,7 +369328,7 @@ export interface UnevaluatedPropertiesApplicators {
     type: "apiKey" | "http";
     [k: string]: unknown;
   };
-  allOfNestedConditionalMember?: NamedWhenApiKey & {
+  allOfNestedConditionalMember?: {
     type: "apiKey" | "http";
     [k: string]: unknown;
   };
@@ -369394,9 +369377,6 @@ export interface UnevaluatedPropertiesApplicators {
 }
 export interface Person {
   age?: number;
-  [k: string]: unknown;
-}
-export interface NamedWhenApiKey {
   [k: string]: unknown;
 }
 export interface Base {
@@ -374276,9 +374256,7 @@ export interface AnyForValidationOnlySchemas {
   defaultOnly?: unknown;
   inAllOf?: string;
   viaRef?: Identifier;
-  unimplementedApplicator?: {
-    [k: string]: unknown;
-  };
+  unimplementedApplicator?: unknown;
 }
 "
 `;

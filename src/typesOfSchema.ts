@@ -33,10 +33,10 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
     }
   }
 
-  // A schema no matcher recognizes is an object if any of its keywords gives it a shape (one
-  // this tool doesn't implement: `not`, `if`), and otherwise -- only bounds on values
-  // (`pattern`, `maximum`), annotations, or keys this tool doesn't know -- says nothing about
-  // which type a value is, like the empty schema
+  // A schema no matcher recognizes is an object if one of its keywords still gives it a shape (a
+  // `required` list), and otherwise -- only bounds on values (`pattern`, `maximum`), annotations,
+  // applicators this tool doesn't implement (`not`, `if`), or keys it doesn't know -- says nothing
+  // about which type a value is, like the empty schema
   if (!matchedTypes.size) {
     matchedTypes.add(isShapeless(schema) ? 'ANY' : 'UNNAMED_SCHEMA')
   }
@@ -52,9 +52,12 @@ export function hasOwnType(schema: JSONSchema): boolean {
   return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
 }
 
-/** No keyword of the schema gives it a shape (see `STRUCTURAL_KEYWORDS`) */
+/**
+ * No keyword of the schema gives it a shape (see `STRUCTURAL_KEYWORDS`). A `$ref` the resolver
+ * could not resolve is still there and still stands for a type: the parser reports it.
+ */
 export function isShapeless(schema: JSONSchema): boolean {
-  return Object.keys(schema).every(key => !STRUCTURAL_KEYWORDS.has(key))
+  return !('$ref' in schema) && Object.keys(schema).every(key => !STRUCTURAL_KEYWORDS.has(key))
 }
 
 /**

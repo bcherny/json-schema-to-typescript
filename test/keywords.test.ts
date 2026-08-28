@@ -9,7 +9,6 @@ import {
   STRUCTURAL_KEYWORDS,
   SUBSCHEMA_KEYWORDS,
   TYPE_RELEVANT_KEYWORDS,
-  TYPE_SHAPING_KEYWORDS,
 } from '../src/keywords'
 import {JSONSchema} from '../src/types/JSONSchema'
 import {typesOfSchema} from '../src/typesOfSchema'
@@ -119,57 +118,28 @@ suite('keywords', () => {
     )
   })
 
-  test("the parser recognizes the allOf members it always has (parser.ts's former RECOGNIZED_ALL_OF_MEMBER_KEYWORDS)", () => {
-    // ...less `$id`, which names a type rather than shaping one: a member that is only an `$id`
-    // is kept either way, for its name
-    expect([...TYPE_SHAPING_KEYWORDS].sort()).toEqual(
-      [
-        'additionalProperties',
-        'allOf',
-        'anyOf',
-        'const',
-        'default',
-        'enum',
-        'extends',
-        'items',
-        'prefixItems',
-        'oneOf',
-        'patternProperties',
-        'properties',
-        'required',
-        'tsEnumNames',
-        'tsType',
-        'type',
-      ].sort(),
-    )
-  })
-
   test('typesOfSchema reads a schema with none of these as the empty schema', () => {
-    // not `definitions`/`$defs`: hosting schemas for others to `$ref` says nothing about instances
+    // The keywords that decide a type and nothing else: not `definitions`/`$defs` (hosting schemas
+    // for others to `$ref` says nothing about instances), not the applicators this tool does not
+    // implement (`not`, `if`/`then`/`else`, `dependencies`: which values, never which type), not
+    // refinements of a type some other keyword has to establish first (`additionalItems`)
     expect([...STRUCTURAL_KEYWORDS].sort()).toEqual(
       [
-        'additionalItems',
         'additionalProperties',
         'allOf',
         'anyOf',
         'const',
-        'dependencies',
-        'else',
         'enum',
         'extends',
-        'if',
         'items',
-        'not',
         'oneOf',
         'patternProperties',
         'prefixItems',
         'properties',
         'required',
-        'then',
         'tsEnumNames',
         'tsType',
         'type',
-        'unevaluatedProperties',
       ].sort(),
     )
   })
@@ -243,15 +213,14 @@ suite('keywords', () => {
     ]
     shapes.forEach(shape => typesOfSchema(recording(shape)))
 
-    // `$ref` is gone by the time the parser runs (see `hasNoRecognizedKeywords` there), so it
+    // `$ref` is gone by the time the parser runs (the resolver replaces every one), so it
     // needs no row; `$id` only tells `NAMED_SCHEMA` from `UNNAMED_SCHEMA`, which parse to the
     // same shape; `tsType` is read by `typesOfSchema` itself rather than a matcher
     read.delete('$ref')
     read.delete('$id')
     expect(read.has('tsType')).toBe(true)
     for (const key of read) {
-      expect(KEYWORDS).toHaveProperty([key])
-      expect(TYPE_SHAPING_KEYWORDS.has(key)).toBe(true)
+      expect(KEYWORDS).toHaveProperty([key, 'typed'])
     }
   })
 })
