@@ -36,6 +36,14 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
   return matchedTypes
 }
 
+/**
+ * Whether any matcher recognizes the schema. One that none does has no way to be
+ * typed on its own: it only gets the `UNNAMED_SCHEMA` default.
+ */
+export function hasOwnType(schema: JSONSchema): boolean {
+  return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
+}
+
 const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
@@ -59,7 +67,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'boolean') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'boolean') {
+    // Only infer BOOLEAN from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'boolean') {
       return true
     }
     return false
@@ -72,7 +83,12 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   },
   NAMED_SCHEMA(schema) {
     // 8.2.1. The presence of "$id" in a subschema indicates that the subschema constitutes a distinct schema resource within a single schema document.
-    return '$id' in schema && ('patternProperties' in schema || 'properties' in schema)
+    // Guarded against an array `type` (narrower than the guard on UNNAMED_SCHEMA
+    // below, on purpose): such a schema is a `UNION`, whose members are re-parsed
+    // one `type` at a time with the `properties` still attached (see the `UNION`
+    // case in `parser.ts`), so also matching here would intersect the object shape
+    // with that union and make its non-object members unreachable.
+    return '$id' in schema && !Array.isArray(schema.type) && ('patternProperties' in schema || 'properties' in schema)
   },
   NEVER(schema: JSONSchema | boolean) {
     return schema === false
@@ -90,7 +106,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'integer' || schema.type === 'number') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'number') {
+    // Only infer NUMBER from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'number') {
       return true
     }
     return false
@@ -120,7 +139,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'string') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'string') {
+    // Only infer STRING from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'string') {
       return true
     }
     return false
@@ -149,8 +171,20 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     }
     return 'enum' in schema
   },
-  UNNAMED_SCHEMA() {
-    return false // Explicitly handled as the default case
+  UNNAMED_SCHEMA(schema) {
+    // Mirrors NAMED_SCHEMA above: a schema's own `properties`/`patternProperties`
+    // are a real type even without a `$id`, so they get intersected with any
+    // sibling `allOf`/`anyOf`/`oneOf` instead of being silently dropped. Guarded
+    // to schemas that are objects (or untyped) so it doesn't fire on a `UNION`
+    // member that was assigned a non-object `type` but still carries the
+    // parent's `properties` (see the `UNION` case in `parser.ts`). Schemas that
+    // don't otherwise match anything still fall through to the default case at
+    // the bottom of `typesOfSchema`.
+    return (
+      (schema.type === undefined || schema.type === 'object') &&
+      !('$id' in schema) &&
+      ('patternProperties' in schema || 'properties' in schema)
+    )
   },
   UNTYPED_ARRAY(schema) {
     return schema.type === 'array' && !('items' in schema)

@@ -5,5 +5,6 @@ export async function format(code: string, options: Options): Promise<string> {
   if (!options.format) {
     return code
   }
-  return prettify(code, {parser: 'typescript', ...options.style})
+  // A `.d.ts` filepath lets prettier skip JSX detection, a regex scan that is quadratic on large quote-free output
+  return prettify(code, {parser: 'typescript', filepath: 'schema.d.ts', ...options.style})
 }

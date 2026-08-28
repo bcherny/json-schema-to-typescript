@@ -1,7 +1,7 @@
 import {uniqBy} from 'lodash'
 import {Options} from '.'
 import {generateType} from './generator'
-import {AST, T_ANY, T_UNKNOWN} from './types/AST'
+import {AST, omitStandaloneName, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'
 
 export function optimize(ast: AST, options: Options, processed = new Set<AST>()): AST {
@@ -27,6 +27,15 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
         params: ast.params.map(_ => optimize(_, options, processed)),
       })
 
+      // [A & B & Unknown] -> [A & B], since a member that matches anything doesn't narrow an intersection
+      if (optimizedAST.type === 'INTERSECTION') {
+        const constrained = optimizedAST.params.filter(_ => _.type !== 'ANY' && _.type !== 'UNKNOWN')
+        if (constrained.length > 0 && constrained.length < optimizedAST.params.length) {
+          log('cyan', 'optimizer', '[A & B & Unknown] -> [A & B]', optimizedAST)
+          optimizedAST.params = constrained
+        }
+      }
+
       // [A, B, C, Any] -> Any
       if (optimizedAST.params.some(_ => _.type === 'ANY')) {
         log('cyan', 'optimizer', '[A, B, C, Any] -> Any', optimizedAST)
@@ -40,16 +49,15 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       }
 
       // [A (named), A] -> [A (named)]
-      if (
-        optimizedAST.params.every(_ => {
-          const a = generateType(omitStandaloneName(_), options)
-          const b = generateType(omitStandaloneName(optimizedAST.params[0]), options)
-          return a === b
-        }) &&
-        optimizedAST.params.some(_ => _.standaloneName !== undefined)
-      ) {
-        log('cyan', 'optimizer', '[A (named), A] -> [A (named)]', optimizedAST)
-        optimizedAST.params = optimizedAST.params.filter(_ => _.standaloneName !== undefined)
+      // (`omitStandaloneName` returns a copy, which the memoized `generateType` has never seen
+      // and so renders from scratch: check the cheap condition first, and render the first
+      // member once rather than once per member)
+      if (optimizedAST.params.some(_ => _.standaloneName !== undefined)) {
+        const first = generateType(omitStandaloneName(optimizedAST.params[0]), options)
+        if (optimizedAST.params.every(_ => generateType(omitStandaloneName(_), options) === first)) {
+          log('cyan', 'optimizer', '[A (named), A] -> [A (named)]', optimizedAST)
+          optimizedAST.params = optimizedAST.params.filter(_ => _.standaloneName !== undefined)
+        }
       }
 
       // [A, B, B] -> [A, B]
@@ -64,15 +72,5 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       })
     default:
       return ast
-  }
-}
-
-// TODO: More clearly disambiguate standalone names vs. aliased names instead.
-function omitStandaloneName<A extends AST>(ast: A): A {
-  switch (ast.type) {
-    case 'ENUM':
-      return ast
-    default:
-      return {...ast, standaloneName: undefined}
   }
 }

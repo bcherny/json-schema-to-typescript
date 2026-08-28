@@ -42,6 +42,7 @@ export interface JSONSchema extends JSONSchema4 {
 }
 
 export const Parent = Symbol('Parent')
+export const Shared = Symbol('Shared')
 
 export interface LinkedJSONSchema extends JSONSchema {
   /**
@@ -49,9 +50,18 @@ export interface LinkedJSONSchema extends JSONSchema {
    * `null` when this is the root schema.
    */
   [Parent]: LinkedJSONSchema | null
+  /**
+   * Set on a schema that is reachable from more than one parent node (the
+   * target of a `$ref`, usually), whose `Parent` is just the first one found.
+   */
+  [Shared]?: true
 
   additionalItems?: boolean | LinkedJSONSchema
   additionalProperties?: boolean | LinkedJSONSchema
+  /**
+   * @see https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.2.4
+   */
+  unevaluatedProperties?: boolean | LinkedJSONSchema
   items?: LinkedJSONSchema | LinkedJSONSchema[]
   definitions?: {
     [k: string]: LinkedJSONSchema
@@ -104,7 +114,10 @@ export interface NormalizedJSONSchema extends Omit<LinkedJSONSchema, 'definition
   anyOf?: NormalizedJSONSchema[]
   oneOf?: NormalizedJSONSchema[]
   not?: NormalizedJSONSchema
-  required: string[]
+  /**
+   * `false` is normalized to `[]`; `true` is the draft 3 property-level form (see `isRequired` in the parser)
+   */
+  required: string[] | true
 }
 
 export interface EnumJSONSchema extends NormalizedJSONSchema {
@@ -119,7 +132,6 @@ export interface SchemaSchema extends NormalizedJSONSchema {
   properties: {
     [k: string]: NormalizedJSONSchema
   }
-  required: string[]
 }
 
 export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {
