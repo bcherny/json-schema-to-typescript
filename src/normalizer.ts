@@ -5,6 +5,7 @@ import {
   hasType,
   isSchemaLike,
   justName,
+  log,
   narrowType,
   toSafeString,
   traverse,
@@ -134,6 +135,14 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
     // Edited in place: the array is what links its members to the schema around them
     if (constrained.length !== members.length || constrained.some((member, i) => member !== members[i])) {
       members.splice(0, members.length, ...constrained)
+    }
+    if (!members.length) {
+      log(
+        'yellow',
+        'normalizer',
+        `No anyOf/oneOf member is compatible with the parent type (${type}): emits never`,
+        schema,
+      )
     }
   }
   constrain(schema.anyOf)

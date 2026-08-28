@@ -496,6 +496,9 @@ function parseNonLiteral(
             if (key in member) {
               member[key] = member[key]!.flatMap(_ => narrowMember(_, type, options))
               if (!member[key]!.length) {
+                if (schema[key]!.length) {
+                  log('yellow', 'parser', `No ${key} member admits "${type}": left out of the union`, schema)
+                }
                 return []
               }
             }
