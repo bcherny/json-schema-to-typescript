@@ -16,7 +16,7 @@ export const input = {
     plain: thing,
     withRequired: {allOf: [thing], required: ['a']},
     withOtherRequired: {allOf: [thing], required: ['b', 'a']},
-    // a key nothing declares is skipped, like everywhere else; nothing declared, nothing added
+    // a key nothing declares is required all the same, as `unknown`
     partlyUndeclared: {allOf: [thing], required: ['zzz', 'a']},
     onlyUndeclared: {allOf: [thing], required: ['zzz']},
     // each key from whichever member declares it
