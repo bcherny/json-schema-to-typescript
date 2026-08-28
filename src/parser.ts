@@ -457,6 +457,17 @@ function parseSuperTypes(
 }
 
 /**
+ * Draft 4+ lists an object's required properties on the object schema (`required: [...]`).
+ * Draft 3 instead flagged each property schema (`required: true`), and some generators still
+ * emit that form. Support both, reading the draft 3 form only when it is strictly `true` so
+ * that a property's own `required` array (which of *its* properties are required) is never
+ * mistaken for the flag.
+ */
+function isRequired(parentSchema: SchemaSchema, key: string, propertySchema: NormalizedJSONSchema): boolean {
+  return propertySchema.required === true || (parentSchema.required !== true && includes(parentSchema.required, key))
+}
+
+/**
  * Helper to parse schema properties into params on the parent schema's type
  */
 function parseSchema(
@@ -470,7 +481,7 @@ function parseSchema(
     ast: parse(value, options, key, processed, usedNames),
     isIndexSignature: false,
     isPatternProperty: false,
-    isRequired: includes(schema.required || [], key),
+    isRequired: isRequired(schema, key, value),
     isUnreachableDefinition: false,
     keyName: key,
   }))
@@ -485,7 +496,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
       ast,
       isIndexSignature: false,
       isPatternProperty: true,
-      isRequired: includes(schema.required || [], key),
+      isRequired: isRequired(schema, key, value),
       isUnreachableDefinition: false,
       keyName: key,
     }
@@ -503,7 +514,7 @@ via the \`definition\` "${key}".`
           ast,
           isIndexSignature: false,
           isPatternProperty: false,
-          isRequired: includes(schema.required || [], key),
+          isRequired: isRequired(schema, key, value),
           isUnreachableDefinition: true,
           keyName: key,
         }
