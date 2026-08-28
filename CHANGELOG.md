@@ -6,7 +6,6 @@
 
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
-- Bugfix: A schema with both `type: object` (or other typed keywords) and `allOf` that is referenced from more than one place no longer repeats its object member in the emitted intersection once per reference (visible under `minItems`/`maxItems` arrays, eg. schemastore's package.json and github-workflow); `allOf: [{$ref: '#'}]` no longer emits the circular `type A = A & {…}` — the self-reference is dropped
 
 ## 16.0.0
 
