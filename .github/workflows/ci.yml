@@ -88,15 +88,47 @@ jobs:
     - name: Smoke-test the built package
       run: node test/smoke.cjs
 
+  # Fuzz smoke: push a fixed seed range of generated schemas through the built
+  # package (test/fuzz/README.md), so a crash, hang or invalid-output regression
+  # turns CI red instead of waiting for a manual fuzz run. Findings master still
+  # has are listed in test/fuzz/known-findings.json, each with its issue.
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v7
+    - name: Use Node.js 24.x
+      uses: actions/setup-node@v7
+      with:
+        node-version: 24.x
+    - name: Use Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version-file: .bun-version
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+    - name: Build
+      run: bun run build:server
+    - name: Fuzz seeds 1..500
+      run: bun run fuzz:ci
+    - name: Upload the fuzz report
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: fuzz-report
+        path: fuzz-report.json
+        if-no-files-found: ignore
+
   # Aggregate check. Branch protection requires this one job instead of each
   # matrix job by name, so the matrix can change without editing the required
   # status checks.
   ci-ok:
     if: always()
-    needs: [build, bun, engines]
+    needs: [build, bun, engines, fuzz]
     runs-on: ubuntu-latest
     steps:
-    - name: Fail if any matrix job did not succeed
+    - name: Fail if any matrix job or the fuzz smoke did not succeed
       # Checking for success (rather than for failure/cancellation) also catches
       # `skipped`, which would otherwise satisfy branch protection with no tests run.
-      run: '[ "${{ needs.build.result }}" = "success" ]'
+      run: '[ "${{ needs.build.result }}" = "success" ] && [ "${{ needs.fuzz.result }}" = "success" ]'
