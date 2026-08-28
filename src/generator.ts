@@ -205,8 +205,6 @@ function generateRawType(ast: AST, options: Options): string {
       return 'null'
     case 'OBJECT':
       return 'object'
-    case 'REFERENCE':
-      return ast.params
     case 'STRING':
       return 'string'
     case 'TUPLE':
@@ -395,7 +393,6 @@ const LEAF_TYPES = new Set<AST['type']>([
   'NULL',
   'NUMBER',
   'OBJECT',
-  'REFERENCE',
   'STRING',
 ])
 
