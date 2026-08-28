@@ -1,6 +1,5 @@
 import {describe, expect, test} from 'bun:test'
 import {DEFAULT_OPTIONS, JSONSchema, Options} from '../src'
-import {link} from '../src/linker'
 import {normalize} from '../src/normalizer'
 import {parse, Processed} from '../src/parser'
 import type {TIntersection} from '../src/types/AST'
@@ -22,7 +21,7 @@ suite('parser', () => {
       }
     }
     const options: Options = {...DEFAULT_OPTIONS, unreachableDefinitions: true}
-    const normalized = normalize(link(schema), new WeakMap(), 'Root', options)
+    const normalized = normalize(schema, new WeakMap(), 'Root', options)
     const start = performance.now()
     parse(normalized, options)
     expect(performance.now() - start).toBeLessThan(5_000)
@@ -37,7 +36,7 @@ suite('parser', () => {
       properties: {a: {type: 'string'}},
       allOf: [{type: 'object', properties: {b: {type: 'string'}}}],
     }
-    const normalized = normalize(link(schema), new WeakMap(), 'Root', DEFAULT_OPTIONS)
+    const normalized = normalize(schema, new WeakMap(), 'Root', DEFAULT_OPTIONS)
     const processed: Processed = new Map()
     const first = parse(normalized, DEFAULT_OPTIONS, undefined, processed) as TIntersection
     expect(first.type).toBe('INTERSECTION')

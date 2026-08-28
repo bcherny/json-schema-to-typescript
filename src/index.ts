@@ -14,7 +14,6 @@ import {prenormalize} from './prenormalizer'
 import {error, stripExtension, log, parseFileAsJSONSchema, readVerbose} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
-import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
 import {AST} from './types/AST'
@@ -293,17 +292,14 @@ async function compileToAST(
     }
   }
 
-  const linked = link(dereferencedSchema)
-  log('green', 'linker', time(), '✅ No change')
-
-  const errors = validate(linked, name)
+  const errors = validate(dereferencedSchema, name)
   if (errors.length) {
     errors.forEach(_ => error(_))
     throw new ValidationError()
   }
   log('green', 'validator', time(), '✅ No change')
 
-  const normalized = normalize(linked, dereferencedPaths, name, _options)
+  const normalized = normalize(dereferencedSchema, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
   const processed: Processed = new Map()

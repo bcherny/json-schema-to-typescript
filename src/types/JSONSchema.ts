@@ -56,7 +56,6 @@ export interface JSONSchema extends JSONSchema4 {
   [DefinitionKey]?: string
 }
 
-export const Parent = Symbol('Parent')
 export const Shared = Symbol('Shared')
 /**
  * Where a schema node was read from: the file (as the resolver addressed it) and the
@@ -69,16 +68,9 @@ export interface SchemaSource {
   pointer: string
 }
 
+/** A dereferenced schema: every `$ref` is now the schema it pointed at */
 export interface LinkedJSONSchema extends JSONSchema {
-  /**
-   * A reference to this schema's parent node, for convenience.
-   * `null` when this is the root schema.
-   */
-  [Parent]: LinkedJSONSchema | null
-  /**
-   * Set on a schema that is reachable from more than one parent node (the
-   * target of a `$ref`, usually), whose `Parent` is just the first one found.
-   */
+  /** Set on a node that is reachable from more than one place (the target of a `$ref`, usually) */
   [Shared]?: true
   [Source]?: SchemaSource
 
@@ -122,7 +114,6 @@ export const Intersection = Symbol('Intersection')
  */
 export interface NormalizedJSONSchema extends Omit<LinkedJSONSchema, 'definitions' | 'id' | 'prefixItems'> {
   [Intersection]?: NormalizedJSONSchema
-  [Parent]: NormalizedJSONSchema | null
   [Types]: ReadonlySet<SchemaType>
 
   additionalItems?: boolean | NormalizedJSONSchema
