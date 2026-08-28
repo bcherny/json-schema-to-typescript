@@ -5,8 +5,9 @@ import {
   Plugin,
   getJsonSchemaRefParserDefaultOptions,
 } from '@apidevtools/json-schema-ref-parser'
+import {isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
-import {ExternallyReferenced, JSONSchema} from './types/JSONSchema'
+import {DefinitionKey, JSONSchema} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
@@ -18,6 +19,7 @@ export async function dereference(
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const parser = new $RefParser()
   const dereferencedPaths: DereferencedPaths = new WeakMap()
+  const externalDocuments = new Set<JSONSchema>()
   const dereferencedSchema = (await parser.dereference(cwd, schema, {
     ...$refOptions,
     parse: prenormalizingParsers($refOptions.parse),
@@ -25,22 +27,52 @@ export async function dereference(
       ...$refOptions.dereference,
       onDereference($ref: string, schema: JSONSchema) {
         dereferencedPaths.set(schema, $ref)
-        // A $ref into a separate file (as opposed to a `#/...` pointer within
-        // the current document) brings in a schema that keeps its own
-        // `definitions`/`$defs` map, wherever it ends up nested once merged
-        // into the referencing document. Mark its root so standaloneName()
-        // can still find named definitions living inside it (see #143).
-        if (!$ref.startsWith('#') && !Object.prototype.hasOwnProperty.call(schema, ExternallyReferenced)) {
-          Object.defineProperty(schema, ExternallyReferenced, {
-            enumerable: false,
-            value: true,
-            writable: false,
-          })
+        if (isWholeDocumentRef($ref)) {
+          externalDocuments.add(schema)
         }
       },
     },
   })) as any // TODO: fix types
+  tagExternalDefinitions(externalDocuments, dereferencedSchema)
   return {dereferencedPaths, dereferencedSchema: resolveNamedAnchors(dereferencedSchema)}
+}
+
+/** `other.json`, `other.json#`, `http://x/y.json#/`: a $ref to a separate document as a whole */
+function isWholeDocumentRef($ref: string): boolean {
+  const hash = $ref.indexOf('#')
+  const fragment = hash === -1 ? '' : $ref.slice(hash + 1)
+  return hash !== 0 && (fragment === '' || fragment === '/')
+}
+
+/**
+ * A schema brought in by a $ref to a separate document keeps its own `definitions`/`$defs`,
+ * but once dereferenced into the referencing document that map sits somewhere below the
+ * root, where the parser does not look for names. Record on each of its entries the key it
+ * is held under, so the parser names it as it would when compiling that document on its
+ * own (see #143). Only documents referenced as a whole are considered; a definition reached
+ * solely through `file.json#/definitions/X` pointers is named as before.
+ */
+function tagExternalDefinitions(documents: Set<JSONSchema>, rootSchema: JSONSchema) {
+  const rootDefinitions = {...rootSchema.definitions, ...rootSchema.$defs}
+  for (const document of documents) {
+    if (!isPlainObject(document) || document === rootSchema) {
+      continue
+    }
+    const {$defs, definitions} = document
+    for (const [key, entry] of [...Object.entries($defs ?? {}), ...Object.entries(definitions ?? {})]) {
+      // A name the document being compiled defines itself stays that definition's alone:
+      // another file's entry under the same key is left unnamed (inlined, as before)
+      // rather than taking the name or a numbered variant of it, depending on visit order.
+      if (
+        key in rootDefinitions ||
+        !isPlainObject(entry) ||
+        Object.prototype.hasOwnProperty.call(entry, DefinitionKey)
+      ) {
+        continue
+      }
+      Object.defineProperty(entry, DefinitionKey, {enumerable: false, value: key, writable: false})
+    }
+  }
 }
 
 /**

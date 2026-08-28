@@ -21,7 +21,7 @@ import type {
   SchemaType,
 } from './types/JSONSchema'
 import {
-  ExternallyReferenced,
+  DefinitionKey,
   Intersection,
   Parent,
   Shared,
@@ -1077,23 +1077,13 @@ const getDefinitionKeysMemoized = memoize((definitions: Definitions): Map<Normal
 })
 
 /**
- * The (first) key `schema` is held under in `definitions`, if any. Ordinarily that is
- * the root schema's map; but a schema pulled in through a $ref to a separate file keeps
- * its own `definitions` nested wherever it landed in the referencing document, so the
- * maps of externally-referenced ancestors are checked first, nearest first (see #143).
+ * The (first) key `schema` is held under in the root schema's `definitions`, if any;
+ * failing that, the key it has in the `definitions` of the separate file it was
+ * dereferenced from (see resolver.ts, #143). The root's own map wins so that a
+ * single-document schema is named exactly as before.
  */
 function definitionKeyOf(schema: NormalizedJSONSchema): string | undefined {
-  let ancestor = schema[Parent]
-  while (ancestor && ancestor[Parent]) {
-    if (ancestor[ExternallyReferenced]) {
-      const key = getDefinitionKeysMemoized(getDefinitionsMemoized(ancestor)).get(schema)
-      if (key !== undefined) {
-        return key
-      }
-    }
-    ancestor = ancestor[Parent]
-  }
-  return getDefinitionKeysMemoized(getDefinitionsMemoized(getRootSchema(schema))).get(schema)
+  return getDefinitionKeysMemoized(getDefinitionsMemoized(getRootSchema(schema))).get(schema) ?? schema[DefinitionKey]
 }
 
 /**

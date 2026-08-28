@@ -26,7 +26,7 @@ export type SchemaType =
 export type JSONSchemaTypeName = JSONSchema4TypeName
 export type JSONSchemaType = JSONSchema4Type
 
-export const ExternallyReferenced = Symbol('ExternallyReferenced')
+export const DefinitionKey = Symbol('DefinitionKey')
 
 export interface JSONSchema extends JSONSchema4 {
   /**
@@ -42,12 +42,12 @@ export interface JSONSchema extends JSONSchema4 {
    */
   deprecated?: boolean
   /**
-   * Set during dereferencing on the root of a schema pulled in through a $ref
-   * to a separate file. Such a schema keeps its own `definitions`/`$defs` map
-   * nested wherever it lands once merged into the referencing document,
-   * instead of at the merged document's root.
+   * Set during dereferencing on each entry of a separate file's `definitions`/`$defs`:
+   * the key it is held under in that file. Once merged into the referencing document
+   * those maps no longer sit at the root (or are not part of the document at all, for a
+   * `file.json#/definitions/X` pointer), so this is how the entry keeps its name.
    */
-  [ExternallyReferenced]?: true
+  [DefinitionKey]?: string
 }
 
 export const Parent = Symbol('Parent')
