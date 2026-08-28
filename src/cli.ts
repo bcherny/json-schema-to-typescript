@@ -45,7 +45,7 @@ async function main(argv: minimist.ParsedArgs) {
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
   const ISGLOB = argIn && isDynamicPattern(argIn)
-  const ISDIR = isDir(argIn)
+  const ISDIR = !!argIn && isDir(argIn)
 
   if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
     throw new ReferenceError(
