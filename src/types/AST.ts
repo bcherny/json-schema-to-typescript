@@ -189,3 +189,8 @@ export const T_UNKNOWN_ADDITIONAL_PROPERTIES: TUnknown & ASTWithName = {
   keyName: '[k: string]',
   type: 'UNKNOWN',
 }
+
+export const T_NEVER_ADDITIONAL_PROPERTIES: TNever & ASTWithName = {
+  keyName: '[k: string]',
+  type: 'NEVER',
+}

@@ -8,6 +8,7 @@ import {
   hasStandaloneName,
   T_ANY,
   T_ANY_ADDITIONAL_PROPERTIES,
+  T_NEVER_ADDITIONAL_PROPERTIES,
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
@@ -788,6 +789,15 @@ function standaloneName(
   }
 }
 
+const CLOSED_EMPTY_OBJECT_PARAM: TInterfaceParam = {
+  ast: T_NEVER_ADDITIONAL_PROPERTIES,
+  isIndexSignature: true,
+  isPatternProperty: false,
+  isRequired: true,
+  isUnreachableDefinition: false,
+  keyName: '[k: string]',
+}
+
 function newInterface(
   schema: SchemaSchema,
   options: Options,
@@ -797,13 +807,23 @@ function newInterface(
   keyNameFromDefinition?: string,
 ): TInterface {
   const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)!
+  const params = parseSchema(schema, options, processed, usedNames, name)
+  const superTypes = parseSuperTypes(schema, options, processed, usedNames)
   return {
     comment: schema.description,
     deprecated: schema.deprecated,
     keyName,
-    params: parseSchema(schema, options, processed, usedNames, name),
+    // A closed object (`additionalProperties: false`) that declares no members of
+    // its own accepts nothing but the empty object. Emitting `{}` for it would say
+    // the opposite: in TypeScript `{}` accepts any non-nullish value. Express the
+    // constraint with a `never` index signature instead, which is what
+    // `Record<string, never>` desugars to.
+    params:
+      params.length === 0 && superTypes.length === 0 && schema.additionalProperties === false
+        ? [CLOSED_EMPTY_OBJECT_PARAM]
+        : params,
     standaloneName: name,
-    superTypes: parseSuperTypes(schema, options, processed, usedNames),
+    superTypes,
     type: 'INTERFACE',
   }
 }
