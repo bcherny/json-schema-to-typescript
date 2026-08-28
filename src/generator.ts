@@ -19,7 +19,13 @@ import {
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string {
+/**
+ * Generates the declaration file for `ast`: the banner comment, then the type aliases, the
+ * interfaces and the enums, a blank line between those groups and a newline between declarations.
+ * It is returned split before each top-level declaration, each part starting with the newlines
+ * that separate it from the previous one; `.join('')` is the whole file.
+ */
+export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string[] {
   const rootASTName = ast.standaloneName!
 
   // One walk over the ASTs collects every standalone declaration, by kind, in the order found
@@ -35,10 +41,16 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinit
     }
   }
 
-  return (
-    [options.bannerComment, types.join('\n'), interfaces.join('\n'), enums.join('\n')].filter(Boolean).join('\n\n') +
-    '\n'
-  ) // trailing newline
+  const parts: string[] = []
+  for (const group of [options.bannerComment ? [options.bannerComment] : [], types, interfaces, enums]) {
+    let separator = parts.length === 0 ? '' : '\n\n'
+    for (const declaration of group) {
+      parts.push(separator + declaration)
+      separator = '\n'
+    }
+  }
+  parts[parts.length - 1] += '\n' // the root type is always declared, so there is a last part
+  return parts
 }
 
 type Declarations = {enums: string[]; interfaces: string[]; types: string[]}
