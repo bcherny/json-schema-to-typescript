@@ -630,7 +630,8 @@ function generateComment(comment?: string, deprecated?: boolean): string {
     commentLines.push(' * @deprecated')
   }
   if (typeof comment !== 'undefined') {
-    commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
+    // a line break is a line break however the schema's author's editor wrote it
+    commentLines.push(...comment.split(/\r\n|\r|\n/).map(_ => ' * ' + _))
   }
   commentLines.push(' */')
   return commentLines.join('\n')
