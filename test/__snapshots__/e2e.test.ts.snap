@@ -453534,7 +453534,7 @@ export interface ReadonlyKeyword {
   readonly nickname?: string | null;
   readonly previousNames?: readonly string[] | null;
   /**
-   * annotation-only but nullable: still \`| null\`
+   * annotation-only but nullable: \`unknown\` (null included), still readonly
    */
   readonly untypedNullable?: unknown;
   /**

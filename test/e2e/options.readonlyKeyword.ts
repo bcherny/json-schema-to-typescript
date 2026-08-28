@@ -71,7 +71,7 @@ export const input = {
       readOnly: true,
     },
     previousNames: {type: 'array', items: {type: 'string'}, nullable: true, readOnly: true},
-    untypedNullable: {description: 'annotation-only but nullable: still `| null`', nullable: true, readOnly: true},
+    untypedNullable: {description: 'annotation-only but nullable: `unknown` (null included), still readonly', nullable: true, readOnly: true},
   },
   patternProperties: {
     '^x-': {type: 'string', readOnly: true},
