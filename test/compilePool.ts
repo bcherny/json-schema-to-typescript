@@ -58,7 +58,9 @@ function startPool() {
       next(worker)
     }
     worker.onerror = e => replies.forEach((_, name) => _.resolve({name, error: e.message}))
-    next(worker)
+    // Hand out the first jobs on the next tick, so the case that started the pool
+    // (moved to the front below) goes first rather than waiting behind the largest.
+    queueMicrotask(() => next(worker))
   }
 
   return async (name: string): Promise<string> => {

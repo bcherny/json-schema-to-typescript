@@ -1,4 +1,4 @@
-import {describe, expect, test} from 'bun:test'
+import {afterAll, beforeAll, describe, expect, test} from 'bun:test'
 import {exec} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
 import {availableParallelism} from 'os'
@@ -6,14 +6,16 @@ import {resolve, posix} from 'path'
 import * as rimraf from 'rimraf'
 import {hasOnly} from './e2eCases'
 
-const skip = hasOnly()
-const suite = skip ? describe.skip : describe
+const suite = hasOnly() ? describe.skip : describe
 
 type Result = {error: Error | null; stdout: string; stderr: string}
 
-// Most of a CLI test is node starting up, so every invocation is spawned up front
-// (at most one per core at a time) and each test then awaits its own result.
-// Tests that write to a file each use their own path, so they can overlap too.
+// Most of a CLI test is node starting up, so every invocation is spawned before the
+// first CLI test runs (at most one per core at a time) and each test then awaits
+// its own result. Tests that write to a file each use their own path, so they can
+// overlap too.
+const spawners: (() => void)[] = []
+const results = new Map<string, Promise<Result>>()
 let running = 0
 const waiting: (() => void)[] = []
 async function run(command: string, input?: string): Promise<Result> {
@@ -36,9 +38,9 @@ async function run(command: string, input?: string): Promise<Result> {
 }
 
 function cliTest(name: string, command: string, check: (output: Omit<Result, 'error'>) => void, input?: string) {
-  const result = skip ? undefined : run(command, input)
+  spawners.push(() => results.set(name, run(command, input)))
   test(name, async () => {
-    const {error, ...output} = await result!
+    const {error, ...output} = await results.get(name)!
     if (error) {
       throw error
     }
@@ -51,7 +53,26 @@ const expectFile = (path: string) => () => {
   unlinkSync(path)
 }
 
+// Everything the file-writing tests below create, for afterAll to clear when a
+// filtered run spawned them all but only ran some.
+const OUTPUTS = [
+  ...[1, 2, 3, 4, 5].map(n => `./ReferencedType.${n}.d.ts`),
+  './test/resources/MultiSchema/out',
+  './test/resources/MultiSchema/foo',
+  './test/resources/MultiSchemaRefs/response/out',
+  './test/resources/MultiSchema2/out',
+]
+
 suite('CLI', () => {
+  // bun skips these hooks when no CLI test is selected (`-t`, `only`), so such a
+  // run spawns nothing; and afterAll waits for every child, so none outlives the
+  // run to write into the working tree after bun has exited.
+  beforeAll(() => spawners.forEach(spawn => spawn()))
+  afterAll(async () => {
+    await Promise.all(results.values())
+    OUTPUTS.forEach(path => rimraf.sync(path))
+  })
+
   cliTest(
     'pipe in, pipe out',
     'node dist/src/cli.js',
