@@ -535,6 +535,7 @@ function standaloneName(
 
 const CLOSED_EMPTY_OBJECT_PARAM: TInterfaceParam = {
   ast: T_NEVER_ADDITIONAL_PROPERTIES,
+  isIndexSignature: true,
   isPatternProperty: false,
   isRequired: true,
   isUnreachableDefinition: false,
