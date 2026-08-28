@@ -48538,11 +48538,11 @@ exports[`reservedWords.2.ts 1`] = `
  */
 
 export interface ReservedWords {
-  definitions?: Definitions;
+  definitions?: Schema;
   [k: string]: unknown;
 }
-export interface Definitions {
-  additionalProperties?: Definitions;
+export interface Schema {
+  additionalProperties?: Schema;
   [k: string]: unknown;
 }
 "
@@ -118039,12 +118039,13 @@ dnsServers: string[]
 }
 export interface Subnet2 {
 name: string
-properties: {
+properties: SubnetProperties
+[k: string]: unknown
+}
+export interface SubnetProperties {
 addressPrefix: string
 networkSecurityGroup?: Id1
 routeTable?: Id1
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface Id1 {
@@ -118056,7 +118057,10 @@ export interface VirtualNetworkPeering {
  * Gets or sets the name of the resource that is unique within a resource group. This name can be used to access the resource
  */
 name: string
-properties: {
+properties: VirtualNetworkPeeringPropertiesFormat
+[k: string]: unknown
+}
+export interface VirtualNetworkPeeringPropertiesFormat {
 allowVirtualNetworkAccess?: boolean
 allowForwardedTraffic?: boolean
 allowGatewayTransit?: boolean
@@ -118066,8 +118070,6 @@ remoteVirtualNetwork?: Id1
  * Gets the status of the virtual network peering
  */
 peeringState?: ((("Initiated" | "Connected" | "Disconnected") | string) & string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -118127,7 +118129,10 @@ name: string
 }
 export interface LoadBalancingRules {
 name: string
-properties: {
+properties: LoadBalancingRulesProperties
+[k: string]: unknown
+}
+export interface LoadBalancingRulesProperties {
 frontendIPConfiguration: Id1
 backendAddressPool: Id1
 protocol: (("Udp" | "Tcp") | string)
@@ -118139,11 +118144,12 @@ idleTimeoutInMinutes?: (number | string)
 loadDistribution?: (("Default" | "SourceIP" | "SourceIPProtocol") | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface Probes {
 name: string
-properties: {
+properties: ProbeProperties
+[k: string]: unknown
+}
+export interface ProbeProperties {
 protocol: (("Http" | "Tcp") | string)
 port: (number | string)
 requestPath?: string
@@ -118151,22 +118157,24 @@ intervalInSeconds?: (number | string)
 numberOfProbes?: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatRules {
 name: string
-properties: {
+properties: InboundNatRulesProperties
+[k: string]: unknown
+}
+export interface InboundNatRulesProperties {
 frontendIPConfiguration: Id1
 protocol: string
 frontendPort: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatPools {
 name: string
-properties: {
+properties: InboundNatPoolsProperties
+[k: string]: unknown
+}
+export interface InboundNatPoolsProperties {
 frontendIPConfiguration: Id1
 protocol: string
 frontendPortRangeStart: (number | string)
@@ -118174,15 +118182,14 @@ frontendPortRangeEnd: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface OutboundNatRules {
 name: string
-properties: {
-frontendIPConfigurations: Id1[]
-backendAddressPool: Id1
+properties: OutboundNatRulesProperties
 [k: string]: unknown
 }
+export interface OutboundNatRulesProperties {
+frontendIPConfigurations: Id1[]
+backendAddressPool: Id1
 [k: string]: unknown
 }
 /**
@@ -118204,7 +118211,10 @@ location: unknown
 }
 export interface SecurityRules {
 name: string
-properties: {
+properties: SecurityruleProperties
+[k: string]: unknown
+}
+export interface SecurityruleProperties {
 description?: string
 protocol: (("Tcp" | "Udp" | "*") | string)
 sourcePortRange: string
@@ -118214,8 +118224,6 @@ destinationAddressPrefix: string
 access: (("Allow" | "Deny") | string)
 priority: (number | string)
 direction: (("Inbound" | "Outbound") | string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -118249,15 +118257,16 @@ location: unknown
 }
 export interface IpConfiguration1 {
 name: string
-properties: {
+properties: IpConfigurationProperties
+[k: string]: unknown
+}
+export interface IpConfigurationProperties {
 subnet: Id1
 privateIPAddress?: string
 privateIPAllocationMethod: (("Dynamic" | "Static") | string)
 publicIPAddress?: Id1
 loadBalancerBackendAddressPools?: Id1[]
 loadBalancerInboundNatRules?: Id1[]
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface NetworkInterfaceDnsSettings {
@@ -118284,12 +118293,13 @@ location: unknown
 }
 export interface Routes {
 name: string
-properties: {
+properties: RouteProperties3
+[k: string]: unknown
+}
+export interface RouteProperties3 {
 addressPrefix: string
 nextHopType: (("VirtualNetworkGateway" | "VnetLocal" | "Internet" | "VirtualAppliance" | "HyperNetGateway" | "None") | string)
 nextHopIpAddress?: string
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -118367,12 +118377,13 @@ dnsServers: string[]
 }
 export interface Subnet3 {
 name: string
-properties: {
+properties: SubnetProperties1
+[k: string]: unknown
+}
+export interface SubnetProperties1 {
 addressPrefix: string
 networkSecurityGroup?: Id2
 routeTable?: Id2
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface Id2 {
@@ -118384,7 +118395,10 @@ export interface VirtualNetworkPeering1 {
  * Gets or sets the name of the resource that is unique within a resource group. This name can be used to access the resource
  */
 name: string
-properties: {
+properties: VirtualNetworkPeeringPropertiesFormat1
+[k: string]: unknown
+}
+export interface VirtualNetworkPeeringPropertiesFormat1 {
 allowVirtualNetworkAccess?: boolean
 allowForwardedTraffic?: boolean
 allowGatewayTransit?: boolean
@@ -118394,8 +118408,6 @@ remoteVirtualNetwork?: Id2
  * Gets the status of the virtual network peering
  */
 peeringState?: ((("Initiated" | "Connected" | "Disconnected") | string) & string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -118455,7 +118467,10 @@ name: string
 }
 export interface LoadBalancingRules1 {
 name: string
-properties: {
+properties: LoadBalancingRulesProperties1
+[k: string]: unknown
+}
+export interface LoadBalancingRulesProperties1 {
 frontendIPConfiguration: Id2
 backendAddressPool: Id2
 protocol: (("Udp" | "Tcp") | string)
@@ -118467,11 +118482,12 @@ idleTimeoutInMinutes?: (number | string)
 loadDistribution?: (("Default" | "SourceIP" | "SourceIPProtocol") | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface Probes1 {
 name: string
-properties: {
+properties: ProbeProperties1
+[k: string]: unknown
+}
+export interface ProbeProperties1 {
 protocol: (("Http" | "Tcp") | string)
 port: (number | string)
 requestPath?: string
@@ -118479,22 +118495,24 @@ intervalInSeconds?: (number | string)
 numberOfProbes?: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatRules1 {
 name: string
-properties: {
+properties: InboundNatRulesProperties1
+[k: string]: unknown
+}
+export interface InboundNatRulesProperties1 {
 frontendIPConfiguration: Id2
 protocol: string
 frontendPort: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatPools1 {
 name: string
-properties: {
+properties: InboundNatPoolsProperties1
+[k: string]: unknown
+}
+export interface InboundNatPoolsProperties1 {
 frontendIPConfiguration: Id2
 protocol: string
 frontendPortRangeStart: (number | string)
@@ -118502,15 +118520,14 @@ frontendPortRangeEnd: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface OutboundNatRules1 {
 name: string
-properties: {
-frontendIPConfigurations: Id2[]
-backendAddressPool: Id2
+properties: OutboundNatRulesProperties1
 [k: string]: unknown
 }
+export interface OutboundNatRulesProperties1 {
+frontendIPConfigurations: Id2[]
+backendAddressPool: Id2
 [k: string]: unknown
 }
 /**
@@ -118532,7 +118549,10 @@ location: unknown
 }
 export interface SecurityRules1 {
 name: string
-properties: {
+properties: SecurityruleProperties1
+[k: string]: unknown
+}
+export interface SecurityruleProperties1 {
 description?: string
 protocol: (("Tcp" | "Udp" | "*") | string)
 sourcePortRange: string
@@ -118542,8 +118562,6 @@ destinationAddressPrefix: string
 access: (("Allow" | "Deny") | string)
 priority: (number | string)
 direction: (("Inbound" | "Outbound") | string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -118577,15 +118595,16 @@ location: unknown
 }
 export interface IpConfiguration2 {
 name: string
-properties: {
+properties: IpConfigurationProperties1
+[k: string]: unknown
+}
+export interface IpConfigurationProperties1 {
 subnet: Id2
 privateIPAddress?: string
 privateIPAllocationMethod: (("Dynamic" | "Static") | string)
 publicIPAddress?: Id2
 loadBalancerBackendAddressPools?: Id2[]
 loadBalancerInboundNatRules?: Id2[]
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface NetworkInterfaceDnsSettings1 {
@@ -118612,12 +118631,13 @@ location: unknown
 }
 export interface Routes1 {
 name: string
-properties: {
+properties: RouteProperties4
+[k: string]: unknown
+}
+export interface RouteProperties4 {
 addressPrefix: string
 nextHopType: (("VirtualNetworkGateway" | "VnetLocal" | "Internet" | "VirtualAppliance" | "HyperNetGateway" | "None") | string)
 nextHopIpAddress?: string
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -118695,12 +118715,13 @@ dnsServers: string[]
 }
 export interface Subnet4 {
 name: string
-properties: {
+properties: SubnetProperties2
+[k: string]: unknown
+}
+export interface SubnetProperties2 {
 addressPrefix: string
 networkSecurityGroup?: Id3
 routeTable?: Id3
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface Id3 {
@@ -118712,7 +118733,10 @@ export interface VirtualNetworkPeering2 {
  * Gets or sets the name of the resource that is unique within a resource group. This name can be used to access the resource
  */
 name: string
-properties: {
+properties: VirtualNetworkPeeringPropertiesFormat2
+[k: string]: unknown
+}
+export interface VirtualNetworkPeeringPropertiesFormat2 {
 allowVirtualNetworkAccess?: boolean
 allowForwardedTraffic?: boolean
 allowGatewayTransit?: boolean
@@ -118722,8 +118746,6 @@ remoteVirtualNetwork?: Id3
  * Gets the status of the virtual network peering
  */
 peeringState?: ((("Initiated" | "Connected" | "Disconnected") | string) & string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -118783,7 +118805,10 @@ name: string
 }
 export interface LoadBalancingRules2 {
 name: string
-properties: {
+properties: LoadBalancingRulesProperties2
+[k: string]: unknown
+}
+export interface LoadBalancingRulesProperties2 {
 frontendIPConfiguration: Id3
 backendAddressPool: Id3
 protocol: (("Udp" | "Tcp") | string)
@@ -118795,11 +118820,12 @@ idleTimeoutInMinutes?: (number | string)
 loadDistribution?: (("Default" | "SourceIP" | "SourceIPProtocol") | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface Probes2 {
 name: string
-properties: {
+properties: ProbeProperties2
+[k: string]: unknown
+}
+export interface ProbeProperties2 {
 protocol: (("Http" | "Tcp") | string)
 port: (number | string)
 requestPath?: string
@@ -118807,22 +118833,24 @@ intervalInSeconds?: (number | string)
 numberOfProbes?: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatRules2 {
 name: string
-properties: {
+properties: InboundNatRulesProperties2
+[k: string]: unknown
+}
+export interface InboundNatRulesProperties2 {
 frontendIPConfiguration: Id3
 protocol: string
 frontendPort: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatPools2 {
 name: string
-properties: {
+properties: InboundNatPoolsProperties2
+[k: string]: unknown
+}
+export interface InboundNatPoolsProperties2 {
 frontendIPConfiguration: Id3
 protocol: string
 frontendPortRangeStart: (number | string)
@@ -118830,15 +118858,14 @@ frontendPortRangeEnd: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface OutboundNatRules2 {
 name: string
-properties: {
-frontendIPConfigurations: Id3[]
-backendAddressPool: Id3
+properties: OutboundNatRulesProperties2
 [k: string]: unknown
 }
+export interface OutboundNatRulesProperties2 {
+frontendIPConfigurations: Id3[]
+backendAddressPool: Id3
 [k: string]: unknown
 }
 /**
@@ -118860,7 +118887,10 @@ location: unknown
 }
 export interface SecurityRules2 {
 name: string
-properties: {
+properties: SecurityruleProperties2
+[k: string]: unknown
+}
+export interface SecurityruleProperties2 {
 description?: string
 protocol: (("Tcp" | "Udp" | "*") | string)
 sourcePortRange: string
@@ -118870,8 +118900,6 @@ destinationAddressPrefix: string
 access: (("Allow" | "Deny") | string)
 priority: (number | string)
 direction: (("Inbound" | "Outbound") | string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -118905,15 +118933,16 @@ location: unknown
 }
 export interface IpConfiguration3 {
 name: string
-properties: {
+properties: IpConfigurationProperties2
+[k: string]: unknown
+}
+export interface IpConfigurationProperties2 {
 subnet: Id3
 privateIPAddress?: string
 privateIPAllocationMethod: (("Dynamic" | "Static") | string)
 publicIPAddress?: Id3
 loadBalancerBackendAddressPools?: Id3[]
 loadBalancerInboundNatRules?: Id3[]
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface NetworkInterfaceDnsSettings2 {
@@ -118940,12 +118969,13 @@ location: unknown
 }
 export interface Routes2 {
 name: string
-properties: {
+properties: RouteProperties5
+[k: string]: unknown
+}
+export interface RouteProperties5 {
 addressPrefix: string
 nextHopType: (("VirtualNetworkGateway" | "VnetLocal" | "Internet" | "VirtualAppliance" | "HyperNetGateway" | "None") | string)
 nextHopIpAddress?: string
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119023,12 +119053,13 @@ dnsServers: string[]
 }
 export interface Subnet5 {
 name: string
-properties: {
+properties: SubnetProperties3
+[k: string]: unknown
+}
+export interface SubnetProperties3 {
 addressPrefix: string
 networkSecurityGroup?: Id4
 routeTable?: Id4
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface Id4 {
@@ -119040,7 +119071,10 @@ export interface VirtualNetworkPeering3 {
  * Gets or sets the name of the resource that is unique within a resource group. This name can be used to access the resource
  */
 name: string
-properties: {
+properties: VirtualNetworkPeeringPropertiesFormat3
+[k: string]: unknown
+}
+export interface VirtualNetworkPeeringPropertiesFormat3 {
 allowVirtualNetworkAccess?: boolean
 allowForwardedTraffic?: boolean
 allowGatewayTransit?: boolean
@@ -119050,8 +119084,6 @@ remoteVirtualNetwork?: Id4
  * Gets the status of the virtual network peering
  */
 peeringState?: ((("Initiated" | "Connected" | "Disconnected") | string) & string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119111,7 +119143,10 @@ name: string
 }
 export interface LoadBalancingRules3 {
 name: string
-properties: {
+properties: LoadBalancingRulesProperties3
+[k: string]: unknown
+}
+export interface LoadBalancingRulesProperties3 {
 frontendIPConfiguration: Id4
 backendAddressPool: Id4
 protocol: (("Udp" | "Tcp") | string)
@@ -119123,11 +119158,12 @@ idleTimeoutInMinutes?: (number | string)
 loadDistribution?: (("Default" | "SourceIP" | "SourceIPProtocol") | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface Probes3 {
 name: string
-properties: {
+properties: ProbeProperties3
+[k: string]: unknown
+}
+export interface ProbeProperties3 {
 protocol: (("Http" | "Tcp") | string)
 port: (number | string)
 requestPath?: string
@@ -119135,22 +119171,24 @@ intervalInSeconds?: (number | string)
 numberOfProbes?: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatRules3 {
 name: string
-properties: {
+properties: InboundNatRulesProperties3
+[k: string]: unknown
+}
+export interface InboundNatRulesProperties3 {
 frontendIPConfiguration: Id4
 protocol: string
 frontendPort: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatPools3 {
 name: string
-properties: {
+properties: InboundNatPoolsProperties3
+[k: string]: unknown
+}
+export interface InboundNatPoolsProperties3 {
 frontendIPConfiguration: Id4
 protocol: string
 frontendPortRangeStart: (number | string)
@@ -119158,15 +119196,14 @@ frontendPortRangeEnd: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface OutboundNatRules3 {
 name: string
-properties: {
-frontendIPConfigurations: Id4[]
-backendAddressPool: Id4
+properties: OutboundNatRulesProperties3
 [k: string]: unknown
 }
+export interface OutboundNatRulesProperties3 {
+frontendIPConfigurations: Id4[]
+backendAddressPool: Id4
 [k: string]: unknown
 }
 /**
@@ -119188,7 +119225,10 @@ location: unknown
 }
 export interface SecurityRules3 {
 name: string
-properties: {
+properties: SecurityruleProperties3
+[k: string]: unknown
+}
+export interface SecurityruleProperties3 {
 description?: string
 protocol: (("Tcp" | "Udp" | "*") | string)
 sourcePortRange: string
@@ -119198,8 +119238,6 @@ destinationAddressPrefix: string
 access: (("Allow" | "Deny") | string)
 priority: (number | string)
 direction: (("Inbound" | "Outbound") | string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119233,15 +119271,16 @@ location: unknown
 }
 export interface IpConfiguration4 {
 name: string
-properties: {
+properties: IpConfigurationProperties3
+[k: string]: unknown
+}
+export interface IpConfigurationProperties3 {
 subnet: Id4
 privateIPAddress?: string
 privateIPAllocationMethod: (("Dynamic" | "Static") | string)
 publicIPAddress?: Id4
 loadBalancerBackendAddressPools?: Id4[]
 loadBalancerInboundNatRules?: Id4[]
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface NetworkInterfaceDnsSettings3 {
@@ -119268,12 +119307,13 @@ location: unknown
 }
 export interface Routes3 {
 name: string
-properties: {
+properties: RouteProperties6
+[k: string]: unknown
+}
+export interface RouteProperties6 {
 addressPrefix: string
 nextHopType: (("VirtualNetworkGateway" | "VnetLocal" | "Internet" | "VirtualAppliance" | "HyperNetGateway" | "None") | string)
 nextHopIpAddress?: string
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119351,12 +119391,13 @@ dnsServers: string[]
 }
 export interface Subnet6 {
 name: string
-properties: {
+properties: SubnetProperties4
+[k: string]: unknown
+}
+export interface SubnetProperties4 {
 addressPrefix: string
 networkSecurityGroup?: Id5
 routeTable?: Id5
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface Id5 {
@@ -119368,7 +119409,10 @@ export interface VirtualNetworkPeering4 {
  * Gets or sets the name of the resource that is unique within a resource group. This name can be used to access the resource
  */
 name: string
-properties: {
+properties: VirtualNetworkPeeringPropertiesFormat4
+[k: string]: unknown
+}
+export interface VirtualNetworkPeeringPropertiesFormat4 {
 allowVirtualNetworkAccess?: boolean
 allowForwardedTraffic?: boolean
 allowGatewayTransit?: boolean
@@ -119378,8 +119422,6 @@ remoteVirtualNetwork?: Id5
  * Gets the status of the virtual network peering
  */
 peeringState?: ((("Initiated" | "Connected" | "Disconnected") | string) & string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119439,7 +119481,10 @@ name: string
 }
 export interface LoadBalancingRules4 {
 name: string
-properties: {
+properties: LoadBalancingRulesProperties4
+[k: string]: unknown
+}
+export interface LoadBalancingRulesProperties4 {
 frontendIPConfiguration: Id5
 backendAddressPool: Id5
 protocol: (("Udp" | "Tcp") | string)
@@ -119451,11 +119496,12 @@ idleTimeoutInMinutes?: (number | string)
 loadDistribution?: (("Default" | "SourceIP" | "SourceIPProtocol") | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface Probes4 {
 name: string
-properties: {
+properties: ProbeProperties4
+[k: string]: unknown
+}
+export interface ProbeProperties4 {
 protocol: (("Http" | "Tcp") | string)
 port: (number | string)
 requestPath?: string
@@ -119463,22 +119509,24 @@ intervalInSeconds?: (number | string)
 numberOfProbes?: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatRules4 {
 name: string
-properties: {
+properties: InboundNatRulesProperties4
+[k: string]: unknown
+}
+export interface InboundNatRulesProperties4 {
 frontendIPConfiguration: Id5
 protocol: string
 frontendPort: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatPools4 {
 name: string
-properties: {
+properties: InboundNatPoolsProperties4
+[k: string]: unknown
+}
+export interface InboundNatPoolsProperties4 {
 frontendIPConfiguration: Id5
 protocol: string
 frontendPortRangeStart: (number | string)
@@ -119486,15 +119534,14 @@ frontendPortRangeEnd: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface OutboundNatRules4 {
 name: string
-properties: {
-frontendIPConfigurations: Id5[]
-backendAddressPool: Id5
+properties: OutboundNatRulesProperties4
 [k: string]: unknown
 }
+export interface OutboundNatRulesProperties4 {
+frontendIPConfigurations: Id5[]
+backendAddressPool: Id5
 [k: string]: unknown
 }
 /**
@@ -119516,7 +119563,10 @@ location: unknown
 }
 export interface SecurityRules4 {
 name: string
-properties: {
+properties: SecurityruleProperties4
+[k: string]: unknown
+}
+export interface SecurityruleProperties4 {
 description?: string
 protocol: (("Tcp" | "Udp" | "*") | string)
 sourcePortRange: string
@@ -119526,8 +119576,6 @@ destinationAddressPrefix: string
 access: (("Allow" | "Deny") | string)
 priority: (number | string)
 direction: (("Inbound" | "Outbound") | string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119561,15 +119609,16 @@ location: unknown
 }
 export interface IpConfiguration5 {
 name: string
-properties: {
+properties: IpConfigurationProperties4
+[k: string]: unknown
+}
+export interface IpConfigurationProperties4 {
 subnet: Id5
 privateIPAddress?: string
 privateIPAllocationMethod: (("Dynamic" | "Static") | string)
 publicIPAddress?: Id5
 loadBalancerBackendAddressPools?: Id5[]
 loadBalancerInboundNatRules?: Id5[]
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface NetworkInterfaceDnsSettings4 {
@@ -119596,12 +119645,13 @@ location: unknown
 }
 export interface Routes4 {
 name: string
-properties: {
+properties: RouteProperties7
+[k: string]: unknown
+}
+export interface RouteProperties7 {
 addressPrefix: string
 nextHopType: (("VirtualNetworkGateway" | "VnetLocal" | "Internet" | "VirtualAppliance" | "HyperNetGateway" | "None") | string)
 nextHopIpAddress?: string
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119679,12 +119729,13 @@ dnsServers: string[]
 }
 export interface Subnet7 {
 name: string
-properties: {
+properties: SubnetProperties5
+[k: string]: unknown
+}
+export interface SubnetProperties5 {
 addressPrefix: string
 networkSecurityGroup?: Id6
 routeTable?: Id6
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface Id6 {
@@ -119696,7 +119747,10 @@ export interface VirtualNetworkPeering5 {
  * Gets or sets the name of the resource that is unique within a resource group. This name can be used to access the resource
  */
 name: string
-properties: {
+properties: VirtualNetworkPeeringPropertiesFormat5
+[k: string]: unknown
+}
+export interface VirtualNetworkPeeringPropertiesFormat5 {
 allowVirtualNetworkAccess?: boolean
 allowForwardedTraffic?: boolean
 allowGatewayTransit?: boolean
@@ -119706,8 +119760,6 @@ remoteVirtualNetwork?: Id6
  * Gets the status of the virtual network peering
  */
 peeringState?: ((("Initiated" | "Connected" | "Disconnected") | string) & string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119767,7 +119819,10 @@ name: string
 }
 export interface LoadBalancingRules5 {
 name: string
-properties: {
+properties: LoadBalancingRulesProperties5
+[k: string]: unknown
+}
+export interface LoadBalancingRulesProperties5 {
 frontendIPConfiguration: Id6
 backendAddressPool: Id6
 protocol: (("Udp" | "Tcp") | string)
@@ -119779,11 +119834,12 @@ idleTimeoutInMinutes?: (number | string)
 loadDistribution?: (("Default" | "SourceIP" | "SourceIPProtocol") | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface Probes5 {
 name: string
-properties: {
+properties: ProbeProperties5
+[k: string]: unknown
+}
+export interface ProbeProperties5 {
 protocol: (("Http" | "Tcp") | string)
 port: (number | string)
 requestPath?: string
@@ -119791,22 +119847,24 @@ intervalInSeconds?: (number | string)
 numberOfProbes?: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatRules5 {
 name: string
-properties: {
+properties: InboundNatRulesProperties5
+[k: string]: unknown
+}
+export interface InboundNatRulesProperties5 {
 frontendIPConfiguration: Id6
 protocol: string
 frontendPort: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatPools5 {
 name: string
-properties: {
+properties: InboundNatPoolsProperties5
+[k: string]: unknown
+}
+export interface InboundNatPoolsProperties5 {
 frontendIPConfiguration: Id6
 protocol: string
 frontendPortRangeStart: (number | string)
@@ -119814,15 +119872,14 @@ frontendPortRangeEnd: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface OutboundNatRules5 {
 name: string
-properties: {
-frontendIPConfigurations: Id6[]
-backendAddressPool: Id6
+properties: OutboundNatRulesProperties5
 [k: string]: unknown
 }
+export interface OutboundNatRulesProperties5 {
+frontendIPConfigurations: Id6[]
+backendAddressPool: Id6
 [k: string]: unknown
 }
 /**
@@ -119844,7 +119901,10 @@ location: unknown
 }
 export interface SecurityRules5 {
 name: string
-properties: {
+properties: SecurityruleProperties5
+[k: string]: unknown
+}
+export interface SecurityruleProperties5 {
 description?: string
 protocol: (("Tcp" | "Udp" | "*") | string)
 sourcePortRange: string
@@ -119854,8 +119914,6 @@ destinationAddressPrefix: string
 access: (("Allow" | "Deny") | string)
 priority: (number | string)
 direction: (("Inbound" | "Outbound") | string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -119889,15 +119947,16 @@ location: unknown
 }
 export interface IpConfiguration6 {
 name: string
-properties: {
+properties: IpConfigurationProperties5
+[k: string]: unknown
+}
+export interface IpConfigurationProperties5 {
 subnet: Id6
 privateIPAddress?: string
 privateIPAllocationMethod: (("Dynamic" | "Static") | string)
 publicIPAddress?: Id6
 loadBalancerBackendAddressPools?: Id6[]
 loadBalancerInboundNatRules?: Id6[]
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface NetworkInterfaceDnsSettings5 {
@@ -119924,12 +119983,13 @@ location: unknown
 }
 export interface Routes5 {
 name: string
-properties: {
+properties: RouteProperties8
+[k: string]: unknown
+}
+export interface RouteProperties8 {
 addressPrefix: string
 nextHopType: (("VirtualNetworkGateway" | "VnetLocal" | "Internet" | "VirtualAppliance" | "HyperNetGateway" | "None") | string)
 nextHopIpAddress?: string
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -120007,12 +120067,13 @@ dnsServers: string[]
 }
 export interface Subnet8 {
 name: string
-properties: {
+properties: SubnetProperties6
+[k: string]: unknown
+}
+export interface SubnetProperties6 {
 addressPrefix: string
 networkSecurityGroup?: Id7
 routeTable?: Id7
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface Id7 {
@@ -120024,7 +120085,10 @@ export interface VirtualNetworkPeering6 {
  * Gets or sets the name of the resource that is unique within a resource group. This name can be used to access the resource
  */
 name: string
-properties: {
+properties: VirtualNetworkPeeringPropertiesFormat6
+[k: string]: unknown
+}
+export interface VirtualNetworkPeeringPropertiesFormat6 {
 allowVirtualNetworkAccess?: boolean
 allowForwardedTraffic?: boolean
 allowGatewayTransit?: boolean
@@ -120034,8 +120098,6 @@ remoteVirtualNetwork?: Id7
  * Gets the status of the virtual network peering
  */
 peeringState?: ((("Initiated" | "Connected" | "Disconnected") | string) & string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -120095,7 +120157,10 @@ name: string
 }
 export interface LoadBalancingRules6 {
 name: string
-properties: {
+properties: LoadBalancingRulesProperties6
+[k: string]: unknown
+}
+export interface LoadBalancingRulesProperties6 {
 frontendIPConfiguration: Id7
 backendAddressPool: Id7
 protocol: (("Udp" | "Tcp") | string)
@@ -120107,11 +120172,12 @@ idleTimeoutInMinutes?: (number | string)
 loadDistribution?: (("Default" | "SourceIP" | "SourceIPProtocol") | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface Probes6 {
 name: string
-properties: {
+properties: ProbeProperties6
+[k: string]: unknown
+}
+export interface ProbeProperties6 {
 protocol: (("Http" | "Tcp") | string)
 port: (number | string)
 requestPath?: string
@@ -120119,22 +120185,24 @@ intervalInSeconds?: (number | string)
 numberOfProbes?: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatRules6 {
 name: string
-properties: {
+properties: InboundNatRulesProperties6
+[k: string]: unknown
+}
+export interface InboundNatRulesProperties6 {
 frontendIPConfiguration: Id7
 protocol: string
 frontendPort: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatPools6 {
 name: string
-properties: {
+properties: InboundNatPoolsProperties6
+[k: string]: unknown
+}
+export interface InboundNatPoolsProperties6 {
 frontendIPConfiguration: Id7
 protocol: string
 frontendPortRangeStart: (number | string)
@@ -120142,15 +120210,14 @@ frontendPortRangeEnd: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface OutboundNatRules6 {
 name: string
-properties: {
-frontendIPConfigurations: Id7[]
-backendAddressPool: Id7
+properties: OutboundNatRulesProperties6
 [k: string]: unknown
 }
+export interface OutboundNatRulesProperties6 {
+frontendIPConfigurations: Id7[]
+backendAddressPool: Id7
 [k: string]: unknown
 }
 /**
@@ -120172,7 +120239,10 @@ location: unknown
 }
 export interface SecurityRules6 {
 name: string
-properties: {
+properties: SecurityruleProperties6
+[k: string]: unknown
+}
+export interface SecurityruleProperties6 {
 description?: string
 protocol: (("Tcp" | "Udp" | "*") | string)
 sourcePortRange: string
@@ -120182,8 +120252,6 @@ destinationAddressPrefix: string
 access: (("Allow" | "Deny") | string)
 priority: (number | string)
 direction: (("Inbound" | "Outbound") | string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -120217,15 +120285,16 @@ location: unknown
 }
 export interface IpConfiguration7 {
 name: string
-properties: {
+properties: IpConfigurationProperties6
+[k: string]: unknown
+}
+export interface IpConfigurationProperties6 {
 subnet: Id7
 privateIPAddress?: string
 privateIPAllocationMethod: (("Dynamic" | "Static") | string)
 publicIPAddress?: Id7
 loadBalancerBackendAddressPools?: Id7[]
 loadBalancerInboundNatRules?: Id7[]
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface NetworkInterfaceDnsSettings6 {
@@ -120252,12 +120321,13 @@ location: unknown
 }
 export interface Routes6 {
 name: string
-properties: {
+properties: RouteProperties9
+[k: string]: unknown
+}
+export interface RouteProperties9 {
 addressPrefix: string
 nextHopType: (("VirtualNetworkGateway" | "VnetLocal" | "Internet" | "VirtualAppliance" | "HyperNetGateway" | "None") | string)
 nextHopIpAddress?: string
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -120335,12 +120405,13 @@ dnsServers: string[]
 }
 export interface Subnet9 {
 name: string
-properties: {
+properties: SubnetProperties7
+[k: string]: unknown
+}
+export interface SubnetProperties7 {
 addressPrefix: string
 networkSecurityGroup?: Id8
 routeTable?: Id8
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface Id8 {
@@ -120352,7 +120423,10 @@ export interface VirtualNetworkPeering7 {
  * Gets or sets the name of the resource that is unique within a resource group. This name can be used to access the resource
  */
 name: string
-properties: {
+properties: VirtualNetworkPeeringPropertiesFormat7
+[k: string]: unknown
+}
+export interface VirtualNetworkPeeringPropertiesFormat7 {
 allowVirtualNetworkAccess?: boolean
 allowForwardedTraffic?: boolean
 allowGatewayTransit?: boolean
@@ -120362,8 +120436,6 @@ remoteVirtualNetwork?: Id8
  * Gets the status of the virtual network peering
  */
 peeringState?: ((("Initiated" | "Connected" | "Disconnected") | string) & string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -120423,7 +120495,10 @@ name: string
 }
 export interface LoadBalancingRules7 {
 name: string
-properties: {
+properties: LoadBalancingRulesProperties7
+[k: string]: unknown
+}
+export interface LoadBalancingRulesProperties7 {
 frontendIPConfiguration: Id8
 backendAddressPool: Id8
 protocol: (("Udp" | "Tcp") | string)
@@ -120435,11 +120510,12 @@ idleTimeoutInMinutes?: (number | string)
 loadDistribution?: (("Default" | "SourceIP" | "SourceIPProtocol") | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface Probes7 {
 name: string
-properties: {
+properties: ProbeProperties7
+[k: string]: unknown
+}
+export interface ProbeProperties7 {
 protocol: (("Http" | "Tcp") | string)
 port: (number | string)
 requestPath?: string
@@ -120447,22 +120523,24 @@ intervalInSeconds?: (number | string)
 numberOfProbes?: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatRules7 {
 name: string
-properties: {
+properties: InboundNatRulesProperties7
+[k: string]: unknown
+}
+export interface InboundNatRulesProperties7 {
 frontendIPConfiguration: Id8
 protocol: string
 frontendPort: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface InboundNatPools7 {
 name: string
-properties: {
+properties: InboundNatPoolsProperties7
+[k: string]: unknown
+}
+export interface InboundNatPoolsProperties7 {
 frontendIPConfiguration: Id8
 protocol: string
 frontendPortRangeStart: (number | string)
@@ -120470,15 +120548,14 @@ frontendPortRangeEnd: (number | string)
 backendPort: (number | string)
 [k: string]: unknown
 }
-[k: string]: unknown
-}
 export interface OutboundNatRules7 {
 name: string
-properties: {
-frontendIPConfigurations: Id8[]
-backendAddressPool: Id8
+properties: OutboundNatRulesProperties7
 [k: string]: unknown
 }
+export interface OutboundNatRulesProperties7 {
+frontendIPConfigurations: Id8[]
+backendAddressPool: Id8
 [k: string]: unknown
 }
 /**
@@ -120500,7 +120577,10 @@ location: unknown
 }
 export interface SecurityRules7 {
 name: string
-properties: {
+properties: SecurityruleProperties7
+[k: string]: unknown
+}
+export interface SecurityruleProperties7 {
 description?: string
 protocol: (("Tcp" | "Udp" | "*") | string)
 sourcePortRange: string
@@ -120510,8 +120590,6 @@ destinationAddressPrefix: string
 access: (("Allow" | "Deny") | string)
 priority: (number | string)
 direction: (("Inbound" | "Outbound") | string)
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -120545,15 +120623,16 @@ location: unknown
 }
 export interface IpConfiguration8 {
 name: string
-properties: {
+properties: IpConfigurationProperties7
+[k: string]: unknown
+}
+export interface IpConfigurationProperties7 {
 subnet: Id8
 privateIPAddress?: string
 privateIPAllocationMethod: (("Dynamic" | "Static") | string)
 publicIPAddress?: Id8
 loadBalancerBackendAddressPools?: Id8[]
 loadBalancerInboundNatRules?: Id8[]
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 export interface NetworkInterfaceDnsSettings7 {
@@ -120580,12 +120659,13 @@ location: unknown
 }
 export interface Routes7 {
 name: string
-properties: {
+properties: RouteProperties10
+[k: string]: unknown
+}
+export interface RouteProperties10 {
 addressPrefix: string
 nextHopType: (("VirtualNetworkGateway" | "VnetLocal" | "Internet" | "VirtualAppliance" | "HyperNetGateway" | "None") | string)
 nextHopIpAddress?: string
-[k: string]: unknown
-}
 [k: string]: unknown
 }
 /**
@@ -120829,7 +120909,7 @@ link?: string
  * Peerings in a virtual network resource.
  */
 export interface VirtualNetworkPeering8 {
-properties?: (VirtualNetworkPeeringPropertiesFormat | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat8 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -120840,7 +120920,7 @@ name: string
 etag?: string
 [k: string]: unknown
 }
-export interface VirtualNetworkPeeringPropertiesFormat {
+export interface VirtualNetworkPeeringPropertiesFormat8 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -120878,7 +120958,7 @@ export interface VirtualNetworksVirtualNetworkPeeringsChildResource {
 name: string
 type: "virtualNetworkPeerings"
 apiVersion: "2017-06-01"
-properties: (VirtualNetworkPeeringPropertiesFormat | string)
+properties: (VirtualNetworkPeeringPropertiesFormat8 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -122899,7 +122979,7 @@ export interface VirtualNetworksVirtualNetworkPeerings {
 name: string
 type: "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
 apiVersion: "2017-06-01"
-properties: (VirtualNetworkPeeringPropertiesFormat | string)
+properties: (VirtualNetworkPeeringPropertiesFormat8 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -133075,7 +133155,7 @@ export interface VirtualNetworkPeering9 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat1 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat9 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -133089,7 +133169,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat1 {
+export interface VirtualNetworkPeeringPropertiesFormat9 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -133130,7 +133210,7 @@ apiVersion: "2017-08-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat1 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat9 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -135307,7 +135387,7 @@ apiVersion: "2017-08-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat1 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat9 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -135659,7 +135739,7 @@ export interface VirtualNetworkPeering10 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat2 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat10 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -135673,7 +135753,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat2 {
+export interface VirtualNetworkPeeringPropertiesFormat10 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -135718,7 +135798,7 @@ apiVersion: "2017-09-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat2 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat10 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -137789,7 +137869,7 @@ export interface VirtualNetworkPeering11 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat3 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat11 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -137803,7 +137883,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat3 {
+export interface VirtualNetworkPeeringPropertiesFormat11 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -137848,7 +137928,7 @@ apiVersion: "2017-10-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat3 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat11 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -141021,7 +141101,7 @@ apiVersion: "2017-09-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat2 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat10 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -142074,7 +142154,7 @@ apiVersion: "2017-10-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat3 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat11 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -142474,7 +142554,7 @@ export interface VirtualNetworkPeering12 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat4 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat12 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -142488,7 +142568,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat4 {
+export interface VirtualNetworkPeeringPropertiesFormat12 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -142533,7 +142613,7 @@ apiVersion: "2017-11-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat4 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat12 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -144749,7 +144829,7 @@ apiVersion: "2017-11-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat4 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat12 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -155690,7 +155770,7 @@ export interface VirtualNetworkPeering13 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat5 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat13 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -155704,7 +155784,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat5 {
+export interface VirtualNetworkPeeringPropertiesFormat13 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -155749,7 +155829,7 @@ apiVersion: "2018-01-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat5 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat13 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -157973,7 +158053,7 @@ apiVersion: "2018-01-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat5 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat13 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -158860,7 +158940,7 @@ export interface VirtualNetworkPeering14 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat6 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat14 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -158874,7 +158954,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat6 {
+export interface VirtualNetworkPeeringPropertiesFormat14 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -158919,7 +158999,7 @@ apiVersion: "2018-02-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat6 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat14 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -163602,7 +163682,7 @@ export interface VirtualNetworkPeering15 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat7 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat15 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -163616,7 +163696,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat7 {
+export interface VirtualNetworkPeeringPropertiesFormat15 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -163661,7 +163741,7 @@ apiVersion: "2018-04-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat7 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat15 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -163712,7 +163792,7 @@ apiVersion: "2018-04-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat7 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat15 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -167693,7 +167773,7 @@ export interface VirtualNetworkPeering16 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat8 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat16 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -167707,7 +167787,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat8 {
+export interface VirtualNetworkPeeringPropertiesFormat16 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -167752,7 +167832,7 @@ apiVersion: "2018-06-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat8 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat16 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -167803,7 +167883,7 @@ apiVersion: "2018-06-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat8 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat16 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -172034,7 +172114,7 @@ export interface VirtualNetworkPeering17 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat9 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat17 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -172048,7 +172128,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat9 {
+export interface VirtualNetworkPeeringPropertiesFormat17 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -172093,7 +172173,7 @@ apiVersion: "2018-07-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat9 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat17 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -172144,7 +172224,7 @@ apiVersion: "2018-07-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat9 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat17 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -173331,7 +173411,7 @@ export interface VirtualNetworkPeering18 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat10 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat18 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -173345,7 +173425,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat10 {
+export interface VirtualNetworkPeeringPropertiesFormat18 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -173390,7 +173470,7 @@ apiVersion: "2018-08-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat10 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat18 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -175890,7 +175970,7 @@ apiVersion: "2018-08-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat10 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat18 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -176944,7 +177024,7 @@ export interface VirtualNetworkPeering19 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat11 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat19 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -176958,7 +177038,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat11 {
+export interface VirtualNetworkPeeringPropertiesFormat19 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -177003,7 +177083,7 @@ apiVersion: "2018-10-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat11 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat19 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -180050,7 +180130,7 @@ export interface VirtualNetworkPeering20 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat12 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat20 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -180064,7 +180144,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat12 {
+export interface VirtualNetworkPeeringPropertiesFormat20 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -180109,7 +180189,7 @@ apiVersion: "2018-12-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat12 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat20 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -183382,7 +183462,7 @@ export interface VirtualNetworkPeering21 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat13 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat21 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -183396,7 +183476,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat13 {
+export interface VirtualNetworkPeeringPropertiesFormat21 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -183441,7 +183521,7 @@ apiVersion: "2019-02-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat13 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat21 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -190714,7 +190794,7 @@ export interface VirtualNetworkPeering22 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat14 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat22 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -190724,7 +190804,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat14 {
+export interface VirtualNetworkPeeringPropertiesFormat22 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -190765,7 +190845,7 @@ apiVersion: "2019-04-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat14 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat22 | string)
 [k: string]: unknown
 }
 /**
@@ -190804,7 +190884,7 @@ apiVersion: "2019-04-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat14 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat22 | string)
 [k: string]: unknown
 }
 /**
@@ -196244,7 +196324,7 @@ export interface VirtualNetworkPeering23 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat15 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat23 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -196254,7 +196334,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat15 {
+export interface VirtualNetworkPeeringPropertiesFormat23 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -196295,7 +196375,7 @@ apiVersion: "2019-06-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat15 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat23 | string)
 [k: string]: unknown
 }
 /**
@@ -196334,7 +196414,7 @@ apiVersion: "2019-06-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat15 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat23 | string)
 [k: string]: unknown
 }
 /**
@@ -201858,7 +201938,7 @@ export interface VirtualNetworkPeering24 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat16 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat24 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -201868,7 +201948,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat16 {
+export interface VirtualNetworkPeeringPropertiesFormat24 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -201909,7 +201989,7 @@ apiVersion: "2019-07-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat16 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat24 | string)
 [k: string]: unknown
 }
 /**
@@ -201948,7 +202028,7 @@ apiVersion: "2019-07-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat16 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat24 | string)
 [k: string]: unknown
 }
 /**
@@ -207850,7 +207930,7 @@ export interface VirtualNetworkPeering25 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat17 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat25 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -207860,7 +207940,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat17 {
+export interface VirtualNetworkPeeringPropertiesFormat25 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -207911,7 +207991,7 @@ apiVersion: "2019-08-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat17 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat25 | string)
 [k: string]: unknown
 }
 /**
@@ -207950,7 +208030,7 @@ apiVersion: "2019-08-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat17 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat25 | string)
 [k: string]: unknown
 }
 /**
@@ -213712,7 +213792,7 @@ export interface VirtualNetworkPeering26 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat18 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat26 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -213722,7 +213802,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat18 {
+export interface VirtualNetworkPeeringPropertiesFormat26 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -213773,7 +213853,7 @@ apiVersion: "2019-09-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat18 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat26 | string)
 [k: string]: unknown
 }
 /**
@@ -213812,7 +213892,7 @@ apiVersion: "2019-09-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat18 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat26 | string)
 [k: string]: unknown
 }
 /**
@@ -215042,7 +215122,7 @@ apiVersion: "2019-02-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat13 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat21 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -215656,7 +215736,7 @@ apiVersion: "2018-12-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat12 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat20 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -216606,7 +216686,7 @@ export interface VirtualNetworkPeering27 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat19 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat27 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -216620,7 +216700,7 @@ etag?: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat19 {
+export interface VirtualNetworkPeeringPropertiesFormat27 {
 /**
  * Whether the VMs in the linked virtual network space would be able to access all the VMs in local Virtual network space.
  */
@@ -216665,7 +216745,7 @@ apiVersion: "2018-11-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat19 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat27 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -219272,7 +219352,7 @@ apiVersion: "2018-11-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat19 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat27 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -219937,7 +220017,7 @@ apiVersion: "2018-10-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat11 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat19 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -221364,7 +221444,7 @@ apiVersion: "2018-02-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat6 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat14 | string)
 /**
  * A unique read-only string that changes whenever the resource is updated.
  */
@@ -228164,7 +228244,7 @@ export interface VirtualNetworkPeering28 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat20 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat28 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -228174,7 +228254,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat20 {
+export interface VirtualNetworkPeeringPropertiesFormat28 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -228225,7 +228305,7 @@ apiVersion: "2019-11-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat20 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat28 | string)
 [k: string]: unknown
 }
 /**
@@ -228264,7 +228344,7 @@ apiVersion: "2019-11-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat20 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat28 | string)
 [k: string]: unknown
 }
 /**
@@ -235196,13 +235276,13 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat21 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat29 | string)
 [k: string]: unknown
 }
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat21 {
+export interface VirtualNetworkPeeringPropertiesFormat29 {
 /**
  * Whether the forwarded traffic from the VMs in the local virtual network will be allowed/disallowed in remote virtual network.
  */
@@ -235261,7 +235341,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat21 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat29 | string)
 type: "virtualNetworkPeerings"
 [k: string]: unknown
 }
@@ -235293,7 +235373,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat21 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat29 | string)
 type: "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
 [k: string]: unknown
 }
@@ -242033,7 +242113,7 @@ export interface VirtualNetworkPeering30 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat22 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat30 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -242043,7 +242123,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat22 {
+export interface VirtualNetworkPeeringPropertiesFormat30 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -242094,7 +242174,7 @@ apiVersion: "2020-03-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat22 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat30 | string)
 [k: string]: unknown
 }
 /**
@@ -242133,7 +242213,7 @@ apiVersion: "2020-03-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat22 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat30 | string)
 [k: string]: unknown
 }
 /**
@@ -246217,7 +246297,7 @@ export interface VirtualNetworkPeering31 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat23 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat31 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -246227,7 +246307,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat23 {
+export interface VirtualNetworkPeeringPropertiesFormat31 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -249257,7 +249337,7 @@ apiVersion: "2020-04-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat23 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat31 | string)
 [k: string]: unknown
 }
 /**
@@ -249296,7 +249376,7 @@ apiVersion: "2020-04-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat23 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat31 | string)
 [k: string]: unknown
 }
 /**
@@ -256693,7 +256773,7 @@ export interface VirtualNetworkPeering32 {
 /**
  * Properties of the virtual network peering.
  */
-properties?: (VirtualNetworkPeeringPropertiesFormat24 | string)
+properties?: (VirtualNetworkPeeringPropertiesFormat32 | string)
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
  */
@@ -256703,7 +256783,7 @@ name: string
 /**
  * Properties of the virtual network peering.
  */
-export interface VirtualNetworkPeeringPropertiesFormat24 {
+export interface VirtualNetworkPeeringPropertiesFormat32 {
 /**
  * Whether the VMs in the local virtual network space would be able to access the VMs in remote virtual network space.
  */
@@ -256754,7 +256834,7 @@ apiVersion: "2020-05-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat24 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat32 | string)
 [k: string]: unknown
 }
 /**
@@ -256793,7 +256873,7 @@ apiVersion: "2020-05-01"
 /**
  * Properties of the virtual network peering.
  */
-properties: (VirtualNetworkPeeringPropertiesFormat24 | string)
+properties: (VirtualNetworkPeeringPropertiesFormat32 | string)
 [k: string]: unknown
 }
 /**
@@ -362836,11 +362916,11 @@ exports[`realWorld.swagger.2.ts 1`] = `
  */
 
 export interface RealWorldSwagger {
-  definitions?: Definitions;
+  definitions?: Schema;
   [k: string]: unknown;
 }
-export interface Definitions {
-  additionalProperties?: Definitions;
+export interface Schema {
+  additionalProperties?: Schema;
   [k: string]: unknown;
 }
 "
@@ -374637,6 +374717,110 @@ export interface RequiredUndeclaredKeys {
       } & {
         a?: string;
       });
+}
+"
+`;
+
+exports[`arrayMaxItemsSharedDefinition.ts 1`] = `
+"/* eslint-disable */
+/**
+ * This file was automatically generated by json-schema-to-typescript.
+ * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
+ * and run json-schema-to-typescript to regenerate this file.
+ */
+
+/**
+ * @minItems 1
+ * @maxItems 5
+ */
+export type Row = [string, ...string[]];
+/**
+ * @minItems 1
+ * @maxItems 5
+ */
+export type Row2 = [string, ...string[]];
+
+export interface ArrayMaxItemsSharedDefinition {
+  /**
+   * @maxItems 10
+   */
+  definitionsFirst?:
+    | []
+    | [Row]
+    | [Row, Row]
+    | [Row, Row, Row]
+    | [Row, Row, Row, Row]
+    | [Row, Row, Row, Row, Row]
+    | [Row, Row, Row, Row, Row, Row]
+    | [Row, Row, Row, Row, Row, Row, Row]
+    | [Row, Row, Row, Row, Row, Row, Row, Row]
+    | [Row, Row, Row, Row, Row, Row, Row, Row, Row]
+    | [Row, Row, Row, Row, Row, Row, Row, Row, Row, Row];
+  /**
+   * @maxItems 10
+   */
+  itemsFirst?:
+    | []
+    | [Row2]
+    | [Row2, Row2]
+    | [Row2, Row2, Row2]
+    | [Row2, Row2, Row2, Row2]
+    | [Row2, Row2, Row2, Row2, Row2]
+    | [Row2, Row2, Row2, Row2, Row2, Row2]
+    | [Row2, Row2, Row2, Row2, Row2, Row2, Row2]
+    | [Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2]
+    | [Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2]
+    | [Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2];
+}
+"
+`;
+
+exports[`keywordNamedProperties.ts 1`] = `
+"/* eslint-disable */
+/**
+ * This file was automatically generated by json-schema-to-typescript.
+ * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
+ * and run json-schema-to-typescript to regenerate this file.
+ */
+
+export interface KeywordNamedProperties {
+  properties?: Settings;
+  config?: {
+    current?: Settings;
+    [k: string]: unknown;
+  };
+  enum?: Choice;
+  x?: Required;
+  y?: Required;
+  not?: Not;
+  [k: string]:
+    | Not
+    | Settings
+    | {
+        current?: Settings;
+        [k: string]: unknown;
+      }
+    | Choice
+    | Required
+    | undefined;
+}
+export interface Settings {
+  a?: string;
+}
+export interface Choice {
+  c?: boolean;
+  [k: string]: unknown;
+}
+export interface Required {
+  b?: number;
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`KeywordNamedProperties\`'s JSON-Schema definition
+ * via the \`patternProperty\` "^z".
+ */
+export interface Not {
+  d?: number;
 }
 "
 `;

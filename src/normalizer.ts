@@ -1,12 +1,4 @@
-import {
-  DefinitionKey,
-  isBoolean,
-  isPrimitive,
-  LinkedJSONSchema,
-  NormalizedJSONSchema,
-  Parent,
-  Shared,
-} from './types/JSONSchema'
+import {DefinitionKey, isBoolean, isPrimitive, LinkedJSONSchema, NormalizedJSONSchema, Shared} from './types/JSONSchema'
 import {formatTypeOf, hasType, isSchemaLike, justName, log, narrowType, toSafeString, traverse} from './utils'
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
@@ -20,6 +12,7 @@ type Rule = (
   fileName: string,
   options: Options,
   key: string | null,
+  parent: LinkedJSONSchema | null,
   dereferencedPaths: DereferencedPaths,
   rootSchema: LinkedJSONSchema,
 ) => void
@@ -76,7 +69,7 @@ rules.set('Destructure unary types', schema => {
 // parent's `type`, a typed one is narrowed to the types both admit, and a member left with no
 // type at all can never match and is dropped. Runs this early so that the rules below normalize
 // an inherited `array` like a declared one.
-rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, _options, _key, dereferencedPaths) => {
+rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, _o, _k, _p, dereferencedPaths) => {
   const {type} = schema
   if ((typeof type !== 'string' && !Array.isArray(type)) || !(schema.anyOf || schema.oneOf)) {
     return
@@ -281,8 +274,8 @@ rules.set('Mark every property required when `minProperties` covers them all', s
   schema.required = propertyNames
 })
 
-rules.set('Transform id to $id', (schema, fileName) => {
-  if (!isSchemaLike(schema)) {
+rules.set('Transform id to $id', (schema, fileName, _options, _key, parent) => {
+  if (!isSchemaLike(schema, parent)) {
     return
   }
   if (schema.id && schema.$id && schema.id !== schema.$id) {
@@ -296,8 +289,8 @@ rules.set('Transform id to $id', (schema, fileName) => {
   }
 })
 
-rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _key, dereferencedPaths, rootSchema) => {
-  if (!isSchemaLike(schema)) {
+rules.set('Add an $id to anything that needs it', (schema, fileName, _o, _k, parent, dereferencedPaths, rootSchema) => {
+  if (!isSchemaLike(schema, parent)) {
     return
   }
 
@@ -377,40 +370,39 @@ rules.set('Normalize schema.minItems', (schema, _fileName, options) => {
   // cannot normalize maxItems because maxItems = 0 has an actual meaning
 })
 
-rules.set('Remove maxItems if it is big enough to likely cause OOMs', (schema, _fileName, options) => {
+// What an array schema's `items` get multiplied by (below): noted when the walk reaches the
+// array, read when it reaches the `items`
+const itemsMultipliers = new WeakMap<LinkedJSONSchema, number>()
+
+rules.set('Remove maxItems if it is big enough to likely cause OOMs', (schema, _fileName, options, _key, parent) => {
   if (options.ignoreMinAndMaxItems || options.maxItems === -1) {
     return
   }
   if (!isArrayType(schema)) {
     return
   }
-  const {maxItems, minItems} = schema
-  // minItems is guaranteed to be a number after the previous rule runs
-  if (maxItems === undefined) {
-    return
-  }
   // A tuple isn't expanded in isolation: it's expanded once for every combination of
   // its enclosing bounded arrays, so nested bounded arrays multiply together (an array
   // of N arrays of M items can emit up to N*M item combinations). Fold in that
   // multiplier so we don't only catch schemas that are too big on their own while
-  // missing ones that are only too big once nested. Ancestors are already normalized
-  // by the time we get here, since rules traverse parent-first.
-  let ancestorMultiplier = 1
-  let child: LinkedJSONSchema = schema
-  let parent = schema[Parent]
-  while (parent && isArrayType(parent) && parent.items === child) {
-    const {maxItems: parentMaxItems, minItems: parentMinItems} = parent
-    ancestorMultiplier *= typeof parentMaxItems === 'number' ? parentMaxItems : (parentMinItems as number) || 1
-    child = parent
-    parent = parent[Parent]
+  // missing ones that are only too big once nested. The array around this one is
+  // already normalized by the time we get here, since rules traverse parent-first.
+  let multiplier = 1
+  if (parent !== null && parent.items === schema && isArrayType(parent)) {
+    const {maxItems, minItems} = parent
+    multiplier =
+      (itemsMultipliers.get(parent) ?? 1) * (typeof maxItems === 'number' ? maxItems : (minItems as number) || 1)
   }
-  if ((maxItems - (minItems as number)) * ancestorMultiplier > options.maxItems) {
+  itemsMultipliers.set(schema, multiplier)
+  const {maxItems, minItems} = schema
+  // minItems is guaranteed to be a number after the previous rule runs
+  if (maxItems !== undefined && (maxItems - (minItems as number)) * multiplier > options.maxItems) {
     delete schema.maxItems
   }
 })
 
-// The rule above compares each ancestor's `items` with the schema below it, so it has to have
-// run everywhere before this one rewrites any `items` into a tuple
+// The rule above compares the `items` of the array around each schema with it, so it has to
+// have run everywhere before this one rewrites any `items` into a tuple
 startNewPass()
 
 rules.set('Normalize schema.items', (schema, _fileName, options) => {
@@ -525,7 +517,7 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
 // ones after it get to see.
 startNewPass()
 
-rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, dereferencedPaths, rootSchema) => {
+rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, _p, dereferencedPaths, rootSchema) => {
   // The name a TypeScript enum gets in this position: the definition it was dereferenced
   // from, else the key it sits under (unless that is just an index into anyOf/items)
   const dereferencedName = dereferencedPaths.get(schema)
@@ -587,9 +579,9 @@ export function normalize(
   options: Options,
 ): NormalizedJSONSchema {
   passes.forEach(pass =>
-    traverse(rootSchema, (schema, key) => {
+    traverse(rootSchema, (schema, key, parent) => {
       for (const rule of pass) {
-        rule(schema, filename, options, key, dereferencedPaths, rootSchema)
+        rule(schema, filename, options, key, parent, dereferencedPaths, rootSchema)
       }
     }),
   )

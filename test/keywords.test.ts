@@ -90,7 +90,7 @@ suite('keywords', () => {
     )
   })
 
-  test("isSchemaLike's containers are the ones it always had (utils.ts's former JSON_SCHEMA_KEYWORDS)", () => {
+  test("isSchemaLike's containers: the keywords that hold a list or map of schemas, plus `enum` and `required`", () => {
     expect([...CONTAINER_KEYWORDS].sort()).toEqual(
       [
         '$defs',
@@ -99,7 +99,6 @@ suite('keywords', () => {
         'definitions',
         'dependencies',
         'enum',
-        'not',
         'oneOf',
         'patternProperties',
         'prefixItems',
