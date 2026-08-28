@@ -177,7 +177,7 @@ function generateRawType(ast: AST, options: Options): string {
       return 'any'
     case 'ARRAY':
       return (() => {
-        const type = generateType(ast.params, options)
+        const type = operand(ast.params, generateType(ast.params, options))
         // `readonly T[][]` would make the outer array the readonly one
         const element = type.endsWith('"') || type.startsWith('readonly ') ? '(' + type + ')' : type
         return readonlyModifier(ast.isReadOnly, options) + element + '[]'
@@ -301,7 +301,7 @@ function readonlyModifier(isReadOnly: boolean | undefined, options: Options): st
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
   const members = (ast as TUnion).params.map(_ => {
-    const type = generateType(_, options)
+    const type = operand(_, generateType(_, options), ast.type === 'UNION')
     // An anonymous object-literal member (eg. an `oneOf`/`anyOf` branch with its
     // own `description` but no name of its own) would otherwise have its comment
     // silently dropped: a named member's comment is printed on its own
@@ -355,27 +355,51 @@ function isUnknown(ast: AST): boolean {
 }
 
 /**
- * `tsType` overrides are opaque strings (e.g. function types) that may not be
- * union-safe, so parenthesize them unless they are a simple type reference.
+ * A `tsType` (or `formatTypes`) override is an opaque string. Where the generator composes it into a
+ * larger type -- an array's element, a member of a union or intersection -- it binds as written only
+ * if it is a single operand (`() => void[]` is a function returning an array; `keyof Foo[]` is the
+ * keys of an array), so anything but a plain type reference is parenthesized; the formatter drops
+ * the pair again where it was not needed. A bare union of names needs none inside a union.
  */
-function unionMember(ast: AST, type: string): string {
-  return ast.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type
+function operand(ast: AST, type: string, inUnion = false): string {
+  if (ast.type !== 'CUSTOM_TYPE' || TYPE_REFERENCE.test(type)) {
+    return type
+  }
+  return inUnion && customUnionMembers(type) ? type : `(${type})`
+}
+const TYPE_REFERENCE = /^[\w$.]+(<[^<>]*>)?(\[\])*$/
+
+/**
+ * The members of a verbatim type that is provably a bare union of names (`A | B`, `keyof A | null`:
+ * nothing but identifier characters, whitespace and `|` -- no brackets, quotes, arrows or anything
+ * else that would take real parsing), which can join an enclosing union as they are
+ */
+function customUnionMembers(type: string): string[] | undefined {
+  return /^[\w$.\s|]+$/.test(type)
+    ? type
+        .split('|')
+        .map(_ => _.trim())
+        .filter(Boolean)
+    : undefined
 }
 
 /**
  * `T | undefined`, for an optional property under `undefinedOptionalProperties`. An
  * anonymous union takes `undefined` as one more member rather than nesting
- * (`string | number | undefined`, not `(string | number) | undefined`); `any` and
- * `unknown` already include it.
+ * (`string | number | undefined`, not `(string | number) | undefined`); `any`,
+ * `unknown` and a `tsType` union that lists `undefined` itself already include it.
  */
 function orUndefined(ast: AST, type: string, options: Options): string {
   if (isAny(ast) || isUnknown(ast)) {
     return type
   }
+  if (ast.type === 'CUSTOM_TYPE' && customUnionMembers(type)?.includes('undefined')) {
+    return type
+  }
   if (ast.type === 'UNION' && !hasStandaloneName(ast)) {
     return generateType({...ast, params: [...ast.params, T_UNDEFINED]}, options)
   }
-  return unionMember(ast, type) + ' | undefined'
+  return operand(ast, type, true) + ' | undefined'
 }
 
 /**
@@ -454,21 +478,10 @@ function generateIndexSignatureType(
       ast.params.forEach(addMember)
       return
     }
-    // also flatten anonymous tsType unions, but only when provably safe to split:
-    // nothing but identifier characters, whitespace, and `|` (no brackets, quotes,
-    // arrows, or other constructs that would require real parsing)
-    if (
-      ast.type === 'CUSTOM_TYPE' &&
-      !hasStandaloneName(ast) &&
-      ast.params.includes('|') &&
-      /^[\w$.\s|]+$/.test(ast.params)
-    ) {
-      for (const member of ast.params.split('|')) {
-        const trimmed = member.trim()
-        if (trimmed) {
-          memberASTs.push({type: 'CUSTOM_TYPE', params: trimmed})
-        }
-      }
+    // also flatten anonymous tsType unions, when provably safe to split
+    const members = ast.type === 'CUSTOM_TYPE' && !hasStandaloneName(ast) ? customUnionMembers(ast.params) : undefined
+    if (members) {
+      members.forEach(params => memberASTs.push({type: 'CUSTOM_TYPE', params}))
       return
     }
     memberASTs.push(ast)
@@ -528,7 +541,7 @@ function generateIndexSignatureType(
     }
     seen.add(type)
     seen.add(underlying)
-    members.push(unionMember(memberAST, type))
+    members.push(operand(memberAST, type, true))
   }
 
   if (needsUndefined && !seen.has('undefined')) {
