@@ -1,6 +1,6 @@
 import {isPlainObject} from 'lodash'
 import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
-import {hasType, traverse} from './utils'
+import {eachSchemaNode, hasType, traverse} from './utils'
 import {META_KEYWORDS, TYPE_RELEVANT_KEYWORDS} from './keywords'
 
 /**
@@ -190,9 +190,15 @@ function setOwn(obj: object, key: string, value: unknown): void {
 /** Runs the rules over one document (anything else a parser may produce passes through) */
 export function prenormalizeDocument<T>(document: T): T {
   if (isPlainObject(document)) {
-    // One walk, every rule per node (the subschemas a rule creates are visited after it). `traverse`
-    // reads no `Parent` links, so a raw document is fine despite its parameter type
-    traverse(document as LinkedJSONSchema, schema => rules.forEach(rule => rule(schema, document as JSONSchema)))
+    // Every rule per node, wherever the ref parser will look for a `$ref`: `traverse` knows where
+    // subschemas live (and reads no `Parent` links, so a raw document is fine despite its parameter
+    // type) but not positions this tool has no keyword for, such as OpenAPI's
+    // `components/schemas/Pet/properties/owner`; `eachSchemaNode` reaches those, and skips only
+    // what sits under an instance-data keyword -- or a property that happens to be named like
+    // one, hence both walks. The rules are idempotent, and see the subschemas they create.
+    const apply = (schema: JSONSchema) => rules.forEach(rule => rule(schema, document as JSONSchema))
+    traverse(document as LinkedJSONSchema, apply)
+    eachSchemaNode(document, apply)
   }
   return document
 }
