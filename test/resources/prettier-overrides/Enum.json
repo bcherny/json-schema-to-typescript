@@ -1,0 +1,9 @@
+{
+  "title": "Enum",
+  "type": "object",
+  "properties": {
+    "fstype": {
+      "enum": ["ext3", "ext4", "btrfs"]
+    }
+  }
+}
