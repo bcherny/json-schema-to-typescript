@@ -1,0 +1,23 @@
+{
+  "title": "FormatTypes",
+  "type": "object",
+  "properties": {
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    }
+  },
+  "required": ["createdAt"],
+  "additionalProperties": false
+}

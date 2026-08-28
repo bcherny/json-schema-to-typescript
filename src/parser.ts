@@ -433,14 +433,23 @@ function parseNonLiteral(
       }
     case 'REFERENCE':
       throw Error(format('Refs should have been resolved by the resolver!', schema))
-    case 'STRING':
-      return {
+    case 'STRING': {
+      const ast = {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        type: 'STRING',
       }
+      // The `formatTypes` option maps a string's `format` to TypeScript type text, which is
+      // emitted verbatim just like `tsType` (an explicit `tsType` never gets here: it wins).
+      if (
+        typeof schema.format === 'string' &&
+        Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
+      ) {
+        return {...ast, params: options.formatTypes[schema.format], type: 'CUSTOM_TYPE'}
+      }
+      return {...ast, type: 'STRING'}
+    }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
         // normalised to not be undefined
