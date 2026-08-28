@@ -1,6 +1,5 @@
 import {JSONSchema4, JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {isPlainObject} from 'lodash'
-import {memoize} from '../memoize'
 
 export type SchemaType =
   | 'ALL_OF'
@@ -47,10 +46,12 @@ export interface JSONSchema extends JSONSchema4 {
    */
   readOnly?: boolean
   /**
-   * Set during dereferencing on each entry of a separate file's `definitions`/`$defs`:
-   * the key it is held under in that file. Once merged into the referencing document
+   * The name the parser declares this schema under: the (first) key it is held under in
+   * the root schema's `$defs`, set by the normalizer once the definitions are final; or,
+   * failing that, the key it had in the `definitions`/`$defs` of the separate file it was
+   * dereferenced from, set by the resolver -- once merged into the referencing document
    * those maps no longer sit at the root (or are not part of the document at all, for a
-   * `file.json#/definitions/X` pointer), so this is how the entry keeps its name.
+   * `file.json#/definitions/X` pointer), so this is how such an entry keeps its name (#143).
    */
   [DefinitionKey]?: string
 }
@@ -173,14 +174,6 @@ export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {
 export interface CustomTypeJSONSchema extends NormalizedJSONSchema {
   tsType: string
 }
-
-export const getRootSchema = memoize((schema: NormalizedJSONSchema): NormalizedJSONSchema => {
-  const parent = schema[Parent]
-  if (!parent) {
-    return schema
-  }
-  return getRootSchema(parent)
-})
 
 export function isBoolean(schema: LinkedJSONSchema | JSONSchemaType): schema is boolean {
   return schema === true || schema === false
