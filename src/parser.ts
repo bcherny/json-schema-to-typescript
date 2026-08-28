@@ -21,7 +21,8 @@ import type {
 } from './types/JSONSchema'
 import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
 import {memoize} from './memoize'
-import {generateName, log, maybeStripDefault} from './utils'
+import {DereferencedPaths} from './resolver'
+import {generateName, justName, log, maybeStripDefault} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -64,6 +65,116 @@ export function parse(
   }
 
   throw new ReferenceError('Expected intersection schema. Please file an issue on GitHub.')
+}
+
+/**
+ * A schema that refers back to itself can only be emitted as a named declaration:
+ * an anonymous type has no way to mention itself, so the generator would try to
+ * inline it forever. Recursive schemas usually have a name by the time they get
+ * here (a `title`, an `$id`, a key in `definitions`), but not always -- eg. a
+ * self-referencing `oneOf` that lives outside of `definitions`, or the copy the
+ * resolver makes of a definition wherever a `$ref` to it carries sibling keywords.
+ *
+ * Guarantees that every reference cycle in the AST passes through a named type, by
+ * naming anonymous types where it has to: after the `$ref` they were dereferenced
+ * from when there is one, else after the closest property key or `$ref` above them.
+ */
+export function nameAnonymousRecursiveTypes(
+  ast: AST,
+  processed: Processed,
+  dereferencedPaths: DereferencedPaths,
+  usedNames: UsedNames,
+): void {
+  const refNames = new Map<AST, string>()
+  processed.forEach((asts, schema) => {
+    const name = justName(dereferencedPaths.get(schema))
+    if (name) {
+      asts.forEach(_ => refNames.set(_, name))
+    }
+  })
+
+  // The generator emits a named type by reference (and declares it separately), and
+  // inlines everything else -- so it recurses forever exactly when some cycle is made
+  // of anonymous types only. Walk the AST the same way: a named type ends the current
+  // path and becomes a root of its own, so an edge that leads back into the current
+  // path (past its root) closes an all-anonymous cycle. Name one of that edge's two
+  // ends; every cycle through the edge contains both. A type named part-way through a
+  // walk can hide a second cycle that shares its path but not that type, so walk
+  // again until a walk finds nothing to name (one extra walk, in practice).
+  let named: boolean
+  do {
+    named = false
+    const done = new Set<AST>()
+    const roots = [ast]
+    const path: AST[] = []
+    const visit = (node: AST): void => {
+      if (done.has(node)) {
+        return
+      }
+      if (path.length && hasStandaloneName(node)) {
+        roots.push(node)
+        return
+      }
+      const index = path.indexOf(node)
+      if (index > -1) {
+        if (!path.slice(index).some(hasStandaloneName)) {
+          const target = pickEnd(node, path[path.length - 1])
+          target.standaloneName = generateName(refNames.get(target) ?? keyOf(target) ?? closestName(path), usedNames)
+          named = true
+        }
+        return
+      }
+      path.push(node)
+      subtrees(node).forEach(visit)
+      path.pop()
+      done.add(node)
+    }
+    while (roots.length) {
+      visit(roots.pop()!)
+    }
+  } while (named)
+
+  // Prefer the end that was reached through a `$ref` (the resolver's copies share
+  // their children with the original, so a cycle through a copy is often entered at
+  // a child rather than at the copy), then the end that isn't a list, so that the
+  // alias reads `type Foo = string | Foo[]` rather than naming the array.
+  function pickEnd(node: AST, source: AST): AST {
+    if (refNames.has(node) !== refNames.has(source)) {
+      return refNames.has(node) ? node : source
+    }
+    return isList(node) && !isList(source) ? source : node
+  }
+
+  // Last resort is the root the walk started from: the schema itself or a named type
+  function closestName(path: AST[]): string {
+    const above = [...path].reverse()
+    return above.map(_ => refNames.get(_)).find(Boolean) ?? above.map(keyOf).find(Boolean) ?? path[0].standaloneName!
+  }
+}
+
+/** A node's property key -- ignoring the placeholder that array items get */
+function keyOf(ast: AST): string | undefined {
+  return ast.keyName?.includes('{keyNameFromDefinition}') ? undefined : ast.keyName
+}
+
+function isList(ast: AST): boolean {
+  return ast.type === 'ARRAY' || ast.type === 'TUPLE'
+}
+
+function subtrees(ast: AST): AST[] {
+  switch (ast.type) {
+    case 'ARRAY':
+      return [ast.params]
+    case 'INTERFACE':
+      return ast.params.map(_ => _.ast).concat(ast.superTypes)
+    case 'INTERSECTION':
+    case 'UNION':
+      return ast.params
+    case 'TUPLE':
+      return ast.spreadParam ? ast.params.concat(ast.spreadParam) : ast.params
+    default:
+      return []
+  }
 }
 
 function parseAsTypeWithCache(
