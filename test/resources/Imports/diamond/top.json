@@ -1,0 +1,20 @@
+{
+  "title": "Top",
+  "type": "object",
+  "properties": {
+    "left": {
+      "$ref": "left.json"
+    },
+    "right": {
+      "$ref": "right.json"
+    },
+    "direct": {
+      "$ref": "base.json#/definitions/node"
+    }
+  },
+  "required": [
+    "left",
+    "right"
+  ],
+  "additionalProperties": false
+}

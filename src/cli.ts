@@ -6,7 +6,7 @@ import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {resolveConfig} from 'prettier'
-import {compile, DEFAULT_OPTIONS, Options} from './index'
+import {compile, compileFiles, DEFAULT_OPTIONS, Options} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} from './utils'
 
 // cwd and style are deliberately left out of the CLI defaults: processFile()
@@ -27,6 +27,7 @@ main(
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
+      'imports',
       'readonly',
       'readonlyKeyword',
       'removeOptionalIfDefaultExists',
@@ -82,6 +83,23 @@ async function main(argv: minimist.ParsedArgs) {
       )
     }
 
+    if (argv.imports) {
+      if (!ISGLOB && !ISDIR) {
+        throw new ReferenceError(
+          '--imports compiles a directory or glob of schemas together, importing shared types between the output files; a single input file has no other file to import from.',
+        )
+      }
+      if (!argOut) {
+        throw new ReferenceError(
+          '--imports needs an output directory (--output): import paths are computed between the output files.',
+        )
+      }
+      if (argv.cwd !== undefined) {
+        throw new ReferenceError(
+          "--cwd cannot be combined with --imports: each file's $refs are resolved against that file's own location.",
+        )
+      }
+    }
     // Process input as either glob, directory, or single file
     if (ISGLOB) {
       await processGlob(argIn, argOut, argv as Partial<Options>)
@@ -111,30 +129,36 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
     )
   }
 
-  // we can do this concurrently for perf
-  const results = await Promise.all(
-    files.map(async file => {
-      const outputPath = argOut && `${argOut}/${justName(file)}.d.ts`
-      return [await processFile(file, outputPath, argv), outputPath] as const
-    }),
+  await processFiles(
+    files.map(file => [file, argOut && `${argOut}/${justName(file)}.d.ts`]),
+    argv,
   )
-
-  // careful to do this serially
-  results.forEach(([result, outputPath]) => outputResult(result, outputPath))
 }
 
 async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
-  const files = getPaths(argIn)
-
-  // we can do this concurrently for perf
-  const results = await Promise.all(
-    files.map(async file => {
-      const outputDir = argOut && pathTransform(argOut, argIn, file)
-      const outputPath = outputDir && `${outputDir}/${justName(file)}.d.ts`
-      return [await processFile(file, outputPath, argv), outputPath] as const
-    }),
+  await processFiles(
+    getPaths(argIn).map(file => [file, argOut && `${pathTransform(argOut, argIn, file)}/${justName(file)}.d.ts`]),
+    argv,
   )
+}
 
+/**
+ * Compiles each file to its output path (or stdout) -- one file at a time, or, with
+ * `--imports`, as one set of modules that import shared types from each other.
+ */
+async function processFiles(files: [string, string | undefined][], argv: Partial<Options> & {imports?: boolean}) {
+  let results: (readonly [string, string | undefined])[]
+  if (argv.imports) {
+    // main() has checked there is an output directory
+    const compiled = await compileFiles(
+      files.map(([file, out]) => ({filename: file, outputPath: out!})),
+      {...argv, style: await styleFor(files[0]?.[1] ?? '.', argv)},
+    )
+    results = files.map(([, out], i) => [compiled[i], out] as const)
+  } else {
+    // we can do this concurrently for perf
+    results = await Promise.all(files.map(async ([file, out]) => [await processFile(file, out, argv), out] as const))
+  }
   // careful to do this serially
   results.forEach(([result, outputPath]) => outputResult(result, outputPath))
 }
@@ -153,12 +177,9 @@ function outputResult(result: string, outputPath: string | undefined): void {
 async function processFile(argIn: string, outputPath: string | undefined, argv: Partial<Options>): Promise<string> {
   const {filename, contents} = await readInput(argIn)
   const schema = parseFileAsJSONSchema(filename, contents)
-  // Resolve the Prettier config for the file being written, so `overrides` keyed
-  // to *.ts / *.d.ts apply and ones keyed to *.json do not. When writing to
-  // stdout that is the .d.ts next to the input (stdin: <cwd>/stdin.d.ts). The
-  // output is always TypeScript, so a configured `parser` is not taken over.
+  // When writing to stdout, the Prettier config is the one for the .d.ts next to
+  // the input (stdin: <cwd>/stdin.d.ts).
   const configPath = outputPath || `${filename ? stripExtension(filename) : 'stdin'}.d.ts`
-  const prettierConfig = omit((await resolveConfig(resolve(process.cwd(), configPath))) || {}, 'parser')
   // Resolve $refs relative to the directory of the file being compiled, not
   // process.cwd(), unless the user explicitly passed --cwd (see #324).
   const cwd = filename ? dirname(resolve(process.cwd(), filename)) : undefined
@@ -167,8 +188,18 @@ async function processFile(argIn: string, outputPath: string | undefined, argv: 
   return compile(schema, filename ?? 'NoName', {
     ...(cwd ? {cwd} : {}),
     ...argv,
-    style: {...prettierConfig, ...argv.style},
+    style: await styleFor(configPath, argv),
   })
+}
+
+/**
+ * The Prettier config that applies to the file being written (so `overrides` keyed to *.ts /
+ * *.d.ts apply and ones keyed to *.json do not), under any explicit --style flags. The output is
+ * always TypeScript, so a configured `parser` is not taken over.
+ */
+async function styleFor(outputPath: string, argv: Partial<Options>): Promise<Options['style']> {
+  const prettierConfig = omit((await resolveConfig(resolve(process.cwd(), outputPath))) || {}, 'parser')
+  return {...prettierConfig, ...argv.style}
 }
 
 function getPaths(path: string, paths: string[] = []) {
@@ -232,6 +263,10 @@ Boolean values can be set to false using the 'no-' prefix.
   --formatTypes.FORMAT=TYPE
       Emit TYPE for strings with the given format (eg.
       --formatTypes.date-time=Date). Repeat for each format.
+  --imports
+      When IN_FILE is a directory or glob: import types that live in another of the
+      compiled files from that file's module, instead of declaring a copy in each.
+      (Experimental; off by default.)
   --maxItems
       Maximum number of unioned tuples to emit when representing bounded-size
       array types, before falling back to emitting unbounded arrays. Increase

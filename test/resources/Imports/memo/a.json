@@ -1,0 +1,9 @@
+{
+  "title": "A",
+  "type": "object",
+  "properties": {
+    "thing": {"$ref": "common.json#/definitions/thing"},
+    "partner": {"$ref": "b.json"}
+  },
+  "additionalProperties": false
+}

@@ -71,6 +71,11 @@ function cliFailTest(
   })
 }
 
+/** A command that must fail, with `message` on stderr */
+function cliErrorTest(name: string, command: string, message: string) {
+  cliFailTest(name, command, ({stderr}) => expect(stderr).toContain(message))
+}
+
 const expectFile = (path: string) => () => {
   expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
   unlinkSync(path)
@@ -86,6 +91,7 @@ const OUTPUTS = [
   './test/resources/MultiSchemaRefs/response/out',
   './test/resources/MultiSchema2/out',
   './test/resources/MultiSchema/extraArgs.d.ts',
+  './test/resources/Imports/out',
 ]
 
 suite('CLI', () => {
@@ -402,6 +408,37 @@ suite('CLI', () => {
       })
       rimraf.sync('./test/resources/MultiSchema2/out')
     },
+  )
+
+  cliTest(
+    'directory in, --imports: shared types are imported from the module that declares them',
+    'node dist/src/cli.js -i ./test/resources/Imports/memo -o ./test/resources/Imports/out --imports --no-bannerComment',
+    () => {
+      getPaths('./test/resources/Imports/out').forEach(file => {
+        expect(file).toMatchSnapshot()
+        expect(readFileSync(file, 'utf-8')).toMatchSnapshot()
+        unlinkSync(file)
+      })
+      rimraf.sync('./test/resources/Imports/out')
+    },
+  )
+
+  cliErrorTest(
+    '--imports with a single file in is an error',
+    'node dist/src/cli.js -i ./test/resources/Imports/memo/a.json -o ./test/resources/Imports/out/a.d.ts --imports',
+    'a single input file has no other file to import from',
+  )
+
+  cliErrorTest(
+    '--imports without an output directory is an error',
+    'node dist/src/cli.js -i ./test/resources/Imports/memo --imports',
+    '--imports needs an output directory',
+  )
+
+  cliErrorTest(
+    '--imports with --cwd is an error',
+    'node dist/src/cli.js -i "./test/resources/Imports/memo/*.json" -o ./test/resources/Imports/out --imports --cwd test/resources/Imports/memo',
+    '--cwd cannot be combined with --imports',
   )
 })
 

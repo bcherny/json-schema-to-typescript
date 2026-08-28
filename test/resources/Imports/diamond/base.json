@@ -1,0 +1,31 @@
+{
+  "title": "Base",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "node": {
+      "title": "Node",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/definitions/kind"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "kind": {
+      "title": "Kind",
+      "type": "string",
+      "enum": [
+        "a",
+        "b"
+      ]
+    }
+  }
+}

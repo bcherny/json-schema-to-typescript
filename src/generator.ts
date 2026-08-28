@@ -21,13 +21,34 @@ import {
 import {log, toSafeString} from './utils'
 
 /**
+ * Hooks for compiling a set of files into a set of modules (`imports` mode): the linker
+ * decides which named types this file imports rather than declares, and hears about
+ * every type it does declare.
+ */
+export interface ModuleLinker {
+  /** True if `ast` is declared by another module; it is then neither declared nor descended into here */
+  imports(ast: ASTWithStandaloneName): boolean
+  declared?(ast: ASTWithStandaloneName): void
+}
+
+interface Scope {
+  rootASTName: string
+  linker?: ModuleLinker
+}
+
+/**
  * Generates the declaration file for `ast`: the banner comment, then the type aliases, the
  * interfaces and the enums, a blank line between those groups and a newline between declarations.
  * It is returned split before each top-level declaration, each part starting with the newlines
  * that separate it from the previous one; `.join('')` is the whole file.
  */
-export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string[] {
-  const rootASTName = ast.standaloneName!
+export function generate(
+  ast: AST,
+  options = DEFAULT_OPTIONS,
+  unreachableDefinitions: AST[] = [],
+  linker?: ModuleLinker,
+): string[] {
+  const scope: Scope = {rootASTName: ast.standaloneName!, linker}
 
   // One walk over the ASTs collects every standalone declaration, by kind, in the order found
   const declarations: Declarations = {enums: [], interfaces: [], types: []}
@@ -35,7 +56,7 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinit
   const processed = new Set<AST>()
   for (const root of [ast, ...unreachableDefinitions]) {
     const enumsBefore = enums.length
-    collectDeclarations(root, options, rootASTName, processed, declarations)
+    collectDeclarations(root, options, scope, processed, declarations)
     // the enums found under each root AST have always been followed by a newline of their own
     if (enums.length > enumsBefore) {
       enums[enums.length - 1] += '\n'
@@ -60,41 +81,42 @@ type Declarations = {enums: string[]; interfaces: string[]; types: string[]}
  * Appends the declarations for every named type reachable from `ast` (itself included) to
  * `declarations`: enums and interfaces as such, everything else as a type alias. An array's
  * alias follows the declarations found in its items; any other declaration precedes the ones
- * found beneath it.
+ * found beneath it. A type another module declares (`imports` mode) is skipped, with all that
+ * is beneath it.
  */
 function collectDeclarations(
   ast: AST,
   options: Options,
-  rootASTName: string,
+  scope: Scope,
   processed: Set<AST>,
   declarations: Declarations,
 ): void {
-  if (processed.has(ast)) {
+  if (processed.has(ast) || isImported(ast, scope)) {
     return
   }
   processed.add(ast)
 
   switch (ast.type) {
     case 'ARRAY':
-      collectDeclarations(ast.params, options, rootASTName, processed, declarations)
-      if (shouldDeclare(ast, options, rootASTName)) {
-        declarations.types.push(generateStandaloneType(ast, options))
+      collectDeclarations(ast.params, options, scope, processed, declarations)
+      if (shouldDeclare(ast, options, scope)) {
+        declarations.types.push(declared(ast, scope, generateStandaloneType(ast, options)))
       }
       return
     case 'ENUM':
-      declarations.enums.push(generateStandaloneEnum(ast, options))
+      declarations.enums.push(declared(ast, scope, generateStandaloneEnum(ast, options)))
       return
     case 'INTERFACE':
-      if (shouldDeclare(ast, options, rootASTName)) {
-        declarations.interfaces.push(generateStandaloneInterface(ast, options))
+      if (shouldDeclare(ast, options, scope)) {
+        declarations.interfaces.push(declared(ast, scope, generateStandaloneInterface(ast, options)))
       }
       break
     default:
-      if (shouldDeclare(ast, options, rootASTName)) {
-        declarations.types.push(generateStandaloneType(ast, options))
+      if (shouldDeclare(ast, options, scope)) {
+        declarations.types.push(declared(ast, scope, generateStandaloneType(ast, options)))
       }
   }
-  childASTs(ast).forEach(child => collectDeclarations(child, options, rootASTName, processed, declarations))
+  childASTs(ast).forEach(child => collectDeclarations(child, options, scope, processed, declarations))
 }
 
 function childASTs(ast: AST): AST[] {
@@ -116,10 +138,28 @@ function childASTs(ast: AST): AST[] {
  * declared, as are unreachable definitions (when `unreachableDefinitions` is on). Everything
  * else is reachable via a `$ref`, so it's only declared when `declareExternallyReferenced` is on.
  */
-function shouldDeclare(ast: AST, options: Options, rootASTName: string): ast is ASTWithStandaloneName {
+function shouldDeclare(ast: AST, options: Options, scope: Scope): ast is ASTWithStandaloneName {
   return (
     hasStandaloneName(ast) &&
-    (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition === true)
+    (ast.standaloneName === scope.rootASTName ||
+      options.declareExternallyReferenced ||
+      ast.isUnreachableDefinition === true)
+  )
+}
+
+/** A declaration on its way out, for the linker (if any) to hear about */
+function declared(ast: ASTWithStandaloneName, scope: Scope, declaration: string): string {
+  scope.linker?.declared?.(ast)
+  return declaration
+}
+
+/** In `imports` mode: a named type that another module declares (the root type never is) */
+function isImported(ast: AST, scope: Scope): boolean {
+  return (
+    scope.linker !== undefined &&
+    hasStandaloneName(ast) &&
+    ast.standaloneName !== scope.rootASTName &&
+    scope.linker.imports(ast)
   )
 }
 

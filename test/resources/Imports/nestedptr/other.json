@@ -1,0 +1,45 @@
+{
+  "title": "Other",
+  "type": "object",
+  "properties": {
+    "p": {
+      "title": "P",
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "x": {
+      "title": "X",
+      "type": "object",
+      "properties": {
+        "y": {
+          "title": "Y",
+          "type": "object",
+          "properties": {
+            "z": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "u": {
+          "type": "object",
+          "properties": {
+            "w": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

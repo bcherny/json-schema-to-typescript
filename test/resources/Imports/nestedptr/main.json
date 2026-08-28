@@ -1,0 +1,19 @@
+{
+  "title": "Main",
+  "type": "object",
+  "properties": {
+    "y": {
+      "$ref": "other.json#/definitions/x/properties/y"
+    },
+    "u": {
+      "$ref": "other.json#/definitions/x/properties/u"
+    },
+    "p": {
+      "$ref": "other.json#/properties/p"
+    },
+    "x": {
+      "$ref": "other.json#/definitions/x"
+    }
+  },
+  "additionalProperties": false
+}

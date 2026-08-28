@@ -57,6 +57,16 @@ export interface JSONSchema extends JSONSchema4 {
 
 export const Parent = Symbol('Parent')
 export const Shared = Symbol('Shared')
+/**
+ * Where a schema node was read from: the file (as the resolver addressed it) and the
+ * JSON Pointer inside that file. Only stamped when compiling a set of files together
+ * (the `imports` mode); absent otherwise.
+ */
+export const Source = Symbol('Source')
+export interface SchemaSource {
+  file: string
+  pointer: string
+}
 
 export interface LinkedJSONSchema extends JSONSchema {
   /**
@@ -69,6 +79,7 @@ export interface LinkedJSONSchema extends JSONSchema {
    * target of a `$ref`, usually), whose `Parent` is just the first one found.
    */
   [Shared]?: true
+  [Source]?: SchemaSource
 
   additionalItems?: boolean | LinkedJSONSchema
   additionalProperties?: boolean | LinkedJSONSchema

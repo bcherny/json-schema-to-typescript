@@ -17,6 +17,7 @@ import {
   Intersection,
   Parent,
   Shared,
+  Source,
   Types,
   getRootSchema,
   isBoolean,
@@ -262,7 +263,13 @@ function parseAsTypeWithCache(
 
   // Update the AST in place. This updates the `processed` cache, as well
   // as any nodes that directly reference the node.
-  return Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames))
+  Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames))
+  // Where the schema was read from (`imports` mode only), so the generator can tell a
+  // type another file declares from one this file has to declare itself
+  if (schema[Source]) {
+    ast.source = schema[Source]
+  }
+  return ast
 }
 
 function parseBooleanSchema(schema: boolean, keyName: string | undefined, options: Options): AST {

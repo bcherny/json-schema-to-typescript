@@ -1,0 +1,3236 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`compileFiles memo: test/resources/Imports/memo/a.json 1`] = `
+"import type {B} from "./b.js";
+import type {Thing} from "./common.js";
+
+export interface A {
+  thing?: Thing;
+  partner?: B;
+}
+"
+`;
+
+exports[`compileFiles memo: test/resources/Imports/memo/b.json 1`] = `
+"import type {A} from "./a.js";
+import type {Thing} from "./common.js";
+
+export interface B {
+  /**
+   * B's own note about its thing
+   */
+  thing?: Thing;
+  owner?: A;
+}
+"
+`;
+
+exports[`compileFiles memo: test/resources/Imports/memo/common.json 1`] = `
+"/**
+ * This interface was referenced by \`Common\`'s JSON-Schema
+ * via the \`definition\` "tag".
+ */
+export type Tag = "red" | "green";
+
+/**
+ * Shared definitions; no properties of its own
+ */
+export interface Common {}
+/**
+ * This interface was referenced by \`Common\`'s JSON-Schema
+ * via the \`definition\` "thing".
+ */
+export interface Thing {
+  id: string;
+  tags?: Tag[];
+}
+"
+`;
+
+exports[`compileFiles cycle: test/resources/cycle.3.json 1`] = `
+"import type {Cycle4} from "./cycle.4.js";
+
+export interface Cycle3 {
+  foo?: Cycle4;
+}
+"
+`;
+
+exports[`compileFiles cycle: test/resources/cycle.4.json 1`] = `
+"import type {Cycle3} from "./cycle.3.js";
+
+export interface Cycle4 {
+  foo?: number;
+  bar?: Cycle3;
+  [k: string]: unknown;
+}
+"
+`;
+
+exports[`compileFiles cycle3: test/resources/Imports/cycle3/a.json 1`] = `
+"import type {B} from "./b.js";
+
+export interface A {
+  next?: B;
+  v?: string;
+}
+"
+`;
+
+exports[`compileFiles cycle3: test/resources/Imports/cycle3/b.json 1`] = `
+"import type {C} from "./c.js";
+
+export interface B {
+  next?: C;
+}
+"
+`;
+
+exports[`compileFiles cycle3: test/resources/Imports/cycle3/c.json 1`] = `
+"import type {A} from "./a.js";
+import type {B} from "./b.js";
+
+export interface C {
+  next?: A;
+  all?: (A | B | C)[];
+}
+"
+`;
+
+exports[`compileFiles diamond: test/resources/Imports/diamond/base.json 1`] = `
+"/**
+ * This interface was referenced by \`Base\`'s JSON-Schema
+ * via the \`definition\` "kind".
+ */
+export type Kind = "a" | "b";
+
+export interface Base {}
+/**
+ * This interface was referenced by \`Base\`'s JSON-Schema
+ * via the \`definition\` "node".
+ */
+export interface Node {
+  id: string;
+  kind?: Kind;
+}
+"
+`;
+
+exports[`compileFiles diamond: test/resources/Imports/diamond/left.json 1`] = `
+"import type {Node} from "./base.js";
+
+export interface Left {
+  node?: Node;
+  l?: number;
+}
+"
+`;
+
+exports[`compileFiles diamond: test/resources/Imports/diamond/right.json 1`] = `
+"import type {Kind, Node} from "./base.js";
+
+export interface Right {
+  node?: Node;
+  kinds?: Kind[];
+}
+"
+`;
+
+exports[`compileFiles diamond: test/resources/Imports/diamond/top.json 1`] = `
+"import type {Node} from "./base.js";
+import type {Left} from "./left.js";
+import type {Right} from "./right.js";
+
+export interface Top {
+  left: Left;
+  right: Right;
+  direct?: Node;
+}
+"
+`;
+
+exports[`compileFiles sametitle: test/resources/Imports/sametitle/defs.json 1`] = `
+"/**
+ * a root that is itself called Thing and has a definition called Thing
+ */
+export interface Thing {
+  self?: Thing1;
+}
+/**
+ * This interface was referenced by \`Thing\`'s JSON-Schema
+ * via the \`definition\` "thing".
+ */
+export interface Thing1 {
+  deep?: boolean;
+}
+"
+`;
+
+exports[`compileFiles sametitle: test/resources/Imports/sametitle/one.json 1`] = `
+"export interface Thing {
+  one?: string;
+}
+"
+`;
+
+exports[`compileFiles sametitle: test/resources/Imports/sametitle/two.json 1`] = `
+"export interface Thing {
+  two?: number;
+}
+"
+`;
+
+exports[`compileFiles sametitle: test/resources/Imports/sametitle/user.json 1`] = `
+"import type {Thing1 as Thing2} from "./defs.js";
+import type {Thing} from "./one.js";
+import type {Thing as Thing1} from "./two.js";
+
+export interface User {
+  a?: Thing;
+  b?: Thing1;
+  c?: Thing2;
+}
+"
+`;
+
+exports[`compileFiles doublealias: test/resources/Imports/doublealias/main.json 1`] = `
+"import type {Thing as Thing1} from "./p.js";
+import type {Thing as Thing2} from "./q.js";
+
+export interface Main {
+  mine?: Thing;
+  p?: Thing1;
+  q?: Thing2;
+}
+/**
+ * This interface was referenced by \`Main\`'s JSON-Schema
+ * via the \`definition\` "thing".
+ */
+export interface Thing {
+  m?: string;
+}
+"
+`;
+
+exports[`compileFiles doublealias: test/resources/Imports/doublealias/p.json 1`] = `
+"export interface Thing {
+  p?: string;
+}
+"
+`;
+
+exports[`compileFiles doublealias: test/resources/Imports/doublealias/q.json 1`] = `
+"export interface Q {}
+/**
+ * This interface was referenced by \`Q\`'s JSON-Schema
+ * via the \`definition\` "thing".
+ */
+export interface Thing {
+  q?: string;
+}
+"
+`;
+
+exports[`compileFiles sibdirs: test/resources/Imports/sibdirs/common/x.json 1`] = `
+"/**
+ * This interface was referenced by \`X\`'s JSON-Schema
+ * via the \`definition\` "e".
+ */
+export type E = "p" | "q";
+
+export interface X {
+  e?: E;
+}
+"
+`;
+
+exports[`compileFiles sibdirs: test/resources/Imports/sibdirs/models/a.json 1`] = `
+"import type {E, X} from "../common/x.js";
+
+export interface A {
+  x?: X;
+  e?: E;
+}
+"
+`;
+
+exports[`compileFiles sibdirs: test/resources/Imports/sibdirs/models/deep/b.json 1`] = `
+"import type {X} from "../../common/x.js";
+import type {A} from "../a.js";
+
+export interface B {
+  a?: A;
+  x?: X;
+}
+"
+`;
+
+exports[`compileFiles nestedptr: test/resources/Imports/nestedptr/main.json 1`] = `
+"import type {P, X, Y} from "./other.js";
+
+export interface Main {
+  y?: Y;
+  u?: U;
+  p?: P;
+  x?: X;
+}
+export interface U {
+  w?: number;
+}
+"
+`;
+
+exports[`compileFiles nestedptr: test/resources/Imports/nestedptr/other.json 1`] = `
+"export interface Other {
+  p?: P;
+}
+export interface P {
+  q?: string;
+}
+/**
+ * This interface was referenced by \`Other\`'s JSON-Schema
+ * via the \`definition\` "x".
+ */
+export interface X {
+  y?: Y;
+  u?: {
+    w?: number;
+  };
+}
+export interface Y {
+  z?: string;
+}
+"
+`;
+
+exports[`compileFiles positions: test/resources/Imports/positions/defs.json 1`] = `
+"/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "nullable".
+ */
+export type MaybeObj = {
+  n?: number;
+} | null;
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "custom".
+ */
+export type Custom = Record<string, Date>;
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "arr".
+ */
+export type ObjList = Obj[];
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "union".
+ */
+export type Either = Obj | Named;
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "str".
+ */
+export type Str = string;
+
+export interface Defs {}
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "obj".
+ */
+export interface Obj {
+  o?: string;
+}
+
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "named".
+ */
+export const enum Named {
+  X = "x",
+  Y = "y"
+}
+"
+`;
+
+exports[`compileFiles positions: test/resources/Imports/positions/use.json 1`] = `
+"import type {Custom, Either, MaybeObj, Named, Obj, ObjList, Str} from "./defs.js";
+
+export interface Use {
+  items?: Obj[];
+  /**
+   * @minItems 2
+   */
+  tuple?: [Named, MaybeObj, ...unknown[]];
+  any?: Custom | ObjList;
+  all?: Obj & {
+    o: string;
+  };
+  either?: Either;
+  str?: Str;
+  nullable?: MaybeObj;
+  [k: string]:
+    | Named
+    | Obj
+    | Obj[]
+    | [Named, MaybeObj, ...unknown[]]
+    | Custom
+    | ObjList
+    | (Obj & {
+        o: string;
+      })
+    | Either
+    | Str
+    | MaybeObj
+    | undefined;
+}
+"
+`;
+
+exports[`compileFiles extends: test/resources/extends/Circle.json 1`] = `
+"import type {Shape} from "./shapes/Shape.js";
+
+/**
+ * A Circle
+ */
+export interface Circle extends Shape {
+  type: "circle";
+  radius: number;
+}
+"
+`;
+
+exports[`compileFiles extends: test/resources/extends/Shape.json 1`] = `
+"/**
+ * A Shape
+ */
+export interface Shape {
+  type: string;
+  id: string;
+}
+"
+`;
+
+exports[`compileFiles extends: test/resources/extends/Square.json 1`] = `
+"import type {Shape} from "./shapes/Shape.js";
+
+/**
+ * A Square
+ */
+export interface Square extends Shape {
+  type: "square";
+  height: number;
+  width: number;
+}
+"
+`;
+
+exports[`compileFiles yamlmix: test/resources/Imports/yamlmix/paint.json 1`] = `
+"import type {Color} from "./types.js";
+
+export interface Paint {
+  color?: Color;
+}
+"
+`;
+
+exports[`compileFiles yamlmix: test/resources/Imports/yamlmix/types.yaml 1`] = `
+"/**
+ * This interface was referenced by \`Types\`'s JSON-Schema
+ * via the \`definition\` "color".
+ */
+export type Color = "red" | "blue";
+
+export interface Types {}
+"
+`;
+
+exports[`compileFiles spell: test/resources/Imports/spell/my defs.json 1`] = `
+"export interface MyDefs {}
+/**
+ * This interface was referenced by \`MyDefs\`'s JSON-Schema
+ * via the \`definition\` "d".
+ */
+export interface D {
+  v?: string;
+}
+"
+`;
+
+exports[`compileFiles spell: test/resources/Imports/spell/sub/x.json 1`] = `
+"import type {D} from "../my defs.js";
+
+export interface X {
+  d?: D;
+  d2?: D;
+}
+"
+`;
+
+exports[`compileFiles spell: test/resources/Imports/spell/y.json 1`] = `
+"import type {D} from "./my defs.js";
+import type {X} from "./sub/x.js";
+
+export interface Y {
+  d?: D;
+  x?: X;
+}
+"
+`;
+
+exports[`compileFiles outsideTheSet: test/resources/MultiSchemaRefs/response/Referencing.json 1`] = `
+"export interface Referencing {
+  inner?: Referenced;
+  [k: string]: unknown;
+}
+export interface Referenced {
+  id: string;
+  [k: string]: unknown;
+}
+"
+`;
+
+exports[`compileFiles azure: common/definitions 1`] = `
+"/**
+ * Deployment template expression. See https://aka.ms/arm-template-expressions for more details on the ARM expression syntax.
+ *
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "expression".
+ */
+export type Expression = string;
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "proxyResourceBase".
+ */
+export type ProxyResourceBase = ARMResourceBase & {
+  /**
+   * Location to deploy resource to
+   */
+  location?: ResourceLocations;
+  [k: string]: unknown;
+};
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceLocations".
+ */
+export type ResourceLocations =
+  | string
+  | (
+      | "East Asia"
+      | "Southeast Asia"
+      | "Central US"
+      | "East US"
+      | "East US 2"
+      | "West US"
+      | "North Central US"
+      | "South Central US"
+      | "North Europe"
+      | "West Europe"
+      | "Japan West"
+      | "Japan East"
+      | "Brazil South"
+      | "Australia East"
+      | "Australia Southeast"
+      | "Central India"
+      | "West India"
+      | "South India"
+      | "Canada Central"
+      | "Canada East"
+      | "West Central US"
+      | "West US 2"
+      | "UK South"
+      | "UK West"
+      | "Korea Central"
+      | "Korea South"
+      | "global"
+    );
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceBase".
+ */
+export type ResourceBase = ARMResourceBase & {
+  /**
+   * Location to deploy resource to
+   */
+  location?: ResourceLocations;
+  /**
+   * Name-value pairs to add to the resource
+   */
+  tags?: {
+    [k: string]: unknown;
+  };
+  copy?: ResourceCopy;
+  comments?: string;
+  [k: string]: unknown;
+};
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceBaseExternal".
+ */
+export type ResourceBaseExternal = ARMResourceBase & {
+  /**
+   * Location to deploy resource to
+   */
+  location?: ResourceLocations;
+  /**
+   * Name-value pairs to add to the resource
+   */
+  tags?: {
+    [k: string]: unknown;
+  };
+  copy?: ResourceCopy;
+  comments?: string;
+  [k: string]: unknown;
+} & {
+  plan: unknown;
+};
+/**
+ * Kind of resource
+ *
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceKind".
+ */
+export type ResourceKind = string;
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "numberOrExpression".
+ */
+export type NumberOrExpression = number | Expression;
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "Iso8601Duration".
+ */
+export type Iso8601Duration = string;
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "UTC".
+ */
+export type UTC = string;
+/**
+ * API version of the resource type
+ *
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "apiVersion".
+ */
+export type ApiVersion = string;
+
+/**
+ * Common definitions
+ */
+export interface Definitions {
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "ARMResourceBase".
+ */
+export interface ARMResourceBase {
+  /**
+   * Name of the resource
+   */
+  name: string;
+  /**
+   * Resource type
+   */
+  type: string;
+  /**
+   * Condition of the resource
+   */
+  condition?: boolean | Expression;
+  /**
+   * API Version of the resource type, optional when apiProfile is used on the template
+   */
+  apiVersion?: string;
+  /**
+   * Collection of resources this resource depends on
+   */
+  dependsOn?: string[];
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceCopy".
+ */
+export interface ResourceCopy {
+  /**
+   * Name of the copy
+   */
+  name?: string;
+  /**
+   * Count of the copy
+   */
+  count?: Expression | number;
+  /**
+   * The copy mode
+   */
+  mode?: "Parallel" | "Serial";
+  /**
+   * The serial copy batch size
+   */
+  batchSize?: Expression | number;
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceSku".
+ */
+export interface ResourceSku {
+  /**
+   * Name of the sku
+   */
+  name: string;
+  /**
+   * Tier of the sku
+   */
+  tier?: string;
+  /**
+   * Size of the sku
+   */
+  size?: string;
+  /**
+   * Family of the sku
+   */
+  family?: string;
+  /**
+   * Capacity of the sku
+   */
+  capacity?: number;
+  [k: string]: unknown;
+}
+/**
+ * Plan of the resource
+ *
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourcePlan".
+ */
+export interface ResourcePlan {
+  /**
+   * Name of the plan
+   */
+  name: string;
+  /**
+   * Plan promotion code
+   */
+  promotionCode?: string;
+  /**
+   * Name of the publisher
+   */
+  publisher?: string;
+  /**
+   * Name of the product
+   */
+  product?: string;
+  /**
+   * Version of the product
+   */
+  version?: string;
+  [k: string]: unknown;
+}
+"
+`;
+
+exports[`compileFiles azure: 2017-03-30/Microsoft.Compute 1`] = `
+"import type {
+  AcronisBackup,
+  AcronisBackupLinux,
+  BgInfo,
+  BmcCtmAgentLinux,
+  BmcCtmAgentWindows,
+  ChefClient,
+  CustomScript,
+  CustomScriptExtension,
+  CustomScriptForLinux,
+  DatadogLinuxAgent,
+  DatadogWindowsAgent,
+  DockerExtension,
+  DscExtension,
+  DynatraceLinux,
+  DynatraceWindows,
+  Eset,
+  GenericExtension,
+  HpeSecurityApplicationDefender,
+  IaaSAntimalware,
+  IaaSDiagnostics,
+  LinuxChefClient,
+  LinuxDiagnostic,
+  NetworkWatcherAgentLinux,
+  NetworkWatcherAgentWindows,
+  OSPatchingForLinux,
+  PuppetAgent,
+  Site24X7ApmInsightExtn,
+  Site24X7LinuxServerExtn,
+  Site24X7WindowsServerExtn,
+  TrendMicroDSA,
+  TrendMicroDSALinux,
+  VMSnapshot,
+  VMSnapshotLinux,
+  VmAccessAgent,
+  VmAccessForLinux
+} from "./Microsoft.Compute.Extensions.js";
+
+/**
+ * Microsoft Compute Resource Types
+ */
+export interface MicrosoftCompute {
+  [k: string]: unknown;
+}
+/**
+ * Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "AdditionalUnattendContent".
+ */
+export interface AdditionalUnattendContent {
+  /**
+   * The component name. Currently, the only allowable value is Microsoft-Windows-Shell-Setup.
+   */
+  componentName?: "Microsoft-Windows-Shell-Setup" | string;
+  /**
+   * Specifies the XML formatted content that is added to the unattend.xml file for the specified path and component. The XML must be less than 4KB and must include the root element for the setting or feature that is being inserted.
+   */
+  content?: string;
+  /**
+   * The pass name. Currently, the only allowable value is OobeSystem.
+   */
+  passName?: "OobeSystem" | string;
+  /**
+   * Specifies the name of the setting to which the content applies. Possible values are: FirstLogonCommands and AutoLogon.
+   */
+  settingName?: ("AutoLogon" | "FirstLogonCommands") | string;
+  [k: string]: unknown;
+}
+/**
+ * The API entity reference.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "ApiEntityReference".
+ */
+export interface ApiEntityReference {
+  /**
+   * The ARM resource id in the form of /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
+   */
+  id?: string;
+  [k: string]: unknown;
+}
+/**
+ * The instance view of a resource.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "AvailabilitySetProperties".
+ */
+export interface AvailabilitySetProperties {
+  /**
+   * Fault Domain count.
+   */
+  platformFaultDomainCount?: number | string;
+  /**
+   * Update Domain count.
+   */
+  platformUpdateDomainCount?: number | string;
+  /**
+   * A list of references to all virtual machines in the availability set.
+   */
+  virtualMachines?: SubResource[] | string;
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "SubResource".
+ */
+export interface SubResource {
+  /**
+   * Resource Id
+   */
+  id?: string;
+  [k: string]: unknown;
+}
+/**
+ * Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status. <br><br> You can easily view the output of your console log. <br><br> Azure also enables you to see a screenshot of the VM from the hypervisor.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "BootDiagnostics".
+ */
+export interface BootDiagnostics {
+  /**
+   * Whether boot diagnostics should be enabled on the Virtual Machine.
+   */
+  enabled?: boolean | string;
+  /**
+   * Uri of the storage account to use for placing the console output and screenshot.
+   */
+  storageUri?: string;
+  [k: string]: unknown;
+}
+/**
+ * Data used when creating a disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "CreationData".
+ */
+export interface CreationData {
+  /**
+   * This enumerates the possible sources of a disk's creation.
+   */
+  createOption: ("Empty" | "Attach" | "FromImage" | "Import" | "Copy") | string;
+  /**
+   * The source image used for creating the disk.
+   */
+  imageReference?: ImageDiskReference | string;
+  /**
+   * If createOption is Copy, this is the ARM id of the source snapshot or disk.
+   */
+  sourceResourceId?: string;
+  /**
+   * If createOption is Import, this is the URI of a blob to be imported into a managed disk.
+   */
+  sourceUri?: string;
+  /**
+   * If createOption is Import, the Azure Resource Manager identifier of the storage account containing the blob to import as a disk. Required only if the blob is in a different subscription
+   */
+  storageAccountId?: string;
+  [k: string]: unknown;
+}
+/**
+ * The source image used for creating the disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "ImageDiskReference".
+ */
+export interface ImageDiskReference {
+  /**
+   * A relative uri containing either a Platform Image Repository or user image reference.
+   */
+  id: string;
+  /**
+   * If the disk is created from an image's data disk, this is an index that indicates which of the data disks in the image to use. For OS disks, this field is null.
+   */
+  lun?: number | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a data disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "DataDisk".
+ */
+export interface DataDisk {
+  /**
+   * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
+   */
+  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  /**
+   * Specifies how the virtual machine should be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This value is used when you are using a specialized disk to create the virtual machine.<br><br> **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described.
+   */
+  createOption: ("FromImage" | "Empty" | "Attach") | string;
+  /**
+   * Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
+   */
+  diskSizeGB?: number | string;
+  /**
+   * Describes the uri of a disk.
+   */
+  image?: VirtualHardDisk | string;
+  /**
+   * Specifies the logical unit number of the data disk. This value is used to identify data disks within the VM and therefore must be unique for each data disk attached to a VM.
+   */
+  lun: number | string;
+  /**
+   * The parameters of a managed disk.
+   */
+  managedDisk?: ManagedDiskParameters | string;
+  /**
+   * The disk name.
+   */
+  name?: string;
+  /**
+   * Describes the uri of a disk.
+   */
+  vhd?: VirtualHardDisk | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes the uri of a disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualHardDisk".
+ */
+export interface VirtualHardDisk {
+  /**
+   * Specifies the virtual hard disk's uri.
+   */
+  uri?: string;
+  [k: string]: unknown;
+}
+/**
+ * The parameters of a managed disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "ManagedDiskParameters".
+ */
+export interface ManagedDiskParameters {
+  /**
+   * Resource Id
+   */
+  id?: string;
+  /**
+   * Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or Premium_LRS.
+   */
+  storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies the boot diagnostic settings state. <br><br>Minimum api-version: 2015-06-15.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "DiagnosticsProfile".
+ */
+export interface DiagnosticsProfile {
+  /**
+   * Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status. <br><br> You can easily view the output of your console log. <br><br> Azure also enables you to see a screenshot of the VM from the hypervisor.
+   */
+  bootDiagnostics?: BootDiagnostics | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a Encryption Settings for a Disk
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "DiskEncryptionSettings".
+ */
+export interface DiskEncryptionSettings {
+  /**
+   * Describes a reference to Key Vault Secret
+   */
+  diskEncryptionKey?: KeyVaultSecretReference | string;
+  /**
+   * Specifies whether disk encryption should be enabled on the virtual machine.
+   */
+  enabled?: boolean | string;
+  /**
+   * Describes a reference to Key Vault Key
+   */
+  keyEncryptionKey?: KeyVaultKeyReference | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a reference to Key Vault Secret
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "KeyVaultSecretReference".
+ */
+export interface KeyVaultSecretReference {
+  /**
+   * The URL referencing a secret in a Key Vault.
+   */
+  secretUrl: string;
+  sourceVault: SubResource | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a reference to Key Vault Key
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "KeyVaultKeyReference".
+ */
+export interface KeyVaultKeyReference {
+  /**
+   * The URL referencing a key encryption key in Key Vault.
+   */
+  keyUrl: string;
+  sourceVault: SubResource | string;
+  [k: string]: unknown;
+}
+/**
+ * Disk resource properties.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "DiskProperties".
+ */
+export interface DiskProperties {
+  /**
+   * Data used when creating a disk.
+   */
+  creationData: CreationData | string;
+  /**
+   * If creationData.createOption is Empty, this field is mandatory and it indicates the size of the VHD to create. If this field is present for updates or creation with other options, it indicates a resize. Resizes are only allowed if the disk is not attached to a running VM, and can only increase the disk's size.
+   */
+  diskSizeGB?: number | string;
+  /**
+   * Encryption settings for disk or snapshot
+   */
+  encryptionSettings?: EncryptionSettings | string;
+  /**
+   * The Operating System type.
+   */
+  osType?: ("Windows" | "Linux") | string;
+  [k: string]: unknown;
+}
+/**
+ * Encryption settings for disk or snapshot
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "EncryptionSettings".
+ */
+export interface EncryptionSettings {
+  /**
+   * Key Vault Secret Url and vault id of the encryption key
+   */
+  diskEncryptionKey?: KeyVaultAndSecretReference | string;
+  /**
+   * Set this flag to true and provide DiskEncryptionKey and optional KeyEncryptionKey to enable encryption. Set this flag to false and remove DiskEncryptionKey and KeyEncryptionKey to disable encryption. If EncryptionSettings is null in the request object, the existing settings remain unchanged.
+   */
+  enabled?: boolean | string;
+  /**
+   * Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey
+   */
+  keyEncryptionKey?: KeyVaultAndKeyReference | string;
+  [k: string]: unknown;
+}
+/**
+ * Key Vault Secret Url and vault id of the encryption key
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "KeyVaultAndSecretReference".
+ */
+export interface KeyVaultAndSecretReference {
+  /**
+   * Url pointing to a key or secret in KeyVault
+   */
+  secretUrl: string;
+  /**
+   * The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}
+   */
+  sourceVault: SourceVault | string;
+  [k: string]: unknown;
+}
+/**
+ * The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "SourceVault".
+ */
+export interface SourceVault {
+  /**
+   * Resource Id
+   */
+  id?: string;
+  [k: string]: unknown;
+}
+/**
+ * Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "KeyVaultAndKeyReference".
+ */
+export interface KeyVaultAndKeyReference {
+  /**
+   * Url pointing to a key or secret in KeyVault
+   */
+  keyUrl: string;
+  /**
+   * The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}
+   */
+  sourceVault: SourceVault | string;
+  [k: string]: unknown;
+}
+/**
+ * The disks and snapshots sku name. Can be Standard_LRS or Premium_LRS.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "DiskSku".
+ */
+export interface DiskSku {
+  /**
+   * The sku name.
+   */
+  name?: ("Standard_LRS" | "Premium_LRS") | string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies the hardware settings for the virtual machine.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "HardwareProfile".
+ */
+export interface HardwareProfile {
+  /**
+   * Specifies the size of the virtual machine. For more information about virtual machine sizes, see [Sizes for virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json). <br><br> The available VM sizes depend on region and availability set. For a list of available sizes use these APIs:  <br><br> [List all available virtual machine sizes in an availability set](https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes) <br><br> [List all available virtual machine sizes in a region](https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list) <br><br> [List all available virtual machine sizes for resizing](https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes).
+   */
+  vmSize?:
+    | (
+        | "Basic_A0"
+        | "Basic_A1"
+        | "Basic_A2"
+        | "Basic_A3"
+        | "Basic_A4"
+        | "Standard_A0"
+        | "Standard_A1"
+        | "Standard_A2"
+        | "Standard_A3"
+        | "Standard_A4"
+        | "Standard_A5"
+        | "Standard_A6"
+        | "Standard_A7"
+        | "Standard_A8"
+        | "Standard_A9"
+        | "Standard_A10"
+        | "Standard_A11"
+        | "Standard_A1_v2"
+        | "Standard_A2_v2"
+        | "Standard_A4_v2"
+        | "Standard_A8_v2"
+        | "Standard_A2m_v2"
+        | "Standard_A4m_v2"
+        | "Standard_A8m_v2"
+        | "Standard_D1"
+        | "Standard_D2"
+        | "Standard_D3"
+        | "Standard_D4"
+        | "Standard_D11"
+        | "Standard_D12"
+        | "Standard_D13"
+        | "Standard_D14"
+        | "Standard_D1_v2"
+        | "Standard_D2_v2"
+        | "Standard_D3_v2"
+        | "Standard_D4_v2"
+        | "Standard_D5_v2"
+        | "Standard_D11_v2"
+        | "Standard_D12_v2"
+        | "Standard_D13_v2"
+        | "Standard_D14_v2"
+        | "Standard_D15_v2"
+        | "Standard_DS1"
+        | "Standard_DS2"
+        | "Standard_DS3"
+        | "Standard_DS4"
+        | "Standard_DS11"
+        | "Standard_DS12"
+        | "Standard_DS13"
+        | "Standard_DS14"
+        | "Standard_DS1_v2"
+        | "Standard_DS2_v2"
+        | "Standard_DS3_v2"
+        | "Standard_DS4_v2"
+        | "Standard_DS5_v2"
+        | "Standard_DS11_v2"
+        | "Standard_DS12_v2"
+        | "Standard_DS13_v2"
+        | "Standard_DS14_v2"
+        | "Standard_DS15_v2"
+        | "Standard_F1"
+        | "Standard_F2"
+        | "Standard_F4"
+        | "Standard_F8"
+        | "Standard_F16"
+        | "Standard_F1s"
+        | "Standard_F2s"
+        | "Standard_F4s"
+        | "Standard_F8s"
+        | "Standard_F16s"
+        | "Standard_G1"
+        | "Standard_G2"
+        | "Standard_G3"
+        | "Standard_G4"
+        | "Standard_G5"
+        | "Standard_GS1"
+        | "Standard_GS2"
+        | "Standard_GS3"
+        | "Standard_GS4"
+        | "Standard_GS5"
+        | "Standard_H8"
+        | "Standard_H16"
+        | "Standard_H8m"
+        | "Standard_H16m"
+        | "Standard_H16r"
+        | "Standard_H16mr"
+        | "Standard_L4s"
+        | "Standard_L8s"
+        | "Standard_L16s"
+        | "Standard_L32s"
+        | "Standard_NC6"
+        | "Standard_NC12"
+        | "Standard_NC24"
+        | "Standard_NC24r"
+        | "Standard_NV6"
+        | "Standard_NV12"
+        | "Standard_NV24"
+      )
+    | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a data disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "ImageDataDisk".
+ */
+export interface ImageDataDisk {
+  /**
+   * The Virtual Hard Disk.
+   */
+  blobUri?: string;
+  /**
+   * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
+   */
+  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  /**
+   * Specifies the size of empty data disks in gigabytes. This element can be used to overwrite the name of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
+   */
+  diskSizeGB?: number | string;
+  /**
+   * Specifies the logical unit number of the data disk. This value is used to identify data disks within the VM and therefore must be unique for each data disk attached to a VM.
+   */
+  lun: number | string;
+  managedDisk?: SubResource | string;
+  snapshot?: SubResource | string;
+  /**
+   * Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or Premium_LRS.
+   */
+  storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes an Operating System disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "ImageOSDisk".
+ */
+export interface ImageOSDisk {
+  /**
+   * The Virtual Hard Disk.
+   */
+  blobUri?: string;
+  /**
+   * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
+   */
+  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  /**
+   * Specifies the size of empty data disks in gigabytes. This element can be used to overwrite the name of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
+   */
+  diskSizeGB?: number | string;
+  managedDisk?: SubResource | string;
+  /**
+   * The OS State.
+   */
+  osState: ("Generalized" | "Specialized") | string;
+  /**
+   * This property allows you to specify the type of the OS that is included in the disk if creating a VM from a custom image. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
+   */
+  osType: ("Windows" | "Linux") | string;
+  snapshot?: SubResource | string;
+  /**
+   * Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or Premium_LRS.
+   */
+  storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes the properties of an Image.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "ImageProperties".
+ */
+export interface ImageProperties {
+  sourceVirtualMachine?: SubResource | string;
+  /**
+   * Describes a storage profile.
+   */
+  storageProfile?: ImageStorageProfile | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a storage profile.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "ImageStorageProfile".
+ */
+export interface ImageStorageProfile {
+  /**
+   * Specifies the parameters that are used to add a data disk to a virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+   */
+  dataDisks?: ImageDataDisk[] | string;
+  /**
+   * Describes an Operating System disk.
+   */
+  osDisk: ImageOSDisk | string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations. NOTE: Image reference publisher and offer can only be set when you create the scale set.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "ImageReference".
+ */
+export interface ImageReference {
+  /**
+   * Resource Id
+   */
+  id?: string;
+  /**
+   * Specifies the offer of the platform image or marketplace image used to create the virtual machine.
+   */
+  offer?: string;
+  /**
+   * The image publisher.
+   */
+  publisher?: string;
+  /**
+   * The image SKU.
+   */
+  sku?: string;
+  /**
+   * Specifies the version of the platform image or marketplace image used to create the virtual machine. The allowed formats are Major.Minor.Build or 'latest'. Major, Minor, and Build are decimal numbers. Specify 'latest' to use the latest version of an image available at deploy time. Even if you use 'latest', the VM image will not automatically update after deploy time even if a new version becomes available.
+   */
+  version?: string;
+  [k: string]: unknown;
+}
+/**
+ * Instance view status.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "InstanceViewStatus".
+ */
+export interface InstanceViewStatus {
+  /**
+   * The status code.
+   */
+  code?: string;
+  /**
+   * The short localizable label for the status.
+   */
+  displayStatus?: string;
+  /**
+   * The level code.
+   */
+  level?: ("Info" | "Warning" | "Error") | string;
+  /**
+   * The detailed status message, including for alerts and error messages.
+   */
+  message?: string;
+  /**
+   * The time of the status.
+   */
+  time?: string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies the Linux operating system settings on the virtual machine. <br><br>For a list of supported Linux distributions, see [Linux on Azure-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) <br><br> For running non-endorsed distributions, see [Information for Non-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "LinuxConfiguration".
+ */
+export interface LinuxConfiguration {
+  /**
+   * Specifies whether password authentication should be disabled.
+   */
+  disablePasswordAuthentication?: boolean | string;
+  /**
+   * SSH configuration for Linux based VMs running on Azure
+   */
+  ssh?: SshConfiguration | string;
+  [k: string]: unknown;
+}
+/**
+ * SSH configuration for Linux based VMs running on Azure
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "SshConfiguration".
+ */
+export interface SshConfiguration {
+  /**
+   * The list of SSH public keys used to authenticate with linux based VMs.
+   */
+  publicKeys?: SshPublicKey[] | string;
+  [k: string]: unknown;
+}
+/**
+ * Contains information about SSH certificate public key and the path on the Linux VM where the public key is placed.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "SshPublicKey".
+ */
+export interface SshPublicKey {
+  /**
+   * SSH public key certificate used to authenticate with the VM through ssh. The key needs to be at least 2048-bit and in ssh-rsa format. <br><br> For creating ssh keys, see [Create SSH keys on Linux and Mac for Linux VMs in Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
+   */
+  keyData?: string;
+  /**
+   * Specifies the full path on the created VM where ssh public key is stored. If the file already exists, the specified key is appended to the file. Example: /home/user/.ssh/authorized_keys
+   */
+  path?: string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a network interface reference.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "NetworkInterfaceReference".
+ */
+export interface NetworkInterfaceReference {
+  /**
+   * Resource Id
+   */
+  id?: string;
+  /**
+   * Describes a network interface reference properties.
+   */
+  properties?: NetworkInterfaceReferenceProperties | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a network interface reference properties.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "NetworkInterfaceReferenceProperties".
+ */
+export interface NetworkInterfaceReferenceProperties {
+  /**
+   * Specifies the primary network interface in case the virtual machine has more than 1 network interface.
+   */
+  primary?: boolean | string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies the network interfaces of the virtual machine.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "NetworkProfile".
+ */
+export interface NetworkProfile {
+  /**
+   * Specifies the list of resource Ids for the network interfaces associated with the virtual machine.
+   */
+  networkInterfaces?: NetworkInterfaceReference[] | string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies information about the operating system disk used by the virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "OSDisk".
+ */
+export interface OSDisk {
+  /**
+   * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
+   */
+  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  /**
+   * Specifies how the virtual machine should be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This value is used when you are using a specialized disk to create the virtual machine.<br><br> **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described.
+   */
+  createOption: ("FromImage" | "Empty" | "Attach") | string;
+  /**
+   * Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
+   */
+  diskSizeGB?: number | string;
+  /**
+   * Describes a Encryption Settings for a Disk
+   */
+  encryptionSettings?: DiskEncryptionSettings | string;
+  /**
+   * Describes the uri of a disk.
+   */
+  image?: VirtualHardDisk | string;
+  /**
+   * The parameters of a managed disk.
+   */
+  managedDisk?: ManagedDiskParameters | string;
+  /**
+   * The disk name.
+   */
+  name?: string;
+  /**
+   * This property allows you to specify the type of the OS that is included in the disk if creating a VM from user-image or a specialized VHD. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
+   */
+  osType?: ("Windows" | "Linux") | string;
+  /**
+   * Describes the uri of a disk.
+   */
+  vhd?: VirtualHardDisk | string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies the operating system settings for the virtual machine.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "OSProfile".
+ */
+export interface OSProfile {
+  /**
+   * Specifies the password of the administrator account. <br><br> **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\\W_]) <br><br> **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" <br><br> For resetting the password, see [How to reset the Remote Desktop service or its login password in a Windows VM](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json) <br><br> For resetting root password, see [Manage users, SSH, and check or repair disks on Azure Linux VMs using the VMAccess Extension](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password)
+   */
+  adminPassword?: string;
+  /**
+   * Specifies the name of the administrator account. <br><br> **Windows-only restriction:** Cannot end in "." <br><br> **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5". <br><br> **Minimum-length (Linux):** 1  character <br><br> **Max-length (Linux):** 64 characters <br><br> **Max-length (Windows):** 20 characters  <br><br><li> For root access to the Linux VM, see [Using root privileges on Linux virtual machines in Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)<br><li> For a list of built-in system users on Linux that should not be used in this field, see [Selecting User Names for Linux on Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)
+   */
+  adminUsername?: string;
+  /**
+   * Specifies the host OS name of the virtual machine. <br><br> This name cannot be updated after the VM is created. <br><br> **Max-length (Windows):** 15 characters <br><br> **Max-length (Linux):** 64 characters. <br><br> For naming conventions and restrictions see [Azure infrastructure services implementation guidelines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions).
+   */
+  computerName?: string;
+  /**
+   * Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length of the binary array is 65535 bytes. <br><br> For using cloud-init for your VM, see [Using cloud-init to customize a Linux VM during creation](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)
+   */
+  customData?: string;
+  /**
+   * Specifies the Linux operating system settings on the virtual machine. <br><br>For a list of supported Linux distributions, see [Linux on Azure-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) <br><br> For running non-endorsed distributions, see [Information for Non-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
+   */
+  linuxConfiguration?: LinuxConfiguration | string;
+  /**
+   * Specifies set of certificates that should be installed onto the virtual machine.
+   */
+  secrets?: VaultSecretGroup[] | string;
+  /**
+   * Specifies Windows operating system settings on the virtual machine.
+   */
+  windowsConfiguration?: WindowsConfiguration | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a set of certificates which are all in the same Key Vault.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VaultSecretGroup".
+ */
+export interface VaultSecretGroup {
+  sourceVault?: SubResource | string;
+  /**
+   * The list of key vault references in SourceVault which contain certificates.
+   */
+  vaultCertificates?: VaultCertificate[] | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VaultCertificate".
+ */
+export interface VaultCertificate {
+  /**
+   * For Windows VMs, specifies the certificate store on the Virtual Machine to which the certificate should be added. The specified certificate store is implicitly in the LocalMachine account. <br><br>For Linux VMs, the certificate file is placed under the /var/lib/waagent directory, with the file name &lt;UppercaseThumbprint&gt;.crt for the X509 certificate file and &lt;UppercaseThumbprint&gt;.prv for private key. Both of these files are .pem formatted.
+   */
+  certificateStore?: string;
+  /**
+   * This is the URL of a certificate that has been uploaded to Key Vault as a secret. For adding a secret to the Key Vault, see [Add a key or secret to the key vault](https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add). In this case, your certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded in UTF-8: <br><br> {<br>  "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>  "password":"<pfx-file-password>"<br>}
+   */
+  certificateUrl?: string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies Windows operating system settings on the virtual machine.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "WindowsConfiguration".
+ */
+export interface WindowsConfiguration {
+  /**
+   * Specifies additional base-64 encoded XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup.
+   */
+  additionalUnattendContent?: AdditionalUnattendContent[] | string;
+  /**
+   * Indicates whether virtual machine is enabled for automatic updates.
+   */
+  enableAutomaticUpdates?: boolean | string;
+  /**
+   * Indicates whether virtual machine agent should be provisioned on the virtual machine. <br><br> When this property is not specified in the request body, default behavior is to set it to true.  This will ensure that VM Agent is installed on the VM so that extensions can be added to the VM later.
+   */
+  provisionVMAgent?: boolean | string;
+  /**
+   * Specifies the time zone of the virtual machine. e.g. "Pacific Standard Time"
+   */
+  timeZone?: string;
+  /**
+   * Describes Windows Remote Management configuration of the VM
+   */
+  winRM?: WinRMConfiguration | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes Windows Remote Management configuration of the VM
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "WinRMConfiguration".
+ */
+export interface WinRMConfiguration {
+  /**
+   * The list of Windows Remote Management listeners
+   */
+  listeners?: WinRMListener[] | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes Protocol and thumbprint of Windows Remote Management listener
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "WinRMListener".
+ */
+export interface WinRMListener {
+  /**
+   * This is the URL of a certificate that has been uploaded to Key Vault as a secret. For adding a secret to the Key Vault, see [Add a key or secret to the key vault](https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add). In this case, your certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded in UTF-8: <br><br> {<br>  "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>  "password":"<pfx-file-password>"<br>}
+   */
+  certificateUrl?: string;
+  /**
+   * Specifies the protocol of listener. <br><br> Possible values are: <br>**http** <br><br> **https**.
+   */
+  protocol?: ("Http" | "Https") | string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace image that you want to use and then click **Want to deploy programmatically, Get Started ->**. Enter any required information and then click **Save**.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "Plan".
+ */
+export interface Plan {
+  /**
+   * The plan ID.
+   */
+  name?: string;
+  /**
+   * Specifies the product of the image from the marketplace. This is the same value as Offer under the imageReference element.
+   */
+  product?: string;
+  /**
+   * The promotion code.
+   */
+  promotionCode?: string;
+  /**
+   * The publisher ID.
+   */
+  publisher?: string;
+  [k: string]: unknown;
+}
+/**
+ * The configuration parameters used while performing a rolling upgrade.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "RollingUpgradePolicy".
+ */
+export interface RollingUpgradePolicy {
+  /**
+   * The maximum percent of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. As this is a maximum, unhealthy instances in previous or future batches can cause the percentage of instances in a batch to decrease to ensure higher reliability. The default value for this parameter is 20%.
+   */
+  maxBatchInstancePercent?: number | string;
+  /**
+   * The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy, either as a result of being upgraded, or by being found in an unhealthy state by the virtual machine health checks before the rolling upgrade aborts. This constraint will be checked prior to starting any batch. The default value for this parameter is 20%.
+   */
+  maxUnhealthyInstancePercent?: number | string;
+  /**
+   * The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state. This check will happen after each batch is upgraded. If this percentage is ever exceeded, the rolling update aborts. The default value for this parameter is 20%.
+   */
+  maxUnhealthyUpgradedInstancePercent?: number | string;
+  /**
+   * The wait time between completing the update for all virtual machines in one batch and starting the next batch. The time duration should be specified in ISO 8601 format. The default value is 0 seconds (PT0S).
+   */
+  pauseTimeBetweenBatches?: string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set sku.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "Sku".
+ */
+export interface Sku {
+  /**
+   * Specifies the number of virtual machines in the scale set. NOTE: If the new VM SKU is not supported on the hardware the scale set is currently on, you need to deallocate the VMs in the scale set before you modify the SKU name.
+   */
+  capacity?: number | string;
+  /**
+   * The sku name.
+   */
+  name?: string;
+  /**
+   * Specifies the tier of virtual machines in a scale set.<br /><br /> Possible Values:<br /><br /> **Standard**<br /><br /> **Basic**
+   */
+  tier?: string;
+  [k: string]: unknown;
+}
+/**
+ * Specifies the storage settings for the virtual machine disks.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "StorageProfile".
+ */
+export interface StorageProfile {
+  /**
+   * Specifies the parameters that are used to add a data disk to a virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+   */
+  dataDisks?: DataDisk[] | string;
+  /**
+   * Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations. NOTE: Image reference publisher and offer can only be set when you create the scale set.
+   */
+  imageReference?: ImageReference | string;
+  /**
+   * Specifies information about the operating system disk used by the virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+   */
+  osDisk?: OSDisk | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes an upgrade policy - automatic, manual, or rolling.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "UpgradePolicy".
+ */
+export interface UpgradePolicy {
+  /**
+   * Whether OS upgrades should automatically be applied to scale set instances in a rolling fashion when a newer version of the image becomes available.
+   */
+  automaticOSUpgrade?: boolean | string;
+  /**
+   * Specifies the mode of an upgrade to virtual machines in the scale set.<br /><br /> Possible values are:<br /><br /> **Manual** - You  control the application of updates to virtual machines in the scale set. You do this by using the manualUpgrade action.<br /><br /> **Automatic** - All virtual machines in the scale set are  automatically updated at the same time.
+   */
+  mode?: ("Automatic" | "Manual" | "Rolling") | string;
+  /**
+   * The configuration parameters used while performing a rolling upgrade.
+   */
+  rollingUpgradePolicy?: RollingUpgradePolicy | string;
+  [k: string]: unknown;
+}
+/**
+ * The instance view of a virtual machine extension.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineExtensionInstanceView".
+ */
+export interface VirtualMachineExtensionInstanceView {
+  /**
+   * The virtual machine extension name.
+   */
+  name?: string;
+  /**
+   * The resource status information.
+   */
+  statuses?: InstanceViewStatus[] | string;
+  /**
+   * The resource status information.
+   */
+  substatuses?: InstanceViewStatus[] | string;
+  /**
+   * Specifies the type of the extension; an example is "CustomScriptExtension".
+   */
+  type?: string;
+  /**
+   * Specifies the version of the script handler.
+   */
+  typeHandlerVersion?: string;
+  [k: string]: unknown;
+}
+/**
+ * Describes the properties of a Virtual Machine Extension.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineExtensionProperties".
+ */
+export interface VirtualMachineExtensionProperties {
+  /**
+   * Indicates whether the extension should use a newer minor version if one is available at deployment time. Once deployed, however, the extension will not upgrade minor versions unless redeployed, even with this property set to true.
+   */
+  autoUpgradeMinorVersion?: boolean | string;
+  /**
+   * How the extension handler should be forced to update even if the extension configuration has not changed.
+   */
+  forceUpdateTag?: string;
+  /**
+   * The instance view of a virtual machine extension.
+   */
+  instanceView?: VirtualMachineExtensionInstanceView | string;
+  /**
+   * The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no protected settings at all.
+   */
+  protectedSettings?: {
+    [k: string]: unknown;
+  };
+  /**
+   * The name of the extension handler publisher.
+   */
+  publisher?: string;
+  /**
+   * Json formatted public settings for the extension.
+   */
+  settings?: {
+    [k: string]: unknown;
+  };
+  /**
+   * Specifies the type of the extension; an example is "CustomScriptExtension".
+   */
+  type?: string;
+  /**
+   * Specifies the version of the script handler.
+   */
+  typeHandlerVersion?: string;
+  [k: string]: unknown;
+}
+/**
+ * Identity for the virtual machine.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineIdentity".
+ */
+export interface VirtualMachineIdentity {
+  /**
+   * The type of identity used for the virtual machine. Currently, the only supported type is 'SystemAssigned', which implicitly creates an identity.
+   */
+  type?: "SystemAssigned" | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes the properties of a Virtual Machine.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineProperties".
+ */
+export interface VirtualMachineProperties {
+  availabilitySet?: SubResource | string;
+  /**
+   * Specifies the boot diagnostic settings state. <br><br>Minimum api-version: 2015-06-15.
+   */
+  diagnosticsProfile?: DiagnosticsProfile | string;
+  /**
+   * Specifies the hardware settings for the virtual machine.
+   */
+  hardwareProfile?: HardwareProfile | string;
+  /**
+   * Specifies that the image or disk that is being used was licensed on-premises. This element is only used for images that contain the Windows Server operating system. <br><br> Possible values are: <br><br> Windows_Client <br><br> Windows_Server <br><br> If this element is included in a request for an update, the value must match the initial value. This value cannot be updated. <br><br> For more information, see [Azure Hybrid Use Benefit for Windows Server](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json) <br><br> Minimum api-version: 2015-06-15
+   */
+  licenseType?: string;
+  /**
+   * Specifies the network interfaces of the virtual machine.
+   */
+  networkProfile?: NetworkProfile | string;
+  /**
+   * Specifies the operating system settings for the virtual machine.
+   */
+  osProfile?: OSProfile | string;
+  /**
+   * Specifies the storage settings for the virtual machine disks.
+   */
+  storageProfile?: StorageProfile | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set data disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetDataDisk".
+ */
+export interface VirtualMachineScaleSetDataDisk {
+  /**
+   * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
+   */
+  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  /**
+   * The create option.
+   */
+  createOption: ("FromImage" | "Empty" | "Attach") | string;
+  /**
+   * Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
+   */
+  diskSizeGB?: number | string;
+  /**
+   * Specifies the logical unit number of the data disk. This value is used to identify data disks within the VM and therefore must be unique for each data disk attached to a VM.
+   */
+  lun: number | string;
+  /**
+   * Describes the parameters of a ScaleSet managed disk.
+   */
+  managedDisk?: VirtualMachineScaleSetManagedDiskParameters | string;
+  /**
+   * The disk name.
+   */
+  name?: string;
+  [k: string]: unknown;
+}
+/**
+ * Describes the parameters of a ScaleSet managed disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetManagedDiskParameters".
+ */
+export interface VirtualMachineScaleSetManagedDiskParameters {
+  /**
+   * Specifies the storage account type for the managed disk. Managed OS disk storage account type can only be set when you create the scale set. Possible values are: Standard_LRS or Premium_LRS.
+   */
+  storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a Virtual Machine Scale Set Extension.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetExtension".
+ */
+export interface VirtualMachineScaleSetExtension {
+  /**
+   * The name of the extension.
+   */
+  name?: string;
+  properties?:
+    | GenericExtension
+    | IaaSDiagnostics
+    | IaaSAntimalware
+    | CustomScriptExtension
+    | CustomScriptForLinux
+    | LinuxDiagnostic
+    | VmAccessForLinux
+    | BgInfo
+    | VmAccessAgent
+    | DscExtension
+    | AcronisBackupLinux
+    | AcronisBackup
+    | LinuxChefClient
+    | ChefClient
+    | DatadogLinuxAgent
+    | DatadogWindowsAgent
+    | DockerExtension
+    | DynatraceLinux
+    | DynatraceWindows
+    | Eset
+    | HpeSecurityApplicationDefender
+    | PuppetAgent
+    | Site24X7LinuxServerExtn
+    | Site24X7WindowsServerExtn
+    | Site24X7ApmInsightExtn
+    | TrendMicroDSALinux
+    | TrendMicroDSA
+    | BmcCtmAgentLinux
+    | BmcCtmAgentWindows
+    | OSPatchingForLinux
+    | VMSnapshot
+    | VMSnapshotLinux
+    | CustomScript
+    | NetworkWatcherAgentWindows
+    | NetworkWatcherAgentLinux;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set extension profile.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetExtensionProfile".
+ */
+export interface VirtualMachineScaleSetExtensionProfile {
+  /**
+   * The virtual machine scale set child extension resources.
+   */
+  extensions?: VirtualMachineScaleSetExtension[] | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes the properties of a Virtual Machine Scale Set Extension.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetExtensionProperties".
+ */
+export interface VirtualMachineScaleSetExtensionProperties {
+  /**
+   * Indicates whether the extension should use a newer minor version if one is available at deployment time. Once deployed, however, the extension will not upgrade minor versions unless redeployed, even with this property set to true.
+   */
+  autoUpgradeMinorVersion?: boolean | string;
+  /**
+   * If a value is provided and is different from the previous value, the extension handler will be forced to update even if the extension configuration has not changed.
+   */
+  forceUpdateTag?: string;
+  /**
+   * The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no protected settings at all.
+   */
+  protectedSettings?: {
+    [k: string]: unknown;
+  };
+  /**
+   * The name of the extension handler publisher.
+   */
+  publisher?: string;
+  /**
+   * Json formatted public settings for the extension.
+   */
+  settings?: {
+    [k: string]: unknown;
+  };
+  /**
+   * Specifies the type of the extension; an example is "CustomScriptExtension".
+   */
+  type?: string;
+  /**
+   * Specifies the version of the script handler.
+   */
+  typeHandlerVersion?: string;
+  [k: string]: unknown;
+}
+/**
+ * Identity for the virtual machine scale set.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetIdentity".
+ */
+export interface VirtualMachineScaleSetIdentity {
+  /**
+   * The type of identity used for the virtual machine scale set. Currently, the only supported type is 'SystemAssigned', which implicitly creates an identity.
+   */
+  type?: "SystemAssigned" | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set network profile's IP configuration.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetIPConfiguration".
+ */
+export interface VirtualMachineScaleSetIPConfiguration {
+  /**
+   * Resource Id
+   */
+  id?: string;
+  /**
+   * The IP configuration name.
+   */
+  name: string;
+  /**
+   * Describes a virtual machine scale set network profile's IP configuration properties.
+   */
+  properties?: VirtualMachineScaleSetIPConfigurationProperties | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set network profile's IP configuration properties.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetIPConfigurationProperties".
+ */
+export interface VirtualMachineScaleSetIPConfigurationProperties {
+  /**
+   * Specifies an array of references to backend address pools of application gateways. A scale set can reference backend address pools of multiple application gateways. Multiple scale sets cannot use the same application gateway.
+   */
+  applicationGatewayBackendAddressPools?: SubResource[] | string;
+  /**
+   * Specifies an array of references to backend address pools of load balancers. A scale set can reference backend address pools of one public and one internal load balancer. Multiple scale sets cannot use the same load balancer.
+   */
+  loadBalancerBackendAddressPools?: SubResource[] | string;
+  /**
+   * Specifies an array of references to inbound Nat pools of the load balancers. A scale set can reference inbound nat pools of one public and one internal load balancer. Multiple scale sets cannot use the same load balancer
+   */
+  loadBalancerInboundNatPools?: SubResource[] | string;
+  /**
+   * Specifies the primary network interface in case the virtual machine has more than 1 network interface.
+   */
+  primary?: boolean | string;
+  /**
+   * Available from Api-Version 2017-03-30 onwards, it represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
+   */
+  privateIPAddressVersion?: ("IPv4" | "IPv6") | string;
+  /**
+   * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
+   */
+  publicIPAddressConfiguration?: VirtualMachineScaleSetPublicIPAddressConfiguration | string;
+  /**
+   * The API entity reference.
+   */
+  subnet?: ApiEntityReference | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetPublicIPAddressConfiguration".
+ */
+export interface VirtualMachineScaleSetPublicIPAddressConfiguration {
+  /**
+   * The publicIP address configuration name.
+   */
+  name: string;
+  /**
+   * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
+   */
+  properties?: VirtualMachineScaleSetPublicIPAddressConfigurationProperties | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetPublicIPAddressConfigurationProperties".
+ */
+export interface VirtualMachineScaleSetPublicIPAddressConfigurationProperties {
+  /**
+   * Describes a virtual machines scale sets network configuration's DNS settings.
+   */
+  dnsSettings?: VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings | string;
+  /**
+   * The idle timeout of the public IP address.
+   */
+  idleTimeoutInMinutes?: number | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machines scale sets network configuration's DNS settings.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings".
+ */
+export interface VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings {
+  /**
+   * The Domain name label.The concatenation of the domain name label and vm index will be the domain name labels of the PublicIPAddress resources that will be created
+   */
+  domainNameLabel: string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set network profile's network configurations.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetNetworkConfiguration".
+ */
+export interface VirtualMachineScaleSetNetworkConfiguration {
+  /**
+   * Resource Id
+   */
+  id?: string;
+  /**
+   * The network configuration name.
+   */
+  name: string;
+  /**
+   * Describes a virtual machine scale set network profile's IP configuration.
+   */
+  properties?: VirtualMachineScaleSetNetworkConfigurationProperties | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set network profile's IP configuration.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetNetworkConfigurationProperties".
+ */
+export interface VirtualMachineScaleSetNetworkConfigurationProperties {
+  /**
+   * Describes a virtual machines scale sets network configuration's DNS settings.
+   */
+  dnsSettings?: VirtualMachineScaleSetNetworkConfigurationDnsSettings | string;
+  /**
+   * Specifies whether the network interface is accelerated networking-enabled.
+   */
+  enableAcceleratedNetworking?: boolean | string;
+  /**
+   * Specifies the IP configurations of the network interface.
+   */
+  ipConfigurations: VirtualMachineScaleSetIPConfiguration[] | string;
+  networkSecurityGroup?: SubResource | string;
+  /**
+   * Specifies the primary network interface in case the virtual machine has more than 1 network interface.
+   */
+  primary?: boolean | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machines scale sets network configuration's DNS settings.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetNetworkConfigurationDnsSettings".
+ */
+export interface VirtualMachineScaleSetNetworkConfigurationDnsSettings {
+  /**
+   * List of DNS servers IP addresses
+   */
+  dnsServers?: string[] | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set network profile.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetNetworkProfile".
+ */
+export interface VirtualMachineScaleSetNetworkProfile {
+  /**
+   * The API entity reference.
+   */
+  healthProbe?: ApiEntityReference | string;
+  /**
+   * The list of network configurations.
+   */
+  networkInterfaceConfigurations?: VirtualMachineScaleSetNetworkConfiguration[] | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set operating system disk.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetOSDisk".
+ */
+export interface VirtualMachineScaleSetOSDisk {
+  /**
+   * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
+   */
+  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  /**
+   * Specifies how the virtual machines in the scale set should be created.<br><br> The only allowed value is: **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described.
+   */
+  createOption: ("FromImage" | "Empty" | "Attach") | string;
+  /**
+   * Describes the uri of a disk.
+   */
+  image?: VirtualHardDisk | string;
+  /**
+   * Describes the parameters of a ScaleSet managed disk.
+   */
+  managedDisk?: VirtualMachineScaleSetManagedDiskParameters | string;
+  /**
+   * The disk name.
+   */
+  name?: string;
+  /**
+   * This property allows you to specify the type of the OS that is included in the disk if creating a VM from user-image or a specialized VHD. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
+   */
+  osType?: ("Windows" | "Linux") | string;
+  /**
+   * Specifies the container urls that are used to store operating system disks for the scale set.
+   */
+  vhdContainers?: string[] | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set OS profile.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetOSProfile".
+ */
+export interface VirtualMachineScaleSetOSProfile {
+  /**
+   * Specifies the password of the administrator account. <br><br> **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\\W_]) <br><br> **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" <br><br> For resetting the password, see [How to reset the Remote Desktop service or its login password in a Windows VM](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json) <br><br> For resetting root password, see [Manage users, SSH, and check or repair disks on Azure Linux VMs using the VMAccess Extension](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password)
+   */
+  adminPassword?: string;
+  /**
+   * Specifies the name of the administrator account. <br><br> **Windows-only restriction:** Cannot end in "." <br><br> **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5". <br><br> **Minimum-length (Linux):** 1  character <br><br> **Max-length (Linux):** 64 characters <br><br> **Max-length (Windows):** 20 characters  <br><br><li> For root access to the Linux VM, see [Using root privileges on Linux virtual machines in Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)<br><li> For a list of built-in system users on Linux that should not be used in this field, see [Selecting User Names for Linux on Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)
+   */
+  adminUsername?: string;
+  /**
+   * Specifies the computer name prefix for all of the virtual machines in the scale set. Computer name prefixes must be 1 to 15 characters long.
+   */
+  computerNamePrefix?: string;
+  /**
+   * Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length of the binary array is 65535 bytes. <br><br> For using cloud-init for your VM, see [Using cloud-init to customize a Linux VM during creation](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)
+   */
+  customData?: string;
+  /**
+   * Specifies the Linux operating system settings on the virtual machine. <br><br>For a list of supported Linux distributions, see [Linux on Azure-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) <br><br> For running non-endorsed distributions, see [Information for Non-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
+   */
+  linuxConfiguration?: LinuxConfiguration | string;
+  /**
+   * Specifies set of certificates that should be installed onto the virtual machines in the scale set.
+   */
+  secrets?: VaultSecretGroup[] | string;
+  /**
+   * Specifies Windows operating system settings on the virtual machine.
+   */
+  windowsConfiguration?: WindowsConfiguration | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes the properties of a Virtual Machine Scale Set.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetProperties".
+ */
+export interface VirtualMachineScaleSetProperties {
+  /**
+   * Specifies whether the Virtual Machine Scale Set should be overprovisioned.
+   */
+  overprovision?: boolean | string;
+  /**
+   * When true this limits the scale set to a single placement group, of max size 100 virtual machines.
+   */
+  singlePlacementGroup?: boolean | string;
+  /**
+   * Describes an upgrade policy - automatic, manual, or rolling.
+   */
+  upgradePolicy?: UpgradePolicy | string;
+  /**
+   * Describes a virtual machine scale set virtual machine profile.
+   */
+  virtualMachineProfile?: VirtualMachineScaleSetVMProfile | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set virtual machine profile.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetVMProfile".
+ */
+export interface VirtualMachineScaleSetVMProfile {
+  /**
+   * Specifies the boot diagnostic settings state. <br><br>Minimum api-version: 2015-06-15.
+   */
+  diagnosticsProfile?: DiagnosticsProfile | string;
+  /**
+   * Describes a virtual machine scale set extension profile.
+   */
+  extensionProfile?: VirtualMachineScaleSetExtensionProfile | string;
+  /**
+   * Specifies that the image or disk that is being used was licensed on-premises. This element is only used for images that contain the Windows Server operating system. <br><br> Possible values are: <br><br> Windows_Client <br><br> Windows_Server <br><br> If this element is included in a request for an update, the value must match the initial value. This value cannot be updated. <br><br> For more information, see [Azure Hybrid Use Benefit for Windows Server](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json) <br><br> Minimum api-version: 2015-06-15
+   */
+  licenseType?: string;
+  /**
+   * Describes a virtual machine scale set network profile.
+   */
+  networkProfile?: VirtualMachineScaleSetNetworkProfile | string;
+  /**
+   * Describes a virtual machine scale set OS profile.
+   */
+  osProfile?: VirtualMachineScaleSetOSProfile | string;
+  /**
+   * Describes a virtual machine scale set storage profile.
+   */
+  storageProfile?: VirtualMachineScaleSetStorageProfile | string;
+  [k: string]: unknown;
+}
+/**
+ * Describes a virtual machine scale set storage profile.
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "VirtualMachineScaleSetStorageProfile".
+ */
+export interface VirtualMachineScaleSetStorageProfile {
+  /**
+   * Specifies the parameters that are used to add data disks to the virtual machines in the scale set. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+   */
+  dataDisks?: VirtualMachineScaleSetDataDisk[] | string;
+  /**
+   * Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations. NOTE: Image reference publisher and offer can only be set when you create the scale set.
+   */
+  imageReference?: ImageReference | string;
+  /**
+   * Describes a virtual machine scale set operating system disk.
+   */
+  osDisk?: VirtualMachineScaleSetOSDisk | string;
+  [k: string]: unknown;
+}
+/**
+ * Microsoft.Compute/virtualMachineScaleSets/extensions
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "virtualMachineScaleSets_extensions_childResource".
+ */
+export interface VirtualMachineScaleSetsExtensionsChildResource {
+  apiVersion: "2017-03-30";
+  /**
+   * The name of the VM scale set extension.
+   */
+  name: string;
+  /**
+   * Describes the properties of a Virtual Machine Scale Set Extension.
+   */
+  properties: VirtualMachineScaleSetExtensionProperties | string;
+  type: "extensions";
+  [k: string]: unknown;
+}
+/**
+ * Microsoft.Compute/virtualMachines/extensions
+ *
+ * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
+ * via the \`definition\` "virtualMachines_extensions_childResource".
+ */
+export interface VirtualMachinesExtensionsChildResource {
+  apiVersion: "2017-03-30";
+  /**
+   * Resource location
+   */
+  location: string;
+  /**
+   * The name of the virtual machine extension.
+   */
+  name: string;
+  properties:
+    | GenericExtension
+    | IaaSDiagnostics
+    | IaaSAntimalware
+    | CustomScriptExtension
+    | CustomScriptForLinux
+    | LinuxDiagnostic
+    | VmAccessForLinux
+    | BgInfo
+    | VmAccessAgent
+    | DscExtension
+    | AcronisBackupLinux
+    | AcronisBackup
+    | LinuxChefClient
+    | ChefClient
+    | DatadogLinuxAgent
+    | DatadogWindowsAgent
+    | DockerExtension
+    | DynatraceLinux
+    | DynatraceWindows
+    | Eset
+    | HpeSecurityApplicationDefender
+    | PuppetAgent
+    | Site24X7LinuxServerExtn
+    | Site24X7WindowsServerExtn
+    | Site24X7ApmInsightExtn
+    | TrendMicroDSALinux
+    | TrendMicroDSA
+    | BmcCtmAgentLinux
+    | BmcCtmAgentWindows
+    | OSPatchingForLinux
+    | VMSnapshot
+    | VMSnapshotLinux
+    | CustomScript
+    | NetworkWatcherAgentWindows
+    | NetworkWatcherAgentLinux;
+  /**
+   * Resource tags
+   */
+  tags?:
+    | {
+        [k: string]: string;
+      }
+    | string;
+  type: "extensions";
+  [k: string]: unknown;
+}
+"
+`;
+
+exports[`compileFiles azure: 2017-03-30/Microsoft.Compute.Extensions 1`] = `
+"/**
+ * Microsoft Compute Extensions Resource Types
+ */
+export interface MicrosoftComputeExtensions {
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "genericExtension".
+ */
+export interface GenericExtension {
+  /**
+   * Microsoft.Compute/extensions - Publisher
+   */
+  publisher: string;
+  /**
+   * Microsoft.Compute/extensions - Type
+   */
+  type: string;
+  /**
+   * Microsoft.Compute/extensions - Type handler version
+   */
+  typeHandlerVersion: string;
+  /**
+   * Microsoft.Compute/extensions - Settings
+   */
+  settings:
+    | {
+        [k: string]: unknown;
+      }
+    | string;
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "iaaSDiagnostics".
+ */
+export interface IaaSDiagnostics {
+  publisher: "Microsoft.Azure.Diagnostics";
+  type: "IaaSDiagnostics";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    xmlCfg: string;
+    StorageAccount: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    storageAccountName: string;
+    storageAccountKey: string;
+    storageAccountEndPoint: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "iaaSAntimalware".
+ */
+export interface IaaSAntimalware {
+  publisher: "Microsoft.Azure.Security";
+  type: "IaaSAntimalware";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    AntimalwareEnabled: boolean;
+    Exclusions: {
+      Paths: string;
+      Extensions: string;
+      Processes: string;
+      [k: string]: unknown;
+    };
+    RealtimeProtectionEnabled: "true" | "false";
+    ScheduledScanSettings: {
+      isEnabled: "true" | "false";
+      scanType: string;
+      day: string;
+      time: string;
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "customScriptExtension".
+ */
+export interface CustomScriptExtension {
+  publisher: "Microsoft.Compute";
+  type: "CustomScriptExtension";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    fileUris?: string[];
+    commandToExecute: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    storageAccountName?: string;
+    storageAccountKey?: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "customScriptForLinux".
+ */
+export interface CustomScriptForLinux {
+  publisher: "Microsoft.OSTCExtensions";
+  type: "CustomScriptForLinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    fileUris?: string[];
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    commandToExecute: string;
+    storageAccountName?: string;
+    storageAccountKey?: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "linuxDiagnostic".
+ */
+export interface LinuxDiagnostic {
+  publisher: "Microsoft.OSTCExtensions";
+  type: "LinuxDiagnostic";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    enableSyslog?: string;
+    mdsdHttpProxy?: string;
+    perCfg?: unknown[];
+    fileCfg?: unknown[];
+    xmlCfg?: string;
+    ladCfg?: {
+      [k: string]: unknown;
+    };
+    syslogCfg?: string;
+    eventVolume?: string;
+    mdsdCfg?: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    mdsdHttpProxy?: string;
+    storageAccountName: string;
+    storageAccountKey: string;
+    storageAccountEndPoint?: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "vmAccessForLinux".
+ */
+export interface VmAccessForLinux {
+  publisher: "Microsoft.OSTCExtensions";
+  type: "VMAccessForLinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    check_disk?: boolean;
+    repair_disk?: boolean;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    username: string;
+    password: string;
+    ssh_key: string;
+    reset_ssh: string;
+    remove_user: string;
+    expiration: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "bgInfo".
+ */
+export interface BgInfo {
+  publisher: "Microsoft.Compute";
+  type: "bginfo";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "vmAccessAgent".
+ */
+export interface VmAccessAgent {
+  publisher: "Microsoft.Compute";
+  type: "VMAccessAgent";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    username?: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    password?: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "dscExtension".
+ */
+export interface DscExtension {
+  publisher: "Microsoft.Powershell";
+  type: "DSC";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    modulesUrl: string;
+    configurationFunction: string;
+    properties?: string;
+    wmfVersion?: string;
+    privacy?: {
+      dataCollection?: string;
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    dataBlobUri?: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "acronisBackupLinux".
+ */
+export interface AcronisBackupLinux {
+  publisher: "Acronis.Backup";
+  type: "AcronisBackupLinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    absURL: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    userLogin: string;
+    userPassword: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "acronisBackup".
+ */
+export interface AcronisBackup {
+  publisher: "Acronis.Backup";
+  type: "AcronisBackup";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    absURL: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    userLogin: string;
+    userPassword: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "linuxChefClient".
+ */
+export interface LinuxChefClient {
+  publisher: "Chef.Bootstrap.WindowsAzure";
+  type: "LinuxChefClient";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    bootstrap_version?: string;
+    bootstrap_options?: {
+      chef_node_name: string;
+      chef_server_url: string;
+      validation_client_name: string;
+      node_ssl_verify_mode: string;
+      environment: string;
+      [k: string]: unknown;
+    };
+    runlist?: string;
+    client_rb?: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    validation_key: string;
+    chef_server_crt: string;
+    secret: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "chefClient".
+ */
+export interface ChefClient {
+  publisher: "Chef.Bootstrap.WindowsAzure";
+  type: "ChefClient";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    bootstrap_options?: {
+      chef_node_name: string;
+      chef_server_url: string;
+      validation_client_name: string;
+      node_ssl_verify_mode: string;
+      environment: string;
+      [k: string]: unknown;
+    };
+    runlist?: string;
+    client_rb?: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    validation_key: string;
+    chef_server_crt: string;
+    secret: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "datadogLinuxAgent".
+ */
+export interface DatadogLinuxAgent {
+  publisher: "Datadog.Agent";
+  type: "DatadogLinuxAgent";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    api_key: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "datadogWindowsAgent".
+ */
+export interface DatadogWindowsAgent {
+  publisher: "Datadog.Agent";
+  type: "DatadogWindowsAgent";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    api_key: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "dockerExtension".
+ */
+export interface DockerExtension {
+  publisher: "Microsoft.Azure.Extensions";
+  type: "DockerExtension";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    docker: {
+      port: string;
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    certs: {
+      ca: string;
+      cert: string;
+      key: string;
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "dynatraceLinux".
+ */
+export interface DynatraceLinux {
+  publisher: "dynatrace.ruxit";
+  type: "ruxitAgentLinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    tenantId: string;
+    token: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "dynatraceWindows".
+ */
+export interface DynatraceWindows {
+  publisher: "dynatrace.ruxit";
+  type: "ruxitAgentWindows";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    tenantId: string;
+    token: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "eset".
+ */
+export interface Eset {
+  publisher: "ESET";
+  type: "FileSecurity";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    LicenseKey: string;
+    "Install-RealtimeProtection": boolean;
+    "Install-ProtocolFiltering": boolean;
+    "Install-DeviceControl": boolean;
+    "Enable-Cloud": boolean;
+    "Enable-PUA": boolean;
+    ERAAgentCfgUrl: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "hpeSecurityApplicationDefender".
+ */
+export interface HpeSecurityApplicationDefender {
+  publisher: "HPE.Security.ApplicationDefender";
+  type: "DotnetAgent";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  protectedSettings: {
+    key: string;
+    serverURL: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "puppetAgent".
+ */
+export interface PuppetAgent {
+  publisher: "Puppet";
+  type: "PuppetAgent";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  protectedSettings: {
+    PUPPET_MASTER_SERVER: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "site24x7LinuxServerExtn".
+ */
+export interface Site24X7LinuxServerExtn {
+  publisher: "Site24x7";
+  type: "Site24x7LinuxServerExtn";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    site24x7AgentType?: "azurevmextnlinuxserver";
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    site24x7LicenseKey: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "site24x7WindowsServerExtn".
+ */
+export interface Site24X7WindowsServerExtn {
+  publisher: "Site24x7";
+  type: "Site24x7WindowsServerExtn";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    site24x7AgentType?: "azurevmextnwindowsserver";
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    site24x7LicenseKey: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "site24x7ApmInsightExtn".
+ */
+export interface Site24X7ApmInsightExtn {
+  publisher: "Site24x7";
+  type: "Site24x7ApmInsightExtn";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    site24x7AgentType?: "azurevmextnapminsightclassic";
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    site24x7LicenseKey: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "trendMicroDSALinux".
+ */
+export interface TrendMicroDSALinux {
+  publisher: "TrendMicro.DeepSecurity";
+  type: "TrendMicroDSALinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    DSMname: string;
+    DSMport: string;
+    policyNameorID?: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    tenantID: string;
+    tenantPassword: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "trendMicroDSA".
+ */
+export interface TrendMicroDSA {
+  publisher: "TrendMicro.DeepSecurity";
+  type: "TrendMicroDSA";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    DSMname: string;
+    DSMport: string;
+    policyNameorID?: string;
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    tenantID: string;
+    tenantPassword: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "bmcCtmAgentLinux".
+ */
+export interface BmcCtmAgentLinux {
+  publisher: "ctm.bmc.com";
+  type: "BmcCtmAgentLinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    "Control-M Server Name": string;
+    "Agent Port": string;
+    "Host Group": string;
+    "User Account": string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "bmcCtmAgentWindows".
+ */
+export interface BmcCtmAgentWindows {
+  publisher: "bmc.ctm";
+  type: "AgentWinExt";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    "Control-M Server Name": string;
+    "Agent Port": string;
+    "Host Group": string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "OSPatchingForLinux".
+ */
+export interface OSPatchingForLinux {
+  publisher: "Microsoft.OSTCExtensions";
+  type: "OSPatchingForLinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    disabled: boolean;
+    stop: boolean;
+    installDuration?: string;
+    intervalOfWeeks?: number;
+    dayOfWeek?: string;
+    startTime?: string;
+    rebootAfterPatch?: string;
+    category?: string;
+    oneoff?: boolean;
+    local?: boolean;
+    idleTestScript?: string;
+    healthyTestScript?: string;
+    distUpgradeList?: string;
+    distUpgradeAll?: boolean;
+    vmStatusTest?: {
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    storageAccountName?: string;
+    storageAccountKey?: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "VMSnapshot".
+ */
+export interface VMSnapshot {
+  publisher: "Microsoft.Azure.RecoveryServices";
+  type: "VMSnapshot";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    locale: string;
+    taskId: string;
+    commandToExecute: string;
+    objectStr: string;
+    logsBlobUri: string;
+    statusBlobUri: string;
+    commandStartTimeUTCTicks: string;
+    vmType: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "VMSnapshotLinux".
+ */
+export interface VMSnapshotLinux {
+  publisher: "Microsoft.Azure.RecoveryServices";
+  type: "VMSnapshotLinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    locale: string;
+    taskId: string;
+    commandToExecute: string;
+    objectStr: string;
+    logsBlobUri: string;
+    statusBlobUri: string;
+    commandStartTimeUTCTicks: string;
+    vmType: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "customScript".
+ */
+export interface CustomScript {
+  publisher: "Microsoft.Azure.Extensions";
+  type: "CustomScript";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  settings: {
+    fileUris: string[];
+    [k: string]: unknown;
+  };
+  protectedSettings: {
+    storageAccountName: string;
+    storageAccountKey: string;
+    commandToExecute: string;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "networkWatcherAgentWindows".
+ */
+export interface NetworkWatcherAgentWindows {
+  publisher: "Microsoft.Azure.NetworkWatcher";
+  type: "NetworkWatcherAgentWindows";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
+ * via the \`definition\` "networkWatcherAgentLinux".
+ */
+export interface NetworkWatcherAgentLinux {
+  publisher: "Microsoft.Azure.NetworkWatcher";
+  type: "NetworkWatcherAgentLinux";
+  typeHandlerVersion: string;
+  autoUpgradeMinorVersion: boolean;
+  [k: string]: unknown;
+}
+"
+`;
