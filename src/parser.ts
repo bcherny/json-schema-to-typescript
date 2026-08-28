@@ -330,7 +330,11 @@ function parseNonLiteral(
           .concat(
             parseRequired(
               schema,
-              members.some(({memberSchema}) => isObjectSchema(memberSchema)),
+              // what else renders as an object type in this intersection: a member that wasn't
+              // dropped, or -- when this is the intersection `applySchemaTyping` split off of a
+              // schema -- that schema's other types, which `parse` appends next
+              intersectionOwner(schema) !== undefined || members.some(({memberSchema}) => isObjectSchema(memberSchema)),
+              name,
               options,
               processed,
               usedNames,
@@ -674,6 +678,7 @@ function parseBranches(
 function parseRequired(
   schema: NormalizedJSONSchema,
   besideObjects: boolean,
+  standaloneName: string | undefined,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
@@ -687,7 +692,18 @@ function parseRequired(
   const takesRest =
     keys.some(key => declarations.get(key) === undefined) && !declaresInterface(owner) && isObjectSchema(owner)
   if (takesRest && !besideObjects) {
-    return [interfaceOf(parseSchema(owner as SchemaSchema, options, processed, usedNames, ''))]
+    // its definitions are not this interface's to declare (`parseUnreachableDefinitions` sees to a root's)
+    return [
+      interfaceOf(
+        parseSchema(
+          owner as SchemaSchema,
+          {...options, unreachableDefinitions: false},
+          processed,
+          usedNames,
+          standaloneName ?? '',
+        ),
+      ),
+    ]
   }
   const params = requireKeys(keys, key => {
     const declaration = declarations.get(key)
@@ -709,6 +725,11 @@ function isObjectSchema(schema: NormalizedJSONSchema, seen = new Set<NormalizedJ
     return false
   }
   seen.add(schema)
+  // an `anyOf`/`oneOf` branch that may match something other than objects makes the whole schema
+  // so (it renders as a union with that branch in it), unless its `type` says otherwise
+  if ([schema.anyOf, schema.oneOf].some(branches => branches?.some(branch => !isObjectSchema(branch, new Set(seen))))) {
+    return schema.type === 'object'
+  }
   return (
     schema.type === 'object' ||
     declaresInterface(schema) ||
@@ -845,7 +866,10 @@ function findDeclaration(
   }
 }
 
-/** The schema of property `key` as declared by `schema` itself or else by a member of its `allOf`, recursively */
+/**
+ * The schema of property `key` as declared by `schema` itself, or else by a member of its `allOf`
+ * or a schema it `extends` (draft 3), recursively
+ */
 function findDeclarationIn(
   schema: NormalizedJSONSchema,
   key: string,
@@ -858,7 +882,9 @@ function findDeclarationIn(
   if (hasProperty(schema, key)) {
     return schema.properties![key]
   }
-  for (const member of (schema[Intersection] ?? schema).allOf ?? []) {
+  // `extends` stays on the schema itself when `applySchemaTyping` splits its `allOf` off
+  const superSchemas = (schema.extends as unknown as NormalizedJSONSchema[] | undefined) ?? []
+  for (const member of ((schema[Intersection] ?? schema).allOf ?? []).concat(superSchemas)) {
     const declaration = findDeclarationIn(member, key, seen)
     if (declaration !== undefined) {
       return declaration
