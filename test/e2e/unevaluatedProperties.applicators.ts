@@ -103,11 +103,25 @@ export const input = {
       allOf: [{$ref: '#/$defs/base'}],
       unevaluatedProperties: false,
     },
-    // closed, as in #782: every property is declared inline
+    // open: a schema (rather than `false`) would become a typed index signature on
+    // {own?: boolean}, and the intersection holds the member's `x` to it: {"x": 1} is valid
+    anyOfSchemaForm: {
+      type: 'object',
+      properties: {own: {type: 'boolean'}},
+      anyOf: [{properties: {x: {type: 'number'}}, required: ['x']}],
+      unevaluatedProperties: {type: 'string'},
+    },
+    // closed, as in #782: every property is declared inline (the schema form types the index
+    // signature)
     plain: {
       type: 'object',
       properties: {own: {type: 'string'}},
       unevaluatedProperties: false,
+    },
+    plainSchemaForm: {
+      type: 'object',
+      properties: {own: {type: 'string'}},
+      unevaluatedProperties: {type: 'string'},
     },
   },
   additionalProperties: false,

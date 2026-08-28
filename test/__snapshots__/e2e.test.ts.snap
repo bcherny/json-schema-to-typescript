@@ -447749,8 +447749,19 @@ export interface UnevaluatedPropertiesApplicators {
   allOf?: Base & {
     own?: string;
   };
+  anyOfSchemaForm?: {
+    x: number;
+    [k: string]: unknown;
+  } & {
+    own?: boolean;
+    [k: string]: string | boolean | undefined;
+  };
   plain?: {
     own?: string;
+  };
+  plainSchemaForm?: {
+    own?: string;
+    [k: string]: string | undefined;
   };
 }
 export interface Person {
