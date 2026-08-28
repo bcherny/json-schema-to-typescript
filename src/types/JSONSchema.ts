@@ -180,5 +180,5 @@ export function isPrimitive(schema: LinkedJSONSchema | JSONSchemaType): schema i
 }
 
 export function isCompound(schema: JSONSchema): boolean {
-  return Array.isArray(schema.type) || 'anyOf' in schema || 'oneOf' in schema
+  return Array.isArray(schema.type) || 'allOf' in schema || 'anyOf' in schema || 'oneOf' in schema
 }

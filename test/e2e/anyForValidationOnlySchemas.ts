@@ -30,6 +30,7 @@ export const input = {
       pattern: '^[^\\/]+$',
     },
     custom: {'x-foo': 'bar'},
+    defaultOnly: {description: 'A `default` that is no string, number or boolean says nothing about the type either', default: null},
     inAllOf: {allOf: [{pattern: 'a'}, {type: 'string'}]},
     viaRef: {$ref: '#/definitions/identifier'},
     unimplementedApplicator: {not: {type: 'null'}},

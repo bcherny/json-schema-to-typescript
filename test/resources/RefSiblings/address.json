@@ -1,0 +1,11 @@
+{
+  "title": "Address",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "lines": {"type": "array", "items": {"type": "string"}},
+    "country": {"$ref": "country.json", "description": "Destination country"},
+    "origin": {"$ref": "country.json"}
+  },
+  "required": ["lines", "country"]
+}

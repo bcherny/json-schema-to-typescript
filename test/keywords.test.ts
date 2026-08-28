@@ -8,6 +8,7 @@ import {
   NOT_SCANNED_FOR_DEFINITIONS,
   STRUCTURAL_KEYWORDS,
   SUBSCHEMA_KEYWORDS,
+  TYPE_RELEVANT_KEYWORDS,
   TYPE_SHAPING_KEYWORDS,
 } from '../src/keywords'
 import {JSONSchema} from '../src/types/JSONSchema'
@@ -69,6 +70,7 @@ suite('keywords', () => {
         'maxProperties',
         'minProperties',
         'required',
+        'format',
         'additionalProperties',
         'unevaluatedProperties',
         'definitions',
@@ -151,7 +153,6 @@ suite('keywords', () => {
         'allOf',
         'anyOf',
         'const',
-        'default',
         'definitions',
         'dependencies',
         'else',
@@ -177,6 +178,36 @@ suite('keywords', () => {
   test("the parser overlooks the annotations it always has in a required-only member (parser.ts's former ANNOTATION_KEYWORDS)", () => {
     expect([...ANNOTATION_KEYWORDS].sort()).toEqual(
       ['$comment', 'deprecated', 'description', 'examples', 'readOnly', 'writeOnly'].sort(),
+    )
+  })
+
+  test("the `$ref` siblings that keep the resolver's merged copy (prenormalizer.ts)", () => {
+    expect([...TYPE_RELEVANT_KEYWORDS].sort()).toEqual(
+      [
+        '$id',
+        'additionalItems',
+        'additionalProperties',
+        'allOf',
+        'anyOf',
+        'const',
+        'enum',
+        'extends',
+        'format',
+        'id',
+        'items',
+        'maxItems',
+        'minItems',
+        'minProperties',
+        'oneOf',
+        'patternProperties',
+        'prefixItems',
+        'properties',
+        'required',
+        'tsEnumNames',
+        'tsType',
+        'type',
+        'unevaluatedProperties',
+      ].sort(),
     )
   })
 
