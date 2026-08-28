@@ -140,6 +140,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | enableConstEnums | boolean | `true` | Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)? |
 | inferStringEnumKeysFromValues | boolean | `false` | Create enums from JSON enums with eponymous keys |
 | format | boolean | `true` | Format code? Set this to `false` to improve performance. |
+| formatTypes | `Record<string, string>` | `{}` | Map from a string schema's [`format`](https://json-schema.org/understanding-json-schema/reference/string#format) to the TypeScript type to emit for it, verbatim, like `tsType` (which still takes precedence, as do `enum` and `const`). Eg. `{ 'date-time': 'Date' }` turns `{ "type": "string", "format": "date-time" }` into `Date` instead of `string`; `nullable`, arrays and `$ref`s follow (`Date \| null`, `Date[]`). Formats you don't list stay `string`. For a type of your own, add its `import` via `bannerComment`. CLI: `--formatTypes.date-time=Date`. |
 | ignoreMinAndMaxItems | boolean | `false` | Ignore maxItems and minItems for `array` types, preventing tuples being generated. |
 | maxItems | number | `20` | Maximum number of unioned tuples to emit when representing bounded-size array types, before falling back to emitting unbounded arrays. Increase this to improve precision of emitted types, decrease it to improve performance, or set it to `-1` to ignore `maxItems`. |
 | removeOptionalIfDefaultExists | boolean | `false` | Remove the optional modifier when a property has a default value. |
@@ -206,7 +207,7 @@ $ bun run test
 
 - `dependencies` ([single](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L261), [multiple](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L282))
 - `divisibleBy` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L185))
-- [`format`](https://github.com/json-schema/json-schema/wiki/Format) ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L209))
+- [`format`](https://github.com/json-schema/json-schema/wiki/Format) ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L209)) — but see the `formatTypes` option to map a format to a type of your choosing
 - `multipleOf` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L186))
 - `maximum` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L183))
 - `minimum` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L182))

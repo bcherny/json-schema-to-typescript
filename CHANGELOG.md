@@ -2,6 +2,10 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
+## Next
+
+- Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
+
 ## 16.0.0
 
 This release collects the fixes and small features merged since 15.0.4. Several of them correct types that were previously emitted wrong, so existing schemas may generate different output; hence the major version.
