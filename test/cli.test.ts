@@ -1,5 +1,5 @@
 import {afterAll, beforeAll, describe, expect, test} from 'bun:test'
-import {exec} from 'child_process'
+import {ExecException, exec} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
 import {availableParallelism} from 'os'
 import {resolve, posix} from 'path'
@@ -8,7 +8,7 @@ import {hasOnly} from './e2eCases'
 
 const suite = hasOnly() ? describe.skip : describe
 
-type Result = {error: Error | null; stdout: string; stderr: string}
+type Result = {error: ExecException | null; stdout: string; stderr: string}
 
 // Most of a CLI test is node starting up, so every invocation is spawned before the
 // first CLI test runs (at most one per core at a time) and each test then awaits
@@ -25,10 +25,7 @@ async function run(command: string, input?: string, cwd?: string): Promise<Resul
   running++
   try {
     return await new Promise<Result>(done => {
-      const child = exec(command, {encoding: 'utf-8', cwd}, (error, stdout, stderr) => {
-        process.stderr.write(stderr) // keep it visible, as it is for a CLI run by hand
-        done({error, stdout, stderr})
-      })
+      const child = exec(command, {encoding: 'utf-8', cwd}, (error, stdout, stderr) => done({error, stdout, stderr}))
       child.stdin!.end(input)
     })
   } finally {
@@ -52,10 +49,25 @@ function cliTest(
   spawners.push(() => results.set(name, run(command, input, cwd)))
   test(name, async () => {
     const {error, ...output} = await results.get(name)!
+    process.stderr.write(output.stderr) // keep it visible, as it is for a CLI run by hand
     if (error) {
       throw error
     }
     check(output)
+  })
+}
+
+// Like cliTest, for an invocation that must fail: the check gets the exit code and both streams.
+function cliFailTest(
+  name: string,
+  command: string,
+  check: (output: {code?: number | string; stdout: string; stderr: string}) => void,
+) {
+  spawners.push(() => results.set(name, run(command)))
+  test(name, async () => {
+    const {error, stdout, stderr} = await results.get(name)!
+    expect(error).not.toBeNull()
+    check({code: error!.code, stdout, stderr})
   })
 }
 
@@ -67,12 +79,13 @@ const expectFile = (path: string) => () => {
 // Everything the file-writing tests below create, for afterAll to clear when a
 // filtered run spawned them all but only ran some.
 const OUTPUTS = [
-  ...[1, 2, 3, 4, 5].map(n => `./test/resources/ReferencedType.${n}.d.ts`),
+  ...[1, 2, 3, 4, 5, 6].map(n => `./test/resources/ReferencedType.${n}.d.ts`),
   './test/resources/prettier-output/Enum.d.ts',
   './test/resources/MultiSchema/out',
   './test/resources/MultiSchema/foo',
   './test/resources/MultiSchemaRefs/response/out',
   './test/resources/MultiSchema2/out',
+  './test/resources/MultiSchema/extraArgs.d.ts',
 ]
 
 suite('CLI', () => {
@@ -274,6 +287,12 @@ suite('CLI', () => {
   )
 
   cliTest(
+    'file in, file out (-o)',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json -o ./test/resources/ReferencedType.6.d.ts',
+    expectFile('./test/resources/ReferencedType.6.d.ts'),
+  )
+
+  cliTest(
     '--unknownAny',
     'node dist/src/cli.js --unknownAny=false --input ./test/resources/ReferencedType.json',
     ({stdout}) => expect(stdout).toMatchSnapshot(),
@@ -338,6 +357,20 @@ suite('CLI', () => {
       const path = './test/resources/MultiSchemaRefs/response/out/Referencing.d.ts'
       expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
       rimraf.sync('./test/resources/MultiSchemaRefs/response/out')
+    },
+  )
+
+  // https://github.com/bcherny/json-schema-to-typescript/issues/365: an unquoted glob the
+  // shell expands (`-i *.json`) arrives as `-i a.json b.json c.json`; the CLI used to take
+  // b.json as the input and c.json as the *output*, overwriting a schema. Extra positional
+  // arguments next to -i/-o are now a usage error and nothing is written.
+  cliFailTest(
+    'extra positional arguments (e.g. from an unquoted glob) are an error, not an output path',
+    'node dist/src/cli.js -i ./test/resources/MultiSchema/a.json ./test/resources/MultiSchema/b.yaml -o ./test/resources/MultiSchema/extraArgs.d.ts',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toContain('Unexpected extra argument(s): ./test/resources/MultiSchema/b.yaml')
+      expect(existsSync('./test/resources/MultiSchema/extraArgs.d.ts')).toBe(false)
     },
   )
 
