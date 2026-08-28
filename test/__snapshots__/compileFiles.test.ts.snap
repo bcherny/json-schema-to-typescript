@@ -491,6 +491,10 @@ export interface Referenced {
 
 exports[`compileFiles azure: common/definitions 1`] = `
 "/**
+ * Common definitions
+ */
+export type Definitions = unknown;
+/**
  * Deployment template expression. See https://aka.ms/arm-template-expressions for more details on the ARM expression syntax.
  *
  * This interface was referenced by \`Definitions\`'s JSON-Schema
@@ -613,12 +617,6 @@ export type UTC = string;
  */
 export type ApiVersion = string;
 
-/**
- * Common definitions
- */
-export interface Definitions {
-  [k: string]: unknown;
-}
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "ARMResourceBase".
@@ -770,9 +768,8 @@ exports[`compileFiles azure: 2017-03-30/Microsoft.Compute 1`] = `
 /**
  * Microsoft Compute Resource Types
  */
-export interface MicrosoftCompute {
-  [k: string]: unknown;
-}
+export type MicrosoftCompute = unknown;
+
 /**
  * Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
  *
@@ -2495,9 +2492,8 @@ exports[`compileFiles azure: 2017-03-30/Microsoft.Compute.Extensions 1`] = `
 "/**
  * Microsoft Compute Extensions Resource Types
  */
-export interface MicrosoftComputeExtensions {
-  [k: string]: unknown;
-}
+export type MicrosoftComputeExtensions = unknown;
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "genericExtension".

@@ -1,4 +1,12 @@
-import {getRootSchema, isBoolean, LinkedJSONSchema, NormalizedJSONSchema, Parent, Shared} from './types/JSONSchema'
+import {
+  DefinitionKey,
+  isBoolean,
+  isPrimitive,
+  LinkedJSONSchema,
+  NormalizedJSONSchema,
+  Parent,
+  Shared,
+} from './types/JSONSchema'
 import {
   appendToDescription,
   escapeBlockComment,
@@ -24,6 +32,7 @@ type Rule = (
   options: Options,
   key: string | null,
   dereferencedPaths: DereferencedPaths,
+  rootSchema: LinkedJSONSchema,
 ) => void
 
 // Rules run in the order they are set: each rule sees a schema only after every rule before it
@@ -524,7 +533,7 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
 // ones after it get to see.
 startNewPass()
 
-rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, dereferencedPaths) => {
+rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, dereferencedPaths, rootSchema) => {
   // The name a TypeScript enum gets in this position: the definition it was dereferenced
   // from, else the key it sits under (unless that is just an index into anyOf/items)
   const dereferencedName = dereferencedPaths.get(schema)
@@ -537,10 +546,10 @@ rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, 
   // A nullable enum that is itself a definition keeps the definition's name (and so its
   // `enum` declaration); references to it become `Name | null`
   if ('tsEnumNames' in inner) {
-    const $defs = getRootSchema(schema as NormalizedJSONSchema).$defs ?? {}
+    const $defs = rootSchema.$defs ?? {}
     for (const name of Object.keys($defs)) {
       if ($defs[name] === schema) {
-        $defs[name] = inner as NormalizedJSONSchema
+        $defs[name] = inner as LinkedJSONSchema
       }
     }
   }
@@ -588,9 +597,21 @@ export function normalize(
   passes.forEach(pass =>
     traverse(rootSchema, (schema, key) => {
       for (const rule of pass) {
-        rule(schema, filename, options, key, dereferencedPaths)
+        rule(schema, filename, options, key, dereferencedPaths, rootSchema)
       }
     }),
   )
+  // Last, now that the root's definitions are final: record on each one the (first) key it is
+  // held under -- the name the parser declares it by. A key here takes precedence over one the
+  // resolver recorded from the separate file the schema came from (#143).
+  const $defs = rootSchema.$defs ?? {}
+  const named = new Set<LinkedJSONSchema>()
+  for (const key of Object.keys($defs)) {
+    const definition = $defs[key]
+    if (!isPrimitive(definition) && !named.has(definition)) {
+      Object.defineProperty(definition, DefinitionKey, {configurable: true, enumerable: false, value: key})
+      named.add(definition)
+    }
+  }
   return rootSchema as NormalizedJSONSchema
 }
