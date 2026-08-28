@@ -130611,6 +130611,10 @@ export type Extended = Thing & {
   e?: string;
   [k: string]: unknown;
 };
+export type Maybe = {
+  a?: string;
+  [k: string]: unknown;
+} | null;
 
 export interface RequiredNextToRef {
   plain?: Thing;
@@ -130666,6 +130670,8 @@ export interface RequiredNextToRef {
     children: Node[];
   };
   list?: Item;
+  nullableRef?: Maybe;
+  nullableBranch?: Maybe | string;
 }
 export interface Thing {
   a?: string;

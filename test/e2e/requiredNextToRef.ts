@@ -3,7 +3,8 @@
 // allOfRefWithSiblingRequired.ts, the issue's own schema, and required.ts, the member form):
 // the points raised on https://github.com/bcherny/json-schema-to-typescript/pull/408 --
 // anyOf/oneOf, nesting, a definition referenced both with and without a sibling `required` --
-// plus undeclared keys, several members, own properties next to the ref, and recursion.
+// plus undeclared keys, several members, own properties next to the ref, recursion, and
+// members that may not be objects.
 const thing = {$ref: '#/definitions/thing'}
 const other = {$ref: '#/definitions/other'}
 export const input = {
@@ -44,11 +45,16 @@ export const input = {
     // recursive definitions, required into from outside and from inside the cycle
     tree: {allOf: [{$ref: '#/definitions/node'}], required: ['children']},
     list: {$ref: '#/definitions/item'},
+    // a member or branch that may be something other than an object is left alone: `required`
+    // says nothing about its non-object instances, and `Maybe & {a: string}` would exclude them
+    nullableRef: {allOf: [{$ref: '#/definitions/maybe'}], required: ['a']},
+    nullableBranch: {anyOf: [{$ref: '#/definitions/maybe'}, {type: 'string'}], required: ['a']},
   },
   definitions: {
     thing: {type: 'object', properties: {a: {type: 'string'}, b: {type: 'integer'}}},
     other: {type: 'object', properties: {x: {type: 'string'}}},
     numeric: {type: 'object', properties: {a: {type: 'number'}}},
+    maybe: {type: ['object', 'null'], properties: {a: {type: 'string'}}},
     extended: {allOf: [thing, {type: 'object', properties: {e: {type: 'string'}}}]},
     node: {
       type: 'object',
