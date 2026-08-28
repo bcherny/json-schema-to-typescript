@@ -447655,6 +447655,9 @@ export type RequiredOnlyMembers = (
     | {
         b: B;
       }
+    /**
+     * Nothing to pick here
+     */
     | {
         [k: string]: unknown;
       }
