@@ -48,12 +48,32 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinit
   ) // trailing newline
 }
 
+// Deduplicated schemas share one standalone name across distinct AST nodes; each declare*
+// pass remembers (per its `processed` set) which names it has emitted, so the name's first
+// node declares it and the rest are skipped.
+const emittedNamesFor = memoize<Set<AST>, [], Set<string>>(() => new Set())
+
+function alreadyEmitted(ast: AST, processed: Set<AST>): boolean {
+  if (!hasStandaloneName(ast)) {
+    return false
+  }
+  const emittedNames = emittedNamesFor(processed)
+  if (emittedNames.has(ast.standaloneName)) {
+    return true
+  }
+  emittedNames.add(ast.standaloneName)
+  return false
+}
+
 function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
   if (processed.has(ast)) {
     return ''
   }
 
   processed.add(ast)
+  if (alreadyEmitted(ast, processed)) {
+    return ''
+  }
   let type = ''
 
   switch (ast.type) {
@@ -95,6 +115,9 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
   }
 
   processed.add(ast)
+  if (alreadyEmitted(ast, processed)) {
+    return ''
+  }
   let type = ''
 
   switch (ast.type) {
@@ -133,6 +156,9 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
   }
 
   processed.add(ast)
+  if (alreadyEmitted(ast, processed)) {
+    return ''
+  }
 
   switch (ast.type) {
     case 'ARRAY':
