@@ -4,10 +4,18 @@
 
 ## 16.0.0
 
-This release collects the bug fixes merged since 15.0.4. Several of them correct types that were previously emitted wrong, so existing schemas may generate different output; hence the major version.
+This release collects the fixes and small features merged since 15.0.4. Several of them correct types that were previously emitted wrong, so existing schemas may generate different output; hence the major version.
+
+New:
+
+- e3c7776 Feat: Support OpenAPI 3.0 `nullable: true`, including next to a `$ref`; such schemas now emit `T | null` (#755, fixes #410)
+- ab31f41 Feat: Support draft-3 / Swagger 2 property-level `required: true`; such properties are now emitted as required (#756, fixes #440, #6)
+- 111c187 Feat: Resolve draft-07 named-anchor `$ref`s (`"#name"` matching a sibling `$id: "#name"`) instead of crashing (#744, fixes #220)
 
 May change emitted types for existing schemas:
 
+- efceb64 Bugfix: Multiple `patternProperties` (or `patternProperties` with `additionalProperties: false`) are folded into one index signature typed as the union of their value types, instead of being dropped (#754, fixes #160, #315)
+- b84b3da Bugfix: `allOf` members made up only of unsupported keywords (eg. `if`/`then`, `not`) no longer add a stray `{[k: string]: unknown}` to the intersection (#743, fixes #369)
 - d8618e5 Bugfix: `properties`/`patternProperties` on a nested schema were dropped when combined with `oneOf`/`anyOf`/`allOf`; they are now intersected with the compound type (#708, fixes #630)
 - 4eee0f1 Bugfix: `$ref`s to definitions with dotted names (eg. `#/definitions/v1.ManagedFieldsEntry`) were truncated at the first dot (`V1`); the full name is now used (`V1ManagedFieldsEntry`) (#705, fixes #645)
 - 7a3dd8e Bugfix: Nested arrays with `minItems`/`maxItems` are capped by the cumulative product of their bounds against `maxItems`, falling back to an unbounded array instead of hanging or emitting enormous tuple unions (#703, fixes #690)
@@ -15,8 +23,9 @@ May change emitted types for existing schemas:
 - 0f9d309 Bugfix: `unreachableDefinitions` now declares definitions even when `declareExternallyReferenced` is off (#706, fixes #652)
 - 1900e1f Bugfix: With `inferStringEnumKeysFromValues`, a `const` is emitted as a literal type again rather than a single-member enum (#701, fixes #666)
 
-Fixes for output that did not compile:
+Fixes for crashes and output that did not compile:
 
+- b25c768 Bugfix: A root-level `$ref` to a definition that is itself only a `$ref` no longer crashes with "Refs should have been resolved by the resolver!" (#741, fixes #740)
 - 107dd42 Bugfix: Index signatures from `patternProperties`/`additionalProperties` are widened to cover sibling named properties, so the interface typechecks (TS2411). Index signatures that already typechecked are emitted type-equivalent to before (#704, fixes #671)
 - a2234d3 Bugfix: `inferStringEnumKeysFromValues` no longer produces invalid enum members for non-string, empty or digit-leading values (#694, fixes #657)
 - 377c6a1 Bugfix: A named enum (`tsEnumNames`) in a position with no name no longer emits a nameless `enum` declaration; it degrades to a union of literals (#693, fixes #691)
@@ -24,6 +33,7 @@ Fixes for output that did not compile:
 
 Other:
 
+- 16c2e77 Bugfix (CLI): relative `$ref`s are resolved against each schema file's own directory rather than `process.cwd()` when compiling a glob or directory; an explicit `--cwd` still wins (#742, fixes #324)
 - 9219636 Updated runtime dependencies: js-yaml 4 -> 5 (YAML files parse as before, #689), prettier ^3.9 (short unions that fit on one line are no longer wrapped; users on the existing `^3.2.5` range may already see this), @apidevtools/json-schema-ref-parser ^11.9 (#686)
 - a5834aa Removed the `is-glob` dependency (#643)
 
