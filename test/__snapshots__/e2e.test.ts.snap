@@ -128324,9 +128324,14 @@ export type Parameter = ExampleXORExamples &
 /**
  * Schema and content are mutually exclusive, at least one is required
  */
-export type SchemaXORContent = {
-  [k: string]: unknown;
-};
+export type SchemaXORContent =
+  | {
+      schema: unknown;
+      [k: string]: unknown;
+    }
+  | {
+      content: unknown;
+    };
 /**
  * Parameter location
  */
@@ -128599,6 +128604,7 @@ export interface Schema {
   [k: string]: unknown;
 }
 export interface Reference {
+  $ref: string;
   /**
    * This interface was referenced by \`Reference\`'s JSON-Schema definition
    * via the \`patternProperty\` "^\\$ref$".
@@ -128942,9 +128948,25 @@ exports[`realWorld.schemaStore.1.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type JSONSchemaForNPMPackageJsonFiles = {
-  [k: string]: unknown;
-} & {
+export type JSONSchemaForNPMPackageJsonFiles = (
+  | {
+      [k: string]: unknown;
+    }
+  | {
+      /**
+       * Array of package names that will be bundled when publishing the package.
+       */
+      bundledDependencies: string[] | false;
+      [k: string]: unknown;
+    }
+  | {
+      /**
+       * DEPRECATED: This field is honored, but "bundledDependencies" is the correct field name.
+       */
+      bundleDependencies: string[] | false;
+      [k: string]: unknown;
+    }
+) & {
   /**
    * The name of the package.
    */
@@ -130058,6 +130080,7 @@ export interface Foo {
 }
 export interface Bar {
   a: string;
+  b: unknown;
   [k: string]: unknown;
 }
 "
@@ -130569,9 +130592,12 @@ export interface RequiredNextToRef {
     a: string;
   };
   partlyUndeclared?: Thing & {
+    zzz: unknown;
     a: string;
   };
-  onlyUndeclared?: Thing;
+  onlyUndeclared?: Thing & {
+    zzz: unknown;
+  };
   twoMembers?: Thing &
     Other & {
       a: string;
@@ -130581,7 +130607,9 @@ export interface RequiredNextToRef {
     | (Thing & {
         a: string;
       })
-    | Other;
+    | (Other & {
+        a: unknown;
+      });
   oneOf?:
     | (Thing & {
         a: string;
@@ -130608,6 +130636,7 @@ export interface RequiredNextToRef {
     | Other
   ) & {
     own: boolean;
+    a: unknown;
   };
   tree?: Node & {
     children: Node[];
@@ -131065,6 +131094,8 @@ copy?: ResourceCopy
 scope?: string
 comments?: string
 [k: string]: unknown
+} & {
+plan: unknown
 }) & Accounts11) | (ARMResourceBase & (Deployments2 | Deployments3 | Deployments4 | Deployments5 | Links)))
 export type ResourceBase = (ARMResourceBase & {
 /**
@@ -131337,6 +131368,7 @@ export type ClustersDataConnectionsChildResource = ({
 name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2019-11-09"
+properties: unknown
 [k: string]: unknown
 } & ((GenevaDataConnection & {
 /**
@@ -131408,6 +131440,7 @@ export type ClustersDataConnections = ({
 name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2019-11-09"
+properties: unknown
 [k: string]: unknown
 } & ((GenevaDataConnection & {
 /**
@@ -131446,6 +131479,7 @@ export type ClustersDataConnectionsChildResource1 = ({
 name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-02-15"
+properties: unknown
 [k: string]: unknown
 } & ((GenevaDataConnection1 & {
 /**
@@ -131517,6 +131551,7 @@ export type ClustersDataConnections1 = ({
 name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-02-15"
+properties: unknown
 [k: string]: unknown
 } & ((GenevaDataConnection1 & {
 /**
@@ -131555,6 +131590,7 @@ export type ClustersDataConnectionsChildResource2 = ({
 name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-06-14"
+properties: unknown
 [k: string]: unknown
 } & ((GenevaDataConnection2 & {
 /**
@@ -131626,6 +131662,7 @@ export type ClustersDataConnections2 = ({
 name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-06-14"
+properties: unknown
 [k: string]: unknown
 } & ((GenevaDataConnection2 & {
 /**
@@ -131664,6 +131701,7 @@ export type ClustersDataConnectionsChildResource3 = ({
 name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-09-18"
+properties: unknown
 [k: string]: unknown
 } & ((GenevaDataConnection3 & {
 /**
@@ -131735,6 +131773,7 @@ export type ClustersDataConnections3 = ({
 name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-09-18"
+properties: unknown
 [k: string]: unknown
 } & ((GenevaDataConnection3 & {
 /**
@@ -158309,6 +158348,8 @@ maxMemoryPolicy?: (string | ("VolatileLRU" | "AllKeysLRU" | "VolatileRandom" | "
  */
 enableNonSslPort?: (boolean | string)
 }
+name: unknown
+location: unknown
 [k: string]: unknown
 }
 /**
@@ -159266,6 +159307,7 @@ properties: {
 accountType: string
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 /**
@@ -163933,6 +163975,7 @@ platformUpdateDomainCount?: (number | string)
 platformFaultDomainCount?: (number | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 /**
@@ -163942,6 +163985,7 @@ export interface Extensions {
 type: "Microsoft.Compute/virtualMachines/extensions"
 apiVersion: ("2015-05-01-preview" | "2015-06-15" | "2016-03-30")
 properties: (GenericExtension | IaaSDiagnostics | IaaSAntimalware | CustomScriptExtension | CustomScriptForLinux | LinuxDiagnostic | VmAccessForLinux | BgInfo | VmAccessAgent | DscExtension | AcronisBackupLinux | AcronisBackup | LinuxChefClient | ChefClient | DatadogLinuxAgent | DatadogWindowsAgent | DockerExtension | DynatraceLinux | DynatraceWindows | Eset | HpeSecurityApplicationDefender | PuppetAgent | Site24X7LinuxServerExtn | Site24X7WindowsServerExtn | Site24X7ApmInsightExtn | TrendMicroDSALinux | TrendMicroDSA | BmcCtmAgentLinux | BmcCtmAgentWindows | OSPatchingForLinux | VMSnapshot | VMSnapshotLinux | CustomScript | NetworkWatcherAgentWindows | NetworkWatcherAgentLinux)
+location: unknown
 [k: string]: unknown
 }
 export interface GenericExtension {
@@ -164554,6 +164598,8 @@ upgradePolicy: (UpgradePolicy | string)
 virtualMachineProfile: (VirtualMachineProfile | string)
 [k: string]: unknown
 }
+name: unknown
+location: unknown
 [k: string]: unknown
 }
 export interface Sku22 {
@@ -165096,6 +165142,7 @@ copy?: ResourceCopy1
 comments?: string
 [k: string]: unknown
 }) & ExtensionsChild)[]
+location: unknown
 [k: string]: unknown
 }
 export interface HardwareProfile {
@@ -165204,6 +165251,7 @@ export interface ExtensionsChild {
 type: "extensions"
 apiVersion: ("2015-05-01-preview" | "2015-06-15" | "2016-03-30")
 properties: (GenericExtension | IaaSDiagnostics | IaaSAntimalware | CustomScriptExtension | CustomScriptForLinux | LinuxDiagnostic | VmAccessForLinux | BgInfo | VmAccessAgent | DscExtension | AcronisBackupLinux | AcronisBackup | LinuxChefClient | ChefClient | DatadogLinuxAgent | DatadogWindowsAgent | DockerExtension | DynatraceLinux | DynatraceWindows | Eset | HpeSecurityApplicationDefender | PuppetAgent | Site24X7LinuxServerExtn | Site24X7WindowsServerExtn | Site24X7ApmInsightExtn | TrendMicroDSALinux | TrendMicroDSA | BmcCtmAgentLinux | BmcCtmAgentWindows | OSPatchingForLinux | VMSnapshot | VMSnapshotLinux | CustomScript | NetworkWatcherAgentWindows | NetworkWatcherAgentLinux)
+location: unknown
 [k: string]: unknown
 }
 /**
@@ -196970,6 +197018,7 @@ idleTimeoutInMinutes?: (number | string)
 dnsSettings?: (PublicIPAddressDnsSettings | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface PublicIPAddressDnsSettings {
@@ -197006,6 +197055,7 @@ subnets: (Subnet2[] | string)
 virtualNetworkPeerings?: (VirtualNetworkPeering[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface AddressSpace {
@@ -197087,6 +197137,7 @@ inboundNatPools?: (InboundNatPools[] | string)
 outboundNatRules?: (OutboundNatRules[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface FrontendIPConfigurations {
@@ -197177,6 +197228,7 @@ properties: {
 securityRules: (SecurityRules[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface SecurityRules {
@@ -197221,6 +197273,7 @@ ipConfigurations: (IpConfiguration1[] | string)
 dnsSettings?: (NetworkInterfaceDnsSettings | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface IpConfiguration1 {
@@ -197255,6 +197308,7 @@ properties: {
 routes: (Routes[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface Routes {
@@ -197292,6 +197346,7 @@ idleTimeoutInMinutes?: (number | string)
 dnsSettings?: (PublicIPAddressDnsSettings1 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface PublicIPAddressDnsSettings1 {
@@ -197328,6 +197383,7 @@ subnets: (Subnet3[] | string)
 virtualNetworkPeerings?: (VirtualNetworkPeering1[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface AddressSpace1 {
@@ -197409,6 +197465,7 @@ inboundNatPools?: (InboundNatPools1[] | string)
 outboundNatRules?: (OutboundNatRules1[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface FrontendIPConfigurations1 {
@@ -197499,6 +197556,7 @@ properties: {
 securityRules: (SecurityRules1[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface SecurityRules1 {
@@ -197543,6 +197601,7 @@ ipConfigurations: (IpConfiguration2[] | string)
 dnsSettings?: (NetworkInterfaceDnsSettings1 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface IpConfiguration2 {
@@ -197577,6 +197636,7 @@ properties: {
 routes: (Routes1[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface Routes1 {
@@ -197614,6 +197674,7 @@ idleTimeoutInMinutes?: (number | string)
 dnsSettings?: (PublicIPAddressDnsSettings2 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface PublicIPAddressDnsSettings2 {
@@ -197650,6 +197711,7 @@ subnets: (Subnet4[] | string)
 virtualNetworkPeerings?: (VirtualNetworkPeering2[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface AddressSpace2 {
@@ -197731,6 +197793,7 @@ inboundNatPools?: (InboundNatPools2[] | string)
 outboundNatRules?: (OutboundNatRules2[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface FrontendIPConfigurations2 {
@@ -197821,6 +197884,7 @@ properties: {
 securityRules: (SecurityRules2[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface SecurityRules2 {
@@ -197865,6 +197929,7 @@ ipConfigurations: (IpConfiguration3[] | string)
 dnsSettings?: (NetworkInterfaceDnsSettings2 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface IpConfiguration3 {
@@ -197899,6 +197964,7 @@ properties: {
 routes: (Routes2[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface Routes2 {
@@ -197936,6 +198002,7 @@ idleTimeoutInMinutes?: (number | string)
 dnsSettings?: (PublicIPAddressDnsSettings3 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface PublicIPAddressDnsSettings3 {
@@ -197972,6 +198039,7 @@ subnets: (Subnet5[] | string)
 virtualNetworkPeerings?: (VirtualNetworkPeering3[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface AddressSpace3 {
@@ -198053,6 +198121,7 @@ inboundNatPools?: (InboundNatPools3[] | string)
 outboundNatRules?: (OutboundNatRules3[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface FrontendIPConfigurations3 {
@@ -198143,6 +198212,7 @@ properties: {
 securityRules: (SecurityRules3[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface SecurityRules3 {
@@ -198187,6 +198257,7 @@ ipConfigurations: (IpConfiguration4[] | string)
 dnsSettings?: (NetworkInterfaceDnsSettings3 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface IpConfiguration4 {
@@ -198221,6 +198292,7 @@ properties: {
 routes: (Routes3[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface Routes3 {
@@ -198258,6 +198330,7 @@ idleTimeoutInMinutes?: (number | string)
 dnsSettings?: (PublicIPAddressDnsSettings4 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface PublicIPAddressDnsSettings4 {
@@ -198294,6 +198367,7 @@ subnets: (Subnet6[] | string)
 virtualNetworkPeerings?: (VirtualNetworkPeering4[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface AddressSpace4 {
@@ -198375,6 +198449,7 @@ inboundNatPools?: (InboundNatPools4[] | string)
 outboundNatRules?: (OutboundNatRules4[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface FrontendIPConfigurations4 {
@@ -198465,6 +198540,7 @@ properties: {
 securityRules: (SecurityRules4[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface SecurityRules4 {
@@ -198509,6 +198585,7 @@ ipConfigurations: (IpConfiguration5[] | string)
 dnsSettings?: (NetworkInterfaceDnsSettings4 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface IpConfiguration5 {
@@ -198543,6 +198620,7 @@ properties: {
 routes: (Routes4[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface Routes4 {
@@ -198580,6 +198658,7 @@ idleTimeoutInMinutes?: (number | string)
 dnsSettings?: (PublicIPAddressDnsSettings5 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface PublicIPAddressDnsSettings5 {
@@ -198616,6 +198695,7 @@ subnets: (Subnet7[] | string)
 virtualNetworkPeerings?: (VirtualNetworkPeering5[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface AddressSpace5 {
@@ -198697,6 +198777,7 @@ inboundNatPools?: (InboundNatPools5[] | string)
 outboundNatRules?: (OutboundNatRules5[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface FrontendIPConfigurations5 {
@@ -198787,6 +198868,7 @@ properties: {
 securityRules: (SecurityRules5[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface SecurityRules5 {
@@ -198831,6 +198913,7 @@ ipConfigurations: (IpConfiguration6[] | string)
 dnsSettings?: (NetworkInterfaceDnsSettings5 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface IpConfiguration6 {
@@ -198865,6 +198948,7 @@ properties: {
 routes: (Routes5[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface Routes5 {
@@ -198902,6 +198986,7 @@ idleTimeoutInMinutes?: (number | string)
 dnsSettings?: (PublicIPAddressDnsSettings6 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface PublicIPAddressDnsSettings6 {
@@ -198938,6 +199023,7 @@ subnets: (Subnet8[] | string)
 virtualNetworkPeerings?: (VirtualNetworkPeering6[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface AddressSpace6 {
@@ -199019,6 +199105,7 @@ inboundNatPools?: (InboundNatPools6[] | string)
 outboundNatRules?: (OutboundNatRules6[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface FrontendIPConfigurations6 {
@@ -199109,6 +199196,7 @@ properties: {
 securityRules: (SecurityRules6[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface SecurityRules6 {
@@ -199153,6 +199241,7 @@ ipConfigurations: (IpConfiguration7[] | string)
 dnsSettings?: (NetworkInterfaceDnsSettings6 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface IpConfiguration7 {
@@ -199187,6 +199276,7 @@ properties: {
 routes: (Routes6[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface Routes6 {
@@ -199224,6 +199314,7 @@ idleTimeoutInMinutes?: (number | string)
 dnsSettings?: (PublicIPAddressDnsSettings7 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface PublicIPAddressDnsSettings7 {
@@ -199260,6 +199351,7 @@ subnets: (Subnet9[] | string)
 virtualNetworkPeerings?: (VirtualNetworkPeering7[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface AddressSpace7 {
@@ -199341,6 +199433,7 @@ inboundNatPools?: (InboundNatPools7[] | string)
 outboundNatRules?: (OutboundNatRules7[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface FrontendIPConfigurations7 {
@@ -199431,6 +199524,7 @@ properties: {
 securityRules: (SecurityRules7[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface SecurityRules7 {
@@ -199475,6 +199569,7 @@ ipConfigurations: (IpConfiguration8[] | string)
 dnsSettings?: (NetworkInterfaceDnsSettings7 | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface IpConfiguration8 {
@@ -199509,6 +199604,7 @@ properties: {
 routes: (Routes7[] | string)
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 export interface Routes7 {
@@ -394360,6 +394456,7 @@ properties: {
 applicationId?: string
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 /**
@@ -394419,6 +394516,7 @@ WebTest?: string
 SyntheticMonitorId?: string
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 /**
@@ -394585,6 +394683,7 @@ name?: string
 targetResourceUri?: string
 [k: string]: unknown
 }
+location: unknown
 [k: string]: unknown
 }
 /**
@@ -441850,9 +441949,14 @@ export type Parameter = ExampleXORExamples &
 /**
  * Schema and content are mutually exclusive, at least one is required
  */
-export type SchemaXORContent = {
-  [k: string]: unknown;
-};
+export type SchemaXORContent =
+  | {
+      schema: unknown;
+      [k: string]: unknown;
+    }
+  | {
+      content: unknown;
+    };
 /**
  * Parameter location
  */
@@ -442125,6 +442229,7 @@ export interface Schema {
   [k: string]: unknown;
 }
 export interface Reference {
+  $ref: string;
   /**
    * This interface was referenced by \`Reference\`'s JSON-Schema definition
    * via the \`patternProperty\` "^\\$ref$".
@@ -442955,6 +443060,7 @@ exports[`allOf.ts 1`] = `
 
 export interface AllOf {
   foo: Foo & Bar;
+  bar: unknown;
 }
 export interface Foo {
   a: string;
@@ -442962,6 +443068,7 @@ export interface Foo {
 }
 export interface Bar {
   a: string;
+  b: unknown;
 }
 "
 `;
@@ -446885,10 +446992,15 @@ export type RequiredOnlyMembers = (
 } & (
     | {
         b: B;
+        notDeclared: unknown;
       }
     /**
      * Nothing to pick here
      */
+    | {
+        notDeclared: unknown;
+        [k: string]: unknown;
+      }
     | {
         [k: string]: unknown;
       }
@@ -446951,16 +447063,30 @@ exports[`requiredOnlyMembersSharedHop.ts 1`] = `
 
 export interface RequiredOnlyMembersSharedHop {
   later?: {
-    x?: {
-      [k: string]: unknown;
-    } & {
+    x?: (
+      | {
+          a: unknown;
+          [k: string]: unknown;
+        }
+      | {
+          b: unknown;
+          [k: string]: unknown;
+        }
+    ) & {
       a?: string;
       b?: number;
       [k: string]: unknown;
     };
-    y?: {
-      [k: string]: unknown;
-    } & {
+    y?: (
+      | {
+          a: unknown;
+          [k: string]: unknown;
+        }
+      | {
+          b: unknown;
+          [k: string]: unknown;
+        }
+    ) & {
       a?: number;
       b?: string;
       [k: string]: unknown;
@@ -446968,16 +447094,30 @@ export interface RequiredOnlyMembersSharedHop {
     [k: string]: unknown;
   };
   earlier?: {
-    x?: {
-      [k: string]: unknown;
-    } & {
+    x?: (
+      | {
+          a: unknown;
+          [k: string]: unknown;
+        }
+      | {
+          b: unknown;
+          [k: string]: unknown;
+        }
+    ) & {
       a?: string;
       b?: number;
       [k: string]: unknown;
     };
-    y?: {
-      [k: string]: unknown;
-    } & {
+    y?: (
+      | {
+          a: unknown;
+          [k: string]: unknown;
+        }
+      | {
+          b: unknown;
+          [k: string]: unknown;
+        }
+    ) & {
       a?: number;
       b?: string;
       [k: string]: unknown;
@@ -448191,6 +448331,7 @@ export type UnionWithProps = (
   | {
       obj_type: "Foo";
       foo_type?: string;
+      type: unknown;
       [k: string]: unknown;
     }
   | {
@@ -448198,6 +448339,7 @@ export type UnionWithProps = (
       bar_type?: string;
       team: string;
       health: number;
+      type: unknown;
       [k: string]: unknown;
     }
 ) & {
