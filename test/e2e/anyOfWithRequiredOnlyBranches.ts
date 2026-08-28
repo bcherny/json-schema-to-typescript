@@ -6,12 +6,11 @@
  * `{[k: string]: unknown}`; the union of those is then intersected with the
  * all-optional parent interface, so the requiredness is lost entirely:
  *   export type Assortment = {[k: string]: unknown} & {id?: string; validFrom?: string; validTo?: string}
- * The snapshot entry for this case holds the reporter's expected union (one
- * member per branch, that branch's `required` applied to the parent's
- * properties). The exact shape is a maintainer decision (see Boris's
- * 2026-08-03 comment on the issue); the same collapse is already recorded as
- * accepted output in oneOfWithRequiredAndProperties.ts (#630), which a fix
- * would change too.
+ * Expected: each branch becomes a pick of the parent's declared properties
+ * with that branch's `required` applied, and the union of those picks is
+ * intersected with the (all-optional) parent interface -- the shape the
+ * maintainer gave as expected output on #513:
+ *   export type Assortment = ({id: string; validFrom: string} | {id: string; validTo: string}) & {id?: string; ...}
  */
 export const input = {
   title: 'Assortment',

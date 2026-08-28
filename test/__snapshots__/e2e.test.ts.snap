@@ -130674,17 +130674,20 @@ exports[`anyOfWithRequiredOnlyBranches.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Assortment =
+export type Assortment = (
   | {
       id: string;
       validFrom: string;
-      validTo?: string;
     }
   | {
       id: string;
-      validFrom?: string;
       validTo: string;
-    };
+    }
+) & {
+  id?: string;
+  validFrom?: string;
+  validTo?: string;
+};
 "
 `;
 
