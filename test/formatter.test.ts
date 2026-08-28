@@ -1,6 +1,7 @@
 import {describe, expect, test} from 'bun:test'
 import {DEFAULT_OPTIONS, Options} from '../src'
 import {format} from '../src/formatter'
+import {format as prettify} from 'prettier'
 import {hasOnly} from './e2eCases'
 
 const suite = hasOnly() ? describe.skip : describe
@@ -59,7 +60,10 @@ suite('formatter', () => {
   test('options that concern the file as a whole are applied to the file as a whole', async () => {
     for (const style of [{insertPragma: true}, {requirePragma: true}, {endOfLine: 'auto' as const}, {rangeEnd: 30}]) {
       const options = {...DEFAULT_OPTIONS, style: {...DEFAULT_OPTIONS.style, ...style}}
-      expect(await format(PIECES, options, 1)).toBe(await inOnePiece(PIECES, options))
+      // what prettier itself makes of the whole file (not `inOnePiece`, which takes the same code
+      // path as the batched call and so could share its mistake)
+      const whole = await prettify(PIECES.join(''), {parser: 'typescript', filepath: 'schema.d.ts', ...options.style})
+      expect(await format(PIECES, options, 1)).toBe(whole)
     }
   })
 })
