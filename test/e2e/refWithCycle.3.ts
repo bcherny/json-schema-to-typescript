@@ -18,4 +18,4 @@ export const input = {
   title: 'Cycle (3)',
 }
 
-export const error = true
+export const error = 'cycle with no concrete base case'
