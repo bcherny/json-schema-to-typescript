@@ -210,3 +210,14 @@ export const TYPE_SHAPING_KEYWORDS = keywordsWhere(({typed}) => typed === true)
 
 /** @see Keyword.annotation */
 export const ANNOTATION_KEYWORDS = keywordsWhere(({annotation}) => annotation === true)
+
+/**
+ * The subschema positions the structural hash recurses into, and what each holds. Unlike
+ * `SUBSCHEMA_KEYWORDS` this includes `extends`, whose `LEGACY` carve-out is `traverse`-specific.
+ */
+export const HASHED_SUBSCHEMA_KEYWORDS: ReadonlyMap<string, SchemaHolds> = new Map(
+  NAMES.flatMap(name => {
+    const {holds} = KEYWORDS[name]
+    return holdsSchemas(holds) ? [[name, holds] as const] : []
+  }),
+)

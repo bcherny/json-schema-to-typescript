@@ -1,0 +1,70 @@
+export const input = {
+  title: 'DuplicateSubSchemas',
+  type: 'object',
+  properties: {
+    option1: {
+      oneOf: [
+        {
+          title: 'Option',
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              const: 'A',
+            },
+            valueA: {
+              type: 'string',
+            },
+          },
+          required: ['type', 'valueA'],
+        },
+        {
+          title: 'Option',
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              const: 'B',
+            },
+            valueB: {
+              type: 'number',
+            },
+          },
+          required: ['type', 'valueB'],
+        },
+      ],
+    },
+    option2: {
+      anyOf: [
+        {
+          title: 'Option',
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              const: 'A',
+            },
+            valueA: {
+              type: 'string',
+            },
+          },
+          required: ['type', 'valueA'],
+        },
+        {
+          title: 'Option',
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              const: 'C',
+            },
+            valueC: {
+              type: 'boolean',
+            },
+          },
+          required: ['type', 'valueC'],
+        },
+      ],
+    },
+  },
+}
