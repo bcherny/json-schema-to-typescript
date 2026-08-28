@@ -27,5 +27,6 @@ suite('linker', () => {
     expect(schema.properties.a[Parent]).toBe(schema.properties)
     expect(schema.properties.a[Shared]).toBe(true)
     expect(schema.properties[Shared]).toBe(undefined)
+    expect(link(schema)[Shared]).toBe(undefined)
   })
 })
