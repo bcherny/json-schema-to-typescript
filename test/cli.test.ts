@@ -187,6 +187,12 @@ suite('CLI', () => {
   )
 
   cliTest(
+    '--declarationStyle',
+    'node dist/src/cli.js --declarationStyle type --input ./test/resources/ReferencedType.json',
+    ({stdout}) => expect(stdout).toMatchSnapshot(),
+  )
+
+  cliTest(
     '--additionalProperties',
     'node dist/src/cli.js --additionalProperties=false --input ./test/resources/ReferencedType.json',
     ({stdout}) => expect(stdout).toMatchSnapshot(),
