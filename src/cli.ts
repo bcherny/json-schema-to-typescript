@@ -51,11 +51,15 @@ async function main(argv: minimist.ParsedArgs) {
 
   try {
     // Defend against unquoted glob expansion (or other shell mistakes) silently supplying extra
-    // positional arguments. Without this check, argv._[0]/argv._[1] would silently win over an
-    // explicitly-passed --input/--output flag, or overflow past the two positional slots (input,
-    // output) this CLI supports -- either way risking a source file being misread as an output
-    // path and overwritten.
-    if (argv._.length > 2 || (argv._.length > 0 && (argv.input !== undefined || argv.output !== undefined))) {
+    // positional arguments. A positional that competes with an explicitly-passed --input/--output
+    // flag for the same slot, or overflows past the two positional slots (input, output) this CLI
+    // supports, risks a source file being misread as an output path and overwritten.
+    // `in.json -o out.d.ts` (positional input, flagged output) stays valid.
+    if (
+      argv._.length > 2 ||
+      (argv.input !== undefined && argv._.length > 0) ||
+      (argv.output !== undefined && argv._.length > 1)
+    ) {
       throw new ReferenceError(
         `Unexpected extra argument(s): ${argv._.join(', ')}. json-schema-to-typescript accepts at most one input path and one output path. If you passed a glob to --input, quote it (e.g. -i "schemas/**/*.json") so your shell doesn't expand it first.`,
       )

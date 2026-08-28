@@ -68,7 +68,7 @@ const expectFile = (path: string) => () => {
 // Everything the file-writing tests below create, for afterAll to clear when a
 // filtered run spawned them all but only ran some.
 const OUTPUTS = [
-  ...[1, 2, 3, 4, 5].map(n => `./ReferencedType.${n}.d.ts`),
+  ...[1, 2, 3, 4, 5, 6].map(n => `./ReferencedType.${n}.d.ts`),
   './test/resources/MultiSchema/out',
   './test/resources/MultiSchema/foo',
   './test/resources/MultiSchemaRefs/response/out',
@@ -191,6 +191,12 @@ suite('CLI', () => {
     'file in (--input), file out (--output)',
     'node dist/src/cli.js --input ./test/resources/ReferencedType.json --output ./ReferencedType.5.d.ts',
     expectFile('./ReferencedType.5.d.ts'),
+  )
+
+  cliTest(
+    'file in, file out (-o)',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json -o ./ReferencedType.6.d.ts',
+    expectFile('./ReferencedType.6.d.ts'),
   )
 
   cliTest(
