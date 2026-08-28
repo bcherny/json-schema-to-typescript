@@ -62,7 +62,7 @@ Other:
 - d45f052, 7c0bb05 Releases are published to npm from CI, with provenance, when a version bump lands on master; the merged commit is tagged `v<version>` and gets a GitHub release with this section as its notes (#794, #836)
 - adc86c5, 26e1bd9 Docs: README documents which JSON Schema drafts and post-draft-4 keywords are supported (#828, #120) and how to pass `$refOptions` to the CLI as dotted flags (#819, settles #632 by @ndopj; refs #631)
 - 188cf89 The repository's own tooling (install, scripts, tests, CI) moved from npm to bun; see CONTRIBUTING.md. The published package, its `dependencies` and `engines` are unchanged (#762, #763)
-- Internal, no output change: root definitions are named once in the normalizer (#837); `applySchemaTyping` folded into `typesOfSchema` (#821, drops `dist/src/applySchemaTyping.*`); the unused `REFERENCE` AST kind and `maybeStripDefault` removed (#824, #797); one-use helpers inlined (#823)
+- Internal, no output change: root definitions are named once in the normalizer (#837); `applySchemaTyping` folded into `typesOfSchema` (#821, drops `dist/src/applySchemaTyping.*`); the unused `REFERENCE` AST kind and `maybeStripDefault` removed (#824, #797); one-use helpers inlined (#823, #795)
 - 088a993, e0de5eb, bddc041 Tests: a slice of the seed fuzzer runs in CI (#830); the output for empty `anyOf`/`oneOf`/`allOf` is pinned (#817, test from #634 by @k-yle); regression tests for a root `$ref` whose target contains a nested `$ref` (#805, from #723), empty `enum` arrays (#765) and `strictIndexSignatures` with a single `patternProperty` (#779)
 
 ## 16.0.0
