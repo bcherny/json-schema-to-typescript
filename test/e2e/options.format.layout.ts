@@ -79,6 +79,39 @@ export const input = {
     enumRef: {$ref: '#/definitions/color'},
     tsEnumRef: {$ref: '#/definitions/level'},
     custom: {tsType: 'Record<string, () => void>'},
+    // a `tsType`'s own lines keep their columns: inside a template literal they are part of the type
+    customMultiline: {
+      type: 'object',
+      properties: {template: {tsType: '`first line\n  second line ${string}\nthird`'}},
+      additionalProperties: false,
+    },
+    // the lone `oneOf` branch's comment goes before the `|`, as any member's
+    singleMemberFirst: {
+      anyOf: [
+        {oneOf: [{description: 'Only branch', type: 'object', properties: {i: {type: 'string'}}}]},
+        {type: 'number'},
+      ],
+    },
+    // a `tsType` that would not parse behind a leading `|` keeps its union on one line
+    customInLongUnion: {
+      anyOf: [
+        {tsType: '(event: string) => void'},
+        ...Array.from({length: 6}, (_, i) => ({$ref: `#/definitions/member${i + 1}`})),
+      ],
+    },
+    // a rest type keeps its parentheses unless it plainly needs none
+    tupleWithCustomRest: {
+      type: 'array',
+      items: [{type: 'string'}],
+      additionalItems: {tsType: 'keyof Named'},
+      minItems: 1,
+    },
+    tupleWithNamedRest: {
+      type: 'array',
+      items: [{type: 'string'}],
+      additionalItems: {$ref: '#/definitions/named'},
+      minItems: 1,
+    },
     empty: {type: 'object', additionalProperties: false},
   },
   required: ['shortUnion', 'nested'],

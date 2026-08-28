@@ -394998,6 +394998,30 @@ export type Layout = {
   readonly enumRef?: Color | undefined;
   readonly tsEnumRef?: Level | undefined;
   readonly custom?: (Record<string, () => void>) | undefined;
+  readonly customMultiline?: {
+    readonly template?: (\`first line
+  second line \${string}
+third\`) | undefined;
+  } | undefined;
+  readonly singleMemberFirst?:
+    /**
+     * Only branch
+     */
+    | {
+        readonly i?: string | undefined;
+        readonly [k: string]: unknown | undefined;
+      }
+    | number
+    | undefined;
+  readonly customInLongUnion?: ((event: string) => void | IntersectionMemberNumber1 | IntersectionMemberNumber2 | IntersectionMemberNumber3 | IntersectionMemberNumber4 | IntersectionMemberNumber5 | IntersectionMemberNumber6 | undefined);
+  /**
+   * @minItems 1
+   */
+  readonly tupleWithCustomRest?: readonly [string, ...(keyof Named)[]] | undefined;
+  /**
+   * @minItems 1
+   */
+  readonly tupleWithNamedRest?: readonly [string, ...Named[]] | undefined;
   readonly empty?: {
     readonly [k: string]: never | undefined;
   } | undefined;
@@ -395171,6 +395195,29 @@ export interface Layout {
   enumRef?: Color;
   tsEnumRef?: Level;
   custom?: Record<string, () => void>;
+  customMultiline?: {
+    template?: \`first line
+  second line \${string}
+third\`;
+  };
+  singleMemberFirst?:
+    /**
+     * Only branch
+     */
+    | {
+        i?: string;
+        [k: string]: unknown;
+      }
+    | number;
+  customInLongUnion?: ((event: string) => void | IntersectionMemberNumber1 | IntersectionMemberNumber2 | IntersectionMemberNumber3 | IntersectionMemberNumber4 | IntersectionMemberNumber5 | IntersectionMemberNumber6);
+  /**
+   * @minItems 1
+   */
+  tupleWithCustomRest?: [string, ...(keyof Named)[]];
+  /**
+   * @minItems 1
+   */
+  tupleWithNamedRest?: [string, ...Named[]];
   empty?: {
     [k: string]: never;
   };
