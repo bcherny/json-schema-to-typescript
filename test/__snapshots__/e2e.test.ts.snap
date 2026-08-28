@@ -50078,9 +50078,8 @@ exports[`safeTypeNames.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface SafeTypeNames {
-  [k: string]: unknown;
-}
+export type SafeTypeNames = unknown;
+
 /**
  * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
  * via the \`definition\` "stra'nge#name".
@@ -368647,9 +368646,8 @@ exports[`options.unreachableDefinitions-declareExternallyReferenced-false.ts 1`]
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface Options {
-  [k: string]: unknown;
-}
+export type Options = unknown;
+
 /**
  * This interface was referenced by \`Options\`'s JSON-Schema
  * via the \`definition\` "CreateThingRequestBody".
