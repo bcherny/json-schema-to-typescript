@@ -7,18 +7,7 @@ import {
   Parent,
   Shared,
 } from './types/JSONSchema'
-import {
-  appendToDescription,
-  escapeBlockComment,
-  formatTypeOf,
-  hasType,
-  isSchemaLike,
-  justName,
-  log,
-  narrowType,
-  toSafeString,
-  traverse,
-} from './utils'
+import {formatTypeOf, hasType, isSchemaLike, justName, log, narrowType, toSafeString, traverse} from './utils'
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
@@ -344,7 +333,9 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
 })
 
 rules.set('Escape closing JSDoc comment', schema => {
-  escapeBlockComment(schema)
+  if (typeof schema.description === 'string') {
+    schema.description = schema.description.replace(/\*\//g, '* /')
+  }
 })
 
 rules.set('Add JSDoc comments for minItems and maxItems', schema => {
@@ -356,7 +347,8 @@ rules.set('Add JSDoc comments for minItems and maxItems', schema => {
     'maxItems' in schema ? `@maxItems ${schema.maxItems}` : '',
   ].filter(Boolean)
   if (commentsToAppend.length) {
-    schema.description = appendToDescription(schema.description, ...commentsToAppend)
+    const tags = commentsToAppend.join('\n')
+    schema.description = schema.description ? `${schema.description}\n\n${tags}` : tags
   }
 })
 
