@@ -103,6 +103,8 @@ You can pass any of the options described below (including style options) as CLI
 json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
 # use single quotes and disable trailing semicolons
 json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
+# pass options to the $ref resolver (quote the flag, so that your shell leaves the `$` alone)
+json2ts -i foo.json -o foo.d.ts '--$refOptions.dereference.externalReferenceResolution=root'
 ```
 
 ### API
