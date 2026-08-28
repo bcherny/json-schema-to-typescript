@@ -74,18 +74,19 @@ type ParserCallback = (error: Error | null, data: any) => any
  * that sees every path the crawl visits -- which otherwise stays the caller's.
  */
 function depthLimitedPathMatcher(options: $RefOptions['dereference']): (pathFromRoot: string) => boolean {
-  const {excludedPathMatcher, maxDepth = 500} = (options ?? {}) as {
+  const {excludedPathMatcher, maxDepth: configured} = (options ?? {}) as {
     excludedPathMatcher?: (path: string) => boolean
-    maxDepth?: number
+    maxDepth?: number | null
   }
-  const shortEnough = 2 * maxDepth // "#" and then at least "/x" per level: most paths stop here
+  const maxDepth = configured ?? 500 // read as ref-parser 15.3+ reads it: null, like undefined, means the default
+  const shortEnough = 2 * maxDepth // "#" then at least "/x" per level: most paths stop here (empty keys fire late, not never)
   return path => {
     const levels = path.length > shortEnough ? path.split('/') : undefined
     if (levels && levels.length - 1 > maxDepth) {
       throw new ReferenceError(
-        `$ref nesting goes deeper than ${maxDepth} levels at ${levels.slice(0, 7).join('/')}/… -- almost ` +
-          'certainly a "$ref" with sibling keywords that leads back to its own parent, a cycle the ref ' +
-          'resolver cannot detect. (If the schema really nests this deep, raise $refOptions.dereference.maxDepth.)',
+        `$ref nesting goes deeper than ${maxDepth} levels at ${levels.slice(0, 7).join('/')}${levels.length > 7 ? '/…' : ''} -- ` +
+          'either a "$ref" with sibling keywords that leads back to its own parent (a cycle the ref resolver ' +
+          'cannot detect), or a schema that really nests this deep: then raise $refOptions.dereference.maxDepth.',
       )
     }
     return excludedPathMatcher?.(path) ?? false

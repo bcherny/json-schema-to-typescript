@@ -4,6 +4,7 @@
 
 ## Next
 
+- A `$ref` cycle that json-schema-ref-parser cannot detect (a `$ref` with sibling keywords leading back to its own container) now fails within seconds with a `ReferenceError` naming the runaway path, instead of spinning for minutes and dying with `Maximum call stack size exceeded`. Dereferencing is bounded at 500 levels (json-schema-ref-parser 15.3+'s own `dereference.maxDepth` default); schemas whose nesting or `$ref` chains genuinely go deeper — none seen in the wild, ~250 chained definitions would — need `$refOptions.dereference.maxDepth` raised (#827)
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
 

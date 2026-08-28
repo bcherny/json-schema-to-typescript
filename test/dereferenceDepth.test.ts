@@ -50,7 +50,7 @@ function nested(depth: number): JSONSchema {
     : {type: 'object', properties: {next: nested(depth - 1)}, additionalProperties: false}
 }
 
-const withMaxDepth = (maxDepth: number): Partial<Options> => ({$refOptions: {dereference: {maxDepth} as object}})
+const withMaxDepth = (maxDepth: number): Partial<Options> => ({$refOptions: {dereference: {maxDepth}}})
 
 /**
  * compile() on a worker thread, given up on (and the worker stopped) after `ms`: a compile that

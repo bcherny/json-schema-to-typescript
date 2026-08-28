@@ -25,9 +25,11 @@ export type {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSche
 
 export interface Options {
   /**
-   * [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s
+   * [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s.
+   * `dereference.maxDepth` (default 500) bounds how deep dereferencing may nest before it is reported as a
+   * `$ref` cycle; raise it for schemas that genuinely nest or chain `$ref`s deeper than that.
    */
-  $refOptions: $RefOptions
+  $refOptions: $RefOptions & {dereference?: {maxDepth?: number}}
   /**
    * Default value for additionalProperties, when it is not explicitly set.
    */
