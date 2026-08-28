@@ -8,6 +8,7 @@ import {
   hasStandaloneName,
   omitStandaloneName,
   T_ANY,
+  T_ANY_ADDITIONAL_PROPERTIES,
   TArray,
   TEnum,
   TInterface,
@@ -16,6 +17,7 @@ import {
   TNamedInterface,
   TUnion,
   T_UNKNOWN,
+  T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
@@ -285,7 +287,32 @@ function generateRawType(ast: AST, options: Options): string {
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
   const members = (ast as TUnion).params.map(_ => generateType(_, options))
   const separator = ast.type === 'UNION' ? '|' : '&'
+  if (members.length === 0) {
+    // A union of nothing accepts nothing (`never`). An intersection of nothing (eg. every
+    // `allOf` member turned out to contribute no information) constrains nothing -- render it
+    // exactly like the `{[k: string]: unknown}` a single vacuous member would otherwise have
+    // produced, so it still dedupes against an identical sibling rather than showing up as a
+    // spurious, differently-spelled extra member.
+    return ast.type === 'UNION' ? 'never' : generateInterface(vacuousInterface(options), options)
+  }
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
+}
+
+function vacuousInterface(options: Options): TInterface {
+  return {
+    params: [
+      {
+        ast: options.unknownAny ? T_UNKNOWN_ADDITIONAL_PROPERTIES : T_ANY_ADDITIONAL_PROPERTIES,
+        isIndexSignature: true,
+        isPatternProperty: false,
+        isRequired: true,
+        isUnreachableDefinition: false,
+        keyName: '[k: string]',
+      },
+    ],
+    superTypes: [],
+    type: 'INTERFACE',
+  }
 }
 
 // `any`/`unknown` accept every other type, making index-signature widening
@@ -412,9 +439,12 @@ function generateIndexSignatureType(
     addMember(sibling.ast)
   }
 
-  if (memberASTs.some(isUnknown)) {
-    // `unknown` absorbs every other member
-    return options.strictIndexSignatures ? 'unknown | undefined' : 'unknown'
+  // `unknown` absorbs every other member; so does an `any` among the index
+  // signature's own members that the optimizer did not already collapse (a
+  // `tsType: 'any'` patternProperty, say)
+  const top = memberASTs.some(isAny) ? 'any' : memberASTs.some(isUnknown) ? 'unknown' : undefined
+  if (top) {
+    return options.strictIndexSignatures ? `${top} | undefined` : top
   }
 
   // degenerate index signature type (e.g. an empty anyOf): render it as-is
