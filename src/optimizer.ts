@@ -94,8 +94,22 @@ function generateStructuralType(ast: AST, options: Options): string {
     return cached
   }
   const type = generateType(omitStandaloneName(ast), options)
-  if (settled.has(ast)) {
+  if (settled.has(ast) && !rendersFromOtherNodes(ast)) {
     structuralTypes.set(ast, type)
   }
   return type
+}
+
+/**
+ * An interface with a typed index signature widens that signature over the *current* members of its
+ * sibling and supertype properties (generateIndexSignatureType), and the optimizer can still rewrite
+ * those after this node has settled -- a supertype it has not reached yet, an enclosing union it is
+ * part-way through -- so its structural render is not a function of this node alone. (Everything
+ * else a render reads is either this node's own fields or a child's memoized render.)
+ */
+function rendersFromOtherNodes(ast: AST): boolean {
+  return (
+    ast.type === 'INTERFACE' &&
+    ast.params.some(_ => _.isIndexSignature && _.ast.type !== 'ANY' && _.ast.type !== 'UNKNOWN')
+  )
 }
