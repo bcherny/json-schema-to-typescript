@@ -28,7 +28,6 @@ main(
       'format',
       'ignoreMinAndMaxItems',
       'removeOptionalIfDefaultExists',
-      'style.singleQuote',
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
@@ -42,6 +41,15 @@ async function main(argv: minimist.ParsedArgs) {
   if (argv.help) {
     printHelp()
     process.exit(0)
+  }
+
+  // `--style.X=false` and `--style.X false` reach us as the string 'false' (#199).
+  // Style flags are not registered as minimist booleans, because a registered
+  // boolean defaults to false and would override the project's Prettier config.
+  for (const key in argv.style) {
+    if (argv.style[key] === 'true' || argv.style[key] === 'false') {
+      argv.style[key] = argv.style[key] === 'true'
+    }
   }
 
   const argIn: string = argv._[0] || argv.input
