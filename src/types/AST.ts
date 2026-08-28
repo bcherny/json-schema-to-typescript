@@ -1,4 +1,5 @@
 import {JSONSchema4Type} from 'json-schema'
+import {omit} from 'lodash'
 
 export type AST_TYPE = AST['type']
 
@@ -28,6 +29,11 @@ export interface AbstractAST {
   standaloneName?: string
   type: AST_TYPE
   deprecated?: boolean
+  /**
+   * Set on ASTs produced from `unreachableDefinitions`, so the generator knows to declare
+   * them even though they aren't the root type and aren't reachable via `$ref`.
+   */
+  isUnreachableDefinition?: boolean
 }
 
 export type ASTWithComment = AST & {comment: string}
@@ -44,6 +50,17 @@ export function hasComment(ast: AST): ast is ASTWithComment {
 
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
   return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
+}
+
+// TODO: More clearly disambiguate standalone names vs. aliased names instead.
+// Note: enums are kept as-is — an ENUM without its standaloneName is unrenderable.
+export function omitStandaloneName<A extends AST>(ast: A): A {
+  switch (ast.type) {
+    case 'ENUM':
+      return ast
+    default:
+      return omit(ast, 'standaloneName') as A
+  }
 }
 
 ////////////////////////////////////////////     types
@@ -95,6 +112,9 @@ export interface TInterfaceParam {
   isRequired: boolean
   isPatternProperty: boolean
   isUnreachableDefinition: boolean
+  // True for the synthesized `[k: string]` index signature param, as opposed to a
+  // named property that happens to be called "[k: string]".
+  isIndexSignature: boolean
 }
 
 export interface TIntersection extends AbstractAST {
@@ -168,4 +188,9 @@ export const T_UNKNOWN: TUnknown = {
 export const T_UNKNOWN_ADDITIONAL_PROPERTIES: TUnknown & ASTWithName = {
   keyName: '[k: string]',
   type: 'UNKNOWN',
+}
+
+export const T_NEVER_ADDITIONAL_PROPERTIES: TNever & ASTWithName = {
+  keyName: '[k: string]',
+  type: 'NEVER',
 }

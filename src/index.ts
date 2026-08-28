@@ -6,9 +6,9 @@ import {dirname} from 'path'
 import {Options as PrettierOptions} from 'prettier'
 import {format} from './formatter'
 import {generate} from './generator'
-import {normalize} from './normalizer'
+import {normalize, normalizeNullableRefs} from './normalizer'
 import {optimize} from './optimizer'
-import {parse} from './parser'
+import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference} from './resolver'
 import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
 import {validate} from './validator'
@@ -71,6 +71,10 @@ export interface Options {
    */
   maxItems: number
   /**
+   * Remove the optional modifier when a property has a default value.
+   */
+  removeOptionalIfDefaultExists: boolean
+  /**
    * Append all index signatures with `| undefined` so that they are strictly typed.
    *
    * This is required to be compatible with `strictNullChecks`.
@@ -106,6 +110,7 @@ export const DEFAULT_OPTIONS: Options = {
   format: true,
   ignoreMinAndMaxItems: false,
   maxItems: 20,
+  removeOptionalIfDefaultExists: false,
   strictIndexSignatures: false,
   style: {
     bracketSpacing: false,
@@ -153,6 +158,9 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   // Initial clone to avoid mutating the input
   const _schema = cloneDeep(schema)
 
+  // The one normalization that cannot wait until after dereferencing (see there)
+  normalizeNullableRefs(_schema)
+
   const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options)
   if (process.env.VERBOSE) {
     if (isDeepStrictEqual(_schema, dereferencedSchema)) {
@@ -179,13 +187,27 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const normalized = normalize(linked, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
 
-  const parsed = parse(normalized, _options)
+  const processed: Processed = new Map()
+  const usedNames: UsedNames = new Set()
+  const parsed = parse(normalized, _options, undefined, processed, usedNames)
+  // Definitions that aren't referenced anywhere in the schema still need to be
+  // declared. An object root declares them while its interface is parsed; for
+  // any other kind of root they are parsed here and handed to the generator.
+  const unreachableDefinitions = parseUnreachableDefinitions(
+    normalized,
+    parsed.standaloneName!,
+    _options,
+    processed,
+    usedNames,
+  )
+  nameAnonymousRecursiveTypes([parsed, ...unreachableDefinitions], processed, dereferencedPaths, usedNames)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed, _options)
+  const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options))
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
-  const generated = generate(optimized, _options)
+  const generated = generate(optimized, _options, optimizedUnreachableDefinitions)
   log('magenta', 'generator', time(), '✅ Result:', generated)
 
   const formatted = await format(generated, _options)

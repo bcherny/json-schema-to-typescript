@@ -1,6 +1,7 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {Intersection, JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {memoize} from './memoize'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
 import type {Format} from 'cli-color'
@@ -40,6 +41,7 @@ const BLACKLISTED_KEYS = new Set([
   'minProperties',
   'required',
   'additionalProperties',
+  'unevaluatedProperties',
   'definitions',
   'properties',
   'patternProperties',
@@ -50,6 +52,9 @@ const BLACKLISTED_KEYS = new Set([
   'anyOf',
   'oneOf',
   'not',
+  'if',
+  'then',
+  'else',
 ])
 
 function traverseObjectKeys(
@@ -124,6 +129,9 @@ export function traverse(
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
     traverse(schema.additionalProperties, callback, processed)
   }
+  if (schema.unevaluatedProperties && typeof schema.unevaluatedProperties === 'object') {
+    traverse(schema.unevaluatedProperties, callback, processed)
+  }
   if (schema.items) {
     const {items} = schema
     if (Array.isArray(items)) {
@@ -151,6 +159,15 @@ export function traverse(
   if (schema.not) {
     traverse(schema.not, callback, processed)
   }
+  if (schema.if) {
+    traverse(schema.if, callback, processed)
+  }
+  if (schema.then) {
+    traverse(schema.then, callback, processed)
+  }
+  if (schema.else) {
+    traverse(schema.else, callback, processed)
+  }
   traverseIntersection(schema, callback, processed)
 
   // technically you can put definitions on any key
@@ -166,8 +183,17 @@ export function traverse(
 
 /**
  * Eg. `foo/bar/baz.json` => `baz`
+ *
+ * `$ref`s that point into a document (eg `other.json#/definitions/v1.Foo` or
+ * `#/definitions/v1.Foo`) are not file paths, so the part after `#` is a JSON
+ * Pointer, not a filename with an extension: any `.` it contains is part of the
+ * name and must not be stripped as though it were a file extension.
  */
 export function justName(filename = ''): string {
+  const hashIndex = filename.indexOf('#')
+  if (hashIndex !== -1) {
+    return basename(filename.slice(hashIndex + 1))
+  }
   return stripExtension(basename(filename))
 }
 
@@ -208,6 +234,14 @@ export function toSafeString(string: string): string {
   )
 }
 
+// The next counter to try for each name, per `usedNames` set, so that the search for a free name
+// carries on where the last one ended instead of counting up from 1 for every duplicate (a schema
+// with thousands of same-named types -- one copy of a definition per `$ref` that has a sibling
+// keyword, say -- would otherwise probe 1 + 2 + ... + n names). Names are only ever added to
+// `usedNames`, so every smaller counter is still taken and the result is the same smallest free
+// counter that counting from 1 would find.
+const nextCounters = memoize<Set<string>, [], Map<string, number>>(() => new Map())
+
 export function generateName(from: string, usedNames: Set<string>) {
   let name = toSafeString(from)
   if (!name) {
@@ -216,13 +250,13 @@ export function generateName(from: string, usedNames: Set<string>) {
 
   // increment counter until we find a free name
   if (usedNames.has(name)) {
-    let counter = 1
-    let nameWithCounter = `${name}${counter}`
-    while (usedNames.has(nameWithCounter)) {
-      nameWithCounter = `${name}${counter}`
+    const counters = nextCounters(usedNames)
+    let counter = counters.get(name) ?? 1
+    while (usedNames.has(`${name}${counter}`)) {
       counter++
     }
-    name = nameWithCounter
+    counters.set(name, counter + 1)
+    name = `${name}${counter}`
   }
 
   usedNames.add(name)

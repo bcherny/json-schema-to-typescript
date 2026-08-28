@@ -23,6 +23,25 @@ suite('utils', () => {
     expect(generateName('a', usedNames)).toBe('A1')
     expect(generateName('a', usedNames)).toBe('A2')
     expect(generateName('a', usedNames)).toBe('A3')
+
+    // ...to the smallest free index, skipping names taken in the meantime:
+    expect(generateName('A4', usedNames)).toBe('A4')
+    expect(generateName('A6', usedNames)).toBe('A6')
+    expect(generateName('a', usedNames)).toBe('A5')
+    expect(generateName('a', usedNames)).toBe('A7')
+    expect(generateName('A4', usedNames)).toBe('A41')
+
+    // A fresh set starts over:
+    expect(generateName('a', new Set(['A']))).toBe('A1')
+
+    // Many same-named schemas (eg. one copy of a definition per `$ref` with a sibling
+    // keyword) must not make naming quadratic
+    const start = Date.now()
+    for (let i = 0; i < 20000; i++) {
+      generateName('Element', usedNames)
+    }
+    expect(generateName('Element', usedNames)).toBe('Element20000')
+    expect(Date.now() - start).toBeLessThan(2000)
   })
   test('isSchemaLike', () => {
     const schema = link({
