@@ -49,16 +49,15 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       }
 
       // [A (named), A] -> [A (named)]
-      if (
-        optimizedAST.params.every(_ => {
-          const a = generateType(omitStandaloneName(_), options)
-          const b = generateType(omitStandaloneName(optimizedAST.params[0]), options)
-          return a === b
-        }) &&
-        optimizedAST.params.some(_ => _.standaloneName !== undefined)
-      ) {
-        log('cyan', 'optimizer', '[A (named), A] -> [A (named)]', optimizedAST)
-        optimizedAST.params = optimizedAST.params.filter(_ => _.standaloneName !== undefined)
+      // (`omitStandaloneName` returns a copy, which the memoized `generateType` has never seen
+      // and so renders from scratch: check the cheap condition first, and render the first
+      // member once rather than once per member)
+      if (optimizedAST.params.some(_ => _.standaloneName !== undefined)) {
+        const first = generateType(omitStandaloneName(optimizedAST.params[0]), options)
+        if (optimizedAST.params.every(_ => generateType(omitStandaloneName(_), options) === first)) {
+          log('cyan', 'optimizer', '[A (named), A] -> [A (named)]', optimizedAST)
+          optimizedAST.params = optimizedAST.params.filter(_ => _.standaloneName !== undefined)
+        }
       }
 
       // [A, B, B] -> [A, B]

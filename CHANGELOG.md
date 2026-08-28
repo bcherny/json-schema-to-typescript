@@ -4,7 +4,8 @@
 
 ## Next
 
-- New (CLI): Automatically load the closest Prettier configuration for generated output; explicit `--style.*` flags still take precedence. A configuration that cannot be loaded, such as one with invalid syntax or a missing plugin, now fails the CLI run (#217, #729)
+- Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
+- Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
 
 ## 16.0.0
 

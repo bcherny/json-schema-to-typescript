@@ -8,6 +8,7 @@ import {
   hasStandaloneName,
   T_ANY,
   T_ANY_ADDITIONAL_PROPERTIES,
+  T_NEVER_ADDITIONAL_PROPERTIES,
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
@@ -19,8 +20,9 @@ import type {
   SchemaSchema,
   SchemaType,
 } from './types/JSONSchema'
-import {Intersection, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
+import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
 import {memoize} from './memoize'
+import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
 import {generateName, justName, log, maybeStripDefault} from './utils'
 
@@ -47,7 +49,23 @@ export function parse(
   const types = schema[Types]
 
   if (intersection) {
+    // Re-entered while this schema's intersection is still being parsed (eg. a
+    // picked property's type leads back here): return the placeholder, which
+    // parseAsTypeWithCache fills in place once the outer call finishes.
+    const inProgress = processed.get(intersection)?.get('ALL_OF')
+    if (inProgress && !inProgress.type) {
+      return inProgress
+    }
     const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames) as TIntersection
+
+    // A cyclic schema can re-enter `parse` for this same intersection while the call
+    // above us is still building it. In that case we get back the empty placeholder
+    // that `parseAsTypeWithCache` caches to break cycles, and `params` doesn't exist
+    // yet. That call fills it in -- with these very same types -- once it unwinds, and
+    // it fills in this exact object, so returning the reference as-is is correct.
+    if (ast.params === undefined) {
+      return ast
+    }
 
     types.forEach(type => {
       ast.params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames))
@@ -80,7 +98,7 @@ export function parse(
  * from when there is one, else after the closest property key or `$ref` above them.
  */
 export function nameAnonymousRecursiveTypes(
-  ast: AST,
+  asts: AST[],
   processed: Processed,
   dereferencedPaths: DereferencedPaths,
   usedNames: UsedNames,
@@ -105,7 +123,7 @@ export function nameAnonymousRecursiveTypes(
   do {
     named = false
     const done = new Set<AST>()
-    const roots = [ast]
+    const roots = [...asts]
     const path: AST[] = []
     const visit = (node: AST): void => {
       if (done.has(node)) {
@@ -177,6 +195,52 @@ function subtrees(ast: AST): AST[] {
   }
 }
 
+/**
+ * Parses the root schema's definitions so that they get declared even though nothing
+ * refers to them (the `unreachableDefinitions` option). An object schema declares its
+ * own definitions, nested `definitions` blocks included, when its interface is parsed
+ * (see `parseSchema`); this covers every other kind of root -- a primitive, an array,
+ * a union, an enum, a bare `$ref` -- whose definitions were otherwise dropped. Call it
+ * once, on the root schema, after `parse`.
+ */
+export function parseUnreachableDefinitions(
+  rootSchema: NormalizedJSONSchema,
+  rootASTName: string,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST[] {
+  if (!options.unreachableDefinitions || declaresInterface(rootSchema)) {
+    return []
+  }
+
+  return map(rootSchema.$defs, (value, key: string) =>
+    parseUnreachableDefinition(value, key, rootASTName, options, processed, usedNames),
+  )
+}
+
+function parseUnreachableDefinition(
+  schema: NormalizedJSONSchema,
+  key: string,
+  parentSchemaName: string,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST {
+  const ast = parse(schema, options, key, processed, usedNames)
+  const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
+via the \`definition\` "${key}".`
+  ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+  ast.isUnreachableDefinition = true
+  return ast
+}
+
+/** Whether `parse` renders this schema through `parseSchema` (which declares its definitions) */
+function declaresInterface(schema: NormalizedJSONSchema): boolean {
+  const types = schema[Types]
+  return types.has('NAMED_SCHEMA') || types.has('UNNAMED_SCHEMA')
+}
+
 function parseAsTypeWithCache(
   schema: NormalizedJSONSchema,
   type: SchemaType,
@@ -237,8 +301,7 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
-  const definitions = getDefinitionsMemoized(getRootSchema(schema as any)) // TODO
-  const keyNameFromDefinition = getDefinitionKeysMemoized(definitions).get(schema)
+  const keyNameFromDefinition = definitionKeyOf(schema)
 
   switch (type) {
     case 'ALL_OF':
@@ -257,11 +320,12 @@ function parseNonLiteral(
         // exactly as before.
         params: schema
           .allOf!.map(memberSchema => ({
-            ast: parse(memberSchema, options, undefined, processed, usedNames),
+            ast: parseMember(memberSchema, schema, options, processed, usedNames),
             memberSchema,
           }))
           .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
-          .map(({ast}) => ast),
+          .map(({ast}) => ast)
+          .concat(parseRequired(schema, options, processed, usedNames)),
         type: 'INTERSECTION',
       }
     case 'ANY':
@@ -278,7 +342,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.anyOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        params: parseBranches(schema.anyOf!, schema, options, processed, usedNames),
         type: 'UNION',
       }
     case 'BOOLEAN':
@@ -364,19 +428,28 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.oneOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        params: parseBranches(schema.oneOf!, schema, options, processed, usedNames),
         type: 'UNION',
       }
     case 'REFERENCE':
       throw Error(format('Refs should have been resolved by the resolver!', schema))
-    case 'STRING':
-      return {
+    case 'STRING': {
+      const ast = {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        type: 'STRING',
       }
+      // The `formatTypes` option maps a string's `format` to TypeScript type text, which is
+      // emitted verbatim just like `tsType` (an explicit `tsType` never gets here: it wins).
+      if (
+        typeof schema.format === 'string' &&
+        Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
+      ) {
+        return {...ast, params: options.formatTypes[schema.format], type: 'CUSTOM_TYPE'}
+      }
+      return {...ast, type: 'STRING'}
+    }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
         // normalised to not be undefined
@@ -465,36 +538,15 @@ function parseNonLiteral(
   }
 }
 
-// Keywords that some matcher in `typesOfSchema`, or the `additionalProperties`/`required`
-// normalizer rules, actually keys off of. An `allOf` member made up exclusively of keywords
-// outside this list (eg. `if`/`then`/`else`, `not`) is one this tool has no notion of at all,
-// as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently
-// renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
-// swallowing members whose current (separately unimplemented) behavior other schemas rely on.
-// (`$ref` is deliberately omitted: by the time this runs, the resolver has already replaced
-// every `$ref` node, so `case 'REFERENCE'` above never fires and no schema here can carry one.)
-// Keep this in sync with the keywords `typesOfSchema.ts`'s matchers check.
-const RECOGNIZED_ALL_OF_MEMBER_KEYWORDS = new Set([
-  '$id',
-  'additionalProperties',
-  'allOf',
-  'anyOf',
-  'const',
-  'default',
-  'enum',
-  'extends',
-  'items',
-  'oneOf',
-  'patternProperties',
-  'properties',
-  'required',
-  'tsEnumNames',
-  'tsType',
-  'type',
-])
-
+// An `allOf` member made up exclusively of keywords that don't shape a type (see `Keyword.typed`
+// in `keywords.ts`; eg. `if`/`then`/`else`, `not`) is one this tool has no notion of at all, as
+// opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently renders
+// no differently -- that distinction keeps `hasNoRecognizedKeywords` from also swallowing members
+// whose current (separately unimplemented) behavior other schemas rely on. (`$ref` needs no
+// recognizing: by the time this runs, the resolver has already replaced every `$ref` node, so
+// `case 'REFERENCE'` above never fires and no schema here can carry one.)
 function hasNoRecognizedKeywords(schema: NormalizedJSONSchema): boolean {
-  return Object.keys(schema).every(key => !RECOGNIZED_ALL_OF_MEMBER_KEYWORDS.has(key))
+  return Object.keys(schema).every(key => !TYPE_SHAPING_KEYWORDS.has(key))
 }
 
 /**
@@ -517,6 +569,253 @@ function isVacuousInterface(ast: AST): boolean {
 }
 
 /**
+ * Parses one member of the `allOf`/`anyOf`/`oneOf` on `schema`.
+ *
+ * A member that only lists `required` keys -- the "factoring" pattern, where the properties
+ * are declared once on the enclosing object and each branch says which of them it needs --
+ * has no `properties` of its own to apply that list to, so parsed in isolation it would come
+ * out as a bare `{[k: string]: unknown}` and its `required` would be lost. Instead, such a
+ * member borrows the declaration of each key it lists from the schemas around it that apply to
+ * the same instance (see `findDeclaration`), and becomes a pick of those with every key required
+ * (`{a: A}`); the caller intersects the set operation with the enclosing schema's own
+ * (all-optional) interface, so the result reads `({a: A} | {b: B}) & {a?: A; b?: B}`. Keys that
+ * aren't declared anywhere are skipped, as `required` keys with no matching property are
+ * everywhere else; a member with nothing left to pick, or one that says anything else about
+ * itself (its own `properties`, a `title`, a non-object `type`, ...), is parsed on its own, as
+ * before.
+ *
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/513
+ */
+function parseMember(
+  member: NormalizedJSONSchema,
+  schema: NormalizedJSONSchema,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST {
+  if (isRequiredOnly(member) && !isNamed(member, options)) {
+    const picked = pickDeclared(
+      member.required as string[],
+      key => findDeclaration(schema, key, options),
+      options,
+      processed,
+      usedNames,
+    )
+    if (picked) {
+      return {comment: member.description, deprecated: member.deprecated, ...picked}
+    }
+  }
+  return parse(member, options, undefined, processed, usedNames)
+}
+
+/**
+ * Parses the members of the `anyOf`/`oneOf` on `schema` and applies `schema`'s own `required` to
+ * them: a key listed there that `schema` has no property of its own for, but a branch declares
+ * (see `findDeclarationIn`), becomes required in that branch, so that `{oneOf: [{$ref:
+ * '#/definitions/a'}, {$ref: '#/definitions/b'}], required: ['id']}` reads `(A & {id: string}) |
+ * (B & {id: string})`. `parseRequired` is the `allOf` counterpart.
+ *
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/395
+ */
+function parseBranches(
+  members: NormalizedJSONSchema[],
+  schema: NormalizedJSONSchema,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST[] {
+  const keys = undeclaredRequired(schema)
+  return members.map(member => {
+    const ast = parseMember(member, schema, options, processed, usedNames)
+    const picked = pickDeclared(keys, key => findDeclarationIn(member, key), options, processed, usedNames)
+    return picked ? {params: [ast, picked], type: 'INTERSECTION'} : ast
+  })
+}
+
+/**
+ * The extra `allOf` member that the `required` list next to it amounts to: the keys listed there
+ * that the schema has no property of its own for (all of them, usually -- `{allOf: [{$ref:
+ * '#/definitions/base'}], required: ['id']}`), each with the declaration found for it among the
+ * members or further out (see `findDeclaration`), so that the example reads `Base & {id: string}`
+ * rather than a plain `Base` that forgot about `id`. The referenced schema itself is left alone:
+ * it is declared once, however many places refer to it and whatever they require of it.
+ *
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/395
+ */
+function parseRequired(
+  schema: NormalizedJSONSchema,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST[] {
+  // the intersection `applySchemaTyping` split off of a schema took its `allOf` along, but not its `required`
+  const picked = pickDeclared(
+    undeclaredRequired(intersectionOwner(schema) ?? schema),
+    key => findDeclaration(schema, key, options),
+    options,
+    processed,
+    usedNames,
+  )
+  return picked ? [picked] : []
+}
+
+/** The keys `schema` lists as `required` (draft 4+ style) but has no `properties` entry for */
+function undeclaredRequired(schema: NormalizedJSONSchema): string[] {
+  return Array.isArray(schema.required) ? schema.required.filter(key => !hasProperty(schema, key)) : []
+}
+
+/**
+ * `{k: K}` for each of `keys` that `lookup` finds a declaration for, every one of them required;
+ * `undefined` if that leaves nothing.
+ */
+function pickDeclared(
+  keys: string[],
+  lookup: (key: string) => NormalizedJSONSchema | undefined,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): TInterface | undefined {
+  const params: TInterfaceParam[] = []
+  new Set(keys).forEach(key => {
+    const declaration = lookup(key)
+    if (declaration !== undefined) {
+      params.push({
+        ast: parse(declaration, options, key, processed, usedNames),
+        isIndexSignature: false,
+        isPatternProperty: false,
+        isRequired: true,
+        isUnreachableDefinition: false,
+        keyName: key,
+      })
+    }
+  })
+  if (params.length) {
+    return {params, superTypes: [], type: 'INTERFACE'}
+  }
+}
+
+/**
+ * True for a schema that says nothing but which keys are `required` (draft 4+ style) -- give or
+ * take annotations, and the `type: 'object'` that is implied anyway (along with the boolean
+ * `additionalProperties` the normalizer defaults next to it).
+ */
+function isRequiredOnly(schema: NormalizedJSONSchema): boolean {
+  return (
+    Array.isArray(schema.required) &&
+    schema.required.length > 0 &&
+    Object.keys(schema).every(
+      key =>
+        key === 'required' ||
+        (key === 'type' && schema.type === 'object') ||
+        (key === 'additionalProperties' && typeof schema.additionalProperties === 'boolean') ||
+        ANNOTATION_KEYWORDS.has(key),
+    )
+  )
+}
+
+/**
+ * The schema of property `key` as declared closest to `schema` among the schemas that apply to
+ * the same instance `schema` does: `schema` itself and the members of its `allOf` (and of theirs,
+ * and so on in), then -- when `schema` is just a member of an enclosing set operation -- that
+ * operation's schema and its `allOf`, and so on out, for as long as the schemas on the way out are
+ * objects (or don't say). Every schema visited holds for the whole instance, so requiring `key`
+ * with the type found for it never asks more than the overall schema already does.
+ */
+function findDeclaration(
+  schema: NormalizedJSONSchema,
+  key: string,
+  options: Options,
+): NormalizedJSONSchema | undefined {
+  const seen = new Set<NormalizedJSONSchema>()
+  let node: NormalizedJSONSchema | undefined = schema
+  while (node && isObjectOnly(node)) {
+    const declaration = findDeclarationIn(node, key, seen)
+    if (declaration !== undefined) {
+      return declaration
+    }
+    node = enclosingSchema(node, options)
+  }
+}
+
+/** The schema of property `key` as declared by `schema` itself or else by a member of its `allOf`, recursively */
+function findDeclarationIn(
+  schema: NormalizedJSONSchema,
+  key: string,
+  seen = new Set<NormalizedJSONSchema>(),
+): NormalizedJSONSchema | undefined {
+  if (seen.has(schema) || !isObjectOnly(schema)) {
+    return undefined
+  }
+  seen.add(schema)
+  if (hasProperty(schema, key)) {
+    return schema.properties![key]
+  }
+  for (const member of (schema[Intersection] ?? schema).allOf ?? []) {
+    const declaration = findDeclarationIn(member, key, seen)
+    if (declaration !== undefined) {
+      return declaration
+    }
+  }
+}
+
+/** True unless `schema`'s `type` says its instances may be something other than objects (`required` asks nothing of those) */
+function isObjectOnly(schema: NormalizedJSONSchema): boolean {
+  return schema.type === undefined || schema.type === 'object'
+}
+
+function hasProperty(schema: NormalizedJSONSchema, key: string): boolean {
+  return schema.properties !== undefined && Object.prototype.hasOwnProperty.call(schema.properties, key)
+}
+
+/**
+ * The schema whose `allOf`/`anyOf`/`oneOf` `schema` is a member of, provided `schema` is inlined
+ * there and only there. A named schema (declared once, however many set operations refer to it) or
+ * a shared one (dereferenced into more than one place, and parsed once for all of them) has no one
+ * enclosing schema. The intersection `applySchemaTyping` split off of a schema stands for that
+ * schema, and kept its `allOf` array, whose parent is still that schema.
+ */
+function enclosingSchema(schema: NormalizedJSONSchema, options: Options): NormalizedJSONSchema | undefined {
+  const split = intersectionOwner(schema)
+  if (split) {
+    return split
+  }
+  const parent = schema[Parent]
+  const owner = parent?.[Parent]
+  const members: unknown = parent
+  if (
+    owner &&
+    !schema[Shared] &&
+    !isNamed(schema, options) &&
+    (owner.allOf === members ||
+      owner.anyOf === members ||
+      owner.oneOf === members ||
+      owner[Intersection]?.allOf === members)
+  ) {
+    return owner
+  }
+}
+
+/** The schema `applySchemaTyping` split `schema` off of, if `schema` is such an intersection */
+function intersectionOwner(schema: NormalizedJSONSchema): NormalizedJSONSchema | undefined {
+  const parent = schema[Parent]
+  return parent && parent[Intersection] === schema ? parent : undefined
+}
+
+/** True for a schema `standaloneName` will name (by a title or id since hoisted onto its intersection, maybe) */
+function isNamed(schema: NormalizedJSONSchema, options: Options): boolean {
+  return Boolean(nameOf(schema[Intersection] ?? schema, definitionKeyOf(schema), options))
+}
+
+/** The name a schema asks for, before it is made unique */
+function nameOf(
+  schema: NormalizedJSONSchema,
+  keyNameFromDefinition: string | undefined,
+  options: Options,
+): string | undefined {
+  return options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+}
+
+/**
  * Compute a schema name using a series of fallbacks
  */
 function standaloneName(
@@ -525,11 +824,19 @@ function standaloneName(
   usedNames: UsedNames,
   options: Options,
 ): string | undefined {
-  const name =
-    options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+  const name = nameOf(schema, keyNameFromDefinition, options)
   if (name) {
     return generateName(name, usedNames)
   }
+}
+
+const CLOSED_EMPTY_OBJECT_PARAM: TInterfaceParam = {
+  ast: T_NEVER_ADDITIONAL_PROPERTIES,
+  isIndexSignature: true,
+  isPatternProperty: false,
+  isRequired: true,
+  isUnreachableDefinition: false,
+  keyName: '[k: string]',
 }
 
 function newInterface(
@@ -541,13 +848,23 @@ function newInterface(
   keyNameFromDefinition?: string,
 ): TInterface {
   const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)!
+  const params = parseSchema(schema, options, processed, usedNames, name)
+  const superTypes = parseSuperTypes(schema, options, processed, usedNames)
   return {
     comment: schema.description,
     deprecated: schema.deprecated,
     keyName,
-    params: parseSchema(schema, options, processed, usedNames, name),
+    // A closed object (`additionalProperties: false`) that declares no members of
+    // its own accepts nothing but the empty object. Emitting `{}` for it would say
+    // the opposite: in TypeScript `{}` accepts any non-nullish value. Express the
+    // constraint with a `never` index signature instead, which is what
+    // `Record<string, never>` desugars to.
+    params:
+      params.length === 0 && superTypes.length === 0 && schema.additionalProperties === false
+        ? [CLOSED_EMPTY_OBJECT_PARAM]
+        : params,
     standaloneName: name,
-    superTypes: parseSuperTypes(schema, options, processed, usedNames),
+    superTypes,
     type: 'INTERFACE',
   }
 }
@@ -592,7 +909,9 @@ function parseSchema(
     ast: parse(value, options, key, processed, usedNames),
     isIndexSignature: false,
     isPatternProperty: false,
-    isRequired: isRequired(schema, key, value),
+    isRequired:
+      isRequired(schema, key, value) ||
+      (options.removeOptionalIfDefaultExists && !isBoolean(value) && 'default' in value),
     isUnreachableDefinition: false,
     keyName: key,
   }))
@@ -615,21 +934,14 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
 
   const unreachableDefinitions: TInterfaceParam[] = !options.unreachableDefinitions
     ? []
-    : map(schema.$defs, (value, key: string) => {
-        const ast = parse(value, options, key, processed, usedNames)
-        const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
-via the \`definition\` "${key}".`
-        ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
-        ast.isUnreachableDefinition = true
-        return {
-          ast,
-          isIndexSignature: false,
-          isPatternProperty: false,
-          isRequired: isRequired(schema, key, value),
-          isUnreachableDefinition: true,
-          keyName: key,
-        }
-      })
+    : map(schema.$defs, (value, key: string) => ({
+        ast: parseUnreachableDefinition(value, key, parentSchemaName, options, processed, usedNames),
+        isIndexSignature: false,
+        isPatternProperty: false,
+        isRequired: isRequired(schema, key, value),
+        isUnreachableDefinition: true,
+        keyName: key,
+      }))
 
   // TypeScript cannot constrain keys by regex, so patternProperties are folded into the one
   // string index signature, typed as the union of their value types:
@@ -754,6 +1066,11 @@ const getDefinitionKeysMemoized = memoize((definitions: Definitions): Map<Normal
   }
   return keys
 })
+
+/** The (first) key `schema` is held under in `definitions`, if any */
+function definitionKeyOf(schema: NormalizedJSONSchema): string | undefined {
+  return getDefinitionKeysMemoized(getDefinitionsMemoized(getRootSchema(schema))).get(schema)
+}
 
 /**
  * TODO: Reduce rate of false positives

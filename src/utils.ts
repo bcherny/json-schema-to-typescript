@@ -1,9 +1,18 @@
 import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
-import {Intersection, JSONSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {
+  Intersection,
+  JSONSchema,
+  JSONSchemaTypeName,
+  LinkedJSONSchema,
+  NormalizedJSONSchema,
+  Parent,
+} from './types/JSONSchema'
+import {memoize} from './memoize'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
 import type {Format} from 'cli-color'
+import {CONTAINER_KEYWORDS, JSON_DATA_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
 
 // TODO: pull out into a separate package
 export function Try<T>(fn: () => T, err: (e: Error) => any): T {
@@ -13,44 +22,6 @@ export function Try<T>(fn: () => T, err: (e: Error) => any): T {
     return err(e as Error)
   }
 }
-
-// keys that shouldn't be traversed by the catchall step
-const BLACKLISTED_KEYS = new Set([
-  'id',
-  '$defs',
-  '$id',
-  '$schema',
-  'title',
-  'description',
-  'default',
-  'multipleOf',
-  'maximum',
-  'exclusiveMaximum',
-  'minimum',
-  'exclusiveMinimum',
-  'maxLength',
-  'minLength',
-  'pattern',
-  'additionalItems',
-  'items',
-  'maxItems',
-  'minItems',
-  'uniqueItems',
-  'maxProperties',
-  'minProperties',
-  'required',
-  'additionalProperties',
-  'definitions',
-  'properties',
-  'patternProperties',
-  'dependencies',
-  'enum',
-  'type',
-  'allOf',
-  'anyOf',
-  'oneOf',
-  'not',
-])
 
 function traverseObjectKeys(
   obj: Record<string, LinkedJSONSchema>,
@@ -106,62 +77,94 @@ export function traverse(
   processed.add(schema)
   callback(schema, key ?? null)
 
-  if (schema.anyOf) {
-    traverseArray(schema.anyOf, callback, processed)
-  }
-  if (schema.allOf) {
-    traverseArray(schema.allOf, callback, processed)
-  }
-  if (schema.oneOf) {
-    traverseArray(schema.oneOf, callback, processed)
-  }
-  if (schema.properties) {
-    traverseObjectKeys(schema.properties, callback, processed)
-  }
-  if (schema.patternProperties) {
-    traverseObjectKeys(schema.patternProperties, callback, processed)
-  }
-  if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-    traverse(schema.additionalProperties, callback, processed)
-  }
-  if (schema.items) {
-    const {items} = schema
-    if (Array.isArray(items)) {
-      traverseArray(items, callback, processed)
-    } else {
-      traverse(items, callback, processed)
+  for (const [keyword, holds] of SUBSCHEMA_KEYWORDS) {
+    const child = schema[keyword]
+    if (!child) {
+      continue
     }
-  }
-  if (schema.additionalItems && typeof schema.additionalItems === 'object') {
-    traverse(schema.additionalItems, callback, processed)
-  }
-  if (schema.dependencies) {
-    if (Array.isArray(schema.dependencies)) {
-      traverseArray(schema.dependencies, callback, processed)
-    } else {
-      traverseObjectKeys(schema.dependencies as LinkedJSONSchema, callback, processed)
+    switch (holds) {
+      case 'schema':
+        traverse(child, callback, processed)
+        break
+      case 'schemaOrBoolean':
+        if (typeof child === 'object') {
+          traverse(child, callback, processed)
+        }
+        break
+      case 'schemaOrSchemaArray':
+        if (Array.isArray(child)) {
+          traverseArray(child, callback, processed)
+        } else {
+          traverse(child, callback, processed)
+        }
+        break
+      case 'schemaArray':
+        traverseArray(child, callback, processed)
+        break
+      case 'schemaMap':
+        traverseObjectKeys(child, callback, processed)
+        break
     }
-  }
-  if (schema.definitions) {
-    traverseObjectKeys(schema.definitions, callback, processed)
-  }
-  if (schema.$defs) {
-    traverseObjectKeys(schema.$defs, callback, processed)
-  }
-  if (schema.not) {
-    traverse(schema.not, callback, processed)
   }
   traverseIntersection(schema, callback, processed)
 
   // technically you can put definitions on any key
   Object.keys(schema)
-    .filter(key => !BLACKLISTED_KEYS.has(key))
+    .filter(key => !NOT_SCANNED_FOR_DEFINITIONS.has(key))
     .forEach(key => {
       const child = schema[key]
       if (child && typeof child === 'object') {
         traverseObjectKeys(child, callback, processed)
       }
     })
+}
+
+/**
+ * Walks every object/array reachable from `schema`, invoking `visit` on each plain
+ * object node found outside instance data (`enum`, `default`...). `replace` swaps the node out in
+ * its parent container, in place (a no-op for the root node, which has no parent).
+ * Where `traverse` knows which keywords hold schemas and visits each node once, this
+ * walk is keyword-agnostic (container objects such as a `properties` map are visited
+ * too) and per occurrence:
+ *
+ * the same node object can be reachable from more than one parent/key (eg. two
+ * schemas sharing a `$ref` node via a YAML alias, or a node the ref-parser already
+ * folded into a cycle), so `visit` runs for every occurrence. Only the recursion
+ * into a node's children is guarded against repeating -- via `seen` -- to keep
+ * cycles from looping forever.
+ */
+export function eachSchemaNode(
+  schema: unknown,
+  visit: (node: JSONSchema, replace: (nextNode: JSONSchema) => void) => void,
+  seen = new Set<unknown>(),
+  parent?: any,
+  key?: string,
+): void {
+  if (!schema || typeof schema !== 'object') {
+    return
+  }
+
+  if (!Array.isArray(schema)) {
+    visit(schema as JSONSchema, nextNode => {
+      if (parent) {
+        parent[key!] = nextNode
+      }
+    })
+  }
+
+  if (seen.has(schema)) {
+    return
+  }
+  seen.add(schema)
+
+  for (const childKey of Object.keys(schema)) {
+    // instance data, never a nested schema, so an `$id`/`$ref` (or anything else) found
+    // underneath is not schema vocabulary
+    if (JSON_DATA_KEYWORDS.has(childKey)) {
+      continue
+    }
+    eachSchemaNode((schema as any)[childKey], visit, seen, schema, childKey)
+  }
 }
 
 /**
@@ -217,6 +220,14 @@ export function toSafeString(string: string): string {
   )
 }
 
+// The next counter to try for each name, per `usedNames` set, so that the search for a free name
+// carries on where the last one ended instead of counting up from 1 for every duplicate (a schema
+// with thousands of same-named types -- one copy of a definition per `$ref` that has a sibling
+// keyword, say -- would otherwise probe 1 + 2 + ... + n names). Names are only ever added to
+// `usedNames`, so every smaller counter is still taken and the result is the same smallest free
+// counter that counting from 1 would find.
+const nextCounters = memoize<Set<string>, [], Map<string, number>>(() => new Map())
+
 export function generateName(from: string, usedNames: Set<string>) {
   let name = toSafeString(from)
   if (!name) {
@@ -225,13 +236,13 @@ export function generateName(from: string, usedNames: Set<string>) {
 
   // increment counter until we find a free name
   if (usedNames.has(name)) {
-    let counter = 1
-    let nameWithCounter = `${name}${counter}`
-    while (usedNames.has(nameWithCounter)) {
-      nameWithCounter = `${name}${counter}`
+    const counters = nextCounters(usedNames)
+    let counter = counters.get(name) ?? 1
+    while (usedNames.has(`${name}${counter}`)) {
       counter++
     }
-    name = nameWithCounter
+    counters.set(name, counter + 1)
+    name = `${name}${counter}`
   }
 
   usedNames.add(name)
@@ -317,6 +328,10 @@ export function pathTransform(outputPath: string, inputPath: string, filePath: s
   return posix.join(posix.normalize(outputPath), ...filePathRel)
 }
 
+export function hasType(schema: JSONSchema, type: JSONSchemaTypeName): boolean {
+  return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
+}
+
 /**
  * Removes the schema's `default` property if it doesn't match the schema's `type` property.
  * Useful when parsing unions.
@@ -383,23 +398,11 @@ export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
     return true
   }
 
-  const JSON_SCHEMA_KEYWORDS = [
-    '$defs',
-    'allOf',
-    'anyOf',
-    'definitions',
-    'dependencies',
-    'enum',
-    'not',
-    'oneOf',
-    'patternProperties',
-    'properties',
-    'required',
-  ]
-  if (JSON_SCHEMA_KEYWORDS.some(_ => parent[_] === schema)) {
-    return false
+  for (const keyword of CONTAINER_KEYWORDS) {
+    if (parent[keyword] === schema) {
+      return false
+    }
   }
-
   return true
 }
 

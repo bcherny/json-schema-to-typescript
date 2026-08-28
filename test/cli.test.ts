@@ -131,6 +131,27 @@ suite('CLI', () => {
     ({stdout}) => expect(stdout).toMatchSnapshot(),
   )
 
+  // https://github.com/bcherny/json-schema-to-typescript/issues/183: one dotted flag per format
+  cliTest(
+    'file in (-i), formatTypes flags, pipe out',
+    'node dist/src/cli.js -i ./test/resources/FormatTypes.json --formatTypes.date-time=Date --formatTypes.uri URL',
+    ({stdout}) => {
+      expect(stdout).toContain('createdAt: Date;')
+      expect(stdout).toContain('links?: URL[];')
+      expect(stdout).toContain('email?: string;')
+    },
+  )
+
+  // https://github.com/bcherny/json-schema-to-typescript/issues/199: an explicit `false` for a
+  // style flag has to reach Prettier as a boolean, however it is spelled
+  for (const flag of ['--no-style.singleQuote', '--style.singleQuote false', '--style.singleQuote=false']) {
+    cliTest(
+      `file in (-i), style boolean with explicit false value (${flag}), pipe out`,
+      `node dist/src/cli.js -i ./test/resources/Enum.json ${flag}`,
+      ({stdout}) => expect(stdout).toContain('fstype?: "ext3" | "ext4" | "btrfs"'),
+    )
+  }
+
   cliTest(
     'file in (-i), Prettier config, pipe out',
     'node dist/src/cli.js -i ./test/resources/prettier/Enum.json',
@@ -220,6 +241,12 @@ suite('CLI', () => {
   cliTest(
     '--unknownAny',
     'node dist/src/cli.js --unknownAny=false --input ./test/resources/ReferencedType.json',
+    ({stdout}) => expect(stdout).toMatchSnapshot(),
+  )
+
+  cliTest(
+    '--declarationStyle',
+    'node dist/src/cli.js --declarationStyle type --input ./test/resources/ReferencedType.json',
     ({stdout}) => expect(stdout).toMatchSnapshot(),
   )
 

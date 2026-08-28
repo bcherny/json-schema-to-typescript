@@ -1,6 +1,11 @@
 import {isPlainObject} from 'lodash'
 import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
 
+// Keywords that only annotate a schema (eg. for documentation) without constraining
+// the values it matches. A schema made up of nothing but these keywords doesn't
+// restrict its type any more than the empty schema does.
+const ANNOTATION_ONLY_KEYWORDS = ['description', 'title', 'deprecated']
+
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
  *
@@ -31,13 +36,22 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
   return matchedTypes
 }
 
+/**
+ * Whether any matcher recognizes the schema. One that none does has no way to be
+ * typed on its own: it only gets the `UNNAMED_SCHEMA` default.
+ */
+export function hasOwnType(schema: JSONSchema): boolean {
+  return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
+}
+
 const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
   },
   ANY(schema) {
-    if (Object.keys(schema).length === 0) {
-      // The empty schema {} validates any value
+    if (Object.keys(schema).every(key => ANNOTATION_ONLY_KEYWORDS.includes(key))) {
+      // The empty schema {} validates any value, and a schema made up of only
+      // annotation keywords (eg. `description`) is no more constrained than that.
       // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1
       return true
     }
@@ -53,7 +67,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'boolean') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'boolean') {
+    // Only infer BOOLEAN from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'boolean') {
       return true
     }
     return false
@@ -89,7 +106,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'integer' || schema.type === 'number') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'number') {
+    // Only infer NUMBER from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'number') {
       return true
     }
     return false
@@ -119,7 +139,10 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
     if (schema.type === 'string') {
       return true
     }
-    if (!isCompound(schema) && typeof schema.default === 'string') {
+    // Only infer STRING from `default` when `type` isn't declared as
+    // something else; an explicit `type` always takes precedence over the
+    // type of `default` (see #434).
+    if (schema.type === undefined && !isCompound(schema) && typeof schema.default === 'string') {
       return true
     }
     return false

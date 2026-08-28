@@ -21,13 +21,27 @@ import {
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
+export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string {
+  const rootASTName = ast.standaloneName!
+  const asts = [ast, ...unreachableDefinitions]
+  const typesProcessed = new Set<AST>()
+  const interfacesProcessed = new Set<AST>()
+  const enumsProcessed = new Set<AST>()
   return (
     [
       options.bannerComment,
-      declareNamedTypes(ast, options, ast.standaloneName!),
-      declareNamedInterfaces(ast, options, ast.standaloneName!),
-      declareEnums(ast, options),
+      asts
+        .map(_ => declareNamedTypes(_, options, rootASTName, typesProcessed))
+        .filter(Boolean)
+        .join('\n'),
+      asts
+        .map(_ => declareNamedInterfaces(_, options, rootASTName, interfacesProcessed))
+        .filter(Boolean)
+        .join('\n'),
+      asts
+        .map(_ => declareEnums(_, options, enumsProcessed))
+        .filter(Boolean)
+        .join('\n'),
     ]
       .filter(Boolean)
       .join('\n\n') + '\n'
@@ -63,6 +77,18 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
   }
 }
 
+/**
+ * Should we emit a standalone declaration for this AST node? The root type is always
+ * declared, as are unreachable definitions (when `unreachableDefinitions` is on). Everything
+ * else is reachable via a `$ref`, so it's only declared when `declareExternallyReferenced` is on.
+ */
+function shouldDeclare(ast: AST, options: Options, rootASTName: string): ast is ASTWithStandaloneName {
+  return (
+    hasStandaloneName(ast) &&
+    (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition === true)
+  )
+}
+
 function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
   if (processed.has(ast)) {
     return ''
@@ -77,9 +103,7 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
       break
     case 'INTERFACE':
       type = [
-        hasStandaloneName(ast) &&
-          (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition) &&
-          generateStandaloneInterface(ast, options),
+        shouldDeclare(ast, options, rootASTName) && generateStandaloneInterface(ast, options),
         getSuperTypesAndParams(ast)
           .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
           .filter(Boolean)
@@ -91,13 +115,10 @@ function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string,
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
-      type = ast.params
+      type = [...ast.params, ...(ast.type === 'TUPLE' && ast.spreadParam ? [ast.spreadParam] : [])]
         .map(_ => declareNamedInterfaces(_, options, rootASTName, processed))
         .filter(Boolean)
         .join('\n')
-      if (ast.type === 'TUPLE' && ast.spreadParam) {
-        type += declareNamedInterfaces(ast.spreadParam, options, rootASTName, processed)
-      }
       break
     default:
       type = ''
@@ -117,7 +138,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
     case 'ARRAY':
       return [
         declareNamedTypes(ast.params, options, rootASTName, processed),
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
+        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
       ]
         .filter(Boolean)
         .join('\n')
@@ -125,20 +146,14 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       return ''
     case 'INTERFACE':
       return getSuperTypesAndParams(ast)
-        .map(
-          ast =>
-            (ast.standaloneName === rootASTName ||
-              options.declareExternallyReferenced ||
-              ast.isUnreachableDefinition) &&
-            declareNamedTypes(ast, options, rootASTName, processed),
-        )
+        .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
         .filter(Boolean)
         .join('\n')
     case 'INTERSECTION':
     case 'TUPLE':
     case 'UNION':
       return [
-        hasStandaloneName(ast) ? generateStandaloneType(ast, options) : undefined,
+        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
         ast.params
           .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
           .filter(Boolean)
@@ -150,7 +165,7 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         .filter(Boolean)
         .join('\n')
     default:
-      if (hasStandaloneName(ast)) {
+      if (shouldDeclare(ast, options, rootASTName)) {
         return generateStandaloneType(ast, options)
       }
       return ''
@@ -266,7 +281,9 @@ function generateRawType(ast: AST, options: Options): string {
             typesToUnion.push(paramsToString(cumulativeParamsList))
           }
 
-          return typesToUnion.join('|')
+          // Parenthesize the union (like generateSetOperation does) so callers can
+          // safely append `[]` or combine it with `&`.
+          return '(' + typesToUnion.join(' | ') + ')'
         }
 
         // no max items so only need to return one type
@@ -285,7 +302,20 @@ function generateRawType(ast: AST, options: Options): string {
  * Generate a Union or Intersection
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
-  const members = (ast as TUnion).params.map(_ => generateType(_, options))
+  const members = (ast as TUnion).params.map(_ => {
+    const type = generateType(_, options)
+    // An anonymous object-literal member (eg. an `oneOf`/`anyOf` branch with its
+    // own `description` but no name of its own) would otherwise have its comment
+    // silently dropped: a named member's comment is printed on its own
+    // declaration (see generateStandaloneInterface), and non-object members
+    // (string, number, ...) have no declaration site for a leading comment to
+    // meaningfully attach to, so only INTERFACE members are handled here. The
+    // leading newline keeps the formatter from attaching the comment to the end
+    // of the previous member (`} /** ... */ | {`).
+    return _.type === 'INTERFACE' && hasComment(_) && !hasStandaloneName(_)
+      ? '\n' + generateComment(_.comment, _.deprecated) + '\n' + type
+      : type
+  })
   const separator = ast.type === 'UNION' ? '|' : '&'
   if (members.length === 0) {
     // A union of nothing accepts nothing (`never`). An intersection of nothing (eg. every
@@ -611,13 +641,14 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 }
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
+  const name = toSafeString(ast.standaloneName)
+  const superTypes = ast.superTypes.map(superType => toSafeString(superType.standaloneName))
+  const body = generateInterface(ast, options)
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
-    `export interface ${toSafeString(ast.standaloneName)} ` +
-    (ast.superTypes.length > 0
-      ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} `
-      : '') +
-    generateInterface(ast, options)
+    (options.declarationStyle === 'type'
+      ? `export type ${name} = ${[...superTypes, body].join(' & ')}`
+      : `export interface ${name} ${superTypes.length > 0 ? `extends ${superTypes.join(', ')} ` : ''}${body}`)
   )
 }
 

@@ -27,12 +27,14 @@ main(
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
+      'removeOptionalIfDefaultExists',
+      'style.singleQuote',
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
     ],
     default: defaultOptions,
-    string: ['bannerComment', 'cwd'],
+    string: ['bannerComment', 'cwd', 'declarationStyle'],
   }),
 )
 
@@ -190,6 +192,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Default value for additionalProperties, when it is not explicitly set
   --cwd=XXX
       Root directory for resolving $ref
+  --declarationStyle=interface|type
+      Declare object types as interfaces (default) or as type aliases
   --declareExternallyReferenced
       Declare external schemas referenced via '$ref'?
   --enableConstEnums
@@ -198,11 +202,16 @@ Boolean values can be set to false using the 'no-' prefix.
       Create enums from JSON enums instead of union types
   --format
       Format code? Set this to false to improve performance.
+  --formatTypes.FORMAT=TYPE
+      Emit TYPE for strings with the given format (eg.
+      --formatTypes.date-time=Date). Repeat for each format.
   --maxItems
       Maximum number of unioned tuples to emit when representing bounded-size
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
       performance, or set it to -1 to ignore minItems and maxItems.
+  --removeOptionalIfDefaultExists
+      Remove the optional modifier when a property has a default value
   --style.XXX=YYY
       Prettier configuration
   --unknownAny
