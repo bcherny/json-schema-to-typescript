@@ -12,8 +12,7 @@ import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
 // cwd is deliberately left out of the CLI defaults: processFile() computes a
 // per-file cwd (the directory of the file being compiled) unless the user
 // passes --cwd explicitly, so argv.cwd must stay unset until then. style starts
-// empty so that a resolved Prettier config is not masked by DEFAULT_OPTIONS.style;
-// compile() fills in the defaults for whatever neither of them sets.
+// empty so a resolved Prettier config isn't masked; compile() applies the defaults.
 const defaultOptions = {...omit(DEFAULT_OPTIONS, 'cwd'), style: {}}
 
 main(

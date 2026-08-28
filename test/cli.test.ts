@@ -38,8 +38,9 @@ async function run(command: string, input?: string, cwd?: string): Promise<Resul
 }
 
 // Piped input resolves its Prettier config from the working directory, so the
-// stdin tests run from test/resources, whose .prettierrc pins the default style.
-const STDIN_CWD = './test/resources'
+// stdin tests run from test/resources, whose prettier.config.cjs pins the default style.
+const STDIN_CWD = resolve('test/resources')
+const CLI = resolve('dist/src/cli.js')
 
 function cliTest(
   name: string,
@@ -85,7 +86,7 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, pipe out',
-    'node ../../dist/src/cli.js',
+    `node ${CLI}`,
     ({stdout, stderr}) => {
       // stderr must stay clean too: no warnings (e.g. Node deprecation notices) for a plain stdin run
       expect(stderr).toBe('')
@@ -97,7 +98,7 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in (schema without ID), pipe out',
-    'node ../../dist/src/cli.js',
+    `node ${CLI}`,
     ({stdout}) => expect(stdout).toMatchSnapshot(),
     readFileSync('./test/resources/ReferencedTypeWithoutID.json', 'utf-8'),
     STDIN_CWD,
@@ -140,13 +141,13 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, Prettier config from the working directory, pipe out',
-    'node ../../../dist/src/cli.js',
+    `node ${CLI}`,
     ({stdout}) => {
       expect(stdout).toContain('    fstype?: "ext3" | "ext4" | "btrfs"')
       expect(stdout).not.toContain(';')
     },
     readFileSync('./test/resources/prettier/Enum.json', 'utf-8'),
-    './test/resources/prettier',
+    resolve('test/resources/prettier'),
   )
 
   cliTest(
@@ -167,7 +168,7 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, file out (--output)',
-    'node ../../dist/src/cli.js --output ../../ReferencedType.1.d.ts',
+    `node ${CLI} --output ${resolve('ReferencedType.1.d.ts')}`,
     expectFile('./ReferencedType.1.d.ts'),
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
     STDIN_CWD,
@@ -175,7 +176,7 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, file out (-o)',
-    'node ../../dist/src/cli.js -o ../../ReferencedType.2.d.ts',
+    `node ${CLI} -o ${resolve('ReferencedType.2.d.ts')}`,
     expectFile('./ReferencedType.2.d.ts'),
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
     STDIN_CWD,
