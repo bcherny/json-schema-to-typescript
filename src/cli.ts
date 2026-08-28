@@ -28,8 +28,11 @@ main(
       'format',
       'ignoreMinAndMaxItems',
       'imports',
+      'readonly',
+      'readonlyKeyword',
       'removeOptionalIfDefaultExists',
       'strictIndexSignatures',
+      'undefinedOptionalProperties',
       'unknownAny',
       'unreachableDefinitions',
     ],
@@ -59,13 +62,27 @@ async function main(argv: minimist.ParsedArgs) {
   const ISGLOB = argIn && isDynamicPattern(argIn)
   const ISDIR = !!argIn && isDir(argIn)
 
-  if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
-    throw new ReferenceError(
-      `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`,
-    )
-  }
-
   try {
+    // Defend against unquoted glob expansion (or other shell mistakes) silently supplying extra
+    // positional arguments. A positional that competes with an explicitly-passed --input/--output
+    // flag for the same slot, or overflows past the two positional slots (input, output) this CLI
+    // supports, risks a source file being misread as an output path and overwritten.
+    // `in.json -o out.d.ts` (positional input, flagged output) stays valid.
+    if (
+      argv._.length > 2 ||
+      (argv.input !== undefined && argv._.length > 0) ||
+      (argv.output !== undefined && argv._.length > 1)
+    ) {
+      throw new ReferenceError(
+        `Unexpected extra argument(s): ${argv._.join(', ')}. json-schema-to-typescript accepts at most one input path and one output path. If you passed a glob to --input, quote it (e.g. -i "schemas/**/*.json") so your shell doesn't expand it first.`,
+      )
+    }
+    if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
+      throw new ReferenceError(
+        `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`,
+      )
+    }
+
     if (argv.imports) {
       if (!ISGLOB && !ISDIR) {
         throw new ReferenceError(
@@ -166,7 +183,9 @@ async function processFile(argIn: string, outputPath: string | undefined, argv: 
   // Resolve $refs relative to the directory of the file being compiled, not
   // process.cwd(), unless the user explicitly passed --cwd (see #324).
   const cwd = filename ? dirname(resolve(process.cwd(), filename)) : undefined
-  return compile(schema, argIn, {
+  // filename is null when input comes from stdin (no file to derive a name from), so fall
+  // back to the same placeholder name used elsewhere for schemas without a derivable name.
+  return compile(schema, filename ?? 'NoName', {
     ...(cwd ? {cwd} : {}),
     ...argv,
     style: await styleFor(configPath, argv),
@@ -253,6 +272,11 @@ Boolean values can be set to false using the 'no-' prefix.
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
       performance, or set it to -1 to ignore minItems and maxItems.
+  --readonly
+      Mark every property and index signature readonly, and every array type readonly T[]
+  --readonlyKeyword
+      Mark properties annotated readOnly: true as readonly, and emit readOnly
+      arrays and tuples as readonly T[]
   --removeOptionalIfDefaultExists
       Remove the optional modifier when a property has a default value
   --style.XXX=YYY
@@ -260,6 +284,9 @@ Boolean values can be set to false using the 'no-' prefix.
   --$refOptions.XXX=YYY
       Options for the $ref resolver (json-schema-ref-parser), eg.
       '--$refOptions.dereference.externalReferenceResolution=root'. Quote it for your shell.
+  --undefinedOptionalProperties
+      Append '| undefined' to the type of optional properties, for consumers
+      that compile with TypeScript's exactOptionalPropertyTypes
   --unknownAny
       Output unknown type instead of any type
   --unreachableDefinitions

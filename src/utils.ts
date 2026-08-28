@@ -12,6 +12,7 @@ import {memoize} from './memoize'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
 import type {Format} from 'cli-color'
+import type {Options} from './'
 import {CONTAINER_KEYWORDS, JSON_DATA_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
 
 // TODO: pull out into a separate package
@@ -359,6 +360,55 @@ export function hasType(schema: JSONSchema, type: JSONSchemaTypeName): boolean {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
 
+type TypeKeyword = JSONSchemaTypeName | JSONSchemaTypeName[]
+
+/**
+ * What is left of `schema`'s `type` once a schema of type `bound` must hold too (`integer` being
+ * the whole-number part of `number`): `false` if no type is left, the narrower `type` if some of
+ * it goes, `undefined` if `bound` takes nothing away (or `schema` declares no `type` to narrow).
+ */
+export function narrowType(schema: JSONSchema | boolean, bound: TypeKeyword): TypeKeyword | false | undefined {
+  if (typeof schema !== 'object' || !schema || schema.type === undefined || schema.type === 'any') {
+    return undefined
+  }
+  const bounds: readonly JSONSchemaTypeName[] = Array.isArray(bound) ? bound : [bound]
+  if (bounds.includes('any')) {
+    return undefined
+  }
+  const types: readonly JSONSchemaTypeName[] = Array.isArray(schema.type) ? schema.type : [schema.type]
+  const narrowed = types.flatMap((type): JSONSchemaTypeName[] =>
+    bounds.includes(type) || (type === 'integer' && bounds.includes('number'))
+      ? [type]
+      : type === 'number' && bounds.includes('integer')
+        ? ['integer']
+        : [],
+  )
+  if (!narrowed.length) {
+    return false
+  }
+  if (narrowed.length === types.length && narrowed.every((type, i) => type === types[i])) {
+    return undefined
+  }
+  return narrowed.length === 1 ? narrowed[0] : narrowed
+}
+
+/**
+ * Whether a value of type `bound` can match `schema` as far as `type`s go: its own, and those of
+ * its `anyOf`/`oneOf` members (a boolean schema admits everything or nothing).
+ */
+export function admitsType(schema: JSONSchema | boolean, bound: TypeKeyword, seen = new Set<JSONSchema>()): boolean {
+  if (typeof schema !== 'object' || !schema || seen.has(schema)) {
+    return schema !== false
+  }
+  if (narrowType(schema, bound) === false) {
+    return false
+  }
+  seen.add(schema)
+  return (['anyOf', 'oneOf'] as const).every(
+    key => schema[key]?.some(member => admitsType(member, bound, seen)) ?? true,
+  )
+}
+
 export function appendToDescription(existingDescription: string | undefined, ...values: string[]): string {
   if (existingDescription) {
     return `${existingDescription}\n\n${values.join('\n')}`
@@ -426,4 +476,11 @@ function color(): Format {
     cliColor = require('cli-color')
   } catch {}
   return cliColor
+}
+
+/** The TypeScript type the `formatTypes` option maps this schema's `format` to, if any */
+export function formatTypeOf(schema: JSONSchema, options: Options): string | undefined {
+  return typeof schema.format === 'string' && Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
+    ? options.formatTypes[schema.format]
+    : undefined
 }

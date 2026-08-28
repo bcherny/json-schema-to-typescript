@@ -1,24 +1,29 @@
 import {uniqBy} from 'lodash'
 import {Options} from '.'
 import {generateType} from './generator'
-import {AST, omitStandaloneName, T_ANY, T_UNKNOWN} from './types/AST'
+import {AST, omitStandaloneName, T_ANY, T_UNKNOWN, TAny, TUnknown} from './types/AST'
 import {log} from './utils'
 
 // nodes whose optimize() has returned; a recursive type can be rendered from inside itself before that
 const settled = new WeakSet<AST>()
 
-export function optimize(ast: AST, options: Options, processed = new Set<AST>()): AST {
+/**
+ * `processed` maps each node already visited to what it optimized to, so that a node reached
+ * from several places (a definition with more than one referrer) optimizes to one node, not one
+ * per referrer -- which matters when the result is a new node rather than the input, mutated
+ */
+export function optimize(ast: AST, options: Options, processed = new Map<AST, AST>()): AST {
   if (processed.has(ast)) {
-    return ast
+    return processed.get(ast)!
   }
-
-  processed.add(ast)
+  processed.set(ast, ast) // a node reached again through itself (a cycle) stays as it is
   const optimized = optimizeNode(ast, options, processed)
-  settled.add(ast)
+  processed.set(ast, optimized)
+  settled.add(ast).add(optimized)
   return optimized
 }
 
-function optimizeNode(ast: AST, options: Options, processed: Set<AST>): AST {
+function optimizeNode(ast: AST, options: Options, processed: Map<AST, AST>): AST {
   switch (ast.type) {
     case 'ARRAY':
       return Object.assign(ast, {
@@ -47,13 +52,13 @@ function optimizeNode(ast: AST, options: Options, processed: Set<AST>): AST {
       // [A, B, C, Any] -> Any
       if (optimizedAST.params.some(_ => _.type === 'ANY')) {
         log('cyan', 'optimizer', '[A, B, C, Any] -> Any', optimizedAST)
-        return T_ANY
+        return collapsed(optimizedAST, T_ANY)
       }
 
       // [A, B, C, Unknown] -> Unknown
       if (optimizedAST.params.some(_ => _.type === 'UNKNOWN')) {
         log('cyan', 'optimizer', '[A, B, C, Unknown] -> Unknown', optimizedAST)
-        return T_UNKNOWN
+        return collapsed(optimizedAST, T_UNKNOWN)
       }
 
       // [A (named), A] -> [A (named)]
@@ -79,6 +84,15 @@ function optimizeNode(ast: AST, options: Options, processed: Set<AST>): AST {
     default:
       return ast
   }
+}
+
+/**
+ * `ast` with its members gone: what names, documents and places it stays, so that a root (or
+ * definition) whose set operation matches anything is still declared, as an alias
+ */
+function collapsed(ast: AST, to: TAny | TUnknown): AST {
+  const {comment, deprecated, isUnreachableDefinition, keyName, standaloneName} = ast
+  return {...to, comment, deprecated, isUnreachableDefinition, keyName, standaloneName}
 }
 
 const structuralTypes = new WeakMap<AST, string>()

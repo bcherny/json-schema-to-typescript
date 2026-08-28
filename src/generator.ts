@@ -14,6 +14,7 @@ import {
   TIntersection,
   TNamedInterface,
   TUnion,
+  T_UNDEFINED,
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
@@ -177,7 +178,9 @@ function generateRawType(ast: AST, options: Options): string {
     case 'ARRAY':
       return (() => {
         const type = generateType(ast.params, options)
-        return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+        // `readonly T[][]` would make the outer array the readonly one
+        const element = type.endsWith('"') || type.startsWith('readonly ') ? '(' + type + ')' : type
+        return readonlyModifier(ast.isReadOnly, options) + element + '[]'
       })()
     case 'BOOLEAN':
       return 'boolean'
@@ -200,6 +203,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'TUPLE':
       return (() => {
         const minItems = ast.minItems
+        const modifier = readonlyModifier(ast.isReadOnly, options)
 
         let spreadParam = ast.spreadParam
         const astParams = [...ast.params]
@@ -226,7 +230,7 @@ function generateRawType(ast: AST, options: Options): string {
         }
 
         function paramsToString(params: string[]): string {
-          return '[' + params.join(', ') + ']'
+          return modifier + '[' + params.join(', ') + ']'
         }
 
         const paramsList = astParams.map(param => generateType(param, options))
@@ -285,6 +289,14 @@ function generateRawType(ast: AST, options: Options): string {
 }
 
 /**
+ * TypeScript's `readonly` modifier, for a property or an array type: on for everything under the
+ * `readonly` option, or driven by the schema's own `readOnly` annotation under `readonlyKeyword`.
+ */
+function readonlyModifier(isReadOnly: boolean | undefined, options: Options): string {
+  return options.readonly || (options.readonlyKeyword && isReadOnly) ? 'readonly ' : ''
+}
+
+/**
  * Generate a Union or Intersection
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
@@ -340,6 +352,30 @@ function isAny(ast: AST): boolean {
 }
 function isUnknown(ast: AST): boolean {
   return ast.type === 'UNKNOWN' || (ast.type === 'CUSTOM_TYPE' && ast.params.trim() === 'unknown')
+}
+
+/**
+ * `tsType` overrides are opaque strings (e.g. function types) that may not be
+ * union-safe, so parenthesize them unless they are a simple type reference.
+ */
+function unionMember(ast: AST, type: string): string {
+  return ast.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type
+}
+
+/**
+ * `T | undefined`, for an optional property under `undefinedOptionalProperties`. An
+ * anonymous union takes `undefined` as one more member rather than nesting
+ * (`string | number | undefined`, not `(string | number) | undefined`); `any` and
+ * `unknown` already include it.
+ */
+function orUndefined(ast: AST, type: string, options: Options): string {
+  if (isAny(ast) || isUnknown(ast)) {
+    return type
+  }
+  if (ast.type === 'UNION' && !hasStandaloneName(ast)) {
+    return generateType({...ast, params: [...ast.params, T_UNDEFINED]}, options)
+  }
+  return unionMember(ast, type) + ' | undefined'
 }
 
 /**
@@ -492,9 +528,7 @@ function generateIndexSignatureType(
     }
     seen.add(type)
     seen.add(underlying)
-    // tsType overrides are opaque strings (e.g. function types) that may not be
-    // union-safe, so parenthesize them unless they are a simple type reference
-    members.push(memberAST.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type)
+    members.push(unionMember(memberAST, type))
   }
 
   if (needsUndefined && !seen.has('undefined')) {
@@ -528,10 +562,13 @@ function generateInterface(ast: TInterface, options: Options): string {
           (hasComment(commented) && !ast.standaloneName
             ? generateComment(commented.comment, commented.deprecated) + '\n'
             : '') +
+          readonlyModifier(param.isReadOnly, options) +
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +
-          type
+          (!isRequired && !isIndexSignature && options.undefinedOptionalProperties
+            ? orUndefined(ast, type, options)
+            : type)
         )
       })
       .join('\n') +

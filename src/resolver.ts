@@ -8,7 +8,7 @@ import {
 } from '@apidevtools/json-schema-ref-parser'
 import {isObjectLike, isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
-import {JSONSchema, SchemaSource, Source} from './types/JSONSchema'
+import {DefinitionKey, JSONSchema, SchemaSource, Source} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
@@ -39,8 +39,17 @@ export async function dereference(
 ): Promise<{dereferencedPaths: DereferencedPaths; dereferencedSchema: JSONSchema}> {
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const dereferencedPaths: DereferencedPaths = new WeakMap()
+  const externalDocuments = new Set<JSONSchema>()
   const onDereference = ($ref: string, schema: JSONSchema) => {
-    dereferencedPaths.set(schema, $ref)
+    // The target of a $ref need not be an object: it can be a boolean schema (`true`/`false`),
+    // or -- for a pointer into a keyword's value -- any JSON value. Only objects can be WeakMap
+    // keys, and only objects are named after the path they were referenced by.
+    if (schema !== null && typeof schema === 'object') {
+      dereferencedPaths.set(schema, $ref)
+      if (isWholeDocumentRef($ref)) {
+        externalDocuments.add(schema)
+      }
+    }
   }
   let prepare: Prepare = prenormalizeDocument
   let resolve = $refOptions.resolve
@@ -69,10 +78,53 @@ export async function dereference(
       ...$refOptions,
       resolve,
       parse: prenormalizingParsers($refOptions.parse, prepare),
-      dereference: {...$refOptions.dereference, onDereference},
+      dereference: {
+        ...$refOptions.dereference,
+        excludedPathMatcher: depthLimitedPathMatcher($refOptions.dereference),
+        onDereference,
+      },
     })) as JSONSchema
+    tagExternalDefinitions(externalDocuments, dereferencedSchema)
   }
   return {dereferencedPaths, dereferencedSchema: resolveNamedAnchors(dereferencedSchema)}
+}
+
+/** `other.json`, `other.json#`, `http://x/y.json#/`: a $ref to a separate document as a whole */
+function isWholeDocumentRef($ref: string): boolean {
+  const hash = $ref.indexOf('#')
+  const fragment = hash === -1 ? '' : $ref.slice(hash + 1)
+  return hash !== 0 && (fragment === '' || fragment === '/')
+}
+
+/**
+ * A schema brought in by a $ref to a separate document keeps its own `definitions`/`$defs`,
+ * but once dereferenced into the referencing document that map sits somewhere below the
+ * root, where the parser does not look for names. Record on each of its entries the key it
+ * is held under, so the parser names it as it would when compiling that document on its
+ * own (see #143). Only documents referenced as a whole are considered; a definition reached
+ * solely through `file.json#/definitions/X` pointers is named as before.
+ */
+function tagExternalDefinitions(documents: Set<JSONSchema>, rootSchema: JSONSchema) {
+  const rootDefinitions = {...rootSchema.definitions, ...rootSchema.$defs}
+  for (const document of documents) {
+    if (!isPlainObject(document) || document === rootSchema) {
+      continue
+    }
+    const {$defs, definitions} = document
+    for (const [key, entry] of [...Object.entries($defs ?? {}), ...Object.entries(definitions ?? {})]) {
+      // A name the document being compiled defines itself stays that definition's alone:
+      // another file's entry under the same key is left unnamed (inlined, as before)
+      // rather than taking the name or a numbered variant of it, depending on visit order.
+      if (
+        Object.prototype.hasOwnProperty.call(rootDefinitions, key) ||
+        !isPlainObject(entry) ||
+        Object.prototype.hasOwnProperty.call(entry, DefinitionKey)
+      ) {
+        continue
+      }
+      Object.defineProperty(entry, DefinitionKey, {enumerable: false, value: key, writable: false})
+    }
+  }
 }
 
 /**
@@ -147,6 +199,44 @@ function stampSource<T>(document: T, file: string): T {
   }
   go(document, '')
   return document
+}
+
+/*
+ * The ref-parser cannot see one kind of cycle: a `$ref` with sibling keywords that points back at
+ * its own container, when that container was itself entered through such a `$ref`. It merges the
+ * target into a fresh object on every visit, so its "seen this object" checks never fire and it
+ * nests without end (`#/a/b/b/b/…`) -- a stack overflow at best and, with a self-referencing `$ref`
+ * nearby, hours of CPU first. So bound the nesting, as ref-parser releases from 15.3 on do
+ * themselves (`dereference.maxDepth`, same default; real schemas stay under 100): in $RefParser from
+ * the one hook that sees every path the crawl visits -- which otherwise stays the caller's -- and in
+ * `dereferenceInDocument`, which copies its bookkeeping and so its blind spot, by the same count.
+ */
+
+const DEFAULT_MAX_DEPTH = 500
+
+function depthLimitedPathMatcher(options: $RefOptions['dereference']): (pathFromRoot: string) => boolean {
+  const {excludedPathMatcher, maxDepth: configured} = (options ?? {}) as {
+    excludedPathMatcher?: (path: string) => boolean
+    maxDepth?: number | null
+  }
+  const maxDepth = configured ?? DEFAULT_MAX_DEPTH // read as ref-parser 15.3+ reads it: null, like undefined, means the default
+  const shortEnough = 2 * maxDepth // "#" then at least "/x" per level: most paths stop here (empty keys fire late, not never)
+  return path => {
+    const levels = path.length > shortEnough ? path.split('/') : undefined
+    if (levels && levels.length - 1 > maxDepth) {
+      throw tooDeep(maxDepth, levels)
+    }
+    return excludedPathMatcher?.(path) ?? false
+  }
+}
+
+/** `levels`: the runaway path split at `/`, root (`#`) first */
+function tooDeep(maxDepth: number, levels: string[]): ReferenceError {
+  return new ReferenceError(
+    `$ref nesting goes deeper than ${maxDepth} levels at ${levels.slice(0, 7).join('/')}${levels.length > 7 ? '/…' : ''} -- ` +
+      'either a "$ref" with sibling keywords that leads back to its own parent (a cycle the ref resolver ' +
+      'cannot detect), or a schema that really nests this deep: then raise $refOptions.dereference.maxDepth.',
+  )
 }
 
 /*
@@ -236,6 +326,7 @@ export function dereferenceInDocument(
   const visited = new Set<unknown>()
   const parents = new Set<unknown>() // the objects on the path from the root to here
   const cache = new Map<string, Resolution>()
+  const trail: string[] = [] // the keys from the root to here ($RefParser's `pathFromRoot`)
 
   /** Dereferences everything under `node`; true if something in there refers back to an ancestor */
   function crawl(node: any): boolean {
@@ -246,6 +337,9 @@ export function dereferenceInDocument(
     parents.add(node)
     let circular = false
     for (const key of Object.keys(node)) {
+      if (trail.push(key) > DEFAULT_MAX_DEPTH) {
+        throw tooDeep(DEFAULT_MAX_DEPTH, ['#', ...trail])
+      }
       const value = node[key]
       if (isRef(value)) {
         const resolution = resolve(value)
@@ -255,6 +349,7 @@ export function dereferenceInDocument(
       } else {
         circular = parents.has(value) || crawl(value) || circular
       }
+      trail.pop()
     }
     parents.delete(node)
     return circular

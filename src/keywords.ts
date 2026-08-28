@@ -35,8 +35,7 @@ interface Keyword {
    * Decides, on its own, which type a schema becomes: a `typesOfSchema` matcher or a
    * type-changing normalizer rule keys off of it, or the parser reads it whatever the matched
    * type (`extends`). Keywords that only refine a type some other keyword established
-   * (`minItems` next to `items`) don't count, so a schema made up only of keywords without
-   * this flag is one the tool has no notion of.
+   * (`minItems` next to `items`) or name it (`$id`) don't count.
    */
   typed?: true
   /**
@@ -77,7 +76,7 @@ export const KEYWORDS = {
 
   // Identity, documentation and other annotations
   id: {holds: 'data', meta: true}, // draft 4
-  $id: {holds: 'data', typed: true, meta: true},
+  $id: {holds: 'data', meta: true}, // names the type; the shape is the same with or without it
   $schema: {holds: 'data', meta: true},
   $comment: {holds: 'data', annotation: true},
   title: {holds: 'data', meta: true},
@@ -208,6 +207,15 @@ export const META_KEYWORDS = keywordsWhere(({meta}, name) => meta === true && !L
 
 /** @see Keyword.typed */
 export const TYPE_SHAPING_KEYWORDS = keywordsWhere(({typed}) => typed === true)
+
+/**
+ * Keywords that give a schema a shape of its own: the ones that decide its type (`Keyword.typed`)
+ * and the ones that hold subschemas, implemented (`properties`) or not (`not`, `if`) -- a schema
+ * made up of only the latter is one this tool has no notion of. A schema with none of either --
+ * only bounds on values (`pattern`, `maximum`), annotations, `format`, `nullable`, or keys this
+ * tool has never heard of -- says nothing about which type a value is: it is the empty schema.
+ */
+export const STRUCTURAL_KEYWORDS = keywordsWhere(({holds, typed}) => typed === true || holdsSchemas(holds))
 
 /** @see Keyword.annotation */
 export const ANNOTATION_KEYWORDS = keywordsWhere(({annotation}) => annotation === true)
