@@ -94,60 +94,90 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
   if ((typeof type !== 'string' && !Array.isArray(type)) || !(schema.anyOf || schema.oneOf)) {
     return
   }
-  const constrain = (members: LinkedJSONSchema[] | undefined) => {
+  // Narrows `owner[key]` to what a value of the parent `type` can match; says whether it changed.
+  // The list is edited in place only when it is the owner's alone: a `$ref` with sibling keywords
+  // is dereferenced into a shallow COPY of its target, list and all, and a copy made below shares
+  // its lists with the original. Otherwise the owner gets a narrowed list of its own and the
+  // other holder keeps the one it had. `seen` stops a member that contains itself.
+  const constrain = (owner: LinkedJSONSchema, key: 'anyOf' | 'oneOf', seen: Set<LinkedJSONSchema>): boolean => {
+    const members: LinkedMembers | undefined = owner[key]
     if (!members) {
-      return
+      return false
     }
+    const owned = members[Parent] === owner && !members[Shared]
+    let changed = false
     const constrained = members.flatMap((member): LinkedJSONSchema[] => {
       // `anyOf`/`oneOf` members are typed as `LinkedJSONSchema`, but a boolean
       // schema (`true`/`false`) can still show up here at runtime.
-      if (typeof member !== 'object' || !member) {
+      if (typeof member !== 'object' || !member || seen.has(member)) {
         return [member]
       }
       // A member that was a `$ref` is now the shared definition object itself: leave it
       // alone so the definition keeps its name and type. Any other member is replaced by a
       // typed COPY rather than written to, so an object shared by other means (YAML
       // anchors, programmatic callers) is not retyped everywhere else it appears.
-      const shared = dereferencedPaths.has(member)
+      const dereferenced = dereferencedPaths.has(member)
       if (member.type === undefined) {
         // An untyped member already parses as an open object, so an `object` parent has
         // nothing to add (and its required-only members are the parser's to narrow).
-        if (typeof type === 'string' && type !== 'object' && !hasOwnType(member) && !shared) {
-          return [link({...member, type}, members)]
+        if (typeof type === 'string' && type !== 'object' && !hasOwnType(member) && !dereferenced) {
+          changed = true
+          return [{...member, type}]
+        }
+        if (dereferenced || !(member.anyOf || member.oneOf)) {
+          return [member]
         }
         // The bound carries through a member that leaves the typing to an `anyOf`/`oneOf` of
-        // its own -- edited in place, so not when the member object is reachable any other way.
-        if (!shared && !member[Shared]) {
-          constrain(member.anyOf)
-          constrain(member.oneOf)
-          if (member.anyOf?.length === 0 || member.oneOf?.length === 0) {
-            return []
-          }
+        // its own: on the member itself when it is ours alone, on a copy when not
+        const target = owned && !member[Shared] ? member : {...member}
+        seen.add(member)
+        const narrowedAny = constrain(target, 'anyOf', seen)
+        const narrowedOne = constrain(target, 'oneOf', seen)
+        seen.delete(member)
+        if (target.anyOf?.length === 0 || target.oneOf?.length === 0) {
+          changed = true
+          return []
         }
-        return [member]
+        if (target === member || !(narrowedAny || narrowedOne)) {
+          return [member]
+        }
+        changed = true
+        return [target]
       }
       const narrowed = narrowType(member, type)
       if (narrowed === false) {
+        changed = true
         return []
       }
-      return narrowed === undefined || shared ? [member] : [link({...member, type: narrowed}, members)]
+      if (narrowed === undefined || dereferenced) {
+        return [member]
+      }
+      changed = true
+      return [{...member, type: narrowed}]
     })
-    // Edited in place: the array is what links its members to the schema around them
-    if (constrained.length !== members.length || constrained.some((member, i) => member !== members[i])) {
+    if (!changed) {
+      return false
+    }
+    if (owned) {
+      // Edited in place: the array is what links its members to the schema around them
       members.splice(0, members.length, ...constrained)
+      members.forEach(member => link(member, members))
+    } else {
+      link(constrained, owner)
+      owner[key] = constrained
     }
-    if (!members.length) {
-      log(
-        'yellow',
-        'normalizer',
-        `No anyOf/oneOf member is compatible with the parent type (${type}): emits never`,
-        schema,
-      )
+    if (!constrained.length) {
+      log('yellow', 'normalizer', `No ${key} member is compatible with the parent type (${type}): emits never`, owner)
     }
+    return true
   }
-  constrain(schema.anyOf)
-  constrain(schema.oneOf)
+  const seen = new Set([schema])
+  constrain(schema, 'anyOf', seen)
+  constrain(schema, 'oneOf', seen)
 })
+
+/** An `anyOf`/`oneOf` list as `link()` leaves it: knowing the schema that holds it, and whether another does too */
+type LinkedMembers = LinkedJSONSchema[] & {readonly [Parent]?: LinkedJSONSchema; readonly [Shared]?: true}
 
 rules.set('Add empty `required` property if none is defined', schema => {
   if (isObjectType(schema) && !('required' in schema)) {

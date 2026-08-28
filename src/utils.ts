@@ -365,15 +365,15 @@ export function narrowType(schema: JSONSchema | boolean, bound: TypeKeyword): Ty
 }
 
 /**
- * Whether a value of type `bound` can match `schema` as far as `type`s go: its own, or failing
- * that those of its `anyOf`/`oneOf` members (a boolean schema admits everything or nothing).
+ * Whether a value of type `bound` can match `schema` as far as `type`s go: its own, and those of
+ * its `anyOf`/`oneOf` members (a boolean schema admits everything or nothing).
  */
 export function admitsType(schema: JSONSchema | boolean, bound: TypeKeyword, seen = new Set<JSONSchema>()): boolean {
   if (typeof schema !== 'object' || !schema || seen.has(schema)) {
     return schema !== false
   }
-  if (schema.type !== undefined) {
-    return narrowType(schema, bound) !== false
+  if (narrowType(schema, bound) === false) {
+    return false
   }
   seen.add(schema)
   return (['anyOf', 'oneOf'] as const).every(

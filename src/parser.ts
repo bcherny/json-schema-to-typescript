@@ -831,8 +831,9 @@ function nameOf(
 
 /**
  * `member` (of an `anyOf`/`oneOf`) as it applies to a value of the given `type`: left out if it
- * admits no such value, a copy typed `type` if that is narrower than its own `type` -- unless it
- * is a declaration of its own, shared, or already split into an intersection -- else as it is.
+ * admits no such value, a copy typed `type` (its own members narrowed the same way) if that is
+ * narrower than its `type` -- unless it is a declaration of its own, shared, or already split
+ * into an intersection -- else as it is.
  */
 function narrowMember(member: LinkedJSONSchema, type: JSONSchema4TypeName, options: Options): LinkedJSONSchema[] {
   if (!admitsType(member, type)) {
@@ -845,6 +846,16 @@ function narrowMember(member: LinkedJSONSchema, type: JSONSchema4TypeName, optio
   }
   const copy: LinkedJSONSchema = {...member, type: narrowed}
   Object.defineProperty(copy, Parent, {enumerable: false, value: member[Parent]})
+  for (const key of ['anyOf', 'oneOf'] as const) {
+    const members = member[key]
+    const narrowedMembers = members?.flatMap(_ => narrowMember(_, type, options))
+    if (
+      narrowedMembers &&
+      !(narrowedMembers.length === members!.length && narrowedMembers.every((_, i) => _ === members![i]))
+    ) {
+      copy[key] = Object.defineProperty(narrowedMembers, Parent, {enumerable: false, value: copy})
+    }
+  }
   applySchemaTyping(copy)
   return [copy]
 }

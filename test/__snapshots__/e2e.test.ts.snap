@@ -130315,39 +130315,14 @@ export type D =
       a?: string;
       [k: string]: unknown;
     };
-export type D1 =
-  | string
-  | {
-      a?: string;
-      [k: string]: unknown;
-    };
-export type E = (
-  | string
-  | null
-  | {
-      b?: string;
-      [k: string]: unknown;
-    }
-) &
-  (
-    | (
-        | string
-        | null
-        | {
-            b?: string;
-            [k: string]: unknown;
-          }
-      )
-    | ((
-        | string
-        | null
-        | {
-            b?: string;
-            [k: string]: unknown;
-          }
-      ) &
-        null)
-  );
+export type D1 = {
+  a?: string;
+  [k: string]: unknown;
+};
+export type E = {
+  b?: string;
+  [k: string]: unknown;
+} | null;
 export type E1 =
   | string
   | null
@@ -130374,226 +130349,22 @@ exports[`typedMembersUnderParentTypeShared.ts 1`] = `
  */
 
 export interface TypedMembersUnderParentTypeShared {
-  asObject?: (
-    | null
-    | string
+  asObject?: {
+    a?: string;
+    [k: string]: unknown;
+  };
+  asString?: string;
+  asIs?:
     | {
         a?: string;
         [k: string]: unknown;
       }
-  ) &
-    (
-      | (
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        )
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          null)
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          string)
-    );
-  asString?: ((
     | null
-    | string
-    | {
-        a?: string;
-        [k: string]: unknown;
-      }
-  ) &
-    (
-      | (
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        )
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          null)
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          string)
-    )) &
-    string;
-  asIs?: (
-    | null
-    | string
-    | {
-        a?: string;
-        [k: string]: unknown;
-      }
-  ) &
-    (
-      | (
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        )
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          null)
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          string)
-    );
-  asNullableObject?: ((
-    | null
-    | string
-    | {
-        a?: string;
-        [k: string]: unknown;
-      }
-  ) &
-    (
-      | (
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        )
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          null)
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          string)
-    )) &
-    (
-      | ((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          (
-            | (
-                | null
-                | string
-                | {
-                    a?: string;
-                    [k: string]: unknown;
-                  }
-              )
-            | ((
-                | null
-                | string
-                | {
-                    a?: string;
-                    [k: string]: unknown;
-                  }
-              ) &
-                null)
-            | ((
-                | null
-                | string
-                | {
-                    a?: string;
-                    [k: string]: unknown;
-                  }
-              ) &
-                string)
-          ))
-      | (((
-          | null
-          | string
-          | {
-              a?: string;
-              [k: string]: unknown;
-            }
-        ) &
-          (
-            | (
-                | null
-                | string
-                | {
-                    a?: string;
-                    [k: string]: unknown;
-                  }
-              )
-            | ((
-                | null
-                | string
-                | {
-                    a?: string;
-                    [k: string]: unknown;
-                  }
-              ) &
-                null)
-            | ((
-                | null
-                | string
-                | {
-                    a?: string;
-                    [k: string]: unknown;
-                  }
-              ) &
-                string)
-          )) &
-          null)
-    );
+    | string;
+  asNullableObject?: {
+    a?: string;
+    [k: string]: unknown;
+  } | null;
 }
 "
 `;
