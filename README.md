@@ -150,10 +150,11 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 
 ## Tests
 
-Tests run under [bun](https://bun.sh) (1.3.9 or later), so install it first:
+This repo uses [bun](https://bun.sh) (1.3.9 or later) to install dependencies and run its scripts and tests, so install it first:
 
 ```sh
-$ npm test
+$ bun install
+$ bun run test
 ```
 
 ## Features
