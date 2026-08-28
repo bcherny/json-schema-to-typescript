@@ -145,6 +145,16 @@ suite('CLI', () => {
     rimraf.sync('./test/resources/MultiSchema/foo')
   })
 
+  test('files in (-i), $ref resolves relative to referring file, not process.cwd() (#324)', () => {
+    execSync(
+      `node dist/src/cli.js -i "./test/resources/MultiSchemaRefs/response/**/*.json" -o ./test/resources/MultiSchemaRefs/response/out`,
+    )
+
+    const path = './test/resources/MultiSchemaRefs/response/out/Referencing.d.ts'
+    expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
+    rimraf.sync('./test/resources/MultiSchemaRefs/response/out')
+  })
+
   test('files in (-i), files out (-o) matching nested dir', () => {
     execSync(
       `node dist/src/cli.js -i "./test/resources/../../test/resources/MultiSchema2/" -o ./test/resources/MultiSchema2/out`,

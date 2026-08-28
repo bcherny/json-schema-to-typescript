@@ -104,7 +104,10 @@ export interface NormalizedJSONSchema extends Omit<LinkedJSONSchema, 'definition
   anyOf?: NormalizedJSONSchema[]
   oneOf?: NormalizedJSONSchema[]
   not?: NormalizedJSONSchema
-  required: string[]
+  /**
+   * `false` is normalized to `[]`; `true` is the draft 3 property-level form (see `isRequired` in the parser)
+   */
+  required: string[] | true
 }
 
 export interface EnumJSONSchema extends NormalizedJSONSchema {
@@ -119,7 +122,6 @@ export interface SchemaSchema extends NormalizedJSONSchema {
   properties: {
     [k: string]: NormalizedJSONSchema
   }
-  required: string[]
 }
 
 export interface JSONSchemaWithDefinitions extends NormalizedJSONSchema {

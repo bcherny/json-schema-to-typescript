@@ -1,0 +1,3 @@
+# Check files out with LF on every OS. .prettierrc pins endOfLine: lf, so a
+# CRLF checkout (the Git for Windows default) fails `npm run format-check`.
+* text=auto eol=lf
