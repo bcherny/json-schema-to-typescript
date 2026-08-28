@@ -458,6 +458,7 @@ function parseNonLiteral(
         const arrayType: TTuple = {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isReadOnly: isReadOnly(schema),
           keyName,
           maxItems,
           minItems,
@@ -475,6 +476,7 @@ function parseNonLiteral(
         return {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isReadOnly: isReadOnly(schema),
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
           params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
@@ -515,6 +517,7 @@ function parseNonLiteral(
         return {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isReadOnly: isReadOnly(schema),
           keyName,
           maxItems: schema.maxItems,
           minItems,
@@ -530,6 +533,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isReadOnly: isReadOnly(schema),
         keyName,
         params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -683,6 +687,7 @@ function pickDeclared(
         ast: parse(declaration, options, key, processed, usedNames),
         isIndexSignature: false,
         isPatternProperty: false,
+        isReadOnly: isReadOnly(declaration),
         isRequired: true,
         isUnreachableDefinition: false,
         keyName: key,
@@ -896,6 +901,13 @@ function isRequired(parentSchema: SchemaSchema, key: string, propertySchema: Nor
 }
 
 /**
+ * The draft 7 `readOnly` annotation. Only a strict `true` counts; boolean schemas carry none.
+ */
+function isReadOnly(schema: LinkedJSONSchema | boolean): boolean {
+  return !isBoolean(schema) && schema.readOnly === true
+}
+
+/**
  * Helper to parse schema properties into params on the parent schema's type
  */
 function parseSchema(
@@ -909,6 +921,7 @@ function parseSchema(
     ast: parse(value, options, key, processed, usedNames),
     isIndexSignature: false,
     isPatternProperty: false,
+    isReadOnly: isReadOnly(value),
     isRequired:
       isRequired(schema, key, value) ||
       (options.removeOptionalIfDefaultExists && !isBoolean(value) && 'default' in value),
@@ -926,6 +939,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
       ast,
       isIndexSignature: false,
       isPatternProperty: true,
+      isReadOnly: isReadOnly(value),
       isRequired: isRequired(schema, key, value),
       isUnreachableDefinition: false,
       keyName: key,
@@ -961,6 +975,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
         ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
         isIndexSignature: false,
         isPatternProperty: true,
+        isReadOnly: isReadOnly(schema.additionalProperties),
         isRequired: false,
         isUnreachableDefinition: false,
         keyName: '[k: string]',
@@ -998,6 +1013,8 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
     ast: indexSignature,
     isIndexSignature: true,
     isPatternProperty: false,
+    // nothing writable may come in through a readonly index signature
+    isReadOnly: indexSignatureMembers.length > 0 && indexSignatureMembers.every(_ => _.isReadOnly),
     isRequired: true,
     isUnreachableDefinition: false,
     keyName: '[k: string]',

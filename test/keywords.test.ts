@@ -107,9 +107,9 @@ suite('keywords', () => {
     expect([...JSON_DATA_KEYWORDS].sort()).toEqual(['enum', 'const', 'default', 'examples'].sort())
   })
 
-  test("`nullable` leaves the keywords outside its anyOf it always has (prenormalizer.ts's former NULLABLE_OUTER_KEYS)", () => {
+  test("`nullable` leaves the keywords that describe the property outside its anyOf (prenormalizer.ts's former NULLABLE_OUTER_KEYS, plus `readOnly`/`writeOnly`)", () => {
     expect([...META_KEYWORDS].sort()).toEqual(
-      ['$defs', '$id', '$schema', 'definitions', 'deprecated', 'description', 'title'].sort(),
+      ['$defs', '$id', '$schema', 'definitions', 'deprecated', 'description', 'readOnly', 'title', 'writeOnly'].sort(),
     )
   })
 

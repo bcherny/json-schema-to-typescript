@@ -26,12 +26,13 @@ main(
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
+      'readonly',
+      'readonlyKeyword',
       'removeOptionalIfDefaultExists',
       'style.singleQuote',
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
-      'readonly',
     ],
     default: defaultOptions,
     string: ['bannerComment', 'cwd'],
@@ -205,6 +206,11 @@ Boolean values can be set to false using the 'no-' prefix.
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
       performance, or set it to -1 to ignore minItems and maxItems.
+  --readonly
+      Mark every property and index signature readonly, and every array type readonly T[]
+  --no-readonlyKeyword
+      Ignore the schema's readOnly annotations (by default a readOnly property is
+      marked readonly and a readOnly array becomes readonly T[])
   --removeOptionalIfDefaultExists
       Remove the optional modifier when a property has a default value
   --style.XXX=YYY
@@ -213,8 +219,6 @@ Boolean values can be set to false using the 'no-' prefix.
       Output unknown type instead of any type
   --unreachableDefinitions
       Generates code for definitions that aren't referenced by the schema
-  --readonly
-      Emits all types as readonly
 `,
   )
 }

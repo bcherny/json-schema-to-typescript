@@ -4,6 +4,7 @@
 
 ## Next
 
+- Feat: The `readOnly: true` annotation now marks a property `readonly`, and an annotated array or tuple type is emitted as `readonly T[]`; set `readonlyKeyword: false` for the old output. The `readonly` option emits every property, index signature, array and tuple as readonly (#131, #627)
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 
 ## 16.0.0

@@ -46,6 +46,12 @@ export function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSc
   if (isNamedEnum && !inner.title && enumName) {
     inner.$id = enumName
   }
+  // `readOnly` is deliberately in both places: it stays on the outer schema (a `meta` keyword)
+  // for the property's `readonly` modifier, and is copied in here because it also makes an
+  // array or tuple value `readonly T[]`
+  if (schema.readOnly === true) {
+    inner.readOnly = true
+  }
   schema.anyOf = [inner, {type: 'null'}]
   return inner
 }

@@ -72,6 +72,8 @@ export interface TAny extends AbstractAST {
 export interface TArray extends AbstractAST {
   type: 'ARRAY'
   params: AST
+  /** The array schema is annotated `readOnly: true` */
+  isReadOnly?: boolean
 }
 
 export interface TBoolean extends AbstractAST {
@@ -115,6 +117,9 @@ export interface TInterfaceParam {
   // True for the synthesized `[k: string]` index signature param, as opposed to a
   // named property that happens to be called "[k: string]".
   isIndexSignature: boolean
+  // The property schema is annotated `readOnly: true` (for the index signature: every
+  // schema folded into it is)
+  isReadOnly?: boolean
 }
 
 export interface TIntersection extends AbstractAST {
@@ -154,6 +159,8 @@ export interface TTuple extends AbstractAST {
   spreadParam?: AST
   minItems: number
   maxItems?: number
+  /** The array schema is annotated `readOnly: true` */
+  isReadOnly?: boolean
 }
 
 export interface TUnion extends AbstractAST {

@@ -79,6 +79,15 @@ export interface Options {
    */
   maxItems: number
   /**
+   * Mark every property and index signature `readonly`, and every array and tuple type `readonly T[]`.
+   */
+  readonly: boolean
+  /**
+   * Honor the schema's `readOnly: true` [annotation](https://json-schema.org/draft-07/json-schema-validation#rfc.section.10.3):
+   * an annotated property gets the `readonly` modifier, an annotated array or tuple becomes `readonly T[]`.
+   */
+  readonlyKeyword: boolean
+  /**
    * Remove the optional modifier when a property has a default value.
    */
   removeOptionalIfDefaultExists: boolean
@@ -100,10 +109,6 @@ export interface Options {
    * Generate unknown type instead of any
    */
   unknownAny: boolean
-  /**
-   * Emit all types as readonly
-   */
-  readonly: boolean
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -123,6 +128,8 @@ export const DEFAULT_OPTIONS: Options = {
   formatTypes: {},
   ignoreMinAndMaxItems: false,
   maxItems: 20,
+  readonly: false,
+  readonlyKeyword: true,
   removeOptionalIfDefaultExists: false,
   strictIndexSignatures: false,
   style: {
@@ -136,7 +143,6 @@ export const DEFAULT_OPTIONS: Options = {
   },
   unreachableDefinitions: false,
   unknownAny: true,
-  readonly: false,
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
