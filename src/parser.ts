@@ -49,23 +49,16 @@ export function parse(
   const types = schema[Types]
 
   if (intersection) {
-    // Re-entered while this schema's intersection is still being parsed (eg. a
-    // picked property's type leads back here): return the placeholder, which
-    // parseAsTypeWithCache fills in place once the outer call finishes.
-    const inProgress = processed.get(intersection)?.get('ALL_OF')
-    if (inProgress && !inProgress.type) {
-      return inProgress
+    // `parse` comes back to this schema once per place that refers to it, and, through
+    // a cycle, while the first call is still inside `parseAsTypeWithCache` below. Either
+    // way the intersection is the first call's to build: hand back its node -- finished,
+    // or the placeholder that call fills in as it unwinds -- rather than pushing these
+    // same types onto it a second time.
+    const seen = processed.get(intersection)?.get('ALL_OF')
+    if (seen) {
+      return seen
     }
     const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames) as TIntersection
-
-    // A cyclic schema can re-enter `parse` for this same intersection while the call
-    // above us is still building it. In that case we get back the empty placeholder
-    // that `parseAsTypeWithCache` caches to break cycles, and `params` doesn't exist
-    // yet. That call fills it in -- with these very same types -- once it unwinds, and
-    // it fills in this exact object, so returning the reference as-is is correct.
-    if (ast.params === undefined) {
-      return ast
-    }
 
     types.forEach(type => {
       ast.params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames))

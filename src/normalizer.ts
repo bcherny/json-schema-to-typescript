@@ -335,6 +335,17 @@ rules.set('Make extends always an array, if it is defined', schema => {
   }
 })
 
+rules.set('Remove the schema itself from its `allOf`', schema => {
+  // A schema listed in its own `allOf` (`{$ref: '#'}` at the root, a definition that
+  // `$ref`s itself, ...) asks that whatever this schema accepts also be accepted by this
+  // schema, which is no constraint at all. After dereferencing the member *is* this
+  // object, so drop it by identity. Kept, it would come out as the type being declared
+  // (`type A = A & {...}`), an alias TypeScript rejects as circular (TS2456).
+  if (Array.isArray(schema.allOf) && schema.allOf.includes(schema)) {
+    schema.allOf = schema.allOf.filter(_ => _ !== schema)
+  }
+})
+
 // Compares the whole `definitions` and `$defs` subtrees, so no other rule may be part-way through
 // rewriting them
 startNewPass()
