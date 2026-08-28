@@ -154,6 +154,15 @@ rules.set('Default additionalProperties', (schema, _, options) => {
   }
 })
 
+// Drafts 4 through 2019-09: an absent `additionalItems` is the empty schema, so a tuple (the
+// array form of `items`) allows further items of any type. Next to a single `items` schema the
+// keyword means nothing; `Normalize schema.items` sets it itself on the tuples it builds.
+rules.set('Default additionalItems', schema => {
+  if (Array.isArray(schema.items) && schema.additionalItems === undefined) {
+    schema.additionalItems = true
+  }
+})
+
 rules.set('Mark every property required when `minProperties` covers them all', schema => {
   const {minProperties, properties} = schema
   if (
@@ -313,12 +322,9 @@ rules.set('Normalize schema.items', (schema, _fileName, options) => {
   if (schema.items && !Array.isArray(schema.items) && (hasMaxItems || hasMinItems)) {
     const items = schema.items
     // create a tuple of length N
-    const newItems = Array(maxItems || minItems || 0).fill(items)
-    if (!hasMaxItems) {
-      // if there is no maximum, then add a spread item to collect the rest
-      schema.additionalItems = items
-    }
-    schema.items = newItems
+    schema.items = Array(maxItems || minItems || 0).fill(items)
+    // if there is no maximum, then add a spread item to collect the rest
+    schema.additionalItems = hasMaxItems ? false : items
   }
 
   if (Array.isArray(schema.items) && hasMaxItems && maxItems! < schema.items.length) {
