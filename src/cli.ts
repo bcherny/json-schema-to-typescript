@@ -29,6 +29,7 @@ main(
       'ignoreMinAndMaxItems',
       'removeOptionalIfDefaultExists',
       'strictIndexSignatures',
+      'undefinedOptionalProperties',
       'unknownAny',
       'unreachableDefinitions',
     ],
@@ -225,6 +226,9 @@ Boolean values can be set to false using the 'no-' prefix.
   --$refOptions.XXX=YYY
       Options for the $ref resolver (json-schema-ref-parser), eg.
       '--$refOptions.dereference.externalReferenceResolution=root'. Quote it for your shell.
+  --undefinedOptionalProperties
+      Append '| undefined' to the type of optional properties, for consumers
+      that compile with TypeScript's exactOptionalPropertyTypes
   --unknownAny
       Output unknown type instead of any type
   --unreachableDefinitions
