@@ -6,7 +6,6 @@
 
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
-- Fix: A key listed in `required` but absent from `properties` is now emitted as a required member (typed by the `patternProperties` it matches or a schema-valued `additionalProperties`, else `unknown`) instead of being dropped. **Output change** for such schemas, eg. `{properties: {a: {type: 'string'}}, required: ['a', 'b']}` now yields `{a: string; b: unknown; [k: string]: unknown}`
 
 ## 16.0.0
 
