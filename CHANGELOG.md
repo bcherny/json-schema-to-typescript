@@ -6,6 +6,7 @@
 
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
+- Bugfix: `unevaluatedProperties: false` (or a schema) no longer closes an object whose keys can also come from `if`/`then`/`else`, `dependentSchemas`, `$dynamicRef`, an `allOf`/`anyOf`/`oneOf` member made of those, or a `$ref` with sibling keywords; such objects keep their index signature, as in 16.0.0. Plain objects and ordinary `allOf`/`anyOf`/`oneOf` compositions keep the closed output from #782 (#442)
 
 ## 16.0.0
 

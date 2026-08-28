@@ -1,0 +1,142 @@
+{
+  "name": "Drop `unevaluatedProperties` where an in-place applicator evaluates keys the emitted type would not cover",
+  "in": {
+    "$id": "foo",
+    "type": "object",
+    "properties": {
+      "conditional": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          }
+        },
+        "if": {
+          "required": [
+            "kind"
+          ]
+        },
+        "then": {
+          "required": [
+            "a"
+          ]
+        },
+        "unevaluatedProperties": false
+      },
+      "dependent": {
+        "type": "object",
+        "dependentSchemas": {
+          "a": {
+            "required": [
+              "b"
+            ]
+          }
+        },
+        "unevaluatedProperties": {
+          "type": "number"
+        }
+      },
+      "combined": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "a"
+            ]
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "combinedWithConditionalMember": {
+        "type": "object",
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "a"
+              ]
+            },
+            "then": {
+              "required": [
+                "b"
+              ]
+            }
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    },
+    "additionalProperties": false
+  },
+  "out": {
+    "$id": "foo",
+    "type": "object",
+    "properties": {
+      "conditional": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          }
+        },
+        "if": {
+          "required": [
+            "kind"
+          ]
+        },
+        "then": {
+          "required": [
+            "a"
+          ]
+        },
+        "required": [],
+        "additionalProperties": true
+      },
+      "dependent": {
+        "type": "object",
+        "dependentSchemas": {
+          "a": {
+            "required": [
+              "b"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": true
+      },
+      "combined": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "a"
+            ]
+          }
+        ],
+        "required": [],
+        "additionalProperties": false
+      },
+      "combinedWithConditionalMember": {
+        "type": "object",
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "a"
+              ]
+            },
+            "then": {
+              "required": [
+                "b"
+              ]
+            }
+          }
+        ],
+        "required": [],
+        "additionalProperties": true
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

@@ -442423,6 +442423,7 @@ export interface Sample {
 }
 export interface Person {
   age?: number;
+  [k: string]: unknown;
 }
 "
 `;
@@ -447702,23 +447703,27 @@ exports[`unevaluatedProperties.applicators.ts 1`] = `
 export interface UnevaluatedPropertiesApplicators {
   ifThenElse?: {
     kind?: string;
+    [k: string]: unknown;
   };
   ifOnly?: {
-    [k: string]: never;
+    [k: string]: unknown;
   };
   dependentSchemas?: {
     a?: string;
-    [k: string]: number | string | undefined;
+    [k: string]: unknown;
   };
   refWithSiblingProperties?: Person;
   allOfConditionalMember?: {
     type: "apiKey" | "http";
+    [k: string]: unknown;
   };
   allOfNestedConditionalMember?: NamedWhenApiKey & {
     type: "apiKey" | "http";
+    [k: string]: unknown;
   };
   dynamicRef?: {
     extra?: number;
+    [k: string]: unknown;
   };
   anyOf?: (
     | {
@@ -447750,6 +447755,7 @@ export interface UnevaluatedPropertiesApplicators {
 }
 export interface Person {
   age?: number;
+  [k: string]: unknown;
 }
 export interface NamedWhenApiKey {
   [k: string]: unknown;
