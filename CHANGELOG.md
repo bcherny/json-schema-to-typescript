@@ -6,6 +6,7 @@
 
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
+- Fix: A `type` next to `anyOf`/`oneOf` now constrains the members too: a member whose own `type` the parent's rules out is dropped (`{type: 'object', oneOf: [{type: 'string'}, {type: 'object', …}]}` no longer admits strings), a wider member `type` is narrowed to what both allow, and a `type` array next to `anyOf`/`oneOf` yields one union over its types (`{type: ['object', 'null'], oneOf: [{$ref: A}, {$ref: B}]}` gives `A | B`, not `(A | B) & ((A | B) | (null & (A | B)))`). Untyped members keep the parent's `type` as before. **Output change** for schemas with a `type` beside `anyOf`/`oneOf` members that carry their own `type`, or with a `type` array beside `anyOf`/`oneOf` (#826)
 
 ## 16.0.0
 
