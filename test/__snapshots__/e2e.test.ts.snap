@@ -131384,7 +131384,17 @@ name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2019-11-09"
 [k: string]: unknown
-} & (GenevaDataConnection | GenevaLegacyDataConnection))
+} & ((GenevaDataConnection & {
+/**
+ * Geneva (DGS) data connection properties
+ */
+properties: (GenevaDataConnectionProperties | string)
+}) | (GenevaLegacyDataConnection & {
+/**
+ * Geneva legacy data connection properties.
+ */
+properties: (GenevaLegacyDataConnectionProperties | string)
+})))
 /**
  * Microsoft.Kusto/clusters/databases
  */
@@ -131445,7 +131455,17 @@ name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2019-11-09"
 [k: string]: unknown
-} & (GenevaDataConnection | GenevaLegacyDataConnection))
+} & ((GenevaDataConnection & {
+/**
+ * Geneva (DGS) data connection properties
+ */
+properties: (GenevaDataConnectionProperties | string)
+}) | (GenevaLegacyDataConnection & {
+/**
+ * Geneva legacy data connection properties.
+ */
+properties: (GenevaLegacyDataConnectionProperties | string)
+})))
 /**
  * Microsoft.Kusto/clusters/databases
  */
@@ -131473,7 +131493,17 @@ name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-02-15"
 [k: string]: unknown
-} & (GenevaDataConnection1 | GenevaLegacyDataConnection1))
+} & ((GenevaDataConnection1 & {
+/**
+ * Geneva (DGS) data connection properties
+ */
+properties: (GenevaDataConnectionProperties1 | string)
+}) | (GenevaLegacyDataConnection1 & {
+/**
+ * Geneva legacy data connection properties.
+ */
+properties: (GenevaLegacyDataConnectionProperties1 | string)
+})))
 /**
  * Microsoft.Kusto/clusters/databases
  */
@@ -131534,7 +131564,17 @@ name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-02-15"
 [k: string]: unknown
-} & (GenevaDataConnection1 | GenevaLegacyDataConnection1))
+} & ((GenevaDataConnection1 & {
+/**
+ * Geneva (DGS) data connection properties
+ */
+properties: (GenevaDataConnectionProperties1 | string)
+}) | (GenevaLegacyDataConnection1 & {
+/**
+ * Geneva legacy data connection properties.
+ */
+properties: (GenevaLegacyDataConnectionProperties1 | string)
+})))
 /**
  * Microsoft.Kusto/clusters/databases
  */
@@ -131562,7 +131602,17 @@ name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-06-14"
 [k: string]: unknown
-} & (GenevaDataConnection2 | GenevaLegacyDataConnection2))
+} & ((GenevaDataConnection2 & {
+/**
+ * Geneva (DGS) data connection properties
+ */
+properties: (GenevaDataConnectionProperties2 | string)
+}) | (GenevaLegacyDataConnection2 & {
+/**
+ * Geneva legacy data connection properties.
+ */
+properties: (GenevaLegacyDataConnectionProperties2 | string)
+})))
 /**
  * Microsoft.Kusto/clusters/databases
  */
@@ -131623,7 +131673,17 @@ name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-06-14"
 [k: string]: unknown
-} & (GenevaDataConnection2 | GenevaLegacyDataConnection2))
+} & ((GenevaDataConnection2 & {
+/**
+ * Geneva (DGS) data connection properties
+ */
+properties: (GenevaDataConnectionProperties2 | string)
+}) | (GenevaLegacyDataConnection2 & {
+/**
+ * Geneva legacy data connection properties.
+ */
+properties: (GenevaLegacyDataConnectionProperties2 | string)
+})))
 /**
  * Microsoft.Kusto/clusters/databases
  */
@@ -131651,7 +131711,17 @@ name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-09-18"
 [k: string]: unknown
-} & (GenevaDataConnection3 | GenevaLegacyDataConnection3))
+} & ((GenevaDataConnection3 & {
+/**
+ * Geneva (DGS) data connection properties
+ */
+properties: (GenevaDataConnectionProperties3 | string)
+}) | (GenevaLegacyDataConnection3 & {
+/**
+ * Geneva legacy data connection properties.
+ */
+properties: (GenevaLegacyDataConnectionProperties3 | string)
+})))
 /**
  * Microsoft.Kusto/clusters/databases
  */
@@ -131712,7 +131782,17 @@ name?: string
 type: "Microsoft.Kusto/clusters/dataconnections"
 apiVersion: "2020-09-18"
 [k: string]: unknown
-} & (GenevaDataConnection3 | GenevaLegacyDataConnection3))
+} & ((GenevaDataConnection3 & {
+/**
+ * Geneva (DGS) data connection properties
+ */
+properties: (GenevaDataConnectionProperties3 | string)
+}) | (GenevaLegacyDataConnection3 & {
+/**
+ * Geneva legacy data connection properties.
+ */
+properties: (GenevaLegacyDataConnectionProperties3 | string)
+})))
 export type HttpAuthentication1 = ({
 [k: string]: unknown
 } & (ClientCertAuthentication | BasicAuthentication | OAuthAuthentication))
@@ -446485,7 +446565,7 @@ exports[`required.ts 1`] = `
 
 export interface Required {
   location: Location & {
-    [k: string]: unknown;
+    postalCode: number;
   };
   name: string;
   website?: string;
