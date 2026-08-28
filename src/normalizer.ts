@@ -41,17 +41,6 @@ function isObjectType(schema: LinkedJSONSchema) {
 function isArrayType(schema: LinkedJSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
 }
-function isEnumTypeWithoutTsEnumNames(schema: LinkedJSONSchema) {
-  return (
-    schema.type === 'string' &&
-    schema.enum !== undefined &&
-    // A TypeScript enum member's value must be a string or a number, so only
-    // string values can be turned into enum members. Mixed enums (`["a", null]`)
-    // stay unions instead of becoming `null = null`, which does not compile.
-    schema.enum.every(value => typeof value === 'string') &&
-    schema.tsEnumNames === undefined
-  )
-}
 
 rules.set('Remove `type=["null"]` if `enum=[null]`', schema => {
   if (
@@ -402,11 +391,16 @@ rules.set('Transform const to singleton enum', schema => {
 
 rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   if (
-    isEnumTypeWithoutTsEnumNames(schema) &&
     options.inferStringEnumKeysFromValues &&
+    schema.type === 'string' &&
+    schema.tsEnumNames === undefined &&
+    // A TypeScript enum member's value must be a string or a number, so only
+    // string values can be turned into enum members. Mixed enums (`["a", null]`)
+    // stay unions instead of becoming `null = null`, which does not compile.
+    schema.enum?.every(value => typeof value === 'string') &&
     !schemasNormalizedFromConst.has(schema)
   ) {
-    schema.tsEnumNames = schema.enum?.map(String)
+    schema.tsEnumNames = schema.enum.map(String)
   }
 })
 

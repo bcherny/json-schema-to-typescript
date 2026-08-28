@@ -231,9 +231,9 @@ function parseAsTypeWithCache(
   schema: NormalizedJSONSchema,
   type: SchemaType,
   options: Options,
-  keyName?: string,
-  processed: Processed = new Map(),
-  usedNames = new Set<string>(),
+  keyName: string | undefined,
+  processed: Processed,
+  usedNames: UsedNames,
 ): AST {
   // If we've seen this node before, return it.
   let cachedTypeMap = processed.get(schema)
@@ -981,7 +981,10 @@ function newInterface(
 ): TInterface {
   const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)!
   const params = parseSchema(schema, options, processed, usedNames, name)
-  const superTypes = parseSuperTypes(schema, options, processed, usedNames)
+  // `extends` holds schemas once dereferenced, whatever the draft 4 typings say
+  const superTypes = ((schema.extends as SchemaSchema[] | undefined) ?? []).map(
+    _ => parse(_, options, undefined, processed, usedNames) as TNamedInterface,
+  )
   return {
     comment: schema.description,
     deprecated: schema.deprecated,
@@ -999,21 +1002,6 @@ function newInterface(
     superTypes,
     type: 'INTERFACE',
   }
-}
-
-function parseSuperTypes(
-  schema: SchemaSchema,
-  options: Options,
-  processed: Processed,
-  usedNames: UsedNames,
-): TNamedInterface[] {
-  // Type assertion needed because of dereferencing step
-  // TODO: Type it upstream
-  const superTypes = schema.extends as SchemaSchema[] | undefined
-  if (!superTypes) {
-    return []
-  }
-  return superTypes.map(_ => parse(_, options, undefined, processed, usedNames) as TNamedInterface)
 }
 
 /**
