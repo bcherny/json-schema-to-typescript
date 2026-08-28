@@ -29,6 +29,7 @@ main(
       'ignoreMinAndMaxItems',
       'removeOptionalIfDefaultExists',
       'strictIndexSignatures',
+      'undefinedOptionalProperties',
       'unknownAny',
       'unreachableDefinitions',
     ],
@@ -58,13 +59,27 @@ async function main(argv: minimist.ParsedArgs) {
   const ISGLOB = argIn && isDynamicPattern(argIn)
   const ISDIR = !!argIn && isDir(argIn)
 
-  if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
-    throw new ReferenceError(
-      `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`,
-    )
-  }
-
   try {
+    // Defend against unquoted glob expansion (or other shell mistakes) silently supplying extra
+    // positional arguments. A positional that competes with an explicitly-passed --input/--output
+    // flag for the same slot, or overflows past the two positional slots (input, output) this CLI
+    // supports, risks a source file being misread as an output path and overwritten.
+    // `in.json -o out.d.ts` (positional input, flagged output) stays valid.
+    if (
+      argv._.length > 2 ||
+      (argv.input !== undefined && argv._.length > 0) ||
+      (argv.output !== undefined && argv._.length > 1)
+    ) {
+      throw new ReferenceError(
+        `Unexpected extra argument(s): ${argv._.join(', ')}. json-schema-to-typescript accepts at most one input path and one output path. If you passed a glob to --input, quote it (e.g. -i "schemas/**/*.json") so your shell doesn't expand it first.`,
+      )
+    }
+    if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
+      throw new ReferenceError(
+        `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`,
+      )
+    }
+
     // Process input as either glob, directory, or single file
     if (ISGLOB) {
       await processGlob(argIn, argOut, argv as Partial<Options>)
@@ -225,6 +240,9 @@ Boolean values can be set to false using the 'no-' prefix.
   --$refOptions.XXX=YYY
       Options for the $ref resolver (json-schema-ref-parser), eg.
       '--$refOptions.dereference.externalReferenceResolution=root'. Quote it for your shell.
+  --undefinedOptionalProperties
+      Append '| undefined' to the type of optional properties, for consumers
+      that compile with TypeScript's exactOptionalPropertyTypes
   --unknownAny
       Output unknown type instead of any type
   --unreachableDefinitions
