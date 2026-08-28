@@ -387,8 +387,9 @@ rules.set('Remove maxItems if it is big enough to likely cause OOMs', (schema, _
   // multiplier so we don't only catch schemas that are too big on their own while
   // missing ones that are only too big once nested. The array around this one is
   // already normalized by the time we get here, since rules traverse parent-first.
+  // A named `items` type is printed once, however many arrays hold it: it counts alone.
   let multiplier = 1
-  if (parent !== null && parent.items === schema && isArrayType(parent)) {
+  if (parent !== null && parent.items === schema && isArrayType(parent) && !schema.$id && !schema.title) {
     const {maxItems, minItems} = parent
     multiplier =
       (itemsMultipliers.get(parent) ?? 1) * (typeof maxItems === 'number' ? maxItems : (minItems as number) || 1)

@@ -374733,44 +374733,121 @@ exports[`arrayMaxItemsSharedDefinition.ts 1`] = `
  * @minItems 1
  * @maxItems 5
  */
-export type Row = [string, ...string[]];
+export type Row =
+  | [string]
+  | [string, string]
+  | [string, string, string]
+  | [string, string, string, string]
+  | [string, string, string, string, string];
 /**
  * @minItems 1
  * @maxItems 5
  */
-export type Row2 = [string, ...string[]];
+export type RowItemsFirst =
+  | [string]
+  | [string, string]
+  | [string, string, string]
+  | [string, string, string, string]
+  | [string, string, string, string, string];
+/**
+ * @minItems 1
+ * @maxItems 5
+ */
+export type RowBigFirst =
+  | [string]
+  | [string, string]
+  | [string, string, string]
+  | [string, string, string, string]
+  | [string, string, string, string, string];
+/**
+ * @minItems 1
+ * @maxItems 5
+ */
+export type RowSmallFirst =
+  | [string]
+  | [string, string]
+  | [string, string, string]
+  | [string, string, string, string]
+  | [string, string, string, string, string];
+/**
+ * @minItems 1
+ * @maxItems 5
+ */
+export type RowUnderBoth =
+  | [string]
+  | [string, string]
+  | [string, string, string]
+  | [string, string, string, string]
+  | [string, string, string, string, string];
+/**
+ * @minItems 1
+ * @maxItems 5
+ */
+export type RowAlsoProperty =
+  | [string]
+  | [string, string]
+  | [string, string, string]
+  | [string, string, string, string]
+  | [string, string, string, string, string];
 
 export interface ArrayMaxItemsSharedDefinition {
   /**
-   * @maxItems 10
+   * @minItems 6
+   * @maxItems 6
    */
-  definitionsFirst?:
-    | []
-    | [Row]
-    | [Row, Row]
-    | [Row, Row, Row]
-    | [Row, Row, Row, Row]
-    | [Row, Row, Row, Row, Row]
-    | [Row, Row, Row, Row, Row, Row]
-    | [Row, Row, Row, Row, Row, Row, Row]
-    | [Row, Row, Row, Row, Row, Row, Row, Row]
-    | [Row, Row, Row, Row, Row, Row, Row, Row, Row]
-    | [Row, Row, Row, Row, Row, Row, Row, Row, Row, Row];
+  definitionsFirst?: [Row, Row, Row, Row, Row, Row];
   /**
-   * @maxItems 10
+   * @minItems 6
+   * @maxItems 6
    */
-  itemsFirst?:
-    | []
-    | [Row2]
-    | [Row2, Row2]
-    | [Row2, Row2, Row2]
-    | [Row2, Row2, Row2, Row2]
-    | [Row2, Row2, Row2, Row2, Row2]
-    | [Row2, Row2, Row2, Row2, Row2, Row2]
-    | [Row2, Row2, Row2, Row2, Row2, Row2, Row2]
-    | [Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2]
-    | [Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2]
-    | [Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2, Row2];
+  itemsFirst?: [RowItemsFirst, RowItemsFirst, RowItemsFirst, RowItemsFirst, RowItemsFirst, RowItemsFirst];
+  bigFirst?: {
+    /**
+     * @minItems 6
+     * @maxItems 6
+     */
+    big?: [RowBigFirst, RowBigFirst, RowBigFirst, RowBigFirst, RowBigFirst, RowBigFirst];
+    /**
+     * @maxItems 1
+     */
+    small?: [] | [RowBigFirst];
+    [k: string]: unknown;
+  };
+  smallFirst?: {
+    /**
+     * @maxItems 1
+     */
+    small?: [] | [RowSmallFirst];
+    /**
+     * @minItems 6
+     * @maxItems 6
+     */
+    big?: [RowSmallFirst, RowSmallFirst, RowSmallFirst, RowSmallFirst, RowSmallFirst, RowSmallFirst];
+    [k: string]: unknown;
+  };
+  keywordOrderVsDocumentOrder?: {
+    /**
+     * @maxItems 1
+     */
+    small?: [] | [RowUnderBoth];
+    /**
+     * @minItems 6
+     * @maxItems 6
+     */
+    [k: string]:
+      | [RowUnderBoth, RowUnderBoth, RowUnderBoth, RowUnderBoth, RowUnderBoth, RowUnderBoth]
+      | ([] | [RowUnderBoth])
+      | undefined;
+  };
+  manyFirst?: {
+    /**
+     * @minItems 6
+     * @maxItems 6
+     */
+    many?: [RowAlsoProperty, RowAlsoProperty, RowAlsoProperty, RowAlsoProperty, RowAlsoProperty, RowAlsoProperty];
+    one?: RowAlsoProperty;
+    [k: string]: unknown;
+  };
 }
 "
 `;
