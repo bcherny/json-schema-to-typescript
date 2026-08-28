@@ -50080,228 +50080,116 @@ exports[`safeTypeNames.ts 1`] = `
 
 export type SafeTypeNames = unknown;
 
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "stra'nge#name".
- */
 export interface StraNgeName {
   a: string;
   b?: number;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "keepUPPERCASE".
- */
 export interface KeepUPPERCASE {
   a?: "a" | "b" | "c";
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "snake_case".
- */
 export interface SnakeCase {
   a?: boolean;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "_startsWithUnderscore".
- */
 export interface _StartsWithUnderscore {
   a?: boolean;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "_StartsWithUnderscoreUppercase".
- */
 export interface _StartsWithUnderscoreUppercase {
   a?: boolean;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "EndsWithUnderscore_".
- */
 export interface EndsWithUnderscore_ {
   a?: boolean;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "UPPER_CASE".
- */
 export interface UPPER_CASE {
   a?: boolean;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "______________".
- */
 export interface ______________ {
   a?: boolean;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "camelCase".
- */
 export interface CamelCase {
   a?: {
     [k: string]: unknown;
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "kebab-case".
- */
 export interface KebabCase {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` " startsWithSpace".
- */
 export interface StartsWithSpace {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "contains space".
- */
 export interface ContainsSpace {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "5tartsWithDigit".
- */
 export interface TartsWithDigit {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` " 5tartsWithBlankAndDigit".
- */
 export interface TartsWithBlankAndDigit {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "endsWithDigi7".
- */
 export interface EndsWithDigi7 {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "contains4digit".
- */
 export interface Contains4Digit {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` ".startsWithPeriod".
- */
 export interface StartsWithPeriod {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "endsWithPeriod.".
- */
 export interface EndsWithPeriod {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "contains...period".
- */
 export interface ContainsPeriod {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` ",startsWithComma".
- */
 export interface StartsWithComma {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "endsWithComma,".
- */
 export interface EndsWithComma {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "contains,,Comma".
- */
 export interface ContainsComma {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "$startsWithDollar".
- */
 export interface $StartsWithDollar {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "endsWithDollar$".
- */
 export interface EndsWithDollar$ {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "contains$Dollar".
- */
 export interface Contains$Dollar {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "$".
- */
 export interface $ {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "UPPERCASE".
- */
 export interface UPPERCASE {
   a?: string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`SafeTypeNames\`'s JSON-Schema
- * via the \`definition\` "Startsuppercase".
- */
 export interface Startsuppercase {
   a?: string;
   [k: string]: unknown;
@@ -362887,10 +362775,6 @@ export interface UnreachableDefinition {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`UnreachableDefinition\`'s JSON-Schema
- * via the \`definition\` "a".
- */
 export interface A {
   firstName?: string;
   lastName?: LastName;
@@ -362910,17 +362794,9 @@ exports[`options.unreachableDefinitions-anyOf-root.ts 1`] = `
 export type Options = string | Shape;
 export type Children = null | Children[];
 
-/**
- * This interface was referenced by \`Options\`'s JSON-Schema
- * via the \`definition\` "shape".
- */
 export interface Shape {
   kind?: string;
 }
-/**
- * This interface was referenced by \`Options\`'s JSON-Schema
- * via the \`definition\` "tree".
- */
 export interface Tree {
   value?: number;
   children?: Children;
@@ -365179,10 +365055,6 @@ exports[`realWorld.payloadCMS.ts 1`] = `
  */
 
 export interface RealWorld {}
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "mainMenu".
- */
 export interface MainMenu {
   items?: {
     type?: "link" | "subMenu";
@@ -365343,10 +365215,6 @@ export interface MainMenu {
     id?: string;
   }[];
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "pages".
- */
 export interface Page {
   breadcrumbs?: {
     doc?: string | Page;
@@ -366129,10 +365997,6 @@ export interface Page {
   author?: string | User;
   preview?: string;
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "posts".
- */
 export interface Post {
   title: string;
   hero?: {
@@ -366902,10 +366766,6 @@ export interface Post {
     image?: string | Media;
   };
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "housing".
- */
 export interface Housing {
   title: string;
   address?: {
@@ -367371,10 +367231,6 @@ export interface Housing {
   categories?: (string | HousingCategory)[];
   subsite?: string | Subsite;
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "media".
- */
 export interface Media {
   url?: string;
   filename?: string;
@@ -367443,10 +367299,6 @@ export interface Media {
   alt: string;
   fallback?: string | Media;
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "forms".
- */
 export interface Form {
   title: string;
   emailTo?: string;
@@ -367528,10 +367380,6 @@ export interface Form {
       }
   )[];
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "locations".
- */
 export interface Location {
   name: string;
   address?: {
@@ -367609,18 +367457,10 @@ export interface Location {
     image?: string | Media;
   };
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "housing-categories".
- */
 export interface HousingCategory {
   title: string;
   slug?: string;
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "subsites".
- */
 export interface Subsite {
   title: string;
   menuItems?: {
@@ -367822,20 +367662,12 @@ export interface Subsite {
   color?: "green" | "blue" | "red" | "purple";
   home: string | Page;
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "post-categories".
- */
 export interface PostCategory {
   title: string;
   color?: "green" | "blue" | "red" | "purple";
   slug?: string;
   subsite?: string | Subsite;
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "users".
- */
 export interface User {
   email?: string;
   resetPasswordToken?: string;
@@ -367843,10 +367675,6 @@ export interface User {
   loginAttempts?: number;
   lockUntil?: string;
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "footer".
- */
 export interface Footer {
   column1?: {
     appearance?: "primary" | "secondary" | "tertiary";
@@ -367895,10 +367723,6 @@ export interface Footer {
     id?: string;
   }[];
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "meta".
- */
 export interface Meta {
   socialMediaLinks?: {
     type: "facebook" | "vimeo" | "twitter" | "linkedin" | "instagram";
@@ -367935,10 +367759,6 @@ export interface Meta {
     id?: string;
   }[];
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "alerts".
- */
 export interface Alert {
   placement: "global" | "subsite";
   subsites: (string | Subsite)[];
@@ -367969,10 +367789,6 @@ export interface Alert {
     id?: string;
   }[];
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "search".
- */
 export interface SearchResult {
   title: string;
   description?: string;
@@ -368001,10 +367817,6 @@ export interface SearchResult {
         relationTo: "locations";
       };
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "people".
- */
 export interface Person {
   name: string;
   position?: string;
@@ -368031,10 +367843,6 @@ export interface Person {
   slug?: string;
   home?: string | Page;
 }
-/**
- * This interface was referenced by \`RealWorld\`'s JSON-Schema
- * via the \`definition\` "form-submissions".
- */
 export interface FormSubmission {
   form: string | Form;
   submissionData?: {
@@ -368114,9 +367922,6 @@ export interface CompatDataFile {
 /**
  * This interface was referenced by \`CompatDataFile\`'s JSON-Schema definition
  * via the \`patternProperty\` "^__compat$".
- *
- * This interface was referenced by \`CompatDataFile\`'s JSON-Schema
- * via the \`definition\` "compat_statement".
  */
 export interface CompatStatement {
   /**
@@ -368125,10 +367930,6 @@ export interface CompatStatement {
   status?: StatusBlock;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`CompatDataFile\`'s JSON-Schema
- * via the \`definition\` "status_block".
- */
 export interface StatusBlock {
   /**
    * exp
@@ -368648,10 +368449,6 @@ exports[`options.unreachableDefinitions-declareExternallyReferenced-false.ts 1`]
 
 export type Options = unknown;
 
-/**
- * This interface was referenced by \`Options\`'s JSON-Schema
- * via the \`definition\` "CreateThingRequestBody".
- */
 export interface CreateThingRequestBody {
   title?: string;
   [k: string]: unknown;
@@ -369035,10 +368832,6 @@ exports[`options.unreachableDefinitions-non-object-root.ts 1`] = `
  */
 
 export type Options = number;
-/**
- * This interface was referenced by \`Options\`'s JSON-Schema
- * via the \`definition\` "unreached".
- */
 export type Unreached = boolean;
 "
 `;
@@ -373650,9 +373443,6 @@ exports[`arrayItemsWithDescription.tagged.ts 1`] = `
 
 /**
  * Standalone array type
- *
- * This interface was referenced by \`Release\`'s JSON-Schema
- * via the \`definition\` "tagged".
  */
 export type TaggedList = string[];
 
@@ -373922,28 +373712,17 @@ exports[`options.declarationStyle.unreachableDefinitions.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-/**
- * This interface was referenced by \`Root\`'s JSON-Schema
- * via the \`definition\` "unusedLeaf".
- */
 export type UnusedLeaf = number;
 
 export type Root = {
   used?: Used;
 };
-/**
- * This interface was referenced by \`Root\`'s JSON-Schema
- * via the \`definition\` "used".
- */
 export type Used = {
   a?: string;
   [k: string]: unknown;
 };
 /**
  * Only reachable through unreachableDefinitions.
- *
- * This interface was referenced by \`Root\`'s JSON-Schema
- * via the \`definition\` "unused".
  */
 export type Unused = {
   b?: UnusedLeaf;
@@ -374520,18 +374299,10 @@ export interface ReadOnlyRequiredUndeclared {
    */
   [k: string]: number | string;
 }
-/**
- * This interface was referenced by \`ReadOnlyRequiredUndeclared\`'s JSON-Schema
- * via the \`definition\` "allReadOnly".
- */
 export interface AllReadOnly {
   readonly id: string;
   readonly [k: string]: string;
 }
-/**
- * This interface was referenced by \`ReadOnlyRequiredUndeclared\`'s JSON-Schema
- * via the \`definition\` "untyped".
- */
 export interface Untyped {
   loose: unknown;
   [k: string]: unknown;
@@ -374590,15 +374361,7 @@ exports[`anyRoot.definitionsOnly.unreachableDefinitions.ts 1`] = `
  */
 
 export type DefinitionsBundle = unknown;
-/**
- * This interface was referenced by \`DefinitionsBundle\`'s JSON-Schema
- * via the \`definition\` "name".
- */
 export type Name = string;
-/**
- * This interface was referenced by \`DefinitionsBundle\`'s JSON-Schema
- * via the \`definition\` "count".
- */
 export type Count = number;
 "
 `;

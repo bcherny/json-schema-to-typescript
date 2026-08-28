@@ -26,20 +26,12 @@ export interface B {
 `;
 
 exports[`compileFiles memo: test/resources/Imports/memo/common.json 1`] = `
-"/**
- * This interface was referenced by \`Common\`'s JSON-Schema
- * via the \`definition\` "tag".
- */
-export type Tag = "red" | "green";
+"export type Tag = "red" | "green";
 
 /**
  * Shared definitions; no properties of its own
  */
 export interface Common {}
-/**
- * This interface was referenced by \`Common\`'s JSON-Schema
- * via the \`definition\` "thing".
- */
 export interface Thing {
   id: string;
   tags?: Tag[];
@@ -98,17 +90,9 @@ export interface C {
 `;
 
 exports[`compileFiles diamond: test/resources/Imports/diamond/base.json 1`] = `
-"/**
- * This interface was referenced by \`Base\`'s JSON-Schema
- * via the \`definition\` "kind".
- */
-export type Kind = "a" | "b";
+"export type Kind = "a" | "b";
 
 export interface Base {}
-/**
- * This interface was referenced by \`Base\`'s JSON-Schema
- * via the \`definition\` "node".
- */
 export interface Node {
   id: string;
   kind?: Kind;
@@ -156,10 +140,6 @@ exports[`compileFiles sametitle: test/resources/Imports/sametitle/defs.json 1`] 
 export interface Thing {
   self?: Thing1;
 }
-/**
- * This interface was referenced by \`Thing\`'s JSON-Schema
- * via the \`definition\` "thing".
- */
 export interface Thing1 {
   deep?: boolean;
 }
@@ -202,10 +182,6 @@ export interface Main {
   p?: Thing1;
   q?: Thing2;
 }
-/**
- * This interface was referenced by \`Main\`'s JSON-Schema
- * via the \`definition\` "thing".
- */
 export interface Thing {
   m?: string;
 }
@@ -221,10 +197,6 @@ exports[`compileFiles doublealias: test/resources/Imports/doublealias/p.json 1`]
 
 exports[`compileFiles doublealias: test/resources/Imports/doublealias/q.json 1`] = `
 "export interface Q {}
-/**
- * This interface was referenced by \`Q\`'s JSON-Schema
- * via the \`definition\` "thing".
- */
 export interface Thing {
   q?: string;
 }
@@ -232,11 +204,7 @@ export interface Thing {
 `;
 
 exports[`compileFiles sibdirs: test/resources/Imports/sibdirs/common/x.json 1`] = `
-"/**
- * This interface was referenced by \`X\`'s JSON-Schema
- * via the \`definition\` "e".
- */
-export type E = "p" | "q";
+"export type E = "p" | "q";
 
 export interface X {
   e?: E;
@@ -287,10 +255,6 @@ exports[`compileFiles nestedptr: test/resources/Imports/nestedptr/other.json 1`]
 export interface P {
   q?: string;
 }
-/**
- * This interface was referenced by \`Other\`'s JSON-Schema
- * via the \`definition\` "x".
- */
 export interface X {
   y?: Y;
   u?: {
@@ -304,47 +268,19 @@ export interface Y {
 `;
 
 exports[`compileFiles positions: test/resources/Imports/positions/defs.json 1`] = `
-"/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "nullable".
- */
-export type MaybeObj = {
+"export type MaybeObj = {
   n?: number;
 } | null;
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "custom".
- */
 export type Custom = Record<string, Date>;
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "arr".
- */
 export type ObjList = Obj[];
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "union".
- */
 export type Either = Obj | Named;
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "str".
- */
 export type Str = string;
 
 export interface Defs {}
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "obj".
- */
 export interface Obj {
   o?: string;
 }
 
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "named".
- */
 export const enum Named {
   X = "x",
   Y = "y"
@@ -434,11 +370,7 @@ export interface Paint {
 `;
 
 exports[`compileFiles yamlmix: test/resources/Imports/yamlmix/types.yaml 1`] = `
-"/**
- * This interface was referenced by \`Types\`'s JSON-Schema
- * via the \`definition\` "color".
- */
-export type Color = "red" | "blue";
+"export type Color = "red" | "blue";
 
 export interface Types {}
 "
@@ -446,10 +378,6 @@ export interface Types {}
 
 exports[`compileFiles spell: test/resources/Imports/spell/my defs.json 1`] = `
 "export interface MyDefs {}
-/**
- * This interface was referenced by \`MyDefs\`'s JSON-Schema
- * via the \`definition\` "d".
- */
 export interface D {
   v?: string;
 }
@@ -496,15 +424,8 @@ exports[`compileFiles azure: common/definitions 1`] = `
 export type Definitions = unknown;
 /**
  * Deployment template expression. See https://aka.ms/arm-template-expressions for more details on the ARM expression syntax.
- *
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "expression".
  */
 export type Expression = string;
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "proxyResourceBase".
- */
 export type ProxyResourceBase = ARMResourceBase & {
   /**
    * Location to deploy resource to
@@ -512,10 +433,6 @@ export type ProxyResourceBase = ARMResourceBase & {
   location?: ResourceLocations;
   [k: string]: unknown;
 };
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceLocations".
- */
 export type ResourceLocations =
   | string
   | (
@@ -547,10 +464,6 @@ export type ResourceLocations =
       | "Korea South"
       | "global"
     );
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceBase".
- */
 export type ResourceBase = ARMResourceBase & {
   /**
    * Location to deploy resource to
@@ -566,10 +479,6 @@ export type ResourceBase = ARMResourceBase & {
   comments?: string;
   [k: string]: unknown;
 };
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceBaseExternal".
- */
 export type ResourceBaseExternal = ARMResourceBase & {
   /**
    * Location to deploy resource to
@@ -589,38 +498,16 @@ export type ResourceBaseExternal = ARMResourceBase & {
 };
 /**
  * Kind of resource
- *
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceKind".
  */
 export type ResourceKind = string;
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "numberOrExpression".
- */
 export type NumberOrExpression = number | Expression;
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "Iso8601Duration".
- */
 export type Iso8601Duration = string;
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "UTC".
- */
 export type UTC = string;
 /**
  * API version of the resource type
- *
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "apiVersion".
  */
 export type ApiVersion = string;
 
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "ARMResourceBase".
- */
 export interface ARMResourceBase {
   /**
    * Name of the resource
@@ -644,10 +531,6 @@ export interface ARMResourceBase {
   dependsOn?: string[];
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceCopy".
- */
 export interface ResourceCopy {
   /**
    * Name of the copy
@@ -667,10 +550,6 @@ export interface ResourceCopy {
   batchSize?: Expression | number;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceSku".
- */
 export interface ResourceSku {
   /**
    * Name of the sku
@@ -696,9 +575,6 @@ export interface ResourceSku {
 }
 /**
  * Plan of the resource
- *
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourcePlan".
  */
 export interface ResourcePlan {
   /**
@@ -772,9 +648,6 @@ export type MicrosoftCompute = unknown;
 
 /**
  * Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "AdditionalUnattendContent".
  */
 export interface AdditionalUnattendContent {
   /**
@@ -797,9 +670,6 @@ export interface AdditionalUnattendContent {
 }
 /**
  * The API entity reference.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "ApiEntityReference".
  */
 export interface ApiEntityReference {
   /**
@@ -810,9 +680,6 @@ export interface ApiEntityReference {
 }
 /**
  * The instance view of a resource.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "AvailabilitySetProperties".
  */
 export interface AvailabilitySetProperties {
   /**
@@ -829,10 +696,6 @@ export interface AvailabilitySetProperties {
   virtualMachines?: SubResource[] | string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "SubResource".
- */
 export interface SubResource {
   /**
    * Resource Id
@@ -842,9 +705,6 @@ export interface SubResource {
 }
 /**
  * Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status. <br><br> You can easily view the output of your console log. <br><br> Azure also enables you to see a screenshot of the VM from the hypervisor.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "BootDiagnostics".
  */
 export interface BootDiagnostics {
   /**
@@ -859,9 +719,6 @@ export interface BootDiagnostics {
 }
 /**
  * Data used when creating a disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "CreationData".
  */
 export interface CreationData {
   /**
@@ -888,9 +745,6 @@ export interface CreationData {
 }
 /**
  * The source image used for creating the disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "ImageDiskReference".
  */
 export interface ImageDiskReference {
   /**
@@ -905,9 +759,6 @@ export interface ImageDiskReference {
 }
 /**
  * Describes a data disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "DataDisk".
  */
 export interface DataDisk {
   /**
@@ -946,9 +797,6 @@ export interface DataDisk {
 }
 /**
  * Describes the uri of a disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualHardDisk".
  */
 export interface VirtualHardDisk {
   /**
@@ -959,9 +807,6 @@ export interface VirtualHardDisk {
 }
 /**
  * The parameters of a managed disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "ManagedDiskParameters".
  */
 export interface ManagedDiskParameters {
   /**
@@ -976,9 +821,6 @@ export interface ManagedDiskParameters {
 }
 /**
  * Specifies the boot diagnostic settings state. <br><br>Minimum api-version: 2015-06-15.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "DiagnosticsProfile".
  */
 export interface DiagnosticsProfile {
   /**
@@ -989,9 +831,6 @@ export interface DiagnosticsProfile {
 }
 /**
  * Describes a Encryption Settings for a Disk
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "DiskEncryptionSettings".
  */
 export interface DiskEncryptionSettings {
   /**
@@ -1010,9 +849,6 @@ export interface DiskEncryptionSettings {
 }
 /**
  * Describes a reference to Key Vault Secret
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "KeyVaultSecretReference".
  */
 export interface KeyVaultSecretReference {
   /**
@@ -1024,9 +860,6 @@ export interface KeyVaultSecretReference {
 }
 /**
  * Describes a reference to Key Vault Key
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "KeyVaultKeyReference".
  */
 export interface KeyVaultKeyReference {
   /**
@@ -1038,9 +871,6 @@ export interface KeyVaultKeyReference {
 }
 /**
  * Disk resource properties.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "DiskProperties".
  */
 export interface DiskProperties {
   /**
@@ -1063,9 +893,6 @@ export interface DiskProperties {
 }
 /**
  * Encryption settings for disk or snapshot
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "EncryptionSettings".
  */
 export interface EncryptionSettings {
   /**
@@ -1084,9 +911,6 @@ export interface EncryptionSettings {
 }
 /**
  * Key Vault Secret Url and vault id of the encryption key
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "KeyVaultAndSecretReference".
  */
 export interface KeyVaultAndSecretReference {
   /**
@@ -1101,9 +925,6 @@ export interface KeyVaultAndSecretReference {
 }
 /**
  * The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "SourceVault".
  */
 export interface SourceVault {
   /**
@@ -1114,9 +935,6 @@ export interface SourceVault {
 }
 /**
  * Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "KeyVaultAndKeyReference".
  */
 export interface KeyVaultAndKeyReference {
   /**
@@ -1131,9 +949,6 @@ export interface KeyVaultAndKeyReference {
 }
 /**
  * The disks and snapshots sku name. Can be Standard_LRS or Premium_LRS.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "DiskSku".
  */
 export interface DiskSku {
   /**
@@ -1144,9 +959,6 @@ export interface DiskSku {
 }
 /**
  * Specifies the hardware settings for the virtual machine.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "HardwareProfile".
  */
 export interface HardwareProfile {
   /**
@@ -1257,9 +1069,6 @@ export interface HardwareProfile {
 }
 /**
  * Describes a data disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "ImageDataDisk".
  */
 export interface ImageDataDisk {
   /**
@@ -1288,9 +1097,6 @@ export interface ImageDataDisk {
 }
 /**
  * Describes an Operating System disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "ImageOSDisk".
  */
 export interface ImageOSDisk {
   /**
@@ -1323,9 +1129,6 @@ export interface ImageOSDisk {
 }
 /**
  * Describes the properties of an Image.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "ImageProperties".
  */
 export interface ImageProperties {
   sourceVirtualMachine?: SubResource | string;
@@ -1337,9 +1140,6 @@ export interface ImageProperties {
 }
 /**
  * Describes a storage profile.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "ImageStorageProfile".
  */
 export interface ImageStorageProfile {
   /**
@@ -1354,9 +1154,6 @@ export interface ImageStorageProfile {
 }
 /**
  * Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations. NOTE: Image reference publisher and offer can only be set when you create the scale set.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "ImageReference".
  */
 export interface ImageReference {
   /**
@@ -1383,9 +1180,6 @@ export interface ImageReference {
 }
 /**
  * Instance view status.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "InstanceViewStatus".
  */
 export interface InstanceViewStatus {
   /**
@@ -1412,9 +1206,6 @@ export interface InstanceViewStatus {
 }
 /**
  * Specifies the Linux operating system settings on the virtual machine. <br><br>For a list of supported Linux distributions, see [Linux on Azure-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) <br><br> For running non-endorsed distributions, see [Information for Non-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "LinuxConfiguration".
  */
 export interface LinuxConfiguration {
   /**
@@ -1429,9 +1220,6 @@ export interface LinuxConfiguration {
 }
 /**
  * SSH configuration for Linux based VMs running on Azure
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "SshConfiguration".
  */
 export interface SshConfiguration {
   /**
@@ -1442,9 +1230,6 @@ export interface SshConfiguration {
 }
 /**
  * Contains information about SSH certificate public key and the path on the Linux VM where the public key is placed.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "SshPublicKey".
  */
 export interface SshPublicKey {
   /**
@@ -1459,9 +1244,6 @@ export interface SshPublicKey {
 }
 /**
  * Describes a network interface reference.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "NetworkInterfaceReference".
  */
 export interface NetworkInterfaceReference {
   /**
@@ -1476,9 +1258,6 @@ export interface NetworkInterfaceReference {
 }
 /**
  * Describes a network interface reference properties.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "NetworkInterfaceReferenceProperties".
  */
 export interface NetworkInterfaceReferenceProperties {
   /**
@@ -1489,9 +1268,6 @@ export interface NetworkInterfaceReferenceProperties {
 }
 /**
  * Specifies the network interfaces of the virtual machine.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "NetworkProfile".
  */
 export interface NetworkProfile {
   /**
@@ -1502,9 +1278,6 @@ export interface NetworkProfile {
 }
 /**
  * Specifies information about the operating system disk used by the virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "OSDisk".
  */
 export interface OSDisk {
   /**
@@ -1547,9 +1320,6 @@ export interface OSDisk {
 }
 /**
  * Specifies the operating system settings for the virtual machine.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "OSProfile".
  */
 export interface OSProfile {
   /**
@@ -1584,9 +1354,6 @@ export interface OSProfile {
 }
 /**
  * Describes a set of certificates which are all in the same Key Vault.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VaultSecretGroup".
  */
 export interface VaultSecretGroup {
   sourceVault?: SubResource | string;
@@ -1598,9 +1365,6 @@ export interface VaultSecretGroup {
 }
 /**
  * Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VaultCertificate".
  */
 export interface VaultCertificate {
   /**
@@ -1615,9 +1379,6 @@ export interface VaultCertificate {
 }
 /**
  * Specifies Windows operating system settings on the virtual machine.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "WindowsConfiguration".
  */
 export interface WindowsConfiguration {
   /**
@@ -1644,9 +1405,6 @@ export interface WindowsConfiguration {
 }
 /**
  * Describes Windows Remote Management configuration of the VM
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "WinRMConfiguration".
  */
 export interface WinRMConfiguration {
   /**
@@ -1657,9 +1415,6 @@ export interface WinRMConfiguration {
 }
 /**
  * Describes Protocol and thumbprint of Windows Remote Management listener
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "WinRMListener".
  */
 export interface WinRMListener {
   /**
@@ -1674,9 +1429,6 @@ export interface WinRMListener {
 }
 /**
  * Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace image that you want to use and then click **Want to deploy programmatically, Get Started ->**. Enter any required information and then click **Save**.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "Plan".
  */
 export interface Plan {
   /**
@@ -1699,9 +1451,6 @@ export interface Plan {
 }
 /**
  * The configuration parameters used while performing a rolling upgrade.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "RollingUpgradePolicy".
  */
 export interface RollingUpgradePolicy {
   /**
@@ -1724,9 +1473,6 @@ export interface RollingUpgradePolicy {
 }
 /**
  * Describes a virtual machine scale set sku.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "Sku".
  */
 export interface Sku {
   /**
@@ -1745,9 +1491,6 @@ export interface Sku {
 }
 /**
  * Specifies the storage settings for the virtual machine disks.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "StorageProfile".
  */
 export interface StorageProfile {
   /**
@@ -1766,9 +1509,6 @@ export interface StorageProfile {
 }
 /**
  * Describes an upgrade policy - automatic, manual, or rolling.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "UpgradePolicy".
  */
 export interface UpgradePolicy {
   /**
@@ -1787,9 +1527,6 @@ export interface UpgradePolicy {
 }
 /**
  * The instance view of a virtual machine extension.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineExtensionInstanceView".
  */
 export interface VirtualMachineExtensionInstanceView {
   /**
@@ -1816,9 +1553,6 @@ export interface VirtualMachineExtensionInstanceView {
 }
 /**
  * Describes the properties of a Virtual Machine Extension.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineExtensionProperties".
  */
 export interface VirtualMachineExtensionProperties {
   /**
@@ -1861,9 +1595,6 @@ export interface VirtualMachineExtensionProperties {
 }
 /**
  * Identity for the virtual machine.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineIdentity".
  */
 export interface VirtualMachineIdentity {
   /**
@@ -1874,9 +1605,6 @@ export interface VirtualMachineIdentity {
 }
 /**
  * Describes the properties of a Virtual Machine.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineProperties".
  */
 export interface VirtualMachineProperties {
   availabilitySet?: SubResource | string;
@@ -1908,9 +1636,6 @@ export interface VirtualMachineProperties {
 }
 /**
  * Describes a virtual machine scale set data disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetDataDisk".
  */
 export interface VirtualMachineScaleSetDataDisk {
   /**
@@ -1941,9 +1666,6 @@ export interface VirtualMachineScaleSetDataDisk {
 }
 /**
  * Describes the parameters of a ScaleSet managed disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetManagedDiskParameters".
  */
 export interface VirtualMachineScaleSetManagedDiskParameters {
   /**
@@ -1954,9 +1676,6 @@ export interface VirtualMachineScaleSetManagedDiskParameters {
 }
 /**
  * Describes a Virtual Machine Scale Set Extension.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetExtension".
  */
 export interface VirtualMachineScaleSetExtension {
   /**
@@ -2003,9 +1722,6 @@ export interface VirtualMachineScaleSetExtension {
 }
 /**
  * Describes a virtual machine scale set extension profile.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetExtensionProfile".
  */
 export interface VirtualMachineScaleSetExtensionProfile {
   /**
@@ -2016,9 +1732,6 @@ export interface VirtualMachineScaleSetExtensionProfile {
 }
 /**
  * Describes the properties of a Virtual Machine Scale Set Extension.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetExtensionProperties".
  */
 export interface VirtualMachineScaleSetExtensionProperties {
   /**
@@ -2057,9 +1770,6 @@ export interface VirtualMachineScaleSetExtensionProperties {
 }
 /**
  * Identity for the virtual machine scale set.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetIdentity".
  */
 export interface VirtualMachineScaleSetIdentity {
   /**
@@ -2070,9 +1780,6 @@ export interface VirtualMachineScaleSetIdentity {
 }
 /**
  * Describes a virtual machine scale set network profile's IP configuration.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetIPConfiguration".
  */
 export interface VirtualMachineScaleSetIPConfiguration {
   /**
@@ -2091,9 +1798,6 @@ export interface VirtualMachineScaleSetIPConfiguration {
 }
 /**
  * Describes a virtual machine scale set network profile's IP configuration properties.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetIPConfigurationProperties".
  */
 export interface VirtualMachineScaleSetIPConfigurationProperties {
   /**
@@ -2128,9 +1832,6 @@ export interface VirtualMachineScaleSetIPConfigurationProperties {
 }
 /**
  * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetPublicIPAddressConfiguration".
  */
 export interface VirtualMachineScaleSetPublicIPAddressConfiguration {
   /**
@@ -2145,9 +1846,6 @@ export interface VirtualMachineScaleSetPublicIPAddressConfiguration {
 }
 /**
  * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetPublicIPAddressConfigurationProperties".
  */
 export interface VirtualMachineScaleSetPublicIPAddressConfigurationProperties {
   /**
@@ -2162,9 +1860,6 @@ export interface VirtualMachineScaleSetPublicIPAddressConfigurationProperties {
 }
 /**
  * Describes a virtual machines scale sets network configuration's DNS settings.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings".
  */
 export interface VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings {
   /**
@@ -2175,9 +1870,6 @@ export interface VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings {
 }
 /**
  * Describes a virtual machine scale set network profile's network configurations.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetNetworkConfiguration".
  */
 export interface VirtualMachineScaleSetNetworkConfiguration {
   /**
@@ -2196,9 +1888,6 @@ export interface VirtualMachineScaleSetNetworkConfiguration {
 }
 /**
  * Describes a virtual machine scale set network profile's IP configuration.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetNetworkConfigurationProperties".
  */
 export interface VirtualMachineScaleSetNetworkConfigurationProperties {
   /**
@@ -2222,9 +1911,6 @@ export interface VirtualMachineScaleSetNetworkConfigurationProperties {
 }
 /**
  * Describes a virtual machines scale sets network configuration's DNS settings.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetNetworkConfigurationDnsSettings".
  */
 export interface VirtualMachineScaleSetNetworkConfigurationDnsSettings {
   /**
@@ -2235,9 +1921,6 @@ export interface VirtualMachineScaleSetNetworkConfigurationDnsSettings {
 }
 /**
  * Describes a virtual machine scale set network profile.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetNetworkProfile".
  */
 export interface VirtualMachineScaleSetNetworkProfile {
   /**
@@ -2252,9 +1935,6 @@ export interface VirtualMachineScaleSetNetworkProfile {
 }
 /**
  * Describes a virtual machine scale set operating system disk.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetOSDisk".
  */
 export interface VirtualMachineScaleSetOSDisk {
   /**
@@ -2289,9 +1969,6 @@ export interface VirtualMachineScaleSetOSDisk {
 }
 /**
  * Describes a virtual machine scale set OS profile.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetOSProfile".
  */
 export interface VirtualMachineScaleSetOSProfile {
   /**
@@ -2326,9 +2003,6 @@ export interface VirtualMachineScaleSetOSProfile {
 }
 /**
  * Describes the properties of a Virtual Machine Scale Set.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetProperties".
  */
 export interface VirtualMachineScaleSetProperties {
   /**
@@ -2351,9 +2025,6 @@ export interface VirtualMachineScaleSetProperties {
 }
 /**
  * Describes a virtual machine scale set virtual machine profile.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetVMProfile".
  */
 export interface VirtualMachineScaleSetVMProfile {
   /**
@@ -2384,9 +2055,6 @@ export interface VirtualMachineScaleSetVMProfile {
 }
 /**
  * Describes a virtual machine scale set storage profile.
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "VirtualMachineScaleSetStorageProfile".
  */
 export interface VirtualMachineScaleSetStorageProfile {
   /**
@@ -2405,9 +2073,6 @@ export interface VirtualMachineScaleSetStorageProfile {
 }
 /**
  * Microsoft.Compute/virtualMachineScaleSets/extensions
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "virtualMachineScaleSets_extensions_childResource".
  */
 export interface VirtualMachineScaleSetsExtensionsChildResource {
   apiVersion: "2017-03-30";
@@ -2424,9 +2089,6 @@ export interface VirtualMachineScaleSetsExtensionsChildResource {
 }
 /**
  * Microsoft.Compute/virtualMachines/extensions
- *
- * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
- * via the \`definition\` "virtualMachines_extensions_childResource".
  */
 export interface VirtualMachinesExtensionsChildResource {
   apiVersion: "2017-03-30";
@@ -2494,10 +2156,6 @@ exports[`compileFiles azure: 2017-03-30/Microsoft.Compute.Extensions 1`] = `
  */
 export type MicrosoftComputeExtensions = unknown;
 
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "genericExtension".
- */
 export interface GenericExtension {
   /**
    * Microsoft.Compute/extensions - Publisher
@@ -2521,10 +2179,6 @@ export interface GenericExtension {
     | string;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "iaaSDiagnostics".
- */
 export interface IaaSDiagnostics {
   publisher: "Microsoft.Azure.Diagnostics";
   type: "IaaSDiagnostics";
@@ -2543,10 +2197,6 @@ export interface IaaSDiagnostics {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "iaaSAntimalware".
- */
 export interface IaaSAntimalware {
   publisher: "Microsoft.Azure.Security";
   type: "IaaSAntimalware";
@@ -2572,10 +2222,6 @@ export interface IaaSAntimalware {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "customScriptExtension".
- */
 export interface CustomScriptExtension {
   publisher: "Microsoft.Compute";
   type: "CustomScriptExtension";
@@ -2593,10 +2239,6 @@ export interface CustomScriptExtension {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "customScriptForLinux".
- */
 export interface CustomScriptForLinux {
   publisher: "Microsoft.OSTCExtensions";
   type: "CustomScriptForLinux";
@@ -2614,10 +2256,6 @@ export interface CustomScriptForLinux {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "linuxDiagnostic".
- */
 export interface LinuxDiagnostic {
   publisher: "Microsoft.OSTCExtensions";
   type: "LinuxDiagnostic";
@@ -2646,10 +2284,6 @@ export interface LinuxDiagnostic {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "vmAccessForLinux".
- */
 export interface VmAccessForLinux {
   publisher: "Microsoft.OSTCExtensions";
   type: "VMAccessForLinux";
@@ -2671,10 +2305,6 @@ export interface VmAccessForLinux {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "bgInfo".
- */
 export interface BgInfo {
   publisher: "Microsoft.Compute";
   type: "bginfo";
@@ -2682,10 +2312,6 @@ export interface BgInfo {
   autoUpgradeMinorVersion: boolean;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "vmAccessAgent".
- */
 export interface VmAccessAgent {
   publisher: "Microsoft.Compute";
   type: "VMAccessAgent";
@@ -2701,10 +2327,6 @@ export interface VmAccessAgent {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "dscExtension".
- */
 export interface DscExtension {
   publisher: "Microsoft.Powershell";
   type: "DSC";
@@ -2727,10 +2349,6 @@ export interface DscExtension {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "acronisBackupLinux".
- */
 export interface AcronisBackupLinux {
   publisher: "Acronis.Backup";
   type: "AcronisBackupLinux";
@@ -2747,10 +2365,6 @@ export interface AcronisBackupLinux {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "acronisBackup".
- */
 export interface AcronisBackup {
   publisher: "Acronis.Backup";
   type: "AcronisBackup";
@@ -2767,10 +2381,6 @@ export interface AcronisBackup {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "linuxChefClient".
- */
 export interface LinuxChefClient {
   publisher: "Chef.Bootstrap.WindowsAzure";
   type: "LinuxChefClient";
@@ -2798,10 +2408,6 @@ export interface LinuxChefClient {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "chefClient".
- */
 export interface ChefClient {
   publisher: "Chef.Bootstrap.WindowsAzure";
   type: "ChefClient";
@@ -2828,10 +2434,6 @@ export interface ChefClient {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "datadogLinuxAgent".
- */
 export interface DatadogLinuxAgent {
   publisher: "Datadog.Agent";
   type: "DatadogLinuxAgent";
@@ -2843,10 +2445,6 @@ export interface DatadogLinuxAgent {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "datadogWindowsAgent".
- */
 export interface DatadogWindowsAgent {
   publisher: "Datadog.Agent";
   type: "DatadogWindowsAgent";
@@ -2858,10 +2456,6 @@ export interface DatadogWindowsAgent {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "dockerExtension".
- */
 export interface DockerExtension {
   publisher: "Microsoft.Azure.Extensions";
   type: "DockerExtension";
@@ -2885,10 +2479,6 @@ export interface DockerExtension {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "dynatraceLinux".
- */
 export interface DynatraceLinux {
   publisher: "dynatrace.ruxit";
   type: "ruxitAgentLinux";
@@ -2901,10 +2491,6 @@ export interface DynatraceLinux {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "dynatraceWindows".
- */
 export interface DynatraceWindows {
   publisher: "dynatrace.ruxit";
   type: "ruxitAgentWindows";
@@ -2917,10 +2503,6 @@ export interface DynatraceWindows {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "eset".
- */
 export interface Eset {
   publisher: "ESET";
   type: "FileSecurity";
@@ -2938,10 +2520,6 @@ export interface Eset {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "hpeSecurityApplicationDefender".
- */
 export interface HpeSecurityApplicationDefender {
   publisher: "HPE.Security.ApplicationDefender";
   type: "DotnetAgent";
@@ -2954,10 +2532,6 @@ export interface HpeSecurityApplicationDefender {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "puppetAgent".
- */
 export interface PuppetAgent {
   publisher: "Puppet";
   type: "PuppetAgent";
@@ -2969,10 +2543,6 @@ export interface PuppetAgent {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "site24x7LinuxServerExtn".
- */
 export interface Site24X7LinuxServerExtn {
   publisher: "Site24x7";
   type: "Site24x7LinuxServerExtn";
@@ -2988,10 +2558,6 @@ export interface Site24X7LinuxServerExtn {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "site24x7WindowsServerExtn".
- */
 export interface Site24X7WindowsServerExtn {
   publisher: "Site24x7";
   type: "Site24x7WindowsServerExtn";
@@ -3007,10 +2573,6 @@ export interface Site24X7WindowsServerExtn {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "site24x7ApmInsightExtn".
- */
 export interface Site24X7ApmInsightExtn {
   publisher: "Site24x7";
   type: "Site24x7ApmInsightExtn";
@@ -3026,10 +2588,6 @@ export interface Site24X7ApmInsightExtn {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "trendMicroDSALinux".
- */
 export interface TrendMicroDSALinux {
   publisher: "TrendMicro.DeepSecurity";
   type: "TrendMicroDSALinux";
@@ -3048,10 +2606,6 @@ export interface TrendMicroDSALinux {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "trendMicroDSA".
- */
 export interface TrendMicroDSA {
   publisher: "TrendMicro.DeepSecurity";
   type: "TrendMicroDSA";
@@ -3070,10 +2624,6 @@ export interface TrendMicroDSA {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "bmcCtmAgentLinux".
- */
 export interface BmcCtmAgentLinux {
   publisher: "ctm.bmc.com";
   type: "BmcCtmAgentLinux";
@@ -3088,10 +2638,6 @@ export interface BmcCtmAgentLinux {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "bmcCtmAgentWindows".
- */
 export interface BmcCtmAgentWindows {
   publisher: "bmc.ctm";
   type: "AgentWinExt";
@@ -3105,10 +2651,6 @@ export interface BmcCtmAgentWindows {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "OSPatchingForLinux".
- */
 export interface OSPatchingForLinux {
   publisher: "Microsoft.OSTCExtensions";
   type: "OSPatchingForLinux";
@@ -3141,10 +2683,6 @@ export interface OSPatchingForLinux {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "VMSnapshot".
- */
 export interface VMSnapshot {
   publisher: "Microsoft.Azure.RecoveryServices";
   type: "VMSnapshot";
@@ -3163,10 +2701,6 @@ export interface VMSnapshot {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "VMSnapshotLinux".
- */
 export interface VMSnapshotLinux {
   publisher: "Microsoft.Azure.RecoveryServices";
   type: "VMSnapshotLinux";
@@ -3185,10 +2719,6 @@ export interface VMSnapshotLinux {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "customScript".
- */
 export interface CustomScript {
   publisher: "Microsoft.Azure.Extensions";
   type: "CustomScript";
@@ -3206,10 +2736,6 @@ export interface CustomScript {
   };
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "networkWatcherAgentWindows".
- */
 export interface NetworkWatcherAgentWindows {
   publisher: "Microsoft.Azure.NetworkWatcher";
   type: "NetworkWatcherAgentWindows";
@@ -3217,10 +2743,6 @@ export interface NetworkWatcherAgentWindows {
   autoUpgradeMinorVersion: boolean;
   [k: string]: unknown;
 }
-/**
- * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
- * via the \`definition\` "networkWatcherAgentLinux".
- */
 export interface NetworkWatcherAgentLinux {
   publisher: "Microsoft.Azure.NetworkWatcher";
   type: "NetworkWatcherAgentLinux";
