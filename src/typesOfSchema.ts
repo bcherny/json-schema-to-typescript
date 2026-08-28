@@ -1,5 +1,14 @@
 import {isPlainObject} from 'lodash'
-import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
+import {
+  Intersection,
+  isCompound,
+  JSONSchema,
+  LinkedJSONSchema,
+  Parent,
+  SchemaType,
+  Source,
+  Types,
+} from './types/JSONSchema'
 
 // Keywords that only annotate a schema (eg. for documentation) without constraining
 // the values it matches. A schema made up of nothing but these keywords doesn't
@@ -44,7 +53,47 @@ export function hasOwnType(schema: JSONSchema): boolean {
   return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
 }
 
-const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
+/**
+ * Works out the schema's types (see `typesOfSchema`) once, ahead of parsing, and records them
+ * on it as `[Types]`. A schema that is several types at once is emitted as their intersection:
+ * it gets a companion `ALL_OF` schema, `[Intersection]`, that takes over its `allOf` (if any)
+ * and its `$id`, `title`, `description` and `name`, so that the name and comment land on the
+ * intersection rather than on each member; the parser adds one member per type to it. It is
+ * built here rather than in the parser because the parser caches ASTs by schema object, so the
+ * intersection has to be one object, not a new one per visit.
+ *
+ * Mutates `schema`.
+ */
+export function applySchemaTyping(schema: LinkedJSONSchema): void {
+  const types = typesOfSchema(schema)
+  Object.defineProperty(schema, Types, {enumerable: false, value: types, writable: false})
+  if (types.size === 1) {
+    return
+  }
+
+  const intersection = {
+    [Parent]: schema,
+    // The intersection stands for the schema as a whole, so it is what other files import
+    [Source]: schema[Source],
+    [Types]: new Set(['ALL_OF']),
+    $id: schema.$id,
+    description: schema.description,
+    name: schema.name,
+    title: schema.title,
+    allOf: schema.allOf ?? [],
+    required: [],
+    additionalProperties: false,
+  }
+  types.delete('ALL_OF')
+  delete schema.allOf
+  delete schema.$id
+  delete schema.description
+  delete schema.name
+  delete schema.title
+  Object.defineProperty(schema, Intersection, {enumerable: false, value: intersection, writable: false})
+}
+
+const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
   },
@@ -74,9 +123,6 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
       return true
     }
     return false
-  },
-  CUSTOM_TYPE() {
-    return false // Explicitly handled before we try to match
   },
   NAMED_ENUM(schema) {
     return 'enum' in schema && 'tsEnumNames' in schema

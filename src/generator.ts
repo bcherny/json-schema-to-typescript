@@ -244,30 +244,26 @@ function generateRawType(ast: AST, options: Options): string {
       return 'null'
     case 'OBJECT':
       return 'object'
-    case 'REFERENCE':
-      return ast.params
     case 'STRING':
       return 'string'
     case 'TUPLE':
       return (() => {
         const minItems = ast.minItems
-        const maxItems = ast.maxItems || -1
 
         let spreadParam = ast.spreadParam
         const astParams = [...ast.params]
-        if (minItems > 0 && minItems > astParams.length && ast.spreadParam === undefined) {
-          // this is a valid state, and JSONSchema doesn't care about the item type
-          if (maxItems < 0) {
-            // no max items and no spread param, so just spread any
-            spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
+        if (typeof ast.maxItems === 'number') {
+          // Bounded: spell out the items `additionalItems` allows (the spread param) up to the
+          // cap instead of as a rest element. Without one (`additionalItems: false`) nothing may
+          // follow the tuple's own items, whatever `maxItems` says.
+          if (spreadParam) {
+            while (astParams.length < ast.maxItems) astParams.push(spreadParam)
+            spreadParam = undefined
           }
-        }
-        if (maxItems > astParams.length && ast.spreadParam === undefined) {
-          // this is a valid state, and JSONSchema doesn't care about the item type
-          // fill the tuple with any elements
-          for (let i = astParams.length; i < maxItems; i += 1) {
-            astParams.push(options.unknownAny ? T_UNKNOWN : T_ANY)
-          }
+        } else if (minItems > astParams.length && spreadParam === undefined) {
+          // `additionalItems: false` with a `minItems` beyond the tuple's own items, which no
+          // array satisfies: emitted as an open tuple, as it always has been, rather than `never`
+          spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
         }
 
         function addSpreadParam(params: string[]): string[] {
@@ -325,7 +321,7 @@ function generateRawType(ast: AST, options: Options): string {
           return '(' + typesToUnion.join(' | ') + ')'
         }
 
-        // no max items so only need to return one type
+        // no optional items, so a single tuple type
         return paramsToString(addSpreadParam(paramsList))
       })()
     case 'UNION':
@@ -436,7 +432,6 @@ const LEAF_TYPES = new Set<AST['type']>([
   'NULL',
   'NUMBER',
   'OBJECT',
-  'REFERENCE',
   'STRING',
 ])
 

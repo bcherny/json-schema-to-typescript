@@ -11,7 +11,7 @@ import {optimize} from './optimizer'
 import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference, SchemaSet} from './resolver'
 import {prenormalize} from './prenormalizer'
-import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
+import {error, stripExtension, Try, log, parseFileAsJSONSchema, readVerbose} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
@@ -240,6 +240,7 @@ async function compileToAST(
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
+  readVerbose()
   const start = Date.now()
   function time() {
     return `(${Date.now() - start}ms)`

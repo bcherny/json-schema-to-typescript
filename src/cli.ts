@@ -5,13 +5,14 @@ import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSy
 import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
+import {resolveConfig} from 'prettier'
 import {compile, compileFiles, DEFAULT_OPTIONS, Options} from './index'
-import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
+import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} from './utils'
 
-// cwd is deliberately left out of the CLI defaults: processFile() computes a
-// per-file cwd (the directory of the file being compiled) unless the user
-// passes --cwd explicitly, so argv.cwd must stay unset until then.
-const defaultOptions = omit(DEFAULT_OPTIONS, 'cwd')
+// cwd and style are deliberately left out of the CLI defaults: processFile()
+// computes a per-file cwd and loads the closest Prettier config. Explicit CLI
+// flags are applied afterwards, so they still take precedence.
+const defaultOptions = omit(DEFAULT_OPTIONS, ['cwd', 'style'])
 
 main(
   minimist(process.argv.slice(2), {
@@ -28,7 +29,6 @@ main(
       'ignoreMinAndMaxItems',
       'imports',
       'removeOptionalIfDefaultExists',
-      'style.singleQuote',
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
@@ -42,6 +42,15 @@ async function main(argv: minimist.ParsedArgs) {
   if (argv.help) {
     printHelp()
     process.exit(0)
+  }
+
+  // `--style.X=false` and `--style.X false` reach us as the string 'false' (#199).
+  // Style flags are not registered as minimist booleans, because a registered
+  // boolean defaults to false and would override the project's Prettier config.
+  for (const key in argv.style) {
+    if (argv.style[key] === 'true' || argv.style[key] === 'false') {
+      argv.style[key] = argv.style[key] === 'true'
+    }
   }
 
   const argIn: string = argv._[0] || argv.input
@@ -80,7 +89,7 @@ async function main(argv: minimist.ParsedArgs) {
     } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
     } else {
-      const result = await processFile(argIn, argv as Partial<Options>)
+      const result = await processFile(argIn, argOut, argv as Partial<Options>)
       outputResult(result, argOut)
     }
   } catch (e) {
@@ -126,15 +135,15 @@ async function processFiles(files: [string, string | undefined][], argv: Partial
     // main() has checked there is an output directory
     const compiled = await compileFiles(
       files.map(([file, out]) => ({filename: file, outputPath: out!})),
-      argv,
+      {...argv, style: await styleFor(files[0]?.[1] ?? '.', argv)},
     )
     results = files.map(([, out], i) => [compiled[i], out] as const)
   } else {
     // we can do this concurrently for perf
-    results = await Promise.all(files.map(async ([file, out]) => [await processFile(file, argv), out] as const))
+    results = await Promise.all(files.map(async ([file, out]) => [await processFile(file, out, argv), out] as const))
   }
   // careful to do this serially
-  results.forEach(([result, out]) => outputResult(result, out))
+  results.forEach(([result, outputPath]) => outputResult(result, outputPath))
 }
 
 function outputResult(result: string, outputPath: string | undefined): void {
@@ -148,13 +157,30 @@ function outputResult(result: string, outputPath: string | undefined): void {
   }
 }
 
-async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
+async function processFile(argIn: string, outputPath: string | undefined, argv: Partial<Options>): Promise<string> {
   const {filename, contents} = await readInput(argIn)
   const schema = parseFileAsJSONSchema(filename, contents)
+  // When writing to stdout, the Prettier config is the one for the .d.ts next to
+  // the input (stdin: <cwd>/stdin.d.ts).
+  const configPath = outputPath || `${filename ? stripExtension(filename) : 'stdin'}.d.ts`
   // Resolve $refs relative to the directory of the file being compiled, not
   // process.cwd(), unless the user explicitly passed --cwd (see #324).
   const cwd = filename ? dirname(resolve(process.cwd(), filename)) : undefined
-  return compile(schema, argIn, cwd ? {cwd, ...argv} : argv)
+  return compile(schema, argIn, {
+    ...(cwd ? {cwd} : {}),
+    ...argv,
+    style: await styleFor(configPath, argv),
+  })
+}
+
+/**
+ * The Prettier config that applies to the file being written (so `overrides` keyed to *.ts /
+ * *.d.ts apply and ones keyed to *.json do not), under any explicit --style flags. The output is
+ * always TypeScript, so a configured `parser` is not taken over.
+ */
+async function styleFor(outputPath: string, argv: Partial<Options>): Promise<Options['style']> {
+  const prettierConfig = omit((await resolveConfig(resolve(process.cwd(), outputPath))) || {}, 'parser')
+  return {...prettierConfig, ...argv.style}
 }
 
 function getPaths(path: string, paths: string[] = []) {
