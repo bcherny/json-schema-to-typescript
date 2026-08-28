@@ -31,6 +31,14 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
   return matchedTypes
 }
 
+/**
+ * Whether any matcher recognizes the schema. One that none does has no way to be
+ * typed on its own: it only gets the `UNNAMED_SCHEMA` default.
+ */
+export function hasOwnType(schema: JSONSchema): boolean {
+  return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
+}
+
 const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
