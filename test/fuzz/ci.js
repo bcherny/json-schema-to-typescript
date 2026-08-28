@@ -152,8 +152,13 @@ async function main() {
       const repeated = []
       for (const seed of f.seeds) {
         const again = (await runChunk(seed, 1, args, workDir)).findings.some(g => g.signature === f.signature)
-        if (again) repeated.push(seed)
-        else console.log(`  seed ${seed}: ${f.status} did not repeat on a re-run alone; not counted`)
+        // Say so right away either way: each confirmation can cost a full per-case
+        // timeout, and if enough seeds hang for the job's own time limit to kill it,
+        // the log must already name them.
+        if (again) {
+          repeated.push(seed)
+          console.log(`  seed ${seed}: ${f.status} again on a re-run alone; counted`)
+        } else console.log(`  seed ${seed}: ${f.status} did not repeat on a re-run alone; not counted`)
       }
       if (!repeated.length) continue
       Object.assign(f, {seed: repeated[0], seeds: repeated, occurrences: repeated.length})
@@ -205,7 +210,9 @@ async function main() {
     console.log(`  [${tag}] seeds ${list(f.seeds)}  ${f.status} ${f.errorName} ${frameFile(f.frame)}  ${message}`)
     if (f.note) console.log(`        ${f.note}`)
   }
-  for (const note of notes) console.log(`  note: known-findings ${note}`)
+  // A stale entry would quietly re-allow its bug on those seeds if it ever came
+  // back, so make the note hard to miss: a workflow annotation on the run's summary.
+  for (const note of notes) console.log(`${process.env.GITHUB_ACTIONS ? '::warning::' : '  note: '}known-findings ${note}`)
   console.log(`report: ${args.out}`)
 
   try {

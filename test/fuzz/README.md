@@ -44,8 +44,10 @@ matches a finding on status, error name, the file of its top library frame and a
 message prefix — not line and column, so unrelated edits to that file do not break
 it — and covers only the seeds it lists: the same error from any other seed is a
 regression wearing a known bug's message, and fails the job. When a fix lands,
-delete its entry; the run prints a note once an entry or some of its seeds stop
-reproducing. When the job goes red the log names the seeds: `node
+delete its entry; the run prints a note (a workflow warning on the run's summary in
+CI) once an entry or some of its seeds stop reproducing. An entry may also be listed
+ahead of a PR that deliberately changes what those seeds throw, citing that PR, so
+that neither it nor the gate turns the other red whichever lands first. When the job goes red the log names the seeds: `node
 test/fuzz/fuzz.js --seed N` prints that case's schema, options and result, and
 `node test/fuzz/fuzz.js --start N --seeds 1` minimizes it.
 

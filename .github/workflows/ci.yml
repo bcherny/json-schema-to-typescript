@@ -94,7 +94,10 @@ jobs:
   # has are listed in test/fuzz/known-findings.json, each with its issue.
   fuzz:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # A green run takes ~80 s. Each seed that genuinely hangs costs up to 75 s more
+    # (60 s in the parallel pass shared four ways, then 60 s re-run alone), so this
+    # leaves room for about a dozen before the job is cut off mid-report.
+    timeout-minutes: 15
 
     steps:
     - uses: actions/checkout@v7

@@ -17,7 +17,16 @@
       "frame": "src/parser.js",
       "message": "Refs should have been resolved by the resolver!",
       "seeds": [114, 139, 187, 254, 263, 267, 286, 339, 361, 372],
-      "example": "a definition that is only a $ref to itself, kept alive by unreachableDefinitions or reached through another $ref: {\"definitions\": {\"A\": {\"$ref\": \"#/definitions/A\"}}} with {unreachableDefinitions: true}. PR 804 turns this into a deliberate ReferenceError; when it lands this entry becomes one for that error, same seeds."
+      "example": "a definition that is only a $ref to itself, kept alive by unreachableDefinitions or reached through another $ref: {\"definitions\": {\"A\": {\"$ref\": \"#/definitions/A\"}}} with {unreachableDefinitions: true}. PR 804 turns this into the deliberate ReferenceError of the next entry; delete this one when it lands."
+    },
+    {
+      "issue": 804,
+      "status": "THREW",
+      "errorName": "ReferenceError",
+      "frame": "src/parser.js",
+      "message": "Failed to resolve $ref ",
+      "seeds": [114, 139, 187, 254, 263, 267, 286, 339, 361, 372],
+      "example": "the same ten seeds once PR 804 has landed: a $ref cycle with no concrete base case is then rejected on purpose with a ReferenceError naming the $ref. Listed ahead of time so neither PR turns the other red; until 804 merges the run notes that this entry matched nothing."
     }
   ]
 }
