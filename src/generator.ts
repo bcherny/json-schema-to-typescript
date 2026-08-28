@@ -1,3 +1,4 @@
+import {isPlainObject} from 'lodash'
 import {memoize} from './memoize'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -176,12 +177,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'ANY':
       return 'any'
     case 'ARRAY':
-      return (() => {
-        const type = generateType(ast.params, options)
-        // `readonly T[][]` would make the outer array the readonly one
-        const element = type.endsWith('"') || type.startsWith('readonly ') ? '(' + type + ')' : type
-        return readonlyModifier(ast.isReadOnly, options) + element + '[]'
-      })()
+      return readonlyModifier(ast.isReadOnly, options) + elementType(ast.params, options) + '[]'
     case 'BOOLEAN':
       return 'boolean'
     case 'INTERFACE':
@@ -189,7 +185,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'INTERSECTION':
       return generateSetOperation(ast, options)
     case 'LITERAL':
-      return JSON.stringify(ast.params)
+      return generateLiteral(ast.params)
     case 'NEVER':
       return 'never'
     case 'NUMBER':
@@ -223,17 +219,25 @@ function generateRawType(ast: AST, options: Options): string {
 
         function addSpreadParam(params: string[]): string[] {
           if (spreadParam) {
-            const spread = '...(' + generateType(spreadParam, options) + ')[]'
-            params.push(spread)
+            // a `tsType` can say anything: it keeps the parentheses it has always had here
+            const rest =
+              spreadParam.type === 'CUSTOM_TYPE'
+                ? parenthesize(generateType(spreadParam, options))
+                : elementType(spreadParam, options)
+            params.push('...' + rest + '[]')
           }
           return params
         }
 
         function paramsToString(params: string[]): string {
-          return modifier + '[' + params.join(', ') + ']'
+          return modifier + generateBracketed(params)
         }
 
-        const paramsList = astParams.map(param => generateType(param, options))
+        // a union on lines of its own goes in parentheses, as prettier puts it
+        const paramsList = astParams.map(param => {
+          const type = generateType(param, options)
+          return type.includes('\n') && bareSetOperations.has(param) ? parenthesize(type) : type
+        })
 
         if (paramsList.length > minItems) {
           /*
@@ -271,9 +275,10 @@ function generateRawType(ast: AST, options: Options): string {
             typesToUnion.push(paramsToString(cumulativeParamsList))
           }
 
-          // Parenthesize the union (like generateSetOperation does) so callers can
-          // safely append `[]` or combine it with `&`.
-          return '(' + typesToUnion.join(' | ') + ')'
+          // a bare union, like generateSetOperation's: callers that append `[]` or combine it
+          // with `&` parenthesize it (`operandType`)
+          bareSetOperations.add(ast)
+          return generateUnion(typesToUnion.map(type => ({type})))
         }
 
         // no optional items, so a single tuple type
@@ -297,25 +302,152 @@ function readonlyModifier(isReadOnly: boolean | undefined, options: Options): st
 }
 
 /**
+ * Layout of the generated text. Prettier (`format: true`) redoes all of it; without it this is
+ * what the reader gets, so nested lines are indented, members end in `;`, and a union too long
+ * for a line takes a line per member. Every type is rendered as if it started in column 0 and the
+ * construct that embeds it indents the lines after its first (`indentLines`), which keeps the
+ * memoized renders independent of where they are used. A type that starts with a newline (a union
+ * written a member per line, a member below its comment) brings its own lines and continues the
+ * `key:` or `type X =` it follows without a space (`typed`).
+ */
+const INDENT = '  '
+/** A union, intersection or tuple longer than this on one line is written a member per line */
+const MAX_WIDTH = 80
+
+/** `text` with every line after its first moved right by `indent` (`\r` line breaks, which only generateComment writes, excepted) */
+function indentLines(text: string, indent = INDENT): string {
+  return text.replace(/\n/g, '\n' + indent)
+}
+
+/** `text` starting on a new line of its own, a level in */
+function onOwnLines(text: string): string {
+  return '\n' + INDENT + indentLines(text)
+}
+
+function fitsOnOneLine(text: string): boolean {
+  return text.length <= MAX_WIDTH && !text.includes('\n')
+}
+
+function parenthesize(type: string): string {
+  return '(' + type + (type.startsWith('\n') ? '\n)' : ')')
+}
+
+/** `head` (`key:`, `export type X =`) and its `type`, on the same line unless the type brings its own lines */
+function typed(head: string, type: string): string {
+  return head + (type.startsWith('\n') ? '' : ' ') + type
+}
+
+/**
+ * Whether a `;` may follow a member's `type` on its line: not when that line could end in a
+ * comment (a `tsType` can say anything), which would swallow it or, formatted, keep it as part of
+ * the comment. Errs towards no `;` (a `//` in a template literal, say), which is only cosmetic.
+ * Top-level declarations get no `;` at all: prettier prints its own, and one already in its input
+ * makes it (3.x) rebuild the whole text once per comment to find where the statement's code ends.
+ */
+function mayTerminate(type: string): boolean {
+  const lastLine = type.slice(type.lastIndexOf('\n') + 1)
+  if (!lastLine.includes('/')) {
+    return true
+  }
+  const unquoted = lastLine.replace(/"(?:[^"\\]|\\.)*"/g, '""')
+  return !unquoted.includes('//') && !unquoted.includes('*/')
+}
+
+/**
+ * The nodes that rendered as a bare union or intersection (`A | B`, `A & B`), which needs
+ * parentheses before `[]` is appended to it or it becomes a member of another one: recorded as
+ * the text is made (generateSetOperation, the TUPLE case), so it says what the memoized text says.
+ */
+const bareSetOperations = new WeakSet<AST>()
+
+/** `ast`'s type where a type operator applies to it (`T[]`, `A | T`, `A & T`): parenthesized if it is a bare union or intersection */
+function operandType(ast: AST, options: Options): string {
+  const type = generateType(ast, options)
+  return bareSetOperations.has(ast) ? parenthesize(type) : type
+}
+
+/** `ast`'s type with `[]` on the way: an operand, parenthesized too where `[]` would bind to a part of it */
+function elementType(ast: AST, options: Options): string {
+  const type = operandType(ast, options)
+  // `readonly T[][]` would make the outer array the readonly one; and a type that ends in a
+  // string literal without being one (a `tsType` can say anything) keeps its parentheses
+  return type.startsWith('readonly ') || (type.endsWith('"') && !/^"(?:[^"\\]|\\.)*"$/.test(type))
+    ? parenthesize(type)
+    : type
+}
+
+type Member = {type: string; comment?: string}
+
+/**
+ * `A | B | C` — or, when that does not fit on a line or a member carries a comment, a line per
+ * member, each behind a `|` of its own and below its comment, indented a level since it
+ * continues a `type X =` or `key:` line:
+ *
+ *     | A
+ *     /** comment * /
+ *     | {
+ *         b: string;
+ *       }
+ */
+function generateUnion(members: Member[]): string {
+  const line = members.map(_ => _.type).join(' | ')
+  if (fitsOnOneLine(line) && members.every(_ => _.comment === undefined)) {
+    return line
+  }
+  return members
+    .map(
+      ({type, comment}) =>
+        (comment === undefined ? '' : onOwnLines(comment)) +
+        ('\n' + INDENT + (type.startsWith('\n') ? '|' : '| ') + indentLines(type, INDENT + INDENT)),
+    )
+    .join('')
+}
+
+/**
+ * `A & B & {...}`, a line per member (`&` last) when that does not fit on a line and no member
+ * spans lines anyway; a commented member goes on the lines after its `&`, below its comment
+ */
+function generateIntersection(members: Member[]): string {
+  const operands = members.map(({type, comment}) => (comment === undefined ? type : onOwnLines(comment + '\n' + type)))
+  const wrap = operands.every(_ => !_.includes('\n')) && !fitsOnOneLine(operands.join(' & '))
+  return operands.reduce(
+    (text, operand) => text + (operand.startsWith('\n') ? ' &' : wrap ? ' &\n' + INDENT : ' & ') + operand,
+  )
+}
+
+/** `[A, B]`, an element per line when that does not fit on one */
+function generateBracketed(elements: string[]): string {
+  const line = '[' + elements.join(', ') + ']'
+  if (fitsOnOneLine(line)) {
+    return line
+  }
+  // (an element that brings its own lines -- a member below its comment -- starts on a new one already)
+  return '[\n' + elements.map(_ => (_.startsWith('\n') ? _.slice(1) : INDENT + indentLines(_))).join(',\n') + '\n]'
+}
+
+/**
+ * A `const` or `enum` value as a literal type: what `JSON.stringify` prints, with object keys
+ * quoted only where they have to be and `;` between members, as TypeScript writes object types.
+ * Kept on one line: prettier keeps an object type on one line or not depending on how it got it.
+ */
+function generateLiteral(value: unknown): string {
+  if (Array.isArray(value)) {
+    return '[' + value.map(_ => generateLiteral(_ ?? null)).join(', ') + ']'
+  }
+  if (isPlainObject(value)) {
+    const members = Object.entries(value as object)
+      .filter(([, _]) => _ !== undefined)
+      .map(([key, _]) => escapeKeyName(key) + ': ' + generateLiteral(_))
+    return '{' + members.join('; ') + '}'
+  }
+  return JSON.stringify(value)
+}
+
+/**
  * Generate a Union or Intersection
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
-  const members = (ast as TUnion).params.map(_ => {
-    const type = generateType(_, options)
-    // An anonymous object-literal member (eg. an `oneOf`/`anyOf` branch with its
-    // own `description` but no name of its own) would otherwise have its comment
-    // silently dropped: a named member's comment is printed on its own
-    // declaration (see generateStandaloneInterface), and non-object members
-    // (string, number, ...) have no declaration site for a leading comment to
-    // meaningfully attach to, so only INTERFACE members are handled here. The
-    // leading newline keeps the formatter from attaching the comment to the end
-    // of the previous member (`} /** ... */ | {`).
-    return _.type === 'INTERFACE' && hasComment(_) && !hasStandaloneName(_)
-      ? '\n' + generateComment(_.comment, _.deprecated) + '\n' + type
-      : type
-  })
-  const separator = ast.type === 'UNION' ? '|' : '&'
-  if (members.length === 0) {
+  if (ast.params.length === 0) {
     // A union of nothing accepts nothing (`never`). An intersection of nothing (eg. every
     // `allOf` member turned out to contribute no information) constrains nothing -- render it
     // exactly like the `{[k: string]: unknown}` a single vacuous member would otherwise have
@@ -323,7 +455,34 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
     // spurious, differently-spelled extra member.
     return ast.type === 'UNION' ? 'never' : generateInterface(vacuousInterface(options), options)
   }
-  return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
+  if (ast.params.length === 1) {
+    // rendered as its member
+    const [param] = ast.params
+    const type = generateType(param, options)
+    if (bareSetOperations.has(param)) {
+      bareSetOperations.add(ast)
+    }
+    const comment = memberComment(param)
+    return comment === undefined ? type : onOwnLines(comment + '\n' + type)
+  }
+  bareSetOperations.add(ast)
+  const members = ast.params.map((_): Member => ({type: operandType(_, options), comment: memberComment(_)}))
+  return ast.type === 'UNION' ? generateUnion(members) : generateIntersection(members)
+}
+
+/**
+ * The comment of an anonymous object-literal member (eg. a `oneOf`/`anyOf` branch with its own
+ * `description` but no name of its own), which would otherwise be silently dropped: a named
+ * member's comment is printed on its own declaration (see generateStandaloneInterface), and
+ * non-object members (string, number, ...) have no declaration site for a leading comment to
+ * meaningfully attach to, so only INTERFACE members are handled here. It goes on lines of its own
+ * before the member (see generateUnion and generateIntersection), which keeps the formatter from
+ * attaching it to the end of the previous member (`} /** ... * / | {`).
+ */
+function memberComment(ast: AST): string | undefined {
+  return ast.type === 'INTERFACE' && hasComment(ast) && !hasStandaloneName(ast)
+    ? generateComment(ast.comment, ast.deprecated)
+    : undefined
 }
 
 function vacuousInterface(options: Options): TInterface {
@@ -355,11 +514,14 @@ function isUnknown(ast: AST): boolean {
 }
 
 /**
- * `tsType` overrides are opaque strings (e.g. function types) that may not be
- * union-safe, so parenthesize them unless they are a simple type reference.
+ * `type` as a union member: `tsType` overrides are opaque strings (e.g. function types)
+ * that may not be union-safe, so parenthesize them unless they are a simple type
+ * reference; and a bare union or intersection keeps together.
  */
 function unionMember(ast: AST, type: string): string {
-  return ast.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type
+  return (ast.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type)) || bareSetOperations.has(ast)
+    ? parenthesize(type)
+    : type
 }
 
 /**
@@ -534,47 +696,43 @@ function generateIndexSignatureType(
   if (needsUndefined && !seen.has('undefined')) {
     members.push('undefined')
   }
-  return members.join(' | ')
+  return generateUnion(members.map(type => ({type})))
 }
 
 function generateInterface(ast: TInterface, options: Options): string {
   const params = ast.params.filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
+  if (params.length === 0) {
+    return '{}'
+  }
 
   const indexSignature = params.find(_ => _.isIndexSignature)
   const indexSignatureType = indexSignature
     ? generateIndexSignatureType(indexSignature, params, ast.superTypes, options)
     : undefined
 
-  return (
-    `{` +
-    '\n' +
-    params
-      .map(param => {
-        const {isRequired, isIndexSignature, keyName, ast} = param
-        // the widened type handles strictIndexSignatures itself; the fallback path
-        // (widening skipped or unneeded) appends `| undefined` here
-        const type =
-          param === indexSignature && indexSignatureType !== undefined
-            ? indexSignatureType
-            : generateType(ast, options) + (isIndexSignature && options.strictIndexSignatures ? ' | undefined' : '')
-        const commented = withItemsComment(ast)
-        return (
-          (hasComment(commented) && !ast.standaloneName
-            ? generateComment(commented.comment, commented.deprecated) + '\n'
-            : '') +
-          readonlyModifier(param.isReadOnly, options) +
-          (isIndexSignature ? keyName : escapeKeyName(keyName)) +
-          (isRequired ? '' : '?') +
-          ': ' +
-          (!isRequired && !isIndexSignature && options.undefinedOptionalProperties
-            ? orUndefined(ast, type, options)
-            : type)
-        )
-      })
-      .join('\n') +
-    '\n' +
-    '}'
-  )
+  const members = params.map(param => {
+    const {isRequired, isIndexSignature, keyName, ast} = param
+    // the widened type handles strictIndexSignatures itself; the fallback path
+    // (widening skipped or unneeded) appends `| undefined` here
+    let type =
+      param === indexSignature && indexSignatureType !== undefined
+        ? indexSignatureType
+        : generateType(ast, options) + (isIndexSignature && options.strictIndexSignatures ? ' | undefined' : '')
+    if (!isRequired && !isIndexSignature && options.undefinedOptionalProperties) {
+      type = orUndefined(ast, type, options)
+    }
+    const commented = withItemsComment(ast)
+    const member =
+      (hasComment(commented) && !ast.standaloneName
+        ? generateComment(commented.comment, commented.deprecated) + '\n'
+        : '') +
+      readonlyModifier(param.isReadOnly, options) +
+      (isIndexSignature ? keyName : escapeKeyName(keyName)) +
+      (isRequired ? '' : '?') +
+      ':'
+    return INDENT + indentLines(typed(member, type) + (mayTerminate(type) ? ';' : ''))
+  })
+  return '{\n' + members.join('\n') + '\n}'
 }
 
 /**
@@ -630,19 +788,17 @@ function generateComment(comment?: string, deprecated?: boolean): string {
     commentLines.push(' * @deprecated')
   }
   if (typeof comment !== 'undefined') {
-    commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
+    commentLines.push(...comment.split('\n').map(_ => (_ === '' ? ' *' : ' * ' + _)))
   }
   commentLines.push(' */')
-  return commentLines.join('\n')
+  // A lone carriage return in the comment starts a line without a `*`, and prettier re-indents a
+  // block comment only when every line has one: it prints this one as it stands. So it stands as
+  // it always has, a space deep, by keeping its lines apart with `\r`, which `indentLines` leaves
+  // alone and TypeScript reads as a newline like any other.
+  return commentLines.join(comment?.includes('\r') && /\r(?!\n)/.test(comment) ? '\r' : '\n')
 }
 
 function generateStandaloneEnum(ast: TEnum, options: Options): string {
-  // Anything that is not a bare TypeScript identifier has to be quoted. Testing
-  // for the valid shape (rather than for "special characters") also covers the
-  // empty string and names that begin with a digit, both of which are legal
-  // enum *values* but not legal identifiers.
-  const isValidIdentifier = (key: string): boolean => /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
-
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
     'export ' +
@@ -650,12 +806,7 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
     `enum ${toSafeString(ast.standaloneName)} {` +
     '\n' +
     ast.params
-      .map(
-        ({ast, keyName}) =>
-          // JSON.stringify, not string interpolation: the key may itself contain
-          // quotes or backslashes that need escaping.
-          (isValidIdentifier(keyName) ? keyName : JSON.stringify(keyName)) + ' = ' + generateType(ast, options),
-      )
+      .map(({ast, keyName}) => INDENT + escapeKeyName(keyName) + ' = ' + indentLines(generateType(ast, options)))
       .join(',\n') +
     '\n' +
     '}'
@@ -669,7 +820,7 @@ function generateStandaloneInterface(ast: TNamedInterface, options: Options): st
   return (
     (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
     (options.declarationStyle === 'type'
-      ? `export type ${name} = ${[...superTypes, body].join(' & ')}`
+      ? `export type ${name} = ${generateIntersection([...superTypes, body].map(type => ({type})))}`
       : `export interface ${name} ${superTypes.length > 0 ? `extends ${superTypes.join(', ')} ` : ''}${body}`)
   )
 }
@@ -678,10 +829,11 @@ function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): s
   const commented = withItemsComment(ast)
   return (
     (hasComment(commented) ? generateComment(commented.comment) + '\n' : '') +
-    `export type ${toSafeString(ast.standaloneName)} = ${generateType(omitStandaloneName(ast), options)}`
+    typed(`export type ${toSafeString(ast.standaloneName)} =`, generateType(omitStandaloneName(ast), options))
   )
 }
 
+/** A property key or enum member name as written in a type: bare if it is an identifier, else quoted (and escaped) */
 function escapeKeyName(keyName: string): string {
   if (keyName.length && /[A-Za-z_$]/.test(keyName.charAt(0)) && /^[\w$]+$/.test(keyName)) {
     return keyName
