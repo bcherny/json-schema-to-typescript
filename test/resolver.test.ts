@@ -8,13 +8,28 @@ import {getTestCases, hasOnly} from './e2eCases'
 
 const suite = hasOnly() ? describe.skip : describe
 
+// Documents the e2e cases don't happen to contain, where doing the obvious thing differs from $RefParser
+const CORNER_CASES: Record<string, {input: JSONSchema}> = {
+  // a sibling keyword named like an Array.prototype member, next to a `$ref` whose (cached) target is an
+  // array: $RefParser drops it (`'length' in []`), so the in-document path has to as well
+  'sibling named like an array method': {
+    input: {
+      definitions: {tup: {items: [{type: 'string'}]}},
+      properties: {
+        a: {items: {$ref: '#/definitions/tup/items'}},
+        c: {items: {$ref: '#/definitions/tup/items', length: 5}},
+      },
+    },
+  },
+}
+
 suite('resolver', () => {
   // The in-document path exists only to be faster than $RefParser, so it has to produce exactly what
   // $RefParser produces: the same object graph (keys in the same order, the same objects shared or
   // copied in the same places, cycles included) and the same onDereference reports
   test('documents dereferenced in-process come out exactly as $RefParser makes them', async () => {
     let inDocument = 0
-    for (const [name, {input}] of getTestCases()) {
+    for (const [name, {input}] of [...getTestCases(), ...Object.entries(CORNER_CASES)]) {
       const ours = prepare(input)
       const targets = inDocumentTargets(ours.schema)
       if (!targets) {

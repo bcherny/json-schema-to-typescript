@@ -208,7 +208,7 @@ function siblingsOf(ref: Ref): object {
 function overlay(first: object, second: object): object {
   const merged: Record<string, unknown> = {...first}
   for (const key of Object.keys(second)) {
-    if (!(key in merged)) {
+    if (!(key in first)) {
       merged[key] = (second as typeof merged)[key]
     }
   }
