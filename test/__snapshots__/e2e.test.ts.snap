@@ -370219,31 +370219,9 @@ exports[`realWorld.heroku.ts 1`] = `
 /**
  * provider actions for this specific add-on
  */
-export type Actions = ({
-/**
- * a unique identifier
- */
-id?: string
-/**
- * the display text shown in Dashboard
- */
-label?: string
-/**
- * identifier of the action to take that is sent via SSO
- */
-action?: string
-/**
- * absolute URL to use instead of an action
- */
-url?: string
-/**
- * if the action requires the user to own the app
- */
-requires_owner?: boolean
+export type Actions = {
 [k: string]: unknown
-} & {
-[k: string]: unknown
-}[])
+}[]
 /**
  * config vars exposed to the owning app by this add-on
  */
