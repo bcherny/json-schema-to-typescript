@@ -26,6 +26,7 @@ May change emitted types for existing schemas:
 Fixes for crashes and output that did not compile:
 
 - b25c768 Bugfix: A root-level `$ref` to a definition that is itself only a `$ref` no longer crashes with "Refs should have been resolved by the resolver!" (#741, fixes #740)
+- b25c768 Bugfix: A root-level `$ref` to a definition that refers back to itself (directly or through `items`/`properties`) compiles instead of crashing with the same error (#741, fixes #132, #730). The referenced definition is still emitted as its own interface alongside the root type
 - 107dd42 Bugfix: Index signatures from `patternProperties`/`additionalProperties` are widened to cover sibling named properties, so the interface typechecks (TS2411). Index signatures that already typechecked are emitted type-equivalent to before (#704, fixes #671)
 - a2234d3 Bugfix: `inferStringEnumKeysFromValues` no longer produces invalid enum members for non-string, empty or digit-leading values (#694, fixes #657)
 - 377c6a1 Bugfix: A named enum (`tsEnumNames`) in a position with no name no longer emits a nameless `enum` declaration; it degrades to a union of literals (#693, fixes #691)
@@ -33,7 +34,7 @@ Fixes for crashes and output that did not compile:
 
 Other:
 
-- 16c2e77 Bugfix (CLI): relative `$ref`s are resolved against each schema file's own directory rather than `process.cwd()` when compiling a glob or directory; an explicit `--cwd` still wins (#742, fixes #324)
+- 16c2e77 Bugfix (CLI): relative `$ref`s are resolved against each schema file's own directory rather than `process.cwd()`, so a schema passed by path from another directory finds its siblings; an explicit `--cwd` still wins (#742, fixes #324, #680)
 - 9219636 Updated runtime dependencies: js-yaml 4 -> 5 (YAML files parse as before, #689), prettier ^3.9 (short unions that fit on one line are no longer wrapped; users on the existing `^3.2.5` range may already see this), @apidevtools/json-schema-ref-parser ^11.9 (#686)
 - a5834aa Removed the `is-glob` dependency (#643)
 
