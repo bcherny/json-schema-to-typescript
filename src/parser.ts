@@ -709,7 +709,7 @@ function parseRequired(
     if (declaration !== undefined) {
       return declaredType(declaration, key, options, processed, usedNames)
     }
-    return takesRest ? {ast: valueType(owner, key, options, processed, usedNames)} : undefined
+    return takesRest ? valueType(owner, key, options, processed, usedNames) : undefined
   })
   return params.length ? [interfaceOf(params)] : []
 }
@@ -807,7 +807,7 @@ function requiredKeyType(
 ): KeyType {
   const declaration = findDeclaration(schema, key, options)
   return declaration === undefined
-    ? {ast: valueType(schema, key, options, processed, usedNames)}
+    ? valueType(schema, key, options, processed, usedNames)
     : declaredType(declaration, key, options, processed, usedNames)
 }
 
@@ -825,7 +825,7 @@ function valueType(
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
-): AST {
+): KeyType {
   const matching = Object.entries(schema.patternProperties ?? {}).filter(([pattern]) => testPattern(pattern, key))
   if (matching.length) {
     const params = matching.map(([, patternSchema]) => {
@@ -834,12 +834,19 @@ function valueType(
       // (see `parseSchema`) that the member does better without
       return hasStandaloneName(ast) ? ast : {...ast, comment: patternSchema.description}
     })
-    return params.length === 1 ? params[0] : {params, type: 'INTERSECTION'}
+    return {
+      ast: params.length === 1 ? params[0] : {params, type: 'INTERSECTION'},
+      // as for the index signature: readonly only if nothing writable applies to the key
+      isReadOnly: matching.every(([, patternSchema]) => isReadOnly(patternSchema)),
+    }
   }
   if (isPlainObject(schema.additionalProperties)) {
-    return parse(schema.additionalProperties, options, key, processed, usedNames)
+    return {
+      ast: parse(schema.additionalProperties, options, key, processed, usedNames),
+      isReadOnly: isReadOnly(schema.additionalProperties),
+    }
   }
-  return options.unknownAny ? T_UNKNOWN : T_ANY
+  return {ast: options.unknownAny ? T_UNKNOWN : T_ANY}
 }
 
 /** Whether `key` matches `pattern`, an (unanchored, ECMA-262) JSON-Schema regex; one JS can't compile matches nothing */
@@ -1136,7 +1143,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
     ...requireKeys(undeclaredRequired(schema), key => {
       const declaration = findDeclaration(schema, key, options)
       if (declaration === undefined) {
-        return {ast: valueType(schema, key, options, processed, usedNames)}
+        return valueType(schema, key, options, processed, usedNames)
       }
       // split off from an `allOf` (see `applySchemaTyping`): `parseRequired` adds the keys its
       // members declare, beside this interface
