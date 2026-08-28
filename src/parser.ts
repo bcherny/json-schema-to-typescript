@@ -16,7 +16,7 @@ import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimiti
 import {memoize} from './memoize'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
-import {generateName, justName, log} from './utils'
+import {formatTypeOf, generateName, justName, log} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -291,14 +291,14 @@ function parseNonLiteral(
   switch (type) {
     case 'ALL_OF': {
       const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
-      // An `allOf` member made up entirely of keywords this tool doesn't implement (eg.
-      // `if`/`then`/`else`, `not`) doesn't match any of the type matchers in `typesOfSchema`,
-      // so it falls back to `newInterface`, which synthesizes a bare `{[k: string]: unknown}`
-      // for it. Intersecting with that contributes no information, so drop it rather than
-      // cluttering the output. Restricted to members with no keyword this tool does recognize,
-      // so it never touches a member whose emptiness is due to its *own* type (eg. a bare
-      // `{type: 'object'}`, or `{required: [...]}` with no matching `properties`) -- those stay
-      // exactly as before.
+      // An `allOf` member made up entirely of subschema keywords this tool doesn't implement
+      // (eg. `if`/`then`/`else`, `not`) doesn't match any of the type matchers in
+      // `typesOfSchema`, so it falls back to `newInterface`, which synthesizes a bare
+      // `{[k: string]: unknown}` for it. Intersecting with that contributes no information, so
+      // drop it rather than cluttering the output. Restricted to members with no keyword this
+      // tool does recognize, so it never touches a member whose emptiness is due to its *own*
+      // type (eg. a bare `{type: 'object'}`, or `{required: [...]}` with no matching
+      // `properties`) -- those stay exactly as before.
       const members = schema
         .allOf!.map(memberSchema => ({
           ast: parseMember(memberSchema, schema, options, processed, usedNames),
@@ -453,13 +453,8 @@ function parseNonLiteral(
       }
       // The `formatTypes` option maps a string's `format` to TypeScript type text, which is
       // emitted verbatim just like `tsType` (an explicit `tsType` never gets here: it wins).
-      if (
-        typeof schema.format === 'string' &&
-        Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
-      ) {
-        return {...ast, params: options.formatTypes[schema.format], type: 'CUSTOM_TYPE'}
-      }
-      return {...ast, type: 'STRING'}
+      const formatType = formatTypeOf(schema, options)
+      return formatType === undefined ? {...ast, type: 'STRING'} : {...ast, params: formatType, type: 'CUSTOM_TYPE'}
     }
     case 'TYPED_ARRAY':
       if (Array.isArray(schema.items)) {
@@ -549,12 +544,13 @@ function parseNonLiteral(
 }
 
 // An `allOf` member made up exclusively of keywords that don't shape a type (see `Keyword.typed`
-// in `keywords.ts`; eg. `if`/`then`/`else`, `not`) is one this tool has no notion of at all, as
-// opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently renders
-// no differently -- that distinction keeps `hasNoRecognizedKeywords` from also swallowing members
-// whose current (separately unimplemented) behavior other schemas rely on. (`$ref` needs no
-// recognizing: by the time this runs, the resolver has already replaced every `$ref` node, so
-// `case 'REFERENCE'` above never fires and no schema here can carry one.)
+// in `keywords.ts`) but do hold subschemas (`if`/`then`/`else`, `not`; with none of either it is
+// the empty schema, which the optimizer drops from intersections) is one this tool has no notion
+// of at all, as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but
+// currently renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
+// swallowing members whose current (separately unimplemented) behavior other schemas rely on.
+// (`$ref` needs no recognizing: by the time this runs, the resolver has already replaced every
+// `$ref` node, so `case 'REFERENCE'` above never fires and no schema here can carry one.)
 function hasNoRecognizedKeywords(schema: NormalizedJSONSchema): boolean {
   return Object.keys(schema).every(key => !TYPE_SHAPING_KEYWORDS.has(key))
 }
