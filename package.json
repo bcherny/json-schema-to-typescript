@@ -10,8 +10,9 @@
   "engines": {
     "node": ">=16.0.0"
   },
+  "packageManager": "bun@1.4.0",
   "scripts": {
-    "build": "npm run lint && npm run clean && npm run build:browser && npm run build:server",
+    "build": "bun run lint && bun run clean && bun run build:browser && bun run build:server",
     "build:browser": "browserify src/index.ts -s jstt -p [ tsify -m commonjs ] > dist/bundle.js",
     "build:server": "tsc -d",
     "clean": "shx rm -rf dist && mkdir dist",
@@ -19,10 +20,10 @@
     "format-check": "prettier \"{src,test}/*.ts\" --check",
     "lint": "eslint src/*.ts test/*.ts",
     "tdd": "bun test --watch",
-    "test": "npm run pre-test && bun test --timeout 300000",
-    "stresstest": "seq 1 10 | xargs -I{} npm test",
-    "prepublishOnly": "npm test",
-    "pre-test": "npm run clean && npm run format-check && npm run typecheck && npm run build:server",
+    "test": "bun run pre-test && bun test --timeout 300000",
+    "stresstest": "seq 1 10 | xargs -I{} bun run test",
+    "prepublishOnly": "bun run test",
+    "pre-test": "bun run clean && bun run format-check && bun run typecheck && bun run build:server",
     "typecheck": "tsc -p tsconfig.test.json",
     "watch": "tsc -w"
   },
@@ -74,6 +75,9 @@
     "shx": "^0.4.0",
     "tsify": "^5.0.4",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "esprima-fb": "https://registry.npmjs.org/esprima-fb/-/esprima-fb-3001.0001.0000-dev-harmony-fb.tgz"
   },
   "browserify": {
     "transform": [

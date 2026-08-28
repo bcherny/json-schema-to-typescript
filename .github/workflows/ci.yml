@@ -21,25 +21,23 @@ jobs:
       uses: actions/setup-node@v7
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    # `bun test` is the test runner. The node version above is still what the
-    # CLI tests shell out to, so the matrix keeps exercising the built package
-    # on each supported node.
+    # bun installs dependencies and runs the scripts and tests; setup-bun takes
+    # its version from packageManager in package.json. The node version above is
+    # still what the CLI tests shell out to, so the matrix keeps exercising the
+    # built package on each supported node.
     - name: Use Bun
       uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: latest
     - name: Install dependencies
-      run: npm ci
+      run: bun install --frozen-lockfile
     - name: Run tests
-      run: npm test
+      run: bun run test
       env:
         CI: true
 
-  # Bun is not a supported target for the published package, but plenty of users
-  # run json2ts under it, so this job catches breakage early. bun install
-  # migrates package-lock.json, so the versions it resolves match the node jobs
-  # without a second lockfile.
+  # Bun is not a supported runtime for the published package, but plenty of
+  # users run json2ts under it, so build the package and run the CLI under bun
+  # rather than node to catch breakage early. (The test suite itself already
+  # runs under bun in the build job.)
   bun:
     runs-on: ubuntu-latest
 
@@ -47,14 +45,10 @@ jobs:
     - uses: actions/checkout@v7
     - name: Use Bun
       uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: latest
     - name: Install dependencies
-      run: bun install
-    - name: Run tests
-      run: bun run test
-      env:
-        CI: true
+      run: bun install --frozen-lockfile
+    - name: Build
+      run: bun run build:server
     - name: Run the built CLI under bun
       run: bun dist/src/cli.js test/resources/Schema.yaml
 
@@ -76,11 +70,12 @@ jobs:
       uses: actions/setup-node@v7
       with:
         node-version: 24.x
-        cache: 'npm'
+    - name: Use Bun
+      uses: oven-sh/setup-bun@v2
     - name: Install dependencies
-      run: npm ci
+      run: bun install --frozen-lockfile
     - name: Build
-      run: npm run build:server
+      run: bun run build:server
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v7
       with:
