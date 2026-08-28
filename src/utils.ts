@@ -63,6 +63,9 @@ function traverseIntersection(
   }
 }
 
+/** Each subschema keyword's position in `traverse`'s visiting order */
+const SUBSCHEMA_KEYWORD_ORDER = new Map(SUBSCHEMA_KEYWORDS.map(([keyword], order) => [keyword as string, order]))
+
 export function traverse(
   schema: LinkedJSONSchema,
   callback: (schema: LinkedJSONSchema, key: string | null) => void,
@@ -77,7 +80,23 @@ export function traverse(
   processed.add(schema)
   callback(schema, key ?? null)
 
-  for (const [keyword, holds] of SUBSCHEMA_KEYWORDS) {
+  // One look at the node's own keys (rather than a probe for every subschema keyword there is,
+  // most of which any one node lacks) finds the subschema keywords it has, visited first in
+  // keyword-table order, and the keys that definitions may technically sit under, visited after
+  const subschemaKeywords: number[] = []
+  const otherKeys: string[] = []
+  for (const key of Object.keys(schema)) {
+    const order = SUBSCHEMA_KEYWORD_ORDER.get(key)
+    if (order !== undefined) {
+      subschemaKeywords.push(order)
+    }
+    if (!NOT_SCANNED_FOR_DEFINITIONS.has(key)) {
+      otherKeys.push(key)
+    }
+  }
+
+  for (const i of subschemaKeywords.sort((a, b) => a - b)) {
+    const [keyword, holds] = SUBSCHEMA_KEYWORDS[i]
     const child = schema[keyword]
     if (!child) {
       continue
@@ -108,15 +127,12 @@ export function traverse(
   }
   traverseIntersection(schema, callback, processed)
 
-  // technically you can put definitions on any key
-  Object.keys(schema)
-    .filter(key => !NOT_SCANNED_FOR_DEFINITIONS.has(key))
-    .forEach(key => {
-      const child = schema[key]
-      if (child && typeof child === 'object') {
-        traverseObjectKeys(child, callback, processed)
-      }
-    })
+  for (const key of otherKeys) {
+    const child = schema[key]
+    if (child && typeof child === 'object') {
+      traverseObjectKeys(child, callback, processed)
+    }
+  }
 }
 
 /**
@@ -258,8 +274,19 @@ export function error(...messages: any[]): void {
 
 type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'white' | 'yellow'
 
+/**
+ * Whether `log()` prints: the VERBOSE environment variable, re-read at the start of every
+ * `compile()` (`readVerbose`) rather than on every call -- `log()` is called for every schema
+ * node and every generated type, and a `process.env` read is not free.
+ */
+let verbose = Boolean(process.env.VERBOSE)
+
+export function readVerbose(): void {
+  verbose = Boolean(process.env.VERBOSE)
+}
+
 export function log(style: LogStyle, title: string, ...messages: unknown[]): void {
-  if (!process.env.VERBOSE) {
+  if (!verbose) {
     return
   }
   let lastMessage = null
