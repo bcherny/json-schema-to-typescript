@@ -70,8 +70,10 @@ jobs:
       with:
         node-version: 24.x
         registry-url: https://registry.npmjs.org
+        package-manager-cache: false # never cache in a release build (npm's own example)
+    # This job holds the OIDC credential, so third-party actions are pinned by commit.
     - name: Use Bun
-      uses: oven-sh/setup-bun@v2
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
       with:
         bun-version-file: .bun-version
     - name: Check npm supports trusted publishing (11.5.1 or later)
@@ -89,7 +91,11 @@ jobs:
       env:
         CI: true
     - name: Publish ${{ needs.check.outputs.version }}
-      run: npm publish --provenance --access public --ignore-scripts
+      run: |
+        npm publish --provenance --access public --ignore-scripts || {
+          echo "::error::npm publish failed. If no trusted publisher is registered yet for bcherny/json-schema-to-typescript + publish.yml on npmjs.com (CONTRIBUTING.md → Releasing), register it and re-run this job, or publish this version by hand."
+          exit 1
+        }
 
   release:
     name: Tag and GitHub release
