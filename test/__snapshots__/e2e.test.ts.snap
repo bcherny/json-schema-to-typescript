@@ -48855,7 +48855,7 @@ export type Parameter = ExampleXORExamples &
       [k: string]: Example | Reference;
     };
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`Parameter\`'s JSON-Schema definition
      * via the \`patternProperty\` "^x-".
      */
     [k: string]: unknown;
@@ -48919,7 +48919,7 @@ export type MediaType = ExampleXORExamples & {
     [k: string]: Encoding;
   };
   /**
-   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * This interface was referenced by \`MediaType\`'s JSON-Schema definition
    * via the \`patternProperty\` "^x-".
    */
   [k: string]: unknown;
@@ -48942,7 +48942,7 @@ export type Header = ExampleXORExamples &
       [k: string]: Example | Reference;
     };
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`Header\`'s JSON-Schema definition
      * via the \`patternProperty\` "^x-".
      */
     [k: string]: unknown;
@@ -48955,7 +48955,7 @@ export type HTTPSecurityScheme = {
   description?: string;
   type: "http";
   /**
-   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * This interface was referenced by \`HTTPSecurityScheme\`'s JSON-Schema definition
    * via the \`patternProperty\` "^x-".
    */
   [k: string]: unknown;
@@ -49288,63 +49288,63 @@ export interface Callback {
 export interface Components {
   schemas?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`schemas\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Schema | Reference;
   };
   responses?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`responses\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Response;
   };
   parameters?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`parameters\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Parameter;
   };
   examples?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`examples\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Example;
   };
   requestBodies?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`requestBodies\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | RequestBody;
   };
   headers?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`headers\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Header;
   };
   securitySchemes?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`securitySchemes\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | SecurityScheme;
   };
   links?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`links\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Link;
   };
   callbacks?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`callbacks\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Callback;
@@ -49608,8 +49608,7 @@ export type JSONSchemaForNPMPackageJsonFiles = (
         /**
          * The module path that is resolved when the path component of the module specifier matches the property name.
          *
-         * This interface was referenced by \`undefined\`'s JSON-Schema definition
-         * via the \`patternProperty\` "^\\./".
+         * This interface was referenced via the \`patternProperty\` "^\\./".
          */
         [k: string]: PackageExportsEntryOrFallback | undefined;
       }
@@ -49647,13 +49646,11 @@ export type JSONSchemaForNPMPackageJsonFiles = (
       /**
        * Maps the file path matching the property key to the file paths specified in the array.
        *
-       * This interface was referenced by \`undefined\`'s JSON-Schema definition
-       * via the \`patternProperty\` "^[^*]+$".
+       * This interface was referenced via the \`patternProperty\` "^[^*]+$".
        *
        * Maps file paths matching the pattern specified in property key to file paths specified in the array.
        *
-       * This interface was referenced by \`undefined\`'s JSON-Schema definition
-       * via the \`patternProperty\` "^[^*]*\\*[^*]*$".
+       * This interface was referenced via the \`patternProperty\` "^[^*]*\\*[^*]*$".
        */
       [k: string]: string[] | undefined;
     };
@@ -49858,7 +49855,7 @@ export type JSONSchemaForNPMPackageJsonFiles = (
   /**
    * Any property starting with _ is valid.
    *
-   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * This interface was referenced by \`JSONSchemaForNPMPackageJsonFiles\`'s JSON-Schema definition
    * via the \`patternProperty\` "^_".
    */
   [k: string]: any;
@@ -363070,7 +363067,7 @@ export type Parameter = ExampleXORExamples &
       [k: string]: Example | Reference;
     };
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`Parameter\`'s JSON-Schema definition
      * via the \`patternProperty\` "^x-".
      */
     [k: string]: unknown;
@@ -363134,7 +363131,7 @@ export type MediaType = ExampleXORExamples & {
     [k: string]: Encoding;
   };
   /**
-   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * This interface was referenced by \`MediaType\`'s JSON-Schema definition
    * via the \`patternProperty\` "^x-".
    */
   [k: string]: unknown;
@@ -363157,7 +363154,7 @@ export type Header = ExampleXORExamples &
       [k: string]: Example | Reference;
     };
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`Header\`'s JSON-Schema definition
      * via the \`patternProperty\` "^x-".
      */
     [k: string]: unknown;
@@ -363170,7 +363167,7 @@ export type HTTPSecurityScheme = {
   description?: string;
   type: "http";
   /**
-   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * This interface was referenced by \`HTTPSecurityScheme\`'s JSON-Schema definition
    * via the \`patternProperty\` "^x-".
    */
   [k: string]: unknown;
@@ -363503,63 +363500,63 @@ export interface Callback {
 export interface Components {
   schemas?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`schemas\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Schema | Reference;
   };
   responses?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`responses\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Response;
   };
   parameters?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`parameters\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Parameter;
   };
   examples?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`examples\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Example;
   };
   requestBodies?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`requestBodies\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | RequestBody;
   };
   headers?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`headers\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Header;
   };
   securitySchemes?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`securitySchemes\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | SecurityScheme;
   };
   links?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`links\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Link;
   };
   callbacks?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`callbacks\`'s JSON-Schema definition
      * via the \`patternProperty\` "^[a-zA-Z0-9\\.\\-_]+$".
      */
     [k: string]: Reference | Callback;
@@ -364055,7 +364052,7 @@ exports[`options.strictIndexSignatures.singlePatternProperty.ts 1`] = `
 export interface Experiment {
   pattern?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`pattern\`'s JSON-Schema definition
      * via the \`patternProperty\` "leaf|tree".
      */
     [k: string]: unknown[] | undefined;
@@ -368063,7 +368060,7 @@ export interface EntityObjectDefinition {
 /**
  * My example entity object definition
  *
- * This interface was referenced by \`undefined\`'s JSON-Schema definition
+ * This interface was referenced by \`definitions\`'s JSON-Schema definition
  * via the \`patternProperty\` "^[a-zA-Z0-9_. /]+$".
  */
 export interface EntityObject {
@@ -369757,10 +369754,10 @@ export interface UndeclaredKeys {
     s1: string;
     other: boolean;
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`pattern\`'s JSON-Schema definition
      * via the \`patternProperty\` "^n".
      *
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`pattern\`'s JSON-Schema definition
      * via the \`patternProperty\` "^s".
      */
     [k: string]: number | string | boolean;
@@ -369865,7 +369862,7 @@ export interface MinProperties {
     a?: number;
     b?: string;
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`patternPropertiesAllowed\`'s JSON-Schema definition
      * via the \`patternProperty\` "^x-".
      */
     [k: string]: string | number | undefined;
@@ -369961,7 +369958,7 @@ export type Intersection = A &
     c: string;
     d: string;
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * This interface was referenced by \`Intersection\`'s JSON-Schema definition
      * via the \`patternProperty\` "^x-".
      */
     [k: string]: unknown;
