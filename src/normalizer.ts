@@ -10,6 +10,7 @@ import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeS
 import {Options} from './'
 import {link} from './linker'
 import {applySchemaTyping} from './applySchemaTyping'
+import {hasOwnType} from './typesOfSchema'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
 
@@ -59,6 +60,38 @@ rules.set('Destructure unary types', schema => {
     schema.type = schema.type[0]
   }
 })
+
+// Left alone, an untyped member falls through to the generic `UNNAMED_SCHEMA` default
+// (an open object) instead of picking up the `type` its parent already declared. Runs
+// this early so that the rules below normalize an inherited `array` like a declared one.
+rules.set(
+  'Inherit parent `type` into untyped `anyOf`/`oneOf` members',
+  (schema, _, _options, _key, dereferencedPaths) => {
+    const {type} = schema
+    // An untyped member already parses as an open object, so an `object` parent has
+    // nothing to add (and its required-only members are the parser's to narrow).
+    if (typeof type !== 'string' || type === 'object') {
+      return
+    }
+    const inherit = (members: LinkedJSONSchema[] | undefined) =>
+      members?.forEach((member, i) => {
+        // `anyOf`/`oneOf` members are typed as `LinkedJSONSchema`, but a boolean
+        // schema (`true`/`false`) can still show up here at runtime.
+        if (typeof member !== 'object' || !member) {
+          return
+        }
+        // A member that was a `$ref` is now the shared definition object itself: leave it
+        // alone so the definition keeps its name and type. Any other member is replaced by a
+        // typed COPY rather than written to, so an object shared by other means (YAML
+        // anchors, programmatic callers) is not retyped everywhere else it appears.
+        if (!hasOwnType(member) && !dereferencedPaths.has(member)) {
+          members[i] = link({...member, type}, members)
+        }
+      })
+    inherit(schema.anyOf)
+    inherit(schema.oneOf)
+  },
+)
 
 rules.set('Add empty `required` property if none is defined', schema => {
   if (isObjectType(schema) && !('required' in schema)) {
@@ -273,45 +306,6 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   ) {
     schema.tsEnumNames = schema.enum?.map(String)
   }
-})
-
-// A member has no way to be typed on its own if none of the keywords that
-// `typesOfSchema` matches on are present. Left alone, such a member falls
-// through to the generic `UNNAMED_SCHEMA` default instead of picking up the
-// `type` its parent already declared.
-function hasOwnType(schema: LinkedJSONSchema): boolean {
-  return (
-    'type' in schema ||
-    '$ref' in schema ||
-    'enum' in schema ||
-    'properties' in schema ||
-    'patternProperties' in schema ||
-    'items' in schema ||
-    'allOf' in schema ||
-    'anyOf' in schema ||
-    'oneOf' in schema ||
-    'tsType' in schema ||
-    'default' in schema
-  )
-}
-
-rules.set('Inherit parent `type` into untyped `anyOf`/`oneOf` members', schema => {
-  const {type} = schema
-  if (typeof type !== 'string') {
-    return
-  }
-  const inherit = (member: LinkedJSONSchema) => {
-    // `anyOf`/`oneOf` members are typed as `LinkedJSONSchema`, but a boolean
-    // schema (`true`/`false`) can still show up here at runtime.
-    if (typeof member !== 'object' || !member) {
-      return
-    }
-    if (!hasOwnType(member)) {
-      member.type = type
-    }
-  }
-  schema.anyOf?.forEach(inherit)
-  schema.oneOf?.forEach(inherit)
 })
 
 // Keywords that describe the property or definition rather than its values (or that host
