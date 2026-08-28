@@ -15,6 +15,7 @@ import {error, stripExtension, log, parseFileAsJSONSchema} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
+import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
 
 // These are all interfaces, so re-export them as types -- transpilers that
@@ -137,9 +138,7 @@ export function compileFromFile(filename: string, options: Partial<Options> = DE
 }
 
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
-  if (options.maxItems !== undefined && options.maxItems < -1) {
-    throw RangeError(`Expected options.maxItems to be >= -1, but was given ${options.maxItems}.`)
-  }
+  validateOptions(options)
 
   const _options = merge({}, DEFAULT_OPTIONS, options)
 
