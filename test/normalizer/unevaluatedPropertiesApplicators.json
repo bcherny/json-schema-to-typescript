@@ -64,6 +64,19 @@
           }
         ],
         "unevaluatedProperties": false
+      },
+      "combinedSchemaForm": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "a"
+            ]
+          }
+        ],
+        "unevaluatedProperties": {
+          "type": "string"
+        }
       }
     },
     "additionalProperties": false
@@ -130,6 +143,18 @@
                 "b"
               ]
             }
+          }
+        ],
+        "required": [],
+        "additionalProperties": true
+      },
+      "combinedSchemaForm": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "a"
+            ]
           }
         ],
         "required": [],

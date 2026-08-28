@@ -129,7 +129,14 @@ rules.set('Treat `unevaluatedProperties` as `additionalProperties`', schema => {
   if (typeof schema !== 'object' || schema === null || schema.unevaluatedProperties === undefined) {
     return
   }
-  if (schema.additionalProperties === undefined && emitsWhatItEvaluates(schema)) {
+  // A schema (rather than a boolean) becomes a typed index signature on the object's own
+  // interface, and an intersection holds the `allOf`/`anyOf`/`oneOf` members' keys to it too
+  // (`{[k: string]: string} & {x: number}` rejects {"x": 1}), so that form folds only where
+  // there is nothing to intersect with.
+  const folds =
+    emitsWhatItEvaluates(schema) &&
+    (isBoolean(schema.unevaluatedProperties) || !INTERSECTED_APPLICATORS.some(key => schema[key]))
+  if (schema.additionalProperties === undefined && folds) {
     schema.additionalProperties = schema.unevaluatedProperties
   }
   delete schema.unevaluatedProperties

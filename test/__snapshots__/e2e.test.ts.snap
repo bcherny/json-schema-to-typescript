@@ -447754,7 +447754,7 @@ export interface UnevaluatedPropertiesApplicators {
     [k: string]: unknown;
   } & {
     own?: boolean;
-    [k: string]: string | boolean | undefined;
+    [k: string]: unknown;
   };
   plain?: {
     own?: string;
