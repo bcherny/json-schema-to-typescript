@@ -304,12 +304,12 @@ function main() {
     if (!isInteresting(result)) continue
     const sig = signature(result)
     if (findings.has(sig)) {
-      findings.get(sig).count++
+      findings.get(sig).seeds.push(seed)
       continue
     }
 
     log(`  [seed ${seed}] ${result.status} ${result.errorName} ${result.message.slice(0, 80)}`)
-    findings.set(sig, {signature: sig, seed, count: 1, ...result, schema, options})
+    findings.set(sig, {signature: sig, seed, seeds: [seed], ...result, schema, options})
   }
 
   log(`\nran ${ran} cases, ${findings.size} distinct findings`)
@@ -330,7 +330,8 @@ function main() {
       message: finding.message,
       frame: finding.frame,
       seed: finding.seed,
-      occurrences: finding.count,
+      occurrences: finding.seeds.length,
+      seeds: finding.seeds,
       elapsedMs: finding.elapsed,
       schema: minimized.schema,
       options: minimized.options,
