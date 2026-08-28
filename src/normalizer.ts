@@ -583,8 +583,9 @@ rules.set('Drop `allOf` members that say nothing about the type', (schema, _, op
   // definition, a `title`...) stays and is referenced by that name, as everywhere else; the
   // optimizer drops it where other members constrain the type. Runs this late so that the rules
   // above have typed the members they can (`nullable`, a mapped `format`). The list is edited in
-  // place, since it is what links the members left to the schema around them; an `allOf` written
-  // empty is left alone.
+  // place: a list shared by several holders (a `$ref` with siblings is dereferenced into a copy
+  // that shares its target's lists) gets the same members dropped wherever it is held, which is
+  // what this rule would do to each holder anyway. An `allOf` written empty is left alone.
   const members = schema.allOf
   if (!Array.isArray(members)) {
     return

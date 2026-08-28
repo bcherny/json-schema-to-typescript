@@ -27,6 +27,7 @@ export function parse(
   keyName?: string,
   processed: Processed = new Map(),
   usedNames = new Set<string>(),
+  enclosing: Scope = [],
 ): AST {
   if (isPrimitive(schema)) {
     if (isBoolean(schema)) {
@@ -38,6 +39,8 @@ export function parse(
 
   const intersection = schema[Intersection]
   const types = schema[Types]
+  // what the members of this schema's set operations may also borrow from (see `Scope`)
+  const scope: Scope = perTypeCopies.has(schema) || !isObjectOnly(schema) ? [] : [schema, ...enclosing]
 
   if (intersection) {
     // `parse` comes back to this schema once per place that refers to it, and, through
@@ -49,10 +52,10 @@ export function parse(
     if (seen) {
       return seen
     }
-    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames) as TIntersection
-
+    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames, scope)
+    const {params} = ast as TIntersection
     types.forEach(type => {
-      ast.params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames))
+      params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames, scope))
     })
 
     log('blue', 'parser', 'Types:', [...types], 'Input:', schema, 'Output:', ast)
@@ -61,7 +64,7 @@ export function parse(
 
   if (types.size === 1) {
     const type = [...types][0]
-    const ast = parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames)
+    const ast = parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames, scope)
     log('blue', 'parser', 'Type:', type, 'Input:', schema, 'Output:', ast)
     return ast
   }
@@ -232,6 +235,7 @@ function parseAsTypeWithCache(
   keyName: string | undefined,
   processed: Processed,
   usedNames: UsedNames,
+  scope: Scope,
 ): AST {
   // If we've seen this node before, return it.
   let cachedTypeMap = processed.get(schema)
@@ -252,7 +256,7 @@ function parseAsTypeWithCache(
 
   // Update the AST in place. This updates the `processed` cache, as well
   // as any nodes that directly reference the node.
-  Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames))
+  Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames, scope))
   // Where the schema was read from (`imports` mode only), so the generator can tell a
   // type another file declares from one this file has to declare itself
   if (schema[Source]) {
@@ -290,6 +294,7 @@ function parseNonLiteral(
   keyName: string | undefined,
   processed: Processed,
   usedNames: UsedNames,
+  scope: Scope,
 ): AST {
   const keyNameFromDefinition = schema[DefinitionKey]
 
@@ -303,7 +308,7 @@ function parseNonLiteral(
         keyName,
         standaloneName: name,
         params: members
-          .map(memberSchema => parseMember(memberSchema, schema, options, processed, usedNames))
+          .map(memberSchema => parseMember(memberSchema, schema, scope, options, processed, usedNames))
           .concat(
             parseRequired(
               schema,
@@ -312,6 +317,7 @@ function parseNonLiteral(
               // schema's other types, which `parse` appends next
               intersectionOwner(schema) !== undefined || members.some(memberSchema => isObjectSchema(memberSchema)),
               name,
+              scope,
               options,
               processed,
               usedNames,
@@ -334,7 +340,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: parseBranches(schema.anyOf!, schema, options, processed, usedNames),
+        params: parseBranches(schema.anyOf!, schema, scope, options, processed, usedNames),
         type: 'UNION',
       }
     case 'BOOLEAN':
@@ -381,7 +387,7 @@ function parseNonLiteral(
       }
     }
     case 'NAMED_SCHEMA':
-      return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName)
+      return newInterface(schema as SchemaSchema, scope, options, processed, usedNames, keyName)
     case 'NEVER':
       return {
         comment: schema.description,
@@ -420,7 +426,7 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: parseBranches(schema.oneOf!, schema, options, processed, usedNames),
+        params: parseBranches(schema.oneOf!, schema, scope, options, processed, usedNames),
         type: 'UNION',
       }
     case 'REFERENCE':
@@ -504,6 +510,7 @@ function parseNonLiteral(
             }
           }
           applySchemaTyping(member)
+          perTypeCopies.add(member)
           return [parse(member, options, undefined, processed, usedNames)]
         }),
         type: 'UNION',
@@ -518,7 +525,7 @@ function parseNonLiteral(
         type: 'UNION',
       }
     case 'UNNAMED_SCHEMA':
-      return newInterface(schema as SchemaSchema, options, processed, usedNames, keyName, keyNameFromDefinition)
+      return newInterface(schema as SchemaSchema, scope, options, processed, usedNames, keyName, keyNameFromDefinition)
     case 'UNTYPED_ARRAY':
       // normalised to not be undefined
       const minItems = schema.minItems!
@@ -574,24 +581,26 @@ function parseNonLiteral(
 function parseMember(
   member: NormalizedJSONSchema,
   schema: NormalizedJSONSchema,
+  scope: Scope,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
+  const required = member.required as string[]
   if (
     isRequiredOnly(member) &&
     !isNamed(member, options) &&
-    (member.required as string[]).some(key => findDeclaration(schema, key, options) !== undefined)
+    required.some(key => findDeclaration(schema, key, scope) !== undefined)
   ) {
     return {
       comment: member.description,
       deprecated: member.deprecated,
-      ...interfaceOf(
-        requireKeys(member.required as string[], key => requiredKeyType(schema, key, options, processed, usedNames)),
-      ),
+      ...interfaceOf(requireKeys(required, key => requiredKeyType(schema, key, scope, options, processed, usedNames))),
     }
   }
-  return parse(member, options, undefined, processed, usedNames)
+  // a member inlined here and only here hands `scope` on to members of its own (see `Scope`)
+  const inlined = !isPrimitive(member) && !member[Shared] && !isNamed(member, options)
+  return parse(member, options, undefined, processed, usedNames, inlined ? scope : [])
 }
 
 /**
@@ -607,13 +616,14 @@ function parseMember(
 function parseBranches(
   members: NormalizedJSONSchema[],
   schema: NormalizedJSONSchema,
+  scope: Scope,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
 ): AST[] {
   const keys = undeclaredRequired(schema)
   return members.map(member => {
-    const ast = parseMember(member, schema, options, processed, usedNames)
+    const ast = parseMember(member, schema, scope, options, processed, usedNames)
     // The keys the branch doesn't declare go on the intersection instead, once, when `schema` was
     // split off of one (see `parseRequired`), and never on a branch that may match something other
     // than objects: `required` asks nothing of those, and the intersection would exclude them
@@ -623,7 +633,7 @@ function parseBranches(
       if (own !== undefined) {
         return declaredType(own, key, options, processed, usedNames)
       }
-      return takesRest ? requiredKeyType(schema, key, options, processed, usedNames) : undefined
+      return takesRest ? requiredKeyType(schema, key, scope, options, processed, usedNames) : undefined
     })
     return params.length ? {params: [ast, interfaceOf(params)], type: 'INTERSECTION'} : ast
   })
@@ -649,6 +659,7 @@ function parseRequired(
   schema: NormalizedJSONSchema,
   besideObjects: boolean,
   standaloneName: string | undefined,
+  scope: Scope,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
@@ -656,7 +667,7 @@ function parseRequired(
   // the intersection `applySchemaTyping` split off of a schema took its `allOf` along, but not its `required`
   const owner = intersectionOwner(schema) ?? schema
   const keys = undeclaredRequired(owner)
-  const declarations = new Map(keys.map(key => [key, findDeclaration(schema, key, options)]))
+  const declarations = new Map(keys.map(key => [key, findDeclaration(schema, key, scope)]))
   // the keys declared nowhere too, unless the owner has an interface of its own to list them or
   // may match something other than objects
   const takesRest =
@@ -667,6 +678,7 @@ function parseRequired(
       interfaceOf(
         parseSchema(
           owner as SchemaSchema,
+          scope,
           {...options, unreachableDefinitions: false},
           processed,
           usedNames,
@@ -772,11 +784,12 @@ function interfaceOf(params: TInterfaceParam[]): TInterface {
 function requiredKeyType(
   schema: NormalizedJSONSchema,
   key: string,
+  scope: Scope,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
 ): KeyType {
-  const declaration = findDeclaration(schema, key, options)
+  const declaration = findDeclaration(schema, key, scope)
   return declaration === undefined
     ? valueType(schema, key, options, processed, usedNames)
     : declaredType(declaration, key, options, processed, usedNames)
@@ -850,26 +863,36 @@ function isRequiredOnly(schema: NormalizedJSONSchema): boolean {
 }
 
 /**
- * The schema of property `key` as declared closest to `schema` among the schemas that apply to
- * the same instance `schema` does: `schema` itself and the members of its `allOf` (and of theirs,
- * and so on in), then -- when `schema` is just a member of an enclosing set operation -- that
- * operation's schema and its `allOf`, and so on out, for as long as the schemas on the way out are
- * objects (or don't say). Every schema visited holds for the whole instance, so requiring `key`
- * with the type found for it never asks more than the overall schema already does.
+ * The schemas around a member of an `allOf`/`anyOf`/`oneOf` that apply to the same instance it
+ * does, innermost first, for as far out as they are objects (or don't say): the schema whose set
+ * operation it is, then -- when that one is itself inlined as such a member, and only there: a
+ * named schema (declared once, however many places refer to it) or a shared one (dereferenced into
+ * several, parsed once for all) starts a scope over -- the schema around *it*, and so on out. An
+ * intersection `applySchemaTyping` split off of a schema hands its members that schema's scope.
  */
-function findDeclaration(
-  schema: NormalizedJSONSchema,
-  key: string,
-  options: Options,
-): NormalizedJSONSchema | undefined {
+type Scope = readonly NormalizedJSONSchema[]
+
+/**
+ * The per-type copies of multi-typed schemas (the `UNION` case, `narrowMember`). The copies share
+ * their members, which are parsed once, so no one copy is the schema around them: a copy hands its
+ * members an empty scope.
+ */
+const perTypeCopies = new WeakSet<LinkedJSONSchema>()
+
+/**
+ * The schema of property `key` as declared closest to `schema` among the schemas that apply to
+ * the same instance `schema` does: `schema` itself, if its instances are all objects, and the
+ * members of its `allOf` (and of theirs, and so on in), then each schema of `scope` the same way.
+ * Every schema visited holds for the whole instance, so requiring `key` with the type found for
+ * it never asks more than the overall schema already does.
+ */
+function findDeclaration(schema: NormalizedJSONSchema, key: string, scope: Scope): NormalizedJSONSchema | undefined {
   const seen = new Set<NormalizedJSONSchema>()
-  let node: NormalizedJSONSchema | undefined = schema
-  while (node && isObjectOnly(node)) {
+  for (const node of [schema, ...scope]) {
     const declaration = findDeclarationIn(node, key, seen)
     if (declaration !== undefined) {
       return declaration
     }
-    node = enclosingSchema(node, options)
   }
 }
 
@@ -908,34 +931,6 @@ function hasProperty(schema: NormalizedJSONSchema, key: string): boolean {
   return schema.properties !== undefined && Object.prototype.hasOwnProperty.call(schema.properties, key)
 }
 
-/**
- * The schema whose `allOf`/`anyOf`/`oneOf` `schema` is a member of, provided `schema` is inlined
- * there and only there. A named schema (declared once, however many set operations refer to it) or
- * a shared one (dereferenced into more than one place, and parsed once for all of them) has no one
- * enclosing schema. The intersection `applySchemaTyping` split off of a schema stands for that
- * schema, and kept its `allOf` array, whose parent is still that schema.
- */
-function enclosingSchema(schema: NormalizedJSONSchema, options: Options): NormalizedJSONSchema | undefined {
-  const split = intersectionOwner(schema)
-  if (split) {
-    return split
-  }
-  const parent = schema[Parent]
-  const owner = parent?.[Parent]
-  const members: unknown = parent
-  if (
-    owner &&
-    !schema[Shared] &&
-    !isNamed(schema, options) &&
-    (owner.allOf === members ||
-      owner.anyOf === members ||
-      owner.oneOf === members ||
-      owner[Intersection]?.allOf === members)
-  ) {
-    return owner
-  }
-}
-
 /** The schema `applySchemaTyping` split `schema` off of, if `schema` is such an intersection */
 function intersectionOwner(schema: NormalizedJSONSchema): NormalizedJSONSchema | undefined {
   const parent = schema[Parent]
@@ -963,15 +958,10 @@ function narrowMember(member: LinkedJSONSchema, type: JSONSchema4TypeName, optio
     return [member]
   }
   const copy: LinkedJSONSchema = {...member, type: narrowed}
-  Object.defineProperty(copy, Parent, {enumerable: false, value: member[Parent]})
+  perTypeCopies.add(copy)
   for (const key of ['anyOf', 'oneOf'] as const) {
-    const members = member[key]
-    const narrowedMembers = members?.flatMap(_ => narrowMember(_, type, options))
-    if (
-      narrowedMembers &&
-      !(narrowedMembers.length === members!.length && narrowedMembers.every((_, i) => _ === members![i]))
-    ) {
-      copy[key] = Object.defineProperty(narrowedMembers, Parent, {enumerable: false, value: copy})
+    if (member[key]) {
+      copy[key] = member[key]!.flatMap(_ => narrowMember(_, type, options))
     }
   }
   applySchemaTyping(copy)
@@ -1004,6 +994,7 @@ const CLOSED_EMPTY_OBJECT_PARAM: TInterfaceParam = {
 
 function newInterface(
   schema: SchemaSchema,
+  scope: Scope,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
@@ -1011,7 +1002,7 @@ function newInterface(
   keyNameFromDefinition?: string,
 ): TInterface {
   const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)!
-  const params = parseSchema(schema, options, processed, usedNames, name)
+  const params = parseSchema(schema, scope, options, processed, usedNames, name)
   // `extends` holds schemas once dereferenced, whatever the draft 4 typings say
   const superTypes = ((schema.extends as SchemaSchema[] | undefined) ?? []).map(
     _ => parse(_, options, undefined, processed, usedNames) as TNamedInterface,
@@ -1058,6 +1049,7 @@ function isReadOnly(schema: LinkedJSONSchema | boolean): boolean {
  */
 function parseSchema(
   schema: SchemaSchema,
+  scope: Scope,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
@@ -1134,7 +1126,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
   // schema's `patternProperties`/`additionalProperties` (see `valueType`).
   asts.push(
     ...requireKeys(undeclaredRequired(schema), key => {
-      const declaration = findDeclaration(schema, key, options)
+      const declaration = findDeclaration(schema, key, scope)
       if (declaration === undefined) {
         return valueType(schema, key, options, processed, usedNames)
       }
