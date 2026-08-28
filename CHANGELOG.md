@@ -6,7 +6,6 @@
 
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
-- Feat: Support draft 2020-12 tuples: `prefixItems` is read as the tuple form of `items`, and `items` next to it as `additionalItems`, so `{prefixItems: [A, B], items: false}` emits `[A, B]` instead of ignoring `prefixItems` (and, with `items: false`, emitting `never[]`). Schemas without `prefixItems` are unchanged (#543, supersedes #574)
 
 ## 16.0.0
 
