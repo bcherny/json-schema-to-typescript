@@ -24,9 +24,13 @@ type Rule = (
 // Rules run in the order they are set: each rule sees a schema only after every rule before it
 // has run on that schema and on the schemas above it. That is all most rules need, so
 // consecutive rules share one walk over the schema (walking a large dereferenced schema costs
-// far more than any rule does). A rule that also needs the rules before it to have finished on
-// every *other* schema, or that adds schemas the rules before it must not see, is preceded by
-// `startNewPass()`.
+// far more than any rule does). A rule gets a walk of its own -- `startNewPass()` above it --
+// when sharing one would be observable: it reads or compares schemas other than the one it is
+// given and its ancestors (so the rules before it must have finished everywhere), it adds
+// schemas that the rules before it never saw, or it removes or moves a key that `traverse`
+// descends through (`traverse` follows every key not on its blacklist, `const` and `extends`
+// included, and visits an `allOf` moved into the intersection last), which would change what
+// the rules sharing its walk visit and in which order.
 const passes: Rule[][] = [[]]
 const rules = {
   set(_name: string, rule: Rule) {
@@ -264,6 +268,10 @@ rules.set('Make extends always an array, if it is defined', schema => {
   }
 })
 
+// Compares the whole `definitions` and `$defs` subtrees, so no other rule may be part-way through
+// rewriting them
+startNewPass()
+
 rules.set('Transform definitions to $defs', (schema, fileName) => {
   if (schema.definitions && schema.$defs && !isDeepStrictEqual(schema.definitions, schema.$defs)) {
     throw ReferenceError(
@@ -279,6 +287,10 @@ rules.set('Transform definitions to $defs', (schema, fileName) => {
 // Schemas that were rewritten by the rule below, so that the `tsEnumNames`
 // inference rule can tell them apart from hand-written enums.
 const schemasNormalizedFromConst = new WeakSet<LinkedJSONSchema>()
+
+// Deleting `const` stops the walk from descending into an object-valued `const`, which the rules
+// above do visit (`enum` is on the traversal blacklist, `const` is not)
+startNewPass()
 
 rules.set('Transform const to singleton enum', schema => {
   if (schema.const !== undefined) {
@@ -394,6 +406,12 @@ export function normalizeNullableRefs(schema: JSONSchema): void {
 // the intersection schema needs to participate in the schema cache during
 // the parsing step, so it cannot be re-calculated every time the schema
 // is encountered.
+//
+// `applySchemaTyping` moves a typed schema's `allOf` into its intersection, which `traverse`
+// visits after everything else rather than first; in a shared walk that would change the order
+// in which the rule above reaches a schema used in two places, and so the `key` it names it by.
+startNewPass()
+
 rules.set('Pre-calculate schema types and intersections', schema => {
   if (schema !== null && typeof schema === 'object') {
     applySchemaTyping(schema)
