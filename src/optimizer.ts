@@ -1,7 +1,7 @@
 import {uniqBy} from 'lodash'
 import {Options} from '.'
 import {generateType} from './generator'
-import {AST, omitStandaloneName, T_ANY, T_UNKNOWN} from './types/AST'
+import {AST, omitStandaloneName, T_ANY, T_UNKNOWN, TAny, TUnknown} from './types/AST'
 import {log} from './utils'
 
 export function optimize(ast: AST, options: Options, processed = new Set<AST>()): AST {
@@ -39,13 +39,13 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       // [A, B, C, Any] -> Any
       if (optimizedAST.params.some(_ => _.type === 'ANY')) {
         log('cyan', 'optimizer', '[A, B, C, Any] -> Any', optimizedAST)
-        return T_ANY
+        return collapsed(optimizedAST, T_ANY)
       }
 
       // [A, B, C, Unknown] -> Unknown
       if (optimizedAST.params.some(_ => _.type === 'UNKNOWN')) {
         log('cyan', 'optimizer', '[A, B, C, Unknown] -> Unknown', optimizedAST)
-        return T_UNKNOWN
+        return collapsed(optimizedAST, T_UNKNOWN)
       }
 
       // [A (named), A] -> [A (named)]
@@ -73,4 +73,13 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
     default:
       return ast
   }
+}
+
+/**
+ * `ast` with its members gone: what names, documents and places it stays, so that a root (or
+ * definition) whose set operation matches anything is still declared, as an alias
+ */
+function collapsed(ast: AST, to: TAny | TUnknown): AST {
+  const {comment, deprecated, isUnreachableDefinition, keyName, standaloneName} = ast
+  return {...to, comment, deprecated, isUnreachableDefinition, keyName, standaloneName}
 }

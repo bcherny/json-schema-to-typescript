@@ -128528,6 +128528,10 @@ export interface Tag {
   [k: string]: unknown;
 }
 export interface Paths {
+  /**
+   * This interface was referenced by \`Paths\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 /**
@@ -128540,6 +128544,10 @@ export interface PathItem {
   description?: string;
   servers?: Server[];
   parameters?: (Parameter | Reference)[];
+  /**
+   * This interface was referenced by \`PathItem\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 /**
@@ -128683,6 +128691,13 @@ export interface RequestBody {
 }
 export interface Responses {
   default?: Response | Reference;
+  /**
+   * This interface was referenced by \`Responses\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^[1-5](?:\\d{2}|XX)$".
+   *
+   * This interface was referenced by \`Responses\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 export interface Response {
@@ -128718,6 +128733,10 @@ export interface Link {
   [k: string]: unknown;
 }
 export interface Callback {
+  /**
+   * This interface was referenced by \`Callback\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 export interface Components {
@@ -131000,6 +131019,10 @@ exports[`patternProperties.emptySchemaWithAdditionalProperties.ts 1`] = `
  */
 
 export interface Callback {
+  /**
+   * This interface was referenced by \`Callback\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 export interface PathItem {
@@ -215251,6 +215274,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties?: unknown
 [k: string]: unknown
 }
@@ -217378,6 +217404,9 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties?: unknown
 [k: string]: unknown
 }
@@ -218923,6 +218952,9 @@ tags?: ({
  * The etag of the zone.
  */
 etag?: string
+/**
+ * The properties of the zone.
+ */
 properties: unknown
 resources?: (DnsZones_TXTChildResource | DnsZones_SRVChildResource | DnsZones_SOAChildResource | DnsZones_PTRChildResource | DnsZones_NSChildResource | DnsZones_MXChildResource | DnsZones_CNAMEChildResource | DnsZones_CAAChildResource | DnsZones_AAAAChildResource | DnsZones_AChildResource)[]
 [k: string]: unknown
@@ -219973,6 +220005,9 @@ tags?: ({
  * The etag of the zone.
  */
 etag?: string
+/**
+ * The properties of the zone.
+ */
 properties: unknown
 resources?: (DnsZones_TXTChildResource1 | DnsZones_SRVChildResource1 | DnsZones_SOAChildResource1 | DnsZones_PTRChildResource1 | DnsZones_NSChildResource1 | DnsZones_MXChildResource1 | DnsZones_CNAMEChildResource1 | DnsZones_CAAChildResource1 | DnsZones_AAAAChildResource1 | DnsZones_AChildResource1)[]
 [k: string]: unknown
@@ -222062,6 +222097,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties?: unknown
 [k: string]: unknown
 }
@@ -234221,6 +234259,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -234241,6 +234282,9 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -234261,6 +234305,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -234281,6 +234328,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -235263,6 +235313,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties?: unknown
 [k: string]: unknown
 }
@@ -236951,6 +237004,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -238427,6 +238483,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties?: unknown
 [k: string]: unknown
 }
@@ -239721,6 +239780,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -240089,6 +240151,9 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the DDoS protection plan.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -243758,6 +243823,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -244414,6 +244482,9 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the DDoS protection plan.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -247843,6 +247914,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -248503,6 +248577,9 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the DDoS protection plan.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -251279,6 +251356,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -251518,6 +251598,9 @@ routeFilter?: (SubResource19 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig4 | string)
+/**
+ * The ExpressRoute connection.
+ */
 expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
@@ -254886,6 +254969,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -255125,6 +255211,9 @@ routeFilter?: (SubResource20 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig5 | string)
+/**
+ * The ExpressRoute connection.
+ */
 expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
@@ -257941,6 +258030,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -257961,6 +258053,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -258204,6 +258299,9 @@ routeFilter?: (SubResource21 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig6 | string)
+/**
+ * The ExpressRoute connection.
+ */
 expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
@@ -261238,6 +261336,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -261492,6 +261593,9 @@ routeFilter?: (SubResource22 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig7 | string)
+/**
+ * The ExpressRoute connection.
+ */
 expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
@@ -294751,6 +294855,9 @@ routeFilter?: (SubResource28 | string)
  * The IPv6 peering configuration.
  */
 ipv6PeeringConfig?: (Ipv6ExpressRouteCircuitPeeringConfig13 | string)
+/**
+ * The ExpressRoute connection.
+ */
 expressRouteConnection?: unknown
 /**
  * The list of circuit connections associated with Azure Private Peering for this circuit.
@@ -300845,6 +300952,9 @@ tags?: ({
  * The ETag of the Private DNS zone.
  */
 etag?: string
+/**
+ * The properties of the Private DNS zone.
+ */
 properties: unknown
 resources?: (PrivateDnsZonesVirtualNetworkLinksChildResource | PrivateDnsZones_AChildResource | PrivateDnsZones_AAAAChildResource | PrivateDnsZones_CNAMEChildResource | PrivateDnsZones_MXChildResource | PrivateDnsZones_PTRChildResource | PrivateDnsZones_SOAChildResource | PrivateDnsZones_SRVChildResource | PrivateDnsZones_TXTChildResource)[]
 [k: string]: unknown
@@ -302616,6 +302726,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -303266,6 +303379,9 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the DDoS protection plan.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -303357,6 +303473,9 @@ gatewayManagerEtag?: string
  * Authorization in an ExpressRouteCircuit resource.
  */
 export interface ExpressRouteCircuitAuthorization16 {
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties?: unknown
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
@@ -303584,6 +303703,9 @@ export interface ExpressRouteCircuitsAuthorizationsChildResource16 {
 name: string
 type: "authorizations"
 apiVersion: "2019-11-01"
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -303594,6 +303716,9 @@ export interface ExpressRouteCircuitsAuthorizations17 {
 name: string
 type: "Microsoft.Network/expressRouteCircuits/authorizations"
 apiVersion: "2019-11-01"
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -304238,6 +304363,9 @@ publicIPPrefix?: (SubResource31 | string)
  * Pool of backend IP addresses.
  */
 export interface BackendAddressPool23 {
+/**
+ * Properties of load balancer backend address pool.
+ */
 properties?: unknown
 /**
  * The name of the resource that is unique within the set of backend address pools used by the load balancer. This name can be used to access the resource.
@@ -305053,6 +305181,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the network watcher.
+ */
 properties: unknown
 resources?: (NetworkWatchersFlowLogsChildResource | NetworkWatchersConnectionMonitorsChildResource5 | NetworkWatchersPacketCapturesChildResource8)[]
 [k: string]: unknown
@@ -316087,6 +316218,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -316748,6 +316882,9 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the DDoS protection plan.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -316839,6 +316976,9 @@ gatewayManagerEtag?: string
  * Authorization in an ExpressRouteCircuit resource.
  */
 export interface ExpressRouteCircuitAuthorization18 {
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties?: unknown
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
@@ -317080,6 +317220,9 @@ export interface ExpressRouteCircuitsAuthorizationsChildResource18 {
 name: string
 type: "authorizations"
 apiVersion: "2020-03-01"
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -317090,6 +317233,9 @@ export interface ExpressRouteCircuitsAuthorizations19 {
 name: string
 type: "Microsoft.Network/expressRouteCircuits/authorizations"
 apiVersion: "2020-03-01"
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -317793,6 +317939,9 @@ publicIPPrefix?: (SubResource33 | string)
  * Pool of backend IP addresses.
  */
 export interface BackendAddressPool25 {
+/**
+ * Properties of load balancer backend address pool.
+ */
 properties?: unknown
 /**
  * The name of the resource that is unique within the set of backend address pools used by the load balancer. This name can be used to access the resource.
@@ -318701,6 +318850,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the network watcher.
+ */
 properties: unknown
 resources?: (NetworkWatchersFlowLogsChildResource2 | NetworkWatchersConnectionMonitorsChildResource7 | NetworkWatchersPacketCapturesChildResource10)[]
 [k: string]: unknown
@@ -330173,6 +330325,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the application security group.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -330876,6 +331031,9 @@ location?: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the DDoS protection plan.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -330967,6 +331125,9 @@ gatewayManagerEtag?: string
  * Authorization in an ExpressRouteCircuit resource.
  */
 export interface ExpressRouteCircuitAuthorization20 {
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties?: unknown
 /**
  * The name of the resource that is unique within a resource group. This name can be used to access the resource.
@@ -331208,6 +331369,9 @@ export interface ExpressRouteCircuitsAuthorizationsChildResource20 {
 name: string
 type: "authorizations"
 apiVersion: "2020-05-01"
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -331218,6 +331382,9 @@ export interface ExpressRouteCircuitsAuthorizations21 {
 name: string
 type: "Microsoft.Network/expressRouteCircuits/authorizations"
 apiVersion: "2020-05-01"
+/**
+ * Properties of the express route circuit authorization.
+ */
 properties: unknown
 [k: string]: unknown
 }
@@ -333147,6 +333314,9 @@ location: string
 tags?: ({
 [k: string]: string
 } | string)
+/**
+ * Properties of the network watcher.
+ */
 properties: unknown
 resources?: (NetworkWatchersFlowLogsChildResource4 | NetworkWatchersConnectionMonitorsChildResource9 | NetworkWatchersPacketCapturesChildResource12)[]
 [k: string]: unknown
@@ -441332,6 +441502,10 @@ exports[`patternProperties.singleOptimizable.ts 1`] = `
  */
 
 export interface Single {
+  /**
+   * This interface was referenced by \`Single\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^a".
+   */
   [k: string]: unknown;
 }
 "
@@ -442054,6 +442228,10 @@ export interface Tag {
   [k: string]: unknown;
 }
 export interface Paths {
+  /**
+   * This interface was referenced by \`Paths\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 /**
@@ -442066,6 +442244,10 @@ export interface PathItem {
   description?: string;
   servers?: Server[];
   parameters?: (Parameter | Reference)[];
+  /**
+   * This interface was referenced by \`PathItem\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 /**
@@ -442209,6 +442391,13 @@ export interface RequestBody {
 }
 export interface Responses {
   default?: Response | Reference;
+  /**
+   * This interface was referenced by \`Responses\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^[1-5](?:\\d{2}|XX)$".
+   *
+   * This interface was referenced by \`Responses\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 export interface Response {
@@ -442244,6 +442433,10 @@ export interface Link {
   [k: string]: unknown;
 }
 export interface Callback {
+  /**
+   * This interface was referenced by \`Callback\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 export interface Components {
@@ -443789,6 +443982,10 @@ exports[`patternProperties.multipleWithAdditionalPropertiesFalse.ts 1`] = `
  */
 
 export interface Paths {
+  /**
+   * This interface was referenced by \`Paths\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
   [k: string]: unknown;
 }
 /**
