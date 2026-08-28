@@ -686,7 +686,7 @@ function findDeclaration(
 ): NormalizedJSONSchema | undefined {
   const seen = new Set<NormalizedJSONSchema>()
   let node: NormalizedJSONSchema | undefined = schema
-  while (node && (node.type === undefined || node.type === 'object')) {
+  while (node && isObjectOnly(node)) {
     const declaration = findDeclarationIn(node, key, seen)
     if (declaration !== undefined) {
       return declaration
@@ -701,7 +701,7 @@ function findDeclarationIn(
   key: string,
   seen = new Set<NormalizedJSONSchema>(),
 ): NormalizedJSONSchema | undefined {
-  if (seen.has(schema)) {
+  if (seen.has(schema) || !isObjectOnly(schema)) {
     return undefined
   }
   seen.add(schema)
@@ -714,6 +714,11 @@ function findDeclarationIn(
       return declaration
     }
   }
+}
+
+/** True unless `schema`'s `type` says its instances may be something other than objects (`required` asks nothing of those) */
+function isObjectOnly(schema: NormalizedJSONSchema): boolean {
+  return schema.type === undefined || schema.type === 'object'
 }
 
 function hasProperty(schema: NormalizedJSONSchema, key: string): boolean {
