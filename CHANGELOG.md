@@ -2,10 +2,43 @@
 
 *Note: This is a partial changelog, covering significant & breaking changes. For a full list of changes, please consult the [commit log](https://github.com/bcherny/json-schema-to-typescript/commits).
 
-## Next
+## 17.0.0
 
-- Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
-- Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
+Sixteen fixes and three new options merged since 16.0.0. Ten of the fixes change the types emitted for schemas that already compiled, which is why this is a major; the list below says what moves. If you pin `^16`, nothing here reaches you until you bump.
+
+May change emitted types for existing schemas:
+
+- 20bf334 Bugfix: `anyOf`/`oneOf`/`allOf` members that carry only a `required` list (the json-schema.org "factoring" pattern, used by the OpenAPI 3.1 meta-schema) now pick the listed keys from the enclosing schema's `properties` and mark them required, instead of emitting `{[k: string]: unknown}`; a `required` list next to an `allOf`/`anyOf`/`oneOf` whose members declare the key now adds `& {key: T}` (#784 with #788, fixes #567, #513, #381, #395)
+- 8e65b2a Bugfix: `unevaluatedProperties` (draft 2019-09+) is honoured like `additionalProperties`: `false` closes the object, a schema types the index signature, an explicit `additionalProperties` still wins. Keys contributed only through a `$ref` with siblings, `if`/`then`/`else` or `dependentSchemas` are not seen, so such an object is emitted closed without them (#782, re-host of #738 by @Neal006, fixes #442)
+- 4f16172 Bugfix: An object with `additionalProperties: false` and no properties emits `{[k: string]: never}` (only the empty object) instead of `{}` (any non-nullish value); with the global `additionalProperties: false` option this applies to every bare `{type: 'object'}` (#781, re-host of #700 by @Souptik96, fixes #486, #557)
+- 9a04298 Bugfix: A schema made of annotation keywords only (`description`, `title`, `deprecated`; no `type`, `properties` or `$ref`) emits `unknown`, like `{}`, instead of `{[k: string]: unknown}` — eg. FHIR's `text.div`, Azure's `properties` (#791 = #707, fixes #432, #654)
+- 0d0399d Bugfix: Untyped `anyOf`/`oneOf` members (`{format: 'hostname'}`, `{pattern: …}`, `{minimum: …}`) under a `string`/`number`/`integer`/`boolean`/`null`/`array` parent inherit the parent's `type`, so `{type: 'string', anyOf: [{format: 'hostname'}, {format: 'ipv6'}]}` is `string` rather than `{[k: string]: unknown} & string`; `$ref` members and `object` parents are unchanged (#774, from draft #710, fixes #528)
+- e38ee55 Bugfix: An explicit `type` takes precedence over the type implied by `default`: `{type: 'integer', default: '30'}` emits `number`, previously `number & string` (#772, from draft #715, fixes #434)
+- ccfe00d Bugfix: In a closed object whose `minProperties` is at least the number of declared properties, every property is emitted required (#771, re-host of #737 by @Neal006, fixes #565)
+- d2988f2 Bugfix: A property that pairs `$ref` with `tsType` no longer produces a self-referential `export type X = X` plus a renamed `X1` for the real definition; the definition keeps its name (#767, from draft #712, fixes #466)
+- 93a1ac9 Bugfix: An array whose `items` is a `maxItems`-bounded array emits `([] | [string] | [string, string])[]` instead of `[] | [string] | [string, string][]` (which rejected valid data); the same union inside an `allOf` is parenthesized too. A bounded array as an `anyOf` member keeps its own parentheses (type-identical) (#769)
+- 2c1b9f1 Bugfix: The `description` of an anonymous `oneOf`/`anyOf`/`allOf` member is kept as a JSDoc comment above that member instead of being dropped. Comments only; the types are unchanged, except that two compound members differing only in a description are no longer deduplicated (#773, from draft #716, fixes #419)
+
+New:
+
+- 8f778ac Feat: `formatTypes` option maps a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#792, closes #183)
+- d86f285 Feat: `declarationStyle: 'type'` (CLI: `--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection. The default `'interface'` leaves output unchanged apart from one whitespace fix (a JSDoc block that followed a closing brace on the same line now starts on its own line) (#793, closes #307, #653)
+- be6199b Feat: `removeOptionalIfDefaultExists` option (CLI: `--removeOptionalIfDefaultExists`) emits a property that has a `default` as required. Off by default (#780, re-host of #673 by @sortA0329, fixes #558)
+
+Fixes for crashes, options and the CLI (no change to default output for schemas that compiled):
+
+- 8d04fc6 Bugfix: A cyclic schema that parses as an intersection (json.schemastore.org/web-types) no longer crashes with "Cannot read properties of undefined (reading 'push')" (#770, re-host of #735 by @Neal006, fixes #649)
+- 1313d75 Bugfix: `unreachableDefinitions` declares definitions whatever the root schema's type is; a non-object root (`type: number`, an array, `anyOf`, a bare `$ref`) used to drop them all (#778, from draft #714, fixes #439)
+- cb58dd6 Bugfix: `declareExternallyReferenced: false` also suppresses externally-referenced named type aliases (reached through a root union, intersection, tuple, array or leaf), not only interfaces (#768, re-host of #734 by @Neal006, fixes #525)
+- 0e85c7a Bugfix: A property named like an annotation keyword (eg. `deprecated`) inside `if`/`then`/`else` no longer fails validation with "deprecated must be a boolean" (#764, re-host of #739 by @joyheroes, fixes #626)
+- e57fa95 Bugfix: OpenAPI `nullable: true` next to a `$ref` inside a file that is itself reached through a `$ref` now compiles to `X | null` like it does in the root file (#776 with #777; follow-up to #755)
+- 44740f2 Bugfix (CLI): `--style.singleQuote false`, `--style.singleQuote=false` and `--no-style.singleQuote` all work instead of throwing "Invalid singleQuote value" (#766, re-host of #709 by @jackwalkerlabs, fixes #199)
+
+Other:
+
+- cb79bfe, 8ccaa9d, 3d17d5b Perf: faster naming when many schemas share a title or definition name, union members are not re-rendered when none is named, and the normalizer walks the schema once per group of rules instead of once per rule. Generated output is unchanged (#787, #786, #785)
+- 188cf89 The repository's own tooling (install, scripts, tests, CI) moved from npm to bun; see CONTRIBUTING.md. The published package, its `dependencies` and `engines` are unchanged (#762, #763)
+- af4a236 Internal: one keyword table replaces six hand-kept keyword lists; no output change, except that an (invalid) array-valued `dependencies` no longer crashes (#775)
 
 ## 16.0.0
 
