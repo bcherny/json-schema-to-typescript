@@ -26,12 +26,7 @@ export function link(schema: JSONSchema4Type | JSONSchema, parent: JSONSchema4Ty
     writable: false,
   })
 
-  // Arrays
-  if (Array.isArray(schema)) {
-    schema.forEach(child => link(child, schema))
-  }
-
-  // Objects
+  // An object's members, or an array's (`for...in` visits its indices, in order)
   for (const key in schema as JSONSchema) {
     link((schema as JSONSchema)[key], schema)
   }

@@ -105,6 +105,8 @@ The CLI automatically loads the closest [Prettier configuration](https://prettie
 json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
 # use single quotes and disable trailing semicolons
 json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
+# pass options to the $ref resolver (quote the flag, so that your shell leaves the `$` alone)
+json2ts -i foo.json -o foo.d.ts '--$refOptions.dereference.externalReferenceResolution=root'
 ```
 
 #### Compiling a directory of schemas that reference each other (experimental)

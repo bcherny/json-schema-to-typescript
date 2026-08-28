@@ -364,7 +364,7 @@ export interface Use {
   /**
    * @minItems 2
    */
-  tuple?: [Named, MaybeObj];
+  tuple?: [Named, MaybeObj, ...unknown[]];
   any?: Custom | ObjList;
   all?: Obj & {
     o: string;
@@ -376,7 +376,7 @@ export interface Use {
     | Named
     | Obj
     | Obj[]
-    | [Named, MaybeObj]
+    | [Named, MaybeObj, ...unknown[]]
     | Custom
     | ObjList
     | (Obj & {
@@ -639,6 +639,8 @@ export type ResourceBaseExternal = ARMResourceBase & {
   copy?: ResourceCopy;
   comments?: string;
   [k: string]: unknown;
+} & {
+  plan: unknown;
 };
 /**
  * Kind of resource

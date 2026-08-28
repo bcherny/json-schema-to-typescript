@@ -1,5 +1,5 @@
 import {readFileSync} from 'fs'
-import {JSONSchema4} from 'json-schema'
+import {JSONSchema4, JSONSchema6, JSONSchema7} from 'json-schema'
 import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
 import {cloneDeep, endsWith, merge} from 'lodash'
 import {dirname, resolve} from 'path'
@@ -143,7 +143,7 @@ export const DEFAULT_OPTIONS: Options = {
   unknownAny: true,
 }
 
-export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
+export function compileFromFile(filename: string, options: Partial<Options> = {}): Promise<string> {
   const schema = parseFileAsJSONSchema(filename, readSchemaFile(filename))
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
@@ -213,9 +213,17 @@ function readSchemaFile(filename: string): string {
   )
 }
 
-export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
-  // Initial clone to avoid mutating the input
-  const {ast, unreachableDefinitions, options: _options, time} = await compileToAST(cloneDeep(schema), name, options)
+export async function compile(
+  schema: JSONSchema4 | JSONSchema6 | JSONSchema7,
+  name: string,
+  options: Partial<Options> = {},
+): Promise<string> {
+  // Initial clone to avoid mutating the input. Downstream code reads schema
+  // keys generically rather than validating them against a specific draft's
+  // shape (e.g. `exclusiveMaximum` is never interpreted as a boolean vs. a
+  // number), so this cast doesn't change runtime behavior -- see #359.
+  const _schema = cloneDeep(schema) as JSONSchema4
+  const {ast, unreachableDefinitions, options: _options, time} = await compileToAST(_schema, name, options)
 
   const generated = generate(ast, _options, unreachableDefinitions)
   log('magenta', 'generator', time(), '✅ Result:', generated)
