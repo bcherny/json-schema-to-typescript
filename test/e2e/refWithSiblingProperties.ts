@@ -1,15 +1,14 @@
 /**
  * @see https://github.com/bcherny/json-schema-to-typescript/issues/613
  * Since draft 2019-09 a `$ref` no longer replaces its siblings: `person` below
- * is BaseType *and* has an `age` property. On master the dereferencer merges
- * the $ref target and the siblings shallowly, so the sibling `properties`
- * ({age}) shadows BaseType's `properties` ({name}) and `name` silently
- * disappears from Person. The snapshot entry for this case holds what master
- * already emits for the same schema written with the non-standard `extends`
- * keyword (`interface Person extends BaseType`), which is the output the
- * reporter asked for; `type Person = BaseType & {age?: number}` (what an
- * explicit allOf gives today) would be the other acceptable shape. Either
- * way the bar is: `name` must not be dropped.
+ * is BaseType *and* has an `age` property. The dereferencer used to merge the
+ * $ref target and the siblings shallowly, so the sibling `properties` ({age})
+ * shadowed BaseType's `properties` ({name}) and `name` silently disappeared
+ * from Person. The reference and its siblings are now composed like the
+ * equivalent `allOf` (`type Person = BaseType & {age?: number}`); ref.7.ts is
+ * the reporter's full schema, with `unevaluatedProperties: false` closing the
+ * added properties. Either that or `interface Person extends BaseType` meets
+ * the bar: `name` must not be dropped.
  */
 export const input = {
   $schema: 'https://json-schema.org/draft/2020-12/schema',

@@ -570,22 +570,9 @@ export type ResourceBase = ARMResourceBase & {
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "resourceBaseExternal".
  */
-export type ResourceBaseExternal = ARMResourceBase & {
-  /**
-   * Location to deploy resource to
-   */
-  location?: ResourceLocations;
-  /**
-   * Name-value pairs to add to the resource
-   */
-  tags?: {
-    [k: string]: unknown;
-  };
-  copy?: ResourceCopy;
-  comments?: string;
-  [k: string]: unknown;
-} & {
+export type ResourceBaseExternal = ResourceBase & {
   plan: unknown;
+  [k: string]: unknown;
 };
 /**
  * Kind of resource
