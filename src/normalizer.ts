@@ -81,26 +81,18 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
   if ((typeof type !== 'string' && !Array.isArray(type)) || !(schema.anyOf || schema.oneOf)) {
     return
   }
-  // The copies and lists this rule makes. Whatever one of them holds that was not made here, the
-  // original holds too; `settle` marks that `[Shared]` where anyone looks -- on members (the parser)
-  // and on their `anyOf`/`oneOf` lists (this rule, when it gets to the copy).
+  // The copies and lists this rule makes. Whatever one of them ends up holding that was not made
+  // here, the original holds too: `settle` marks that `[Shared]` once the node is in place.
   const made = new Set<object>()
   const copyOf = (member: LinkedJSONSchema, change?: Partial<LinkedJSONSchema>): LinkedJSONSchema => {
     const copy = {...member, ...change}
     made.add(copy)
     return copy
   }
-  const settle = (members: SharedMembers) =>
-    members.forEach(member => {
-      if (made.has(member)) {
-        if (member.anyOf && !made.has(member.anyOf)) {
-          markShared(member.anyOf)
-        }
-        if (member.oneOf && !made.has(member.oneOf)) {
-          markShared(member.oneOf)
-        }
-      } else if (made.has(members) && typeof member === 'object') {
-        markShared(member)
+  const settle = (node: object) =>
+    Object.values(node).forEach(held => {
+      if (typeof held === 'object' && held && !made.has(held)) {
+        markShared(held)
       }
     })
   // Narrows `owner[key]` to what a value of the parent `type` can match; says whether it changed.
@@ -169,12 +161,12 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
     }
     if (owned) {
       members.splice(0, members.length, ...constrained)
-      settle(members)
     } else {
       made.add(constrained)
       owner[key] = constrained
       settle(constrained)
     }
+    constrained.forEach(member => made.has(member) && settle(member))
     if (!constrained.length) {
       log('yellow', 'normalizer', `No ${key} member is compatible with the parent type (${type}): emits never`, owner)
     }
