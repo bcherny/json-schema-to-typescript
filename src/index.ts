@@ -63,12 +63,6 @@ export interface Options {
    */
   inferStringEnumKeysFromValues: boolean
   /**
-   * Append all optional property signatures with `| undefined` so that they are strictly typed in accordance with
-   * TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes)
-   * option.
-   */
-  exactOptionalPropertyTypes: boolean
-  /**
    * Format code? Set this to `false` to improve performance.
    */
   format: boolean
@@ -109,6 +103,11 @@ export interface Options {
    */
   unreachableDefinitions: boolean
   /**
+   * Append `| undefined` to the type of every optional property, for consumers that compile with
+   * TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes).
+   */
+  undefinedOptionalProperties: boolean
+  /**
    * Generate unknown type instead of any
    */
   unknownAny: boolean
@@ -128,7 +127,6 @@ export const DEFAULT_OPTIONS: Options = {
   declareExternallyReferenced: true,
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
-  exactOptionalPropertyTypes: false,
   format: true,
   formatTypes: {},
   ignoreMinAndMaxItems: false,
@@ -145,6 +143,7 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false,
   },
   unreachableDefinitions: false,
+  undefinedOptionalProperties: false,
   unknownAny: true,
 }
 

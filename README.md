@@ -140,7 +140,6 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | declareExternallyReferenced | boolean | `true` | Declare external schemas referenced via `$ref`? |
 | enableConstEnums | boolean | `true` | Prepend enums with [`const`](https://www.typescriptlang.org/docs/handbook/enums.html#computed-and-constant-members)? |
 | inferStringEnumKeysFromValues | boolean | `false` | Create enums from JSON enums with eponymous keys |
-| exactOptionalPropertyTypes | boolean | `false` | Append all optional property signatures with `\| undefined` so that they are strictly typed in accordance with TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) option. |
 | format | boolean | `true` | Format code? Set this to `false` to improve performance. |
 | formatTypes | `Record<string, string>` | `{}` | Map from a string schema's [`format`](https://json-schema.org/understanding-json-schema/reference/string#format) to the TypeScript type to emit for it, verbatim, like `tsType` (which still takes precedence, as do `enum` and `const`). Eg. `{ 'date-time': 'Date' }` turns `{ "type": "string", "format": "date-time" }` into `Date` instead of `string`; `nullable`, arrays and `$ref`s follow (`Date \| null`, `Date[]`). Formats you don't list stay `string`. For a type of your own, add its `import` via `bannerComment`. CLI: `--formatTypes.date-time=Date`. |
 | ignoreMinAndMaxItems | boolean | `false` | Ignore maxItems and minItems for `array` types, preventing tuples being generated. |
@@ -148,6 +147,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | removeOptionalIfDefaultExists | boolean | `false` | Remove the optional modifier when a property has a default value. |
 | strictIndexSignatures | boolean | `false` | Append all index signatures with `\| undefined` so that they are strictly typed. |
 | style | object | `{ bracketSpacing: false,  printWidth: 120,  semi: true,  singleQuote: false,  tabWidth: 2,  trailingComma: 'none',  useTabs: false }` | A [Prettier](https://prettier.io/docs/en/options.html) configuration |
+| undefinedOptionalProperties | boolean | `false` | Append `\| undefined` to the type of every optional property (`age?: number \| undefined`), for consumers that compile with TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes). |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
 | $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s |

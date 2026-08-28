@@ -24,12 +24,12 @@ main(
       'additionalProperties',
       'declareExternallyReferenced',
       'enableConstEnums',
-      'exactOptionalPropertyTypes',
       'format',
       'ignoreMinAndMaxItems',
       'removeOptionalIfDefaultExists',
       'style.singleQuote',
       'strictIndexSignatures',
+      'undefinedOptionalProperties',
       'unknownAny',
       'unreachableDefinitions',
     ],
@@ -211,6 +211,9 @@ Boolean values can be set to false using the 'no-' prefix.
       Remove the optional modifier when a property has a default value
   --style.XXX=YYY
       Prettier configuration
+  --undefinedOptionalProperties
+      Append '| undefined' to the type of optional properties, for consumers
+      that compile with TypeScript's exactOptionalPropertyTypes
   --unknownAny
       Output unknown type instead of any type
   --unreachableDefinitions

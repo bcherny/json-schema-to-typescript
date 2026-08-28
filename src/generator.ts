@@ -16,6 +16,7 @@ import {
   TIntersection,
   TNamedInterface,
   TUnion,
+  T_UNDEFINED,
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
@@ -357,6 +358,30 @@ function isUnknown(ast: AST): boolean {
 }
 
 /**
+ * `tsType` overrides are opaque strings (e.g. function types) that may not be
+ * union-safe, so parenthesize them unless they are a simple type reference.
+ */
+function unionMember(ast: AST, type: string): string {
+  return ast.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type
+}
+
+/**
+ * `T | undefined`, for an optional property under `undefinedOptionalProperties`. An
+ * anonymous union takes `undefined` as one more member rather than nesting
+ * (`string | number | undefined`, not `(string | number) | undefined`); `any` and
+ * `unknown` already include it.
+ */
+function orUndefined(ast: AST, type: string, options: Options): string {
+  if (isAny(ast) || isUnknown(ast)) {
+    return type
+  }
+  if (ast.type === 'UNION' && !hasStandaloneName(ast)) {
+    return generateType({...ast, params: [...ast.params, T_UNDEFINED]}, options)
+  }
+  return unionMember(ast, type) + ' | undefined'
+}
+
+/**
  * Named properties (own and inherited) that TypeScript checks against an interface's
  * index signature.
  */
@@ -507,9 +532,7 @@ function generateIndexSignatureType(
     }
     seen.add(type)
     seen.add(underlying)
-    // tsType overrides are opaque strings (e.g. function types) that may not be
-    // union-safe, so parenthesize them unless they are a simple type reference
-    members.push(memberAST.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type)
+    members.push(unionMember(memberAST, type))
   }
 
   if (needsUndefined && !seen.has('undefined')) {
@@ -546,8 +569,9 @@ function generateInterface(ast: TInterface, options: Options): string {
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +
-          type +
-          (!isRequired && options.exactOptionalPropertyTypes ? ' | undefined' : '')
+          (!isRequired && !isIndexSignature && options.undefinedOptionalProperties
+            ? orUndefined(ast, type, options)
+            : type)
         )
       })
       .join('\n') +
