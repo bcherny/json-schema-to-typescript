@@ -1,12 +1,6 @@
-import {
-  getRootSchema,
-  JSONSchema,
-  JSONSchemaTypeName,
-  LinkedJSONSchema,
-  NormalizedJSONSchema,
-  Parent,
-} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {getRootSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {appendToDescription, escapeBlockComment, hasType, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
 import {applySchemaTyping} from './applySchemaTyping'
@@ -42,9 +36,6 @@ function startNewPass() {
   passes.push([])
 }
 
-function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
-  return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
-}
 function isObjectType(schema: LinkedJSONSchema) {
   return schema.properties !== undefined || hasType(schema, 'object') || hasType(schema, 'any')
 }
@@ -386,47 +377,6 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   }
 })
 
-// Keywords that describe the property or definition rather than its values (or that host
-// other schemas), so they stay on the outer schema when `nullable` moves everything else
-// into an `anyOf`
-const NULLABLE_OUTER_KEYS = new Set(['$defs', '$id', '$schema', 'definitions', 'deprecated', 'description', 'title'])
-
-/**
- * OpenAPI 3.0 `nullable: true` becomes `anyOf: [<schema>, {type: 'null'}]`, which the
- * parser already turns into `X | null` for every shape of schema (typed or untyped,
- * enum, const, allOf, array...). Schemas whose `type` or `enum` already allow null, and
- * schemas that constrain nothing (only annotations next to `nullable`), are left as they
- * are. The schema is rewritten in place, so every reference to it sees the union.
- *
- * A TypeScript enum (`enum` + `tsEnumNames`) cannot be an anonymous union member, so it
- * takes its `title` with it, or else is named after `enumName` (the key or definition it
- * sits under) - the name the parser would have given it in place.
- *
- * Returns the schema that moved into the `anyOf`, if any.
- */
-function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSchema | undefined {
-  if (schema.nullable !== true || Object.keys(schema).every(_ => _ === 'nullable' || NULLABLE_OUTER_KEYS.has(_))) {
-    return
-  }
-  delete schema.nullable
-  if (hasType(schema, 'null') || (Array.isArray(schema.enum) && schema.enum.includes(null))) {
-    return
-  }
-  const isNamedEnum = 'enum' in schema && 'tsEnumNames' in schema
-  const inner: JSONSchema = {}
-  for (const key of Object.keys(schema)) {
-    if (!NULLABLE_OUTER_KEYS.has(key) || (isNamedEnum && key === 'title')) {
-      inner[key] = schema[key]
-      delete schema[key]
-    }
-  }
-  if (isNamedEnum && !inner.title && enumName) {
-    inner.$id = enumName
-  }
-  schema.anyOf = [inner, {type: 'null'}]
-  return inner
-}
-
 // Runs this late so that the schema has already been named from its `$ref` path, had
 // its object defaults filled in, its `const` turned into an `enum` and its `tsEnumNames`
 // inferred (all of which look at keywords that move into the `anyOf`), and before types
@@ -455,22 +405,6 @@ rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, 
     }
   }
 })
-
-/**
- * `nullable` next to a `$ref` has to be rewritten before dereferencing, while it still
- * visibly belongs to the referencing schema: the ref parser folds `$ref` siblings into a
- * copy of the target, where it would read as if the target itself were nullable (and
- * the copy would be emitted as a second, identical type). Everything else waits for the
- * rule above, which also reaches schemas in other files, once dereferencing has pulled
- * them in.
- */
-export function normalizeNullableRefs(schema: JSONSchema): void {
-  traverse(schema as LinkedJSONSchema, node => {
-    if (node.$ref) {
-      normalizeNullable(node)
-    }
-  })
-}
 
 // Precalculation of the schema types is necessary because the ALL_OF type
 // is implemented in a way that mutates the schema object. Detection of the
