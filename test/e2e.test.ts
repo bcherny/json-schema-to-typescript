@@ -9,7 +9,8 @@ for (const [name, testCase] of getTestCases()) {
 
   test(name, async () => {
     if (testCase.error) {
-      await expect(compile(testCase.input, stripExtension(name), getOptions(testCase))).rejects.toBeInstanceOf(Error)
+      const rejects = expect(compile(testCase.input, stripExtension(name), getOptions(testCase))).rejects
+      await (testCase.error === true ? rejects.toBeInstanceOf(Error) : rejects.toThrow(testCase.error))
     } else {
       expect(await compileTestCase(name)).toMatchSnapshot()
     }

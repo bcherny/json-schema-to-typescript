@@ -226,7 +226,10 @@ export async function compile(
   const {ast, unreachableDefinitions, options: _options, time} = await compileToAST(_schema, name, options)
 
   const generated = generate(ast, _options, unreachableDefinitions)
-  log('magenta', 'generator', time(), '✅ Result:', generated)
+  if (process.env.VERBOSE) {
+    // (the guard spares joining the whole file when nobody is reading)
+    log('magenta', 'generator', time(), '✅ Result:', generated.join(''))
+  }
 
   const formatted = await format(generated, _options)
   log('white', 'formatter', time(), '✅ Result:', formatted)

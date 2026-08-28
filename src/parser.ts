@@ -1,6 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {includes, isPlainObject, map, omit} from 'lodash'
-import {format} from 'util'
 import {Options} from './'
 import {applySchemaTyping} from './typesOfSchema'
 import type {AST, TInterface, TInterfaceParam, TIntersection, TNamedInterface, TTuple} from './types/AST'
@@ -439,7 +438,18 @@ function parseNonLiteral(
         type: 'UNION',
       }
     case 'REFERENCE':
-      throw Error(format('Refs should have been resolved by the resolver!', schema))
+      // If a $ref makes it this far unresolved, the most likely cause is a $ref
+      // cycle with no concrete base case -- eg. `definitions.bar` being nothing
+      // but `{"$ref": "#/definitions/bar"}`, which (directly, or through a chain
+      // of other $refs) only ever points back to itself and never bottoms out
+      // in an actual type. There's no TypeScript equivalent for that (it's like
+      // `type Bar = Bar`), so surface a targeted error instead of the generic
+      // one below.
+      throw new ReferenceError(
+        `Failed to resolve $ref "${schema.$ref}"` +
+          (keyNameFromDefinition ? ` in definition "${keyNameFromDefinition}"` : '') +
+          '. This usually means the $ref is part of a cycle with no concrete base case, so it can never resolve to an actual type.',
+      )
     case 'STRING': {
       const ast = {
         comment: schema.description,

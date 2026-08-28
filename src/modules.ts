@@ -74,7 +74,8 @@ export async function generateModules(modules: Module[]): Promise<string[]> {
       }
       const body = generate(module.ast, {...module.options, bannerComment: ''}, module.unreachableDefinitions, linker)
       const header = [module.options.bannerComment, renderImports(module, imports)].filter(Boolean).join('\n')
-      return format([header, body].filter(Boolean).join('\n\n'), module.options)
+      // `generate`'s parts, the header ahead of them as one more (see `format`)
+      return format(header ? [header, `\n\n${body[0]}`, ...body.slice(1)] : body, module.options)
     }),
   )
 }
