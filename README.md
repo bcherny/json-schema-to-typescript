@@ -98,7 +98,7 @@ json2ts -i schemas/ -o types/
 
 You can pass any of the options described below (including style options) as CLI flags. Boolean values can be set to false using the `no-` prefix.
 
-The CLI automatically loads the closest [Prettier configuration](https://prettier.io/docs/configuration) for the generated output file (or the input file when writing to stdout). Explicit `--style.*` flags take precedence over discovered settings. This does not affect the programmatic API.
+The CLI automatically loads the closest [Prettier configuration](https://prettier.io/docs/configuration) for the generated output file (when writing to stdout: for a `.d.ts` next to the input file, or in the working directory for piped input). Explicit `--style.*` flags take precedence over discovered settings, and the output is always parsed as TypeScript whatever `parser` the config names. A Prettier config that cannot be loaded (invalid syntax, a missing plugin) now fails the run. This does not affect the programmatic API.
 
 ```sh
 # generate code for definitions that aren't referenced

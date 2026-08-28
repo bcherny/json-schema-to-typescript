@@ -7,7 +7,7 @@ import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {resolveConfig} from 'prettier'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
-import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
+import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} from './utils'
 
 // cwd and style are deliberately left out of the CLI defaults: processFile()
 // computes a per-file cwd and loads the closest Prettier config. Explicit CLI
@@ -126,10 +126,12 @@ function outputResult(result: string, outputPath: string | undefined): void {
 async function processFile(argIn: string, outputPath: string | undefined, argv: Partial<Options>): Promise<string> {
   const {filename, contents} = await readInput(argIn)
   const schema = parseFileAsJSONSchema(filename, contents)
-  // Prefer the file being formatted so Prettier overrides match the generated
-  // declaration. When writing to stdout, use the input file's project config.
-  const configPath = outputPath || filename
-  const prettierConfig = configPath ? (await resolveConfig(resolve(process.cwd(), configPath))) || {} : {}
+  // Resolve the Prettier config for the file being written, so `overrides` keyed
+  // to *.ts / *.d.ts apply and ones keyed to *.json do not. When writing to
+  // stdout that is the .d.ts next to the input (stdin: <cwd>/stdin.d.ts). The
+  // output is always TypeScript, so a configured `parser` is not taken over.
+  const configPath = outputPath || `${filename ? stripExtension(filename) : 'stdin'}.d.ts`
+  const prettierConfig = omit((await resolveConfig(resolve(process.cwd(), configPath))) || {}, 'parser')
   // Resolve $refs relative to the directory of the file being compiled, not
   // process.cwd(), unless the user explicitly passed --cwd (see #324).
   const cwd = filename ? dirname(resolve(process.cwd(), filename)) : undefined

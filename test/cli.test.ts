@@ -18,14 +18,14 @@ const spawners: (() => void)[] = []
 const results = new Map<string, Promise<Result>>()
 let running = 0
 const waiting: (() => void)[] = []
-async function run(command: string, input?: string): Promise<Result> {
+async function run(command: string, input?: string, cwd?: string): Promise<Result> {
   if (running >= availableParallelism()) {
     await new Promise<void>(_ => waiting.push(_))
   }
   running++
   try {
     return await new Promise<Result>(done => {
-      const child = exec(command, {encoding: 'utf-8'}, (error, stdout, stderr) => {
+      const child = exec(command, {encoding: 'utf-8', cwd}, (error, stdout, stderr) => {
         process.stderr.write(stderr) // keep it visible, as it is for a CLI run by hand
         done({error, stdout, stderr})
       })
@@ -37,8 +37,19 @@ async function run(command: string, input?: string): Promise<Result> {
   }
 }
 
-function cliTest(name: string, command: string, check: (output: Omit<Result, 'error'>) => void, input?: string) {
-  spawners.push(() => results.set(name, run(command, input)))
+// Piped input resolves its Prettier config from the working directory, so the
+// stdin tests run from test/resources, whose .prettierrc pins the default style.
+const STDIN_CWD = resolve('test/resources')
+const CLI = resolve('dist/src/cli.js')
+
+function cliTest(
+  name: string,
+  command: string,
+  check: (output: Omit<Result, 'error'>) => void,
+  input?: string,
+  cwd?: string,
+) {
+  spawners.push(() => results.set(name, run(command, input, cwd)))
   test(name, async () => {
     const {error, ...output} = await results.get(name)!
     if (error) {
@@ -76,20 +87,22 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, pipe out',
-    'node dist/src/cli.js',
+    `node ${CLI}`,
     ({stdout, stderr}) => {
       // stderr must stay clean too: no warnings (e.g. Node deprecation notices) for a plain stdin run
       expect(stderr).toBe('')
       expect(stdout).toMatchSnapshot()
     },
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
+    STDIN_CWD,
   )
 
   cliTest(
     'pipe in (schema without ID), pipe out',
-    'node dist/src/cli.js',
+    `node ${CLI}`,
     ({stdout}) => expect(stdout).toMatchSnapshot(),
     readFileSync('./test/resources/ReferencedTypeWithoutID.json', 'utf-8'),
+    STDIN_CWD,
   )
 
   cliTest('file in (no flags), pipe out', 'node dist/src/cli.js ./test/resources/ReferencedType.json', ({stdout}) =>
@@ -144,6 +157,23 @@ suite('CLI', () => {
   )
 
   cliTest(
+    'file in (-i), Prettier overrides for the generated .d.ts apply, *.json ones and `parser` do not, pipe out',
+    'node dist/src/cli.js -i ./test/resources/prettier-overrides/Enum.json',
+    ({stdout}) => expect(stdout).toContain("  fstype?: 'ext3' | 'ext4' | 'btrfs'\n"),
+  )
+
+  cliTest(
+    'pipe in, Prettier config from the working directory, pipe out',
+    `node ${CLI}`,
+    ({stdout}) => {
+      expect(stdout).toContain('    fstype?: "ext3" | "ext4" | "btrfs"')
+      expect(stdout).not.toContain(';')
+    },
+    readFileSync('./test/resources/prettier/Enum.json', 'utf-8'),
+    resolve('test/resources/prettier'),
+  )
+
+  cliTest(
     'file in (-i), pipe out (absolute path)',
     `node dist/src/cli.js -i ${__dirname}/resources/ReferencedType.json`,
     ({stdout}) => expect(stdout).toMatchSnapshot(),
@@ -155,16 +185,18 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, file out (--output)',
-    'node dist/src/cli.js --output ./test/resources/ReferencedType.1.d.ts',
+    `node ${CLI} --output ${resolve('test/resources/ReferencedType.1.d.ts')}`,
     expectFile('./test/resources/ReferencedType.1.d.ts'),
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
+    STDIN_CWD,
   )
 
   cliTest(
     'pipe in, file out (-o)',
-    'node dist/src/cli.js -o ./test/resources/ReferencedType.2.d.ts',
+    `node ${CLI} -o ${resolve('test/resources/ReferencedType.2.d.ts')}`,
     expectFile('./test/resources/ReferencedType.2.d.ts'),
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
+    STDIN_CWD,
   )
 
   cliTest(
