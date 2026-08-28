@@ -1,3 +1,4 @@
+// https://github.com/bcherny/json-schema-to-typescript/issues/558
 export const input = {
   type: 'object',
   properties: {
@@ -21,6 +22,9 @@ export const input = {
     isActive: {
       type: 'boolean',
     },
+    // boolean property schemas have no `default` and stay optional
+    anything: true,
+    nothing: false,
   },
 }
 
