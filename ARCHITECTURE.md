@@ -10,7 +10,7 @@ Rewrites the few things that have to be seen on the raw document, before the der
 
 #### 3. Dereferencer
 
-Resolves referenced schemas (in the file, on the local filesystem, or over the network).
+Resolves referenced schemas (in the file, on the local filesystem, or over the network). A document whose `$ref`s all point into itself is dereferenced in-process; anything else goes through [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser), and the two give the same result (test/resolver.test.ts).
 
 #### 4. Linker
 
