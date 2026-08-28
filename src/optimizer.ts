@@ -4,6 +4,9 @@ import {generateType} from './generator'
 import {AST, omitStandaloneName, T_ANY, T_UNKNOWN, TAny, TUnknown} from './types/AST'
 import {log} from './utils'
 
+// nodes whose optimize() has returned; a recursive type can be rendered from inside itself before that
+const settled = new WeakSet<AST>()
+
 /**
  * `processed` maps each node already visited to what it optimized to, so that a node reached
  * from several places (a definition with more than one referrer) optimizes to one node, not one
@@ -16,6 +19,7 @@ export function optimize(ast: AST, options: Options, processed = new Map<AST, AS
   processed.set(ast, ast) // a node reached again through itself (a cycle) stays as it is
   const optimized = optimizeNode(ast, options, processed)
   processed.set(ast, optimized)
+  settled.add(ast).add(optimized)
   return optimized
 }
 
@@ -58,12 +62,10 @@ function optimizeNode(ast: AST, options: Options, processed: Map<AST, AST>): AST
       }
 
       // [A (named), A] -> [A (named)]
-      // (`omitStandaloneName` returns a copy, which the memoized `generateType` has never seen
-      // and so renders from scratch: check the cheap condition first, and render the first
-      // member once rather than once per member)
       if (optimizedAST.params.some(_ => _.standaloneName !== undefined)) {
-        const first = generateType(omitStandaloneName(optimizedAST.params[0]), options)
-        if (optimizedAST.params.every(_ => generateType(omitStandaloneName(_), options) === first)) {
+        const [first, ...rest] = optimizedAST.params
+        const type = generateStructuralType(first, options)
+        if (rest.every(_ => generateStructuralType(_, options) === type)) {
           log('cyan', 'optimizer', '[A (named), A] -> [A (named)]', optimizedAST)
           optimizedAST.params = optimizedAST.params.filter(_ => _.standaloneName !== undefined)
         }
@@ -91,4 +93,37 @@ function optimizeNode(ast: AST, options: Options, processed: Map<AST, AST>): AST
 function collapsed(ast: AST, to: TAny | TUnknown): AST {
   const {comment, deprecated, isUnreachableDefinition, keyName, standaloneName} = ast
   return {...to, comment, deprecated, isUnreachableDefinition, keyName, standaloneName}
+}
+
+const structuralTypes = new WeakMap<AST, string>()
+
+/**
+ * The type `ast` renders as with its standalone name left out. `omitStandaloneName` returns a
+ * copy that the memoized `generateType` has never seen, so that is a full render every time, and
+ * the same named type sits in many unions: keep the result, once the node is settled.
+ */
+function generateStructuralType(ast: AST, options: Options): string {
+  const cached = structuralTypes.get(ast)
+  if (cached !== undefined) {
+    return cached
+  }
+  const type = generateType(omitStandaloneName(ast), options)
+  if (settled.has(ast) && !rendersFromOtherNodes(ast)) {
+    structuralTypes.set(ast, type)
+  }
+  return type
+}
+
+/**
+ * An interface with a typed index signature widens that signature over the *current* members of its
+ * sibling and supertype properties (generateIndexSignatureType), and the optimizer can still rewrite
+ * those after this node has settled -- a supertype it has not reached yet, an enclosing union it is
+ * part-way through -- so its structural render is not a function of this node alone. (Everything
+ * else a render reads is either this node's own fields or a child's memoized render.)
+ */
+function rendersFromOtherNodes(ast: AST): boolean {
+  return (
+    ast.type === 'INTERFACE' &&
+    ast.params.some(_ => _.isIndexSignature && _.ast.type !== 'ANY' && _.ast.type !== 'UNKNOWN')
+  )
 }

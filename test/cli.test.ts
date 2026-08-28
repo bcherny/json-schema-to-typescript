@@ -142,6 +142,19 @@ suite('CLI', () => {
     },
   )
 
+  // https://github.com/bcherny/json-schema-to-typescript/issues/631: `$refOptions` are dotted
+  // flags like `style`; quoted, because of the `$`. These fixtures spell their `$ref`s relative
+  // to the repository root, which only resolves with `externalReferenceResolution: 'root'`.
+  const quote = process.platform === 'win32' ? '"' : "'"
+  cliTest(
+    'file in (-i), $refOptions flag, pipe out',
+    `node dist/src/cli.js -i ./test/resources/refOptions/specific/specific.yml ${quote}--$refOptions.dereference.externalReferenceResolution=root${quote}`,
+    ({stdout}) => {
+      expect(stdout).toContain('export type TestResourcesRefOptionsSpecificSpecificYml =')
+      expect(stdout).toContain('export interface TestResourcesRefOptionsCommonYml {')
+    },
+  )
+
   // https://github.com/bcherny/json-schema-to-typescript/issues/199: an explicit `false` for a
   // style flag has to reach Prettier as a boolean, however it is spelled
   for (const flag of ['--no-style.singleQuote', '--style.singleQuote false', '--style.singleQuote=false']) {
