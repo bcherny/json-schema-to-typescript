@@ -109,6 +109,13 @@ export const input = {
       allOf: [{if: {required: ['q']}, then: {required: ['r']}}],
       required: ['a'],
     },
+    // ...nor when the schema itself renders as something other than an object (an enum here;
+    // likewise `items` with no `type`, `const`): master's type, no object member in front
+    enumVacuousAllOf: {
+      enum: [{a: 1}, 'x'],
+      allOf: [{not: {required: ['zz']}}],
+      required: ['a'],
+    },
     // a key the (draft 3 style) `extends` base declares takes the base's type, so that the
     // interface still extends it (`id: unknown` under `id?: string` would not compile)
     extendsBase: {

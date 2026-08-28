@@ -448251,6 +448251,7 @@ export interface UndeclaredKeys {
         a: string;
       })
     | null;
+  enumVacuousAllOf?: {a: 1} | "x";
   extendsBase?: ExtendsBase;
 }
 export interface ExtendsBase extends Base {
