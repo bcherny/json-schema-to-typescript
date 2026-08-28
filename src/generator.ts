@@ -266,7 +266,9 @@ function generateRawType(ast: AST, options: Options): string {
             typesToUnion.push(paramsToString(cumulativeParamsList))
           }
 
-          return typesToUnion.join('|')
+          // Parenthesize the union (like generateSetOperation does) so callers can
+          // safely append `[]` or combine it with `&`.
+          return '(' + typesToUnion.join(' | ') + ')'
         }
 
         // no max items so only need to return one type
