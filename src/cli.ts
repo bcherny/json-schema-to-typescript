@@ -222,6 +222,9 @@ Boolean values can be set to false using the 'no-' prefix.
       Remove the optional modifier when a property has a default value
   --style.XXX=YYY
       Prettier configuration
+  --$refOptions.XXX=YYY
+      Options for the $ref resolver (json-schema-ref-parser), eg.
+      '--$refOptions.dereference.externalReferenceResolution=root'. Quote it for your shell.
   --unknownAny
       Output unknown type instead of any type
   --unreachableDefinitions
