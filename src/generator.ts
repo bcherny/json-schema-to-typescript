@@ -673,8 +673,12 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
       .map(
         ({ast, keyName}) =>
           // JSON.stringify, not string interpolation: the key may itself contain
-          // quotes or backslashes that need escaping.
-          (isValidIdentifier(keyName) ? keyName : JSON.stringify(keyName)) + ' = ' + generateType(ast, options),
+          // quotes or backslashes that need escaping. The initializer is a value, not a
+          // type, so it is printed verbatim too (an object member is not valid TypeScript
+          // either way, but it must not come out in `generateLiteral`'s type notation).
+          (isValidIdentifier(keyName) ? keyName : JSON.stringify(keyName)) +
+          ' = ' +
+          (ast.type === 'LITERAL' ? JSON.stringify(ast.params) : generateType(ast, options)),
       )
       .join(',\n') +
     '\n' +
