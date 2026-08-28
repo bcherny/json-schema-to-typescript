@@ -98,6 +98,8 @@ json2ts -i schemas/ -o types/
 
 You can pass any of the options described below (including style options) as CLI flags. Boolean values can be set to false using the `no-` prefix.
 
+The CLI automatically loads the closest [Prettier configuration](https://prettier.io/docs/configuration) for the generated output file (when writing to stdout: for a `.d.ts` next to the input file, or in the working directory for piped input). Explicit `--style.*` flags take precedence over discovered settings, and the output is always parsed as TypeScript whatever `parser` the config names. A Prettier config that cannot be loaded (invalid syntax, a missing plugin) now fails the run. This does not affect the programmatic API.
+
 ```sh
 # generate code for definitions that aren't referenced
 json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
@@ -190,6 +192,7 @@ $ bun run test
 - [x] `oneOf` (treated like `anyOf`)
 - [x] `maxItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L166))
 - [x] `minItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L165))
+- [x] tuples: array-form `items` + `additionalItems` (draft 4 – 2019-09) and `prefixItems` + `items` (draft 2020-12)
 - [x] `additionalProperties` of type
 - [x] `patternProperties` (partial support)
 - [x] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends/014e3cd8692250baad70c361dd81f6119ad0f696)
@@ -219,6 +222,39 @@ $ bun run test
 - `pattern` ([string](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L203), [regex](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L207))
 - `uniqueItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L172))
 
+## JSON Schema draft support
+
+Every draft goes through the same pipeline; a `$schema` declaration does not change the output. The schema model is draft 4 (`JSONSchema4` from `@types/json-schema`): the lists above cover its keywords, the table below covers what later drafts added. "Supported" means the keyword shapes the emitted type as the spec intends; keywords that only constrain values have no TypeScript equivalent and are ignored next to a `type` (a subschema made of nothing else still comes out as `{[k: string]: unknown}` rather than `unknown`, #806 pending). As of master `d86f285`, which is ahead of 16.0.0 (there `unevaluatedProperties` is still ignored and `formatTypes` does not exist); every row was checked by compiling a one-keyword schema with the CLI.
+
+| Keyword | Status | Note | Tracking |
+|-|-|-|-|
+| **draft 6** | | | |
+| `const` | supported | literal types, including object literals | |
+| boolean schemas (`true` / `false`) | supported | as a property, `items`, `additionalProperties`, and inside `allOf` / `anyOf`. A `$ref` to one crashes (#809 pending); a root `true` / `false` errors | [#725](https://github.com/bcherny/json-schema-to-typescript/issues/725), [#496](https://github.com/bcherny/json-schema-to-typescript/issues/496) |
+| `$id` | supported | for naming, and `$ref: "#name"` to an `$id: "#name"` | |
+| `examples` | ignored | not copied into the JSDoc comment | [#237](https://github.com/bcherny/json-schema-to-typescript/issues/237) |
+| `propertyNames` | ignored | `enum` / `const` names would be expressible | [#337](https://github.com/bcherny/json-schema-to-typescript/issues/337) |
+| `contains`, numeric `exclusiveMinimum` / `exclusiveMaximum` | not expressible | | |
+| **draft 7** | | | |
+| `if` / `then` / `else` | ignored | properties and `required` inside the branches contribute nothing | [#426](https://github.com/bcherny/json-schema-to-typescript/issues/426) |
+| `readOnly` | ignored | a `readonly` modifier is #796 (pending) | [#131](https://github.com/bcherny/json-schema-to-typescript/issues/131) |
+| `writeOnly`, `$comment`, `contentMediaType`, `contentEncoding`, new `format`s | not expressible | formats are plain `string` unless mapped with the `formatTypes` option | |
+| **2019-09** | | | |
+| `$defs` | supported | same as `definitions` (using both in one schema errors) | |
+| `$anchor` | errors | a `$ref: "#name"` to it fails with "Refs should have been resolved by the resolver"; `$id: "#name"` or a JSON pointer works | |
+| `$id` inside a subschema as a base URI | errors | `$ref`s resolve against the file's location, not against an enclosing `$id` | |
+| `$ref` with sibling keywords | partial | merged into a copy of the referenced schema, not intersected with it: a keyword both sides have (eg. `properties`) keeps one side only, and the definition may be emitted twice (`Foo`, `Foo1`). Use `allOf` to get both. Annotation-only siblings stop forking with #803 (pending) | |
+| `$recursiveRef` / `$recursiveAnchor` | ignored | the target is typed `{[k: string]: unknown}` (`unknown` with #806, pending), not the recursive type | |
+| `unevaluatedProperties` | partial | like `additionalProperties` for the schema's own `properties`; not enforced across `allOf` / `anyOf` / `oneOf`; wrongly closed over properties from a sibling `$ref`, `dependentSchemas` or `if` / `then` (#798 pending) | |
+| `unevaluatedItems`, `dependentSchemas` | ignored | | |
+| `dependentRequired`, `minContains` / `maxContains`, `contentSchema` | not expressible | like draft 4 `dependencies` | [#169](https://github.com/bcherny/json-schema-to-typescript/issues/169) |
+| `deprecated` | supported | `@deprecated` in the JSDoc comment | |
+| **2020-12** | | | |
+| `prefixItems` | ignored | `unknown[]`; with `items: false` → `never[]`, with `items: {…}` that schema is applied to every element. Tuples are #816 (pending) | [#543](https://github.com/bcherny/json-schema-to-typescript/issues/543) |
+| `$dynamicRef` / `$dynamicAnchor` | ignored | as `$recursiveRef` | |
+
+Not supported from 2019-09 / 2020-12, by name: `$anchor`, `$recursiveRef`, `$recursiveAnchor`, `$dynamicRef`, `$dynamicAnchor`, `$vocabulary`, `unevaluatedItems`, `prefixItems`, `dependentSchemas`, `dependentRequired`, `minContains`, `maxContains`, `contentSchema`, and `$id`-based reference resolution.
+
 ## FAQ
 
 ### JSON-Schema-to-TypeScript is crashing on my giant file. What can I do?
@@ -227,10 +263,12 @@ Prettier is known to run slowly on really big files. To skip formatting and impr
 
 ## Further Reading
 
-- JSON-schema spec: https://tools.ietf.org/html/draft-zyp-json-schema-04
-- JSON-schema wiki: https://github.com/json-schema/json-schema/wiki
-- JSON-schema test suite: https://github.com/json-schema/JSON-Schema-Test-Suite/blob/node
-- TypeScript spec: https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md
+- JSON Schema specification (2020-12, with links to every earlier draft): https://json-schema.org/specification
+- Draft 4, the schema model used here: https://json-schema.org/draft-04/draft-zyp-json-schema-04
+- What changed per draft: [draft 6](https://json-schema.org/draft-06/json-schema-release-notes), [draft 7](https://json-schema.org/draft-07/json-schema-release-notes), [2019-09](https://json-schema.org/draft/2019-09/release-notes), [2020-12](https://json-schema.org/draft/2020-12/release-notes)
+- Understanding JSON Schema: https://json-schema.org/understanding-json-schema
+- JSON Schema test suite: https://github.com/json-schema-org/JSON-Schema-Test-Suite
+- TypeScript handbook: https://www.typescriptlang.org/docs/handbook/
 
 ## Who uses JSON-Schema-to-TypeScript?
 

@@ -1,0 +1,114 @@
+{
+  "name": "Default additionalItems to true for the array form of items only",
+  "in": {
+    "$id": "foo",
+    "type": "object",
+    "properties": {
+      "tuple": {
+        "type": "array",
+        "items": [
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "tupleClosed": {
+        "type": "array",
+        "items": [
+          {
+            "type": "string"
+          }
+        ],
+        "additionalItems": false
+      },
+      "tupleTyped": {
+        "type": "array",
+        "items": [
+          {
+            "type": "string"
+          }
+        ],
+        "additionalItems": {
+          "type": "number"
+        }
+      },
+      "list": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "listBounded": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 2
+      }
+    },
+    "additionalProperties": false,
+    "required": []
+  },
+  "out": {
+    "$id": "foo",
+    "type": "object",
+    "properties": {
+      "tuple": {
+        "type": "array",
+        "items": [
+          {
+            "type": "string"
+          }
+        ],
+        "additionalItems": true,
+        "minItems": 0
+      },
+      "tupleClosed": {
+        "type": "array",
+        "items": [
+          {
+            "type": "string"
+          }
+        ],
+        "additionalItems": false,
+        "minItems": 0
+      },
+      "tupleTyped": {
+        "type": "array",
+        "items": [
+          {
+            "type": "string"
+          }
+        ],
+        "additionalItems": {
+          "type": "number"
+        },
+        "minItems": 0
+      },
+      "list": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 0
+      },
+      "listBounded": {
+        "type": "array",
+        "description": "@maxItems 2",
+        "items": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "additionalItems": false,
+        "maxItems": 2,
+        "minItems": 0
+      }
+    },
+    "additionalProperties": false,
+    "required": []
+  }
+}

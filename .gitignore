@@ -16,3 +16,6 @@ dist/
 dist_tests/
 yarn-error.log
 bench/profiles/
+
+# written by `bun run fuzz:ci`
+fuzz-report.json
