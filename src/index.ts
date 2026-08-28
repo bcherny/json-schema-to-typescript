@@ -8,7 +8,7 @@ import {format} from './formatter'
 import {generate} from './generator'
 import {normalize, normalizeNullableRefs} from './normalizer'
 import {optimize} from './optimizer'
-import {nameAnonymousRecursiveTypes, parse, Processed, UsedNames} from './parser'
+import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference} from './resolver'
 import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
 import {validate} from './validator'
@@ -190,13 +190,24 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
   const processed: Processed = new Map()
   const usedNames: UsedNames = new Set()
   const parsed = parse(normalized, _options, undefined, processed, usedNames)
-  nameAnonymousRecursiveTypes(parsed, processed, dereferencedPaths, usedNames)
+  // Definitions that aren't referenced anywhere in the schema still need to be
+  // declared. An object root declares them while its interface is parsed; for
+  // any other kind of root they are parsed here and handed to the generator.
+  const unreachableDefinitions = parseUnreachableDefinitions(
+    normalized,
+    parsed.standaloneName!,
+    _options,
+    processed,
+    usedNames,
+  )
+  nameAnonymousRecursiveTypes([parsed, ...unreachableDefinitions], processed, dereferencedPaths, usedNames)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
   const optimized = optimize(parsed, _options)
+  const optimizedUnreachableDefinitions = unreachableDefinitions.map(ast => optimize(ast, _options))
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
-  const generated = generate(optimized, _options)
+  const generated = generate(optimized, _options, optimizedUnreachableDefinitions)
   log('magenta', 'generator', time(), '✅ Result:', generated)
 
   const formatted = await format(generated, _options)

@@ -88,7 +88,7 @@ export function parse(
  * from when there is one, else after the closest property key or `$ref` above them.
  */
 export function nameAnonymousRecursiveTypes(
-  ast: AST,
+  asts: AST[],
   processed: Processed,
   dereferencedPaths: DereferencedPaths,
   usedNames: UsedNames,
@@ -113,7 +113,7 @@ export function nameAnonymousRecursiveTypes(
   do {
     named = false
     const done = new Set<AST>()
-    const roots = [ast]
+    const roots = [...asts]
     const path: AST[] = []
     const visit = (node: AST): void => {
       if (done.has(node)) {
@@ -183,6 +183,52 @@ function subtrees(ast: AST): AST[] {
     default:
       return []
   }
+}
+
+/**
+ * Parses the root schema's definitions so that they get declared even though nothing
+ * refers to them (the `unreachableDefinitions` option). An object schema declares its
+ * own definitions, nested `definitions` blocks included, when its interface is parsed
+ * (see `parseSchema`); this covers every other kind of root -- a primitive, an array,
+ * a union, an enum, a bare `$ref` -- whose definitions were otherwise dropped. Call it
+ * once, on the root schema, after `parse`.
+ */
+export function parseUnreachableDefinitions(
+  rootSchema: NormalizedJSONSchema,
+  rootASTName: string,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST[] {
+  if (!options.unreachableDefinitions || declaresInterface(rootSchema)) {
+    return []
+  }
+
+  return map(rootSchema.$defs, (value, key: string) =>
+    parseUnreachableDefinition(value, key, rootASTName, options, processed, usedNames),
+  )
+}
+
+function parseUnreachableDefinition(
+  schema: NormalizedJSONSchema,
+  key: string,
+  parentSchemaName: string,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST {
+  const ast = parse(schema, options, key, processed, usedNames)
+  const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
+via the \`definition\` "${key}".`
+  ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
+  ast.isUnreachableDefinition = true
+  return ast
+}
+
+/** Whether `parse` renders this schema through `parseSchema` (which declares its definitions) */
+function declaresInterface(schema: NormalizedJSONSchema): boolean {
+  const types = schema[Types]
+  return types.has('NAMED_SCHEMA') || types.has('UNNAMED_SCHEMA')
 }
 
 function parseAsTypeWithCache(
@@ -893,21 +939,14 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
 
   const unreachableDefinitions: TInterfaceParam[] = !options.unreachableDefinitions
     ? []
-    : map(schema.$defs, (value, key: string) => {
-        const ast = parse(value, options, key, processed, usedNames)
-        const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
-via the \`definition\` "${key}".`
-        ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
-        ast.isUnreachableDefinition = true
-        return {
-          ast,
-          isIndexSignature: false,
-          isPatternProperty: false,
-          isRequired: isRequired(schema, key, value),
-          isUnreachableDefinition: true,
-          keyName: key,
-        }
-      })
+    : map(schema.$defs, (value, key: string) => ({
+        ast: parseUnreachableDefinition(value, key, parentSchemaName, options, processed, usedNames),
+        isIndexSignature: false,
+        isPatternProperty: false,
+        isRequired: isRequired(schema, key, value),
+        isUnreachableDefinition: true,
+        keyName: key,
+      }))
 
   // TypeScript cannot constrain keys by regex, so patternProperties are folded into the one
   // string index signature, typed as the union of their value types:
