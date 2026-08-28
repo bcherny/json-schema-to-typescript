@@ -332,54 +332,6 @@ export function hasType(schema: JSONSchema, type: JSONSchemaTypeName): boolean {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
 
-/**
- * Removes the schema's `default` property if it doesn't match the schema's `type` property.
- * Useful when parsing unions.
- *
- * Mutates `schema`.
- */
-export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
-  if (!('default' in schema)) {
-    return schema
-  }
-
-  switch (schema.type) {
-    case 'array':
-      if (Array.isArray(schema.default)) {
-        return schema
-      }
-      break
-    case 'boolean':
-      if (typeof schema.default === 'boolean') {
-        return schema
-      }
-      break
-    case 'integer':
-    case 'number':
-      if (typeof schema.default === 'number') {
-        return schema
-      }
-      break
-    case 'string':
-      if (typeof schema.default === 'string') {
-        return schema
-      }
-      break
-    case 'null':
-      if (schema.default === null) {
-        return schema
-      }
-      break
-    case 'object':
-      if (isPlainObject(schema.default)) {
-        return schema
-      }
-      break
-  }
-  delete schema.default
-  return schema
-}
-
 export function appendToDescription(existingDescription: string | undefined, ...values: string[]): string {
   if (existingDescription) {
     return `${existingDescription}\n\n${values.join('\n')}`
