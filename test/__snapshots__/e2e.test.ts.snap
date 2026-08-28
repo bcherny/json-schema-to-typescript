@@ -374637,6 +374637,33 @@ export interface RequiredUndeclaredKeys {
       } & {
         a?: string;
       });
+  perTypeExtends?:
+    | ({
+        x: string;
+      } & (
+        | {
+            a?: number;
+            [k: string]: unknown;
+          }
+        | {
+            b?: boolean;
+            [k: string]: unknown;
+          }
+      ) & {
+          p?: string;
+          [k: string]: unknown;
+        })
+    | ((
+        | {
+            a?: number;
+            [k: string]: unknown;
+          }
+        | {
+            b?: boolean;
+            [k: string]: unknown;
+          }
+      ) &
+        null);
 }
 "
 `;

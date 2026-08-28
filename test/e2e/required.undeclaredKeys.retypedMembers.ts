@@ -7,6 +7,9 @@
  * - `perType`: the owner admits `null` and objects, so the parser renders it one type at a time,
  *   from per-type copies that share the `anyOf` member. The member is parsed once for all of them,
  *   so it borrows from none: `a` stays `unknown` whichever type is listed first.
+ * - `perTypeExtends`: the same kind of owner, requiring a key only the schema it `extends` (draft 3)
+ *   declares. Each per-type copy still finds it for the intersection it is rendered as
+ *   (`{x: string} & (…)`), members shared or not.
  */
 export const input = {
   type: 'object',
@@ -27,6 +30,13 @@ export const input = {
       properties: {a: {type: 'string'}},
       additionalProperties: false,
       anyOf: [{properties: {b: {type: 'number'}}, required: ['a', 'b']}],
+    },
+    perTypeExtends: {
+      type: ['object', 'null'],
+      extends: {properties: {x: {type: 'string'}}},
+      properties: {p: {type: 'string'}},
+      required: ['x'],
+      anyOf: [{properties: {a: {type: 'number'}}}, {properties: {b: {type: 'boolean'}}}],
     },
   },
   additionalProperties: false,
