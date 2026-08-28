@@ -195,6 +195,28 @@ suite('CLI', () => {
     )
   }
 
+  // https://github.com/bcherny/json-schema-to-typescript/issues/131
+  cliTest(
+    'readOnly annotations are ignored by default',
+    'node dist/src/cli.js -i ./test/resources/ReadOnly.json',
+    ({stdout}) => expect(stdout).not.toContain('readonly'),
+  )
+  cliTest(
+    '--readonlyKeyword',
+    'node dist/src/cli.js -i ./test/resources/ReadOnly.json --readonlyKeyword',
+    ({stdout}) => {
+      expect(stdout).toContain('readonly id?: string;')
+      expect(stdout).toContain('readonly tags?: readonly string[];')
+      expect(stdout).not.toContain('readonly name')
+    },
+  )
+  // https://github.com/bcherny/json-schema-to-typescript/issues/627
+  cliTest('--readonly', 'node dist/src/cli.js -i ./test/resources/ReadOnly.json --readonly', ({stdout}) => {
+    expect(stdout).toContain('readonly id?: string;')
+    expect(stdout).toContain('readonly tags?: readonly string[];')
+    expect(stdout).toContain('readonly name?: string;')
+  })
+
   cliTest(
     'file in (-i), Prettier config, pipe out',
     'node dist/src/cli.js -i ./test/resources/prettier/Enum.json',

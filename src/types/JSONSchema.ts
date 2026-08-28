@@ -39,6 +39,11 @@ export interface JSONSchema extends JSONSchema4 {
    * property exists at least in https://json-schema.org/draft/2019-09/json-schema-validation.html#rfc.section.9.3
    */
   deprecated?: boolean
+  /**
+   * draft 7+ annotation (also OpenAPI): the value is managed by the owning authority
+   * @see https://json-schema.org/draft-07/json-schema-validation#rfc.section.10.3
+   */
+  readOnly?: boolean
 }
 
 export const Parent = Symbol('Parent')

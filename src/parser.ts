@@ -464,6 +464,7 @@ function parseNonLiteral(
         const arrayType: TTuple = {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isReadOnly: isReadOnly(schema),
           keyName,
           maxItems,
           minItems,
@@ -481,6 +482,7 @@ function parseNonLiteral(
         return {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isReadOnly: isReadOnly(schema),
           keyName,
           standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
           params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
@@ -520,6 +522,7 @@ function parseNonLiteral(
         return {
           comment: schema.description,
           deprecated: schema.deprecated,
+          isReadOnly: isReadOnly(schema),
           keyName,
           maxItems: schema.maxItems,
           minItems,
@@ -535,6 +538,7 @@ function parseNonLiteral(
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
+        isReadOnly: isReadOnly(schema),
         keyName,
         params,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
@@ -642,7 +646,7 @@ function parseBranches(
     const params = requireKeys(keys, key => {
       const own = findDeclarationIn(member, key)
       if (own !== undefined) {
-        return parse(own, options, key, processed, usedNames)
+        return declaredType(own, key, options, processed, usedNames)
       }
       return takesRest ? requiredKeyType(schema, key, options, processed, usedNames) : undefined
     })
@@ -699,7 +703,7 @@ function parseRequired(
   const params = requireKeys(keys, key => {
     const declaration = declarations.get(key)
     if (declaration !== undefined) {
-      return parse(declaration, options, key, processed, usedNames)
+      return declaredType(declaration, key, options, processed, usedNames)
     }
     return takesRest ? valueType(owner, key, options, processed, usedNames) : undefined
   })
@@ -746,14 +750,17 @@ function undeclaredRequired(schema: NormalizedJSONSchema): string[] {
   return Array.isArray(schema.required) ? schema.required.filter(key => !hasProperty(schema, key)) : []
 }
 
+/** What a required member borrows from the declaration found for its key */
+type KeyType = Pick<TInterfaceParam, 'ast' | 'isReadOnly'>
+
 /** A required member `k: K` for each of `keys` that `typeOf` has a type for */
-function requireKeys(keys: string[], typeOf: (key: string) => AST | undefined): TInterfaceParam[] {
+function requireKeys(keys: string[], typeOf: (key: string) => KeyType | undefined): TInterfaceParam[] {
   const params: TInterfaceParam[] = []
   new Set(keys).forEach(key => {
-    const ast = typeOf(key)
-    if (ast !== undefined) {
+    const type = typeOf(key)
+    if (type !== undefined) {
       params.push({
-        ast,
+        ...type,
         isIndexSignature: false,
         isPatternProperty: false,
         isRequired: true,
@@ -763,6 +770,20 @@ function requireKeys(keys: string[], typeOf: (key: string) => AST | undefined): 
     }
   })
   return params
+}
+
+/**
+ * A required member's type as `declaration` gives it, and whether it is `readOnly` there: in
+ * TypeScript `{readonly a?: A} & {a: A}` is writable, so the pick has to repeat the modifier
+ */
+function declaredType(
+  declaration: NormalizedJSONSchema,
+  key: string,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): KeyType {
+  return {ast: parse(declaration, options, key, processed, usedNames), isReadOnly: isReadOnly(declaration)}
 }
 
 function interfaceOf(params: TInterfaceParam[]): TInterface {
@@ -779,11 +800,11 @@ function requiredKeyType(
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
-): AST {
+): KeyType {
   const declaration = findDeclaration(schema, key, options)
   return declaration === undefined
     ? valueType(schema, key, options, processed, usedNames)
-    : parse(declaration, options, key, processed, usedNames)
+    : declaredType(declaration, key, options, processed, usedNames)
 }
 
 /**
@@ -800,7 +821,7 @@ function valueType(
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
-): AST {
+): KeyType {
   const matching = Object.entries(schema.patternProperties ?? {}).filter(([pattern]) => testPattern(pattern, key))
   if (matching.length) {
     const params = matching.map(([, patternSchema]) => {
@@ -809,12 +830,19 @@ function valueType(
       // (see `parseSchema`) that the member does better without
       return hasStandaloneName(ast) ? ast : {...ast, comment: patternSchema.description}
     })
-    return params.length === 1 ? params[0] : {params, type: 'INTERSECTION'}
+    return {
+      ast: params.length === 1 ? params[0] : {params, type: 'INTERSECTION'},
+      // as for the index signature: readonly only if nothing writable applies to the key
+      isReadOnly: matching.every(([, patternSchema]) => isReadOnly(patternSchema)),
+    }
   }
   if (isPlainObject(schema.additionalProperties)) {
-    return parse(schema.additionalProperties, options, key, processed, usedNames)
+    return {
+      ast: parse(schema.additionalProperties, options, key, processed, usedNames),
+      isReadOnly: isReadOnly(schema.additionalProperties),
+    }
   }
-  return options.unknownAny ? T_UNKNOWN : T_ANY
+  return {ast: options.unknownAny ? T_UNKNOWN : T_ANY}
 }
 
 /** Whether `key` matches `pattern`, an (unanchored, ECMA-262) JSON-Schema regex; one JS can't compile matches nothing */
@@ -1022,6 +1050,13 @@ function isRequired(parentSchema: SchemaSchema, key: string, propertySchema: Nor
 }
 
 /**
+ * The draft 7 `readOnly` annotation. Only a strict `true` counts; boolean schemas carry none.
+ */
+function isReadOnly(schema: LinkedJSONSchema | boolean): boolean {
+  return !isBoolean(schema) && schema.readOnly === true
+}
+
+/**
  * Helper to parse schema properties into params on the parent schema's type
  */
 function parseSchema(
@@ -1035,6 +1070,7 @@ function parseSchema(
     ast: parse(value, options, key, processed, usedNames),
     isIndexSignature: false,
     isPatternProperty: false,
+    isReadOnly: isReadOnly(value),
     isRequired:
       isRequired(schema, key, value) ||
       (options.removeOptionalIfDefaultExists && !isBoolean(value) && 'default' in value),
@@ -1052,6 +1088,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
       ast,
       isIndexSignature: false,
       isPatternProperty: true,
+      isReadOnly: isReadOnly(value),
       isRequired: isRequired(schema, key, value),
       isUnreachableDefinition: false,
       keyName: key,
@@ -1087,6 +1124,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
         ast: parse(schema.additionalProperties, options, '[k: string]', processed, usedNames),
         isIndexSignature: false,
         isPatternProperty: true,
+        isReadOnly: isReadOnly(schema.additionalProperties),
         isRequired: false,
         isUnreachableDefinition: false,
         keyName: '[k: string]',
@@ -1105,7 +1143,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
       }
       // split off from an `allOf` (see `applySchemaTyping`): `parseRequired` adds the keys its
       // members declare, beside this interface
-      return schema[Intersection] ? undefined : parse(declaration, options, key, processed, usedNames)
+      return schema[Intersection] ? undefined : declaredType(declaration, key, options, processed, usedNames)
     }),
   )
 
@@ -1140,6 +1178,8 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
     ast: indexSignature,
     isIndexSignature: true,
     isPatternProperty: false,
+    // nothing writable may come in through a readonly index signature
+    isReadOnly: indexSignatureMembers.length > 0 && indexSignatureMembers.every(_ => _.isReadOnly),
     isRequired: true,
     isUnreachableDefinition: false,
     keyName: '[k: string]',
