@@ -64,6 +64,7 @@ export const KEYWORDS = {
   additionalProperties: {holds: 'schemaOrBoolean', typed: true},
   unevaluatedProperties: {holds: 'schemaOrBoolean'}, // 2019-09; the normalizer folds it into `additionalProperties`
   items: {holds: 'schemaOrSchemaArray', typed: true},
+  prefixItems: {holds: 'schemaArray', typed: true}, // 2020-12; the normalizer renames it to the tuple form of `items`
   additionalItems: {holds: 'schemaOrBoolean'},
   dependencies: {holds: 'schemaMap'}, // or, per name, a string array
   definitions: {holds: 'schemaMap', meta: true},

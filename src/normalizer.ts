@@ -131,6 +131,24 @@ rules.set('Treat `unevaluatedProperties` as `additionalProperties`', schema => {
   delete schema.unevaluatedProperties
 })
 
+// Draft 2020-12 renamed the tuple form of `items` to `prefixItems`, and `additionalItems` to
+// `items`. No earlier draft has `prefixItems`, so its presence alone says which meaning a
+// sibling `items` carries (2020-12 core, section 10.3.1.2: "When "prefixItems" is present, the
+// behavior of "items" is identical to the former "additionalItems" keyword"); rename both back
+// to the draft 4 spelling the rest of the pipeline understands. Runs before any rule that asks
+// `isArrayType`, which looks for `items`.
+rules.set('Treat `prefixItems` as the tuple form of `items`', schema => {
+  // (an array-form `items` next to `prefixItems` mixes two drafts: leave that schema as it is)
+  if (!Array.isArray(schema.prefixItems) || Array.isArray(schema.items)) {
+    return
+  }
+  if (schema.items !== undefined) {
+    schema.additionalItems = schema.items
+  }
+  schema.items = schema.prefixItems
+  delete schema.prefixItems
+})
+
 rules.set('Default additionalProperties', (schema, _, options) => {
   if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
     schema.additionalProperties = options.additionalProperties

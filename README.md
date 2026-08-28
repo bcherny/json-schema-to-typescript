@@ -190,6 +190,7 @@ $ bun run test
 - [x] `oneOf` (treated like `anyOf`)
 - [x] `maxItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L166))
 - [x] `minItems` ([eg](https://github.com/tdegrunt/jsonschema/blob/67c0e27ce9542efde0bf43dc1b2a95dd87df43c3/examples/all.js#L165))
+- [x] tuples: array-form `items` + `additionalItems` (draft 4 – 2019-09) and `prefixItems` + `items` (draft 2020-12)
 - [x] `additionalProperties` of type
 - [x] `patternProperties` (partial support)
 - [x] [`extends`](https://github.com/json-schema/json-schema/wiki/Extends/014e3cd8692250baad70c361dd81f6119ad0f696)
