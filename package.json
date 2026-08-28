@@ -22,7 +22,7 @@
     "test": "npm run pre-test && bun test --timeout 300000",
     "stresstest": "seq 1 10 | xargs -I{} npm test",
     "prepublishOnly": "npm test",
-    "pre-test": "npm run clean && npm run format-check && npm run typecheck && npm run build:server",
+    "pre-test": "npm run clean && bun run --parallel format-check typecheck build:server",
     "typecheck": "tsc -p tsconfig.test.json",
     "watch": "tsc -w"
   },
