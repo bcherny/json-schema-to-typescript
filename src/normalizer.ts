@@ -3,8 +3,7 @@ import {appendToDescription, escapeBlockComment, hasType, isSchemaLike, justName
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
-import {applySchemaTyping} from './applySchemaTyping'
-import {hasOwnType} from './typesOfSchema'
+import {applySchemaTyping, hasOwnType} from './typesOfSchema'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
 
@@ -41,17 +40,6 @@ function isObjectType(schema: LinkedJSONSchema) {
 }
 function isArrayType(schema: LinkedJSONSchema) {
   return schema.items !== undefined || hasType(schema, 'array') || hasType(schema, 'any')
-}
-function isEnumTypeWithoutTsEnumNames(schema: LinkedJSONSchema) {
-  return (
-    schema.type === 'string' &&
-    schema.enum !== undefined &&
-    // A TypeScript enum member's value must be a string or a number, so only
-    // string values can be turned into enum members. Mixed enums (`["a", null]`)
-    // stay unions instead of becoming `null = null`, which does not compile.
-    schema.enum.every(value => typeof value === 'string') &&
-    schema.tsEnumNames === undefined
-  )
 }
 
 rules.set('Remove `type=["null"]` if `enum=[null]`', schema => {
@@ -131,9 +119,35 @@ rules.set('Treat `unevaluatedProperties` as `additionalProperties`', schema => {
   delete schema.unevaluatedProperties
 })
 
+// Draft 2020-12 renamed the tuple form of `items` to `prefixItems`, and `additionalItems` to
+// `items`. No earlier draft has `prefixItems`, so its presence alone says which meaning a
+// sibling `items` carries (2020-12 core, section 10.3.1.2: "When "prefixItems" is present, the
+// behavior of "items" is identical to the former "additionalItems" keyword"). Runs before any
+// rule that asks `isArrayType`, which looks for `items`. An array-form `items` next to
+// `prefixItems` mixes two drafts: that schema is left as it is.
+rules.set('Treat `prefixItems` as the tuple form of `items`', schema => {
+  if (!Array.isArray(schema.prefixItems) || Array.isArray(schema.items)) {
+    return
+  }
+  if (schema.items !== undefined) {
+    schema.additionalItems = schema.items
+  }
+  schema.items = schema.prefixItems
+  delete schema.prefixItems
+})
+
 rules.set('Default additionalProperties', (schema, _, options) => {
   if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
     schema.additionalProperties = options.additionalProperties
+  }
+})
+
+// Drafts 4 through 2019-09: an absent `additionalItems` is the empty schema, so a tuple (the
+// array form of `items`) allows further items of any type. Next to a single `items` schema the
+// keyword means nothing; `Normalize schema.items` sets it itself on the tuples it builds.
+rules.set('Default additionalItems', schema => {
+  if (Array.isArray(schema.items) && schema.additionalItems === undefined) {
+    schema.additionalItems = true
   }
 })
 
@@ -296,12 +310,9 @@ rules.set('Normalize schema.items', (schema, _fileName, options) => {
   if (schema.items && !Array.isArray(schema.items) && (hasMaxItems || hasMinItems)) {
     const items = schema.items
     // create a tuple of length N
-    const newItems = Array(maxItems || minItems || 0).fill(items)
-    if (!hasMaxItems) {
-      // if there is no maximum, then add a spread item to collect the rest
-      schema.additionalItems = items
-    }
-    schema.items = newItems
+    schema.items = Array(maxItems || minItems || 0).fill(items)
+    // if there is no maximum, then add a spread item to collect the rest
+    schema.additionalItems = hasMaxItems ? false : items
   }
 
   if (Array.isArray(schema.items) && hasMaxItems && maxItems! < schema.items.length) {
@@ -332,6 +343,17 @@ rules.set('Make extends always an array, if it is defined', schema => {
   }
   if (!Array.isArray(schema.extends)) {
     schema.extends = [schema.extends]
+  }
+})
+
+rules.set('Remove the schema itself from its `allOf`', schema => {
+  // A schema listed in its own `allOf` (`{$ref: '#'}` at the root, a definition that
+  // `$ref`s itself, ...) asks that whatever this schema accepts also be accepted by this
+  // schema, which is no constraint at all. After dereferencing the member *is* this
+  // object, so drop it by identity. Kept, it would come out as the type being declared
+  // (`type A = A & {...}`), an alias TypeScript rejects as circular (TS2456).
+  if (Array.isArray(schema.allOf) && schema.allOf.includes(schema)) {
+    schema.allOf = schema.allOf.filter(_ => _ !== schema)
   }
 })
 
@@ -369,11 +391,16 @@ rules.set('Transform const to singleton enum', schema => {
 
 rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
   if (
-    isEnumTypeWithoutTsEnumNames(schema) &&
     options.inferStringEnumKeysFromValues &&
+    schema.type === 'string' &&
+    schema.tsEnumNames === undefined &&
+    // A TypeScript enum member's value must be a string or a number, so only
+    // string values can be turned into enum members. Mixed enums (`["a", null]`)
+    // stay unions instead of becoming `null = null`, which does not compile.
+    schema.enum?.every(value => typeof value === 'string') &&
     !schemasNormalizedFromConst.has(schema)
   ) {
-    schema.tsEnumNames = schema.enum?.map(String)
+    schema.tsEnumNames = schema.enum.map(String)
   }
 })
 

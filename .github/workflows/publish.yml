@@ -1,0 +1,122 @@
+name: Publish
+
+# Publishes the package to npm when a commit that changes `version` in
+# package.json to one the registry does not have yet lands on master. Every
+# other push to master stops after the `check` job ("already on npm").
+#
+# Authentication is npm trusted publishing (OIDC): there is no npm token in this
+# repository, and nothing can publish until the package owner registers this
+# repository and workflow file as the package's trusted publisher on npmjs.com
+# (see CONTRIBUTING.md, "Releasing"). Until then the `publish` job fails at
+# `npm publish` and nothing else happens.
+
+on:
+  push:
+    branches: [master]
+
+# One run at a time, in push order: a second push waits for the first rather
+# than cancelling a publish half way through.
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Is this version on npm?
+    # Forks have nothing to publish.
+    if: github.repository == 'bcherny/json-schema-to-typescript'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      published: ${{ steps.check.outputs.published }}
+    steps:
+    - uses: actions/checkout@v7
+    - name: Compare package.json's version with the registry
+      id: check
+      run: |
+        name=$(node -p 'require("./package.json").name')
+        version=$(node -p 'require("./package.json").version')
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+        log=$RUNNER_TEMP/npm-view.log
+        found=$(npm view "$name@$version" version 2>"$log" || true)
+        if [ "$found" = "$version" ]; then
+          echo "published=true" >> "$GITHUB_OUTPUT"
+          echo "$name@$version is already on npm: nothing to publish."
+        elif [ -z "$found" ] && { [ ! -s "$log" ] || grep -q E404 "$log"; }; then
+          echo "published=false" >> "$GITHUB_OUTPUT"
+          echo "$name@$version is not on npm yet: publishing it."
+        else
+          # A registry or network error is not a reason to attempt a publish.
+          cat "$log"
+          echo "::error::Could not check whether $name@$version is on npm; re-run this job."
+          exit 1
+        fi
+
+  publish:
+    name: Publish to npm
+    needs: check
+    if: needs.check.outputs.published == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing (OIDC) and the provenance attestation
+    steps:
+    - uses: actions/checkout@v7
+    - name: Use Node.js 24.x
+      uses: actions/setup-node@v7
+      with:
+        node-version: 24.x
+        registry-url: https://registry.npmjs.org
+        package-manager-cache: false # never cache in a release build (npm's own example)
+    # This job holds the OIDC credential, so third-party actions are pinned by commit.
+    - name: Use Bun
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      with:
+        bun-version-file: .bun-version
+    - name: Check npm supports trusted publishing (11.5.1 or later)
+      run: |
+        echo "node $(node -v), npm $(npm -v)"
+        [ "$(printf '%s\n' 11.5.1 "$(npm -v)" | sort -V | head -n1)" = 11.5.1 ] ||
+          { echo "::error::npm $(npm -v) is too old for trusted publishing, which needs 11.5.1 or later"; exit 1; }
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+    # `test` builds first (pre-test: clean, format-check, typecheck, tsc -d). It is
+    # what `prepublishOnly` runs too, so the publish step skips lifecycle scripts
+    # rather than building and testing a second time.
+    - name: Build and run tests
+      run: bun run test
+      env:
+        CI: true
+    - name: Publish ${{ needs.check.outputs.version }}
+      run: |
+        npm publish --provenance --access public --ignore-scripts || {
+          echo "::error::npm publish failed. If no trusted publisher is registered yet for bcherny/json-schema-to-typescript + publish.yml on npmjs.com (CONTRIBUTING.md → Releasing), register it and re-run this job, or publish this version by hand."
+          exit 1
+        }
+
+  release:
+    name: Tag and GitHub release
+    needs: [check, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the tag and the release; this job only
+    steps:
+    - uses: actions/checkout@v7
+    - name: Create v${{ needs.check.outputs.version }} with its CHANGELOG section as the notes
+      env:
+        GH_TOKEN: ${{ github.token }}
+        VERSION: ${{ needs.check.outputs.version }}
+      run: |
+        if gh release view "v$VERSION" >/dev/null 2>&1; then
+          echo "Release v$VERSION already exists."
+          exit 0
+        fi
+        # The body of the "## <version>" section of CHANGELOG.md, up to the next "## " heading.
+        awk -v v="$VERSION" '/^## / { if (found) exit; if ($2 == v) { found = 1; next } } found' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+        if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
+          echo "See [CHANGELOG.md](https://github.com/$GITHUB_REPOSITORY/blob/master/CHANGELOG.md) and the [commit log](https://github.com/$GITHUB_REPOSITORY/commits/v$VERSION)." > "$RUNNER_TEMP/notes.md"
+        fi
+        gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" --notes-file "$RUNNER_TEMP/notes.md"
