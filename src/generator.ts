@@ -70,16 +70,12 @@ export function generate(
 }
 
 function declareEnums(ast: AST, options: Options, scope: Scope, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
+  if (processed.has(ast) || isImported(ast, scope)) {
     return ''
   }
 
   processed.add(ast)
   let type = ''
-
-  if (isImported(ast, scope)) {
-    return ''
-  }
 
   switch (ast.type) {
     case 'ENUM':
@@ -133,16 +129,12 @@ function isImported(ast: AST, scope: Scope): boolean {
 }
 
 function declareNamedInterfaces(ast: AST, options: Options, scope: Scope, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
+  if (processed.has(ast) || isImported(ast, scope)) {
     return ''
   }
 
   processed.add(ast)
   let type = ''
-
-  if (isImported(ast, scope)) {
-    return ''
-  }
 
   switch (ast.type) {
     case 'ARRAY':
@@ -175,15 +167,11 @@ function declareNamedInterfaces(ast: AST, options: Options, scope: Scope, proces
 }
 
 function declareNamedTypes(ast: AST, options: Options, scope: Scope, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
+  if (processed.has(ast) || isImported(ast, scope)) {
     return ''
   }
 
   processed.add(ast)
-
-  if (isImported(ast, scope)) {
-    return ''
-  }
 
   switch (ast.type) {
     case 'ARRAY':

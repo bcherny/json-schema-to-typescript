@@ -3,6 +3,7 @@ import {
   FileInfo,
   ParserOptions as $RefOptions,
   Plugin,
+  ResolverOptions,
   getJsonSchemaRefParserDefaultOptions,
 } from '@apidevtools/json-schema-ref-parser'
 import {isPlainObject} from 'lodash'
@@ -12,28 +13,51 @@ import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
 
+/**
+ * A set of schema files being compiled together (`compileFiles`), as seen from one of them:
+ * which file this schema is, and the contents of every file of the set, read once up front.
+ */
+export interface SchemaSet {
+  /** The absolute path this schema was read from */
+  file: string
+  /** Every file of the set by absolute path, this one included: its contents as read from disk */
+  files: ReadonlyMap<string, string>
+}
+
 export async function dereference(
   schema: JSONSchema,
   {cwd, $refOptions}: {cwd: string; $refOptions: $RefOptions},
   /**
-   * The absolute path `schema` counts as read from, when compiling a set of files together
-   * (`imports` mode). The schema is then registered with the ref-parser under that path
-   * rather than under `cwd` -- so a `$ref` in another file that leads back to this one
-   * resolves to this very object instead of a second copy read from disk -- and every node
-   * of every document gets stamped with the file and JSON Pointer it was read from (its
-   * `Source`), before any `$ref` is inlined.
+   * Only when compiling a set of files together (`compileFiles`). The schema is then
+   * registered with the ref-parser under its own path rather than under `cwd` -- so a `$ref`
+   * in another file that leads back to this one resolves to this very object instead of a
+   * second copy -- the other files of the set are served from memory rather than read again,
+   * and every node of every document gets stamped with the file and JSON Pointer it was read
+   * from (its `Source`) before any `$ref` is inlined.
    */
-  sourceFile?: string,
+  set?: SchemaSet,
 ): Promise<{dereferencedPaths: DereferencedPaths; dereferencedSchema: JSONSchema}> {
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const parser = new $RefParser()
   const dereferencedPaths: DereferencedPaths = new WeakMap()
-  if (sourceFile !== undefined) {
-    stampSource(schema, fileKey(sourceFile))
+  let prepare: Prepare = prenormalizeDocument
+  let resolve = $refOptions.resolve
+  if (set) {
+    stampSource(schema, fileKey(set.file))
+    prepare = (document, file) => stampSource(prenormalizeDocument(document), fileKey(file.url))
+    const files = new Map([...set.files].map(([file, contents]) => [fileKey(file), contents]))
+    // Serves the files of the set from memory, ahead of the ref-parser's own file resolver
+    const inMemory: ResolverOptions = {
+      order: 1,
+      canRead: ({url}) => files.has(fileKey(url)),
+      read: ({url}) => files.get(fileKey(url))!,
+    }
+    resolve = {...resolve, set: inMemory}
   }
-  const dereferencedSchema = (await parser.dereference(sourceFile ?? cwd, schema, {
+  const dereferencedSchema = (await parser.dereference(set?.file ?? cwd, schema, {
     ...$refOptions,
-    parse: prenormalizingParsers($refOptions.parse, sourceFile !== undefined),
+    resolve,
+    parse: prenormalizingParsers($refOptions.parse, prepare),
     dereference: {
       ...$refOptions.dereference,
       onDereference($ref: string, schema: JSONSchema) {
@@ -50,10 +74,7 @@ export async function dereference(
  * gets the same pre-dereference rewrites as the schema being compiled, before its own
  * `$ref`s are resolved.
  */
-function prenormalizingParsers(configured: $RefOptions['parse'] = {}, stamp = false): $RefOptions['parse'] {
-  const prepare = stamp
-    ? (document: unknown, file: FileInfo) => stampSource(prenormalizeDocument(document), fileKey(file.url))
-    : prenormalizeDocument
+function prenormalizingParsers(configured: $RefOptions['parse'] = {}, prepare: Prepare): $RefOptions['parse'] {
   const defaults = getJsonSchemaRefParserDefaultOptions().parse
   const parsers: $RefOptions['parse'] = {...defaults, ...configured}
   for (const [name, options] of Object.entries(parsers)) {
@@ -77,6 +98,8 @@ function prenormalizingParsers(configured: $RefOptions['parse'] = {}, stamp = fa
 }
 
 type ParserCallback = (error: Error | null, data: any) => any
+/** What is done to each parsed document before the ref-parser gets it back */
+type Prepare = <T>(document: T, file: FileInfo) => T
 
 /**
  * One spelling per file, whichever way it was addressed: the ref-parser hands parsers an

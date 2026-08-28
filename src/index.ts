@@ -2,14 +2,14 @@ import {readFileSync} from 'fs'
 import {JSONSchema4} from 'json-schema'
 import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
 import {cloneDeep, endsWith, merge} from 'lodash'
-import {dirname} from 'path'
+import {dirname, resolve} from 'path'
 import {Options as PrettierOptions} from 'prettier'
 import {format} from './formatter'
 import {generate} from './generator'
 import {normalize} from './normalizer'
 import {optimize} from './optimizer'
 import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
-import {dereference} from './resolver'
+import {dereference, SchemaSet} from './resolver'
 import {prenormalize} from './prenormalizer'
 import {error, stripExtension, Try, log, parseFileAsJSONSchema} from './utils'
 import {validate} from './validator'
@@ -18,9 +18,7 @@ import {link} from './linker'
 import {validateOptions} from './optionValidator'
 import {JSONSchema as LinkedJSONSchema} from './types/JSONSchema'
 import {AST} from './types/AST'
-import {compileSchemas} from './modules'
-
-export {compileSchemas, type ModuleInput} from './modules'
+import {generateModules, Module} from './modules'
 
 // These are all interfaces, so re-export them as types -- transpilers that
 // compile a file at a time (bun, esbuild) can't tell on their own, and fail to
@@ -146,37 +144,78 @@ export const DEFAULT_OPTIONS: Options = {
 }
 
 export function compileFromFile(filename: string, options: Partial<Options> = DEFAULT_OPTIONS): Promise<string> {
-  const schema = parseAsJSONSchema(filename)
+  const schema = parseFileAsJSONSchema(filename, readSchemaFile(filename))
   return compile(schema, stripExtension(filename), {cwd: dirname(filename), ...options})
 }
 
 /**
- * Compiles a set of schema files into a set of modules that import the types they share
- * from one another instead of each declaring a copy (see `compileSchemas`). Returns the
- * TypeScript for each file, in order; writes nothing.
+ * Compiles a set of schema files together, into modules that import the types they share from
+ * one another (`import type {…} from "./other.js"`) instead of each declaring its own copy of
+ * them. What a file declares under `definitions`/`$defs`, and whatever its root type reaches, is
+ * what the others can import from it; a type from a file outside the set is declared inline, as
+ * `compileFromFile` would. The files of the set are read from disk once, up front; relative
+ * `$ref`s resolve against the file they appear in.
+ *
+ * @param files each schema file to compile and the path its module will be written to (import
+ * paths are computed between output paths); both relative to `options.cwd` (by default the
+ * working directory), if not absolute
+ * @returns the TypeScript for each file, in order. Writes nothing.
  */
-export function compileFiles(
+export async function compileFiles(
   files: {filename: string; outputPath: string}[],
-  options: Partial<Options> = DEFAULT_OPTIONS,
+  options: Partial<Options> = {},
 ): Promise<string[]> {
-  return compileSchemas(
-    files.map(_ => ({..._, schema: parseAsJSONSchema(_.filename)})),
-    options,
+  const cwd = options.cwd ?? DEFAULT_OPTIONS.cwd
+  const members = files.map(_ => ({
+    name: _.filename,
+    file: resolve(cwd, _.filename),
+    outputPath: resolve(cwd, _.outputPath),
+  }))
+  assertDistinct(members, 'file', 'are the same schema file')
+  assertDistinct(members, 'outputPath', 'would both be written to the same file')
+
+  const contents = new Map(members.map(_ => [_.file, readSchemaFile(_.file)]))
+  const modules = await Promise.all(
+    members.map(async ({name, file, outputPath}): Promise<Module> => {
+      const schema = parseFileAsJSONSchema(file, contents.get(file)!)
+      const set: SchemaSet = {file, files: contents}
+      // A file's definitions are what the others import from it, so they are always declared
+      const {
+        ast,
+        unreachableDefinitions,
+        options: full,
+      } = await compileToAST(schema, name, {...options, cwd: dirname(file), unreachableDefinitions: true}, set)
+      return {file, outputPath, ast, unreachableDefinitions, options: full}
+    }),
   )
+  return generateModules(modules)
 }
 
-function parseAsJSONSchema(filename: string): JSONSchema4 {
-  const contents = Try(
-    () => readFileSync(filename),
+/** @param what is wrong with two of them having the same `key` */
+function assertDistinct<K extends string>(members: ({name: string} & Record<K, string>)[], key: K, what: string) {
+  const seen = new Map<string, string>()
+  for (const member of members) {
+    if (seen.has(member[key])) {
+      throw new ReferenceError(
+        `compileFiles: ${JSON.stringify(seen.get(member[key]))} and ${JSON.stringify(member.name)} ${what}`,
+      )
+    }
+    seen.set(member[key], member.name)
+  }
+}
+
+function readSchemaFile(filename: string): string {
+  return Try(
+    () => readFileSync(filename, 'utf8'),
     () => {
       throw new ReferenceError(`Unable to read file "${filename}"`)
     },
   )
-  return parseFileAsJSONSchema(filename, contents.toString())
 }
 
 export async function compile(schema: JSONSchema4, name: string, options: Partial<Options> = {}): Promise<string> {
-  const {ast, unreachableDefinitions, options: _options, time} = await compileToAST(schema, name, options)
+  // Initial clone to avoid mutating the input
+  const {ast, unreachableDefinitions, options: _options, time} = await compileToAST(cloneDeep(schema), name, options)
 
   const generated = generate(ast, _options, unreachableDefinitions)
   log('magenta', 'generator', time(), '✅ Result:', generated)
@@ -188,16 +227,14 @@ export async function compile(schema: JSONSchema4, name: string, options: Partia
 }
 
 /**
- * Every phase up to the generator. `sourceFile` (the absolute path `schema` was read
- * from) is passed only when compiling a set of files together: see `compileFiles`.
- *
- * @internal
+ * Every phase up to the generator, on `schema` itself (the caller passes a copy it owns). `set`
+ * is passed only when compiling a set of files together: see `compileFiles`.
  */
-export async function compileToAST(
+async function compileToAST(
   schema: JSONSchema4,
   name: string,
   options: Partial<Options>,
-  sourceFile?: string,
+  set?: SchemaSet,
 ): Promise<{ast: AST; unreachableDefinitions: AST[]; options: Options; time(): string}> {
   validateOptions(options)
 
@@ -213,16 +250,13 @@ export async function compileToAST(
     _options.cwd += '/'
   }
 
-  // Initial clone to avoid mutating the input
-  const _schema = cloneDeep(schema)
-
   // Rewrites that have to see the raw document, before dereferencing (see ./prenormalizer)
-  prenormalize(_schema)
-  log('yellow', 'prenormalizer', time(), '✅ Result:', _schema)
+  prenormalize(schema)
+  log('yellow', 'prenormalizer', time(), '✅ Result:', schema)
 
-  const {dereferencedPaths, dereferencedSchema} = await dereference(_schema, _options, sourceFile)
+  const {dereferencedPaths, dereferencedSchema} = await dereference(schema, _options, set)
   if (process.env.VERBOSE) {
-    if (isDeepStrictEqual(_schema, dereferencedSchema)) {
+    if (isDeepStrictEqual(schema, dereferencedSchema)) {
       log('green', 'dereferencer', time(), '✅ No change')
     } else {
       log('green', 'dereferencer', time(), '✅ Result:', dereferencedSchema)

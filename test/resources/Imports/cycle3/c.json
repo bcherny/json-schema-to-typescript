@@ -1,0 +1,26 @@
+{
+  "title": "C",
+  "type": "object",
+  "properties": {
+    "next": {
+      "$ref": "a.json"
+    },
+    "all": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "a.json"
+          },
+          {
+            "$ref": "b.json"
+          },
+          {
+            "$ref": "#"
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

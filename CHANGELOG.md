@@ -4,6 +4,7 @@
 
 ## Next
 
+- Feat: `--imports` (CLI, with a directory or glob in and a directory out) and `compileFiles()` (API) compile a set of schema files together, so that a type owned by another file of the set is emitted as `import type {X} from "./other.js"` instead of being declared again in every file that references it. Experimental and off by default; no output change unless used (#258)
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
 

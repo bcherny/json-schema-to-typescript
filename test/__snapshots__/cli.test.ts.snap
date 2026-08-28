@@ -560,8 +560,8 @@ export interface DSchema {
 exports[`CLI directory in, --imports: shared types are imported from the module that declares them 1`] = `"test/resources/Imports/out/a.d.ts"`;
 
 exports[`CLI directory in, --imports: shared types are imported from the module that declares them 2`] = `
-"import type {B} from "./b";
-import type {Thing} from "./common";
+"import type {B} from "./b.js";
+import type {Thing} from "./common.js";
 
 export interface A {
   thing?: Thing;
@@ -573,8 +573,8 @@ export interface A {
 exports[`CLI directory in, --imports: shared types are imported from the module that declares them 3`] = `"test/resources/Imports/out/b.d.ts"`;
 
 exports[`CLI directory in, --imports: shared types are imported from the module that declares them 4`] = `
-"import type {A} from "./a";
-import type {Tag} from "./common";
+"import type {A} from "./a.js";
+import type {Tag} from "./common.js";
 
 export interface B {
   thing?: Thing;

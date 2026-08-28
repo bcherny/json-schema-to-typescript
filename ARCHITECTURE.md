@@ -36,4 +36,8 @@ Converts the intermediate respresentation to TypeScript code.
 
 Formats the code so it is properly indented, etc.
 
+#### Compiling a set of files (`compileFiles`, `--imports`)
+
+Each file goes through phases 1–7 on its own, with two additions: the dereferencer registers the file under its own path and stamps every node of every document it loads with the file and JSON Pointer it came from (`Source`, before any `$ref` is inlined; the parser copies it onto named AST nodes as `source`), and the other files of the set are served to it from memory. Then `src/modules.ts` runs the generator over every file twice: once to learn which of its own schemas each file declares and under what name, and once for real, with a linker that turns a named type owned by another file of the set into an `import type` instead of a declaration.
+
 All phases share one table of the JSON-Schema keywords they tell apart, and what each one holds: `src/keywords.ts`.

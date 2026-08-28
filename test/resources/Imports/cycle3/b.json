@@ -1,0 +1,10 @@
+{
+  "title": "B",
+  "type": "object",
+  "properties": {
+    "next": {
+      "$ref": "c.json"
+    }
+  },
+  "additionalProperties": false
+}

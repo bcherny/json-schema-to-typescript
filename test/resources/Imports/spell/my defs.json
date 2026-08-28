@@ -1,0 +1,17 @@
+{
+  "title": "My Defs",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "d": {
+      "title": "D",
+      "type": "object",
+      "properties": {
+        "v": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

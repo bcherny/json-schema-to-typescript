@@ -18,7 +18,7 @@ const spawners: (() => void)[] = []
 const results = new Map<string, Promise<Result>>()
 let running = 0
 const waiting: (() => void)[] = []
-async function run(command: string, input?: string): Promise<Result> {
+async function run(command: string, input?: string, echoStderr = true): Promise<Result> {
   if (running >= availableParallelism()) {
     await new Promise<void>(_ => waiting.push(_))
   }
@@ -26,7 +26,9 @@ async function run(command: string, input?: string): Promise<Result> {
   try {
     return await new Promise<Result>(done => {
       const child = exec(command, {encoding: 'utf-8'}, (error, stdout, stderr) => {
-        process.stderr.write(stderr) // keep it visible, as it is for a CLI run by hand
+        if (echoStderr) {
+          process.stderr.write(stderr) // keep it visible, as it is for a CLI run by hand
+        }
         done({error, stdout, stderr})
       })
       child.stdin!.end(input)
@@ -45,6 +47,16 @@ function cliTest(name: string, command: string, check: (output: Omit<Result, 'er
       throw error
     }
     check(output)
+  })
+}
+
+/** A command that must fail, with `message` on stderr */
+function cliErrorTest(name: string, command: string, message: string) {
+  spawners.push(() => results.set(name, run(command, undefined, false)))
+  test(name, async () => {
+    const {error, stderr} = await results.get(name)!
+    expect(error).not.toBeNull()
+    expect(stderr).toContain(message)
   })
 }
 
@@ -264,7 +276,7 @@ suite('CLI', () => {
 
   cliTest(
     'directory in, --imports: shared types are imported from the module that declares them',
-    'node dist/src/cli.js -i ./test/resources/Imports -o ./test/resources/Imports/out --imports --no-bannerComment',
+    'node dist/src/cli.js -i ./test/resources/Imports/memo -o ./test/resources/Imports/out --imports --no-bannerComment',
     () => {
       getPaths('./test/resources/Imports/out').forEach(file => {
         expect(file).toMatchSnapshot()
@@ -273,6 +285,24 @@ suite('CLI', () => {
       })
       rimraf.sync('./test/resources/Imports/out')
     },
+  )
+
+  cliErrorTest(
+    '--imports with a single file in is an error',
+    'node dist/src/cli.js -i ./test/resources/Imports/memo/a.json -o ./test/resources/Imports/out/a.d.ts --imports',
+    'a single input file has no other file to import from',
+  )
+
+  cliErrorTest(
+    '--imports without an output directory is an error',
+    'node dist/src/cli.js -i ./test/resources/Imports/memo --imports',
+    '--imports needs an output directory',
+  )
+
+  cliErrorTest(
+    '--imports with --cwd is an error',
+    'node dist/src/cli.js -i "./test/resources/Imports/memo/*.json" -o ./test/resources/Imports/out --imports --cwd test/resources/Imports/memo',
+    '--cwd cannot be combined with --imports',
   )
 })
 

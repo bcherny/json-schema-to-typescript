@@ -27,7 +27,7 @@ export function applySchemaTyping(schema: LinkedJSONSchema) {
   const intersection = {
     [Parent]: schema,
     // The intersection stands for the schema as a whole, so it is what other files import
-    ...(schema[Source] && {[Source]: schema[Source]}),
+    [Source]: schema[Source],
     [Types]: new Set(['ALL_OF']),
     $id: schema.$id,
     description: schema.description,

@@ -57,6 +57,23 @@ async function main(argv: minimist.ParsedArgs) {
   }
 
   try {
+    if (argv.imports) {
+      if (!ISGLOB && !ISDIR) {
+        throw new ReferenceError(
+          '--imports compiles a directory or glob of schemas together, importing shared types between the output files; a single input file has no other file to import from.',
+        )
+      }
+      if (!argOut) {
+        throw new ReferenceError(
+          '--imports needs an output directory (--output): import paths are computed between the output files.',
+        )
+      }
+      if (argv.cwd !== undefined) {
+        throw new ReferenceError(
+          "--cwd cannot be combined with --imports: each file's $refs are resolved against that file's own location.",
+        )
+      }
+    }
     // Process input as either glob, directory, or single file
     if (ISGLOB) {
       await processGlob(argIn, argOut, argv as Partial<Options>)
@@ -106,8 +123,9 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
 async function processFiles(files: [string, string | undefined][], argv: Partial<Options> & {imports?: boolean}) {
   let results: (readonly [string, string | undefined])[]
   if (argv.imports) {
+    // main() has checked there is an output directory
     const compiled = await compileFiles(
-      files.map(([file, out]) => ({filename: file, outputPath: out ?? file})),
+      files.map(([file, out]) => ({filename: file, outputPath: out!})),
       argv,
     )
     results = files.map(([, out], i) => [compiled[i], out] as const)
