@@ -1,0 +1,69 @@
+{
+  "title": "Defs",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "obj": {
+      "title": "Obj",
+      "type": "object",
+      "properties": {
+        "o": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "named": {
+      "title": "Named",
+      "type": "string",
+      "enum": [
+        "x",
+        "y"
+      ],
+      "tsEnumNames": [
+        "X",
+        "Y"
+      ]
+    },
+    "nullable": {
+      "title": "MaybeObj",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "n": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "custom": {
+      "title": "Custom",
+      "tsType": "Record<string, Date>"
+    },
+    "arr": {
+      "title": "ObjList",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/obj"
+      }
+    },
+    "union": {
+      "title": "Either",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/obj"
+        },
+        {
+          "$ref": "#/definitions/named"
+        }
+      ]
+    },
+    "str": {
+      "title": "Str",
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

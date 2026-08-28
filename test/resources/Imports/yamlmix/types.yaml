@@ -1,0 +1,8 @@
+title: Types
+type: object
+additionalProperties: false
+definitions:
+  color:
+    title: Color
+    type: string
+    enum: [red, blue]

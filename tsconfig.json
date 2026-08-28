@@ -25,6 +25,7 @@
     "forceConsistentCasingInFileNames": false
   },
   "exclude": [
+    "bench",
     "dist",
     "example",
     "node_modules",

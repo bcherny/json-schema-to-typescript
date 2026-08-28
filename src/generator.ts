@@ -1,4 +1,3 @@
-import {omit} from 'lodash'
 import {memoize} from './memoize'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -9,71 +8,128 @@ import {
   omitStandaloneName,
   T_ANY,
   T_ANY_ADDITIONAL_PROPERTIES,
-  TArray,
   TEnum,
   TInterface,
   TInterfaceParam,
   TIntersection,
   TNamedInterface,
   TUnion,
+  T_UNDEFINED,
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string {
-  const rootASTName = ast.standaloneName!
-  const asts = [ast, ...unreachableDefinitions]
-  const typesProcessed = new Set<AST>()
-  const interfacesProcessed = new Set<AST>()
-  const enumsProcessed = new Set<AST>()
-  return (
-    [
-      options.bannerComment,
-      asts
-        .map(_ => declareNamedTypes(_, options, rootASTName, typesProcessed))
-        .filter(Boolean)
-        .join('\n'),
-      asts
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, interfacesProcessed))
-        .filter(Boolean)
-        .join('\n'),
-      asts
-        .map(_ => declareEnums(_, options, enumsProcessed))
-        .filter(Boolean)
-        .join('\n'),
-    ]
-      .filter(Boolean)
-      .join('\n\n') + '\n'
-  ) // trailing newline
+/**
+ * Hooks for compiling a set of files into a set of modules (`imports` mode): the linker
+ * decides which named types this file imports rather than declares, and hears about
+ * every type it does declare.
+ */
+export interface ModuleLinker {
+  /** True if `ast` is declared by another module; it is then neither declared nor descended into here */
+  imports(ast: ASTWithStandaloneName): boolean
+  declared?(ast: ASTWithStandaloneName): void
 }
 
-function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
+interface Scope {
+  rootASTName: string
+  linker?: ModuleLinker
+}
+
+/**
+ * Generates the declaration file for `ast`: the banner comment, then the type aliases, the
+ * interfaces and the enums, a blank line between those groups and a newline between declarations.
+ * It is returned split before each top-level declaration, each part starting with the newlines
+ * that separate it from the previous one; `.join('')` is the whole file.
+ */
+export function generate(
+  ast: AST,
+  options = DEFAULT_OPTIONS,
+  unreachableDefinitions: AST[] = [],
+  linker?: ModuleLinker,
+): string[] {
+  const scope: Scope = {rootASTName: ast.standaloneName!, linker}
+
+  // One walk over the ASTs collects every standalone declaration, by kind, in the order found
+  const declarations: Declarations = {enums: [], interfaces: [], types: []}
+  const {enums, interfaces, types} = declarations
+  const processed = new Set<AST>()
+  for (const root of [ast, ...unreachableDefinitions]) {
+    const enumsBefore = enums.length
+    collectDeclarations(root, options, scope, processed, declarations)
+    // the enums found under each root AST have always been followed by a newline of their own
+    if (enums.length > enumsBefore) {
+      enums[enums.length - 1] += '\n'
+    }
   }
 
+  const parts: string[] = []
+  for (const group of [options.bannerComment ? [options.bannerComment] : [], types, interfaces, enums]) {
+    let separator = parts.length === 0 ? '' : '\n\n'
+    for (const declaration of group) {
+      parts.push(separator + declaration)
+      separator = '\n'
+    }
+  }
+  parts[parts.length - 1] += '\n' // the root type is always declared, so there is a last part
+  return parts
+}
+
+type Declarations = {enums: string[]; interfaces: string[]; types: string[]}
+
+/**
+ * Appends the declarations for every named type reachable from `ast` (itself included) to
+ * `declarations`: enums and interfaces as such, everything else as a type alias. An array's
+ * alias follows the declarations found in its items; any other declaration precedes the ones
+ * found beneath it. A type another module declares (`imports` mode) is skipped, with all that
+ * is beneath it.
+ */
+function collectDeclarations(
+  ast: AST,
+  options: Options,
+  scope: Scope,
+  processed: Set<AST>,
+  declarations: Declarations,
+): void {
+  if (processed.has(ast) || isImported(ast, scope)) {
+    return
+  }
   processed.add(ast)
-  let type = ''
 
   switch (ast.type) {
-    case 'ENUM':
-      return generateStandaloneEnum(ast, options) + '\n'
     case 'ARRAY':
-      return declareEnums(ast.params, options, processed)
-    case 'UNION':
-    case 'INTERSECTION':
-      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-    case 'TUPLE':
-      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-      if (ast.spreadParam) {
-        type += declareEnums(ast.spreadParam, options, processed)
+      collectDeclarations(ast.params, options, scope, processed, declarations)
+      if (shouldDeclare(ast, options, scope)) {
+        declarations.types.push(declared(ast, scope, generateStandaloneType(ast, options)))
       }
-      return type
+      return
+    case 'ENUM':
+      declarations.enums.push(declared(ast, scope, generateStandaloneEnum(ast, options)))
+      return
     case 'INTERFACE':
-      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      if (shouldDeclare(ast, options, scope)) {
+        declarations.interfaces.push(declared(ast, scope, generateStandaloneInterface(ast, options)))
+      }
+      break
     default:
-      return ''
+      if (shouldDeclare(ast, options, scope)) {
+        declarations.types.push(declared(ast, scope, generateStandaloneType(ast, options)))
+      }
+  }
+  childASTs(ast).forEach(child => collectDeclarations(child, options, scope, processed, declarations))
+}
+
+function childASTs(ast: AST): AST[] {
+  switch (ast.type) {
+    case 'INTERFACE':
+      return ast.params.map(param => param.ast).concat(ast.superTypes)
+    case 'INTERSECTION':
+    case 'UNION':
+      return ast.params
+    case 'TUPLE':
+      return ast.spreadParam ? ast.params.concat(ast.spreadParam) : ast.params
+    default:
+      return []
   }
 }
 
@@ -82,94 +138,29 @@ function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): s
  * declared, as are unreachable definitions (when `unreachableDefinitions` is on). Everything
  * else is reachable via a `$ref`, so it's only declared when `declareExternallyReferenced` is on.
  */
-function shouldDeclare(ast: AST, options: Options, rootASTName: string): ast is ASTWithStandaloneName {
+function shouldDeclare(ast: AST, options: Options, scope: Scope): ast is ASTWithStandaloneName {
   return (
     hasStandaloneName(ast) &&
-    (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition === true)
+    (ast.standaloneName === scope.rootASTName ||
+      options.declareExternallyReferenced ||
+      ast.isUnreachableDefinition === true)
   )
 }
 
-function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
-  }
-
-  processed.add(ast)
-  let type = ''
-
-  switch (ast.type) {
-    case 'ARRAY':
-      type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
-      break
-    case 'INTERFACE':
-      type = [
-        shouldDeclare(ast, options, rootASTName) && generateStandaloneInterface(ast, options),
-        getSuperTypesAndParams(ast)
-          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n'),
-      ]
-        .filter(Boolean)
-        .join('\n')
-      break
-    case 'INTERSECTION':
-    case 'TUPLE':
-    case 'UNION':
-      type = [...ast.params, ...(ast.type === 'TUPLE' && ast.spreadParam ? [ast.spreadParam] : [])]
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, processed))
-        .filter(Boolean)
-        .join('\n')
-      break
-    default:
-      type = ''
-  }
-
-  return type
+/** A declaration on its way out, for the linker (if any) to hear about */
+function declared(ast: ASTWithStandaloneName, scope: Scope, declaration: string): string {
+  scope.linker?.declared?.(ast)
+  return declaration
 }
 
-function declareNamedTypes(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
-  }
-
-  processed.add(ast)
-
-  switch (ast.type) {
-    case 'ARRAY':
-      return [
-        declareNamedTypes(ast.params, options, rootASTName, processed),
-        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
-      ]
-        .filter(Boolean)
-        .join('\n')
-    case 'ENUM':
-      return ''
-    case 'INTERFACE':
-      return getSuperTypesAndParams(ast)
-        .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
-        .filter(Boolean)
-        .join('\n')
-    case 'INTERSECTION':
-    case 'TUPLE':
-    case 'UNION':
-      return [
-        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
-        ast.params
-          .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n'),
-        'spreadParam' in ast && ast.spreadParam
-          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
-          : undefined,
-      ]
-        .filter(Boolean)
-        .join('\n')
-    default:
-      if (shouldDeclare(ast, options, rootASTName)) {
-        return generateStandaloneType(ast, options)
-      }
-      return ''
-  }
+/** In `imports` mode: a named type that another module declares (the root type never is) */
+function isImported(ast: AST, scope: Scope): boolean {
+  return (
+    scope.linker !== undefined &&
+    hasStandaloneName(ast) &&
+    ast.standaloneName !== scope.rootASTName &&
+    scope.linker.imports(ast)
+  )
 }
 
 export const generateType = memoize(generateRawType)
@@ -187,7 +178,9 @@ function generateRawType(ast: AST, options: Options): string {
     case 'ARRAY':
       return (() => {
         const type = generateType(ast.params, options)
-        return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+        // `readonly T[][]` would make the outer array the readonly one
+        const element = type.endsWith('"') || type.startsWith('readonly ') ? '(' + type + ')' : type
+        return readonlyModifier(ast.isReadOnly, options) + element + '[]'
       })()
     case 'BOOLEAN':
       return 'boolean'
@@ -205,30 +198,27 @@ function generateRawType(ast: AST, options: Options): string {
       return 'null'
     case 'OBJECT':
       return 'object'
-    case 'REFERENCE':
-      return ast.params
     case 'STRING':
       return 'string'
     case 'TUPLE':
       return (() => {
         const minItems = ast.minItems
-        const maxItems = ast.maxItems || -1
+        const modifier = readonlyModifier(ast.isReadOnly, options)
 
         let spreadParam = ast.spreadParam
         const astParams = [...ast.params]
-        if (minItems > 0 && minItems > astParams.length && ast.spreadParam === undefined) {
-          // this is a valid state, and JSONSchema doesn't care about the item type
-          if (maxItems < 0) {
-            // no max items and no spread param, so just spread any
-            spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
+        if (typeof ast.maxItems === 'number') {
+          // Bounded: spell out the items `additionalItems` allows (the spread param) up to the
+          // cap instead of as a rest element. Without one (`additionalItems: false`) nothing may
+          // follow the tuple's own items, whatever `maxItems` says.
+          if (spreadParam) {
+            while (astParams.length < ast.maxItems) astParams.push(spreadParam)
+            spreadParam = undefined
           }
-        }
-        if (maxItems > astParams.length && ast.spreadParam === undefined) {
-          // this is a valid state, and JSONSchema doesn't care about the item type
-          // fill the tuple with any elements
-          for (let i = astParams.length; i < maxItems; i += 1) {
-            astParams.push(options.unknownAny ? T_UNKNOWN : T_ANY)
-          }
+        } else if (minItems > astParams.length && spreadParam === undefined) {
+          // `additionalItems: false` with a `minItems` beyond the tuple's own items, which no
+          // array satisfies: emitted as an open tuple, as it always has been, rather than `never`
+          spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
         }
 
         function addSpreadParam(params: string[]): string[] {
@@ -240,7 +230,7 @@ function generateRawType(ast: AST, options: Options): string {
         }
 
         function paramsToString(params: string[]): string {
-          return '[' + params.join(', ') + ']'
+          return modifier + '[' + params.join(', ') + ']'
         }
 
         const paramsList = astParams.map(param => generateType(param, options))
@@ -286,7 +276,7 @@ function generateRawType(ast: AST, options: Options): string {
           return '(' + typesToUnion.join(' | ') + ')'
         }
 
-        // no max items so only need to return one type
+        // no optional items, so a single tuple type
         return paramsToString(addSpreadParam(paramsList))
       })()
     case 'UNION':
@@ -296,6 +286,14 @@ function generateRawType(ast: AST, options: Options): string {
     case 'CUSTOM_TYPE':
       return ast.params
   }
+}
+
+/**
+ * TypeScript's `readonly` modifier, for a property or an array type: on for everything under the
+ * `readonly` option, or driven by the schema's own `readOnly` annotation under `readonlyKeyword`.
+ */
+function readonlyModifier(isReadOnly: boolean | undefined, options: Options): string {
+  return options.readonly || (options.readonlyKeyword && isReadOnly) ? 'readonly ' : ''
 }
 
 /**
@@ -357,6 +355,30 @@ function isUnknown(ast: AST): boolean {
 }
 
 /**
+ * `tsType` overrides are opaque strings (e.g. function types) that may not be
+ * union-safe, so parenthesize them unless they are a simple type reference.
+ */
+function unionMember(ast: AST, type: string): string {
+  return ast.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type
+}
+
+/**
+ * `T | undefined`, for an optional property under `undefinedOptionalProperties`. An
+ * anonymous union takes `undefined` as one more member rather than nesting
+ * (`string | number | undefined`, not `(string | number) | undefined`); `any` and
+ * `unknown` already include it.
+ */
+function orUndefined(ast: AST, type: string, options: Options): string {
+  if (isAny(ast) || isUnknown(ast)) {
+    return type
+  }
+  if (ast.type === 'UNION' && !hasStandaloneName(ast)) {
+    return generateType({...ast, params: [...ast.params, T_UNDEFINED]}, options)
+  }
+  return unionMember(ast, type) + ' | undefined'
+}
+
+/**
  * Named properties (own and inherited) that TypeScript checks against an interface's
  * index signature.
  */
@@ -397,7 +419,6 @@ const LEAF_TYPES = new Set<AST['type']>([
   'NULL',
   'NUMBER',
   'OBJECT',
-  'REFERENCE',
   'STRING',
 ])
 
@@ -507,9 +528,7 @@ function generateIndexSignatureType(
     }
     seen.add(type)
     seen.add(underlying)
-    // tsType overrides are opaque strings (e.g. function types) that may not be
-    // union-safe, so parenthesize them unless they are a simple type reference
-    members.push(memberAST.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type)
+    members.push(unionMember(memberAST, type))
   }
 
   if (needsUndefined && !seen.has('undefined')) {
@@ -543,10 +562,13 @@ function generateInterface(ast: TInterface, options: Options): string {
           (hasComment(commented) && !ast.standaloneName
             ? generateComment(commented.comment, commented.deprecated) + '\n'
             : '') +
+          readonlyModifier(param.isReadOnly, options) +
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +
-          type
+          (!isRequired && !isIndexSignature && options.undefinedOptionalProperties
+            ? orUndefined(ast, type, options)
+            : type)
         )
       })
       .join('\n') +
@@ -656,10 +678,7 @@ function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): s
   const commented = withItemsComment(ast)
   return (
     (hasComment(commented) ? generateComment(commented.comment) + '\n' : '') +
-    `export type ${toSafeString(ast.standaloneName)} = ${generateType(
-      omit<AST>(ast, 'standaloneName') as AST /* TODO */,
-      options,
-    )}`
+    `export type ${toSafeString(ast.standaloneName)} = ${generateType(omitStandaloneName(ast), options)}`
   )
 }
 
@@ -668,8 +687,4 @@ function escapeKeyName(keyName: string): string {
     return keyName
   }
   return JSON.stringify(keyName)
-}
-
-function getSuperTypesAndParams(ast: TInterface): AST[] {
-  return ast.params.map(param => param.ast).concat(ast.superTypes)
 }

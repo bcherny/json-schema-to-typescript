@@ -1,0 +1,16 @@
+{
+  "title": "User",
+  "type": "object",
+  "properties": {
+    "a": {
+      "$ref": "one.json"
+    },
+    "b": {
+      "$ref": "two.json"
+    },
+    "c": {
+      "$ref": "defs.json#/definitions/thing"
+    }
+  },
+  "additionalProperties": false
+}

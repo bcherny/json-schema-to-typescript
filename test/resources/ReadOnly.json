@@ -1,0 +1,10 @@
+{
+  "title": "ReadOnly",
+  "type": "object",
+  "properties": {
+    "id": {"type": "string", "readOnly": true},
+    "tags": {"type": "array", "items": {"type": "string"}, "readOnly": true},
+    "name": {"type": "string"}
+  },
+  "additionalProperties": false
+}

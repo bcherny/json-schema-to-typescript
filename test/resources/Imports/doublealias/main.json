@@ -1,0 +1,28 @@
+{
+  "title": "Main",
+  "type": "object",
+  "properties": {
+    "mine": {
+      "$ref": "#/definitions/thing"
+    },
+    "p": {
+      "$ref": "p.json"
+    },
+    "q": {
+      "$ref": "q.json#/definitions/thing"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "thing": {
+      "title": "Thing",
+      "type": "object",
+      "properties": {
+        "m": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "title": "Thing",
+  "description": "a root that is itself called Thing and has a definition called Thing",
+  "type": "object",
+  "properties": {
+    "self": {
+      "$ref": "#/definitions/thing"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "thing": {
+      "title": "Thing",
+      "type": "object",
+      "properties": {
+        "deep": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

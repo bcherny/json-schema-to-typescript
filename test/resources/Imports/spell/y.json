@@ -1,0 +1,13 @@
+{
+  "title": "Y",
+  "type": "object",
+  "properties": {
+    "d": {
+      "$ref": "./my%20defs.json#/definitions/d"
+    },
+    "x": {
+      "$ref": "sub/x.json"
+    }
+  },
+  "additionalProperties": false
+}

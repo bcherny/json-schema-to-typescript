@@ -1,0 +1,6 @@
+{
+  "title": "Country",
+  "description": "ISO 3166-1 alpha-2",
+  "type": "string",
+  "enum": ["NL", "DE", "BE"]
+}

@@ -1,0 +1,63 @@
+{
+  "title": "Use",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "defs.json#/definitions/obj"
+  },
+  "patternProperties": {
+    "^x-": {
+      "$ref": "defs.json#/definitions/named"
+    }
+  },
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "defs.json#/definitions/obj"
+      }
+    },
+    "tuple": {
+      "type": "array",
+      "items": [
+        {
+          "$ref": "defs.json#/definitions/named"
+        },
+        {
+          "$ref": "defs.json#/definitions/nullable"
+        }
+      ],
+      "minItems": 2
+    },
+    "any": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/definitions/custom"
+        },
+        {
+          "$ref": "defs.json#/definitions/arr"
+        }
+      ]
+    },
+    "all": {
+      "allOf": [
+        {
+          "$ref": "defs.json#/definitions/obj"
+        },
+        {
+          "required": [
+            "o"
+          ]
+        }
+      ]
+    },
+    "either": {
+      "$ref": "defs.json#/definitions/union"
+    },
+    "str": {
+      "$ref": "defs.json#/definitions/str"
+    },
+    "nullable": {
+      "$ref": "defs.json#/definitions/nullable"
+    }
+  }
+}

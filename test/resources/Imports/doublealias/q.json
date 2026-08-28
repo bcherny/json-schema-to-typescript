@@ -1,0 +1,17 @@
+{
+  "title": "Q",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "thing": {
+      "title": "Thing",
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

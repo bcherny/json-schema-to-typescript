@@ -1,0 +1,10 @@
+{
+  "title": "Paint",
+  "type": "object",
+  "properties": {
+    "color": {
+      "$ref": "types.yaml#/definitions/color"
+    }
+  },
+  "additionalProperties": false
+}

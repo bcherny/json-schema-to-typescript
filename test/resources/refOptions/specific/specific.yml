@@ -1,0 +1,6 @@
+$schema: https://json-schema.org/draft/2020-12
+$id: test/resources/refOptions/specific/specific.yml
+type: object
+anyOf:
+  - $ref: test/resources/refOptions/specific/caseA.yml
+  - $ref: test/resources/refOptions/specific/caseB.yml
