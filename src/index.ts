@@ -61,6 +61,13 @@ export interface Options {
    */
   format: boolean
   /**
+   * Map from a string schema's [`format`](https://json-schema.org/understanding-json-schema/reference/string#format)
+   * to the TypeScript type to emit for it, eg. `{'date-time': 'Date'}`. Like `tsType`, the type is
+   * emitted verbatim (and `tsType`, `enum` and `const` take precedence). Formats not listed here
+   * stay `string`.
+   */
+  formatTypes: Record<string, string>
+  /**
    * Ignore maxItems and minItems for `array` types, preventing tuples being generated.
    */
   ignoreMinAndMaxItems: boolean
@@ -109,6 +116,7 @@ export const DEFAULT_OPTIONS: Options = {
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
   format: true,
+  formatTypes: {},
   ignoreMinAndMaxItems: false,
   maxItems: 20,
   removeOptionalIfDefaultExists: false,
