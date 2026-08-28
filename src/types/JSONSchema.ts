@@ -42,6 +42,11 @@ export interface JSONSchema extends JSONSchema4 {
    */
   deprecated?: boolean
   /**
+   * draft 7+ annotation (also OpenAPI): the value is managed by the owning authority
+   * @see https://json-schema.org/draft-07/json-schema-validation#rfc.section.10.3
+   */
+  readOnly?: boolean
+  /**
    * Set during dereferencing on each entry of a separate file's `definitions`/`$defs`:
    * the key it is held under in that file. Once merged into the referencing document
    * those maps no longer sit at the root (or are not part of the document at all, for a

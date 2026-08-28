@@ -138,7 +138,9 @@ function generateRawType(ast: AST, options: Options): string {
     case 'ARRAY':
       return (() => {
         const type = generateType(ast.params, options)
-        return type.endsWith('"') ? '(' + type + ')[]' : type + '[]'
+        // `readonly T[][]` would make the outer array the readonly one
+        const element = type.endsWith('"') || type.startsWith('readonly ') ? '(' + type + ')' : type
+        return readonlyModifier(ast.isReadOnly, options) + element + '[]'
       })()
     case 'BOOLEAN':
       return 'boolean'
@@ -161,6 +163,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'TUPLE':
       return (() => {
         const minItems = ast.minItems
+        const modifier = readonlyModifier(ast.isReadOnly, options)
 
         let spreadParam = ast.spreadParam
         const astParams = [...ast.params]
@@ -187,7 +190,7 @@ function generateRawType(ast: AST, options: Options): string {
         }
 
         function paramsToString(params: string[]): string {
-          return '[' + params.join(', ') + ']'
+          return modifier + '[' + params.join(', ') + ']'
         }
 
         const paramsList = astParams.map(param => generateType(param, options))
@@ -243,6 +246,14 @@ function generateRawType(ast: AST, options: Options): string {
     case 'CUSTOM_TYPE':
       return ast.params
   }
+}
+
+/**
+ * TypeScript's `readonly` modifier, for a property or an array type: on for everything under the
+ * `readonly` option, or driven by the schema's own `readOnly` annotation under `readonlyKeyword`.
+ */
+function readonlyModifier(isReadOnly: boolean | undefined, options: Options): string {
+  return options.readonly || (options.readonlyKeyword && isReadOnly) ? 'readonly ' : ''
 }
 
 /**
@@ -511,6 +522,7 @@ function generateInterface(ast: TInterface, options: Options): string {
           (hasComment(commented) && !ast.standaloneName
             ? generateComment(commented.comment, commented.deprecated) + '\n'
             : '') +
+          readonlyModifier(param.isReadOnly, options) +
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +

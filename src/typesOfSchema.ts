@@ -94,7 +94,10 @@ const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) 
     return schema.type === 'any' // for the empty schema and its likes, see `typesOfSchema`
   },
   ANY_OF(schema) {
-    return 'anyOf' in schema
+    // An array `type` makes the schema a `UNION`, whose case in `parser.ts` applies the
+    // `anyOf` within each type: also matching here would intersect that union with the
+    // `anyOf` parsed as if the schema had no `type`
+    return 'anyOf' in schema && !Array.isArray(schema.type)
   },
   BOOLEAN(schema) {
     if ('enum' in schema) {
@@ -160,7 +163,7 @@ const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) 
     )
   },
   ONE_OF(schema) {
-    return 'oneOf' in schema
+    return 'oneOf' in schema && !Array.isArray(schema.type) // as for ANY_OF
   },
   REFERENCE(schema) {
     return '$ref' in schema
