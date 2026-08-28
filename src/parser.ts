@@ -601,11 +601,9 @@ function parseMember(
     return {
       comment: member.description,
       deprecated: member.deprecated,
-      params: requireKeys(member.required as string[], key =>
-        requiredKeyType(schema, key, options, processed, usedNames),
+      ...interfaceOf(
+        requireKeys(member.required as string[], key => requiredKeyType(schema, key, options, processed, usedNames)),
       ),
-      superTypes: [],
-      type: 'INTERFACE',
     }
   }
   return parse(member, options, undefined, processed, usedNames)
@@ -631,22 +629,18 @@ function parseBranches(
   const keys = undeclaredRequired(schema)
   return members.map(member => {
     const ast = parseMember(member, schema, options, processed, usedNames)
-    const picked = interfaceOf(
-      requireKeys(keys, key => {
-        const own = findDeclarationIn(member, key)
-        if (own !== undefined) {
-          return parse(own, options, key, processed, usedNames)
-        }
-        // The rest go on the intersection instead, once, when `schema` was split off of one (see
-        // `parseRequired`), and never on a branch that may match something other than objects:
-        // `required` asks nothing of those, and the intersection would exclude them
-        if (schema[Intersection] || !isObjectSchema(member)) {
-          return undefined
-        }
-        return requiredKeyType(schema, key, options, processed, usedNames)
-      }),
-    )
-    return picked ? {params: [ast, picked], type: 'INTERSECTION'} : ast
+    // The keys the branch doesn't declare go on the intersection instead, once, when `schema` was
+    // split off of one (see `parseRequired`), and never on a branch that may match something other
+    // than objects: `required` asks nothing of those, and the intersection would exclude them
+    const takesRest = keys.length > 0 && !schema[Intersection] && isObjectSchema(member)
+    const params = requireKeys(keys, key => {
+      const own = findDeclarationIn(member, key)
+      if (own !== undefined) {
+        return parse(own, options, key, processed, usedNames)
+      }
+      return takesRest ? requiredKeyType(schema, key, options, processed, usedNames) : undefined
+    })
+    return params.length ? {params: [ast, interfaceOf(params)], type: 'INTERSECTION'} : ast
   })
 }
 
@@ -671,19 +665,17 @@ function parseRequired(
 ): AST[] {
   // the intersection `applySchemaTyping` split off of a schema took its `allOf` along, but not its `required`
   const owner = intersectionOwner(schema) ?? schema
-  const picked = interfaceOf(
-    requireKeys(undeclaredRequired(owner), key => {
-      const declaration = findDeclaration(schema, key, options)
-      if (declaration !== undefined) {
-        return parse(declaration, options, key, processed, usedNames)
-      }
-      if (declaresInterface(owner) || !isObjectSchema(owner)) {
-        return undefined
-      }
-      return valueType(owner, key, options, processed, usedNames)
-    }),
-  )
-  return picked ? [picked] : []
+  const keys = undeclaredRequired(owner)
+  // the keys declared nowhere too, unless the owner has an interface of its own to list them or may match non-objects
+  const takesRest = keys.length > 0 && !declaresInterface(owner) && isObjectSchema(owner)
+  const params = requireKeys(keys, key => {
+    const declaration = findDeclaration(schema, key, options)
+    if (declaration !== undefined) {
+      return parse(declaration, options, key, processed, usedNames)
+    }
+    return takesRest ? valueType(owner, key, options, processed, usedNames) : undefined
+  })
+  return params.length ? [interfaceOf(params)] : []
 }
 
 /**
@@ -727,10 +719,8 @@ function requireKeys(keys: string[], typeOf: (key: string) => AST | undefined): 
   return params
 }
 
-function interfaceOf(params: TInterfaceParam[]): TInterface | undefined {
-  if (params.length) {
-    return {params, superTypes: [], type: 'INTERFACE'}
-  }
+function interfaceOf(params: TInterfaceParam[]): TInterface {
+  return {params, superTypes: [], type: 'INTERFACE'}
 }
 
 /**
@@ -765,10 +755,9 @@ function valueType(
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
-  const matching = Object.keys(schema.patternProperties ?? {}).filter(pattern => testPattern(pattern, key))
+  const matching = Object.entries(schema.patternProperties ?? {}).filter(([pattern]) => testPattern(pattern, key))
   if (matching.length) {
-    const params = matching.map(pattern => {
-      const patternSchema = schema.patternProperties![pattern]
+    const params = matching.map(([, patternSchema]) => {
       const ast = parse(patternSchema, options, key, processed, usedNames)
       // the index signature had it parsed already, and a comment naming the pattern appended
       // (see `parseSchema`) that the member does better without
