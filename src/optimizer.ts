@@ -27,9 +27,16 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
         params: ast.params.map(_ => optimize(_, options, processed)),
       })
 
+      // [A] -> A is the generator's job (it prints a one-member set operation as that member):
+      // nothing below has two members to work with, and trading the node for a bare `any`
+      // would lose the member's name and the comment of whatever holds it
+      if (optimizedAST.params.length === 1) {
+        return optimizedAST
+      }
+
       // [A & B & Unknown] -> [A & B], since a member that matches anything doesn't narrow an intersection
       if (optimizedAST.type === 'INTERSECTION') {
-        const constrained = optimizedAST.params.filter(_ => _.type !== 'ANY' && _.type !== 'UNKNOWN')
+        const constrained = optimizedAST.params.filter(_ => !matchesAnything(_))
         if (constrained.length > 0 && constrained.length < optimizedAST.params.length) {
           log('cyan', 'optimizer', '[A & B & Unknown] -> [A & B]', optimizedAST)
           optimizedAST.params = constrained
@@ -72,5 +79,27 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       })
     default:
       return ast
+  }
+}
+
+/**
+ * `any`, `unknown`, or a set operation over nothing but those (which is printed as its member) --
+ * not one with no members at all, which the generator prints as an open object or `never`. A set
+ * operation can be its own member (`allOf: [{$ref: '#'}]`): one met again matches nothing more.
+ */
+function matchesAnything(ast: AST, seen = new Set<AST>()): boolean {
+  switch (ast.type) {
+    case 'ANY':
+    case 'UNKNOWN':
+      return true
+    case 'INTERSECTION':
+    case 'UNION':
+      if (seen.has(ast)) {
+        return false
+      }
+      seen.add(ast)
+      return ast.params.length > 0 && ast.params.every(_ => matchesAnything(_, seen))
+    default:
+      return false
   }
 }
