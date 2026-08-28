@@ -130586,6 +130586,7 @@ export type AllOfSelfReference = {
   label?: string;
   viaProperty?: ViaProperty;
   viaItems?: ViaItems;
+  viaSelf?: ViaSelf;
 };
 export type ViaProperty = {
   back?: ViaProperty;
@@ -130594,6 +130595,11 @@ export type ViaProperty = {
 };
 export type ViaItems = {
   children?: ViaItems[];
+} & {
+  label?: string;
+};
+export type ViaSelf = {
+  label: string;
 } & {
   label?: string;
 };
