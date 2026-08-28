@@ -3,7 +3,7 @@
 [build]: https://img.shields.io/github/actions/workflow/status/bcherny/json-schema-to-typescript/ci.yml?style=flat-square
 [npm]: https://img.shields.io/npm/v/json-schema-to-typescript.svg?style=flat-square
 [mit]: https://img.shields.io/npm/l/json-schema-to-typescript.svg?style=flat-square
-[node]: https://img.shields.io/badge/Node.js-16+-417e37?style=flat-square
+[node]: https://img.shields.io/badge/Node.js-22.19+-417e37?style=flat-square
 
 > Compile JSON Schema to TypeScript typings.
 
@@ -58,6 +58,8 @@ export interface ExampleSchema {
 ```sh
 npm install json-schema-to-typescript
 ```
+
+Requires Node.js 22.19 or later. (json-schema-to-typescript 16.x is the last release line that runs on Node.js 16–20.)
 
 ## Usage
 

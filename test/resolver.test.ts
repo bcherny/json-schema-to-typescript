@@ -2,7 +2,7 @@ import {describe, expect, test} from 'bun:test'
 import {$RefParser} from '@apidevtools/json-schema-ref-parser'
 import {cloneDeep} from 'lodash'
 import {prenormalize} from '../src/prenormalizer'
-import {dereferenceInDocument, inDocumentTargets} from '../src/resolver'
+import {IdScopeMask, dereferenceInDocument, inDocumentTargets} from '../src/resolver'
 import {JSONSchema} from '../src/types/JSONSchema'
 import {getTestCases, hasOnly} from './e2eCases'
 
@@ -19,6 +19,16 @@ const CORNER_CASES: Record<string, {input: JSONSchema}> = {
         a: {items: {$ref: '#/definitions/tup/items'}},
         c: {items: {$ref: '#/definitions/tup/items', length: 5}},
       },
+    },
+  },
+  // `$id` names a type here, and never rebases the pointers below it -- which $RefParser (16+) would do,
+  // and then not find `definitions`, in a document whose root declares a draft `$schema` or an `$id`
+  'pointer from under a nested $id': {
+    input: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      $id: 'https://example.com/root.json',
+      definitions: {shared: {type: 'string'}},
+      properties: {named: {$id: 'Named', type: 'object', properties: {s: {$ref: '#/definitions/shared'}}}},
     },
   },
 }
@@ -38,9 +48,11 @@ suite('resolver', () => {
       inDocument++
       dereferenceInDocument(ours.schema, targets, ours.onDereference)
       const theirs = prepare(input)
-      await new $RefParser().dereference(__dirname + '/', theirs.schema, {
+      const documents = new IdScopeMask() // as `dereference()` hands documents to $RefParser
+      await new $RefParser().dereference(__dirname + '/', documents.hide(theirs.schema), {
         dereference: {onDereference: theirs.onDereference},
       })
+      documents.restore()
       expect(firstDifference(ours.schema, theirs.schema, ours.reported, theirs.reported), name).toBe(undefined)
     }
     expect(inDocument).toBeGreaterThan(150) // most of them

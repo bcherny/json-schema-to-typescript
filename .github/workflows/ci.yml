@@ -55,17 +55,18 @@ jobs:
     - name: Run the built CLI under bun
       run: bun dist/src/cli.js test/resources/Schema.yaml
 
-  # package.json claims node >=16, but the test suite runs under bun rather than
-  # node, so it can't cover the older versions on its own. Build on a current
-  # node, then exercise the built package on every version the package claims to
-  # support.
+  # package.json claims node >=22.19.0 (the first release that can `require()`
+  # the ES-module-only $ref parser and its HTTP client), but the test suite runs
+  # under bun, and the build matrix above on whatever 22.x is current. Build on a
+  # current node, then exercise the built package on exactly the version the
+  # package claims as its floor.
   engines:
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [22.19.0]
 
     steps:
     - uses: actions/checkout@v7

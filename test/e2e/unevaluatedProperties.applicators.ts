@@ -41,7 +41,7 @@ export const input = {
       dependentSchemas: {a: {properties: {b: {type: 'boolean'}}}},
       unevaluatedProperties: {type: 'number'},
     },
-    // open: {"name": "x", "age": 1} is valid, but the merge keeps only `age` (issue 613)
+    // open: {"name": "x", "age": 1} is valid; the ref resolver merges the two `properties` (issue 613)
     refWithSiblingProperties: {
       $ref: '#/$defs/base',
       title: 'Person',
