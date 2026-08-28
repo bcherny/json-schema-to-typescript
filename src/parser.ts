@@ -136,7 +136,21 @@ function parseNonLiteral(
         deprecated: schema.deprecated,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: schema.allOf!.map(_ => parse(_, options, undefined, processed, usedNames)),
+        // An `allOf` member made up entirely of keywords this tool doesn't implement (eg.
+        // `if`/`then`/`else`, `not`) doesn't match any of the type matchers in `typesOfSchema`,
+        // so it falls back to `newInterface`, which synthesizes a bare `{[k: string]: unknown}`
+        // for it. Intersecting with that contributes no information, so drop it rather than
+        // cluttering the output. Restricted to members with no keyword this tool does recognize,
+        // so it never touches a member whose emptiness is due to its *own* type (eg. a bare
+        // `{type: 'object'}`, or `{required: [...]}` with no matching `properties`) -- those stay
+        // exactly as before.
+        params: schema
+          .allOf!.map(memberSchema => ({
+            ast: parse(memberSchema, options, undefined, processed, usedNames),
+            memberSchema,
+          }))
+          .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
+          .map(({ast}) => ast),
         type: 'INTERSECTION',
       }
     case 'ANY':
@@ -340,6 +354,57 @@ function parseNonLiteral(
   }
 }
 
+// Keywords that some matcher in `typesOfSchema`, or the `additionalProperties`/`required`
+// normalizer rules, actually keys off of. An `allOf` member made up exclusively of keywords
+// outside this list (eg. `if`/`then`/`else`, `not`) is one this tool has no notion of at all,
+// as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but currently
+// renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
+// swallowing members whose current (separately unimplemented) behavior other schemas rely on.
+// (`$ref` is deliberately omitted: by the time this runs, the resolver has already replaced
+// every `$ref` node, so `case 'REFERENCE'` above never fires and no schema here can carry one.)
+// Keep this in sync with the keywords `typesOfSchema.ts`'s matchers check.
+const RECOGNIZED_ALL_OF_MEMBER_KEYWORDS = new Set([
+  '$id',
+  'additionalProperties',
+  'allOf',
+  'anyOf',
+  'const',
+  'default',
+  'enum',
+  'extends',
+  'items',
+  'oneOf',
+  'patternProperties',
+  'properties',
+  'required',
+  'tsEnumNames',
+  'tsType',
+  'type',
+])
+
+function hasNoRecognizedKeywords(schema: NormalizedJSONSchema): boolean {
+  return Object.keys(schema).every(key => !RECOGNIZED_ALL_OF_MEMBER_KEYWORDS.has(key))
+}
+
+/**
+ * True for a parsed AST that carries no information beyond the synthesized
+ * `[k: string]: unknown`/`any` index signature `parseSchema` adds by default -- ie. an interface
+ * with no properties, patternProperties, superTypes, comment, or standalone name of its own.
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/369
+ */
+function isVacuousInterface(ast: AST): boolean {
+  return (
+    ast.type === 'INTERFACE' &&
+    ast.standaloneName === undefined &&
+    ast.comment === undefined &&
+    !ast.deprecated &&
+    ast.superTypes.length === 0 &&
+    ast.params.length === 1 &&
+    ast.params[0].isIndexSignature &&
+    (ast.params[0].ast.type === 'ANY' || ast.params[0].ast.type === 'UNKNOWN')
+  )
+}
+
 /**
  * Compute a schema name using a series of fallbacks
  */
@@ -392,6 +457,17 @@ function parseSuperTypes(
 }
 
 /**
+ * Draft 4+ lists an object's required properties on the object schema (`required: [...]`).
+ * Draft 3 instead flagged each property schema (`required: true`), and some generators still
+ * emit that form. Support both, reading the draft 3 form only when it is strictly `true` so
+ * that a property's own `required` array (which of *its* properties are required) is never
+ * mistaken for the flag.
+ */
+function isRequired(parentSchema: SchemaSchema, key: string, propertySchema: NormalizedJSONSchema): boolean {
+  return propertySchema.required === true || (parentSchema.required !== true && includes(parentSchema.required, key))
+}
+
+/**
  * Helper to parse schema properties into params on the parent schema's type
  */
 function parseSchema(
@@ -405,7 +481,7 @@ function parseSchema(
     ast: parse(value, options, key, processed, usedNames),
     isIndexSignature: false,
     isPatternProperty: false,
-    isRequired: includes(schema.required || [], key),
+    isRequired: isRequired(schema, key, value),
     isUnreachableDefinition: false,
     keyName: key,
   }))
@@ -420,7 +496,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
       ast,
       isIndexSignature: false,
       isPatternProperty: true,
-      isRequired: includes(schema.required || [], key),
+      isRequired: isRequired(schema, key, value),
       isUnreachableDefinition: false,
       keyName: key,
     }
@@ -438,7 +514,7 @@ via the \`definition\` "${key}".`
           ast,
           isIndexSignature: false,
           isPatternProperty: false,
-          isRequired: includes(schema.required || [], key),
+          isRequired: isRequired(schema, key, value),
           isUnreachableDefinition: true,
           keyName: key,
         }

@@ -3,7 +3,9 @@
 // only, or as its own `allOf` member - a spelling some OpenAPI 3.0 generators use) must
 // not turn the schema into `unknown | null`: that folds to `unknown`, swallows the other
 // `allOf` members and drops the comment. Such a schema already admits null, so it is left
-// alone. Expected = master's output for this exact input.
+// alone. The nullable-only `allOf` member carries no recognized keyword, so the parser's
+// hasNoRecognizedKeywords / isVacuousInterface rule (PR 743) drops it instead of emitting
+// a stray `& {[k: string]: unknown}`: `allOfMember?: Bar`.
 export const input = {
   title: 'NullableAnnotationOnly',
   type: 'object',
