@@ -72,6 +72,22 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
   }
 })
 
+// `unevaluatedProperties` (draft 2019-09+) constrains the keys no other keyword
+// accounted for. Where a schema declares its properties inline, that is the same set
+// `additionalProperties` covers, so fold it into the handling we already have rather
+// than teaching the parser a second way to say the same thing. An explicit
+// `additionalProperties` is the narrower constraint, so it wins.
+rules.set('Treat `unevaluatedProperties` as `additionalProperties`', schema => {
+  // `traverse` also visits boolean schemas, where `in` would throw.
+  if (typeof schema !== 'object' || schema === null || schema.unevaluatedProperties === undefined) {
+    return
+  }
+  if (schema.additionalProperties === undefined) {
+    schema.additionalProperties = schema.unevaluatedProperties
+  }
+  delete schema.unevaluatedProperties
+})
+
 rules.set('Default additionalProperties', (schema, _, options) => {
   if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
     schema.additionalProperties = options.additionalProperties

@@ -40,6 +40,7 @@ const BLACKLISTED_KEYS = new Set([
   'minProperties',
   'required',
   'additionalProperties',
+  'unevaluatedProperties',
   'definitions',
   'properties',
   'patternProperties',
@@ -123,6 +124,9 @@ export function traverse(
   }
   if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
     traverse(schema.additionalProperties, callback, processed)
+  }
+  if (schema.unevaluatedProperties && typeof schema.unevaluatedProperties === 'object') {
+    traverse(schema.unevaluatedProperties, callback, processed)
   }
   if (schema.items) {
     const {items} = schema
