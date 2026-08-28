@@ -14,12 +14,19 @@ import {
   TIntersection,
   TNamedInterface,
   TUnion,
+  T_UNDEFINED,
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string {
+/**
+ * Generates the declaration file for `ast`: the banner comment, then the type aliases, the
+ * interfaces and the enums, a blank line between those groups and a newline between declarations.
+ * It is returned split before each top-level declaration, each part starting with the newlines
+ * that separate it from the previous one; `.join('')` is the whole file.
+ */
+export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string[] {
   const rootASTName = ast.standaloneName!
 
   // One walk over the ASTs collects every standalone declaration, by kind, in the order found
@@ -35,10 +42,16 @@ export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinit
     }
   }
 
-  return (
-    [options.bannerComment, types.join('\n'), interfaces.join('\n'), enums.join('\n')].filter(Boolean).join('\n\n') +
-    '\n'
-  ) // trailing newline
+  const parts: string[] = []
+  for (const group of [options.bannerComment ? [options.bannerComment] : [], types, interfaces, enums]) {
+    let separator = parts.length === 0 ? '' : '\n\n'
+    for (const declaration of group) {
+      parts.push(separator + declaration)
+      separator = '\n'
+    }
+  }
+  parts[parts.length - 1] += '\n' // the root type is always declared, so there is a last part
+  return parts
 }
 
 type Declarations = {enums: string[]; interfaces: string[]; types: string[]}
@@ -291,6 +304,30 @@ function isUnknown(ast: AST): boolean {
 }
 
 /**
+ * `tsType` overrides are opaque strings (e.g. function types) that may not be
+ * union-safe, so parenthesize them unless they are a simple type reference.
+ */
+function unionMember(ast: AST, type: string): string {
+  return ast.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type
+}
+
+/**
+ * `T | undefined`, for an optional property under `undefinedOptionalProperties`. An
+ * anonymous union takes `undefined` as one more member rather than nesting
+ * (`string | number | undefined`, not `(string | number) | undefined`); `any` and
+ * `unknown` already include it.
+ */
+function orUndefined(ast: AST, type: string, options: Options): string {
+  if (isAny(ast) || isUnknown(ast)) {
+    return type
+  }
+  if (ast.type === 'UNION' && !hasStandaloneName(ast)) {
+    return generateType({...ast, params: [...ast.params, T_UNDEFINED]}, options)
+  }
+  return unionMember(ast, type) + ' | undefined'
+}
+
+/**
  * Named properties (own and inherited) that TypeScript checks against an interface's
  * index signature.
  */
@@ -440,9 +477,7 @@ function generateIndexSignatureType(
     }
     seen.add(type)
     seen.add(underlying)
-    // tsType overrides are opaque strings (e.g. function types) that may not be
-    // union-safe, so parenthesize them unless they are a simple type reference
-    members.push(memberAST.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type)
+    members.push(unionMember(memberAST, type))
   }
 
   if (needsUndefined && !seen.has('undefined')) {
@@ -479,7 +514,9 @@ function generateInterface(ast: TInterface, options: Options): string {
           (isIndexSignature ? keyName : escapeKeyName(keyName)) +
           (isRequired ? '' : '?') +
           ': ' +
-          type
+          (!isRequired && !isIndexSignature && options.undefinedOptionalProperties
+            ? orUndefined(ast, type, options)
+            : type)
         )
       })
       .join('\n') +

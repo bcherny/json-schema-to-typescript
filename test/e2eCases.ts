@@ -9,7 +9,8 @@ export const E2E_DIR = join(__dirname, 'e2e')
 
 export type TestCase = {
   input: JSONSchema
-  error?: true
+  /** The case must reject: with any Error (`true`), or one whose message matches. */
+  error?: true | string | RegExp
   exclude?: boolean
   only?: boolean
   options?: Options

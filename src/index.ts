@@ -104,6 +104,11 @@ export interface Options {
    */
   unreachableDefinitions: boolean
   /**
+   * Append `| undefined` to the type of every optional property, for consumers that compile with
+   * TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes).
+   */
+  undefinedOptionalProperties: boolean
+  /**
    * Generate unknown type instead of any
    */
   unknownAny: boolean
@@ -139,6 +144,7 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false,
   },
   unreachableDefinitions: false,
+  undefinedOptionalProperties: false,
   unknownAny: true,
 }
 
@@ -235,7 +241,10 @@ export async function compile(
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
   const generated = generate(optimized, _options, optimizedUnreachableDefinitions)
-  log('magenta', 'generator', time(), '✅ Result:', generated)
+  if (process.env.VERBOSE) {
+    // (the guard spares joining the whole file when nobody is reading)
+    log('magenta', 'generator', time(), '✅ Result:', generated.join(''))
+  }
 
   const formatted = await format(generated, _options)
   log('white', 'formatter', time(), '✅ Result:', formatted)

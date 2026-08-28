@@ -174,6 +174,11 @@ export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   type: 'ANY',
 }
 
+export const T_UNDEFINED: TCustomType = {
+  params: 'undefined',
+  type: 'CUSTOM_TYPE',
+}
+
 export const T_UNKNOWN: TUnknown = {
   type: 'UNKNOWN',
 }
