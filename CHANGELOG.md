@@ -8,6 +8,7 @@ This release collects the fixes and small features merged since 15.0.4. Several 
 
 New:
 
+- Feat: The CLI formats its output with the Prettier configuration (`.prettierrc`, `prettier.config.js`, …) that applies to the input file, or to the working directory for piped input; `--style.*` flags override it. Projects with a Prettier config will see their generated `.d.ts` files reformatted accordingly. The `compile()` API is unchanged (#217)
 - e3c7776 Feat: Support OpenAPI 3.0 `nullable: true`, including next to a `$ref`; such schemas now emit `T | null` (#755, fixes #410)
 - ab31f41 Feat: Support draft-3 / Swagger 2 property-level `required: true`; such properties are now emitted as required (#756, fixes #440, #6)
 - 111c187 Feat: Resolve draft-07 named-anchor `$ref`s (`"#name"` matching a sibling `$id: "#name"`) instead of crashing (#744, fixes #220)

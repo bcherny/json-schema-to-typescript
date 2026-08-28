@@ -105,6 +105,8 @@ json2ts -i foo.json -o foo.d.ts --unreachableDefinitions
 json2ts -i foo.json -o foo.d.ts --style.singleQuote --no-style.semi
 ```
 
+The CLI formats its output with the [Prettier configuration](https://prettier.io/docs/en/configuration.html) that applies to the input file (for piped input, to the working directory), if there is one; `--style.*` flags override it. The programmatic API only uses the `style` option.
+
 ### API
 
 To invoke json-schema-to-typescript from your TypeScript or JavaScript program, import it and call `compile` or `compileFromFile`.
