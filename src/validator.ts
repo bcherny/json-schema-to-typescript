@@ -43,14 +43,14 @@ rules.set('deprecated must be a boolean', schema => {
 })
 
 export function validate(schema: LinkedJSONSchema, filename: string): string[] {
-  const errors: string[] = []
-  rules.forEach((rule, ruleName) => {
-    traverse(schema, (schema, key) => {
+  // All rules share one walk over the schema; errors are still listed rule by rule
+  const checks = [...rules].map(([ruleName, rule]) => ({ruleName, rule, errors: [] as string[]}))
+  traverse(schema, (schema, key) => {
+    for (const {ruleName, rule, errors} of checks) {
       if (rule(schema) === false) {
         errors.push(`Error at key "${key}" in file "${filename}": ${ruleName}`)
       }
-      return schema
-    })
+    }
   })
-  return errors
+  return checks.flatMap(_ => _.errors)
 }

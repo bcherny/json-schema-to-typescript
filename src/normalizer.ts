@@ -20,7 +20,22 @@ type Rule = (
   key: string | null,
   dereferencedPaths: DereferencedPaths,
 ) => void
-const rules = new Map<string, Rule>()
+
+// Rules run in the order they are set: each rule sees a schema only after every rule before it
+// has run on that schema and on the schemas above it. That is all most rules need, so
+// consecutive rules share one walk over the schema (walking a large dereferenced schema costs
+// far more than any rule does). A rule that also needs the rules before it to have finished on
+// every *other* schema, or that adds schemas the rules before it must not see, is preceded by
+// `startNewPass()`.
+const passes: Rule[][] = [[]]
+const rules = {
+  set(_name: string, rule: Rule) {
+    passes[passes.length - 1].push(rule)
+  },
+}
+function startNewPass() {
+  passes.push([])
+}
 
 function hasType(schema: JSONSchema, type: JSONSchemaTypeName) {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
@@ -195,6 +210,10 @@ rules.set('Remove maxItems if it is big enough to likely cause OOMs', (schema, _
   }
 })
 
+// The rule above compares each ancestor's `items` with the schema below it, so it has to have
+// run everywhere before this one rewrites any `items` into a tuple
+startNewPass()
+
 rules.set('Normalize schema.items', (schema, _fileName, options) => {
   if (options.ignoreMinAndMaxItems) {
     return
@@ -231,6 +250,10 @@ rules.set('Remove extends, if it is empty', schema => {
     delete schema.extends
   }
 })
+
+// Wrapping `extends` in an array makes the walk descend into the wrapped schema, which the
+// rules above never visited on its own
+startNewPass()
 
 rules.set('Make extends always an array, if it is defined', schema => {
   if (schema.extends == null) {
@@ -319,7 +342,10 @@ function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSchema | 
 // Runs this late so that the schema has already been named from its `$ref` path, had
 // its object defaults filled in, its `const` turned into an `enum` and its `tsEnumNames`
 // inferred (all of which look at keywords that move into the `anyOf`), and before types
-// are pre-calculated.
+// are pre-calculated. It adds the `anyOf` members to the tree, which only this rule and the
+// ones after it get to see.
+startNewPass()
+
 rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, dereferencedPaths) => {
   // The name a TypeScript enum gets in this position: the definition it was dereferenced
   // from, else the key it sits under (unless that is just an index into anyOf/items)
@@ -380,6 +406,12 @@ export function normalize(
   filename: string,
   options: Options,
 ): NormalizedJSONSchema {
-  rules.forEach(rule => traverse(rootSchema, (schema, key) => rule(schema, filename, options, key, dereferencedPaths)))
+  passes.forEach(pass =>
+    traverse(rootSchema, (schema, key) => {
+      for (const rule of pass) {
+        rule(schema, filename, options, key, dereferencedPaths)
+      }
+    }),
+  )
   return rootSchema as NormalizedJSONSchema
 }
