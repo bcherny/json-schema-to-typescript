@@ -1,5 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {includes, map, omit} from 'lodash'
+import {includes, isPlainObject, map, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {applySchemaTyping} from './typesOfSchema'
