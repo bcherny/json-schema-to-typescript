@@ -6,6 +6,7 @@ import {
   KEYWORDS,
   META_KEYWORDS,
   NOT_SCANNED_FOR_DEFINITIONS,
+  STRUCTURAL_KEYWORDS,
   SUBSCHEMA_KEYWORDS,
   TYPE_SHAPING_KEYWORDS,
 } from '../src/keywords'
@@ -117,9 +118,10 @@ suite('keywords', () => {
   })
 
   test("the parser recognizes the allOf members it always has (parser.ts's former RECOGNIZED_ALL_OF_MEMBER_KEYWORDS)", () => {
+    // ...less `$id`, which names a type rather than shaping one: a member that is only an `$id`
+    // is kept either way, for its name
     expect([...TYPE_SHAPING_KEYWORDS].sort()).toEqual(
       [
-        '$id',
         'additionalProperties',
         'allOf',
         'anyOf',
@@ -136,6 +138,38 @@ suite('keywords', () => {
         'tsEnumNames',
         'tsType',
         'type',
+      ].sort(),
+    )
+  })
+
+  test('typesOfSchema reads a schema with none of these as the empty schema', () => {
+    expect([...STRUCTURAL_KEYWORDS].sort()).toEqual(
+      [
+        '$defs',
+        'additionalItems',
+        'additionalProperties',
+        'allOf',
+        'anyOf',
+        'const',
+        'default',
+        'definitions',
+        'dependencies',
+        'else',
+        'enum',
+        'extends',
+        'if',
+        'items',
+        'not',
+        'oneOf',
+        'patternProperties',
+        'prefixItems',
+        'properties',
+        'required',
+        'then',
+        'tsEnumNames',
+        'tsType',
+        'type',
+        'unevaluatedProperties',
       ].sort(),
     )
   })
@@ -180,8 +214,10 @@ suite('keywords', () => {
     shapes.forEach(shape => typesOfSchema(recording(shape)))
 
     // `$ref` is gone by the time the parser runs (see `hasNoRecognizedKeywords` there), so it
-    // needs no row; `tsType` is read by `typesOfSchema` itself rather than a matcher
+    // needs no row; `$id` only tells `NAMED_SCHEMA` from `UNNAMED_SCHEMA`, which parse to the
+    // same shape; `tsType` is read by `typesOfSchema` itself rather than a matcher
     read.delete('$ref')
+    read.delete('$id')
     expect(read.has('tsType')).toBe(true)
     for (const key of read) {
       expect(KEYWORDS).toHaveProperty([key])

@@ -1,9 +1,18 @@
-import {getRootSchema, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
-import {appendToDescription, escapeBlockComment, hasType, isSchemaLike, justName, toSafeString, traverse} from './utils'
+import {getRootSchema, isBoolean, LinkedJSONSchema, NormalizedJSONSchema, Parent} from './types/JSONSchema'
+import {
+  appendToDescription,
+  escapeBlockComment,
+  formatTypeOf,
+  hasType,
+  isSchemaLike,
+  justName,
+  toSafeString,
+  traverse,
+} from './utils'
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
-import {applySchemaTyping, hasOwnType} from './typesOfSchema'
+import {applySchemaTyping, hasOwnType, isShapeless} from './typesOfSchema'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
 
@@ -103,17 +112,28 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
   }
 })
 
-// `unevaluatedProperties` (draft 2019-09+) constrains the keys no other keyword
-// accounted for. Where a schema declares its properties inline, that is the same set
-// `additionalProperties` covers, so fold it into the handling we already have rather
-// than teaching the parser a second way to say the same thing. An explicit
-// `additionalProperties` is the narrower constraint, so it wins.
+// `unevaluatedProperties` (draft 2019-09+) constrains the keys no keyword accounted for,
+// counting the keys evaluated by in-place applicators. Where the emitted type covers every
+// key those applicators contribute, that is the same set `additionalProperties` covers, so
+// fold it into the handling we already have rather than teaching the parser a second way to
+// say the same thing. Where it does not (`emitsWhatItEvaluates`), closing the object would
+// reject instances the spec accepts, so the keyword is dropped and the object stays open, as
+// it was before the keyword was supported. A `$ref` with siblings is the prenormalizer's
+// case: by now it has been merged away. An explicit `additionalProperties` is the narrower
+// constraint, so it wins.
 rules.set('Treat `unevaluatedProperties` as `additionalProperties`', schema => {
   // `traverse` also visits boolean schemas, where `in` would throw.
   if (typeof schema !== 'object' || schema === null || schema.unevaluatedProperties === undefined) {
     return
   }
-  if (schema.additionalProperties === undefined) {
+  // A schema (rather than a boolean) becomes a typed index signature on the object's own
+  // interface, and an intersection holds the `allOf`/`anyOf`/`oneOf` members' keys to it too
+  // (`{[k: string]: string} & {x: number}` rejects {"x": 1}), so that form folds only where
+  // there is nothing to intersect with.
+  const folds =
+    emitsWhatItEvaluates(schema) &&
+    (isBoolean(schema.unevaluatedProperties) || !INTERSECTED_APPLICATORS.some(key => schema[key]))
+  if (schema.additionalProperties === undefined && folds) {
     schema.additionalProperties = schema.unevaluatedProperties
   }
   delete schema.unevaluatedProperties
@@ -135,6 +155,29 @@ rules.set('Treat `prefixItems` as the tuple form of `items`', schema => {
   schema.items = schema.prefixItems
   delete schema.prefixItems
 })
+
+// In-place applicators that evaluate keys the emitted type never reflects (`then`/`else` only
+// ever apply through an `if`; `not` contributes nothing). Not KEYWORDS rows: half of them have
+// none, and a row changes what `traverse` visits.
+const UNEMITTED_APPLICATORS = ['if', 'dependentSchemas', '$dynamicRef', '$recursiveRef'] as const
+// In-place applicators emitted as an intersection with the object's own interface: a member's
+// keys satisfy that intersection whether or not the interface is closed, as long as the member
+// itself emits what it evaluates (one made of `if`/`then` alone parses as `{}` and is dropped).
+const INTERSECTED_APPLICATORS = ['allOf', 'anyOf', 'oneOf'] as const
+
+function emitsWhatItEvaluates(schema: LinkedJSONSchema | boolean, seen = new Set<LinkedJSONSchema>()): boolean {
+  // a boolean schema evaluates no keys; a schema met again is a dereferenced cycle or already passed
+  if (isBoolean(schema) || seen.has(schema)) {
+    return true
+  }
+  seen.add(schema)
+  return (
+    !UNEMITTED_APPLICATORS.some(key => key in schema) &&
+    INTERSECTED_APPLICATORS.every(
+      key => !schema[key] || schema[key].every(member => emitsWhatItEvaluates(member, seen)),
+    )
+  )
+}
 
 rules.set('Default additionalProperties', (schema, _, options) => {
   if (isObjectType(schema) && !('additionalProperties' in schema) && schema.patternProperties === undefined) {
@@ -434,6 +477,17 @@ rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, 
     }
   }
 })
+
+rules.set(
+  'With `formatTypes`, a schema that only bounds values is a string if its `format` is mapped',
+  (schema, _, options) => {
+    // `format` alone doesn't make a schema a string (it constrains strings and lets everything
+    // else through), but mapping it to a type says which type the caller wants such values read as
+    if (schema.type === undefined && formatTypeOf(schema, options) !== undefined && isShapeless(schema)) {
+      schema.type = 'string'
+    }
+  },
+)
 
 // Precalculation of the schema types is necessary because the ALL_OF type
 // is implemented in a way that mutates the schema object. Detection of the
