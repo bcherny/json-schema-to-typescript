@@ -63,6 +63,10 @@ export interface LinkedJSONSchema extends JSONSchema {
    */
   unevaluatedProperties?: boolean | LinkedJSONSchema
   items?: LinkedJSONSchema | LinkedJSONSchema[]
+  /**
+   * @see https://json-schema.org/draft/2020-12/json-schema-core#section-10.3.1.1
+   */
+  prefixItems?: LinkedJSONSchema[]
   definitions?: {
     [k: string]: LinkedJSONSchema
   }
@@ -87,9 +91,10 @@ export const Intersection = Symbol('Intersection')
 /**
  * Normalized JSON schema.
  *
- * Note: `definitions` and `id` are removed by the normalizer. Use `$defs` and `$id` instead.
+ * Note: `definitions`, `id` and `prefixItems` are removed by the normalizer. Use `$defs`, `$id`
+ * and `items`/`additionalItems` instead.
  */
-export interface NormalizedJSONSchema extends Omit<LinkedJSONSchema, 'definitions' | 'id'> {
+export interface NormalizedJSONSchema extends Omit<LinkedJSONSchema, 'definitions' | 'id' | 'prefixItems'> {
   [Intersection]?: NormalizedJSONSchema
   [Parent]: NormalizedJSONSchema | null
   [Types]: ReadonlySet<SchemaType>

@@ -70,6 +70,7 @@ export const KEYWORDS = {
   additionalProperties: {holds: 'schemaOrBoolean', typed: true},
   unevaluatedProperties: {holds: 'schemaOrBoolean', refines: true}, // 2019-09; the normalizer folds it into `additionalProperties`
   items: {holds: 'schemaOrSchemaArray', typed: true},
+  prefixItems: {holds: 'schemaArray', typed: true}, // 2020-12; the normalizer renames it to the tuple form of `items`
   additionalItems: {holds: 'schemaOrBoolean', refines: true},
   dependencies: {holds: 'schemaMap'}, // or, per name, a string array
   definitions: {holds: 'schemaMap', meta: true},
@@ -82,7 +83,7 @@ export const KEYWORDS = {
 
   // Identity, documentation and other annotations
   id: {holds: 'data', meta: true}, // draft 4
-  $id: {holds: 'data', typed: true, meta: true},
+  $id: {holds: 'data', meta: true}, // names the type; the shape is the same with or without it
   $schema: {holds: 'data', meta: true},
   $comment: {holds: 'data', annotation: true},
   title: {holds: 'data', meta: true},
@@ -217,13 +218,22 @@ export const TYPE_SHAPING_KEYWORDS = keywordsWhere(({typed}) => typed !== undefi
 
 /**
  * Keywords that have a say in the emitted type or its name, unless something else decides it:
- * the type-shaping ones bar fallbacks, the refining ones, and draft 4's `id` (renamed to `$id`
- * only later, by the normalizer). Next to a `$ref`, one of these asks for a variant of the
- * referenced type; any other keyword there describes whatever holds the reference.
+ * the type-shaping ones bar fallbacks, the refining ones, and `$id` (draft 4: `id`, renamed
+ * only later, by the normalizer), which names it. Next to a `$ref`, one of these asks for a
+ * variant of the referenced type; any other keyword there describes whatever holds the reference.
  */
 export const TYPE_RELEVANT_KEYWORDS = keywordsWhere(
-  ({typed, refines}, name) => typed === true || refines === true || name === 'id',
+  ({typed, refines}, name) => typed === true || refines === true || name === 'id' || name === '$id',
 )
+
+/**
+ * Keywords that give a schema a shape of its own: the ones that decide its type (`Keyword.typed`)
+ * and the ones that hold subschemas, implemented (`properties`) or not (`not`, `if`) -- a schema
+ * made up of only the latter is one this tool has no notion of. A schema with none of either --
+ * only bounds on values (`pattern`, `maximum`), annotations, `format`, `nullable`, or keys this
+ * tool has never heard of -- says nothing about which type a value is: it is the empty schema.
+ */
+export const STRUCTURAL_KEYWORDS = keywordsWhere(({holds, typed}) => typed === true || holdsSchemas(holds))
 
 /** @see Keyword.annotation */
 export const ANNOTATION_KEYWORDS = keywordsWhere(({annotation}) => annotation === true)

@@ -1,5 +1,5 @@
 import {afterAll, beforeAll, describe, expect, test} from 'bun:test'
-import {exec} from 'child_process'
+import {ExecException, exec} from 'child_process'
 import {readFileSync, unlinkSync, readdirSync, existsSync, lstatSync} from 'fs'
 import {availableParallelism} from 'os'
 import {resolve, posix} from 'path'
@@ -8,7 +8,7 @@ import {hasOnly} from './e2eCases'
 
 const suite = hasOnly() ? describe.skip : describe
 
-type Result = {error: Error | null; stdout: string; stderr: string}
+type Result = {error: ExecException | null; stdout: string; stderr: string}
 
 // Most of a CLI test is node starting up, so every invocation is spawned before the
 // first CLI test runs (at most one per core at a time) and each test then awaits
@@ -18,17 +18,14 @@ const spawners: (() => void)[] = []
 const results = new Map<string, Promise<Result>>()
 let running = 0
 const waiting: (() => void)[] = []
-async function run(command: string, input?: string): Promise<Result> {
+async function run(command: string, input?: string, cwd?: string): Promise<Result> {
   if (running >= availableParallelism()) {
     await new Promise<void>(_ => waiting.push(_))
   }
   running++
   try {
     return await new Promise<Result>(done => {
-      const child = exec(command, {encoding: 'utf-8'}, (error, stdout, stderr) => {
-        process.stderr.write(stderr) // keep it visible, as it is for a CLI run by hand
-        done({error, stdout, stderr})
-      })
+      const child = exec(command, {encoding: 'utf-8', cwd}, (error, stdout, stderr) => done({error, stdout, stderr}))
       child.stdin!.end(input)
     })
   } finally {
@@ -37,14 +34,40 @@ async function run(command: string, input?: string): Promise<Result> {
   }
 }
 
-function cliTest(name: string, command: string, check: (output: Omit<Result, 'error'>) => void, input?: string) {
-  spawners.push(() => results.set(name, run(command, input)))
+// Piped input resolves its Prettier config from the working directory, so the
+// stdin tests run from test/resources, whose .prettierrc pins the default style.
+const STDIN_CWD = resolve('test/resources')
+const CLI = resolve('dist/src/cli.js')
+
+function cliTest(
+  name: string,
+  command: string,
+  check: (output: Omit<Result, 'error'>) => void,
+  input?: string,
+  cwd?: string,
+) {
+  spawners.push(() => results.set(name, run(command, input, cwd)))
   test(name, async () => {
     const {error, ...output} = await results.get(name)!
+    process.stderr.write(output.stderr) // keep it visible, as it is for a CLI run by hand
     if (error) {
       throw error
     }
     check(output)
+  })
+}
+
+// Like cliTest, for an invocation that must fail: the check gets the exit code and both streams.
+function cliFailTest(
+  name: string,
+  command: string,
+  check: (output: {code?: number | string; stdout: string; stderr: string}) => void,
+) {
+  spawners.push(() => results.set(name, run(command)))
+  test(name, async () => {
+    const {error, stdout, stderr} = await results.get(name)!
+    expect(error).not.toBeNull()
+    check({code: error!.code, stdout, stderr})
   })
 }
 
@@ -56,11 +79,13 @@ const expectFile = (path: string) => () => {
 // Everything the file-writing tests below create, for afterAll to clear when a
 // filtered run spawned them all but only ran some.
 const OUTPUTS = [
-  ...[1, 2, 3, 4, 5].map(n => `./ReferencedType.${n}.d.ts`),
+  ...[1, 2, 3, 4, 5, 6].map(n => `./test/resources/ReferencedType.${n}.d.ts`),
+  './test/resources/prettier-output/Enum.d.ts',
   './test/resources/MultiSchema/out',
   './test/resources/MultiSchema/foo',
   './test/resources/MultiSchemaRefs/response/out',
   './test/resources/MultiSchema2/out',
+  './test/resources/MultiSchema/extraArgs.d.ts',
 ]
 
 suite('CLI', () => {
@@ -75,20 +100,22 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, pipe out',
-    'node dist/src/cli.js',
+    `node ${CLI}`,
     ({stdout, stderr}) => {
       // stderr must stay clean too: no warnings (e.g. Node deprecation notices) for a plain stdin run
       expect(stderr).toBe('')
       expect(stdout).toMatchSnapshot()
     },
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
+    STDIN_CWD,
   )
 
   cliTest(
     'pipe in (schema without ID), pipe out',
-    'node dist/src/cli.js',
+    `node ${CLI}`,
     ({stdout}) => expect(stdout).toMatchSnapshot(),
     readFileSync('./test/resources/ReferencedTypeWithoutID.json', 'utf-8'),
+    STDIN_CWD,
   )
 
   cliTest('file in (no flags), pipe out', 'node dist/src/cli.js ./test/resources/ReferencedType.json', ({stdout}) =>
@@ -128,6 +155,19 @@ suite('CLI', () => {
     },
   )
 
+  // https://github.com/bcherny/json-schema-to-typescript/issues/631: `$refOptions` are dotted
+  // flags like `style`; quoted, because of the `$`. These fixtures spell their `$ref`s relative
+  // to the repository root, which only resolves with `externalReferenceResolution: 'root'`.
+  const quote = process.platform === 'win32' ? '"' : "'"
+  cliTest(
+    'file in (-i), $refOptions flag, pipe out',
+    `node dist/src/cli.js -i ./test/resources/refOptions/specific/specific.yml ${quote}--$refOptions.dereference.externalReferenceResolution=root${quote}`,
+    ({stdout}) => {
+      expect(stdout).toContain('export type TestResourcesRefOptionsSpecificSpecificYml =')
+      expect(stdout).toContain('export interface TestResourcesRefOptionsCommonYml {')
+    },
+  )
+
   // https://github.com/bcherny/json-schema-to-typescript/issues/199: an explicit `false` for a
   // style flag has to reach Prettier as a boolean, however it is spelled
   for (const flag of ['--no-style.singleQuote', '--style.singleQuote false', '--style.singleQuote=false']) {
@@ -137,6 +177,48 @@ suite('CLI', () => {
       ({stdout}) => expect(stdout).toContain('fstype?: "ext3" | "ext4" | "btrfs"'),
     )
   }
+
+  cliTest(
+    'file in (-i), Prettier config, pipe out',
+    'node dist/src/cli.js -i ./test/resources/prettier/Enum.json',
+    ({stdout}) => {
+      expect(stdout).toContain('    fstype?: "ext3" | "ext4" | "btrfs"')
+      expect(stdout).not.toContain(';')
+    },
+  )
+
+  cliTest(
+    'file in (-i), style flags override Prettier config, pipe out',
+    'node dist/src/cli.js -i ./test/resources/prettier/Enum.json --style.singleQuote --style.semi',
+    ({stdout}) => expect(stdout).toContain("    fstype?: 'ext3' | 'ext4' | 'btrfs';"),
+  )
+
+  cliTest(
+    'file in (-i), output Prettier config takes precedence',
+    'node dist/src/cli.js -i ./test/resources/prettier/Enum.json -o ./test/resources/prettier-output/Enum.d.ts',
+    () => {
+      const path = './test/resources/prettier-output/Enum.d.ts'
+      expect(readFileSync(path, 'utf-8')).toContain("  fstype?: 'ext3' | 'ext4' | 'btrfs';")
+      unlinkSync(path)
+    },
+  )
+
+  cliTest(
+    'file in (-i), Prettier overrides for the generated .d.ts apply, *.json ones and `parser` do not, pipe out',
+    'node dist/src/cli.js -i ./test/resources/prettier-overrides/Enum.json',
+    ({stdout}) => expect(stdout).toContain("  fstype?: 'ext3' | 'ext4' | 'btrfs'\n"),
+  )
+
+  cliTest(
+    'pipe in, Prettier config from the working directory, pipe out',
+    `node ${CLI}`,
+    ({stdout}) => {
+      expect(stdout).toContain('    fstype?: "ext3" | "ext4" | "btrfs"')
+      expect(stdout).not.toContain(';')
+    },
+    readFileSync('./test/resources/prettier/Enum.json', 'utf-8'),
+    resolve('test/resources/prettier'),
+  )
 
   cliTest(
     'file in (-i), pipe out (absolute path)',
@@ -150,34 +232,42 @@ suite('CLI', () => {
 
   cliTest(
     'pipe in, file out (--output)',
-    'node dist/src/cli.js --output ./ReferencedType.1.d.ts',
-    expectFile('./ReferencedType.1.d.ts'),
+    `node ${CLI} --output ${resolve('test/resources/ReferencedType.1.d.ts')}`,
+    expectFile('./test/resources/ReferencedType.1.d.ts'),
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
+    STDIN_CWD,
   )
 
   cliTest(
     'pipe in, file out (-o)',
-    'node dist/src/cli.js -o ./ReferencedType.2.d.ts',
-    expectFile('./ReferencedType.2.d.ts'),
+    `node ${CLI} -o ${resolve('test/resources/ReferencedType.2.d.ts')}`,
+    expectFile('./test/resources/ReferencedType.2.d.ts'),
     readFileSync('./test/resources/ReferencedType.json', 'utf-8'),
+    STDIN_CWD,
   )
 
   cliTest(
     'file in (no flags), file out (no flags)',
-    'node dist/src/cli.js ./test/resources/ReferencedType.json ./ReferencedType.3.d.ts',
-    expectFile('./ReferencedType.3.d.ts'),
+    'node dist/src/cli.js ./test/resources/ReferencedType.json ./test/resources/ReferencedType.3.d.ts',
+    expectFile('./test/resources/ReferencedType.3.d.ts'),
   )
 
   cliTest(
     'file in (-i), file out (-o)',
-    'node dist/src/cli.js -i ./test/resources/ReferencedType.json -o ./ReferencedType.4.d.ts',
-    expectFile('./ReferencedType.4.d.ts'),
+    'node dist/src/cli.js -i ./test/resources/ReferencedType.json -o ./test/resources/ReferencedType.4.d.ts',
+    expectFile('./test/resources/ReferencedType.4.d.ts'),
   )
 
   cliTest(
     'file in (--input), file out (--output)',
-    'node dist/src/cli.js --input ./test/resources/ReferencedType.json --output ./ReferencedType.5.d.ts',
-    expectFile('./ReferencedType.5.d.ts'),
+    'node dist/src/cli.js --input ./test/resources/ReferencedType.json --output ./test/resources/ReferencedType.5.d.ts',
+    expectFile('./test/resources/ReferencedType.5.d.ts'),
+  )
+
+  cliTest(
+    'file in, file out (-o)',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json -o ./test/resources/ReferencedType.6.d.ts',
+    expectFile('./test/resources/ReferencedType.6.d.ts'),
   )
 
   cliTest(
@@ -245,6 +335,20 @@ suite('CLI', () => {
       const path = './test/resources/MultiSchemaRefs/response/out/Referencing.d.ts'
       expect(readFileSync(path, 'utf-8')).toMatchSnapshot()
       rimraf.sync('./test/resources/MultiSchemaRefs/response/out')
+    },
+  )
+
+  // https://github.com/bcherny/json-schema-to-typescript/issues/365: an unquoted glob the
+  // shell expands (`-i *.json`) arrives as `-i a.json b.json c.json`; the CLI used to take
+  // b.json as the input and c.json as the *output*, overwriting a schema. Extra positional
+  // arguments next to -i/-o are now a usage error and nothing is written.
+  cliFailTest(
+    'extra positional arguments (e.g. from an unquoted glob) are an error, not an output path',
+    'node dist/src/cli.js -i ./test/resources/MultiSchema/a.json ./test/resources/MultiSchema/b.yaml -o ./test/resources/MultiSchema/extraArgs.d.ts',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toContain('Unexpected extra argument(s): ./test/resources/MultiSchema/b.yaml')
+      expect(existsSync('./test/resources/MultiSchema/extraArgs.d.ts')).toBe(false)
     },
   )
 

@@ -5,13 +5,14 @@ import {readFileSync, writeFileSync, existsSync, lstatSync, readdirSync, mkdirSy
 import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
+import {resolveConfig} from 'prettier'
 import {compile, DEFAULT_OPTIONS, Options} from './index'
-import {pathTransform, error, parseFileAsJSONSchema, justName} from './utils'
+import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} from './utils'
 
-// cwd is deliberately left out of the CLI defaults: processFile() computes a
-// per-file cwd (the directory of the file being compiled) unless the user
-// passes --cwd explicitly, so argv.cwd must stay unset until then.
-const defaultOptions = omit(DEFAULT_OPTIONS, 'cwd')
+// cwd and style are deliberately left out of the CLI defaults: processFile()
+// computes a per-file cwd and loads the closest Prettier config. Explicit CLI
+// flags are applied afterwards, so they still take precedence.
+const defaultOptions = omit(DEFAULT_OPTIONS, ['cwd', 'style'])
 
 main(
   minimist(process.argv.slice(2), {
@@ -27,8 +28,8 @@ main(
       'format',
       'ignoreMinAndMaxItems',
       'removeOptionalIfDefaultExists',
-      'style.singleQuote',
       'strictIndexSignatures',
+      'undefinedOptionalProperties',
       'unknownAny',
       'unreachableDefinitions',
     ],
@@ -43,26 +44,49 @@ async function main(argv: minimist.ParsedArgs) {
     process.exit(0)
   }
 
+  // `--style.X=false` and `--style.X false` reach us as the string 'false' (#199).
+  // Style flags are not registered as minimist booleans, because a registered
+  // boolean defaults to false and would override the project's Prettier config.
+  for (const key in argv.style) {
+    if (argv.style[key] === 'true' || argv.style[key] === 'false') {
+      argv.style[key] = argv.style[key] === 'true'
+    }
+  }
+
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
   const ISGLOB = argIn && isDynamicPattern(argIn)
   const ISDIR = !!argIn && isDir(argIn)
 
-  if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
-    throw new ReferenceError(
-      `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`,
-    )
-  }
-
   try {
+    // Defend against unquoted glob expansion (or other shell mistakes) silently supplying extra
+    // positional arguments. A positional that competes with an explicitly-passed --input/--output
+    // flag for the same slot, or overflows past the two positional slots (input, output) this CLI
+    // supports, risks a source file being misread as an output path and overwritten.
+    // `in.json -o out.d.ts` (positional input, flagged output) stays valid.
+    if (
+      argv._.length > 2 ||
+      (argv.input !== undefined && argv._.length > 0) ||
+      (argv.output !== undefined && argv._.length > 1)
+    ) {
+      throw new ReferenceError(
+        `Unexpected extra argument(s): ${argv._.join(', ')}. json-schema-to-typescript accepts at most one input path and one output path. If you passed a glob to --input, quote it (e.g. -i "schemas/**/*.json") so your shell doesn't expand it first.`,
+      )
+    }
+    if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
+      throw new ReferenceError(
+        `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`,
+      )
+    }
+
     // Process input as either glob, directory, or single file
     if (ISGLOB) {
       await processGlob(argIn, argOut, argv as Partial<Options>)
     } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
     } else {
-      const result = await processFile(argIn, argv as Partial<Options>)
+      const result = await processFile(argIn, argOut, argv as Partial<Options>)
       outputResult(result, argOut)
     }
   } catch (e) {
@@ -88,15 +112,13 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
   // we can do this concurrently for perf
   const results = await Promise.all(
     files.map(async file => {
-      return [file, await processFile(file, argv)] as const
+      const outputPath = argOut && `${argOut}/${justName(file)}.d.ts`
+      return [await processFile(file, outputPath, argv), outputPath] as const
     }),
   )
 
   // careful to do this serially
-  results.forEach(([file, result]) => {
-    const outputPath = argOut && `${argOut}/${justName(file)}.d.ts`
-    outputResult(result, outputPath)
-  })
+  results.forEach(([result, outputPath]) => outputResult(result, outputPath))
 }
 
 async function processDir(argIn: string, argOut: string | undefined, argv: Partial<Options>) {
@@ -105,19 +127,14 @@ async function processDir(argIn: string, argOut: string | undefined, argv: Parti
   // we can do this concurrently for perf
   const results = await Promise.all(
     files.map(async file => {
-      if (!argOut) {
-        return [file, await processFile(file, argv)] as const
-      } else {
-        const outputPath = pathTransform(argOut, argIn, file)
-        return [file, await processFile(file, argv), outputPath] as const
-      }
+      const outputDir = argOut && pathTransform(argOut, argIn, file)
+      const outputPath = outputDir && `${outputDir}/${justName(file)}.d.ts`
+      return [await processFile(file, outputPath, argv), outputPath] as const
     }),
   )
 
   // careful to do this serially
-  results.forEach(([file, result, outputPath]) =>
-    outputResult(result, outputPath ? `${outputPath}/${justName(file)}.d.ts` : undefined),
-  )
+  results.forEach(([result, outputPath]) => outputResult(result, outputPath))
 }
 
 function outputResult(result: string, outputPath: string | undefined): void {
@@ -131,13 +148,23 @@ function outputResult(result: string, outputPath: string | undefined): void {
   }
 }
 
-async function processFile(argIn: string, argv: Partial<Options>): Promise<string> {
+async function processFile(argIn: string, outputPath: string | undefined, argv: Partial<Options>): Promise<string> {
   const {filename, contents} = await readInput(argIn)
   const schema = parseFileAsJSONSchema(filename, contents)
+  // Resolve the Prettier config for the file being written, so `overrides` keyed
+  // to *.ts / *.d.ts apply and ones keyed to *.json do not. When writing to
+  // stdout that is the .d.ts next to the input (stdin: <cwd>/stdin.d.ts). The
+  // output is always TypeScript, so a configured `parser` is not taken over.
+  const configPath = outputPath || `${filename ? stripExtension(filename) : 'stdin'}.d.ts`
+  const prettierConfig = omit((await resolveConfig(resolve(process.cwd(), configPath))) || {}, 'parser')
   // Resolve $refs relative to the directory of the file being compiled, not
   // process.cwd(), unless the user explicitly passed --cwd (see #324).
   const cwd = filename ? dirname(resolve(process.cwd(), filename)) : undefined
-  return compile(schema, argIn, cwd ? {cwd, ...argv} : argv)
+  return compile(schema, argIn, {
+    ...(cwd ? {cwd} : {}),
+    ...argv,
+    style: {...prettierConfig, ...argv.style},
+  })
 }
 
 function getPaths(path: string, paths: string[] = []) {
@@ -210,6 +237,12 @@ Boolean values can be set to false using the 'no-' prefix.
       Remove the optional modifier when a property has a default value
   --style.XXX=YYY
       Prettier configuration
+  --$refOptions.XXX=YYY
+      Options for the $ref resolver (json-schema-ref-parser), eg.
+      '--$refOptions.dereference.externalReferenceResolution=root'. Quote it for your shell.
+  --undefinedOptionalProperties
+      Append '| undefined' to the type of optional properties, for consumers
+      that compile with TypeScript's exactOptionalPropertyTypes
   --unknownAny
       Output unknown type instead of any type
   --unreachableDefinitions

@@ -1,10 +1,6 @@
 import {isPlainObject} from 'lodash'
-import {isCompound, JSONSchema, SchemaType} from './types/JSONSchema'
-
-// Keywords that only annotate a schema (eg. for documentation) without constraining
-// the values it matches. A schema made up of nothing but these keywords doesn't
-// restrict its type any more than the empty schema does.
-const ANNOTATION_ONLY_KEYWORDS = ['description', 'title', 'deprecated']
+import {STRUCTURAL_KEYWORDS} from './keywords'
+import {Intersection, isCompound, JSONSchema, LinkedJSONSchema, Parent, SchemaType, Types} from './types/JSONSchema'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
@@ -28,9 +24,12 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
     }
   }
 
-  // Default to an unnamed schema
+  // A schema no matcher recognizes is an object if any of its keywords gives it a shape (one
+  // this tool doesn't implement: `not`, `if`), and otherwise -- only bounds on values
+  // (`pattern`, `maximum`), annotations, or keys this tool doesn't know -- says nothing about
+  // which type a value is, like the empty schema
   if (!matchedTypes.size) {
-    matchedTypes.add('UNNAMED_SCHEMA')
+    matchedTypes.add(isShapeless(schema) ? 'ANY' : 'UNNAMED_SCHEMA')
   }
 
   return matchedTypes
@@ -38,24 +37,61 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
 
 /**
  * Whether any matcher recognizes the schema. One that none does has no way to be
- * typed on its own: it only gets the `UNNAMED_SCHEMA` default.
+ * typed on its own: it only gets the default at the bottom of `typesOfSchema`.
  */
 export function hasOwnType(schema: JSONSchema): boolean {
   return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
 }
 
-const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
+/** No keyword of the schema gives it a shape (see `STRUCTURAL_KEYWORDS`) */
+export function isShapeless(schema: JSONSchema): boolean {
+  return Object.keys(schema).every(key => !STRUCTURAL_KEYWORDS.has(key))
+}
+
+/**
+ * Works out the schema's types (see `typesOfSchema`) once, ahead of parsing, and records them
+ * on it as `[Types]`. A schema that is several types at once is emitted as their intersection:
+ * it gets a companion `ALL_OF` schema, `[Intersection]`, that takes over its `allOf` (if any)
+ * and its `$id`, `title`, `description` and `name`, so that the name and comment land on the
+ * intersection rather than on each member; the parser adds one member per type to it. It is
+ * built here rather than in the parser because the parser caches ASTs by schema object, so the
+ * intersection has to be one object, not a new one per visit.
+ *
+ * Mutates `schema`.
+ */
+export function applySchemaTyping(schema: LinkedJSONSchema): void {
+  const types = typesOfSchema(schema)
+  Object.defineProperty(schema, Types, {enumerable: false, value: types, writable: false})
+  if (types.size === 1) {
+    return
+  }
+
+  const intersection = {
+    [Parent]: schema,
+    [Types]: new Set(['ALL_OF']),
+    $id: schema.$id,
+    description: schema.description,
+    name: schema.name,
+    title: schema.title,
+    allOf: schema.allOf ?? [],
+    required: [],
+    additionalProperties: false,
+  }
+  types.delete('ALL_OF')
+  delete schema.allOf
+  delete schema.$id
+  delete schema.description
+  delete schema.name
+  delete schema.title
+  Object.defineProperty(schema, Intersection, {enumerable: false, value: intersection, writable: false})
+}
+
+const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) => boolean> = {
   ALL_OF(schema) {
     return 'allOf' in schema
   },
   ANY(schema) {
-    if (Object.keys(schema).every(key => ANNOTATION_ONLY_KEYWORDS.includes(key))) {
-      // The empty schema {} validates any value, and a schema made up of only
-      // annotation keywords (eg. `description`) is no more constrained than that.
-      // @see https://json-schema.org/draft-07/json-schema-core.html#rfc.section.4.3.1
-      return true
-    }
-    return schema.type === 'any'
+    return schema.type === 'any' // for the empty schema and its likes, see `typesOfSchema`
   },
   ANY_OF(schema) {
     return 'anyOf' in schema
@@ -74,9 +110,6 @@ const matchers: Record<SchemaType, (schema: JSONSchema) => boolean> = {
       return true
     }
     return false
-  },
-  CUSTOM_TYPE() {
-    return false // Explicitly handled before we try to match
   },
   NAMED_ENUM(schema) {
     return 'enum' in schema && 'tsEnumNames' in schema
