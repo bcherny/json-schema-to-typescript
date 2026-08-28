@@ -4,8 +4,8 @@
  * Every phase that has to classify keywords -- which keys hold subschemas to walk, which hold
  * instance data to leave alone, which decide the emitted type, which merely describe it --
  * derives its set from this table (see the exports below it), so teaching the tool a keyword
- * is one row here. Keywords a phase only ever reads by name (`format`, `nullable`, `$ref`)
- * need no row until some phase has to classify them.
+ * is one row here. Keywords a phase only ever reads by name (`nullable`, `$ref`) need no row
+ * until some phase has to classify them.
  */
 
 /** What a keyword's value is, when that is or contains subschemas */
@@ -34,11 +34,17 @@ interface Keyword {
   /**
    * Decides, on its own, which type a schema becomes: a `typesOfSchema` matcher or a
    * type-changing normalizer rule keys off of it, or the parser reads it whatever the matched
-   * type (`extends`). Keywords that only refine a type some other keyword established
-   * (`minItems` next to `items`) don't count, so a schema made up only of keywords without
-   * this flag is one the tool has no notion of.
+   * type (`extends`) -- so a schema made up only of keywords without this flag is one the tool
+   * has no notion of (refining keywords: see `refines`). `'fallback'`: the type it implies
+   * yields to any other source of one (`default`).
    */
-  typed?: true
+  typed?: true | 'fallback'
+  /**
+   * Refines a type some other keyword established, in a way the emitted type shows: the
+   * normalizer or parser reads it (`minItems` next to `items` makes a tuple), though on its
+   * own it decides nothing.
+   */
+  refines?: true
   /**
    * Names, places or documents the schema, or hosts other schemas' definitions -- as opposed
    * to keywords that speak about instance values (constraints, defaults, examples). These stay
@@ -62,9 +68,9 @@ export const KEYWORDS = {
   properties: {holds: 'schemaMap', typed: true},
   patternProperties: {holds: 'schemaMap', typed: true},
   additionalProperties: {holds: 'schemaOrBoolean', typed: true},
-  unevaluatedProperties: {holds: 'schemaOrBoolean'}, // 2019-09; the normalizer folds it into `additionalProperties`
+  unevaluatedProperties: {holds: 'schemaOrBoolean', refines: true}, // 2019-09; the normalizer folds it into `additionalProperties`
   items: {holds: 'schemaOrSchemaArray', typed: true},
-  additionalItems: {holds: 'schemaOrBoolean'},
+  additionalItems: {holds: 'schemaOrBoolean', refines: true},
   dependencies: {holds: 'schemaMap'}, // or, per name, a string array
   definitions: {holds: 'schemaMap', meta: true},
   $defs: {holds: 'schemaMap', meta: true},
@@ -86,7 +92,7 @@ export const KEYWORDS = {
   writeOnly: {holds: 'data', annotation: true},
 
   // Instance data
-  default: {holds: 'json', typed: true},
+  default: {holds: 'json', typed: 'fallback'},
   examples: {holds: 'json', annotation: true},
   enum: {holds: 'json', typed: true},
   const: {holds: 'json', typed: true},
@@ -101,12 +107,13 @@ export const KEYWORDS = {
   maxLength: {holds: 'data'},
   minLength: {holds: 'data'},
   pattern: {holds: 'data'},
-  maxItems: {holds: 'data'},
-  minItems: {holds: 'data'},
+  maxItems: {holds: 'data', refines: true},
+  minItems: {holds: 'data', refines: true},
   uniqueItems: {holds: 'data'},
   maxProperties: {holds: 'data'},
-  minProperties: {holds: 'data'},
+  minProperties: {holds: 'data', refines: true},
   required: {holds: 'data', typed: true}, // a string array; in draft 3, a boolean
+  format: {holds: 'data', refines: true}, // through the `formatTypes` option
 
   // This tool's own extensions
   tsType: {holds: 'data', typed: true},
@@ -206,7 +213,17 @@ export const JSON_DATA_KEYWORDS = keywordsWhere(({holds}) => holds === 'json')
 export const META_KEYWORDS = keywordsWhere(({meta}, name) => meta === true && !LEGACY.notMeta.has(name))
 
 /** @see Keyword.typed */
-export const TYPE_SHAPING_KEYWORDS = keywordsWhere(({typed}) => typed === true)
+export const TYPE_SHAPING_KEYWORDS = keywordsWhere(({typed}) => typed !== undefined)
+
+/**
+ * Keywords that have a say in the emitted type or its name, unless something else decides it:
+ * the type-shaping ones bar fallbacks, the refining ones, and draft 4's `id` (renamed to `$id`
+ * only later, by the normalizer). Next to a `$ref`, one of these asks for a variant of the
+ * referenced type; any other keyword there describes whatever holds the reference.
+ */
+export const TYPE_RELEVANT_KEYWORDS = keywordsWhere(
+  ({typed, refines}, name) => typed === true || refines === true || name === 'id',
+)
 
 /** @see Keyword.annotation */
 export const ANNOTATION_KEYWORDS = keywordsWhere(({annotation}) => annotation === true)
