@@ -19,7 +19,12 @@ export async function dereference(
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const dereferencedPaths: DereferencedPaths = new WeakMap()
   const onDereference = ($ref: string, schema: JSONSchema) => {
-    dereferencedPaths.set(schema, $ref)
+    // The target of a $ref need not be an object: it can be a boolean schema (`true`/`false`),
+    // or -- for a pointer into a keyword's value -- any JSON value. Only objects can be WeakMap
+    // keys, and only objects are named after the path they were referenced by.
+    if (schema !== null && typeof schema === 'object') {
+      dereferencedPaths.set(schema, $ref)
+    }
   }
   // `resolve` and `parse` settings only concern other files; any other option can change what $RefParser does
   const optionsConcernOtherFiles = Object.keys($refOptions).every(_ => _ === 'resolve' || _ === 'parse')
