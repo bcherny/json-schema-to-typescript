@@ -545,36 +545,34 @@ function generateInterface(ast: TInterface, options: Options): string {
     ? generateIndexSignatureType(indexSignature, params, ast.superTypes, options)
     : undefined
 
-  return (
-    `{` +
-    '\n' +
-    params
-      .map(param => {
-        const {isRequired, isIndexSignature, keyName, ast} = param
-        // the widened type handles strictIndexSignatures itself; the fallback path
-        // (widening skipped or unneeded) appends `| undefined` here
-        const type =
-          param === indexSignature && indexSignatureType !== undefined
-            ? indexSignatureType
-            : generateType(ast, options) + (isIndexSignature && options.strictIndexSignatures ? ' | undefined' : '')
-        const commented = withItemsComment(ast)
-        return (
-          (hasComment(commented) && !ast.standaloneName
-            ? generateComment(commented.comment, commented.deprecated) + '\n'
-            : '') +
-          readonlyModifier(param.isReadOnly, options) +
-          (isIndexSignature ? keyName : escapeKeyName(keyName)) +
-          (isRequired ? '' : '?') +
-          ': ' +
-          (!isRequired && !isIndexSignature && options.undefinedOptionalProperties
-            ? orUndefined(ast, type, options)
-            : type)
-        )
-      })
-      .join('\n') +
-    '\n' +
-    '}'
-  )
+  const members = params.map(param => {
+    const {isRequired, isIndexSignature, keyName, ast} = param
+    // the widened type handles strictIndexSignatures itself; the fallback path
+    // (widening skipped or unneeded) appends `| undefined` here
+    const type =
+      param === indexSignature && indexSignatureType !== undefined
+        ? indexSignatureType
+        : generateType(ast, options) + (isIndexSignature && options.strictIndexSignatures ? ' | undefined' : '')
+    const commented = withItemsComment(ast)
+    return (
+      (hasComment(commented) && !ast.standaloneName
+        ? generateComment(commented.comment, commented.deprecated) + '\n'
+        : '') +
+      readonlyModifier(param.isReadOnly, options) +
+      (isIndexSignature ? keyName : escapeKeyName(keyName)) +
+      (isRequired ? '' : '?') +
+      ': ' +
+      (!isRequired && !isIndexSignature && options.undefinedOptionalProperties ? orUndefined(ast, type, options) : type)
+    )
+  })
+
+  // A map and nothing else -- one index signature, no comment on it -- is written the way people
+  // write one, `{[k: string]: T}`; the formatter breaks it again where the line runs too long, and
+  // always does inside an `interface` declaration
+  if (members.length === 1 && indexSignature && !members[0].includes('\n')) {
+    return `{${members[0]}}`
+  }
+  return '{\n' + members.join('\n') + '\n}'
 }
 
 /**

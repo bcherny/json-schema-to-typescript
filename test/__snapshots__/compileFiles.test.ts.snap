@@ -559,9 +559,7 @@ export type ResourceBase = ARMResourceBase & {
   /**
    * Name-value pairs to add to the resource
    */
-  tags?: {
-    [k: string]: unknown;
-  };
+  tags?: {[k: string]: unknown};
   copy?: ResourceCopy;
   comments?: string;
   [k: string]: unknown;
@@ -578,9 +576,7 @@ export type ResourceBaseExternal = ARMResourceBase & {
   /**
    * Name-value pairs to add to the resource
    */
-  tags?: {
-    [k: string]: unknown;
-  };
+  tags?: {[k: string]: unknown};
   copy?: ResourceCopy;
   comments?: string;
   [k: string]: unknown;
@@ -1836,9 +1832,7 @@ export interface VirtualMachineExtensionProperties {
   /**
    * The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no protected settings at all.
    */
-  protectedSettings?: {
-    [k: string]: unknown;
-  };
+  protectedSettings?: {[k: string]: unknown};
   /**
    * The name of the extension handler publisher.
    */
@@ -1846,9 +1840,7 @@ export interface VirtualMachineExtensionProperties {
   /**
    * Json formatted public settings for the extension.
    */
-  settings?: {
-    [k: string]: unknown;
-  };
+  settings?: {[k: string]: unknown};
   /**
    * Specifies the type of the extension; an example is "CustomScriptExtension".
    */
@@ -2032,9 +2024,7 @@ export interface VirtualMachineScaleSetExtensionProperties {
   /**
    * The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no protected settings at all.
    */
-  protectedSettings?: {
-    [k: string]: unknown;
-  };
+  protectedSettings?: {[k: string]: unknown};
   /**
    * The name of the extension handler publisher.
    */
@@ -2042,9 +2032,7 @@ export interface VirtualMachineScaleSetExtensionProperties {
   /**
    * Json formatted public settings for the extension.
    */
-  settings?: {
-    [k: string]: unknown;
-  };
+  settings?: {[k: string]: unknown};
   /**
    * Specifies the type of the extension; an example is "CustomScriptExtension".
    */
@@ -2477,11 +2465,7 @@ export interface VirtualMachinesExtensionsChildResource {
   /**
    * Resource tags
    */
-  tags?:
-    | {
-        [k: string]: string;
-      }
-    | string;
+  tags?: {[k: string]: string} | string;
   type: "extensions";
   [k: string]: unknown;
 }
@@ -2514,11 +2498,7 @@ export interface GenericExtension {
   /**
    * Microsoft.Compute/extensions - Settings
    */
-  settings:
-    | {
-        [k: string]: unknown;
-      }
-    | string;
+  settings: {[k: string]: unknown} | string;
   [k: string]: unknown;
 }
 /**
@@ -2629,9 +2609,7 @@ export interface LinuxDiagnostic {
     perCfg?: unknown[];
     fileCfg?: unknown[];
     xmlCfg?: string;
-    ladCfg?: {
-      [k: string]: unknown;
-    };
+    ladCfg?: {[k: string]: unknown};
     syslogCfg?: string;
     eventVolume?: string;
     mdsdCfg?: string;
@@ -3129,9 +3107,7 @@ export interface OSPatchingForLinux {
     healthyTestScript?: string;
     distUpgradeList?: string;
     distUpgradeAll?: boolean;
-    vmStatusTest?: {
-      [k: string]: unknown;
-    };
+    vmStatusTest?: {[k: string]: unknown};
     [k: string]: unknown;
   };
   protectedSettings: {
