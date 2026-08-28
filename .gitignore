@@ -15,3 +15,4 @@ package-lock.json
 dist/
 dist_tests/
 yarn-error.log
+bench/profiles/

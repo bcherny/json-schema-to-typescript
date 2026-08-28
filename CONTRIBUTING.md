@@ -13,3 +13,4 @@
 - Add `export let only=true` to a test in test/e2e to just run that test
 - Add `export let exclude=true` to a test (or, add `.ignore` to its filename) in test/e2e to not run that test
 - To debug a test, with breakpoints, follow the instructions [here](https://bun.sh/docs/runtime/debugger)
+- To measure a performance change, run `node bench/bench.mjs` (or `bun bench/bench.mjs`) before and after it: compile time and peak memory over a fixed set of large real-world schemas, with and without formatting. See [bench/README.md](bench/README.md)
