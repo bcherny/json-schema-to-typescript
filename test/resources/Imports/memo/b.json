@@ -1,0 +1,9 @@
+{
+  "title": "B",
+  "type": "object",
+  "properties": {
+    "thing": {"$ref": "common.json#/definitions/thing", "description": "B's own note about its thing"},
+    "owner": {"$ref": "a.json"}
+  },
+  "additionalProperties": false
+}

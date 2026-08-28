@@ -261,6 +261,7 @@
                 "type": "string"
               }
             ],
+            "additionalItems": false,
             "maxItems": 2,
             "minItems": 0
           },
@@ -274,6 +275,7 @@
                 "type": "string"
               }
             ],
+            "additionalItems": false,
             "minItems": 1,
             "maxItems": 2
           }
@@ -326,6 +328,7 @@
                     "type": "string"
                   }
                 ],
+                "additionalItems": false,
                 "maxItems": 2,
                 "minItems": 0
               }
@@ -345,6 +348,7 @@
                     "type": "string"
                   }
                 ],
+                "additionalItems": false,
                 "minItems": 1,
                 "maxItems": 2
               }

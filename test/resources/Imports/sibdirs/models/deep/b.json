@@ -1,0 +1,13 @@
+{
+  "title": "B",
+  "type": "object",
+  "properties": {
+    "a": {
+      "$ref": "../a.json"
+    },
+    "x": {
+      "$ref": "../../common/x.json"
+    }
+  },
+  "additionalProperties": false
+}

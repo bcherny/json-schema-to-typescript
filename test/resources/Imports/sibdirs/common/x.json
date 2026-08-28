@@ -1,0 +1,20 @@
+{
+  "title": "X",
+  "type": "object",
+  "properties": {
+    "e": {
+      "$ref": "#/definitions/e"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "e": {
+      "title": "E",
+      "type": "string",
+      "enum": [
+        "p",
+        "q"
+      ]
+    }
+  }
+}

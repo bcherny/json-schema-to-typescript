@@ -1,0 +1,13 @@
+{
+  "title": "Left",
+  "type": "object",
+  "properties": {
+    "node": {
+      "$ref": "base.json#/definitions/node"
+    },
+    "l": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": false
+}

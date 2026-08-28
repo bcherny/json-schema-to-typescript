@@ -1,0 +1,10 @@
+{
+  "title": "Thing",
+  "type": "object",
+  "properties": {
+    "two": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": false
+}

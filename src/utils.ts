@@ -12,6 +12,7 @@ import {memoize} from './memoize'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
 import type {Format} from 'cli-color'
+import type {Options} from './'
 import {CONTAINER_KEYWORDS, JSON_DATA_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
 
 // TODO: pull out into a separate package
@@ -63,6 +64,9 @@ function traverseIntersection(
   }
 }
 
+/** Each subschema keyword's position in `traverse`'s visiting order */
+const SUBSCHEMA_KEYWORD_ORDER = new Map(SUBSCHEMA_KEYWORDS.map(([keyword], order) => [keyword as string, order]))
+
 export function traverse(
   schema: LinkedJSONSchema,
   callback: (schema: LinkedJSONSchema, key: string | null) => void,
@@ -77,7 +81,23 @@ export function traverse(
   processed.add(schema)
   callback(schema, key ?? null)
 
-  for (const [keyword, holds] of SUBSCHEMA_KEYWORDS) {
+  // One look at the node's own keys (rather than a probe for every subschema keyword there is,
+  // most of which any one node lacks) finds the subschema keywords it has, visited first in
+  // keyword-table order, and the keys that definitions may technically sit under, visited after
+  const subschemaKeywords: number[] = []
+  const otherKeys: string[] = []
+  for (const key of Object.keys(schema)) {
+    const order = SUBSCHEMA_KEYWORD_ORDER.get(key)
+    if (order !== undefined) {
+      subschemaKeywords.push(order)
+    }
+    if (!NOT_SCANNED_FOR_DEFINITIONS.has(key)) {
+      otherKeys.push(key)
+    }
+  }
+
+  for (const i of subschemaKeywords.sort((a, b) => a - b)) {
+    const [keyword, holds] = SUBSCHEMA_KEYWORDS[i]
     const child = schema[keyword]
     if (!child) {
       continue
@@ -108,15 +128,12 @@ export function traverse(
   }
   traverseIntersection(schema, callback, processed)
 
-  // technically you can put definitions on any key
-  Object.keys(schema)
-    .filter(key => !NOT_SCANNED_FOR_DEFINITIONS.has(key))
-    .forEach(key => {
-      const child = schema[key]
-      if (child && typeof child === 'object') {
-        traverseObjectKeys(child, callback, processed)
-      }
-    })
+  for (const key of otherKeys) {
+    const child = schema[key]
+    if (child && typeof child === 'object') {
+      traverseObjectKeys(child, callback, processed)
+    }
+  }
 }
 
 /**
@@ -258,8 +275,19 @@ export function error(...messages: any[]): void {
 
 type LogStyle = 'blue' | 'cyan' | 'green' | 'magenta' | 'red' | 'white' | 'yellow'
 
+/**
+ * Whether `log()` prints: the VERBOSE environment variable, re-read at the start of every
+ * `compile()` (`readVerbose`) rather than on every call -- `log()` is called for every schema
+ * node and every generated type, and a `process.env` read is not free.
+ */
+let verbose = Boolean(process.env.VERBOSE)
+
+export function readVerbose(): void {
+  verbose = Boolean(process.env.VERBOSE)
+}
+
 export function log(style: LogStyle, title: string, ...messages: unknown[]): void {
-  if (!process.env.VERBOSE) {
+  if (!verbose) {
     return
   }
   let lastMessage = null
@@ -332,52 +360,53 @@ export function hasType(schema: JSONSchema, type: JSONSchemaTypeName): boolean {
   return schema.type === type || (Array.isArray(schema.type) && schema.type.includes(type))
 }
 
-/**
- * Removes the schema's `default` property if it doesn't match the schema's `type` property.
- * Useful when parsing unions.
- *
- * Mutates `schema`.
- */
-export function maybeStripDefault(schema: LinkedJSONSchema): LinkedJSONSchema {
-  if (!('default' in schema)) {
-    return schema
-  }
+type TypeKeyword = JSONSchemaTypeName | JSONSchemaTypeName[]
 
-  switch (schema.type) {
-    case 'array':
-      if (Array.isArray(schema.default)) {
-        return schema
-      }
-      break
-    case 'boolean':
-      if (typeof schema.default === 'boolean') {
-        return schema
-      }
-      break
-    case 'integer':
-    case 'number':
-      if (typeof schema.default === 'number') {
-        return schema
-      }
-      break
-    case 'string':
-      if (typeof schema.default === 'string') {
-        return schema
-      }
-      break
-    case 'null':
-      if (schema.default === null) {
-        return schema
-      }
-      break
-    case 'object':
-      if (isPlainObject(schema.default)) {
-        return schema
-      }
-      break
+/**
+ * What is left of `schema`'s `type` once a schema of type `bound` must hold too (`integer` being
+ * the whole-number part of `number`): `false` if no type is left, the narrower `type` if some of
+ * it goes, `undefined` if `bound` takes nothing away (or `schema` declares no `type` to narrow).
+ */
+export function narrowType(schema: JSONSchema | boolean, bound: TypeKeyword): TypeKeyword | false | undefined {
+  if (typeof schema !== 'object' || !schema || schema.type === undefined || schema.type === 'any') {
+    return undefined
   }
-  delete schema.default
-  return schema
+  const bounds: readonly JSONSchemaTypeName[] = Array.isArray(bound) ? bound : [bound]
+  if (bounds.includes('any')) {
+    return undefined
+  }
+  const types: readonly JSONSchemaTypeName[] = Array.isArray(schema.type) ? schema.type : [schema.type]
+  const narrowed = types.flatMap((type): JSONSchemaTypeName[] =>
+    bounds.includes(type) || (type === 'integer' && bounds.includes('number'))
+      ? [type]
+      : type === 'number' && bounds.includes('integer')
+        ? ['integer']
+        : [],
+  )
+  if (!narrowed.length) {
+    return false
+  }
+  if (narrowed.length === types.length && narrowed.every((type, i) => type === types[i])) {
+    return undefined
+  }
+  return narrowed.length === 1 ? narrowed[0] : narrowed
+}
+
+/**
+ * Whether a value of type `bound` can match `schema` as far as `type`s go: its own, and those of
+ * its `anyOf`/`oneOf` members (a boolean schema admits everything or nothing).
+ */
+export function admitsType(schema: JSONSchema | boolean, bound: TypeKeyword, seen = new Set<JSONSchema>()): boolean {
+  if (typeof schema !== 'object' || !schema || seen.has(schema)) {
+    return schema !== false
+  }
+  if (narrowType(schema, bound) === false) {
+    return false
+  }
+  seen.add(schema)
+  return (['anyOf', 'oneOf'] as const).every(
+    key => schema[key]?.some(member => admitsType(member, bound, seen)) ?? true,
+  )
 }
 
 export function appendToDescription(existingDescription: string | undefined, ...values: string[]): string {
@@ -447,4 +476,11 @@ function color(): Format {
     cliColor = require('cli-color')
   } catch {}
   return cliColor
+}
+
+/** The TypeScript type the `formatTypes` option maps this schema's `format` to, if any */
+export function formatTypeOf(schema: JSONSchema, options: Options): string | undefined {
+  return typeof schema.format === 'string' && Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
+    ? options.formatTypes[schema.format]
+    : undefined
 }

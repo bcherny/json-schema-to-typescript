@@ -1,5 +1,5 @@
 import {JSONSchema4Type} from 'json-schema'
-import {omit} from 'lodash'
+import type {SchemaSource} from './JSONSchema'
 
 export type AST_TYPE = AST['type']
 
@@ -16,7 +16,6 @@ export type AST =
   | TNumber
   | TNull
   | TObject
-  | TReference
   | TString
   | TTuple
   | TUnion
@@ -34,6 +33,12 @@ export interface AbstractAST {
    * them even though they aren't the root type and aren't reachable via `$ref`.
    */
   isUnreachableDefinition?: boolean
+  /**
+   * The file and JSON Pointer this type's schema was read from. Only set in `imports`
+   * mode, where the generator uses it to import a type its own file declares instead of
+   * declaring a copy.
+   */
+  source?: SchemaSource
 }
 
 export type ASTWithComment = AST & {comment: string}
@@ -58,8 +63,11 @@ export function omitStandaloneName<A extends AST>(ast: A): A {
   switch (ast.type) {
     case 'ENUM':
       return ast
-    default:
-      return omit(ast, 'standaloneName') as A
+    default: {
+      const unnamed = {...ast}
+      delete unnamed.standaloneName
+      return unnamed
+    }
   }
 }
 
@@ -72,6 +80,8 @@ export interface TAny extends AbstractAST {
 export interface TArray extends AbstractAST {
   type: 'ARRAY'
   params: AST
+  /** The array schema is annotated `readOnly: true` */
+  isReadOnly?: boolean
 }
 
 export interface TBoolean extends AbstractAST {
@@ -95,11 +105,8 @@ export interface TInterface extends AbstractAST {
   superTypes: TNamedInterface[]
 }
 
-export interface TNamedInterface extends AbstractAST {
+export interface TNamedInterface extends TInterface {
   standaloneName: string
-  type: 'INTERFACE'
-  params: TInterfaceParam[]
-  superTypes: TNamedInterface[]
 }
 
 export interface TNever extends AbstractAST {
@@ -115,6 +122,9 @@ export interface TInterfaceParam {
   // True for the synthesized `[k: string]` index signature param, as opposed to a
   // named property that happens to be called "[k: string]".
   isIndexSignature: boolean
+  // The property schema is annotated `readOnly: true` (for the index signature: every
+  // schema folded into it is)
+  isReadOnly?: boolean
 }
 
 export interface TIntersection extends AbstractAST {
@@ -139,11 +149,6 @@ export interface TObject extends AbstractAST {
   type: 'OBJECT'
 }
 
-export interface TReference extends AbstractAST {
-  type: 'REFERENCE'
-  params: string
-}
-
 export interface TString extends AbstractAST {
   type: 'STRING'
 }
@@ -154,6 +159,8 @@ export interface TTuple extends AbstractAST {
   spreadParam?: AST
   minItems: number
   maxItems?: number
+  /** The array schema is annotated `readOnly: true` */
+  isReadOnly?: boolean
 }
 
 export interface TUnion extends AbstractAST {
@@ -179,6 +186,11 @@ export const T_ANY: TAny = {
 export const T_ANY_ADDITIONAL_PROPERTIES: TAny & ASTWithName = {
   keyName: '[k: string]',
   type: 'ANY',
+}
+
+export const T_UNDEFINED: TCustomType = {
+  params: 'undefined',
+  type: 'CUSTOM_TYPE',
 }
 
 export const T_UNKNOWN: TUnknown = {

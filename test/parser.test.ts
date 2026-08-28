@@ -2,7 +2,8 @@ import {describe, expect, test} from 'bun:test'
 import {DEFAULT_OPTIONS, JSONSchema, Options} from '../src'
 import {link} from '../src/linker'
 import {normalize} from '../src/normalizer'
-import {parse} from '../src/parser'
+import {parse, Processed} from '../src/parser'
+import type {TIntersection} from '../src/types/AST'
 import {hasOnly} from './e2eCases'
 
 const suite = hasOnly() ? describe.skip : describe
@@ -25,5 +26,24 @@ suite('parser', () => {
     const start = performance.now()
     parse(normalized, options)
     expect(performance.now() - start).toBeLessThan(5_000)
+  })
+
+  // A schema that is both an OBJECT and an ALL_OF parses as an intersection of the two. `parse`
+  // meets such a schema once per place that refers to it; every call after the first must hand
+  // back the node the first one built, as it built it -- not push the object member on again.
+  test('parsing a schema again returns its intersection unchanged', () => {
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: {a: {type: 'string'}},
+      allOf: [{type: 'object', properties: {b: {type: 'string'}}}],
+    }
+    const normalized = normalize(link(schema), new WeakMap(), 'Root', DEFAULT_OPTIONS)
+    const processed: Processed = new Map()
+    const first = parse(normalized, DEFAULT_OPTIONS, undefined, processed) as TIntersection
+    expect(first.type).toBe('INTERSECTION')
+    expect(first.params).toHaveLength(2)
+    const second = parse(normalized, DEFAULT_OPTIONS, undefined, processed)
+    expect(second).toBe(first)
+    expect(first.params).toHaveLength(2)
   })
 })

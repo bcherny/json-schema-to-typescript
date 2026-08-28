@@ -1,0 +1,7 @@
+{
+  "parser": "json",
+  "overrides": [
+    {"files": "*.json", "options": {"tabWidth": 8}},
+    {"files": "*.d.ts", "options": {"semi": false, "singleQuote": true}}
+  ]
+}

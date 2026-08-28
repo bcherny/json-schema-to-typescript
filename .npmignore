@@ -16,3 +16,4 @@ package-lock.json
 yarn.lock
 bun.lock
 .bun-version
+bench

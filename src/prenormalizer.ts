@@ -1,14 +1,14 @@
 import {isPlainObject} from 'lodash'
 import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
-import {hasType, traverse} from './utils'
-import {META_KEYWORDS} from './keywords'
+import {eachSchemaNode, hasType, traverse} from './utils'
+import {META_KEYWORDS, TYPE_RELEVANT_KEYWORDS} from './keywords'
 
 /**
  * Rewrites that have to happen on the raw document, before it goes to the ref-parser --
  * each rule below says why it cannot wait for the normalizer. Rules work on plain JSON
  * (there is no `Parent` link yet) and change the schema in place.
  */
-type Rule = (schema: JSONSchema) => void
+type Rule = (schema: JSONSchema, document: JSONSchema) => void
 const rules = new Map<string, Rule>()
 
 /**
@@ -46,6 +46,12 @@ export function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSc
   if (isNamedEnum && !inner.title && enumName) {
     inner.$id = enumName
   }
+  // `readOnly` ends up in both places: it moved into the member with every other non-meta
+  // keyword (where it makes an array or tuple value `readonly T[]`), and is put back on the
+  // outer schema because it also describes the property (its `readonly` modifier)
+  if (inner.readOnly === true) {
+    schema.readOnly = true
+  }
   schema.anyOf = [inner, {type: 'null'}]
   return inner
 }
@@ -61,6 +67,57 @@ export function normalizeNullable(schema: JSONSchema, enumName?: string): JSONSc
 rules.set('Transform `nullable` next to a `$ref` to anyOf with null', schema => {
   if (schema.$ref) {
     normalizeNullable(schema)
+  }
+})
+
+/** Draft 3's `required: true` flags the property, like an annotation; draft 4's list shapes the type */
+function asksForOwnType(schema: JSONSchema, key: string): boolean {
+  return TYPE_RELEVANT_KEYWORDS.has(key) && !(key === 'required' && typeof schema.required === 'boolean')
+}
+
+/**
+ * The ref parser replaces a `$ref` that has sibling keywords with a shallow copy of its
+ * target, the siblings merged in -- a new object per reference; and downstream, a schema's
+ * identity is its type's identity (hence a `Foo1` per documented reference to `Foo`).
+ *
+ * So when no sibling has a say in the type (see `TYPE_RELEVANT_KEYWORDS`; that leaves
+ * `description`, `examples`, `default`, `deprecated`, `readOnly`, validation keywords with no
+ * TypeScript rendering, editor and vendor extensions...), the siblings stay where they are and
+ * the reference moves into a one-member `allOf` -- the way draft 2019-09 reads a `$ref` with
+ * siblings. The `$ref` then resolves to the target itself, the property is typed with the one
+ * named type, and its `description`/`deprecated` print where the parser prints a property
+ * schema's own. A `title` there labels the property: it is dropped rather than left to name a
+ * one-member intersection (`type Label = Foo`), which `{title, allOf: [{$ref}]}` still does
+ * for whoever wants the alias. The document root is left alone: its keywords describe the
+ * type the document stands for (see `resolveRootRef`).
+ *
+ * Has to happen before dereferencing, while the `$ref` can still be told from its siblings.
+ */
+rules.set('Keep `$ref` siblings that have no say in the type on the referencing schema', (schema, document) => {
+  if (typeof schema.$ref !== 'string' || schema === document) {
+    return
+  }
+  const siblings = Object.keys(schema).filter(key => key !== '$ref')
+  if (!siblings.length || siblings.some(key => asksForOwnType(schema, key))) {
+    return
+  }
+  delete schema.title
+  if (siblings.some(key => key !== 'title')) {
+    schema.allOf = [{$ref: schema.$ref}]
+    delete schema.$ref
+  }
+})
+
+/**
+ * `unevaluatedProperties` next to a `$ref` also counts what the target evaluates, and the ref
+ * parser is about to merge the two into a copy that can drop the target's `properties` (#613):
+ * the normalizer's fold into `additionalProperties` would then close the object over keys that
+ * were never emitted. Until `$ref` siblings are emitted as an intersection, drop the keyword
+ * here, while the `$ref` is still visible, and leave the object open as it was before.
+ */
+rules.set('Drop `unevaluatedProperties` next to a `$ref`', schema => {
+  if (schema.$ref) {
+    delete schema.unevaluatedProperties
   }
 })
 
@@ -152,8 +209,15 @@ function setOwn(obj: object, key: string, value: unknown): void {
 /** Runs the rules over one document (anything else a parser may produce passes through) */
 export function prenormalizeDocument<T>(document: T): T {
   if (isPlainObject(document)) {
-    // `traverse` reads no `Parent` links, so a raw document is fine despite its parameter type
-    rules.forEach(rule => traverse(document as LinkedJSONSchema, rule))
+    // Every rule per node, wherever the ref parser will look for a `$ref`: `traverse` knows where
+    // subschemas live (and reads no `Parent` links, so a raw document is fine despite its parameter
+    // type) but not positions this tool has no keyword for, such as OpenAPI's
+    // `components/schemas/Pet/properties/owner`; `eachSchemaNode` reaches those, and skips only
+    // what sits under an instance-data keyword -- or a property that happens to be named like
+    // one, hence both walks. The rules are idempotent, and see the subschemas they create.
+    const apply = (schema: JSONSchema) => rules.forEach(rule => rule(schema, document as JSONSchema))
+    traverse(document as LinkedJSONSchema, apply)
+    eachSchemaNode(document, apply)
   }
   return document
 }

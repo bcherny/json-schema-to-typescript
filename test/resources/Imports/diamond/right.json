@@ -1,0 +1,16 @@
+{
+  "title": "Right",
+  "type": "object",
+  "properties": {
+    "node": {
+      "$ref": "base.json#/definitions/node"
+    },
+    "kinds": {
+      "type": "array",
+      "items": {
+        "$ref": "base.json#/definitions/kind"
+      }
+    }
+  },
+  "additionalProperties": false
+}
