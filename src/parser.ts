@@ -594,7 +594,7 @@ function parseSchema(
     isPatternProperty: false,
     isRequired:
       isRequired(schema, key, value) ||
-      (options.removeOptionalIfDefaultExists && typeof value === 'object' && 'default' in value),
+      (options.removeOptionalIfDefaultExists && !isBoolean(value) && 'default' in value),
     isUnreachableDefinition: false,
     keyName: key,
   }))
