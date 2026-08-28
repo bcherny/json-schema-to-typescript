@@ -448243,6 +448243,24 @@ export interface UndeclaredKeys {
     a: unknown;
     [k: string]: unknown;
   };
+  anyOfNullVacuousAllOf?:
+    | ({
+        a?: string;
+        [k: string]: unknown;
+      } & {
+        a: string;
+      })
+    | null;
+  extendsBase?: ExtendsBase;
+}
+export interface ExtendsBase extends Base {
+  x: number;
+  id: string;
+  [k: string]: unknown;
+}
+export interface Base {
+  id?: string;
+  [k: string]: unknown;
 }
 "
 `;

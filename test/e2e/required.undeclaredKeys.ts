@@ -102,7 +102,29 @@ export const input = {
       required: ['a'],
       allOf: [{not: {required: ['b']}}, {description: 'words'}],
     },
+    // ...but not when a sibling anyOf/oneOf admits something other than an object: `null` stays
+    // assignable, the object branch picks up the key on its own
+    anyOfNullVacuousAllOf: {
+      anyOf: [{type: 'object', properties: {a: {type: 'string'}}}, {type: 'null'}],
+      allOf: [{if: {required: ['q']}, then: {required: ['r']}}],
+      required: ['a'],
+    },
+    // a key the (draft 3 style) `extends` base declares takes the base's type, so that the
+    // interface still extends it (`id: unknown` under `id?: string` would not compile)
+    extendsBase: {
+      title: 'ExtendsBase',
+      type: 'object',
+      extends: {$ref: '#/definitions/base'},
+      properties: {x: {type: 'number'}},
+      required: ['id', 'x'],
+    },
   },
   required: ['root'],
   additionalProperties: false,
+  definitions: {
+    base: {
+      type: 'object',
+      properties: {id: {type: 'string'}},
+    },
+  },
 }
