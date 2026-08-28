@@ -20,6 +20,7 @@ main(
       'enableConstEnums',
       'format',
       'ignoreMinAndMaxItems',
+      'style.singleQuote',
       'strictIndexSignatures',
       'unknownAny',
       'unreachableDefinitions',
