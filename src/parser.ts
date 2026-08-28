@@ -1,5 +1,5 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
-import {includes, isPlainObject, map, omit} from 'lodash'
+import {includes, map, omit} from 'lodash'
 import {format} from 'util'
 import {Options} from './'
 import {applySchemaTyping} from './applySchemaTyping'
@@ -12,14 +12,7 @@ import {
   T_UNKNOWN,
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
-import type {
-  EnumJSONSchema,
-  JSONSchemaWithDefinitions,
-  LinkedJSONSchema,
-  NormalizedJSONSchema,
-  SchemaSchema,
-  SchemaType,
-} from './types/JSONSchema'
+import type {EnumJSONSchema, LinkedJSONSchema, NormalizedJSONSchema, SchemaSchema, SchemaType} from './types/JSONSchema'
 import {Intersection, Parent, Shared, Types, getRootSchema, isBoolean, isPrimitive} from './types/JSONSchema'
 import {memoize} from './memoize'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
@@ -1016,49 +1009,13 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
     : asts.concat(unreachableDefinitions, indexSignatureParam)
 }
 
-type Definitions = {[k: string]: NormalizedJSONSchema}
-
-function getDefinitions(
-  schema: NormalizedJSONSchema,
-  isSchema = true,
-  processed = new Set<NormalizedJSONSchema>(),
-): Definitions {
-  if (processed.has(schema)) {
-    return {}
-  }
-  processed.add(schema)
-  if (Array.isArray(schema)) {
-    return schema.reduce(
-      (prev, cur) => ({
-        ...prev,
-        ...getDefinitions(cur, false, processed),
-      }),
-      {},
-    )
-  }
-  if (isPlainObject(schema)) {
-    return {
-      ...(isSchema && hasDefinitions(schema) ? schema.$defs : {}),
-      ...Object.keys(schema).reduce<Definitions>(
-        (prev, cur) => ({
-          ...prev,
-          ...getDefinitions(schema[cur], false, processed),
-        }),
-        {},
-      ),
-    }
-  }
-  return {}
-}
-
-const getDefinitionsMemoized = memoize(getDefinitions)
-
 /**
- * Reverse index of `getDefinitions`: schema -> the first definition key that holds it,
- * built once per definitions object instead of scanning every key for every parsed node.
+ * The key each of the root schema's definitions is held under (the first one, for a schema held
+ * under several), collected once per root schema rather than searched for every node parsed.
  */
-const getDefinitionKeysMemoized = memoize((definitions: Definitions): Map<NormalizedJSONSchema, string> => {
+const definitionKeys = memoize((rootSchema: NormalizedJSONSchema): Map<NormalizedJSONSchema, string> => {
   const keys = new Map<NormalizedJSONSchema, string>()
+  const definitions = rootSchema.$defs ?? {}
   for (const key of Object.keys(definitions)) {
     if (!keys.has(definitions[key])) {
       keys.set(definitions[key], key)
@@ -1067,14 +1024,7 @@ const getDefinitionKeysMemoized = memoize((definitions: Definitions): Map<Normal
   return keys
 })
 
-/** The (first) key `schema` is held under in `definitions`, if any */
+/** The (first) key `schema` is held under in its root schema's definitions, if any */
 function definitionKeyOf(schema: NormalizedJSONSchema): string | undefined {
-  return getDefinitionKeysMemoized(getDefinitionsMemoized(getRootSchema(schema))).get(schema)
-}
-
-/**
- * TODO: Reduce rate of false positives
- */
-function hasDefinitions(schema: NormalizedJSONSchema): schema is JSONSchemaWithDefinitions {
-  return '$defs' in schema
+  return definitionKeys(getRootSchema(schema)).get(schema)
 }
