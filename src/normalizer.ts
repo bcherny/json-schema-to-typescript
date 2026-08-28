@@ -146,6 +146,27 @@ rules.set('Default additionalProperties', (schema, _, options) => {
   }
 })
 
+rules.set('Mark every property required when `minProperties` covers them all', schema => {
+  const {minProperties, properties} = schema
+  if (
+    typeof minProperties !== 'number' ||
+    // Anything that lets the object carry keys beyond `properties` breaks the
+    // counting argument below, since `minProperties` could be satisfied by those.
+    schema.additionalProperties !== false ||
+    schema.patternProperties !== undefined ||
+    properties === undefined
+  ) {
+    return
+  }
+  const propertyNames = Object.keys(properties)
+  if (propertyNames.length === 0 || minProperties < propertyNames.length) {
+    return
+  }
+  // No other key can appear, so the object holds at most these properties. Needing
+  // at least this many of them means every one of them has to be present.
+  schema.required = propertyNames
+})
+
 rules.set('Transform id to $id', (schema, fileName) => {
   if (!isSchemaLike(schema)) {
     return
