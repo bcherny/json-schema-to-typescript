@@ -132,7 +132,9 @@ rules.set('Drop `unevaluatedProperties` next to a `$ref`', schema => {
  * everything else (which it does correctly once the root itself isn't a
  * `$ref`). Only *internal* pointers (`#/...`) are handled here, since those
  * are the only ones affected; a root `$ref` to an external file/URL is left
- * for $RefParser to resolve, as before.
+ * for $RefParser to resolve, as before. A boolean schema at the end of the
+ * chain joins the root's `allOf` ($RefParser 11 put the boolean in the whole
+ * document's place, 16 reports a missing pointer).
  */
 function resolveRootRef(schema: JSONSchema): void {
   if (!isPlainObject(schema) || typeof schema.$ref !== 'string' || !schema.$ref.startsWith('#/')) {
@@ -171,8 +173,15 @@ function resolveRootRef(schema: JSONSchema): void {
         return Object.prototype.hasOwnProperty.call(node, key) ? (node as Record<string, unknown>)[key] : undefined
       }, documentRoot)
 
+    if (typeof target === 'boolean') {
+      // A boolean schema, which the root cannot become in place: keep it as the root's one more
+      // `allOf` member instead, as a `$ref` below the root would be kept (`never` or `unknown`)
+      delete schema.$ref
+      setOwn(schema, 'allOf', [...(Array.isArray(schema.allOf) ? schema.allOf : []), target])
+      break
+    }
     if (!isPlainObject(target)) {
-      break // not a plain-object pointer into this document; let $RefParser handle/report it
+      break // not a schema in this document; let $RefParser handle/report it
     }
 
     delete schema.$ref
