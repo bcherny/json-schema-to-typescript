@@ -6,7 +6,6 @@
 
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
-- Fix: A tuple (`items: [A, B]`) without `additionalItems` now allows further items, as drafts 4 through 2019-09 specify (`additionalItems` defaults to the empty schema): it emits `[] | [A] | [A, B, ...unknown[]]`, the same as `additionalItems: true`, instead of the closed `[] | [A] | [A, B]`; write `additionalItems: false` to keep a tuple closed. With `maxItems`, the items `additionalItems` allows are spelled out up to the cap (`items: [A], additionalItems: {…B}, maxItems: 3` gives `[] | [A] | [A, B] | [A, B, B]`, where the cap used to be dropped), and `additionalItems: false` is no longer padded out to `maxItems` with `unknown` members. **Output change** for array-form `items` wherever `additionalItems` is absent or `maxItems` is set, and for list-form `items` that carry a (spec-ignored) `additionalItems` together with `maxItems`, where the cap now holds
 
 ## 16.0.0
 
