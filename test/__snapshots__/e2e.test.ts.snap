@@ -130481,9 +130481,7 @@ export interface NullableAnnotationOnly {
   described?: {
     [k: string]: unknown;
   };
-  allOfMember?: Bar & {
-    [k: string]: unknown;
-  };
+  allOfMember?: Bar;
 }
 export interface Bar {
   baz?: boolean;
