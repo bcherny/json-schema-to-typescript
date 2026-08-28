@@ -12,6 +12,11 @@ export const input = {
       title: 'Identifier',
       oneOf: [{pattern: '^[a-z]+$'}, {type: 'integer'}],
     },
+    nullableBound: {
+      description: 'OpenAPI nullable next to a bound: a union with null once normalized',
+      nullable: true,
+      minimum: 0,
+    },
     json: {
       description: 'Any JSON value',
       anyOf: [
@@ -32,6 +37,8 @@ export const input = {
     d: {$ref: '#/definitions/identifier'},
     e: {$ref: '#/definitions/json'},
     f: {type: 'array', items: {$ref: '#/definitions/json'}},
+    g: {$ref: '#/definitions/nullableBound'},
+    h: {$ref: '#/definitions/nullableBound'},
   },
   additionalProperties: false,
 }

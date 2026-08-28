@@ -452561,6 +452561,10 @@ export type Identifier = unknown;
  * Any JSON value
  */
 export type Json = unknown;
+/**
+ * OpenAPI nullable next to a bound: a union with null once normalized
+ */
+export type NullableBound = unknown;
 
 export interface ReferencedTwice {
   a?: Loose;
@@ -452569,6 +452573,8 @@ export interface ReferencedTwice {
   d?: Identifier;
   e?: Json;
   f?: Json[];
+  g?: NullableBound;
+  h?: NullableBound;
 }
 "
 `;
