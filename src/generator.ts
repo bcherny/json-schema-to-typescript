@@ -1,3 +1,5 @@
+import {JSONSchema4Object, JSONSchema4Type} from 'json-schema'
+import {isPlainObject} from 'lodash'
 import {memoize} from './memoize'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -189,7 +191,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'INTERSECTION':
       return generateSetOperation(ast, options)
     case 'LITERAL':
-      return JSON.stringify(ast.params)
+      return generateLiteral(ast.params)
     case 'NEVER':
       return 'never'
     case 'NUMBER':
@@ -294,6 +296,24 @@ function generateRawType(ast: AST, options: Options): string {
  */
 function readonlyModifier(isReadOnly: boolean | undefined, options: Options): string {
   return options.readonly || (options.readonlyKeyword && isReadOnly) ? 'readonly ' : ''
+}
+
+/**
+ * A JSON value (of a `const`, or an `enum` member) as the type of exactly that value: what
+ * `JSON.stringify` prints, except for an empty object anywhere in it. The type `{}` admits any
+ * non-nullish value, not just the empty object, so that is spelled as the closed empty object.
+ */
+function generateLiteral(value: JSONSchema4Type): string {
+  if (Array.isArray(value)) {
+    return `[${value.map(_ => generateLiteral(_ ?? null)).join(',')}]`
+  }
+  if (isPlainObject(value)) {
+    const members = Object.entries(value as JSONSchema4Object).filter(([, _]) => JSON.stringify(_) !== undefined)
+    return members.length
+      ? `{${members.map(([key, _]) => `${JSON.stringify(key)}:${generateLiteral(_)}`).join(',')}}`
+      : '{[k: string]: never}'
+  }
+  return JSON.stringify(value)
 }
 
 /**
