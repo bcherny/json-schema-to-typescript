@@ -33,7 +33,7 @@ main(
       'unreachableDefinitions',
     ],
     default: defaultOptions,
-    string: ['bannerComment', 'cwd'],
+    string: ['bannerComment', 'cwd', 'declarationStyle'],
   }),
 )
 
@@ -188,6 +188,8 @@ Boolean values can be set to false using the 'no-' prefix.
       Default value for additionalProperties, when it is not explicitly set
   --cwd=XXX
       Root directory for resolving $ref
+  --declarationStyle=interface|type
+      Declare object types as interfaces (default) or as type aliases
   --declareExternallyReferenced
       Declare external schemas referenced via '$ref'?
   --enableConstEnums

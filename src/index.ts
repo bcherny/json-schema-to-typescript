@@ -45,6 +45,12 @@ export interface Options {
    */
   cwd: string
   /**
+   * Declare object types as `interface`s (`export interface A {...}`, supertypes in an
+   * `extends` clause) or as `type` aliases (`export type A = {...}`, supertypes intersected:
+   * `export type B = A & {...}`).
+   */
+  declarationStyle: 'interface' | 'type'
+  /**
    * Declare external schemas referenced via `$ref`?
    */
   declareExternallyReferenced: boolean
@@ -112,6 +118,7 @@ export const DEFAULT_OPTIONS: Options = {
 * and run json-schema-to-typescript to regenerate this file.
 */`,
   cwd: process.cwd(),
+  declarationStyle: 'interface',
   declareExternallyReferenced: true,
   enableConstEnums: true,
   inferStringEnumKeysFromValues: false,
