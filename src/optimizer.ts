@@ -4,13 +4,21 @@ import {generateType} from './generator'
 import {AST, omitStandaloneName, T_ANY, T_UNKNOWN} from './types/AST'
 import {log} from './utils'
 
+// nodes whose optimize() has returned; a recursive type can be rendered from inside itself before that
+const settled = new WeakSet<AST>()
+
 export function optimize(ast: AST, options: Options, processed = new Set<AST>()): AST {
   if (processed.has(ast)) {
     return ast
   }
 
   processed.add(ast)
+  const optimized = optimizeNode(ast, options, processed)
+  settled.add(ast)
+  return optimized
+}
 
+function optimizeNode(ast: AST, options: Options, processed: Set<AST>): AST {
   switch (ast.type) {
     case 'ARRAY':
       return Object.assign(ast, {
@@ -49,12 +57,10 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
       }
 
       // [A (named), A] -> [A (named)]
-      // (`omitStandaloneName` returns a copy, which the memoized `generateType` has never seen
-      // and so renders from scratch: check the cheap condition first, and render the first
-      // member once rather than once per member)
       if (optimizedAST.params.some(_ => _.standaloneName !== undefined)) {
-        const first = generateType(omitStandaloneName(optimizedAST.params[0]), options)
-        if (optimizedAST.params.every(_ => generateType(omitStandaloneName(_), options) === first)) {
+        const [first, ...rest] = optimizedAST.params
+        const type = generateStructuralType(first, options)
+        if (rest.every(_ => generateStructuralType(_, options) === type)) {
           log('cyan', 'optimizer', '[A (named), A] -> [A (named)]', optimizedAST)
           optimizedAST.params = optimizedAST.params.filter(_ => _.standaloneName !== undefined)
         }
@@ -73,4 +79,23 @@ export function optimize(ast: AST, options: Options, processed = new Set<AST>())
     default:
       return ast
   }
+}
+
+const structuralTypes = new WeakMap<AST, string>()
+
+/**
+ * The type `ast` renders as with its standalone name left out. `omitStandaloneName` returns a
+ * copy that the memoized `generateType` has never seen, so that is a full render every time, and
+ * the same named type sits in many unions: keep the result, once the node is settled.
+ */
+function generateStructuralType(ast: AST, options: Options): string {
+  const cached = structuralTypes.get(ast)
+  if (cached !== undefined) {
+    return cached
+  }
+  const type = generateType(omitStandaloneName(ast), options)
+  if (settled.has(ast)) {
+    structuralTypes.set(ast, type)
+  }
+  return type
 }

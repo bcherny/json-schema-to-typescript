@@ -1,5 +1,4 @@
 import {JSONSchema4Type} from 'json-schema'
-import {omit} from 'lodash'
 
 export type AST_TYPE = AST['type']
 
@@ -58,8 +57,11 @@ export function omitStandaloneName<A extends AST>(ast: A): A {
   switch (ast.type) {
     case 'ENUM':
       return ast
-    default:
-      return omit(ast, 'standaloneName') as A
+    default: {
+      const unnamed = {...ast}
+      delete unnamed.standaloneName
+      return unnamed
+    }
   }
 }
 
