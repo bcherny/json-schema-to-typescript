@@ -15,15 +15,6 @@ import type {Format} from 'cli-color'
 import type {Options} from './'
 import {CONTAINER_KEYWORDS, JSON_DATA_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
 
-// TODO: pull out into a separate package
-export function Try<T>(fn: () => T, err: (e: Error) => any): T {
-  try {
-    return fn()
-  } catch (e) {
-    return err(e as Error)
-  }
-}
-
 function traverseObjectKeys(
   obj: Record<string, LinkedJSONSchema>,
   callback: (schema: LinkedJSONSchema, key: string | null) => void,
@@ -42,26 +33,6 @@ function traverseArray(
   processed: Set<LinkedJSONSchema>,
 ) {
   arr.forEach((s, k) => traverse(s, callback, processed, k.toString()))
-}
-
-function traverseIntersection(
-  schema: LinkedJSONSchema,
-  callback: (schema: LinkedJSONSchema, key: string | null) => void,
-  processed: Set<LinkedJSONSchema>,
-) {
-  if (typeof schema !== 'object' || !schema) {
-    return
-  }
-
-  const r = schema as unknown as Record<string | symbol, unknown>
-  const intersection = r[Intersection] as NormalizedJSONSchema | undefined
-  if (!intersection) {
-    return
-  }
-
-  if (Array.isArray(intersection.allOf)) {
-    traverseArray(intersection.allOf, callback, processed)
-  }
 }
 
 /** Each subschema keyword's position in `traverse`'s visiting order */
@@ -126,7 +97,10 @@ export function traverse(
         break
     }
   }
-  traverseIntersection(schema, callback, processed)
+  const intersection = (schema as NormalizedJSONSchema)[Intersection]
+  if (intersection && Array.isArray(intersection.allOf)) {
+    traverseArray(intersection.allOf, callback, processed)
+  }
 
   for (const key of otherKeys) {
     const child = schema[key]
@@ -322,21 +296,6 @@ function getStyledTextForLogging(style: LogStyle): ((text: string) => string) | 
   }
 }
 
-/**
- * escape block comments in schema descriptions so that they don't unexpectedly close JSDoc comments in generated typescript interfaces
- */
-export function escapeBlockComment(schema: JSONSchema) {
-  const replacer = '* /'
-  if (schema === null || typeof schema !== 'object') {
-    return
-  }
-  for (const key of Object.keys(schema)) {
-    if (key === 'description' && typeof schema[key] === 'string') {
-      schema[key] = schema[key]!.replace(/\*\//g, replacer)
-    }
-  }
-}
-
 /*
 the following logic determines the out path by comparing the in path to the users specified out path.
 For example, if input directory MultiSchema looks like:
@@ -409,13 +368,6 @@ export function admitsType(schema: JSONSchema | boolean, bound: TypeKeyword, see
   )
 }
 
-export function appendToDescription(existingDescription: string | undefined, ...values: string[]): string {
-  if (existingDescription) {
-    return `${existingDescription}\n\n${values.join('\n')}`
-  }
-  return values.join('\n')
-}
-
 export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
   if (!isPlainObject(schema)) {
     return false
@@ -449,25 +401,18 @@ export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
 const JS_YAML_4_SCHEMA = CORE_SCHEMA.withTags(mergeTag, timestampTag, binaryTag, omapTag, pairsTag, setTag)
 
 export function parseFileAsJSONSchema(filename: string | null, contents: string): JSONSchema4 {
-  if (filename != null && isYaml(filename)) {
-    return Try(
-      () => loadYaml(contents.toString(), {schema: JS_YAML_4_SCHEMA}) as JSONSchema4,
-      () => {
-        throw new TypeError(`Error parsing YML in file "${filename}"`)
-      },
-    )
+  if (filename != null && (filename.endsWith('.yaml') || filename.endsWith('.yml'))) {
+    try {
+      return loadYaml(contents, {schema: JS_YAML_4_SCHEMA}) as JSONSchema4
+    } catch {
+      throw new TypeError(`Error parsing YML in file "${filename}"`)
+    }
   }
-
-  return Try(
-    () => JSON.parse(contents.toString()),
-    () => {
-      throw new TypeError(`Error parsing JSON in file "${filename}"`)
-    },
-  )
-}
-
-function isYaml(filename: string) {
-  return filename.endsWith('.yaml') || filename.endsWith('.yml')
+  try {
+    return JSON.parse(contents)
+  } catch {
+    throw new TypeError(`Error parsing JSON in file "${filename}"`)
+  }
 }
 
 function color(): Format {

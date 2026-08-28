@@ -11,7 +11,7 @@ import {optimize} from './optimizer'
 import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference, SchemaSet} from './resolver'
 import {prenormalize} from './prenormalizer'
-import {error, stripExtension, Try, log, parseFileAsJSONSchema, readVerbose} from './utils'
+import {error, stripExtension, log, parseFileAsJSONSchema, readVerbose} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {link} from './linker'
@@ -224,12 +224,11 @@ function assertDistinct<K extends string>(members: ({name: string} & Record<K, s
 }
 
 function readSchemaFile(filename: string): string {
-  return Try(
-    () => readFileSync(filename, 'utf8'),
-    () => {
-      throw new ReferenceError(`Unable to read file "${filename}"`)
-    },
-  )
+  try {
+    return readFileSync(filename, 'utf8')
+  } catch {
+    throw new ReferenceError(`Unable to read file "${filename}"`)
+  }
 }
 
 export async function compile(
@@ -295,18 +294,14 @@ async function compileToAST(
   }
 
   const linked = link(dereferencedSchema)
-  if (process.env.VERBOSE) {
-    log('green', 'linker', time(), '✅ No change')
-  }
+  log('green', 'linker', time(), '✅ No change')
 
   const errors = validate(linked, name)
   if (errors.length) {
     errors.forEach(_ => error(_))
     throw new ValidationError()
   }
-  if (process.env.VERBOSE) {
-    log('green', 'validator', time(), '✅ No change')
-  }
+  log('green', 'validator', time(), '✅ No change')
 
   const normalized = normalize(linked, dereferencedPaths, name, _options)
   log('yellow', 'normalizer', time(), '✅ Result:', normalized)
