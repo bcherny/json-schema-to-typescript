@@ -8,7 +8,6 @@ import {
   omitStandaloneName,
   T_ANY,
   T_ANY_ADDITIONAL_PROPERTIES,
-  TArray,
   TEnum,
   TInterface,
   TInterfaceParam,
@@ -20,59 +19,94 @@ import {
 } from './types/AST'
 import {log, toSafeString} from './utils'
 
-export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string {
+/**
+ * Generates the declaration file for `ast`: the banner comment, then the type aliases, the
+ * interfaces and the enums, a blank line between those groups and a newline between declarations.
+ * It is returned split before each top-level declaration, each part starting with the newlines
+ * that separate it from the previous one; `.join('')` is the whole file.
+ */
+export function generate(ast: AST, options = DEFAULT_OPTIONS, unreachableDefinitions: AST[] = []): string[] {
   const rootASTName = ast.standaloneName!
-  const asts = [ast, ...unreachableDefinitions]
-  const typesProcessed = new Set<AST>()
-  const interfacesProcessed = new Set<AST>()
-  const enumsProcessed = new Set<AST>()
-  return (
-    [
-      options.bannerComment,
-      asts
-        .map(_ => declareNamedTypes(_, options, rootASTName, typesProcessed))
-        .filter(Boolean)
-        .join('\n'),
-      asts
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, interfacesProcessed))
-        .filter(Boolean)
-        .join('\n'),
-      asts
-        .map(_ => declareEnums(_, options, enumsProcessed))
-        .filter(Boolean)
-        .join('\n'),
-    ]
-      .filter(Boolean)
-      .join('\n\n') + '\n'
-  ) // trailing newline
-}
 
-function declareEnums(ast: AST, options: Options, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
+  // One walk over the ASTs collects every standalone declaration, by kind, in the order found
+  const declarations: Declarations = {enums: [], interfaces: [], types: []}
+  const {enums, interfaces, types} = declarations
+  const processed = new Set<AST>()
+  for (const root of [ast, ...unreachableDefinitions]) {
+    const enumsBefore = enums.length
+    collectDeclarations(root, options, rootASTName, processed, declarations)
+    // the enums found under each root AST have always been followed by a newline of their own
+    if (enums.length > enumsBefore) {
+      enums[enums.length - 1] += '\n'
+    }
   }
 
+  const parts: string[] = []
+  for (const group of [options.bannerComment ? [options.bannerComment] : [], types, interfaces, enums]) {
+    let separator = parts.length === 0 ? '' : '\n\n'
+    for (const declaration of group) {
+      parts.push(separator + declaration)
+      separator = '\n'
+    }
+  }
+  parts[parts.length - 1] += '\n' // the root type is always declared, so there is a last part
+  return parts
+}
+
+type Declarations = {enums: string[]; interfaces: string[]; types: string[]}
+
+/**
+ * Appends the declarations for every named type reachable from `ast` (itself included) to
+ * `declarations`: enums and interfaces as such, everything else as a type alias. An array's
+ * alias follows the declarations found in its items; any other declaration precedes the ones
+ * found beneath it.
+ */
+function collectDeclarations(
+  ast: AST,
+  options: Options,
+  rootASTName: string,
+  processed: Set<AST>,
+  declarations: Declarations,
+): void {
+  if (processed.has(ast)) {
+    return
+  }
   processed.add(ast)
-  let type = ''
 
   switch (ast.type) {
-    case 'ENUM':
-      return generateStandaloneEnum(ast, options) + '\n'
     case 'ARRAY':
-      return declareEnums(ast.params, options, processed)
-    case 'UNION':
-    case 'INTERSECTION':
-      return ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-    case 'TUPLE':
-      type = ast.params.reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
-      if (ast.spreadParam) {
-        type += declareEnums(ast.spreadParam, options, processed)
+      collectDeclarations(ast.params, options, rootASTName, processed, declarations)
+      if (shouldDeclare(ast, options, rootASTName)) {
+        declarations.types.push(generateStandaloneType(ast, options))
       }
-      return type
+      return
+    case 'ENUM':
+      declarations.enums.push(generateStandaloneEnum(ast, options))
+      return
     case 'INTERFACE':
-      return getSuperTypesAndParams(ast).reduce((prev, ast) => prev + declareEnums(ast, options, processed), '')
+      if (shouldDeclare(ast, options, rootASTName)) {
+        declarations.interfaces.push(generateStandaloneInterface(ast, options))
+      }
+      break
     default:
-      return ''
+      if (shouldDeclare(ast, options, rootASTName)) {
+        declarations.types.push(generateStandaloneType(ast, options))
+      }
+  }
+  childASTs(ast).forEach(child => collectDeclarations(child, options, rootASTName, processed, declarations))
+}
+
+function childASTs(ast: AST): AST[] {
+  switch (ast.type) {
+    case 'INTERFACE':
+      return ast.params.map(param => param.ast).concat(ast.superTypes)
+    case 'INTERSECTION':
+    case 'UNION':
+      return ast.params
+    case 'TUPLE':
+      return ast.spreadParam ? ast.params.concat(ast.spreadParam) : ast.params
+    default:
+      return []
   }
 }
 
@@ -86,89 +120,6 @@ function shouldDeclare(ast: AST, options: Options, rootASTName: string): ast is 
     hasStandaloneName(ast) &&
     (ast.standaloneName === rootASTName || options.declareExternallyReferenced || ast.isUnreachableDefinition === true)
   )
-}
-
-function declareNamedInterfaces(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
-  }
-
-  processed.add(ast)
-  let type = ''
-
-  switch (ast.type) {
-    case 'ARRAY':
-      type = declareNamedInterfaces((ast as TArray).params, options, rootASTName, processed)
-      break
-    case 'INTERFACE':
-      type = [
-        shouldDeclare(ast, options, rootASTName) && generateStandaloneInterface(ast, options),
-        getSuperTypesAndParams(ast)
-          .map(ast => declareNamedInterfaces(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n'),
-      ]
-        .filter(Boolean)
-        .join('\n')
-      break
-    case 'INTERSECTION':
-    case 'TUPLE':
-    case 'UNION':
-      type = [...ast.params, ...(ast.type === 'TUPLE' && ast.spreadParam ? [ast.spreadParam] : [])]
-        .map(_ => declareNamedInterfaces(_, options, rootASTName, processed))
-        .filter(Boolean)
-        .join('\n')
-      break
-    default:
-      type = ''
-  }
-
-  return type
-}
-
-function declareNamedTypes(ast: AST, options: Options, rootASTName: string, processed = new Set<AST>()): string {
-  if (processed.has(ast)) {
-    return ''
-  }
-
-  processed.add(ast)
-
-  switch (ast.type) {
-    case 'ARRAY':
-      return [
-        declareNamedTypes(ast.params, options, rootASTName, processed),
-        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
-      ]
-        .filter(Boolean)
-        .join('\n')
-    case 'ENUM':
-      return ''
-    case 'INTERFACE':
-      return getSuperTypesAndParams(ast)
-        .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
-        .filter(Boolean)
-        .join('\n')
-    case 'INTERSECTION':
-    case 'TUPLE':
-    case 'UNION':
-      return [
-        shouldDeclare(ast, options, rootASTName) ? generateStandaloneType(ast, options) : undefined,
-        ast.params
-          .map(ast => declareNamedTypes(ast, options, rootASTName, processed))
-          .filter(Boolean)
-          .join('\n'),
-        'spreadParam' in ast && ast.spreadParam
-          ? declareNamedTypes(ast.spreadParam, options, rootASTName, processed)
-          : undefined,
-      ]
-        .filter(Boolean)
-        .join('\n')
-    default:
-      if (shouldDeclare(ast, options, rootASTName)) {
-        return generateStandaloneType(ast, options)
-      }
-      return ''
-  }
 }
 
 export const generateType = memoize(generateRawType)
@@ -659,8 +610,4 @@ function escapeKeyName(keyName: string): string {
     return keyName
   }
   return JSON.stringify(keyName)
-}
-
-function getSuperTypesAndParams(ast: TInterface): AST[] {
-  return ast.params.map(param => param.ast).concat(ast.superTypes)
 }

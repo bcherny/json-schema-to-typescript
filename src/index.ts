@@ -235,7 +235,10 @@ export async function compile(
   log('cyan', 'optimizer', time(), '✅ Result:', optimized)
 
   const generated = generate(optimized, _options, optimizedUnreachableDefinitions)
-  log('magenta', 'generator', time(), '✅ Result:', generated)
+  if (process.env.VERBOSE) {
+    // (the guard spares joining the whole file when nobody is reading)
+    log('magenta', 'generator', time(), '✅ Result:', generated.join(''))
+  }
 
   const formatted = await format(generated, _options)
   log('white', 'formatter', time(), '✅ Result:', formatted)
