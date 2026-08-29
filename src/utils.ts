@@ -431,16 +431,6 @@ export function formatTypeOf(schema: JSONSchema, options: Options): string | und
 }
 
 /**
- * Schema keys are attacker/document-controlled and may include names like
- * `__proto__`: plain `obj[key] = value` assignment goes through the prototype
- * chain's setters, so a `__proto__` key would reassign obj's actual prototype
- * instead of setting a data property. Define the property directly instead.
- */
-export function setOwn(obj: object, key: string, value: unknown): void {
-  Object.defineProperty(obj, key, {value, writable: true, enumerable: true, configurable: true})
-}
-
-/**
  * Deep-copies the arrays and plain objects a schema is made of -- the nodes
  * `link` will annotate and the normalizer will rewrite -- so that compiling
  * never touches the caller's object. Every other value (a function under a
@@ -478,7 +468,8 @@ export function cloneDeepPlain<T>(value: T, copies = new Map<object, unknown>())
   for (const key of Object.keys(value)) {
     const member = cloneDeepPlain((value as Record<string, unknown>)[key], copies)
     if (key === '__proto__') {
-      setOwn(copy, key, member)
+      // An own `__proto__` key (JSON.parse makes those) must stay an own key, not set the prototype
+      Object.defineProperty(copy, key, {value: member, writable: true, enumerable: true, configurable: true})
     } else {
       copy[key] = member
     }

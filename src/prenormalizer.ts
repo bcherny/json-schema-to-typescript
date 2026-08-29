@@ -1,6 +1,6 @@
 import {isPlainObject} from 'lodash'
 import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
-import {eachSchemaNode, hasType, setOwn, traverse} from './utils'
+import {eachSchemaNode, hasType, traverse} from './utils'
 import {META_KEYWORDS, TYPE_RELEVANT_KEYWORDS} from './keywords'
 
 /**
@@ -196,6 +196,14 @@ function safeDecodeURIComponent(segment: string): string {
   } catch {
     return segment
   }
+}
+
+// Schema keys are attacker/document-controlled and may include names like
+// `__proto__`: plain `obj[key] = value` assignment goes through the prototype
+// chain's setters, so a `__proto__` key would reassign obj's actual prototype
+// instead of setting a data property. Define the property directly instead.
+function setOwn(obj: object, key: string, value: unknown): void {
+  Object.defineProperty(obj, key, {value, writable: true, enumerable: true, configurable: true})
 }
 
 /** Runs the rules over one document (anything else a parser may produce passes through) */
