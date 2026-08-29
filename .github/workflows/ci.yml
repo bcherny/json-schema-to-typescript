@@ -152,6 +152,8 @@ jobs:
     - name: Compile and type-check the real-world corpus
       run: bun run corpus
     - name: Spec conformance against the baseline
+      # also when the corpus step failed, so one run reports both
+      if: ${{ !cancelled() }}
       run: bun run conformance --report conformance-report.json
     - name: Upload the conformance report
       if: ${{ !cancelled() }}
