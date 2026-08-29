@@ -429,3 +429,59 @@ export function formatTypeOf(schema: JSONSchema, options: Options): string | und
     ? options.formatTypes[schema.format]
     : undefined
 }
+
+/**
+ * Schema keys are attacker/document-controlled and may include names like
+ * `__proto__`: plain `obj[key] = value` assignment goes through the prototype
+ * chain's setters, so a `__proto__` key would reassign obj's actual prototype
+ * instead of setting a data property. Define the property directly instead.
+ */
+export function setOwn(obj: object, key: string, value: unknown): void {
+  Object.defineProperty(obj, key, {value, writable: true, enumerable: true, configurable: true})
+}
+
+/**
+ * Deep-copies the arrays and plain objects a schema is made of -- the nodes
+ * `link` will annotate and the normalizer will rewrite -- so that compiling
+ * never touches the caller's object. Every other value (a function under a
+ * custom keyword, a `Date` from a YAML timestamp, a class instance) is carried
+ * over by reference: the compiler reads such values but never writes to them.
+ * A node reachable along several paths, or through a cycle, is copied once, so
+ * the copy shares structure exactly where the input does.
+ *
+ * Not lodash's `cloneDeep` because its seen-set fails lodash's own "is `Map`
+ * native" check under bun (see memoize.ts) and degrades to a linearly scanned
+ * list, which makes the copy quadratic in the number of schema nodes.
+ */
+export function cloneDeepPlain<T>(value: T, copies = new Map<object, unknown>()): T {
+  if (typeof value !== 'object' || value === null) {
+    return value
+  }
+  const copied = copies.get(value)
+  if (copied !== undefined) {
+    return copied as T
+  }
+  if (Array.isArray(value)) {
+    const copy: unknown[] = new Array(value.length)
+    copies.set(value, copy)
+    for (let i = 0; i < value.length; i++) {
+      copy[i] = cloneDeepPlain(value[i], copies)
+    }
+    return copy as T
+  }
+  const prototype = Object.getPrototypeOf(value)
+  if (prototype !== Object.prototype && prototype !== null && !isPlainObject(value)) {
+    return value
+  }
+  const copy: Record<string, unknown> = {}
+  copies.set(value, copy)
+  for (const key of Object.keys(value)) {
+    const member = cloneDeepPlain((value as Record<string, unknown>)[key], copies)
+    if (key === '__proto__') {
+      setOwn(copy, key, member)
+    } else {
+      copy[key] = member
+    }
+  }
+  return copy as T
+}
