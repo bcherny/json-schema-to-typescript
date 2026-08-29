@@ -1022,7 +1022,10 @@ function standaloneName(
 }
 
 function schemaNameForComment(standaloneName: string | undefined, keyName: string | undefined): string | undefined {
-  return standaloneName ?? (keyName && keyName !== '[k: string]' ? keyName : undefined)
+  const name =
+    standaloneName ??
+    (keyName && keyName !== '[k: string]' && !keyName.includes('{keyNameFromDefinition}') ? keyName : undefined)
+  return name?.replace(/\*\//g, '*\\/')
 }
 
 const CLOSED_EMPTY_OBJECT_PARAM: TInterfaceParam = {
