@@ -21,8 +21,7 @@ export const input = {
     },
     commentedSignature: {
       type: 'object',
-      additionalProperties: false,
-      patternProperties: {'^x-': {type: 'string'}},
+      additionalProperties: {type: 'string', description: 'A comment on the signature keeps the long form'},
     },
     tooLongForOneLine: {
       type: 'object',

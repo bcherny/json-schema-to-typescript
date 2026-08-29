@@ -354490,8 +354490,7 @@ export interface MapOnly {
   described?: {[k: string]: boolean};
   commentedSignature?: {
     /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
-     * via the \`patternProperty\` "^x-".
+     * A comment on the signature keeps the long form
      */
     [k: string]: string;
   };
