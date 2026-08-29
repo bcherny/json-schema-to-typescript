@@ -13,6 +13,7 @@
 - Add `export let only=true` to a test in test/e2e to just run that test
 - Add `export let exclude=true` to a test (or, add `.ignore` to its filename) in test/e2e to not run that test
 - To debug a test, with breakpoints, follow the instructions [here](https://bun.sh/docs/runtime/debugger)
+- CI also compiles a corpus of large real-world schemas under several option sets and type-checks the output (`bun run corpus`, see [test/corpus/README.md](test/corpus/README.md)), and scores generated types against the official JSON-Schema-Test-Suite (`bun run conformance`, see [test/conformance/README.md](test/conformance/README.md)). Both need `bun run build:server` first. The second compares with a checked-in baseline, test/conformance/baseline.json, and fails on *any* difference: if your change improves conformance, re-record the baseline with `bun run conformance --update` and commit it with the change, like a snapshot
 - To measure a performance change, run `node bench/bench.mjs` (or `bun bench/bench.mjs`) before and after it: compile time and peak memory over a fixed set of large real-world schemas, with and without formatting. See [bench/README.md](bench/README.md)
 
 ## Releasing

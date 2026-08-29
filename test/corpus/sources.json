@@ -1,0 +1,98 @@
+[
+  {
+    "name": "github-rest-api",
+    "url": "https://raw.githubusercontent.com/github/rest-api-description/3fa67306b30ebd736a08604ff8b8932a34f68ddf/descriptions/api.github.com/api.github.com.json",
+    "license": "MIT (github/rest-api-description)",
+    "prep": "openapi-components",
+    "options": {
+      "unreachableDefinitions": true
+    }
+  },
+  {
+    "name": "kubernetes-definitions-v1.30",
+    "file": "bench/fixtures/kubernetes-definitions-v1.30.0.json",
+    "options": {
+      "unreachableDefinitions": true
+    }
+  },
+  {
+    "name": "kubernetes-deployment-v1.30",
+    "url": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/14355cdd490a43d21e05985668815a36a6f97da6/v1.30.0-standalone-strict/deployment-apps-v1.json",
+    "license": "Apache-2.0 (yannh/kubernetes-json-schema, from kubernetes/kubernetes)",
+    "prep": "as-is"
+  },
+  {
+    "name": "gitlab-ci",
+    "url": "https://gitlab.com/gitlab-org/gitlab/-/raw/v18.3.1-ee/app/assets/javascripts/editor/schema/ci.json",
+    "license": "MIT (gitlab-org/gitlab, outside ee/)",
+    "prep": "as-is"
+  },
+  {
+    "name": "compose-spec",
+    "url": "https://raw.githubusercontent.com/compose-spec/compose-spec/bd6ccc6581199b0103837b7f1529f1ea875d7362/schema/compose-spec.json",
+    "license": "Apache-2.0 (compose-spec/compose-spec)",
+    "prep": "as-is"
+  },
+  {
+    "name": "openapi-3.0-meta",
+    "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.0/schemas/v3.0/schema.json",
+    "license": "Apache-2.0 (OAI/OpenAPI-Specification)",
+    "prep": "as-is"
+  },
+  {
+    "name": "json-api-1.0",
+    "url": "https://raw.githubusercontent.com/json-api/json-api/52fc018adcc15358cb0f9d3de119f7e0fbe34ea6/_schemas/1.0/schema.json",
+    "license": "CC0-1.0 (json-api/json-api)",
+    "prep": "as-is"
+  },
+  {
+    "name": "schemastore-tsconfig",
+    "file": "bench/fixtures/tsconfig.json"
+  },
+  {
+    "name": "schemastore-github-workflow",
+    "file": "bench/fixtures/github-workflow.json"
+  },
+  {
+    "name": "schemastore-github-action",
+    "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/3da93b2a129e53ba2f37c4405581060d50b2b6d2/src/schemas/json/github-action.json",
+    "license": "Apache-2.0 (SchemaStore/schemastore)",
+    "prep": "as-is"
+  },
+  {
+    "name": "schemastore-dependabot-2.0",
+    "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/3da93b2a129e53ba2f37c4405581060d50b2b6d2/src/schemas/json/dependabot-2.0.json",
+    "license": "Apache-2.0 (SchemaStore/schemastore)",
+    "prep": "as-is"
+  },
+  {
+    "name": "schemastore-kustomization",
+    "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/3da93b2a129e53ba2f37c4405581060d50b2b6d2/src/schemas/json/kustomization.json",
+    "license": "Apache-2.0 (SchemaStore/schemastore)",
+    "prep": "as-is"
+  },
+  {
+    "name": "schemastore-jest",
+    "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/3da93b2a129e53ba2f37c4405581060d50b2b6d2/src/schemas/json/jest.json",
+    "license": "Apache-2.0 (SchemaStore/schemastore)",
+    "prep": "as-is"
+  },
+  {
+    "name": "schemastore-prettierrc",
+    "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/3da93b2a129e53ba2f37c4405581060d50b2b6d2/src/schemas/json/prettierrc.json",
+    "license": "Apache-2.0 (SchemaStore/schemastore)",
+    "prep": "as-is"
+  },
+  {
+    "name": "schemastore-launchsettings",
+    "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/3da93b2a129e53ba2f37c4405581060d50b2b6d2/src/schemas/json/launchsettings.json",
+    "license": "Apache-2.0 (SchemaStore/schemastore)",
+    "prep": "as-is"
+  },
+  {
+    "name": "schemastore-helm-chart",
+    "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/3da93b2a129e53ba2f37c4405581060d50b2b6d2/src/schemas/json/chart.json",
+    "license": "Apache-2.0 (SchemaStore/schemastore)",
+    "prep": "as-is"
+  }
+]
