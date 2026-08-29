@@ -166,7 +166,9 @@ function outputResult(result: string, outputPath: string | undefined): void {
   if (!outputPath) {
     process.stdout.write(result)
   } else {
-    mkdirSync(dirname(outputPath), {recursive: true})
+    if (!isDir(dirname(outputPath))) {
+      mkdirSync(dirname(outputPath), {recursive: true})
+    }
     writeFileSync(outputPath, result)
   }
 }
