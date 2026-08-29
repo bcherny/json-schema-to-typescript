@@ -302,15 +302,18 @@ function readonlyModifier(isReadOnly: boolean | undefined, options: Options): st
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
   const members = (ast as TUnion).params.map(_ => {
     const type = generateType(_, options)
-    // An anonymous object-literal member (eg. an `oneOf`/`anyOf` branch with its
-    // own `description` but no name of its own) would otherwise have its comment
-    // silently dropped: a named member's comment is printed on its own
-    // declaration (see generateStandaloneInterface), and non-object members
-    // (string, number, ...) have no declaration site for a leading comment to
-    // meaningfully attach to, so only INTERFACE members are handled here. The
-    // leading newline keeps the formatter from attaching the comment to the end
-    // of the previous member (`} /** ... */ | {`).
-    return _.type === 'INTERFACE' && hasComment(_) && !hasStandaloneName(_)
+    // A named member's comment is printed on its own declaration (see
+    // generateStandaloneInterface, generateStandaloneType). An anonymous member's
+    // comment (eg. a `oneOf`/`anyOf` branch with its own `description` but no name
+    // of its own) would otherwise be silently dropped, so it is printed above the
+    // member here, for the two kinds of member that render as one self-contained
+    // unit: an object literal, and a literal or union of literals (a `const` or
+    // inline `enum` branch). Other anonymous members are left alone: arrays and
+    // tuples carry `@minItems`-style block tags in their descriptions, and
+    // primitive types (string, number, ...) are not handled yet. The leading
+    // newline keeps the formatter from attaching the comment to the end of the
+    // previous member (`} /** ... */ | {`).
+    return (_.type === 'INTERFACE' || isLiteralUnion(_)) && hasComment(_) && !hasStandaloneName(_)
       ? '\n' + generateComment(_.comment, _.deprecated) + '\n' + type
       : type
   })
@@ -324,6 +327,13 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
     return ast.type === 'UNION' ? 'never' : generateInterface(vacuousInterface(options), options)
   }
   return members.length === 1 ? members[0] : '(' + members.join(' ' + separator + ' ') + ')'
+}
+
+/**
+ * A literal, or a union of nothing but literals: what a `const` or an inline `enum` parses to.
+ */
+function isLiteralUnion(ast: AST): boolean {
+  return ast.type === 'LITERAL' || (ast.type === 'UNION' && ast.params.every(_ => _.type === 'LITERAL'))
 }
 
 function vacuousInterface(options: Options): TInterface {
