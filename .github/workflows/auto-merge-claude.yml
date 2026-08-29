@@ -1,0 +1,53 @@
+name: Auto-merge Claude PRs
+
+# Pull requests opened by the claude[bot] GitHub App are approved and queued for
+# squash merge as soon as they are marked ready for review. Branch protection
+# still applies: the merge waits for the `ci-ok` check, so nothing lands red.
+#
+# Approval uses the built-in Actions token (github-actions[bot] counts as the
+# one required review). Enabling auto-merge uses AUTO_MERGE_TOKEN, a
+# fine-grained personal access token of the repository owner with Contents and
+# Pull requests write access. GitHub suppresses workflow runs for pushes it
+# attributes to the built-in token, so a merge queued with it would land on
+# master without running publish.yml. The token makes the merge count as the
+# owner's, and the release publishes.
+#
+# pull_request_target runs with write access on the base branch's workflow
+# file. This job never checks out or executes anything from the pull request.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  approve-and-queue:
+    # claude[bot] is app id 209825114; the login alone could be spoofed by a
+    # user account named the same way, the id cannot.
+    if: >-
+      github.event.pull_request.user.id == 209825114 &&
+      github.event.pull_request.user.type == 'Bot' &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    steps:
+    - name: Approve
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PR: ${{ github.event.pull_request.number }}
+      run: gh pr review "$PR" --repo "$GITHUB_REPOSITORY" --approve --body "Auto-approved: opened by claude[bot]."
+    - name: Enable auto-merge (squash)
+      env:
+        GH_TOKEN: ${{ secrets.AUTO_MERGE_TOKEN }}
+        PR: ${{ github.event.pull_request.number }}
+      run: |
+        if [ -z "$GH_TOKEN" ]; then
+          echo "::error::AUTO_MERGE_TOKEN is not set. Add a fine-grained PAT (Contents: write, Pull requests: write) as a repository secret; see the comment at the top of this workflow."
+          exit 1
+        fi
+        # A pull request that is already green and approved cannot have
+        # auto-merge enabled; merge it outright instead.
+        gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --auto --squash ||
+          gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --squash
