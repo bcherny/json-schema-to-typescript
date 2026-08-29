@@ -20,7 +20,7 @@ body:
     attributes:
       label: How you ran it
       description: The CLI command with its flags, or the `compile()` / `compileFromFile()` call with its options.
-      placeholder: npx json2ts schema.json --unreachableDefinitions
+      placeholder: json2ts -i schema.json --unreachableDefinitions
     validations:
       required: true
   - type: textarea
@@ -43,7 +43,7 @@ body:
     id: version
     attributes:
       label: json-schema-to-typescript version
-      description: "`npm ls json-schema-to-typescript`, or the first line of `json2ts --help`"
+      description: "`npm ls json-schema-to-typescript`, or the version line at the top of `json2ts --help`"
     validations:
       required: true
   - type: input
@@ -53,6 +53,11 @@ body:
       description: "`node --version`. If you are on Bun, Deno or in a browser, say that and its version."
     validations:
       required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: With its version, e.g. macOS 15, Windows 11, Ubuntu 24.04.
   - type: dropdown
     id: demo
     attributes:
