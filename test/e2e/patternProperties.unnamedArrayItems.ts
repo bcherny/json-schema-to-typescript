@@ -1,0 +1,10 @@
+export const input = {
+  title: 'Root',
+  type: 'array',
+  items: {
+    type: 'object',
+    patternProperties: {
+      '^x-': {type: 'string'},
+    },
+  },
+}
