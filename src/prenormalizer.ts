@@ -130,7 +130,10 @@ rules.set('Drop `unevaluatedProperties` next to a `$ref`', schema => {
  * the root's own `$ref` chain ourselves first, via plain in-document JSON
  * Pointer lookups, before handing the schema off to $RefParser to resolve
  * everything else (which it does correctly once the root itself isn't a
- * `$ref`). Only *internal* pointers (`#/...`) are handled here, since those
+ * `$ref`). The same goes for a file loaded through a `$ref`: $RefParser copes
+ * with one hop at its root, but not with a chain, nor with a JSON Pointer into a
+ * file whose root is a `$ref` -- so every document gets this, not only the one
+ * being compiled. Only *internal* pointers (`#/...`) are handled here, since those
  * are the only ones affected; a root `$ref` to an external file/URL is left
  * for $RefParser to resolve, as before.
  */
@@ -206,7 +209,11 @@ function setOwn(obj: object, key: string, value: unknown): void {
   Object.defineProperty(obj, key, {value, writable: true, enumerable: true, configurable: true})
 }
 
-/** Runs the rules over one document (anything else a parser may produce passes through) */
+/**
+ * Runs the rules over one document and resolves its root `$ref` (anything else a parser may
+ * produce passes through). The schema being compiled and every file the ref parser loads for
+ * it both come through here: a loaded file's root can be a `$ref` chain too.
+ */
 export function prenormalizeDocument<T>(document: T): T {
   if (isPlainObject(document)) {
     // Every rule per node, wherever the ref parser will look for a `$ref`: `traverse` knows where
@@ -218,15 +225,7 @@ export function prenormalizeDocument<T>(document: T): T {
     const apply = (schema: JSONSchema) => rules.forEach(rule => rule(schema, document as JSONSchema))
     traverse(document as LinkedJSONSchema, apply)
     eachSchemaNode(document, apply)
+    resolveRootRef(document as JSONSchema)
   }
   return document
-}
-
-/**
- * The schema being compiled gets the rules plus its root `$ref` resolved -- which only the
- * document handed to $RefParser needs; the files it loads get `prenormalizeDocument` alone.
- */
-export function prenormalize(schema: JSONSchema): void {
-  prenormalizeDocument(schema)
-  resolveRootRef(schema)
 }
