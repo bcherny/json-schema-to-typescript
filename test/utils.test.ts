@@ -114,9 +114,10 @@ suite('utils', () => {
     expect(copy).toEqual(input)
     expect(copy).not.toBe(input)
     expect(copy.properties.list.enum[1][1]).not.toBe(input.properties.list.enum[1][1])
-    // ...but everything else carried over by reference
+    // ...other objects copied too (by lodash), and what it cannot copy carried over by reference
+    expect(copy.properties.a.when).not.toBe(shared.when)
+    expect(copy.properties.a.when.getTime()).toBe(0)
     expect(copy.properties.a.check).toBe(shared.check)
-    expect(copy.properties.a.when).toBe(shared.when)
     // A node reachable several ways is copied once; a cycle stays a cycle
     expect(copy.properties.a).not.toBe(shared)
     expect(copy.properties.b).toBe(copy.properties.a)

@@ -1,4 +1,4 @@
-import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
+import {cloneDeep, deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {
   Intersection,
@@ -431,17 +431,21 @@ export function formatTypeOf(schema: JSONSchema, options: Options): string | und
 }
 
 /**
- * Deep-copies the arrays and plain objects a schema is made of -- the nodes
- * `link` will annotate and the normalizer will rewrite -- so that compiling
- * never touches the caller's object. Every other value (a function under a
- * custom keyword, a `Date` from a YAML timestamp, a class instance) is carried
- * over by reference: the compiler reads such values but never writes to them.
- * A node reachable along several paths, or through a cycle, is copied once, so
- * the copy shares structure exactly where the input does.
+ * Deep-copies a schema so that compiling never touches the caller's object.
+ * The arrays and plain objects it is made of -- the nodes `link` annotates and
+ * the normalizer rewrites, i.e. nearly all of any schema -- are copied here, by
+ * their own enumerable string keys. The rare value that is neither (a `Date`
+ * from a YAML timestamp, a `RegExp` or class instance under a custom keyword)
+ * is handed to lodash's `cloneDeep`, because `traverse` may still reach it and
+ * stamp it; what lodash cannot copy (a function, an `Error`) is carried over by
+ * reference, as it was when lodash copied the whole schema. A node reachable
+ * along several paths, or through a cycle, is copied exactly once, so the copy
+ * shares structure wherever the input does.
  *
- * Not lodash's `cloneDeep` because its seen-set fails lodash's own "is `Map`
- * native" check under bun (see memoize.ts) and degrades to a linearly scanned
- * list, which makes the copy quadratic in the number of schema nodes.
+ * lodash's `cloneDeep` used to do all of this, but its seen-set fails its own
+ * "is `Map` native" check under bun (see memoize.ts) and falls back to a list it
+ * scans linearly, making the clone quadratic in the number of schema nodes:
+ * 37 of the 43 seconds a 10,000-definition schema took to compile.
  */
 export function cloneDeepPlain<T>(value: T, copies = new Map<object, unknown>()): T {
   if (typeof value !== 'object' || value === null) {
@@ -461,7 +465,10 @@ export function cloneDeepPlain<T>(value: T, copies = new Map<object, unknown>())
   }
   const prototype = Object.getPrototypeOf(value)
   if (prototype !== Object.prototype && prototype !== null && !isPlainObject(value)) {
-    return value
+    // Copied as an array member so that lodash hands back what it cannot copy instead of `{}`
+    const [copy] = cloneDeep([value])
+    copies.set(value, copy)
+    return copy
   }
   const copy: Record<string, unknown> = {}
   copies.set(value, copy)
