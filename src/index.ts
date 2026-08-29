@@ -10,7 +10,7 @@ import {normalize} from './normalizer'
 import {optimize} from './optimizer'
 import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference, SchemaSet} from './resolver'
-import {prenormalizeDocument} from './prenormalizer'
+import {prenormalize} from './prenormalizer'
 import {error, stripExtension, log, parseFileAsJSONSchema, readVerbose} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
@@ -281,7 +281,7 @@ async function compileToAST(
   }
 
   // Rewrites that have to see the raw document, before dereferencing (see ./prenormalizer)
-  prenormalizeDocument(schema)
+  prenormalize(schema)
   log('yellow', 'prenormalizer', time(), '✅ Result:', schema)
 
   const {dereferencedPaths, dereferencedSchema} = await dereference(schema, _options, set)

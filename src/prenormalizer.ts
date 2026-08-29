@@ -211,8 +211,8 @@ function setOwn(obj: object, key: string, value: unknown): void {
 
 /**
  * Runs the rules over one document and resolves its root `$ref` (anything else a parser may
- * produce passes through). The schema being compiled and every file the ref parser loads for
- * it both come through here: a loaded file's root can be a `$ref` chain too.
+ * produce passes through). Every file the ref parser loads comes through here, as does the
+ * schema being compiled (`prenormalize`): a loaded file's root can be a `$ref` chain too.
  */
 export function prenormalizeDocument<T>(document: T): T {
   if (isPlainObject(document)) {
@@ -228,4 +228,9 @@ export function prenormalizeDocument<T>(document: T): T {
     resolveRootRef(document as JSONSchema)
   }
   return document
+}
+
+/** The schema being compiled gets the same rewrites as the files loaded for it */
+export function prenormalize(schema: JSONSchema): void {
+  prenormalizeDocument(schema)
 }
