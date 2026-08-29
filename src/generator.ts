@@ -195,7 +195,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'NUMBER':
       return 'number'
     case 'NULL':
-      return 'null'
+      return 'Null'
     case 'OBJECT':
       return 'object'
     case 'STRING':
