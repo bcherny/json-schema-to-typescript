@@ -106,8 +106,7 @@ async function main(argv: minimist.ParsedArgs) {
     } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
     } else {
-      const result = await processFile(argIn, argOut, argv as Partial<Options>)
-      outputResult(result, argOut)
+      outputResult(await processFile(argIn, argOut, argv as Partial<Options>), argOut)
     }
   } catch (e) {
     error(e)
@@ -167,10 +166,8 @@ function outputResult(result: string, outputPath: string | undefined): void {
   if (!outputPath) {
     process.stdout.write(result)
   } else {
-    if (!isDir(dirname(outputPath))) {
-      mkdirSync(dirname(outputPath), {recursive: true})
-    }
-    return writeFileSync(outputPath, result)
+    mkdirSync(dirname(outputPath), {recursive: true})
+    writeFileSync(outputPath, result)
   }
 }
 
@@ -203,7 +200,7 @@ async function styleFor(outputPath: string, argv: Partial<Options>): Promise<Opt
 }
 
 function getPaths(path: string, paths: string[] = []) {
-  if (existsSync(path) && lstatSync(path).isDirectory()) {
+  if (isDir(path)) {
     readdirSync(resolve(path)).forEach(item => getPaths(join(path, item), paths))
   } else {
     paths.push(path)
