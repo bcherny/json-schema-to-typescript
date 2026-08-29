@@ -29,10 +29,11 @@ nothing). Every entry is compiled three times (`VARIANTS` in run.js):
 | `strict` | `strictIndexSignatures`, `undefinedOptionalProperties`, `unreachableDefinitions`, `format: false` | index signatures and optional properties are where "property X is not assignable to index type" (TS2411) comes from; `unreachableDefinitions` emits every definition, used or not |
 | `style` | `declarationStyle: 'type'`, `readonly`, `additionalProperties: false`, `enableConstEnums: false`, `unknownAny: false`, `format: false` | the other declaration form for every object (intersections instead of `extends`), `readonly` on every property and array, closed objects |
 
-`--e2e` adds the `realWorld.*` cases from test/e2e (their schemas are read through
-`bun`, since those fixtures are TypeScript modules; remote `$ref`s are answered from
-the test suite's cache in test/__fixtures__). The test suite already type-checks
-those under their own options; this puts them through `strict` and `style` too.
+`--e2e` adds the `realWorld.*` cases from test/e2e (those fixtures are TypeScript
+modules, so the runner transpiles them with `ts.transpileModule` and loads them in
+node; remote `$ref`s are answered from the test suite's cache in test/__fixtures__).
+The test suite already type-checks those under their own options; this puts them
+through `strict` and `style` too.
 
 Nothing here touches the network: a vendored schema with a remote `$ref` is a
 mistake and fails the run.

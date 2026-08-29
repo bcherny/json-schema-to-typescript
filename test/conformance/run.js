@@ -59,7 +59,17 @@ function fetchSuite() {
   mkdirSync(dir, {recursive: true})
   const git = (...argv) => execFileSync('git', argv, {cwd: dir, stdio: ['ignore', 'ignore', 'inherit']})
   git('init', '-q')
-  git('fetch', '-q', '--depth', '1', SUITE_REPO, SUITE_COMMIT)
+  // a required CI job should not go red on one dropped connection
+  for (let attempt = 1; ; attempt++) {
+    try {
+      git('fetch', '-q', '--depth', '1', SUITE_REPO, SUITE_COMMIT)
+      break
+    } catch (e) {
+      if (attempt === 4) throw e
+      console.log(`fetch failed (attempt ${attempt} of 4); retrying in ${5 * attempt} s`)
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 5000 * attempt)
+    }
+  }
   git('checkout', '-q', '--detach', 'FETCH_HEAD')
   return dir
 }
@@ -179,6 +189,12 @@ function compare(baseline, current, rows, filtered) {
       if (!(id in current.groups)) gone.push(`${id}: in the baseline but not in this run`)
 
   if (!worse.length && !better.length && !gone.length) {
+    // the rows all match, so totals that do not were edited or merged by hand
+    if (!filtered && JSON.stringify(baseline.totals) !== JSON.stringify(current.totals)) {
+      console.log(`\nFAIL: every group matches ${BASELINE.slice(ROOT.length + 1)} but its "totals" do not add up;`)
+      console.log('re-record it with `node test/conformance/run.js --update` rather than editing it.')
+      return false
+    }
     console.log(`\nOK: all ${Object.keys(current.groups).length} groups match ${BASELINE.slice(ROOT.length + 1)}`)
     return true
   }

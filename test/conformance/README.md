@@ -33,6 +33,8 @@ That gives each group one line in the baseline: `"crash"` if step 1 threw,
 `"invalid-output"` if step 2 produced a diagnostic (or no `Root` at all), otherwise
 four numbers — **valid instances rejected**, valid instances, **invalid instances
 accepted**, invalid instances. The two bold ones are the score; lower is better.
+They are counts, not lists: a change that fixes one instance of a group and breaks
+another of the same kind leaves the line unchanged, and only `--report` shows it.
 
 Neither will ever be zero everywhere, and that is fine: TypeScript cannot say
 "string matching this pattern", "number below 5" or "array with unique items", so
@@ -71,7 +73,8 @@ draft7/properties.json#0 (object properties validation)
 - **A group regressed** (more valid instances rejected, more invalid ones accepted,
   or it stopped compiling / type-checking): the change broke something the fixtures
   in test/e2e do not cover. `node test/conformance/run.js --filter <group id> --report rows.json`
-  shows the schema's output and every instance; fix the generator.
+  lists each offending instance with the compiler's message (the schema itself is in
+  the suite file the id names; `compile()` it to read the output); fix the generator.
 - **Groups improved** and nothing regressed: the change fixed something. The job
   still fails, because the baseline has to keep describing master — run
   `node test/conformance/run.js --update`, look at the diff of baseline.json (it is
