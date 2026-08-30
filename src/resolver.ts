@@ -7,6 +7,7 @@ import {
   getJsonSchemaRefParserDefaultOptions,
 } from '@apidevtools/json-schema-ref-parser'
 import {isObjectLike, isPlainObject} from 'lodash'
+import {JSON_DATA_KEYWORDS, KEYWORDS} from './keywords'
 import {prenormalizeDocument} from './prenormalizer'
 import {DefinitionKey, JSONSchema, SchemaSource, Source} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
@@ -80,7 +81,7 @@ export async function dereference(
       parse: prenormalizingParsers($refOptions.parse, prepare),
       dereference: {
         ...$refOptions.dereference,
-        excludedPathMatcher: depthLimitedPathMatcher($refOptions.dereference),
+        excludedPathMatcher: depthLimitedPathMatcher($refOptions.dereference, schema),
         onDereference,
       },
     })) as JSONSchema
@@ -215,7 +216,10 @@ function stampSource<T>(document: T, file: string): T {
 
 const DEFAULT_MAX_DEPTH = 500
 
-function depthLimitedPathMatcher(options: $RefOptions['dereference']): (pathFromRoot: string) => boolean {
+function depthLimitedPathMatcher(
+  options: $RefOptions['dereference'],
+  root: JSONSchema,
+): (pathFromRoot: string) => boolean {
   const {excludedPathMatcher, maxDepth: configured} = (options ?? {}) as {
     excludedPathMatcher?: (path: string) => boolean
     maxDepth?: number | null
@@ -223,12 +227,57 @@ function depthLimitedPathMatcher(options: $RefOptions['dereference']): (pathFrom
   const maxDepth = configured ?? DEFAULT_MAX_DEPTH // read as ref-parser 15.3+ reads it: null, like undefined, means the default
   const shortEnough = 2 * maxDepth // "#" then at least "/x" per level: most paths stop here (empty keys fire late, not never)
   return path => {
+    if (isDataPath(root, path)) {
+      return true
+    }
     const levels = path.length > shortEnough ? path.split('/') : undefined
     if (levels && levels.length - 1 > maxDepth) {
       throw tooDeep(maxDepth, levels)
     }
     return excludedPathMatcher?.(path) ?? false
   }
+}
+
+/** Whether a ref-parser path points into a JSON value, rather than a schema keyword's value. */
+function isDataPath(root: JSONSchema, path: string): boolean {
+  const hash = path.indexOf('#')
+  if (hash === -1) {
+    return false
+  }
+  const fragment = path.slice(hash + 1)
+  if (!fragment.startsWith('/')) {
+    return false
+  }
+
+  let node: unknown = root
+  let inContainer = false
+  for (const encoded of fragment.slice(1).split('/')) {
+    const token = decodePathToken(encoded)
+    if (inContainer) {
+      node = node !== null && typeof node === 'object' ? (node as Record<string, unknown>)[token] : undefined
+      inContainer = false
+      continue
+    }
+    if (JSON_DATA_KEYWORDS.has(token)) {
+      return true
+    }
+    const value = node !== null && typeof node === 'object' ? (node as Record<string, unknown>)[token] : undefined
+    const keyword = KEYWORDS[token as keyof typeof KEYWORDS]
+    node = value
+    inContainer =
+      keyword?.holds === 'schemaMap' ||
+      keyword?.holds === 'schemaArray' ||
+      (keyword?.holds === 'schemaOrSchemaArray' && Array.isArray(value))
+  }
+  return false
+}
+
+function decodePathToken(encoded: string): string {
+  let token = encoded
+  try {
+    token = decodeURIComponent(token)
+  } catch {}
+  return token.replace(/~1/g, '/').replace(/~0/g, '~')
 }
 
 /** `levels`: the runaway path split at `/`, root (`#`) first */
@@ -275,7 +324,7 @@ export function inDocumentTargets(root: JSONSchema): Map<string, object> | undef
   const targets = new Map<string, object>()
   const visited = new Set<unknown>()
   /** False as soon as it meets a `$ref` that rules the document out */
-  function scan(node: any): boolean {
+  function scan(node: any, schemaNode = true): boolean {
     if (!isObjectLike(node) || visited.has(node)) {
       return true
     }
@@ -290,7 +339,13 @@ export function inDocumentTargets(root: JSONSchema): Map<string, object> | undef
       }
       targets.set(node.$ref, target)
     }
-    return Object.values(node).every(scan) // instance data too, like $RefParser
+    for (const [key, value] of Object.entries(node)) {
+      const childSchemaNode = childSchemaContext(schemaNode, key, value)
+      if (childSchemaNode !== undefined && !scan(value, childSchemaNode)) {
+        return false
+      }
+    }
+    return true
   }
   return scan(root) ? targets : undefined
 }
@@ -330,7 +385,7 @@ export function dereferenceInDocument(
   const trail: string[] = [] // the keys from the root to here ($RefParser's `pathFromRoot`)
 
   /** Dereferences everything under `node`; true if something in there refers back to an ancestor */
-  function crawl(node: any): boolean {
+  function crawl(node: any, schemaNode = true): boolean {
     if (!isObjectLike(node) || visited.has(node)) {
       return false
     }
@@ -338,17 +393,21 @@ export function dereferenceInDocument(
     parents.add(node)
     let circular = false
     for (const key of Object.keys(node)) {
+      const value = node[key]
+      const childSchemaNode = childSchemaContext(schemaNode, key, value)
+      if (childSchemaNode === undefined) {
+        continue
+      }
       if (trail.push(key) > DEFAULT_MAX_DEPTH) {
         throw tooDeep(DEFAULT_MAX_DEPTH, ['#', ...trail])
       }
-      const value = node[key]
       if (isRef(value)) {
         const resolution = resolve(value)
         node[key] = resolution.value
         onDereference(value.$ref, resolution.value)
         circular = resolution.circular || circular
       } else {
-        circular = parents.has(value) || crawl(value) || circular
+        circular = parents.has(value) || crawl(value, childSchemaNode) || circular
       }
       trail.pop()
     }
@@ -372,6 +431,29 @@ export function dereferenceInDocument(
   }
 
   crawl(root)
+}
+
+/**
+ * Distinguishes a schema object from a map/array that contains schemas. Data keywords are not
+ * crawled at all: an object-valued const, enum, default or examples may legitimately contain a
+ * property named $ref.
+ */
+function childSchemaContext(schemaNode: boolean, key: string, value: unknown): boolean | undefined {
+  if (!schemaNode) {
+    return true
+  }
+  const keyword = KEYWORDS[key as keyof typeof KEYWORDS]
+  if (keyword?.holds === 'json' || keyword?.holds === 'data') {
+    return undefined
+  }
+  if (
+    keyword?.holds === 'schemaMap' ||
+    keyword?.holds === 'schemaArray' ||
+    (keyword?.holds === 'schemaOrSchemaArray' && Array.isArray(value))
+  ) {
+    return false
+  }
+  return true
 }
 
 function siblingsOf(ref: Ref): object {
