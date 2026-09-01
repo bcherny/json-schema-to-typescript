@@ -61,6 +61,19 @@ export function isShapeless(schema: JSONSchema): boolean {
 }
 
 /**
+ * The schema declares `properties` or `patternProperties` and its `type` lets them apply: it
+ * is `object` or absent (object keywords alone read as an object, by this tool's convention).
+ * Under any other `type` those keywords constrain nothing -- JSON Schema applies them only to
+ * values that are objects -- so they give the schema no object shape; that includes an array
+ * `type`, whose `UNION` case in `parser.ts` re-parses the schema once per member type.
+ */
+function hasObjectShape(schema: JSONSchema): boolean {
+  return (
+    (schema.type === undefined || schema.type === 'object') && ('patternProperties' in schema || 'properties' in schema)
+  )
+}
+
+/**
  * Works out the schema's types (see `typesOfSchema`) once, ahead of parsing, and records them
  * on it as `[Types]`. A schema that is several types at once is emitted as their intersection:
  * it gets a companion `ALL_OF` schema, `[Intersection]`, that takes over its `allOf` (if any)
@@ -133,12 +146,7 @@ const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) 
   },
   NAMED_SCHEMA(schema) {
     // 8.2.1. The presence of "$id" in a subschema indicates that the subschema constitutes a distinct schema resource within a single schema document.
-    // Guarded against an array `type` (narrower than the guard on UNNAMED_SCHEMA
-    // below, on purpose): such a schema is a `UNION`, whose members are re-parsed
-    // one `type` at a time with the `properties` still attached (see the `UNION`
-    // case in `parser.ts`), so also matching here would intersect the object shape
-    // with that union and make its non-object members unreachable.
-    return '$id' in schema && !Array.isArray(schema.type) && ('patternProperties' in schema || 'properties' in schema)
+    return '$id' in schema && hasObjectShape(schema)
   },
   NEVER(schema: JSONSchema | boolean) {
     return schema === false
@@ -224,17 +232,10 @@ const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) 
   UNNAMED_SCHEMA(schema) {
     // Mirrors NAMED_SCHEMA above: a schema's own `properties`/`patternProperties`
     // are a real type even without a `$id`, so they get intersected with any
-    // sibling `allOf`/`anyOf`/`oneOf` instead of being silently dropped. Guarded
-    // to schemas that are objects (or untyped) so it doesn't fire on a `UNION`
-    // member that was assigned a non-object `type` but still carries the
-    // parent's `properties` (see the `UNION` case in `parser.ts`). Schemas that
+    // sibling `allOf`/`anyOf`/`oneOf` instead of being silently dropped. Schemas that
     // don't otherwise match anything still fall through to the default case at
     // the bottom of `typesOfSchema`.
-    return (
-      (schema.type === undefined || schema.type === 'object') &&
-      !('$id' in schema) &&
-      ('patternProperties' in schema || 'properties' in schema)
-    )
+    return !('$id' in schema) && hasObjectShape(schema)
   },
   UNTYPED_ARRAY(schema) {
     return schema.type === 'array' && !('items' in schema)

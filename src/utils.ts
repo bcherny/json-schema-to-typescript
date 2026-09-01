@@ -1,4 +1,4 @@
-import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
+import {cloneDeep, deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {
   Intersection,
@@ -437,4 +437,58 @@ export function formatTypeOf(schema: JSONSchema, options: Options): string | und
   return typeof schema.format === 'string' && Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
     ? options.formatTypes[schema.format]
     : undefined
+}
+
+/**
+ * Deep-copies a schema so that compiling never touches the caller's object.
+ * The arrays and plain objects it is made of -- the nodes `link` annotates and
+ * the normalizer rewrites, i.e. nearly all of any schema -- are copied here, by
+ * their own enumerable string keys. The rare value that is neither (a `Date`
+ * from a YAML timestamp, a `RegExp` or class instance under a custom keyword)
+ * is handed to lodash's `cloneDeep`, because `traverse` may still reach it and
+ * stamp it; what lodash cannot copy (a function, an `Error`) is carried over by
+ * reference, as it was when lodash copied the whole schema. A node reachable
+ * along several paths, or through a cycle, is copied exactly once, so the copy
+ * shares structure wherever the input does.
+ *
+ * lodash's `cloneDeep` used to do all of this, but its seen-set fails its own
+ * "is `Map` native" check under bun (see memoize.ts) and falls back to a list it
+ * scans linearly, making the clone quadratic in the number of schema nodes:
+ * 37 of the 43 seconds a 10,000-definition schema took to compile.
+ */
+export function cloneDeepPlain<T>(value: T, copies = new Map<object, unknown>()): T {
+  if (typeof value !== 'object' || value === null) {
+    return value
+  }
+  const copied = copies.get(value)
+  if (copied !== undefined) {
+    return copied as T
+  }
+  if (Array.isArray(value)) {
+    const copy: unknown[] = new Array(value.length)
+    copies.set(value, copy)
+    for (let i = 0; i < value.length; i++) {
+      copy[i] = cloneDeepPlain(value[i], copies)
+    }
+    return copy as T
+  }
+  const prototype = Object.getPrototypeOf(value)
+  if (prototype !== Object.prototype && prototype !== null && !isPlainObject(value)) {
+    // Copied as an array member so that lodash hands back what it cannot copy instead of `{}`
+    const [copy] = cloneDeep([value])
+    copies.set(value, copy)
+    return copy
+  }
+  const copy: Record<string, unknown> = {}
+  copies.set(value, copy)
+  for (const key of Object.keys(value)) {
+    const member = cloneDeepPlain((value as Record<string, unknown>)[key], copies)
+    if (key === '__proto__') {
+      // An own `__proto__` key (JSON.parse makes those) must stay an own key, not set the prototype
+      Object.defineProperty(copy, key, {value: member, writable: true, enumerable: true, configurable: true})
+    } else {
+      copy[key] = member
+    }
+  }
+  return copy as T
 }
