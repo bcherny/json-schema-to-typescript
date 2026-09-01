@@ -1,13 +1,6 @@
 import {cloneDeep, deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
-import {
-  Intersection,
-  JSONSchema,
-  JSONSchemaTypeName,
-  LinkedJSONSchema,
-  NormalizedJSONSchema,
-  Parent,
-} from './types/JSONSchema'
+import {Intersection, JSONSchema, JSONSchemaTypeName, LinkedJSONSchema, NormalizedJSONSchema} from './types/JSONSchema'
 import {memoize} from './memoize'
 import {JSONSchema4} from 'json-schema'
 import {binaryTag, CORE_SCHEMA, load as loadYaml, mergeTag, omapTag, pairsTag, setTag, timestampTag} from 'js-yaml'
@@ -16,33 +9,42 @@ import type {Options} from './'
 import {CONTAINER_KEYWORDS, JSON_DATA_KEYWORDS, NOT_SCANNED_FOR_DEFINITIONS, SUBSCHEMA_KEYWORDS} from './keywords'
 
 function traverseObjectKeys(
-  obj: Record<string, LinkedJSONSchema>,
-  callback: (schema: LinkedJSONSchema, key: string | null) => void,
+  obj: LinkedJSONSchema,
+  parent: LinkedJSONSchema,
+  callback: TraverseCallback,
   processed: Set<LinkedJSONSchema>,
 ) {
   Object.keys(obj).forEach(k => {
     if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-      traverse(obj[k], callback, processed, k)
+      traverse(obj[k], callback, processed, k, parent)
     }
   })
 }
 
 function traverseArray(
   arr: LinkedJSONSchema[],
-  callback: (schema: LinkedJSONSchema, key: string | null) => void,
+  parent: LinkedJSONSchema,
+  callback: TraverseCallback,
   processed: Set<LinkedJSONSchema>,
 ) {
-  arr.forEach((s, k) => traverse(s, callback, processed, k.toString()))
+  arr.forEach((s, k) => traverse(s, callback, processed, k.toString(), parent))
 }
+
+/**
+ * Gets each schema along with the key it is held under (if in a map or list) and the schema it
+ * belongs to (`null` for the root; for what the definitions scan finds, the object scanned)
+ */
+type TraverseCallback = (schema: LinkedJSONSchema, key: string | null, parent: LinkedJSONSchema | null) => void
 
 /** Each subschema keyword's position in `traverse`'s visiting order */
 const SUBSCHEMA_KEYWORD_ORDER = new Map(SUBSCHEMA_KEYWORDS.map(([keyword], order) => [keyword as string, order]))
 
 export function traverse(
   schema: LinkedJSONSchema,
-  callback: (schema: LinkedJSONSchema, key: string | null) => void,
+  callback: TraverseCallback,
   processed = new Set<LinkedJSONSchema>(),
-  key?: string,
+  key: string | null = null,
+  parent: LinkedJSONSchema | null = null,
 ): void {
   // Handle recursive schemas
   if (processed.has(schema)) {
@@ -50,7 +52,7 @@ export function traverse(
   }
 
   processed.add(schema)
-  callback(schema, key ?? null)
+  callback(schema, key, parent)
 
   // One look at the node's own keys (rather than a probe for every subschema keyword there is,
   // most of which any one node lacks) finds the subschema keywords it has, visited first in
@@ -75,37 +77,37 @@ export function traverse(
     }
     switch (holds) {
       case 'schema':
-        traverse(child, callback, processed)
+        traverse(child, callback, processed, null, schema)
         break
       case 'schemaOrBoolean':
         if (typeof child === 'object') {
-          traverse(child, callback, processed)
+          traverse(child, callback, processed, null, schema)
         }
         break
       case 'schemaOrSchemaArray':
         if (Array.isArray(child)) {
-          traverseArray(child, callback, processed)
+          traverseArray(child, schema, callback, processed)
         } else {
-          traverse(child, callback, processed)
+          traverse(child, callback, processed, null, schema)
         }
         break
       case 'schemaArray':
-        traverseArray(child, callback, processed)
+        traverseArray(child, schema, callback, processed)
         break
       case 'schemaMap':
-        traverseObjectKeys(child, callback, processed)
+        traverseObjectKeys(child, schema, callback, processed)
         break
     }
   }
   const intersection = (schema as NormalizedJSONSchema)[Intersection]
   if (intersection && Array.isArray(intersection.allOf)) {
-    traverseArray(intersection.allOf, callback, processed)
+    traverseArray(intersection.allOf, schema, callback, processed)
   }
 
   for (const key of otherKeys) {
     const child = schema[key]
     if (child && typeof child === 'object') {
-      traverseObjectKeys(child, callback, processed)
+      traverseObjectKeys(child, child, callback, processed)
     }
   }
 }
@@ -368,17 +370,18 @@ export function admitsType(schema: JSONSchema | boolean, bound: TypeKeyword, see
   )
 }
 
-export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
+/**
+ * Whether a node `traverse` visits is a schema: anything at a subschema keyword is, whatever its
+ * key; what the definitions scan finds one level under some other key is unless it is one of that
+ * object's containers (its `properties` map, say)
+ */
+export function isSchemaLike(schema: unknown, parent: JSONSchema | null): schema is LinkedJSONSchema {
   if (!isPlainObject(schema)) {
     return false
   }
-
-  // top-level schema
-  const parent = schema[Parent]
   if (parent === null) {
     return true
   }
-
   for (const keyword of CONTAINER_KEYWORDS) {
     if (parent[keyword] === schema) {
       return false

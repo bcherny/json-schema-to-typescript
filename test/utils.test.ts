@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'bun:test'
-import {link} from '../src/linker'
 import {cloneDeepPlain, pathTransform, generateName, isSchemaLike, parseFileAsJSONSchema} from '../src/utils'
 import {hasOnly} from './e2eCases'
+import {JSONSchema} from '../src/types/JSONSchema'
 
 const suite = hasOnly() ? describe.skip : describe
 
@@ -44,7 +44,7 @@ suite('utils', () => {
     expect(Date.now() - start).toBeLessThan(2000)
   })
   test('isSchemaLike', () => {
-    const schema = link({
+    const schema: JSONSchema = {
       title: 'Example Schema',
       type: 'object',
       properties: {
@@ -55,16 +55,20 @@ suite('utils', () => {
           id: 'lastName',
           type: 'string',
         },
+        enum: {
+          type: 'number',
+        },
       },
       required: ['firstName', 'lastName'],
-    })
-    expect(isSchemaLike(schema)).toBe(true)
-    expect(isSchemaLike([])).toBe(false)
-    expect(isSchemaLike(schema.properties)).toBe(false)
-    expect(isSchemaLike(schema.required)).toBe(false)
-    expect(isSchemaLike(schema.title)).toBe(false)
-    expect(isSchemaLike(schema.properties!.firstName)).toBe(true)
-    expect(isSchemaLike(schema.properties!.lastName)).toBe(true)
+    }
+    expect(isSchemaLike(schema, null)).toBe(true)
+    expect(isSchemaLike([], schema)).toBe(false)
+    expect(isSchemaLike(schema.properties, schema)).toBe(false)
+    expect(isSchemaLike(schema.required, schema)).toBe(false)
+    expect(isSchemaLike(schema.title, schema)).toBe(false)
+    expect(isSchemaLike(schema.properties!.firstName, schema)).toBe(true)
+    expect(isSchemaLike(schema.properties!.lastName, schema)).toBe(true)
+    expect(isSchemaLike(schema.properties!.enum, schema)).toBe(true)
   })
   test('parseFileAsJSONSchema does not apply YAML 1.1 scalar resolution', () => {
     // Under the YAML 1.1 scalar rules, `y`/`n`/`yes`/`no`/`on`/`off` resolve to

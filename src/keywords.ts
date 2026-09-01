@@ -169,12 +169,10 @@ const LEGACY = {
     'tsEnumNames',
   ]),
   /**
-   * Observable. `isSchemaLike` also counts these as containers whose direct children are not
-   * schemas: `not` holds nothing but a schema, and since `isSchemaLike` matches by identity, a
-   * *property* that happens to be named `not`, `enum` or `required` (or after any real
-   * container) counts as sitting under one.
+   * `isSchemaLike` also counts these as containers whose direct children are not schemas, for
+   * an object the definitions scan finds directly under one: they hold values and names.
    */
-  containers: new Set<KeywordName>(['not', 'enum', 'required']),
+  containers: new Set<KeywordName>(['enum', 'required']),
   /**
    * Observable. `id` means `$id`, and the normalizer renames it to that before any rule asks
    * whether it is `meta` -- except the pre-dereference `nullable` pass, which moved a draft-4
