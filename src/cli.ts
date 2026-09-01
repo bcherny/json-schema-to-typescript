@@ -238,9 +238,11 @@ function printHelp() {
 ${pkg.name} ${pkg.version}
 Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE] [OPTIONS]
 
-With no IN_FILE, or when IN_FILE is -, read standard input.
-With no OUT_FILE and when IN_FILE is specified, create .d.ts file in the same directory.
-With no OUT_FILE nor IN_FILE, write to standard output.
+With no IN_FILE, read standard input.
+With no OUT_FILE, write to standard output.
+When IN_FILE is a directory or a quoted glob, every matching schema is compiled:
+with --output DIR, one .d.ts file per schema is written under DIR; without
+--output, every result is written to standard output, one after another.
 
 You can use any of the following options by adding them at the end.
 Boolean values can be set to false using the 'no-' prefix.
