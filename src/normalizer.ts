@@ -83,15 +83,15 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
   }
   // Narrows `owner[key]` to what a value of the parent `type` can match; says whether it changed.
   // The list is edited in place only when it is the owner's alone: a `$ref` with sibling keywords
-  // is dereferenced into a shallow COPY of its target, list and all, and a copy made below shares
-  // its lists with the original. Otherwise the owner gets a narrowed list of its own and the
-  // other holder keeps the one it had. `seen` stops a member that contains itself.
-  const constrain = (owner: LinkedJSONSchema, key: 'anyOf' | 'oneOf', seen: Set<LinkedJSONSchema>): boolean => {
+  // is dereferenced into a shallow COPY of its target, list and all, and a copy made below
+  // (`copied`) shares its lists with the original. Otherwise the owner gets a narrowed list of its
+  // own and the other holder keeps the one it had. `seen` stops a member that contains itself.
+  const constrain = (owner: LinkedJSONSchema, key: 'anyOf' | 'oneOf', seen: Set<LinkedJSONSchema>, copied = false) => {
     const members: LinkedMembers | undefined = owner[key]
     if (!members) {
       return false
     }
-    const owned = members[Parent] === owner && !members[Shared]
+    const owned = !copied && !members[Shared]
     let changed = false
     const constrained = members.flatMap((member): LinkedJSONSchema[] => {
       // `anyOf`/`oneOf` members are typed as `LinkedJSONSchema`, but a boolean
@@ -118,8 +118,8 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
         // its own: on the member itself when it is ours alone, on a copy when not
         const target = owned && !member[Shared] ? member : {...member}
         seen.add(member)
-        const narrowedAny = constrain(target, 'anyOf', seen)
-        const narrowedOne = constrain(target, 'oneOf', seen)
+        const narrowedAny = constrain(target, 'anyOf', seen, target !== member)
+        const narrowedOne = constrain(target, 'oneOf', seen, target !== member)
         seen.delete(member)
         if (target.anyOf?.length === 0 || target.oneOf?.length === 0) {
           changed = true
@@ -163,8 +163,8 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
   constrain(schema, 'oneOf', seen)
 })
 
-/** An `anyOf`/`oneOf` list as `link()` leaves it: knowing the schema that holds it, and whether another does too */
-type LinkedMembers = LinkedJSONSchema[] & {readonly [Parent]?: LinkedJSONSchema; readonly [Shared]?: true}
+/** An `anyOf`/`oneOf` list as `link()` leaves it: knowing whether another schema holds it too */
+type LinkedMembers = LinkedJSONSchema[] & {readonly [Shared]?: true}
 
 rules.set('Add empty `required` property if none is defined', schema => {
   if (isObjectType(schema) && !('required' in schema)) {
@@ -297,7 +297,7 @@ rules.set('Transform id to $id', (schema, fileName) => {
   }
 })
 
-rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _key, dereferencedPaths) => {
+rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _key, dereferencedPaths, rootSchema) => {
   if (!isSchemaLike(schema)) {
     return
   }
@@ -305,7 +305,7 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
   // Top-level schema. A name with no usable identifier characters (stdin, or a file
   // called `2024.json`) gets the same placeholder generateName() uses, rather than an
   // empty `$id` -- which would leave the root type undeclared and the output empty.
-  if (!schema.$id && !schema[Parent]) {
+  if (!schema.$id && schema === rootSchema) {
     schema.$id = toSafeString(justName(fileName)) || 'NoName'
     return
   }

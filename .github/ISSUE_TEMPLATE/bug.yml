@@ -1,0 +1,74 @@
+name: Bug report
+description: Wrong output, a crash, or an error for a schema that should compile
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Trying the schema in the [browser demo](https://borischerny.com/json-schema-to-typescript-browser/) first is the quickest check of whether the problem is in the library or in your setup.
+  - type: textarea
+    id: schema
+    attributes:
+      label: Schema
+      description: The smallest JSON Schema that shows the problem. If it spans several files or is too big to paste, put a link under "Anything else" instead.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: invocation
+    attributes:
+      label: How you ran it
+      description: The CLI command with its flags, or the `compile()` / `compileFromFile()` call with its options.
+      placeholder: json2ts -i schema.json --unreachableDefinitions
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual output
+      description: The TypeScript that was generated, or the full error with its stack trace.
+      render: typescript
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected output
+      description: The TypeScript you expected instead. For a crash, say what should have happened.
+      render: typescript
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: json-schema-to-typescript version
+      description: "`npm ls json-schema-to-typescript`, or the version line at the top of `json2ts --help`"
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      description: "`node --version`. If you are on Bun, Deno or in a browser, say that and its version."
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: With its version, e.g. macOS 15, Windows 11, Ubuntu 24.04.
+  - type: dropdown
+    id: demo
+    attributes:
+      label: Browser demo
+      description: Does the browser demo linked at the top give the same result for this schema?
+      options:
+        - Same result
+        - Different result
+        - Did not try
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else
+      description: Links to a gist or repo, the spec, related issues, or what you are generating types for.
