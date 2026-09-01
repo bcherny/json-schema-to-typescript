@@ -49560,9 +49560,15 @@ exports[`titleCollidesWithGlobal.ts 1`] = `
  */
 
 export type Symbol1 = string;
+export type Symbol2 = string;
+export type Array1 = number[];
+export type Date = string;
 
 export interface Currency {
   displaySymbol?: Symbol1;
+  nativeSymbol?: Symbol2;
+  denominations?: Array1;
+  introduced?: Date;
   [k: string]: unknown;
 }
 "

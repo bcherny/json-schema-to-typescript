@@ -219,14 +219,24 @@ export function toSafeString(string: string): string {
 // counter that counting from 1 would find.
 const nextCounters = memoize<Set<string>, [], Map<string, number>>(() => new Map())
 
+/**
+ * Built-in type names a generated type must not take, or it shadows the global for the whole
+ * file (`export type Symbol = string` -- #386). A name that lands here gets the same counter
+ * suffix as a duplicate (`Symbol1`). Deliberately short: the built-ins from lib.es5 /
+ * lib.es2015 that read as TypeScript's own types in an annotation, minus the ones real-world
+ * schemas use as type names on purpose (`Date`, `Error`, `Function`, `String`, `Number`,
+ * `Boolean`), which are left as the schema author wrote them.
+ */
+const RESERVED_TYPE_NAMES = new Set(['Array', 'Map', 'Object', 'Promise', 'RegExp', 'Set', 'Symbol'])
+
 export function generateName(from: string, usedNames: Set<string>) {
   let name = toSafeString(from)
   if (!name) {
     name = 'NoName'
   }
 
-  // increment counter until we find a free name
-  if (usedNames.has(name)) {
+  // taken or reserved: increment counter until we find a free name
+  if (usedNames.has(name) || RESERVED_TYPE_NAMES.has(name)) {
     const counters = nextCounters(usedNames)
     let counter = counters.get(name) ?? 1
     while (usedNames.has(`${name}${counter}`)) {
