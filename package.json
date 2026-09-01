@@ -23,7 +23,7 @@
     "test": "bun run pre-test && bun test --timeout 300000",
     "stresstest": "seq 1 10 | xargs -I{} bun run test",
     "prepublishOnly": "bun run test",
-    "pre-test": "bun run clean && bun run --parallel format-check typecheck build:server",
+    "pre-test": "bun run clean && bun run --parallel format-check lint typecheck build:server",
     "typecheck": "tsc -p tsconfig.test.json",
     "watch": "tsc -w"
   },

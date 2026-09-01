@@ -86,7 +86,7 @@ jobs:
           { echo "::error::npm $(npm -v) is too old for trusted publishing, which needs 11.5.1 or later"; exit 1; }
     - name: Install dependencies
       run: bun install --frozen-lockfile
-    # `test` builds first (pre-test: clean, format-check, typecheck, tsc -d). It is
+    # `test` builds first (pre-test: clean, format-check, lint, typecheck, tsc -d). It is
     # what `prepublishOnly` runs too, so the publish step skips lifecycle scripts
     # rather than building and testing a second time.
     - name: Build and run tests
