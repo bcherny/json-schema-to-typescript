@@ -395501,6 +395501,20 @@ third\`) | undefined;
         (5 | 6)[]
     | number
     | undefined;
+  readonly describedLongEnum?: readonly
+    /**
+     * Many
+     */
+    (
+      | "enum-member-value-0"
+      | "enum-member-value-1"
+      | "enum-member-value-2"
+      | "enum-member-value-3"
+      | "enum-member-value-4"
+      | "enum-member-value-5"
+      | "enum-member-value-6"
+      | "enum-member-value-7"
+    )[] | undefined;
   readonly customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1
@@ -395812,6 +395826,20 @@ third\`;
      */
     | (5 | 6)[]
     | number;
+  describedLongEnum?:
+    /**
+     * Many
+     */
+    (
+      | "enum-member-value-0"
+      | "enum-member-value-1"
+      | "enum-member-value-2"
+      | "enum-member-value-3"
+      | "enum-member-value-4"
+      | "enum-member-value-5"
+      | "enum-member-value-6"
+      | "enum-member-value-7"
+    )[];
   customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1

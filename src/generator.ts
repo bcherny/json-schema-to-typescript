@@ -418,9 +418,12 @@ function isStringLiteral(type: string): boolean {
 /** A union or intersection member: its text and the comment that goes before it */
 type Member = {type: string; comment?: string}
 
-/** A member's text below its comment, if any, on lines of their own */
+/** A member's text below its comment, if any, on lines of their own (a type that brings its own keeps them) */
 function commented({type, comment}: Member): string {
-  return comment === undefined ? type : onOwnLines(comment + '\n' + type)
+  if (comment === undefined) {
+    return type
+  }
+  return type.startsWith('\n') ? onOwnLines(comment) + type : onOwnLines(comment + '\n' + type)
 }
 
 /**

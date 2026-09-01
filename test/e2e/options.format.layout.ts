@@ -159,6 +159,11 @@ export const input = {
         {type: 'number'},
       ],
     },
+    // a described `enum` too long for a line brings its own lines; its comment goes right above them
+    describedLongEnum: {
+      type: 'array',
+      items: {oneOf: [{enum: Array.from({length: 8}, (_, i) => `enum-member-value-${i}`), description: 'Many'}]},
+    },
     // a `tsType` that would not parse behind a `|` is parenthesized, and the union laid out like any other
     customInLongUnion: {
       anyOf: [
