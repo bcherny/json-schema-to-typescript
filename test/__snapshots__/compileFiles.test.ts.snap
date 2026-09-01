@@ -27,15 +27,10 @@ export interface B {
 
 exports[`compileFiles memo: test/resources/Imports/memo/common.json 1`] = `
 "/**
- * This interface was referenced by \`Common\`'s JSON-Schema
- * via the \`definition\` "tag".
- */
-export type Tag = "red" | "green";
-
-/**
  * Shared definitions; no properties of its own
  */
 export interface Common {}
+
 /**
  * This interface was referenced by \`Common\`'s JSON-Schema
  * via the \`definition\` "thing".
@@ -44,6 +39,12 @@ export interface Thing {
   id: string;
   tags?: Tag[];
 }
+
+/**
+ * This interface was referenced by \`Common\`'s JSON-Schema
+ * via the \`definition\` "tag".
+ */
+export type Tag = "red" | "green";
 "
 `;
 
@@ -98,13 +99,8 @@ export interface C {
 `;
 
 exports[`compileFiles diamond: test/resources/Imports/diamond/base.json 1`] = `
-"/**
- * This interface was referenced by \`Base\`'s JSON-Schema
- * via the \`definition\` "kind".
- */
-export type Kind = "a" | "b";
+"export interface Base {}
 
-export interface Base {}
 /**
  * This interface was referenced by \`Base\`'s JSON-Schema
  * via the \`definition\` "node".
@@ -113,6 +109,12 @@ export interface Node {
   id: string;
   kind?: Kind;
 }
+
+/**
+ * This interface was referenced by \`Base\`'s JSON-Schema
+ * via the \`definition\` "kind".
+ */
+export type Kind = "a" | "b";
 "
 `;
 
@@ -156,6 +158,7 @@ exports[`compileFiles sametitle: test/resources/Imports/sametitle/defs.json 1`] 
 export interface Thing {
   self?: Thing1;
 }
+
 /**
  * This interface was referenced by \`Thing\`'s JSON-Schema
  * via the \`definition\` "thing".
@@ -202,6 +205,7 @@ export interface Main {
   p?: Thing1;
   q?: Thing2;
 }
+
 /**
  * This interface was referenced by \`Main\`'s JSON-Schema
  * via the \`definition\` "thing".
@@ -221,6 +225,7 @@ exports[`compileFiles doublealias: test/resources/Imports/doublealias/p.json 1`]
 
 exports[`compileFiles doublealias: test/resources/Imports/doublealias/q.json 1`] = `
 "export interface Q {}
+
 /**
  * This interface was referenced by \`Q\`'s JSON-Schema
  * via the \`definition\` "thing".
@@ -232,15 +237,15 @@ export interface Thing {
 `;
 
 exports[`compileFiles sibdirs: test/resources/Imports/sibdirs/common/x.json 1`] = `
-"/**
+"export interface X {
+  e?: E;
+}
+
+/**
  * This interface was referenced by \`X\`'s JSON-Schema
  * via the \`definition\` "e".
  */
 export type E = "p" | "q";
-
-export interface X {
-  e?: E;
-}
 "
 `;
 
@@ -274,6 +279,7 @@ export interface Main {
   p?: P;
   x?: X;
 }
+
 export interface U {
   w?: number;
 }
@@ -284,9 +290,11 @@ exports[`compileFiles nestedptr: test/resources/Imports/nestedptr/other.json 1`]
 "export interface Other {
   p?: P;
 }
+
 export interface P {
   q?: string;
 }
+
 /**
  * This interface was referenced by \`Other\`'s JSON-Schema
  * via the \`definition\` "x".
@@ -297,6 +305,7 @@ export interface X {
     w?: number;
   };
 }
+
 export interface Y {
   z?: string;
 }
@@ -304,35 +313,8 @@ export interface Y {
 `;
 
 exports[`compileFiles positions: test/resources/Imports/positions/defs.json 1`] = `
-"/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "nullable".
- */
-export type MaybeObj = {
-  n?: number;
-} | null;
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "custom".
- */
-export type Custom = Record<string, Date>;
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "arr".
- */
-export type ObjList = Obj[];
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "union".
- */
-export type Either = Obj | Named;
-/**
- * This interface was referenced by \`Defs\`'s JSON-Schema
- * via the \`definition\` "str".
- */
-export type Str = string;
+"export interface Defs {}
 
-export interface Defs {}
 /**
  * This interface was referenced by \`Defs\`'s JSON-Schema
  * via the \`definition\` "obj".
@@ -349,6 +331,38 @@ export const enum Named {
   X = "x",
   Y = "y"
 }
+
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "nullable".
+ */
+export type MaybeObj = {
+  n?: number;
+} | null;
+
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "custom".
+ */
+export type Custom = Record<string, Date>;
+
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "arr".
+ */
+export type ObjList = Obj[];
+
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "union".
+ */
+export type Either = Obj | Named;
+
+/**
+ * This interface was referenced by \`Defs\`'s JSON-Schema
+ * via the \`definition\` "str".
+ */
+export type Str = string;
 "
 `;
 
@@ -434,18 +448,19 @@ export interface Paint {
 `;
 
 exports[`compileFiles yamlmix: test/resources/Imports/yamlmix/types.yaml 1`] = `
-"/**
+"export interface Types {}
+
+/**
  * This interface was referenced by \`Types\`'s JSON-Schema
  * via the \`definition\` "color".
  */
 export type Color = "red" | "blue";
-
-export interface Types {}
 "
 `;
 
 exports[`compileFiles spell: test/resources/Imports/spell/my defs.json 1`] = `
 "export interface MyDefs {}
+
 /**
  * This interface was referenced by \`MyDefs\`'s JSON-Schema
  * via the \`definition\` "d".
@@ -482,6 +497,7 @@ exports[`compileFiles outsideTheSet: test/resources/MultiSchemaRefs/response/Ref
   inner?: Referenced;
   [k: string]: unknown;
 }
+
 export interface Referenced {
   id: string;
   [k: string]: unknown;
@@ -494,6 +510,35 @@ exports[`compileFiles azure: common/definitions 1`] = `
  * Common definitions
  */
 export type Definitions = unknown;
+
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "ARMResourceBase".
+ */
+export interface ARMResourceBase {
+  /**
+   * Name of the resource
+   */
+  name: string;
+  /**
+   * Resource type
+   */
+  type: string;
+  /**
+   * Condition of the resource
+   */
+  condition?: boolean | Expression;
+  /**
+   * API Version of the resource type, optional when apiProfile is used on the template
+   */
+  apiVersion?: string;
+  /**
+   * Collection of resources this resource depends on
+   */
+  dependsOn?: string[];
+  [k: string]: unknown;
+}
+
 /**
  * Deployment template expression. See https://aka.ms/arm-template-expressions for more details on the ARM expression syntax.
  *
@@ -501,6 +546,7 @@ export type Definitions = unknown;
  * via the \`definition\` "expression".
  */
 export type Expression = string;
+
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "proxyResourceBase".
@@ -512,6 +558,7 @@ export type ProxyResourceBase = ARMResourceBase & {
   location?: ResourceLocations;
   [k: string]: unknown;
 };
+
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "resourceLocations".
@@ -547,6 +594,7 @@ export type ResourceLocations =
       | "Korea South"
       | "global"
     );
+
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "resourceBase".
@@ -566,84 +614,7 @@ export type ResourceBase = ARMResourceBase & {
   comments?: string;
   [k: string]: unknown;
 };
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceBaseExternal".
- */
-export type ResourceBaseExternal = ARMResourceBase & {
-  /**
-   * Location to deploy resource to
-   */
-  location?: ResourceLocations;
-  /**
-   * Name-value pairs to add to the resource
-   */
-  tags?: {
-    [k: string]: unknown;
-  };
-  copy?: ResourceCopy;
-  comments?: string;
-  [k: string]: unknown;
-} & {
-  plan: unknown;
-};
-/**
- * Kind of resource
- *
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "resourceKind".
- */
-export type ResourceKind = string;
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "numberOrExpression".
- */
-export type NumberOrExpression = number | Expression;
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "Iso8601Duration".
- */
-export type Iso8601Duration = string;
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "UTC".
- */
-export type UTC = string;
-/**
- * API version of the resource type
- *
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "apiVersion".
- */
-export type ApiVersion = string;
 
-/**
- * This interface was referenced by \`Definitions\`'s JSON-Schema
- * via the \`definition\` "ARMResourceBase".
- */
-export interface ARMResourceBase {
-  /**
-   * Name of the resource
-   */
-  name: string;
-  /**
-   * Resource type
-   */
-  type: string;
-  /**
-   * Condition of the resource
-   */
-  condition?: boolean | Expression;
-  /**
-   * API Version of the resource type, optional when apiProfile is used on the template
-   */
-  apiVersion?: string;
-  /**
-   * Collection of resources this resource depends on
-   */
-  dependsOn?: string[];
-  [k: string]: unknown;
-}
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "resourceCopy".
@@ -667,6 +638,29 @@ export interface ResourceCopy {
   batchSize?: Expression | number;
   [k: string]: unknown;
 }
+
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceBaseExternal".
+ */
+export type ResourceBaseExternal = ARMResourceBase & {
+  /**
+   * Location to deploy resource to
+   */
+  location?: ResourceLocations;
+  /**
+   * Name-value pairs to add to the resource
+   */
+  tags?: {
+    [k: string]: unknown;
+  };
+  copy?: ResourceCopy;
+  comments?: string;
+  [k: string]: unknown;
+} & {
+  plan: unknown;
+};
+
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "resourceSku".
@@ -694,6 +688,15 @@ export interface ResourceSku {
   capacity?: number;
   [k: string]: unknown;
 }
+
+/**
+ * Kind of resource
+ *
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "resourceKind".
+ */
+export type ResourceKind = string;
+
 /**
  * Plan of the resource
  *
@@ -723,6 +726,32 @@ export interface ResourcePlan {
   version?: string;
   [k: string]: unknown;
 }
+
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "numberOrExpression".
+ */
+export type NumberOrExpression = number | Expression;
+
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "Iso8601Duration".
+ */
+export type Iso8601Duration = string;
+
+/**
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "UTC".
+ */
+export type UTC = string;
+
+/**
+ * API version of the resource type
+ *
+ * This interface was referenced by \`Definitions\`'s JSON-Schema
+ * via the \`definition\` "apiVersion".
+ */
+export type ApiVersion = string;
 "
 `;
 
@@ -795,6 +824,7 @@ export interface AdditionalUnattendContent {
   settingName?: ("AutoLogon" | "FirstLogonCommands") | string;
   [k: string]: unknown;
 }
+
 /**
  * The API entity reference.
  *
@@ -808,6 +838,7 @@ export interface ApiEntityReference {
   id?: string;
   [k: string]: unknown;
 }
+
 /**
  * The instance view of a resource.
  *
@@ -829,6 +860,7 @@ export interface AvailabilitySetProperties {
   virtualMachines?: SubResource[] | string;
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftCompute\`'s JSON-Schema
  * via the \`definition\` "SubResource".
@@ -840,6 +872,7 @@ export interface SubResource {
   id?: string;
   [k: string]: unknown;
 }
+
 /**
  * Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status. <br><br> You can easily view the output of your console log. <br><br> Azure also enables you to see a screenshot of the VM from the hypervisor.
  *
@@ -857,6 +890,7 @@ export interface BootDiagnostics {
   storageUri?: string;
   [k: string]: unknown;
 }
+
 /**
  * Data used when creating a disk.
  *
@@ -886,6 +920,7 @@ export interface CreationData {
   storageAccountId?: string;
   [k: string]: unknown;
 }
+
 /**
  * The source image used for creating the disk.
  *
@@ -903,6 +938,7 @@ export interface ImageDiskReference {
   lun?: number | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a data disk.
  *
@@ -944,6 +980,7 @@ export interface DataDisk {
   vhd?: VirtualHardDisk | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes the uri of a disk.
  *
@@ -957,6 +994,7 @@ export interface VirtualHardDisk {
   uri?: string;
   [k: string]: unknown;
 }
+
 /**
  * The parameters of a managed disk.
  *
@@ -974,6 +1012,7 @@ export interface ManagedDiskParameters {
   storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies the boot diagnostic settings state. <br><br>Minimum api-version: 2015-06-15.
  *
@@ -987,6 +1026,7 @@ export interface DiagnosticsProfile {
   bootDiagnostics?: BootDiagnostics | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a Encryption Settings for a Disk
  *
@@ -1008,6 +1048,7 @@ export interface DiskEncryptionSettings {
   keyEncryptionKey?: KeyVaultKeyReference | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a reference to Key Vault Secret
  *
@@ -1022,6 +1063,7 @@ export interface KeyVaultSecretReference {
   sourceVault: SubResource | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a reference to Key Vault Key
  *
@@ -1036,6 +1078,7 @@ export interface KeyVaultKeyReference {
   sourceVault: SubResource | string;
   [k: string]: unknown;
 }
+
 /**
  * Disk resource properties.
  *
@@ -1061,6 +1104,7 @@ export interface DiskProperties {
   osType?: ("Windows" | "Linux") | string;
   [k: string]: unknown;
 }
+
 /**
  * Encryption settings for disk or snapshot
  *
@@ -1082,6 +1126,7 @@ export interface EncryptionSettings {
   keyEncryptionKey?: KeyVaultAndKeyReference | string;
   [k: string]: unknown;
 }
+
 /**
  * Key Vault Secret Url and vault id of the encryption key
  *
@@ -1099,6 +1144,7 @@ export interface KeyVaultAndSecretReference {
   sourceVault: SourceVault | string;
   [k: string]: unknown;
 }
+
 /**
  * The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}
  *
@@ -1112,6 +1158,7 @@ export interface SourceVault {
   id?: string;
   [k: string]: unknown;
 }
+
 /**
  * Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey
  *
@@ -1129,6 +1176,7 @@ export interface KeyVaultAndKeyReference {
   sourceVault: SourceVault | string;
   [k: string]: unknown;
 }
+
 /**
  * The disks and snapshots sku name. Can be Standard_LRS or Premium_LRS.
  *
@@ -1142,6 +1190,7 @@ export interface DiskSku {
   name?: ("Standard_LRS" | "Premium_LRS") | string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies the hardware settings for the virtual machine.
  *
@@ -1255,6 +1304,7 @@ export interface HardwareProfile {
     | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a data disk.
  *
@@ -1286,6 +1336,7 @@ export interface ImageDataDisk {
   storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes an Operating System disk.
  *
@@ -1321,6 +1372,7 @@ export interface ImageOSDisk {
   storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes the properties of an Image.
  *
@@ -1335,6 +1387,7 @@ export interface ImageProperties {
   storageProfile?: ImageStorageProfile | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a storage profile.
  *
@@ -1352,6 +1405,7 @@ export interface ImageStorageProfile {
   osDisk: ImageOSDisk | string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations. NOTE: Image reference publisher and offer can only be set when you create the scale set.
  *
@@ -1381,6 +1435,7 @@ export interface ImageReference {
   version?: string;
   [k: string]: unknown;
 }
+
 /**
  * Instance view status.
  *
@@ -1410,6 +1465,7 @@ export interface InstanceViewStatus {
   time?: string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies the Linux operating system settings on the virtual machine. <br><br>For a list of supported Linux distributions, see [Linux on Azure-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) <br><br> For running non-endorsed distributions, see [Information for Non-Endorsed Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
  *
@@ -1427,6 +1483,7 @@ export interface LinuxConfiguration {
   ssh?: SshConfiguration | string;
   [k: string]: unknown;
 }
+
 /**
  * SSH configuration for Linux based VMs running on Azure
  *
@@ -1440,6 +1497,7 @@ export interface SshConfiguration {
   publicKeys?: SshPublicKey[] | string;
   [k: string]: unknown;
 }
+
 /**
  * Contains information about SSH certificate public key and the path on the Linux VM where the public key is placed.
  *
@@ -1457,6 +1515,7 @@ export interface SshPublicKey {
   path?: string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a network interface reference.
  *
@@ -1474,6 +1533,7 @@ export interface NetworkInterfaceReference {
   properties?: NetworkInterfaceReferenceProperties | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a network interface reference properties.
  *
@@ -1487,6 +1547,7 @@ export interface NetworkInterfaceReferenceProperties {
   primary?: boolean | string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies the network interfaces of the virtual machine.
  *
@@ -1500,6 +1561,7 @@ export interface NetworkProfile {
   networkInterfaces?: NetworkInterfaceReference[] | string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies information about the operating system disk used by the virtual machine. <br><br> For more information about disks, see [About disks and VHDs for Azure virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
  *
@@ -1545,6 +1607,7 @@ export interface OSDisk {
   vhd?: VirtualHardDisk | string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies the operating system settings for the virtual machine.
  *
@@ -1582,6 +1645,7 @@ export interface OSProfile {
   windowsConfiguration?: WindowsConfiguration | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a set of certificates which are all in the same Key Vault.
  *
@@ -1596,6 +1660,7 @@ export interface VaultSecretGroup {
   vaultCertificates?: VaultCertificate[] | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
  *
@@ -1613,6 +1678,7 @@ export interface VaultCertificate {
   certificateUrl?: string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies Windows operating system settings on the virtual machine.
  *
@@ -1642,6 +1708,7 @@ export interface WindowsConfiguration {
   winRM?: WinRMConfiguration | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes Windows Remote Management configuration of the VM
  *
@@ -1655,6 +1722,7 @@ export interface WinRMConfiguration {
   listeners?: WinRMListener[] | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes Protocol and thumbprint of Windows Remote Management listener
  *
@@ -1672,6 +1740,7 @@ export interface WinRMListener {
   protocol?: ("Http" | "Https") | string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace image that you want to use and then click **Want to deploy programmatically, Get Started ->**. Enter any required information and then click **Save**.
  *
@@ -1697,6 +1766,7 @@ export interface Plan {
   publisher?: string;
   [k: string]: unknown;
 }
+
 /**
  * The configuration parameters used while performing a rolling upgrade.
  *
@@ -1722,6 +1792,7 @@ export interface RollingUpgradePolicy {
   pauseTimeBetweenBatches?: string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set sku.
  *
@@ -1743,6 +1814,7 @@ export interface Sku {
   tier?: string;
   [k: string]: unknown;
 }
+
 /**
  * Specifies the storage settings for the virtual machine disks.
  *
@@ -1764,6 +1836,7 @@ export interface StorageProfile {
   osDisk?: OSDisk | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes an upgrade policy - automatic, manual, or rolling.
  *
@@ -1785,6 +1858,7 @@ export interface UpgradePolicy {
   rollingUpgradePolicy?: RollingUpgradePolicy | string;
   [k: string]: unknown;
 }
+
 /**
  * The instance view of a virtual machine extension.
  *
@@ -1814,6 +1888,7 @@ export interface VirtualMachineExtensionInstanceView {
   typeHandlerVersion?: string;
   [k: string]: unknown;
 }
+
 /**
  * Describes the properties of a Virtual Machine Extension.
  *
@@ -1859,6 +1934,7 @@ export interface VirtualMachineExtensionProperties {
   typeHandlerVersion?: string;
   [k: string]: unknown;
 }
+
 /**
  * Identity for the virtual machine.
  *
@@ -1872,6 +1948,7 @@ export interface VirtualMachineIdentity {
   type?: "SystemAssigned" | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes the properties of a Virtual Machine.
  *
@@ -1906,6 +1983,7 @@ export interface VirtualMachineProperties {
   storageProfile?: StorageProfile | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set data disk.
  *
@@ -1939,6 +2017,7 @@ export interface VirtualMachineScaleSetDataDisk {
   name?: string;
   [k: string]: unknown;
 }
+
 /**
  * Describes the parameters of a ScaleSet managed disk.
  *
@@ -1952,6 +2031,7 @@ export interface VirtualMachineScaleSetManagedDiskParameters {
   storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a Virtual Machine Scale Set Extension.
  *
@@ -2001,6 +2081,7 @@ export interface VirtualMachineScaleSetExtension {
     | NetworkWatcherAgentLinux;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set extension profile.
  *
@@ -2014,6 +2095,7 @@ export interface VirtualMachineScaleSetExtensionProfile {
   extensions?: VirtualMachineScaleSetExtension[] | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes the properties of a Virtual Machine Scale Set Extension.
  *
@@ -2055,6 +2137,7 @@ export interface VirtualMachineScaleSetExtensionProperties {
   typeHandlerVersion?: string;
   [k: string]: unknown;
 }
+
 /**
  * Identity for the virtual machine scale set.
  *
@@ -2068,6 +2151,7 @@ export interface VirtualMachineScaleSetIdentity {
   type?: "SystemAssigned" | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set network profile's IP configuration.
  *
@@ -2089,6 +2173,7 @@ export interface VirtualMachineScaleSetIPConfiguration {
   properties?: VirtualMachineScaleSetIPConfigurationProperties | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set network profile's IP configuration properties.
  *
@@ -2126,6 +2211,7 @@ export interface VirtualMachineScaleSetIPConfigurationProperties {
   subnet?: ApiEntityReference | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
  *
@@ -2143,6 +2229,7 @@ export interface VirtualMachineScaleSetPublicIPAddressConfiguration {
   properties?: VirtualMachineScaleSetPublicIPAddressConfigurationProperties | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
  *
@@ -2160,6 +2247,7 @@ export interface VirtualMachineScaleSetPublicIPAddressConfigurationProperties {
   idleTimeoutInMinutes?: number | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machines scale sets network configuration's DNS settings.
  *
@@ -2173,6 +2261,7 @@ export interface VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings {
   domainNameLabel: string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set network profile's network configurations.
  *
@@ -2194,6 +2283,7 @@ export interface VirtualMachineScaleSetNetworkConfiguration {
   properties?: VirtualMachineScaleSetNetworkConfigurationProperties | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set network profile's IP configuration.
  *
@@ -2220,6 +2310,7 @@ export interface VirtualMachineScaleSetNetworkConfigurationProperties {
   primary?: boolean | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machines scale sets network configuration's DNS settings.
  *
@@ -2233,6 +2324,7 @@ export interface VirtualMachineScaleSetNetworkConfigurationDnsSettings {
   dnsServers?: string[] | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set network profile.
  *
@@ -2250,6 +2342,7 @@ export interface VirtualMachineScaleSetNetworkProfile {
   networkInterfaceConfigurations?: VirtualMachineScaleSetNetworkConfiguration[] | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set operating system disk.
  *
@@ -2287,6 +2380,7 @@ export interface VirtualMachineScaleSetOSDisk {
   vhdContainers?: string[] | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set OS profile.
  *
@@ -2324,6 +2418,7 @@ export interface VirtualMachineScaleSetOSProfile {
   windowsConfiguration?: WindowsConfiguration | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes the properties of a Virtual Machine Scale Set.
  *
@@ -2349,6 +2444,7 @@ export interface VirtualMachineScaleSetProperties {
   virtualMachineProfile?: VirtualMachineScaleSetVMProfile | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set virtual machine profile.
  *
@@ -2382,6 +2478,7 @@ export interface VirtualMachineScaleSetVMProfile {
   storageProfile?: VirtualMachineScaleSetStorageProfile | string;
   [k: string]: unknown;
 }
+
 /**
  * Describes a virtual machine scale set storage profile.
  *
@@ -2403,6 +2500,7 @@ export interface VirtualMachineScaleSetStorageProfile {
   osDisk?: VirtualMachineScaleSetOSDisk | string;
   [k: string]: unknown;
 }
+
 /**
  * Microsoft.Compute/virtualMachineScaleSets/extensions
  *
@@ -2422,6 +2520,7 @@ export interface VirtualMachineScaleSetsExtensionsChildResource {
   type: "extensions";
   [k: string]: unknown;
 }
+
 /**
  * Microsoft.Compute/virtualMachines/extensions
  *
@@ -2521,6 +2620,7 @@ export interface GenericExtension {
     | string;
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "iaaSDiagnostics".
@@ -2543,6 +2643,7 @@ export interface IaaSDiagnostics {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "iaaSAntimalware".
@@ -2572,6 +2673,7 @@ export interface IaaSAntimalware {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "customScriptExtension".
@@ -2593,6 +2695,7 @@ export interface CustomScriptExtension {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "customScriptForLinux".
@@ -2614,6 +2717,7 @@ export interface CustomScriptForLinux {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "linuxDiagnostic".
@@ -2646,6 +2750,7 @@ export interface LinuxDiagnostic {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "vmAccessForLinux".
@@ -2671,6 +2776,7 @@ export interface VmAccessForLinux {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "bgInfo".
@@ -2682,6 +2788,7 @@ export interface BgInfo {
   autoUpgradeMinorVersion: boolean;
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "vmAccessAgent".
@@ -2701,6 +2808,7 @@ export interface VmAccessAgent {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "dscExtension".
@@ -2727,6 +2835,7 @@ export interface DscExtension {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "acronisBackupLinux".
@@ -2747,6 +2856,7 @@ export interface AcronisBackupLinux {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "acronisBackup".
@@ -2767,6 +2877,7 @@ export interface AcronisBackup {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "linuxChefClient".
@@ -2798,6 +2909,7 @@ export interface LinuxChefClient {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "chefClient".
@@ -2828,6 +2940,7 @@ export interface ChefClient {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "datadogLinuxAgent".
@@ -2843,6 +2956,7 @@ export interface DatadogLinuxAgent {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "datadogWindowsAgent".
@@ -2858,6 +2972,7 @@ export interface DatadogWindowsAgent {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "dockerExtension".
@@ -2885,6 +3000,7 @@ export interface DockerExtension {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "dynatraceLinux".
@@ -2901,6 +3017,7 @@ export interface DynatraceLinux {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "dynatraceWindows".
@@ -2917,6 +3034,7 @@ export interface DynatraceWindows {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "eset".
@@ -2938,6 +3056,7 @@ export interface Eset {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "hpeSecurityApplicationDefender".
@@ -2954,6 +3073,7 @@ export interface HpeSecurityApplicationDefender {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "puppetAgent".
@@ -2969,6 +3089,7 @@ export interface PuppetAgent {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "site24x7LinuxServerExtn".
@@ -2988,6 +3109,7 @@ export interface Site24X7LinuxServerExtn {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "site24x7WindowsServerExtn".
@@ -3007,6 +3129,7 @@ export interface Site24X7WindowsServerExtn {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "site24x7ApmInsightExtn".
@@ -3026,6 +3149,7 @@ export interface Site24X7ApmInsightExtn {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "trendMicroDSALinux".
@@ -3048,6 +3172,7 @@ export interface TrendMicroDSALinux {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "trendMicroDSA".
@@ -3070,6 +3195,7 @@ export interface TrendMicroDSA {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "bmcCtmAgentLinux".
@@ -3088,6 +3214,7 @@ export interface BmcCtmAgentLinux {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "bmcCtmAgentWindows".
@@ -3105,6 +3232,7 @@ export interface BmcCtmAgentWindows {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "OSPatchingForLinux".
@@ -3141,6 +3269,7 @@ export interface OSPatchingForLinux {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "VMSnapshot".
@@ -3163,6 +3292,7 @@ export interface VMSnapshot {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "VMSnapshotLinux".
@@ -3185,6 +3315,7 @@ export interface VMSnapshotLinux {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "customScript".
@@ -3206,6 +3337,7 @@ export interface CustomScript {
   };
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "networkWatcherAgentWindows".
@@ -3217,6 +3349,7 @@ export interface NetworkWatcherAgentWindows {
   autoUpgradeMinorVersion: boolean;
   [k: string]: unknown;
 }
+
 /**
  * This interface was referenced by \`MicrosoftComputeExtensions\`'s JSON-Schema
  * via the \`definition\` "networkWatcherAgentLinux".

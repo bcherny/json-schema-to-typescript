@@ -170,13 +170,8 @@ export interface B {
   owner?: A;
 }
 // types/common.d.ts
-/**
- * This interface was referenced by `Common`'s JSON-Schema
- * via the `definition` "tag".
- */
-export type Tag = "red" | "green";
-
 export interface Common {}
+
 /**
  * This interface was referenced by `Common`'s JSON-Schema
  * via the `definition` "thing".
@@ -185,6 +180,12 @@ export interface Thing {
   id: string;
   tags?: Tag[];
 }
+
+/**
+ * This interface was referenced by `Common`'s JSON-Schema
+ * via the `definition` "tag".
+ */
+export type Tag = "red" | "green";
 ```
 
 (Without `--imports`, `a.d.ts` and `b.d.ts` each declare their own `Thing`, `Tag`, `A` and `B`, plus a second `A1`/`B1` where the cycle comes back around, and `common.d.ts` declares only `Common`.)

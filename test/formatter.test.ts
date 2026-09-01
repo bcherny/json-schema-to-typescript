@@ -6,10 +6,10 @@ import {hasOnly} from './e2eCases'
 
 const suite = hasOnly() ? describe.skip : describe
 
-// A generated file as `generate` returns it: banner, type aliases, interfaces, enums, split
-// before each declaration. It includes the things a batch boundary has to get right: blank lines
-// between the groups and after each root schema's enums, comments ahead of declarations, and
-// user-supplied text (tsType, bannerComment) with stray whitespace and line endings at the edges.
+// A file split before each declaration, the way `generate` returns it, with every kind of edge a
+// batch boundary has to get right: one newline or a blank line between declarations, trailing
+// newlines, comments ahead of declarations, and user-supplied text (tsType, bannerComment) with
+// stray whitespace and line endings at the edges.
 const PIECES = [
   '/* A banner */\n/**\n* over several lines\n*/',
   '\n\nexport type A = string',

@@ -37,10 +37,11 @@ interface Scope {
 }
 
 /**
- * Generates the declaration file for `ast`: the banner comment, then the type aliases, the
- * interfaces and the enums, a blank line between those groups and a newline between declarations.
- * It is returned split before each top-level declaration, each part starting with the newlines
- * that separate it from the previous one; `.join('')` is the whole file.
+ * Generates the declaration file for `ast`: the banner comment, then one declaration per named
+ * type, the root type first and every other type after the first declaration that refers to it,
+ * in the order a reader meets the references; unreachable definitions follow, in schema order.
+ * It is returned split before each top-level declaration, each part starting with the blank line
+ * that separates it from the previous one; `.join('')` is the whole file.
  */
 export function generate(
   ast: AST,
@@ -50,71 +51,44 @@ export function generate(
 ): string[] {
   const scope: Scope = {rootASTName: ast.standaloneName!, linker}
 
-  // One walk over the ASTs collects every standalone declaration, by kind, in the order found
-  const declarations: Declarations = {enums: [], interfaces: [], types: []}
-  const {enums, interfaces, types} = declarations
+  const declarations: string[] = []
   const processed = new Set<AST>()
   for (const root of [ast, ...unreachableDefinitions]) {
-    const enumsBefore = enums.length
     collectDeclarations(root, options, scope, processed, declarations)
-    // the enums found under each root AST have always been followed by a newline of their own
-    if (enums.length > enumsBefore) {
-      enums[enums.length - 1] += '\n'
-    }
   }
 
-  const parts: string[] = []
-  for (const group of [options.bannerComment ? [options.bannerComment] : [], types, interfaces, enums]) {
-    let separator = parts.length === 0 ? '' : '\n\n'
-    for (const declaration of group) {
-      parts.push(separator + declaration)
-      separator = '\n'
-    }
-  }
-  parts[parts.length - 1] += '\n' // the root type is always declared, so there is a last part
-  return parts
+  const parts = (options.bannerComment ? [options.bannerComment] : []).concat(declarations)
+  return parts.map((part, i) => (i === 0 ? '' : '\n\n') + part + (i === parts.length - 1 ? '\n' : ''))
 }
-
-type Declarations = {enums: string[]; interfaces: string[]; types: string[]}
 
 /**
  * Appends the declarations for every named type reachable from `ast` (itself included) to
- * `declarations`: enums and interfaces as such, everything else as a type alias. An array's
- * alias follows the declarations found in its items; any other declaration precedes the ones
- * found beneath it. A type another module declares (`imports` mode) is skipped, with all that
- * is beneath it.
+ * `declarations`, each ahead of the ones found beneath it: enums and interfaces as such,
+ * everything else as a type alias. A type another module declares (`imports` mode) is skipped,
+ * with all that is beneath it.
  */
 function collectDeclarations(
   ast: AST,
   options: Options,
   scope: Scope,
   processed: Set<AST>,
-  declarations: Declarations,
+  declarations: string[],
 ): void {
   if (processed.has(ast) || isImported(ast, scope)) {
     return
   }
   processed.add(ast)
 
-  switch (ast.type) {
-    case 'ARRAY':
-      collectDeclarations(ast.params, options, scope, processed, declarations)
-      if (shouldDeclare(ast, options, scope)) {
-        declarations.types.push(declared(ast, scope, generateStandaloneType(ast, options)))
-      }
-      return
-    case 'ENUM':
-      declarations.enums.push(declared(ast, scope, generateStandaloneEnum(ast, options)))
-      return
-    case 'INTERFACE':
-      if (shouldDeclare(ast, options, scope)) {
-        declarations.interfaces.push(declared(ast, scope, generateStandaloneInterface(ast, options)))
-      }
-      break
-    default:
-      if (shouldDeclare(ast, options, scope)) {
-        declarations.types.push(declared(ast, scope, generateStandaloneType(ast, options)))
-      }
+  if (ast.type === 'ENUM') {
+    declarations.push(declared(ast, scope, generateStandaloneEnum(ast, options)))
+  } else if (shouldDeclare(ast, options, scope)) {
+    declarations.push(
+      declared(
+        ast,
+        scope,
+        ast.type === 'INTERFACE' ? generateStandaloneInterface(ast, options) : generateStandaloneType(ast, options),
+      ),
+    )
   }
   childASTs(ast).forEach(child => collectDeclarations(child, options, scope, processed, declarations))
 }
@@ -123,6 +97,8 @@ function childASTs(ast: AST): AST[] {
   switch (ast.type) {
     case 'INTERFACE':
       return ast.params.map(param => param.ast).concat(ast.superTypes)
+    case 'ARRAY':
+      return [ast.params]
     case 'INTERSECTION':
     case 'UNION':
       return ast.params
