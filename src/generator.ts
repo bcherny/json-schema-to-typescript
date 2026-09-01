@@ -530,12 +530,9 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
  */
 function memberOf(ast: AST, options: Options, inUnion: boolean): Member {
   const member = setOperationMember(ast)
-  return (
-    commentedTypes.get(member) ?? {
-      type: operandType(member, options, inUnion && member === ast),
-      comment: memberComment(member),
-    }
-  )
+  // rendered first: that is what fills `commentedTypes`
+  const type = operandType(member, options, inUnion && member === ast)
+  return commentedTypes.get(member) ?? {type, comment: memberComment(member)}
 }
 
 /**

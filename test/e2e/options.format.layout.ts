@@ -123,6 +123,30 @@ export const input = {
         },
       },
     },
+    // ... also below a tuple, where nothing else renders the members first
+    tupleOfSingleMemberFirst: {
+      type: 'array',
+      minItems: 1,
+      items: {
+        anyOf: [
+          {
+            type: 'array',
+            items: {oneOf: [{description: 'Only branch', type: 'object', properties: {l: {type: 'string'}}}]},
+          },
+          {type: 'number'},
+        ],
+      },
+    },
+    tupleRestOfSingleMemberFirst: {
+      type: 'array',
+      items: [{type: 'string'}],
+      additionalItems: {
+        anyOf: [
+          {oneOf: [{description: 'Only branch', type: 'object', properties: {m: {type: 'string'}}}]},
+          {type: 'number'},
+        ],
+      },
+    },
     // a `tsType` that would not parse behind a `|` is parenthesized, and the union laid out like any other
     customInLongUnion: {
       anyOf: [

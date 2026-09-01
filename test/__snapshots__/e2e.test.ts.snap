@@ -395264,6 +395264,49 @@ third\`) | undefined;
       | string
       | undefined;
   } | undefined;
+  /**
+   * @minItems 1
+   */
+  readonly tupleOfSingleMemberFirst?: readonly [
+    (
+      | readonly
+          /**
+           * Only branch
+           */
+          {
+            readonly l?: string | undefined;
+            readonly [k: string]: unknown | undefined;
+          }[]
+      | number
+    ),
+    ...(
+      | readonly
+          /**
+           * Only branch
+           */
+          {
+            readonly l?: string | undefined;
+            readonly [k: string]: unknown | undefined;
+          }[]
+      | number
+    )[]
+  ] | undefined;
+  readonly tupleRestOfSingleMemberFirst?: (
+    | readonly []
+    | readonly [
+        string,
+        ...(
+          /**
+           * Only branch
+           */
+          | {
+              readonly m?: string | undefined;
+              readonly [k: string]: unknown | undefined;
+            }
+          | number
+        )[]
+      ]
+  ) | undefined;
   readonly customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1
@@ -395511,6 +395554,46 @@ third\`;
       | string
       | undefined;
   };
+  /**
+   * @minItems 1
+   */
+  tupleOfSingleMemberFirst?: [
+    (
+      /**
+       * Only branch
+       */
+      | {
+          l?: string;
+          [k: string]: unknown;
+        }[]
+      | number
+    ),
+    ...(
+      /**
+       * Only branch
+       */
+      | {
+          l?: string;
+          [k: string]: unknown;
+        }[]
+      | number
+    )[]
+  ];
+  tupleRestOfSingleMemberFirst?:
+    | []
+    | [
+        string,
+        ...(
+          /**
+           * Only branch
+           */
+          | {
+              m?: string;
+              [k: string]: unknown;
+            }
+          | number
+        )[]
+      ];
   customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1
