@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'bun:test'
-import {pathTransform, generateName, isSchemaLike, parseFileAsJSONSchema} from '../src/utils'
+import {cloneDeepPlain, pathTransform, generateName, isSchemaLike, parseFileAsJSONSchema} from '../src/utils'
 import {hasOnly} from './e2eCases'
 import {JSONSchema} from '../src/types/JSONSchema'
 
@@ -102,5 +102,46 @@ suite('utils', () => {
     )
     expect(schema.properties!.name.type).toBe('string')
     expect(schema.properties!.name.default).toBeInstanceOf(Date)
+  })
+  test('cloneDeepPlain', () => {
+    const shared = {type: 'string', check: () => true, when: new Date(0)}
+    const input: any = {
+      type: 'object',
+      properties: {a: shared, b: shared, list: {enum: [1, [2, {c: 3}]]}},
+      definitions: {S: shared},
+    }
+    input.properties.self = input
+    Object.defineProperty(input.properties, '__proto__', {value: {type: 'number'}, enumerable: true})
+    const copy = cloneDeepPlain(input)
+
+    // Same data, no array or plain object shared with the input...
+    expect(copy).toEqual(input)
+    expect(copy).not.toBe(input)
+    expect(copy.properties.list.enum[1][1]).not.toBe(input.properties.list.enum[1][1])
+    // ...other objects copied too (by lodash), and what it cannot copy carried over by reference
+    expect(copy.properties.a.when).not.toBe(shared.when)
+    expect(copy.properties.a.when.getTime()).toBe(0)
+    expect(copy.properties.a.check).toBe(shared.check)
+    // A node reachable several ways is copied once; a cycle stays a cycle
+    expect(copy.properties.a).not.toBe(shared)
+    expect(copy.properties.b).toBe(copy.properties.a)
+    expect(copy.definitions.S).toBe(copy.properties.a)
+    expect(copy.properties.self).toBe(copy)
+    // An own `__proto__` key stays an own key, in place
+    expect(Object.keys(copy.properties)).toEqual(['a', 'b', 'list', 'self', '__proto__'])
+    expect(Object.getPrototypeOf(copy.properties)).toBe(Object.prototype)
+    // Leaves that are not objects come back as they are
+    expect(cloneDeepPlain('x')).toBe('x')
+    expect(cloneDeepPlain(null)).toBe(null)
+  })
+  test('cloneDeepPlain is linear in the size of the schema', () => {
+    // lodash's cloneDeep takes ~7 s for this under bun (its seen-set degrades to a linear scan); this takes ~30 ms
+    const definitions: Record<string, object> = {}
+    for (let i = 0; i < 20_000; i++) {
+      definitions[`D${i}`] = {type: 'object', properties: {v: {type: 'string'}}, additionalProperties: false}
+    }
+    const start = performance.now()
+    cloneDeepPlain({definitions})
+    expect(performance.now() - start).toBeLessThan(2_000)
   })
 })

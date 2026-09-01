@@ -1,7 +1,7 @@
 import {readFileSync} from 'fs'
 import {JSONSchema4, JSONSchema6, JSONSchema7} from 'json-schema'
 import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
-import {cloneDeep, endsWith, merge} from 'lodash'
+import {endsWith, merge} from 'lodash'
 import {dirname, resolve} from 'path'
 import {Options as PrettierOptions} from 'prettier'
 import {format} from './formatter'
@@ -11,7 +11,7 @@ import {optimize} from './optimizer'
 import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference, SchemaSet} from './resolver'
 import {prenormalize} from './prenormalizer'
-import {error, stripExtension, log, parseFileAsJSONSchema, readVerbose} from './utils'
+import {cloneDeepPlain, error, stripExtension, log, parseFileAsJSONSchema, readVerbose} from './utils'
 import {validate} from './validator'
 import {isDeepStrictEqual} from 'util'
 import {validateOptions} from './optionValidator'
@@ -239,7 +239,7 @@ export async function compile(
   // keys generically rather than validating them against a specific draft's
   // shape (e.g. `exclusiveMaximum` is never interpreted as a boolean vs. a
   // number), so this cast doesn't change runtime behavior -- see #359.
-  const _schema = cloneDeep(schema) as JSONSchema4
+  const _schema = cloneDeepPlain(schema) as JSONSchema4
   const {ast, unreachableDefinitions, options: _options, time} = await compileToAST(_schema, name, options)
 
   const generated = generate(ast, _options, unreachableDefinitions)

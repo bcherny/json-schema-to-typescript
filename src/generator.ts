@@ -1,3 +1,5 @@
+import {JSONSchema4Object, JSONSchema4Type} from 'json-schema'
+import {isPlainObject} from 'lodash'
 import {memoize} from './memoize'
 import {DEFAULT_OPTIONS, Options} from './index'
 import {
@@ -177,7 +179,7 @@ function generateRawType(ast: AST, options: Options): string {
       return 'any'
     case 'ARRAY':
       return (() => {
-        const type = generateType(ast.params, options)
+        const type = operand(ast.params, generateType(ast.params, options))
         // `readonly T[][]` would make the outer array the readonly one
         const element = type.endsWith('"') || type.startsWith('readonly ') ? '(' + type + ')' : type
         return readonlyModifier(ast.isReadOnly, options) + element + '[]'
@@ -189,7 +191,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'INTERSECTION':
       return generateSetOperation(ast, options)
     case 'LITERAL':
-      return JSON.stringify(ast.params)
+      return generateLiteral(ast.params)
     case 'NEVER':
       return 'never'
     case 'NUMBER':
@@ -297,11 +299,29 @@ function readonlyModifier(isReadOnly: boolean | undefined, options: Options): st
 }
 
 /**
+ * A JSON value (of a `const`, or an `enum` member) as the type of exactly that value: what
+ * `JSON.stringify` prints, except for an empty object anywhere in it. The type `{}` admits any
+ * non-nullish value, not just the empty object, so that is spelled as the closed empty object.
+ */
+function generateLiteral(value: JSONSchema4Type): string {
+  if (Array.isArray(value)) {
+    return `[${value.map(_ => generateLiteral(_ ?? null)).join(',')}]`
+  }
+  if (isPlainObject(value)) {
+    const members = Object.entries(value as JSONSchema4Object).filter(([, _]) => JSON.stringify(_) !== undefined)
+    return members.length
+      ? `{${members.map(([key, _]) => `${JSON.stringify(key)}:${generateLiteral(_)}`).join(',')}}`
+      : '{[k: string]: never}'
+  }
+  return JSON.stringify(value)
+}
+
+/**
  * Generate a Union or Intersection
  */
 function generateSetOperation(ast: TIntersection | TUnion, options: Options): string {
   const members = (ast as TUnion).params.map(_ => {
-    const type = generateType(_, options)
+    const type = operand(_, generateType(_, options), ast.type === 'UNION' && ast.params.length > 1)
     // An anonymous object-literal member (eg. an `oneOf`/`anyOf` branch with its
     // own `description` but no name of its own) would otherwise have its comment
     // silently dropped: a named member's comment is printed on its own
@@ -355,27 +375,55 @@ function isUnknown(ast: AST): boolean {
 }
 
 /**
- * `tsType` overrides are opaque strings (e.g. function types) that may not be
- * union-safe, so parenthesize them unless they are a simple type reference.
+ * A `tsType` (or `formatTypes`) override is an opaque string. Where the generator composes it into a
+ * larger type -- an array's element, a member of a union or intersection -- it binds as written only
+ * if it is a single operand (`() => void[]` is a function returning an array; `keyof Foo[]` is the
+ * keys of an array), so anything but a plain type reference is parenthesized; the formatter drops
+ * the pair again where it was not needed. A bare union of names needs none inside a union.
  */
-function unionMember(ast: AST, type: string): string {
-  return ast.type === 'CUSTOM_TYPE' && !/^[\w$.]+(\[\])*$/.test(type) ? `(${type})` : type
+function operand(ast: AST, type: string, inUnion = false): string {
+  if (ast.type !== 'CUSTOM_TYPE' || TYPE_REFERENCE.test(type)) {
+    return type
+  }
+  if (inUnion && customUnionMembers(type)) {
+    return type
+  }
+  // a `//` comment on its last line would swallow the closing parenthesis
+  return /\/\/[^\n]*$/.test(type) ? `(${type}\n)` : `(${type})`
+}
+const TYPE_REFERENCE = /^[\w$.]+(<[^<>]*>)?(\[\])*$/
+
+/**
+ * The members of a verbatim type that is provably a bare union of names (`A | B`, `keyof A | null`:
+ * nothing but identifier characters, whitespace and `|` -- no brackets, quotes, arrows or anything
+ * else that would take real parsing), which can join an enclosing union as they are
+ */
+function customUnionMembers(type: string): string[] | undefined {
+  return /^[\w$.\s|]+$/.test(type)
+    ? type
+        .split('|')
+        .map(_ => _.trim())
+        .filter(Boolean)
+    : undefined
 }
 
 /**
  * `T | undefined`, for an optional property under `undefinedOptionalProperties`. An
  * anonymous union takes `undefined` as one more member rather than nesting
- * (`string | number | undefined`, not `(string | number) | undefined`); `any` and
- * `unknown` already include it.
+ * (`string | number | undefined`, not `(string | number) | undefined`); `any`,
+ * `unknown` and a `tsType` union that lists `undefined` itself already include it.
  */
 function orUndefined(ast: AST, type: string, options: Options): string {
   if (isAny(ast) || isUnknown(ast)) {
     return type
   }
+  if (ast.type === 'CUSTOM_TYPE' && customUnionMembers(type)?.includes('undefined')) {
+    return type
+  }
   if (ast.type === 'UNION' && !hasStandaloneName(ast)) {
     return generateType({...ast, params: [...ast.params, T_UNDEFINED]}, options)
   }
-  return unionMember(ast, type) + ' | undefined'
+  return operand(ast, type, true) + ' | undefined'
 }
 
 /**
@@ -454,21 +502,10 @@ function generateIndexSignatureType(
       ast.params.forEach(addMember)
       return
     }
-    // also flatten anonymous tsType unions, but only when provably safe to split:
-    // nothing but identifier characters, whitespace, and `|` (no brackets, quotes,
-    // arrows, or other constructs that would require real parsing)
-    if (
-      ast.type === 'CUSTOM_TYPE' &&
-      !hasStandaloneName(ast) &&
-      ast.params.includes('|') &&
-      /^[\w$.\s|]+$/.test(ast.params)
-    ) {
-      for (const member of ast.params.split('|')) {
-        const trimmed = member.trim()
-        if (trimmed) {
-          memberASTs.push({type: 'CUSTOM_TYPE', params: trimmed})
-        }
-      }
+    // also flatten anonymous tsType unions, when provably safe to split
+    const members = ast.type === 'CUSTOM_TYPE' && !hasStandaloneName(ast) ? customUnionMembers(ast.params) : undefined
+    if (members) {
+      members.forEach(params => memberASTs.push({type: 'CUSTOM_TYPE', params}))
       return
     }
     memberASTs.push(ast)
@@ -528,7 +565,7 @@ function generateIndexSignatureType(
     }
     seen.add(type)
     seen.add(underlying)
-    members.push(unionMember(memberAST, type))
+    members.push(operand(memberAST, type, true))
   }
 
   if (needsUndefined && !seen.has('undefined')) {
@@ -630,7 +667,8 @@ function generateComment(comment?: string, deprecated?: boolean): string {
     commentLines.push(' * @deprecated')
   }
   if (typeof comment !== 'undefined') {
-    commentLines.push(...comment.split('\n').map(_ => ' * ' + _))
+    // a line break is a line break however the schema's author's editor wrote it
+    commentLines.push(...comment.split(/\r\n|\r|\n/).map(_ => ' * ' + _))
   }
   commentLines.push(' */')
   return commentLines.join('\n')
@@ -653,8 +691,12 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
       .map(
         ({ast, keyName}) =>
           // JSON.stringify, not string interpolation: the key may itself contain
-          // quotes or backslashes that need escaping.
-          (isValidIdentifier(keyName) ? keyName : JSON.stringify(keyName)) + ' = ' + generateType(ast, options),
+          // quotes or backslashes that need escaping. The initializer is a value, not a
+          // type, so it is printed verbatim too (an object member is not valid TypeScript
+          // either way, but it must not come out in `generateLiteral`'s type notation).
+          (isValidIdentifier(keyName) ? keyName : JSON.stringify(keyName)) +
+          ' = ' +
+          (ast.type === 'LITERAL' ? JSON.stringify(ast.params) : generateType(ast, options)),
       )
       .join(',\n') +
     '\n' +
@@ -664,13 +706,40 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   const name = toSafeString(ast.standaloneName)
-  const superTypes = ast.superTypes.map(superType => toSafeString(superType.standaloneName))
   const body = generateInterface(ast, options)
+  const comment = hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : ''
+  // `extends` means an instance also validates against each base schema: an intersection. It is
+  // printed as an `interface … extends` clause when every base is something an interface may
+  // extend, and as the intersection itself otherwise (or when type aliases were asked for)
+  if (options.declarationStyle === 'type' || !ast.superTypes.every(_ => isExtendable(_))) {
+    return comment + `export type ${name} = ${[...ast.superTypes.map(_ => generateType(_, options)), body].join(' & ')}`
+  }
+  const superTypes = ast.superTypes.map(superType => toSafeString(superType.standaloneName))
+  return comment + `export interface ${name} ${superTypes.length > 0 ? `extends ${superTypes.join(', ')} ` : ''}${body}`
+}
+
+/**
+ * A base an `interface` declaration may name in its `extends` clause: a named object type
+ * (not `unknown`, a primitive, or a union: TS2312), not the closed empty object, whose
+ * `never` index signature would reject every property the extending interface declares
+ * (TS2411), and itself printed as an interface, i.e. its own bases pass the same test (`seen`
+ * guards `extends` cycles). The parser casts `extends` schemas to TNamedInterface unchecked,
+ * hence the checks.
+ */
+function isExtendable(superType: AST, seen = new Set<AST>()): boolean {
+  if (seen.has(superType)) {
+    return true
+  }
+  seen.add(superType)
   return (
-    (hasComment(ast) ? generateComment(ast.comment, ast.deprecated) + '\n' : '') +
-    (options.declarationStyle === 'type'
-      ? `export type ${name} = ${[...superTypes, body].join(' & ')}`
-      : `export interface ${name} ${superTypes.length > 0 ? `extends ${superTypes.join(', ')} ` : ''}${body}`)
+    superType.type === 'INTERFACE' &&
+    hasStandaloneName(superType) &&
+    !(
+      superType.params.length === 1 &&
+      superType.params[0].isIndexSignature &&
+      superType.params[0].ast.type === 'NEVER'
+    ) &&
+    superType.superTypes.every(_ => isExtendable(_, seen))
   )
 }
 
