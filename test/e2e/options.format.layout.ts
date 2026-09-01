@@ -159,6 +159,8 @@ export const input = {
         {type: 'number'},
       ],
     },
+    // in an `allOf` as well, also with `| undefined` after it (the type-style twin)
+    describedEnumInAllOf: {allOf: [{enum: ['on', 'off'], description: 'Either'}]},
     // a described `enum` too long for a line brings its own lines; its comment goes right above them
     describedLongEnum: {
       type: 'array',

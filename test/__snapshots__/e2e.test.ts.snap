@@ -395501,6 +395501,12 @@ third\`) | undefined;
         (5 | 6)[]
     | number
     | undefined;
+  readonly describedEnumInAllOf?:
+    /**
+     * Either
+     */
+    | ("on" | "off")
+    | undefined;
   readonly describedLongEnum?: readonly
     /**
      * Many
@@ -395826,6 +395832,11 @@ third\`;
      */
     | (5 | 6)[]
     | number;
+  describedEnumInAllOf?:
+    /**
+     * Either
+     */
+    "on" | "off";
   describedLongEnum?:
     /**
      * Many

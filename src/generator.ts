@@ -183,15 +183,14 @@ function generateRawType(ast: AST, options: Options): string {
       // An array of a type below a comment (rendered by now): a string literal keeps the comment to
       // itself, in the parentheses it has always had here; any other type's array is a type below
       // that comment too (same text) and says so to a union it joins, or has it after its `readonly`
-      const below = commentedTypes.get(ast.params)
+      const below = commentedOperand(ast.params)
       if (below) {
-        const type = bareSetOperations.has(ast.params) ? parenthesize(below.type) : below.type
-        if (isStringLiteral(type)) {
+        if (isStringLiteral(below.type)) {
           element = parenthesize(commented(below))
         } else if (modifier) {
-          element = commented({type, comment: below.comment})
+          element = commented(below)
         } else {
-          return commentedType(ast, {type: type + '[]', comment: below.comment})
+          return commentedType(ast, {type: below.type + '[]', comment: below.comment})
         }
       }
       return (modifier ? typed(modifier.trimEnd(), element) : element) + '[]'
@@ -442,6 +441,12 @@ function commentedType(ast: AST, member: Member): string {
   return commented(member)
 }
 
+/** What `commentedTypes` has for `ast` (rendered by now), its type made a single operand (see `operandType`) */
+function commentedOperand(ast: AST): Member | undefined {
+  const below = commentedTypes.get(ast)
+  return below && bareSetOperations.has(ast) ? {type: parenthesize(below.type), comment: below.comment} : below
+}
+
 /**
  * `A | B | C` — or, when that does not fit on a line or a member carries a comment, a line per
  * member, each behind a `|` of its own and below its comment, indented a level since it
@@ -665,8 +670,10 @@ function orUndefined(ast: AST, type: string, options: Options): string {
   if (ast.type === 'UNION' && !hasStandaloneName(ast)) {
     return generateType({...ast, params: [...ast.params, T_UNDEFINED]}, options)
   }
-  // (`type` is `ast`'s memoized rendering)
-  return operandType(ast, options, true) + ' | undefined'
+  // (`type` is `ast`'s memoized rendering, so `ast` has rendered:) a type below a comment keeps the
+  // comment where this union's go, before the `|`
+  const below = commentedOperand(ast)
+  return below ? generateUnion([below, {type: 'undefined'}]) : operandType(ast, options, true) + ' | undefined'
 }
 
 /**
