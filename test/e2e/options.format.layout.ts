@@ -147,6 +147,18 @@ export const input = {
         ],
       },
     },
+    // a described `const` or inline `enum` branch has its comment before its `|` too; an array of a
+    // described string literal keeps the comment inside its parentheses (a `readonly` one after `readonly`)
+    describedLiteralMembers: {
+      anyOf: [
+        {const: 'one', description: 'First choice'},
+        {enum: ['two', 'three'], description: 'The others'},
+        {type: 'array', items: {oneOf: [{const: 'el', description: 'Element'}]}},
+        {type: 'array', items: {oneOf: [{const: 4, description: 'Four'}]}},
+        {type: 'array', items: {oneOf: [{enum: [5, 6], description: 'Five or six'}]}},
+        {type: 'number'},
+      ],
+    },
     // a `tsType` that would not parse behind a `|` is parenthesized, and the union laid out like any other
     customInLongUnion: {
       anyOf: [

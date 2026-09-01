@@ -395474,6 +395474,33 @@ third\`) | undefined;
         )[]
       ]
   ) | undefined;
+  readonly describedLiteralMembers?:
+    /**
+     * First choice
+     */
+    | "one"
+    /**
+     * The others
+     */
+    | ("two" | "three")
+    | readonly (
+        /**
+         * Element
+         */
+        "el"
+      )[]
+    | readonly
+        /**
+         * Four
+         */
+        4[]
+    | readonly
+        /**
+         * Five or six
+         */
+        (5 | 6)[]
+    | number
+    | undefined;
   readonly customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1
@@ -395761,6 +395788,30 @@ third\`;
           | number
         )[]
       ];
+  describedLiteralMembers?:
+    /**
+     * First choice
+     */
+    | "one"
+    /**
+     * The others
+     */
+    | ("two" | "three")
+    | (
+        /**
+         * Element
+         */
+        "el"
+      )[]
+    /**
+     * Four
+     */
+    | 4[]
+    /**
+     * Five or six
+     */
+    | (5 | 6)[]
+    | number;
   customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1
