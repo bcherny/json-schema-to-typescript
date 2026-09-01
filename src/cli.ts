@@ -106,8 +106,7 @@ async function main(argv: minimist.ParsedArgs) {
     } else if (ISDIR) {
       await processDir(argIn, argOut, argv as Partial<Options>)
     } else {
-      const result = await processFile(argIn, argOut, argv as Partial<Options>)
-      outputResult(result, argOut)
+      outputResult(await processFile(argIn, argOut, argv as Partial<Options>), argOut)
     }
   } catch (e) {
     error(e)
@@ -170,7 +169,7 @@ function outputResult(result: string, outputPath: string | undefined): void {
     if (!isDir(dirname(outputPath))) {
       mkdirSync(dirname(outputPath), {recursive: true})
     }
-    return writeFileSync(outputPath, result)
+    writeFileSync(outputPath, result)
   }
 }
 
@@ -203,7 +202,7 @@ async function styleFor(outputPath: string, argv: Partial<Options>): Promise<Opt
 }
 
 function getPaths(path: string, paths: string[] = []) {
-  if (existsSync(path) && lstatSync(path).isDirectory()) {
+  if (isDir(path)) {
     readdirSync(resolve(path)).forEach(item => getPaths(join(path, item), paths))
   } else {
     paths.push(path)
@@ -239,9 +238,11 @@ function printHelp() {
 ${pkg.name} ${pkg.version}
 Usage: json2ts [--input, -i] [IN_FILE] [--output, -o] [OUT_FILE] [OPTIONS]
 
-With no IN_FILE, or when IN_FILE is -, read standard input.
-With no OUT_FILE and when IN_FILE is specified, create .d.ts file in the same directory.
-With no OUT_FILE nor IN_FILE, write to standard output.
+With no IN_FILE, read standard input.
+With no OUT_FILE, write to standard output.
+When IN_FILE is a directory or a quoted glob, every matching schema is compiled:
+with --output DIR, one .d.ts file per schema is written under DIR; without
+--output, every result is written to standard output, one after another.
 
 You can use any of the following options by adding them at the end.
 Boolean values can be set to false using the 'no-' prefix.
