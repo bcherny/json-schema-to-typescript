@@ -49,15 +49,22 @@ export function isShapeless(schema: JSONSchema): boolean {
 }
 
 /**
- * The schema declares `properties` or `patternProperties` and its `type` lets them apply: it
- * is `object` or absent (object keywords alone read as an object, by this tool's convention).
- * Under any other `type` those keywords constrain nothing -- JSON Schema applies them only to
- * values that are objects -- so they give the schema no object shape; that includes an array
- * `type`, whose `UNION` case in `parser.ts` re-parses the schema once per member type.
+ * The schema says what an object's members are -- it declares `properties` or
+ * `patternProperties`, or types the rest with an `additionalProperties` schema -- and its `type`
+ * lets that apply: it is `object` or absent (object keywords alone read as an object, by this
+ * tool's convention). Under any other `type` those keywords constrain nothing -- JSON Schema
+ * applies them only to values that are objects -- so they give the schema no object shape; that
+ * includes an array `type`, whose `UNION` case in `parser.ts` re-parses the schema once per
+ * member type. `additionalProperties` counts only when it types something: `true` or `{}` is
+ * the open object any schema without these keywords already is, and `false` may be nothing
+ * but the `additionalProperties` option's default.
  */
 function hasObjectShape(schema: JSONSchema): boolean {
   return (
-    (schema.type === undefined || schema.type === 'object') && ('patternProperties' in schema || 'properties' in schema)
+    (schema.type === undefined || schema.type === 'object') &&
+    ('patternProperties' in schema ||
+      'properties' in schema ||
+      (isPlainObject(schema.additionalProperties) && !isShapeless(schema.additionalProperties as JSONSchema)))
   )
 }
 
