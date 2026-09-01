@@ -6,6 +6,7 @@
 ## Tips
 
 - Tests run with [`bun test`](https://bun.sh/docs/cli/test), straight from the TypeScript sources in test/
+- `bun run test` is what CI runs: it checks formatting (prettier), lint (eslint) and types and builds `dist/` first, and only runs the suite when all of those pass
 - Use `bun run tdd` to re-run tests when a file is modified
 - Use `VERBOSE=true bun run tdd` to add logging output to the above command
 - Use `bun test <filter>` to run a subset of the suite, and `bun test --update-snapshots` to re-record snapshots
