@@ -179,11 +179,20 @@ function generateRawType(ast: AST, options: Options): string {
       return 'any'
     case 'ARRAY': {
       const modifier = readonlyModifier(ast.isReadOnly, options)
-      const element = elementType(ast.params, options)
-      // an array of a type below a comment is one too (same text), and says so to a union it joins
+      let element = elementType(ast.params, options)
+      // An array of a type below a comment (rendered by now): a string literal keeps the comment to
+      // itself, in the parentheses it has always had here; any other type's array is a type below
+      // that comment too (same text) and says so to a union it joins, or has it after its `readonly`
       const below = commentedTypes.get(ast.params)
-      if (below && !modifier) {
-        return commentedType(ast, {type: below.type + '[]', comment: below.comment})
+      if (below) {
+        const type = bareSetOperations.has(ast.params) ? parenthesize(below.type) : below.type
+        if (isStringLiteral(type)) {
+          element = parenthesize(commented(below))
+        } else if (modifier) {
+          element = commented({type, comment: below.comment})
+        } else {
+          return commentedType(ast, {type: type + '[]', comment: below.comment})
+        }
       }
       return (modifier ? typed(modifier.trimEnd(), element) : element) + '[]'
     }
@@ -416,7 +425,7 @@ function commented({type, comment}: Member): string {
 
 /**
  * The nodes whose text is a type below a comment (an anonymous set operation of one described
- * object, an array of one), taken apart: a union or intersection such a node joins puts the
+ * object or inline `enum`, an array of one), taken apart: a union or intersection such a node joins puts the
  * comment where its members' comments go -- before the `|`, where the formatter reads it as the
  * union's when it comes first -- rather than finding it inside the member's text.
  */
@@ -538,28 +547,42 @@ function memberOf(ast: AST, options: Options, inUnion: boolean): Member {
 /**
  * What a set operation renders for `ast` as one of its members: an anonymous one-member set
  * operation (a lone `oneOf` branch, say) renders as its member, so it is that member — whose
- * comment then goes where the enclosing operation puts member comments, not inside its text.
+ * comment then goes where the enclosing operation puts member comments, not inside its text. A
+ * one-value `enum` or a `const` is a union of one literal, and a unit of its own (see memberComment).
  */
 function setOperationMember(ast: AST): AST {
-  while ((ast.type === 'UNION' || ast.type === 'INTERSECTION') && ast.params.length === 1 && !hasStandaloneName(ast)) {
+  while (
+    (ast.type === 'UNION' || ast.type === 'INTERSECTION') &&
+    ast.params.length === 1 &&
+    !hasStandaloneName(ast) &&
+    !isLiteralUnion(ast)
+  ) {
     ast = ast.params[0]
   }
   return ast
 }
 
 /**
- * The comment of an anonymous object-literal member (eg. a `oneOf`/`anyOf` branch with its own
- * `description` but no name of its own), which would otherwise be silently dropped: a named
- * member's comment is printed on its own declaration (see generateStandaloneInterface), and
- * non-object members (string, number, ...) have no declaration site for a leading comment to
- * meaningfully attach to, so only INTERFACE members are handled here. It goes on lines of its own
- * before the member (see generateUnion and generateIntersection), which keeps the formatter from
- * attaching it to the end of the previous member (`} /** ... * / | {`).
+ * The comment of an anonymous member that renders as one self-contained unit -- an object literal,
+ * or a literal or union of literals (a `const` or inline `enum` branch) -- eg. a `oneOf`/`anyOf`
+ * branch with its own `description` but no name of its own, which would otherwise be silently
+ * dropped: a named member's comment is printed on its own declaration (see
+ * generateStandaloneInterface, generateStandaloneType), arrays and tuples carry `@minItems`-style
+ * block tags in their descriptions, and primitive types (string, number, ...) are not handled yet.
+ * It goes on lines of its own before the member (see generateUnion and generateIntersection), which
+ * keeps the formatter from attaching it to the end of the previous member (`} /** ... * / | {`).
  */
 function memberComment(ast: AST): string | undefined {
-  return ast.type === 'INTERFACE' && hasComment(ast) && !hasStandaloneName(ast)
+  return (ast.type === 'INTERFACE' || isLiteralUnion(ast)) && hasComment(ast) && !hasStandaloneName(ast)
     ? generateComment(ast.comment, ast.deprecated)
     : undefined
+}
+
+/**
+ * A literal, or a union of nothing but literals: what a `const` or an inline `enum` parses to.
+ */
+function isLiteralUnion(ast: AST): boolean {
+  return ast.type === 'LITERAL' || (ast.type === 'UNION' && ast.params.every(_ => _.type === 'LITERAL'))
 }
 
 function vacuousInterface(options: Options): TInterface {
