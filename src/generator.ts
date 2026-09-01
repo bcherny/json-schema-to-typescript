@@ -494,14 +494,19 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
     }
     return commented({type, comment: memberComment(param)})
   }
-  // a verbatim bare union of names joins a union it is directly a member of (see `operand`)
-  const joinsUnion = ast.type === 'UNION'
-  const members = ast.params.map((param): Member => {
-    const member = setOperationMember(param)
-    return {type: operandType(member, options, joinsUnion && member === param), comment: memberComment(member)}
-  })
+  const members = ast.params.map(_ => memberOf(_, options, ast.type === 'UNION'))
   bareSetOperations.add(ast)
   return ast.type === 'UNION' ? generateUnion(members) : generateIntersection(members)
+}
+
+/**
+ * `ast` as a member of a union (`inUnion`) or intersection: the text of the member it stands for
+ * (see `setOperationMember`) made a single operand, and that member's comment. A verbatim bare
+ * union of names joins a union `ast` itself is a member of as it is (see `operand`).
+ */
+function memberOf(ast: AST, options: Options, inUnion: boolean): Member {
+  const member = setOperationMember(ast)
+  return {type: operandType(member, options, inUnion && member === ast), comment: memberComment(member)}
 }
 
 /**
@@ -560,14 +565,6 @@ function isUnknown(ast: AST): boolean {
 }
 
 /**
- * `type`, `ast`'s rendering, as a union member: verbatim text made a single operand (see
- * `operand`), and a bare union or intersection kept together.
- */
-function unionMember(ast: AST, type: string): string {
-  return bareSetOperations.has(ast) ? parenthesize(type) : operand(ast, type, true)
-}
-
-/**
  * A `tsType` (or `formatTypes`) override is an opaque string. Where the generator composes it into a
  * larger type -- an array's element, a member of a union or intersection -- it binds as written only
  * if it is a single operand (`() => void[]` is a function returning an array; `keyof Foo[]` is the
@@ -616,7 +613,8 @@ function orUndefined(ast: AST, type: string, options: Options): string {
   if (ast.type === 'UNION' && !hasStandaloneName(ast)) {
     return generateType({...ast, params: [...ast.params, T_UNDEFINED]}, options)
   }
-  return unionMember(ast, type) + ' | undefined'
+  // (`type` is `ast`'s memoized rendering)
+  return operandType(ast, options, true) + ' | undefined'
 }
 
 /**
@@ -739,7 +737,7 @@ function generateIndexSignatureType(
   }
 
   const seen = new Set<string>()
-  const members: string[] = []
+  const members: Member[] = []
   for (const memberAST of memberASTs) {
     const type = generateType(memberAST, options)
     // a named alias of a leaf type (e.g. `type Foo = string`) also covers its
@@ -758,13 +756,21 @@ function generateIndexSignatureType(
     }
     seen.add(type)
     seen.add(underlying)
-    members.push(unionMember(memberAST, type))
+    // an anonymous set operation of one has always rendered as its member below that member's
+    // comment (generateSetOperation), which goes where the union puts its members' comments; a
+    // member's own comment has never been printed here
+    const member = setOperationMember(memberAST)
+    members.push(
+      member === memberAST
+        ? {type: operandType(member, options, true)}
+        : {type: operandType(member, options), comment: memberComment(member)},
+    )
   }
 
   if (needsUndefined && !seen.has('undefined')) {
-    members.push('undefined')
+    members.push({type: 'undefined'})
   }
-  return generateUnion(members.map(type => ({type})))
+  return generateUnion(members)
 }
 
 function generateInterface(ast: TInterface, options: Options): string {

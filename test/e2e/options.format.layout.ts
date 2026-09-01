@@ -92,7 +92,15 @@ export const input = {
         {type: 'number'},
       ],
     },
-    // a `tsType` that would not parse behind a leading `|` keeps its union on one line
+    // ... in a widened index signature too
+    widenedIndexSignature: {
+      type: 'object',
+      properties: {q: {type: 'string'}},
+      patternProperties: {
+        '^p': {allOf: [{description: 'Only branch', type: 'object', properties: {i: {type: 'string'}}}]},
+      },
+    },
+    // a `tsType` that would not parse behind a `|` is parenthesized, and the union laid out like any other
     customInLongUnion: {
       anyOf: [
         {tsType: '(event: string) => void'},

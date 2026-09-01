@@ -395218,6 +395218,23 @@ third\`) | undefined;
       }
     | number
     | undefined;
+  readonly widenedIndexSignature?: {
+    readonly q?: string | undefined;
+    /**
+     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * via the \`patternProperty\` "^p".
+     */
+    readonly [k: string]:
+      /**
+       * Only branch
+       */
+      | {
+          readonly i?: string | undefined;
+          readonly [k: string]: unknown | undefined;
+        }
+      | string
+      | undefined;
+  } | undefined;
   readonly customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1
@@ -395422,6 +395439,23 @@ third\`;
         [k: string]: unknown;
       }
     | number;
+  widenedIndexSignature?: {
+    q?: string;
+    /**
+     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * via the \`patternProperty\` "^p".
+     */
+    [k: string]:
+      /**
+       * Only branch
+       */
+      | {
+          i?: string;
+          [k: string]: unknown;
+        }
+      | string
+      | undefined;
+  };
   customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1
