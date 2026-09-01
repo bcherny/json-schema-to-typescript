@@ -395235,6 +395235,35 @@ third\`) | undefined;
       | string
       | undefined;
   } | undefined;
+  readonly arrayOfSingleMemberFirst?:
+    | readonly (readonly
+        /**
+         * Only branch
+         */
+        {
+          readonly j?: string | undefined;
+          readonly [k: string]: unknown | undefined;
+        }[])[]
+    | number
+    | undefined;
+  readonly arrayInWidenedIndexSignature?: {
+    readonly q?: string | undefined;
+    /**
+     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * via the \`patternProperty\` "^p".
+     */
+    readonly [k: string]:
+      | readonly
+          /**
+           * Only branch
+           */
+          {
+            readonly j?: string | undefined;
+            readonly [k: string]: unknown | undefined;
+          }[]
+      | string
+      | undefined;
+  } | undefined;
   readonly customInLongUnion?:
     | ((event: string) => void)
     | IntersectionMemberNumber1
@@ -395453,6 +395482,32 @@ third\`;
           i?: string;
           [k: string]: unknown;
         }
+      | string
+      | undefined;
+  };
+  arrayOfSingleMemberFirst?:
+    /**
+     * Only branch
+     */
+    | {
+        j?: string;
+        [k: string]: unknown;
+      }[][]
+    | number;
+  arrayInWidenedIndexSignature?: {
+    q?: string;
+    /**
+     * This interface was referenced by \`undefined\`'s JSON-Schema definition
+     * via the \`patternProperty\` "^p".
+     */
+    [k: string]:
+      /**
+       * Only branch
+       */
+      | {
+          j?: string;
+          [k: string]: unknown;
+        }[]
       | string
       | undefined;
   };

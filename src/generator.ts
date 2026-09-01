@@ -177,8 +177,16 @@ function generateRawType(ast: AST, options: Options): string {
   switch (ast.type) {
     case 'ANY':
       return 'any'
-    case 'ARRAY':
-      return readonlyModifier(ast.isReadOnly, options) + elementType(ast.params, options) + '[]'
+    case 'ARRAY': {
+      const modifier = readonlyModifier(ast.isReadOnly, options)
+      const element = elementType(ast.params, options)
+      // an array of a type below a comment is one too (same text), and says so to a union it joins
+      const below = commentedTypes.get(ast.params)
+      if (below && !modifier) {
+        return commentedType(ast, {type: below.type + '[]', comment: below.comment})
+      }
+      return (modifier ? typed(modifier.trimEnd(), element) : element) + '[]'
+    }
     case 'BOOLEAN':
       return 'boolean'
     case 'INTERFACE':
@@ -391,7 +399,7 @@ function elementType(ast: AST, options: Options): string {
   const type = operandType(ast, options)
   // `readonly T[][]` would make the outer array the readonly one; and a type that ends in a
   // string literal without being one (a `tsType` can say anything) keeps its parentheses
-  return type.startsWith('readonly ') || (type.endsWith('"') && !isStringLiteral(type)) ? parenthesize(type) : type
+  return /^readonly\s/.test(type) || (type.endsWith('"') && !isStringLiteral(type)) ? parenthesize(type) : type
 }
 
 function isStringLiteral(type: string): boolean {
@@ -404,6 +412,22 @@ type Member = {type: string; comment?: string}
 /** A member's text below its comment, if any, on lines of their own */
 function commented({type, comment}: Member): string {
   return comment === undefined ? type : onOwnLines(comment + '\n' + type)
+}
+
+/**
+ * The nodes whose text is a type below a comment (an anonymous set operation of one described
+ * object, an array of one), taken apart: a union or intersection such a node joins puts the
+ * comment where its members' comments go -- before the `|`, where the formatter reads it as the
+ * union's when it comes first -- rather than finding it inside the member's text.
+ */
+const commentedTypes = new WeakMap<AST, Member>()
+
+/** `member` as `ast`'s text (see `commented`), remembered in `commentedTypes` if it has a comment */
+function commentedType(ast: AST, member: Member): string {
+  if (member.comment !== undefined) {
+    commentedTypes.set(ast, member)
+  }
+  return commented(member)
 }
 
 /**
@@ -488,11 +512,14 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
   if (ast.params.length === 1) {
     // rendered as its member, below the member's comment
     const param = setOperationMember(ast.params[0])
-    const type = operand(param, generateType(param, options))
     if (bareSetOperations.has(param)) {
       bareSetOperations.add(ast)
     }
-    return commented({type, comment: memberComment(param)})
+    const member = commentedTypes.get(param) ?? {
+      type: operand(param, generateType(param, options)),
+      comment: memberComment(param),
+    }
+    return commentedType(ast, member)
   }
   const members = ast.params.map(_ => memberOf(_, options, ast.type === 'UNION'))
   bareSetOperations.add(ast)
@@ -506,7 +533,12 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
  */
 function memberOf(ast: AST, options: Options, inUnion: boolean): Member {
   const member = setOperationMember(ast)
-  return {type: operandType(member, options, inUnion && member === ast), comment: memberComment(member)}
+  return (
+    commentedTypes.get(member) ?? {
+      type: operandType(member, options, inUnion && member === ast),
+      comment: memberComment(member),
+    }
+  )
 }
 
 /**
@@ -756,14 +788,10 @@ function generateIndexSignatureType(
     }
     seen.add(type)
     seen.add(underlying)
-    // an anonymous set operation of one has always rendered as its member below that member's
-    // comment (generateSetOperation), which goes where the union puts its members' comments; a
-    // member's own comment has never been printed here
-    const member = setOperationMember(memberAST)
+    // a described object's comment has never been printed here; one a member renders below (an
+    // anonymous set operation of one, an array of one) goes where the union puts member comments
     members.push(
-      member === memberAST
-        ? {type: operandType(member, options, true)}
-        : {type: operandType(member, options), comment: memberComment(member)},
+      memberAST.type === 'INTERFACE' ? {type: generateType(memberAST, options)} : memberOf(memberAST, options, true),
     )
   }
 

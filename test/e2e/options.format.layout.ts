@@ -100,6 +100,29 @@ export const input = {
         '^p': {allOf: [{description: 'Only branch', type: 'object', properties: {i: {type: 'string'}}}]},
       },
     },
+    // ... and when the member is an array (of arrays) of that branch
+    arrayOfSingleMemberFirst: {
+      anyOf: [
+        {
+          type: 'array',
+          items: {
+            type: 'array',
+            items: {oneOf: [{description: 'Only branch', type: 'object', properties: {j: {type: 'string'}}}]},
+          },
+        },
+        {type: 'number'},
+      ],
+    },
+    arrayInWidenedIndexSignature: {
+      type: 'object',
+      properties: {q: {type: 'string'}},
+      patternProperties: {
+        '^p': {
+          type: 'array',
+          items: {oneOf: [{description: 'Only branch', type: 'object', properties: {j: {type: 'string'}}}]},
+        },
+      },
+    },
     // a `tsType` that would not parse behind a `|` is parenthesized, and the union laid out like any other
     customInLongUnion: {
       anyOf: [
