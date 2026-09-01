@@ -1,8 +1,15 @@
-import {DefinitionKey, isBoolean, isPrimitive, LinkedJSONSchema, NormalizedJSONSchema, Shared} from './types/JSONSchema'
+import {
+  DefinitionKey,
+  isBoolean,
+  isPrimitive,
+  LinkedJSONSchema,
+  markShared,
+  NormalizedJSONSchema,
+  Shared,
+} from './types/JSONSchema'
 import {formatTypeOf, hasType, isSchemaLike, justName, log, narrowType, toSafeString, traverse} from './utils'
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
-import {link} from './linker'
 import {applySchemaTyping, hasOwnType, isShapeless} from './typesOfSchema'
 import {DereferencedPaths} from './resolver'
 import {isDeepStrictEqual} from 'util'
@@ -74,17 +81,31 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
   if ((typeof type !== 'string' && !Array.isArray(type)) || !(schema.anyOf || schema.oneOf)) {
     return
   }
+  // The copies and lists this rule makes. Whatever one of them ends up holding that was not made
+  // here, the original holds too: `settle` marks that `[Shared]` once the node is in place.
+  const made = new Set<object>()
+  const copyOf = (member: LinkedJSONSchema, change?: Partial<LinkedJSONSchema>): LinkedJSONSchema => {
+    const copy = {...member, ...change}
+    made.add(copy)
+    return copy
+  }
+  const settle = (node: object) =>
+    Object.values(node).forEach(held => {
+      if (typeof held === 'object' && held && !made.has(held)) {
+        markShared(held)
+      }
+    })
   // Narrows `owner[key]` to what a value of the parent `type` can match; says whether it changed.
   // The list is edited in place only when it is the owner's alone: a `$ref` with sibling keywords
-  // is dereferenced into a shallow COPY of its target, list and all, and a copy made below
-  // (`copied`) shares its lists with the original. Otherwise the owner gets a narrowed list of its
-  // own and the other holder keeps the one it had. `seen` stops a member that contains itself.
-  const constrain = (owner: LinkedJSONSchema, key: 'anyOf' | 'oneOf', seen: Set<LinkedJSONSchema>, copied = false) => {
-    const members: LinkedMembers | undefined = owner[key]
+  // is dereferenced into a shallow COPY of its target, list and all, and a copy made here shares
+  // its lists with the original. Otherwise the owner gets a narrowed list of its own and the
+  // other holder keeps the one it had. `seen` stops a member that contains itself.
+  const constrain = (owner: LinkedJSONSchema, key: 'anyOf' | 'oneOf', seen: Set<LinkedJSONSchema>) => {
+    const members: SharedMembers | undefined = owner[key]
     if (!members) {
       return false
     }
-    const owned = !copied && !members[Shared]
+    const owned = !made.has(owner) && !members[Shared]
     let changed = false
     const constrained = members.flatMap((member): LinkedJSONSchema[] => {
       // `anyOf`/`oneOf` members are typed as `LinkedJSONSchema`, but a boolean
@@ -102,17 +123,17 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
         // nothing to add (and its required-only members are the parser's to narrow).
         if (typeof type === 'string' && type !== 'object' && !hasOwnType(member) && !dereferenced) {
           changed = true
-          return [{...member, type}]
+          return [copyOf(member, {type})]
         }
         if (dereferenced || !(member.anyOf || member.oneOf)) {
           return [member]
         }
         // The bound carries through a member that leaves the typing to an `anyOf`/`oneOf` of
         // its own: on the member itself when it is ours alone, on a copy when not
-        const target = owned && !member[Shared] ? member : {...member}
+        const target = owned && !member[Shared] ? member : copyOf(member)
         seen.add(member)
-        const narrowedAny = constrain(target, 'anyOf', seen, target !== member)
-        const narrowedOne = constrain(target, 'oneOf', seen, target !== member)
+        const narrowedAny = constrain(target, 'anyOf', seen)
+        const narrowedOne = constrain(target, 'oneOf', seen)
         seen.delete(member)
         if (target.anyOf?.length === 0 || target.oneOf?.length === 0) {
           changed = true
@@ -133,19 +154,19 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
         return [member]
       }
       changed = true
-      return [{...member, type: narrowed}]
+      return [copyOf(member, {type: narrowed})]
     })
     if (!changed) {
       return false
     }
     if (owned) {
-      // Edited in place: the array is what links its members to the schema around them
       members.splice(0, members.length, ...constrained)
-      members.forEach(member => link(member, members))
     } else {
-      link(constrained, owner)
+      made.add(constrained)
       owner[key] = constrained
+      settle(constrained)
     }
+    constrained.forEach(member => made.has(member) && settle(member))
     if (!constrained.length) {
       log('yellow', 'normalizer', `No ${key} member is compatible with the parent type (${type}): emits never`, owner)
     }
@@ -156,8 +177,8 @@ rules.set('Constrain `anyOf`/`oneOf` members to the parent `type`', (schema, _, 
   constrain(schema, 'oneOf', seen)
 })
 
-/** An `anyOf`/`oneOf` list as `link()` leaves it: knowing whether another schema holds it too */
-type LinkedMembers = LinkedJSONSchema[] & {readonly [Shared]?: true}
+/** An `anyOf`/`oneOf` list, knowing whether another schema holds it too (see `markSharedNodes`, resolver.ts) */
+type SharedMembers = LinkedJSONSchema[] & {readonly [Shared]?: true}
 
 rules.set('Add empty `required` property if none is defined', schema => {
   if (isObjectType(schema) && !('required' in schema)) {
@@ -527,7 +548,6 @@ rules.set('Transform `nullable` to anyOf with null', (schema, _, _options, key, 
   if (!inner) {
     return
   }
-  link(schema.anyOf!, schema)
   // A nullable enum that is itself a definition keeps the definition's name (and so its
   // `enum` declaration); references to it become `Name | null`
   if ('tsEnumNames' in inner) {

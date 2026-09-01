@@ -2,7 +2,6 @@ import {describe, expect, test} from 'bun:test'
 import {readdirSync} from 'fs'
 import {join} from 'path'
 import {JSONSchema, Options, DEFAULT_OPTIONS} from '../src'
-import {link} from '../src/linker'
 import {normalize} from '../src/normalizer'
 import {hasOnly} from './e2eCases'
 
@@ -24,7 +23,7 @@ suite('normalizer', () => {
     .map(_ => [_, require(_)] as [string, JSONTestCase])
     .forEach(([filename, json]: [string, JSONTestCase]) => {
       test(json.name, () => {
-        const normalized = normalize(link(json.in), new WeakMap(), filename, json.options ?? DEFAULT_OPTIONS)
+        const normalized = normalize(json.in, new WeakMap(), filename, json.options ?? DEFAULT_OPTIONS)
         expect(json.out).toEqual(normalized)
       })
     })

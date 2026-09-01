@@ -8,7 +8,7 @@ import {
 } from '@apidevtools/json-schema-ref-parser'
 import {isObjectLike, isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
-import {DefinitionKey, JSONSchema, SchemaSource, Source} from './types/JSONSchema'
+import {DefinitionKey, JSONSchema, LinkedJSONSchema, SchemaSource, Source, markShared} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
@@ -36,7 +36,7 @@ export async function dereference(
    * from (its `Source`) before any `$ref` is inlined.
    */
   set?: SchemaSet,
-): Promise<{dereferencedPaths: DereferencedPaths; dereferencedSchema: JSONSchema}> {
+): Promise<{dereferencedPaths: DereferencedPaths; dereferencedSchema: LinkedJSONSchema}> {
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const dereferencedPaths: DereferencedPaths = new WeakMap()
   const externalDocuments = new Set<JSONSchema>()
@@ -86,7 +86,34 @@ export async function dereference(
     })) as JSONSchema
     tagExternalDefinitions(externalDocuments, dereferencedSchema)
   }
-  return {dereferencedPaths, dereferencedSchema: resolveNamedAnchors(dereferencedSchema)}
+  return {dereferencedPaths, dereferencedSchema: markSharedNodes(resolveNamedAnchors(dereferencedSchema))}
+}
+
+/**
+ * With every `$ref` replaced by its target, some nodes are held in more than one place (also: a
+ * YAML alias, or one object a caller passed twice). Mark them `[Shared]`, so that a rewrite meant
+ * for one of those places is made on a copy. An object met again under the object or array it was
+ * first found in (`{a: x, b: x}`) does not count.
+ */
+export function markSharedNodes(schema: JSONSchema): LinkedJSONSchema {
+  const holders = new Map<object, object | null>()
+  const visit = (node: object, holder: object | null) => {
+    if (!isPlainObject(node) && !Array.isArray(node)) {
+      return
+    }
+    if (holders.has(node)) {
+      if (holders.get(node) !== holder) {
+        markShared(node)
+      }
+      return
+    }
+    holders.set(node, holder)
+    for (const key in node) {
+      visit((node as Record<string, object>)[key], node)
+    }
+  }
+  visit(schema, null)
+  return schema as LinkedJSONSchema
 }
 
 /** `other.json`, `other.json#`, `http://x/y.json#/`: a $ref to a separate document as a whole */

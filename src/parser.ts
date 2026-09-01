@@ -12,7 +12,7 @@ import {
   T_UNKNOWN_ADDITIONAL_PROPERTIES,
 } from './types/AST'
 import type {EnumJSONSchema, LinkedJSONSchema, NormalizedJSONSchema, SchemaSchema, SchemaType} from './types/JSONSchema'
-import {DefinitionKey, Intersection, Parent, Shared, Source, Types, isBoolean, isPrimitive} from './types/JSONSchema'
+import {DefinitionKey, Intersection, Shared, Source, Types, isBoolean, isPrimitive} from './types/JSONSchema'
 import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
 import {admitsType, formatTypeOf, generateName, justName, log, narrowType} from './utils'
@@ -52,7 +52,7 @@ export function parse(
     if (seen) {
       return seen
     }
-    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames, scope)
+    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames, scope, schema)
     const {params} = ast as TIntersection
     types.forEach(type => {
       params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames, scope))
@@ -236,6 +236,8 @@ function parseAsTypeWithCache(
   processed: Processed,
   usedNames: UsedNames,
   scope: Scope,
+  /** The schema `applySchemaTyping` split `schema` off of, when `schema` is such an intersection */
+  owner?: NormalizedJSONSchema,
 ): AST {
   // If we've seen this node before, return it.
   let cachedTypeMap = processed.get(schema)
@@ -256,7 +258,7 @@ function parseAsTypeWithCache(
 
   // Update the AST in place. This updates the `processed` cache, as well
   // as any nodes that directly reference the node.
-  Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames, scope))
+  Object.assign(ast, parseNonLiteral(schema, type, options, keyName, processed, usedNames, scope, owner))
   // Where the schema was read from (`imports` mode only), so the generator can tell a
   // type another file declares from one this file has to declare itself
   if (schema[Source]) {
@@ -295,6 +297,7 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames,
   scope: Scope,
+  owner?: NormalizedJSONSchema,
 ): AST {
   const keyNameFromDefinition = schema[DefinitionKey]
 
@@ -325,10 +328,11 @@ function parseNonLiteral(
           .concat(
             parseRequired(
               schema,
+              owner ?? schema,
               // what else renders as an object type in this intersection: a member that wasn't
               // dropped, or -- when this is the intersection `applySchemaTyping` split off of a
               // schema -- that schema's other types, which `parse` appends next
-              intersectionOwner(schema) !== undefined || members.some(({memberSchema}) => isObjectSchema(memberSchema)),
+              owner !== undefined || members.some(({memberSchema}) => isObjectSchema(memberSchema)),
               name,
               scope,
               options,
@@ -701,6 +705,8 @@ function parseBranches(
  */
 function parseRequired(
   schema: NormalizedJSONSchema,
+  /** `schema`, or the schema `applySchemaTyping` split it off of: it kept the `required` when `schema` took its `allOf` */
+  owner: NormalizedJSONSchema,
   besideObjects: boolean,
   standaloneName: string | undefined,
   scope: Scope,
@@ -708,8 +714,6 @@ function parseRequired(
   processed: Processed,
   usedNames: UsedNames,
 ): AST[] {
-  // the intersection `applySchemaTyping` split off of a schema took its `allOf` along, but not its `required`
-  const owner = intersectionOwner(schema) ?? schema
   const keys = undeclaredRequired(owner)
   const declarations = new Map(keys.map(key => [key, findDeclaration(schema, key, scope)]))
   // the keys declared nowhere too, unless the owner has an interface of its own to list them or
@@ -973,12 +977,6 @@ function isObjectOnly(schema: NormalizedJSONSchema): boolean {
 
 function hasProperty(schema: NormalizedJSONSchema, key: string): boolean {
   return schema.properties !== undefined && Object.prototype.hasOwnProperty.call(schema.properties, key)
-}
-
-/** The schema `applySchemaTyping` split `schema` off of, if `schema` is such an intersection */
-function intersectionOwner(schema: NormalizedJSONSchema): NormalizedJSONSchema | undefined {
-  const parent = schema[Parent]
-  return parent && parent[Intersection] === schema ? parent : undefined
 }
 
 /** True for a schema `standaloneName` will name (by a title or id since hoisted onto its intersection, maybe) */

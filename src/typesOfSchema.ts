@@ -1,15 +1,6 @@
 import {isPlainObject} from 'lodash'
 import {STRUCTURAL_KEYWORDS} from './keywords'
-import {
-  Intersection,
-  isCompound,
-  JSONSchema,
-  LinkedJSONSchema,
-  Parent,
-  SchemaType,
-  Source,
-  Types,
-} from './types/JSONSchema'
+import {Intersection, isCompound, JSONSchema, LinkedJSONSchema, SchemaType, Source, Types} from './types/JSONSchema'
 
 /**
  * Duck types a JSONSchema schema or property to determine which kind of AST node to parse it into.
@@ -76,7 +67,6 @@ export function applySchemaTyping(schema: LinkedJSONSchema): void {
   }
 
   const intersection = {
-    [Parent]: schema,
     // The intersection stands for the schema as a whole, so it is what other files import
     [Source]: schema[Source],
     [Types]: new Set(['ALL_OF']),
