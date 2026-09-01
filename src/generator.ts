@@ -512,14 +512,11 @@ function generateSetOperation(ast: TIntersection | TUnion, options: Options): st
   if (ast.params.length === 1) {
     // rendered as its member, below the member's comment
     const param = setOperationMember(ast.params[0])
+    const type = operand(param, generateType(param, options))
     if (bareSetOperations.has(param)) {
       bareSetOperations.add(ast)
     }
-    const member = commentedTypes.get(param) ?? {
-      type: operand(param, generateType(param, options)),
-      comment: memberComment(param),
-    }
-    return commentedType(ast, member)
+    return commentedType(ast, commentedTypes.get(param) ?? {type, comment: memberComment(param)})
   }
   const members = ast.params.map(_ => memberOf(_, options, ast.type === 'UNION'))
   bareSetOperations.add(ast)
