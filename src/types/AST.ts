@@ -53,6 +53,13 @@ export function hasComment(ast: AST): ast is ASTWithComment {
   )
 }
 
+/**
+ * A literal, or a union of nothing but literals: what a `const` or an inline `enum` parses to.
+ */
+export function isLiteralUnion(ast: AST): boolean {
+  return ast.type === 'LITERAL' || (ast.type === 'UNION' && ast.params.every(_ => _.type === 'LITERAL'))
+}
+
 export function hasStandaloneName(ast: AST): ast is ASTWithStandaloneName {
   return 'standaloneName' in ast && ast.standaloneName != null && ast.standaloneName !== ''
 }

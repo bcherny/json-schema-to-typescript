@@ -3,7 +3,9 @@ import {Options} from '.'
 import {generateType} from './generator'
 import {
   AST,
+  hasComment,
   hasStandaloneName,
+  isLiteralUnion,
   omitStandaloneName,
   T_ANY,
   T_UNKNOWN,
@@ -51,9 +53,14 @@ function optimizeNode(ast: AST, options: Options, processed: Map<AST, AST>): AST
       })
 
       // [A | (B | C)] -> [A | B | C]: an unnamed set operation of the same kind, nested, only adds
-      // parentheses -- its members accept exactly what they accept one level up
+      // parentheses -- its members accept exactly what they accept one level up. A described
+      // `const` / inline `enum` branch stays whole: its description belongs to it as one member,
+      // and flattening would scatter or drop it
       const nested = (_: AST): _ is TIntersection | TUnion =>
-        _.type === optimizedAST.type && !hasStandaloneName(_) && _ !== optimizedAST
+        _.type === optimizedAST.type &&
+        !hasStandaloneName(_) &&
+        !(hasComment(_) && isLiteralUnion(_)) &&
+        _ !== optimizedAST
       if (optimizedAST.params.some(nested)) {
         log('cyan', 'optimizer', '[A | (B | C)] -> [A | B | C]', optimizedAST)
         optimizedAST.params = optimizedAST.params.flatMap(_ => (nested(_) ? _.params : [_]))
