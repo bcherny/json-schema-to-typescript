@@ -2,13 +2,14 @@
 /**
  * CI gate around the fuzz harness (fuzz.js): a fixed seed range, no shrinking, a
  * few fuzz.js chunks at a time, one merged report, and a non-zero exit for any
- * finding that known-findings.json does not list. `bun run fuzz:ci` runs it after
- * `bun run build:server`; test/fuzz/README.md ("In CI") says how the allowlist
- * matches and what keeps the gate from flapping.
+ * finding that known-findings.json does not list -- a case slower than --slow
+ * included. `bun run fuzz:ci` runs it after `bun run build:server`;
+ * test/fuzz/README.md ("In CI") says how the allowlist matches and what keeps the
+ * gate from flapping.
  *
  * Usage:
  *   node test/fuzz/ci.js --start 1 --seeds 500 --out fuzz-report.json
- *   [--jobs N] [--timeout MS] [--memory MB] [--known FILE]
+ *   [--jobs N] [--timeout MS] [--memory MB] [--slow MS] [--known FILE]
  */
 
 const {spawn} = require('child_process')
@@ -19,7 +20,7 @@ const {join, resolve} = require('path')
 
 const FUZZ = resolve(__dirname, 'fuzz.js')
 const CHUNK = 20 // seeds per fuzz.js invocation; small enough to balance the workers
-const CONFIRM = ['TIMEOUT', 'OOM', 'CRASHED'] // machine-dependent outcomes: count only if they repeat
+const CONFIRM = ['TIMEOUT', 'OOM', 'CRASHED', 'SLOW'] // machine-dependent outcomes: count only if they repeat
 
 function parseArgs(argv) {
   const defaults = {
@@ -28,6 +29,9 @@ function parseArgs(argv) {
     jobs: Math.min(4, availableParallelism()),
     timeout: 60000,
     memory: 512,
+    // A case takes well under a second, node start-up included; one that finishes but
+    // needs twenty times that is a regression the 60 s timeout would never mention.
+    slow: 10000,
     known: resolve(__dirname, 'known-findings.json'),
     out: 'fuzz-report.json',
   }
@@ -42,7 +46,20 @@ function parseArgs(argv) {
 /** Run fuzz.js over [start, start+seeds) and resolve with its parsed report. */
 function runChunk(start, seeds, args, workDir) {
   const out = join(workDir, `report-${start}-${seeds}.json`)
-  const argv = ['--start', start, '--seeds', seeds, '--timeout', args.timeout, '--memory', args.memory, '--out', out]
+  const argv = [
+    '--start',
+    start,
+    '--seeds',
+    seeds,
+    '--timeout',
+    args.timeout,
+    '--memory',
+    args.memory,
+    '--slow',
+    args.slow,
+    '--out',
+    out,
+  ]
   return new Promise((resolvePromise, reject) => {
     const child = spawn(process.execPath, [FUZZ, '--no-shrink', '--quiet', ...argv.map(String)], {
       stdio: ['ignore', 'inherit', 'inherit'],
@@ -75,12 +92,14 @@ async function runRange(args, workDir) {
   return reports
 }
 
-/** Merge reports given in seed order: sum the cases, dedupe findings by signature, union their seeds. */
+/** Merge reports given in seed order: sum the cases, keep the slowest, dedupe findings by signature, union their seeds. */
 function merge(reports) {
   let casesRun = 0
+  let slowest = null
   const bySignature = new Map()
   for (const report of reports) {
     casesRun += report.casesRun
+    if (report.slowest && (!slowest || report.slowest.elapsedMs > slowest.elapsedMs)) slowest = report.slowest
     for (const f of report.findings) {
       const seen = bySignature.get(f.signature)
       if (seen) seen.seeds.push(...f.seeds)
@@ -89,7 +108,7 @@ function merge(reports) {
   }
   const findings = [...bySignature.values()].sort((a, b) => a.seed - b.seed)
   for (const f of findings) f.occurrences = f.seeds.length
-  return {casesRun, findings}
+  return {casesRun, slowest, findings}
 }
 
 /**
@@ -138,7 +157,7 @@ async function main() {
   const last = args.start + args.seeds - 1
 
   console.log(
-    `fuzz smoke: seeds ${args.start}..${last}, ${args.jobs} at a time (timeout ${args.timeout}ms, heap ${args.memory}MB per case)`,
+    `fuzz smoke: seeds ${args.start}..${last}, ${args.jobs} at a time (per case: timeout ${args.timeout}ms, heap ${args.memory}MB, slow above ${args.slow}ms)`,
   )
   const merged = merge(await runRange(args, workDir))
 
@@ -151,13 +170,15 @@ async function main() {
     if (CONFIRM.includes(f.status)) {
       const repeated = []
       for (const seed of f.seeds) {
-        const again = (await runChunk(seed, 1, args, workDir)).findings.some(g => g.signature === f.signature)
+        // Any of these outcomes again counts, not only the same one: they are budgets
+        // on one run, so a SLOW seed that times out alone (or the reverse) repeated.
+        const again = (await runChunk(seed, 1, args, workDir)).findings.find(g => CONFIRM.includes(g.status))
         // Say so right away either way: each confirmation can cost a full per-case
         // timeout, and if enough seeds hang for the job's own time limit to kill it,
         // the log must already name them.
         if (again) {
           repeated.push(seed)
-          console.log(`  seed ${seed}: ${f.status} again on a re-run alone; counted`)
+          console.log(`  seed ${seed}: ${again.status} on a re-run alone; counted`)
         } else console.log(`  seed ${seed}: ${f.status} did not repeat on a re-run alone; not counted`)
       }
       if (!repeated.length) continue
@@ -195,6 +216,7 @@ async function main() {
     seedRange: [args.start, last],
     casesRun: merged.casesRun,
     wallMs,
+    slowest: merged.slowest,
     newFindings: fresh.length,
     findings,
     notes,
@@ -204,6 +226,7 @@ async function main() {
   console.log(
     `\nran ${merged.casesRun} cases in ${(wallMs / 1000).toFixed(1)}s: ${findings.length} distinct findings, ${fresh.length} new`,
   )
+  if (merged.slowest) console.log(`slowest case: seed ${merged.slowest.seed}, ${merged.slowest.elapsedMs}ms`)
   for (const f of findings) {
     const tag = f.known ? `known ${f.known}` : 'NEW'
     const message = String(f.message).split('\n')[0].slice(0, 100)
@@ -212,7 +235,8 @@ async function main() {
   }
   // A stale entry would quietly re-allow its bug on those seeds if it ever came
   // back, so make the note hard to miss: a workflow annotation on the run's summary.
-  for (const note of notes) console.log(`${process.env.GITHUB_ACTIONS ? '::warning::' : '  note: '}known-findings ${note}`)
+  for (const note of notes)
+    console.log(`${process.env.GITHUB_ACTIONS ? '::warning::' : '  note: '}known-findings ${note}`)
   console.log(`report: ${args.out}`)
 
   try {
