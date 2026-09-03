@@ -233,6 +233,30 @@ export const TYPE_RELEVANT_KEYWORDS = keywordsWhere(
 )
 
 /**
+ * Keywords that add members to a type -- the type-deciding ones that hold a map or list of
+ * subschemas (named or pattern properties, array items, schemas to intersect or union with),
+ * plus `required` (in its draft 4 list form: callers check) -- as opposed to bounding or
+ * restating it (`type`, `enum`, `additionalProperties`, `minItems`...). Next to a `$ref`, one
+ * of these extends the referenced schema: see the prenormalizer.
+ */
+export const EXTENDING_KEYWORDS = keywordsWhere(
+  ({holds, typed}, name) =>
+    (typed === true && (holds === 'schemaMap' || holds === 'schemaArray' || holds === 'schemaOrSchemaArray')) ||
+    name === 'required',
+)
+
+/**
+ * Keywords that decide which values validate: assertions about the value (`type`, `enum`,
+ * `pattern`, `required`) and applicators (`properties`, `items`, `allOf`, `not`) -- what moves
+ * when a schema's constraints are moved into a subschema of it. The rest (`Keyword.meta`,
+ * `Keyword.annotation`, `default`, and any key without a row) stay with the position the
+ * schema occupies.
+ */
+export const VALIDATION_KEYWORDS = keywordsWhere(
+  ({meta, annotation, typed}) => meta !== true && annotation !== true && typed !== 'fallback',
+)
+
+/**
  * Keywords that give a schema a shape of its own: the ones that decide its type (`Keyword.typed`)
  * and the ones that apply subschemas to the instance, implemented (`properties`) or not (`not`,
  * `if`) -- a schema made up of only the latter is one this tool has no notion of. A schema with

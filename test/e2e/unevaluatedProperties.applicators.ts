@@ -41,7 +41,8 @@ export const input = {
       dependentSchemas: {a: {properties: {b: {type: 'boolean'}}}},
       unevaluatedProperties: {type: 'number'},
     },
-    // open: {"name": "x", "age": 1} is valid, but the merge keeps only `age` (issue 613)
+    // `Base & {age?: number}`: the reference and its siblings are composed (issue 613), and the
+    // keyword closes the sibling member; {"name": "x", "age": 1} satisfies the intersection
     refWithSiblingProperties: {
       $ref: '#/$defs/base',
       title: 'Person',

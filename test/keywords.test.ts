@@ -2,6 +2,7 @@ import {describe, expect, test} from 'bun:test'
 import {
   ANNOTATION_KEYWORDS,
   CONTAINER_KEYWORDS,
+  EXTENDING_KEYWORDS,
   JSON_DATA_KEYWORDS,
   KEYWORDS,
   META_KEYWORDS,
@@ -11,6 +12,7 @@ import {
   SUBSCHEMA_KEYWORDS,
   TYPE_RELEVANT_KEYWORDS,
   TYPE_SHAPING_KEYWORDS,
+  VALIDATION_KEYWORDS,
 } from '../src/keywords'
 import {JSONSchema} from '../src/types/JSONSchema'
 import {typesOfSchema} from '../src/typesOfSchema'
@@ -211,6 +213,65 @@ suite('keywords', () => {
         'tsType',
         'type',
         'unevaluatedProperties',
+      ].sort(),
+    )
+  })
+
+  test('the `$ref` siblings that are composed with the reference instead (prenormalizer.ts)', () => {
+    expect([...EXTENDING_KEYWORDS].sort()).toEqual(
+      [
+        'allOf',
+        'anyOf',
+        'extends',
+        'items',
+        'oneOf',
+        'patternProperties',
+        'prefixItems',
+        'properties',
+        'required',
+      ].sort(),
+    )
+  })
+
+  test('...taking these with them into the `allOf`, and leaving the rest on the referencing schema', () => {
+    expect([...VALIDATION_KEYWORDS].sort()).toEqual(
+      [
+        'additionalItems',
+        'additionalProperties',
+        'allOf',
+        'anyOf',
+        'const',
+        'dependencies',
+        'else',
+        'enum',
+        'exclusiveMaximum',
+        'exclusiveMinimum',
+        'extends',
+        'format',
+        'if',
+        'items',
+        'maxItems',
+        'maxLength',
+        'maxProperties',
+        'maximum',
+        'minItems',
+        'minLength',
+        'minProperties',
+        'minimum',
+        'multipleOf',
+        'not',
+        'oneOf',
+        'pattern',
+        'patternProperties',
+        'prefixItems',
+        'properties',
+        'required',
+        'then',
+        'tsEnumNames',
+        'tsType',
+        'type',
+        'unevaluatedProperties',
+        'uniqueItems',
       ].sort(),
     )
   })
