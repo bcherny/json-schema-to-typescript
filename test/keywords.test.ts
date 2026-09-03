@@ -6,6 +6,7 @@ import {
   KEYWORDS,
   META_KEYWORDS,
   NOT_SCANNED_FOR_DEFINITIONS,
+  SCHEMA_HOLDING_KEYWORDS,
   STRUCTURAL_KEYWORDS,
   SUBSCHEMA_KEYWORDS,
   TYPE_RELEVANT_KEYWORDS,
@@ -41,6 +42,10 @@ suite('keywords', () => {
       ['then', 'schema'],
       ['else', 'schema'],
     ])
+  })
+
+  test('the resolver judges $ref targets in those same positions plus `extends`, which traverse never visited', () => {
+    expect(SCHEMA_HOLDING_KEYWORDS).toEqual([...SUBSCHEMA_KEYWORDS, ['extends', 'schemaOrSchemaArray']])
   })
 
   test("traverse's definitions scan skips the keys it always has (utils.ts's former BLACKLISTED_KEYS)", () => {
