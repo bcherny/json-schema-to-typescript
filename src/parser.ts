@@ -374,6 +374,13 @@ function parseNonLiteral(
         type: 'CUSTOM_TYPE',
       }
     case 'NAMED_ENUM': {
+      const values = (schema as EnumJSONSchema).enum!
+      // A TypeScript enum member holds a string or a number: an `enum` with a `null`,
+      // boolean, object or array value cannot become one (`None = null` does not compile),
+      // so it is typed as a union of its values instead, like an `enum` without `tsEnumNames`.
+      if (!values.every(isEnumMemberValue)) {
+        return parseNonLiteral(schema, 'UNNAMED_ENUM', options, keyName, processed, usedNames, scope)
+      }
       const enumName = standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)
       // A TypeScript enum declaration requires a name. In positions that supply
       // none (an `anyOf`/`oneOf` branch, say) fall back to a union of literals
@@ -383,18 +390,19 @@ function parseNonLiteral(
           comment: schema.description,
           deprecated: schema.deprecated,
           keyName,
-          params: (schema as EnumJSONSchema).enum!.map(_ => parseLiteral(_, undefined)),
+          params: values.map(_ => parseLiteral(_, undefined)),
           type: 'UNION',
         }
       }
+      const memberNames = enumMemberNames(schema.tsEnumNames!)
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: enumName,
-        params: (schema as EnumJSONSchema).enum!.map((_, n) => ({
+        params: values.map((_, n) => ({
           ast: parseLiteral(_, undefined),
-          keyName: schema.tsEnumNames![n],
+          keyName: memberNames[n],
         })),
         type: 'ENUM',
       }
@@ -1019,6 +1027,37 @@ function narrowMember(member: LinkedJSONSchema, type: JSONSchema4TypeName, optio
   }
   applySchemaTyping(copy)
   return [copy]
+}
+
+/**
+ * What a TypeScript enum member can hold: a string or a (finite) number. `null`, `true`, an
+ * object or an array is a fine `enum` value but not an enum member's (TS2474 / TS18033).
+ */
+function isEnumMemberValue(value: JSONSchema4Type): boolean {
+  return typeof value === 'string' || (typeof value === 'number' && isFinite(value))
+}
+
+/**
+ * The names of an enum's members, from its `tsEnumNames` (given, or inferred from the values):
+ * each name as it is, except one TypeScript would reject. An enum member cannot have a numeric
+ * name, quoted or not (TS2452) -- "numeric" meaning the text of a number as TypeScript prints
+ * it: `1`, `-1`, `1.5`, but not `+1`, `01`, `1e3` or `Infinity`. Such a name gets a leading
+ * underscore (more than one, should another member already be called that; two prefixed names
+ * cannot clash with each other, since each ends in its own underscore-free number). The
+ * generator quotes whatever is still not an identifier.
+ */
+function enumMemberNames(names: readonly string[]): string[] {
+  const taken = new Set(names)
+  return names.map(name => {
+    if (!(String(Number(name)) === name && isFinite(Number(name)))) {
+      return name
+    }
+    let legalName = '_' + name
+    while (taken.has(legalName)) {
+      legalName = '_' + legalName
+    }
+    return legalName
+  })
 }
 
 /**
