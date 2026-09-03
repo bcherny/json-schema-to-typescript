@@ -314,7 +314,7 @@ $ bun run test
 ## Custom schema properties:
 
 - `tsType`: Overrides the type that's generated from the schema. Useful for forcing a type to `any` or when using non-standard JSON schema extensions ([eg](https://github.com/sokra/json-schema-to-typescript/blob/f1f40307cf5efa328522bb1c9ae0b0d9e5f367aa/test/e2e/customType.ts)).
-- `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)).
+- `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)). The names must be distinct strings, one per `enum` value; otherwise the schema is rejected with a `ValidationError`. A name TypeScript would read as a number (`"1"`, `"-1"`, `"2.5"`) cannot be an enum member's name, so it gets a leading underscore (`_1 = 1`); the same goes for a value that `inferStringEnumKeysFromValues` turns into a name. A TypeScript enum holds strings and numbers only: an `enum` with a `null`, boolean, object or array value stays a union of literal types (`null | "a" | "b"`), as it is without `tsEnumNames`.
 
 ## Not expressible in TypeScript:
 
