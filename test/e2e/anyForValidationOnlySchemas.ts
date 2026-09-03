@@ -2,8 +2,8 @@
 // `maximum`, `minLength`), annotations (`$comment`, `readOnly`, `examples`), OpenAPI's
 // `nullable`, or keys this tool doesn't know (`ignoreCase`, `x-*`) -- says nothing about which
 // type a value is, so it is `unknown` like the empty schema, not an object. `description` and
-// `title` still make it to the output. A keyword that holds subschemas (`not`, `if`) is a shape
-// of its own, implemented or not, and keeps the object fallback.
+// `title` still make it to the output. The same goes for applicators this tool does not implement
+// (`not`: see anyForUnimplementedApplicators.ts).
 export const input = {
   title: 'AnyForValidationOnlySchemas',
   type: 'object',

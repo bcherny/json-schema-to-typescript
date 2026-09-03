@@ -49,9 +49,9 @@ export const input = {
       properties: {age: {type: 'number'}},
       unevaluatedProperties: false,
     },
-    // open: the security-scheme pattern from the OpenAPI 3.1 meta-schema. The member parses
-    // as `{}` and is left out of the intersection, so {"type": "apiKey", "name": "x"} needs
-    // the index signature
+    // open: the security-scheme pattern from the OpenAPI 3.1 meta-schema. The member says
+    // nothing about the type and is left out of the intersection, so {"type": "apiKey",
+    // "name": "x"} needs the index signature
     allOfConditionalMember: {
       type: 'object',
       properties: {type: {enum: ['apiKey', 'http']}},

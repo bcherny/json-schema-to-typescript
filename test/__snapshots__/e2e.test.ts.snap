@@ -49024,8 +49024,7 @@ exports[`realWorld.openapi.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Parameter = ExampleXORExamples &
-  SchemaXORContent &
+export type Parameter = SchemaXORContent &
   ParameterLocation & {
     name: string;
     in: string;
@@ -49058,6 +49057,9 @@ export type SchemaXORContent =
       schema: unknown;
       [k: string]: unknown;
     }
+  /**
+   * Some properties are not allowed if content is present
+   */
   | {
       content: unknown;
       [k: string]: unknown;
@@ -49099,7 +49101,7 @@ export type ParameterLocation =
       style?: "form";
       [k: string]: unknown;
     };
-export type MediaType = ExampleXORExamples & {
+export type MediaType = {
   schema?: Schema | Reference;
   example?: unknown;
   examples?: {
@@ -49114,29 +49116,28 @@ export type MediaType = ExampleXORExamples & {
    */
   [k: string]: unknown;
 };
-export type Header = ExampleXORExamples &
-  SchemaXORContent & {
-    description?: string;
-    required?: boolean;
-    deprecated?: boolean;
-    allowEmptyValue?: boolean;
-    style?: "simple";
-    explode?: boolean;
-    allowReserved?: boolean;
-    schema?: Schema | Reference;
-    content?: {
-      [k: string]: MediaType;
-    };
-    example?: unknown;
-    examples?: {
-      [k: string]: Example | Reference;
-    };
-    /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
-     * via the \`patternProperty\` "^x-".
-     */
-    [k: string]: unknown;
+export type Header = SchemaXORContent & {
+  description?: string;
+  required?: boolean;
+  deprecated?: boolean;
+  allowEmptyValue?: boolean;
+  style?: "simple";
+  explode?: boolean;
+  allowReserved?: boolean;
+  schema?: Schema | Reference;
+  content?: {
+    [k: string]: MediaType;
   };
+  example?: unknown;
+  examples?: {
+    [k: string]: Example | Reference;
+  };
+  /**
+   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
+  [k: string]: unknown;
+};
 export type SecurityScheme =
   APIKeySecurityScheme | HTTPSecurityScheme | OAuth2SecurityScheme | OpenIdConnectSecurityScheme;
 export type HTTPSecurityScheme = {
@@ -49162,9 +49163,7 @@ export type HTTPSecurityScheme1 =
    * Non Bearer
    */
   | {
-      scheme?: {
-        [k: string]: unknown;
-      };
+      scheme?: unknown;
       [k: string]: unknown;
     };
 
@@ -49283,12 +49282,6 @@ export interface PathItem {
    * This interface was referenced by \`PathItem\`'s JSON-Schema definition
    * via the \`patternProperty\` "^x-".
    */
-  [k: string]: unknown;
-}
-/**
- * Example and examples are mutually exclusive
- */
-export interface ExampleXORExamples {
   [k: string]: unknown;
 }
 export interface Schema {
@@ -363303,10 +363296,10 @@ exports[`allOf.2.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Demo = {
+export interface Demo {
   hostname?: string;
   enable_subconfig: boolean;
-};
+}
 "
 `;
 
@@ -363416,8 +363409,7 @@ exports[`intersection.3.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Parameter = ExampleXORExamples &
-  SchemaXORContent &
+export type Parameter = SchemaXORContent &
   ParameterLocation & {
     name: string;
     in: string;
@@ -363450,6 +363442,9 @@ export type SchemaXORContent =
       schema: unknown;
       [k: string]: unknown;
     }
+  /**
+   * Some properties are not allowed if content is present
+   */
   | {
       content: unknown;
       [k: string]: unknown;
@@ -363491,7 +363486,7 @@ export type ParameterLocation =
       style?: "form";
       [k: string]: unknown;
     };
-export type MediaType = ExampleXORExamples & {
+export type MediaType = {
   schema?: Schema | Reference;
   example?: unknown;
   examples?: {
@@ -363506,29 +363501,28 @@ export type MediaType = ExampleXORExamples & {
    */
   [k: string]: unknown;
 };
-export type Header = ExampleXORExamples &
-  SchemaXORContent & {
-    description?: string;
-    required?: boolean;
-    deprecated?: boolean;
-    allowEmptyValue?: boolean;
-    style?: "simple";
-    explode?: boolean;
-    allowReserved?: boolean;
-    schema?: Schema | Reference;
-    content?: {
-      [k: string]: MediaType;
-    };
-    example?: unknown;
-    examples?: {
-      [k: string]: Example | Reference;
-    };
-    /**
-     * This interface was referenced by \`undefined\`'s JSON-Schema definition
-     * via the \`patternProperty\` "^x-".
-     */
-    [k: string]: unknown;
+export type Header = SchemaXORContent & {
+  description?: string;
+  required?: boolean;
+  deprecated?: boolean;
+  allowEmptyValue?: boolean;
+  style?: "simple";
+  explode?: boolean;
+  allowReserved?: boolean;
+  schema?: Schema | Reference;
+  content?: {
+    [k: string]: MediaType;
   };
+  example?: unknown;
+  examples?: {
+    [k: string]: Example | Reference;
+  };
+  /**
+   * This interface was referenced by \`undefined\`'s JSON-Schema definition
+   * via the \`patternProperty\` "^x-".
+   */
+  [k: string]: unknown;
+};
 export type SecurityScheme =
   APIKeySecurityScheme | HTTPSecurityScheme | OAuth2SecurityScheme | OpenIdConnectSecurityScheme;
 export type HTTPSecurityScheme = {
@@ -363554,9 +363548,7 @@ export type HTTPSecurityScheme1 =
    * Non Bearer
    */
   | {
-      scheme?: {
-        [k: string]: unknown;
-      };
+      scheme?: unknown;
       [k: string]: unknown;
     };
 
@@ -363675,12 +363667,6 @@ export interface PathItem {
    * This interface was referenced by \`PathItem\`'s JSON-Schema definition
    * via the \`patternProperty\` "^x-".
    */
-  [k: string]: unknown;
-}
-/**
- * Example and examples are mutually exclusive
- */
-export interface ExampleXORExamples {
   [k: string]: unknown;
 }
 export interface Schema {
@@ -364669,9 +364655,7 @@ exports[`allOf.3.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type AllOfAllVacuous = {
-  [k: string]: unknown;
-};
+export type AllOfAllVacuous = unknown;
 "
 `;
 
@@ -368821,6 +368805,7 @@ export type RequiredOnlyMembers = (
         [k: string]: unknown;
       }
     | {
+        b: B;
         [k: string]: unknown;
       }
   );
@@ -369518,9 +369503,7 @@ exports[`refToBooleanSchema.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface RefToBooleanSchema {
-  [k: string]: unknown;
-}
+export type RefToBooleanSchema = unknown;
 "
 `;
 
@@ -369789,7 +369772,7 @@ export interface UnevaluatedPropertiesApplicators {
     type: "apiKey" | "http";
     [k: string]: unknown;
   };
-  allOfNestedConditionalMember?: NamedWhenApiKey & {
+  allOfNestedConditionalMember?: {
     type: "apiKey" | "http";
     [k: string]: unknown;
   };
@@ -369838,9 +369821,6 @@ export interface UnevaluatedPropertiesApplicators {
 }
 export interface Person {
   age?: number;
-  [k: string]: unknown;
-}
-export interface NamedWhenApiKey {
   [k: string]: unknown;
 }
 export interface Base {
@@ -374752,9 +374732,7 @@ export interface AnyForValidationOnlySchemas {
   defaultOnly?: unknown;
   inAllOf?: string;
   viaRef?: Identifier;
-  unimplementedApplicator?: {
-    [k: string]: unknown;
-  };
+  unimplementedApplicator?: unknown;
 }
 "
 `;
@@ -375113,6 +375091,93 @@ export interface RequiredUndeclaredKeys {
       } & {
         a?: string;
       });
+}
+"
+`;
+
+exports[`anyRoot.notOnly.ts 1`] = `
+"/* eslint-disable */
+/**
+ * This file was automatically generated by json-schema-to-typescript.
+ * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
+ * and run json-schema-to-typescript to regenerate this file.
+ */
+
+/**
+ * Anything but the empty string
+ */
+export type NotOnly = unknown;
+"
+`;
+
+exports[`anyForUnimplementedApplicators.ts 1`] = `
+"/* eslint-disable */
+/**
+ * This file was automatically generated by json-schema-to-typescript.
+ * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
+ * and run json-schema-to-typescript to regenerate this file.
+ */
+
+/**
+ * Anything but null
+ */
+export type NotNull = unknown;
+
+export interface AnyForUnimplementedApplicators {
+  not?: unknown;
+  /**
+   * Not a string
+   */
+  describedNot?: unknown;
+  ifThenElse?: unknown;
+  dependencies?: unknown;
+  typedNot?: string;
+  objectWithIf?: {
+    kind?: string;
+    [k: string]: unknown;
+  };
+  inAllOf?: number;
+  /**
+   * What is left once the \`not\` members are set aside is an object that requires \`a\`
+   */
+  inAllOfWithRequired?: {
+    a: unknown;
+    [k: string]: unknown;
+  };
+  allOfOnlyThese?: unknown;
+  /**
+   * The \`oneOf\` members still find \`a\` and \`b\` declared next to the \`allOf\`
+   */
+  besideRequiredOnlyMembers?: (
+    | {
+        a: string;
+      }
+    | {
+        b: number;
+      }
+  ) & {
+    a?: string;
+    b?: number;
+    [k: string]: unknown;
+  };
+  /**
+   * A \`oneOf\` (or \`anyOf\`) with a branch that says nothing accepts anything, whatever the other branches say
+   */
+  inOneOf?: unknown;
+  /**
+   * Next to \`properties\`, such an \`anyOf\` adds nothing: no picked branches, just the object
+   */
+  anyOfBesideProperties?: {
+    a?: string;
+    [k: string]: unknown;
+  };
+  viaRef?: NotNull;
+  viaRefInAllOf?: NotNull;
+  viaRefAmongOthers?: string;
+  additionalItemsOnly?: unknown;
+  unevaluatedPropertiesOnly?: {
+    [k: string]: never;
+  };
 }
 "
 `;

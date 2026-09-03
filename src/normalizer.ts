@@ -7,7 +7,7 @@ import {
   Parent,
   Shared,
 } from './types/JSONSchema'
-import {formatTypeOf, hasType, isSchemaLike, justName, log, narrowType, toSafeString, traverse} from './utils'
+import {formatTypeOf, hasType, isSchemaLike, justName, log, nameOf, narrowType, toSafeString, traverse} from './utils'
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
@@ -578,6 +578,38 @@ rules.set(
 // visits after everything else rather than first; in a shared walk that would change the order
 // in which the rule above reaches a schema used in two places, and so the `key` it names it by.
 startNewPass()
+
+rules.set('Drop `allOf` members that say nothing about the type', (schema, _, options, _key, _paths, rootSchema) => {
+  // A member with no keyword that gives it a shape (`isShapeless`: one that holds only a `not`,
+  // an `if`/`then`, a `pattern`, a description...) is the empty schema as far as the emitted type
+  // goes, and intersecting with the empty schema is no constraint: leave it out, so that it
+  // neither clutters the intersection nor hides that what is left (say, a `required` list and
+  // nothing else) is an object. A member the parser declares under a name of its own (`nameOf`: a
+  // definition, a `title`...) stays and is referenced by that name, as everywhere else; the
+  // optimizer drops it where other members constrain the type. Runs this late so that the rules
+  // above have typed the members they can (`nullable`, a mapped `format`). The list is edited in
+  // place: a list shared by several holders (a `$ref` with siblings is dereferenced into a copy
+  // that shares its target's lists) gets the same members dropped wherever it is held, which is
+  // what this rule would do to each holder anyway. An `allOf` written empty is left alone.
+  const members = schema.allOf
+  if (!Array.isArray(members)) {
+    return
+  }
+  const $defs = rootSchema.$defs ?? {}
+  const definitionKeyOf = (member: LinkedJSONSchema) =>
+    Object.keys($defs).find(key => $defs[key] === member) ?? member[DefinitionKey]
+  const kept = members.filter(
+    member => isPrimitive(member) || !isShapeless(member) || nameOf(member, definitionKeyOf(member), options),
+  )
+  if (kept.length === members.length) {
+    return
+  }
+  if (kept.length === 0) {
+    delete schema.allOf
+  } else {
+    members.splice(0, members.length, ...kept)
+  }
+})
 
 rules.set('Pre-calculate schema types and intersections', schema => {
   if (schema !== null && typeof schema === 'object') {
