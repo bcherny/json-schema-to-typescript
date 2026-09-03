@@ -430,6 +430,12 @@ suite('CLI', () => {
   )
 
   cliErrorTest(
+    'a $ref to a file that is not a schema names the $ref and the file instead of crashing',
+    'node dist/src/cli.js -i ./test/resources/NotASchema/refersToEmptyFile.json',
+    'which is not a JSON Schema: the file is empty',
+  )
+
+  cliErrorTest(
     '--imports without an output directory is an error',
     'node dist/src/cli.js -i ./test/resources/Imports/memo --imports',
     '--imports needs an output directory',
