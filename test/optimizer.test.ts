@@ -29,4 +29,20 @@ suite('optimizer', () => {
       expect(await compile(schema, 'X', {bannerComment: ''})).toContain('export ')
     })
   }
+
+  // [A | (B | C)] -> [A | B | C] lifts an anonymous nested union into the enclosing one, except a
+  // described `const` / inline `enum` branch: that is one member with one description, kept whole
+  test('a nested anonymous union is flattened unless it is a described literal branch', async () => {
+    const schema: JSONSchema = {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        plain: {anyOf: [{enum: ['red', 'green']}, {const: 'blue'}]},
+        described: {anyOf: [{enum: ['red', 'green'], description: 'Additive primaries.'}, {const: 'blue'}]},
+      },
+    }
+    const ts = await compile(schema, 'X', {bannerComment: ''})
+    expect(ts).toContain('plain?: "red" | "green" | "blue";')
+    expect(ts).toContain('("red" | "green")')
+  })
 })
