@@ -192,7 +192,6 @@ function subtrees(ast: AST): AST[] {
  */
 export function parseUnreachableDefinitions(
   rootSchema: NormalizedJSONSchema,
-  rootASTName: string,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
@@ -202,22 +201,18 @@ export function parseUnreachableDefinitions(
   }
 
   return map(rootSchema.$defs, (value, key: string) =>
-    parseUnreachableDefinition(value, key, rootASTName, options, processed, usedNames),
+    parseUnreachableDefinition(value, key, options, processed, usedNames),
   )
 }
 
 function parseUnreachableDefinition(
   schema: NormalizedJSONSchema,
   key: string,
-  parentSchemaName: string,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
   const ast = parse(schema, options, key, processed, usedNames)
-  const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
-via the \`definition\` "${key}".`
-  ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
   ast.isUnreachableDefinition = true
   return ast
 }
@@ -1179,7 +1174,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
   const unreachableDefinitions: TInterfaceParam[] = !options.unreachableDefinitions
     ? []
     : map(schema.$defs, (value, key: string) => ({
-        ast: parseUnreachableDefinition(value, key, parentSchemaName, options, processed, usedNames),
+        ast: parseUnreachableDefinition(value, key, options, processed, usedNames),
         isIndexSignature: false,
         isPatternProperty: false,
         isRequired: isRequired(schema, key, value),

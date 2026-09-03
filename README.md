@@ -170,17 +170,9 @@ export interface B {
   owner?: A;
 }
 // types/common.d.ts
-/**
- * This interface was referenced by `Common`'s JSON-Schema
- * via the `definition` "tag".
- */
 export type Tag = "red" | "green";
 
 export interface Common {}
-/**
- * This interface was referenced by `Common`'s JSON-Schema
- * via the `definition` "thing".
- */
 export interface Thing {
   id: string;
   tags?: Tag[];
