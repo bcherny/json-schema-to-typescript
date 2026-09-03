@@ -183,11 +183,16 @@ const LEGACY = {
   notMeta: new Set<KeywordName>(['id']),
 }
 
-/** The subschema positions `traverse` descends into, and what each holds, in visiting order */
-export const SUBSCHEMA_KEYWORDS: ReadonlyArray<readonly [KeywordName, SchemaHolds]> = NAMES.flatMap(name => {
+/** Every keyword whose value is or contains subschemas, and what it holds, in table order */
+export const SCHEMA_HOLDING_KEYWORDS: ReadonlyArray<readonly [KeywordName, SchemaHolds]> = NAMES.flatMap(name => {
   const {holds} = KEYWORDS[name]
-  return holdsSchemas(holds) && !LEGACY.notTraversed.has(name) ? [[name, holds] as const] : []
+  return holdsSchemas(holds) ? [[name, holds] as const] : []
 })
+
+/** The subschema positions `traverse` descends into, and what each holds, in visiting order */
+export const SUBSCHEMA_KEYWORDS: typeof SCHEMA_HOLDING_KEYWORDS = SCHEMA_HOLDING_KEYWORDS.filter(
+  ([name]) => !LEGACY.notTraversed.has(name),
+)
 
 /**
  * Every keyword (bar the `LEGACY` carve-outs above). Definitions can technically sit under any

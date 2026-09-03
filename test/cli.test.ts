@@ -201,6 +201,20 @@ suite('CLI', () => {
     )
   }
 
+  // The same for an option flag: `=false` and ` false` only parse as booleans for flags
+  // minimist knows are boolean, and inferStringEnumKeysFromValues was missing from that list
+  for (const flag of [
+    '--no-inferStringEnumKeysFromValues',
+    '--inferStringEnumKeysFromValues false',
+    '--inferStringEnumKeysFromValues=false',
+  ]) {
+    cliTest(
+      `file in (-i), option boolean with explicit false value (${flag}), pipe out`,
+      `node dist/src/cli.js -i ./test/resources/RefSiblings/country.json ${flag}`,
+      ({stdout}) => expect(stdout).toContain('export type Country = "NL" | "DE" | "BE"'),
+    )
+  }
+
   // https://github.com/bcherny/json-schema-to-typescript/issues/131
   cliTest(
     'readOnly annotations are ignored by default',
@@ -397,6 +411,30 @@ suite('CLI', () => {
     },
   )
 
+  // A usage error is one `error: ...` line on stderr: the message, no stack trace around it
+  cliFailTest(
+    'a glob that matches no file is a one-line usage error',
+    'node dist/src/cli.js -i "./test/resources/NoSuchDir/*.json"',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: You passed a glob pattern "./test/resources/NoSuchDir/*.json", but')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+  )
+
+  // ...while anything else that goes wrong still says where: the unreadable path here
+  cliFailTest(
+    'an unreadable input file reports the path it could not open',
+    'node dist/src/cli.js -i ./test/resources/NoSuchFile.json',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: ')
+      expect(stderr).toContain('ENOENT')
+      expect(stderr).toContain('NoSuchFile.json')
+    },
+  )
+
   cliTest(
     'files in (-i), files out (-o) matching nested dir',
     `node dist/src/cli.js -i "./test/resources/../../test/resources/MultiSchema2/" -o ./test/resources/MultiSchema2/out`,
@@ -427,6 +465,12 @@ suite('CLI', () => {
     '--imports with a single file in is an error',
     'node dist/src/cli.js -i ./test/resources/Imports/memo/a.json -o ./test/resources/Imports/out/a.d.ts --imports',
     'a single input file has no other file to import from',
+  )
+
+  cliErrorTest(
+    'a $ref to a file that is not a schema names the $ref and the file instead of crashing',
+    'node dist/src/cli.js -i ./test/resources/NotASchema/refersToEmptyFile.json',
+    'which is not a JSON Schema: the file is empty',
   )
 
   cliErrorTest(
