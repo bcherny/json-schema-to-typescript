@@ -252,7 +252,7 @@ export function generateName(from: string, usedNames: Set<string>) {
 
 export function error(...messages: any[]): void {
   if (!process.env.VERBOSE) {
-    return console.error(messages)
+    return console.error('error:', ...messages)
   }
   console.error(getStyledTextForLogging('red')?.('error'), ...messages)
 }
