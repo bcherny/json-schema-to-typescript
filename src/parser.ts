@@ -39,8 +39,11 @@ export function parse(
 
   const intersection = schema[Intersection]
   const types = schema[Types]
-  // what the members of this schema's set operations may also borrow from (see `Scope`)
-  const scope: Scope = perTypeCopies.has(schema) || !isObjectOnly(schema) ? [] : [schema, ...enclosing]
+  // What else applies to this schema's instances, if they are all objects: the schema and what it was
+  // handed (see `Scope`). The intersection split off of it looks keys up in these; so do the members
+  // of its set operations -- unless it is a per-type copy, which shares its members with the others
+  const alongside: Scope = isObjectOnly(schema) ? [schema, ...enclosing] : []
+  const scope: Scope = perTypeCopies.has(schema) ? [] : alongside
 
   if (intersection) {
     // `parse` comes back to this schema once per place that refers to it, and, through
@@ -52,7 +55,7 @@ export function parse(
     if (seen) {
       return seen
     }
-    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames, scope)
+    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames, alongside)
     const {params} = ast as TIntersection
     types.forEach(type => {
       params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames, scope))
@@ -927,7 +930,7 @@ type Scope = readonly NormalizedJSONSchema[]
 /**
  * The per-type copies of multi-typed schemas (the `UNION` case, `narrowMember`). The copies share
  * their members, which are parsed once, so no one copy is the schema around them: a copy hands its
- * members an empty scope.
+ * members an empty scope (its own split-off intersection still sees it).
  */
 const perTypeCopies = new WeakSet<LinkedJSONSchema>()
 
