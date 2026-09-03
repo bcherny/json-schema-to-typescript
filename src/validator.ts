@@ -16,6 +16,13 @@ rules.set('tsEnumNames must be an array of strings', schema => {
   }
 })
 
+// Two members of one enum cannot share a name (TS2300 "Duplicate identifier")
+rules.set('tsEnumNames must not contain duplicates', schema => {
+  if (schema.tsEnumNames) {
+    return new Set(schema.tsEnumNames).size === schema.tsEnumNames.length
+  }
+})
+
 rules.set('When both maxItems and minItems are present, maxItems >= minItems', schema => {
   const {maxItems, minItems} = schema
   if (typeof maxItems === 'number' && typeof minItems === 'number') {
