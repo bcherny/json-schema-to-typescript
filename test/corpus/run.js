@@ -45,6 +45,7 @@ const VARIANTS = {
     additionalProperties: false,
     declarationStyle: 'type',
     enableConstEnums: false,
+    inferStringEnumKeysFromValues: true,
     readonly: true,
     unknownAny: false,
   },
