@@ -123,15 +123,55 @@ jobs:
         path: fuzz-report.json
         if-no-files-found: ignore
 
+  # What the generated code looks like beyond the fixtures. First, compile a corpus
+  # of large real-world schemas under several option sets and run the TypeScript
+  # compiler over every result (test/corpus/README.md). Then score the generated
+  # types against the official JSON-Schema-Test-Suite, group by group, and compare
+  # with the checked-in baseline (test/conformance/README.md): the job fails on any
+  # difference, and the log says whether it is a regression to fix or an improvement
+  # to record with `node test/conformance/run.js --update`. About 40 s of checks;
+  # Linux only, since neither depends on the platform.
+  output:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v7
+    - name: Use Node.js 24.x
+      uses: actions/setup-node@v7
+      with:
+        node-version: 24.x
+    - name: Use Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version-file: .bun-version
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+    - name: Build
+      run: bun run build:server
+    - name: Compile and type-check the real-world corpus
+      run: bun run corpus
+    - name: Spec conformance against the baseline
+      # also when the corpus step failed, so one run reports both
+      if: ${{ !cancelled() }}
+      run: bun run conformance --report conformance-report.json
+    - name: Upload the conformance report
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: conformance-report
+        path: conformance-report.json
+        if-no-files-found: ignore
+
   # Aggregate check. Branch protection requires this one job instead of each
   # matrix job by name, so the matrix can change without editing the required
   # status checks.
   ci-ok:
     if: always()
-    needs: [build, bun, engines, fuzz]
+    needs: [build, bun, engines, fuzz, output]
     runs-on: ubuntu-latest
     steps:
-    - name: Fail if any matrix job or the fuzz smoke did not succeed
+    - name: Fail if any matrix job, the fuzz smoke or the output checks did not succeed
       # Checking for success (rather than for failure/cancellation) also catches
       # `skipped`, which would otherwise satisfy branch protection with no tests run.
-      run: '[ "${{ needs.build.result }}" = "success" ] && [ "${{ needs.fuzz.result }}" = "success" ]'
+      run: '[ "${{ needs.build.result }}" = "success" ] && [ "${{ needs.fuzz.result }}" = "success" ] && [ "${{ needs.output.result }}" = "success" ]'

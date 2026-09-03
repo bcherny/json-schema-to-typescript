@@ -18,6 +18,8 @@
     "format": "prettier \"{src,test}/*.ts\" --write",
     "format-check": "prettier \"{src,test}/*.ts\" --check",
     "fuzz:ci": "node test/fuzz/ci.js --start 1 --seeds 500 --out fuzz-report.json",
+    "corpus": "node test/corpus/run.js --e2e",
+    "conformance": "node test/conformance/run.js",
     "lint": "eslint src test/*.ts",
     "tdd": "bun test --watch",
     "test": "bun run pre-test && bun test --timeout 300000",
