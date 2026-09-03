@@ -1,10 +1,13 @@
 import {
   $RefParser,
   FileInfo,
+  JSONParserErrorGroup,
   ParserOptions as $RefOptions,
   Plugin,
   ResolverOptions,
+  dereferenceInternal,
   getJsonSchemaRefParserDefaultOptions,
+  jsonSchemaParserNormalizeArgs,
 } from '@apidevtools/json-schema-ref-parser'
 import {isObjectLike, isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
@@ -79,16 +82,35 @@ export async function dereference(
     dereferenceInDocument(schema, targets, onDereference)
   } else {
     const parser = new $RefParser()
-    dereferencedSchema = (await parser.dereference(set?.file ?? cwd, schema, {
-      ...$refOptions,
-      resolve,
-      parse: prenormalizingParsers($refOptions.parse, prepare),
-      dereference: {
-        ...$refOptions.dereference,
-        excludedPathMatcher: depthLimitedPathMatcher($refOptions.dereference),
-        onDereference,
+    const documents = new IdScopeMask()
+    const {path, options} = jsonSchemaParserNormalizeArgs<JSONSchema, $RefOptions>([
+      set?.file ?? cwd,
+      schema,
+      {
+        ...$refOptions,
+        mutateInputSchema: true, // `schema` is this module's own copy already
+        resolve,
+        parse: prenormalizingParsers($refOptions.parse, (document, file) => documents.hide(prepare(document, file))),
+        dereference: {...$refOptions.dereference, onDereference},
       },
-    })) as JSONSchema
+    ])
+    try {
+      // = parser.dereference(path, schema, options), with the documents' `$id`s out of the way while it
+      // reads them in (which is when it decides what their `$ref`s are relative to) and back before it
+      // inlines anything (so every copy it makes of a `$ref` target is whole)
+      try {
+        await parser.resolve(path, documents.hide(schema), options)
+      } finally {
+        documents.restore()
+      }
+      dereferenceInternal(parser, options)
+      if (JSONParserErrorGroup.getParserErrors(parser).length) {
+        throw new JSONParserErrorGroup(parser) // what `continueOnError: true` collected instead of throwing
+      }
+    } catch (error) {
+      throw tooDeepFromRefParser(error) ?? error
+    }
+    dereferencedSchema = parser.schema as JSONSchema
     if (nonSchemaTargets.length || !isSchema(dereferencedSchema)) {
       // (`values()` is every document read, by path or URL -- typed upstream as if it were one schema)
       rejectNonSchemaTargets(schema, dereferencedSchema, nonSchemaTargets, () => parser.$refs.values() as object)
@@ -96,6 +118,57 @@ export async function dereference(
     tagExternalDefinitions(externalDocuments, dereferencedSchema)
   }
   return {dereferencedPaths, dereferencedSchema: resolveNamedAnchors(dereferencedSchema)}
+}
+
+/*
+ * A `$ref` here resolves against the file it is written in, and `$id`/`id` name types. The ref-parser
+ * (from 16 on) instead treats a document that declares an `$id`, a draft `$schema` or `openapi: 3.1` as
+ * a JSON Schema resource: its relative `$ref`s resolve against the `$id`, and a `#/…` pointer below a
+ * nested `$id` against that sub-schema -- so a schema compiled from disk would fetch its neighbours
+ * from wherever its `$id` points, and a pointer to the root's definitions from inside a named
+ * sub-schema would no longer resolve. It decides that once per document, from the document's root, as
+ * each is read in; so each root goes to it without those keywords and gets them back, in place, once
+ * every document has been read.
+ */
+
+const ID_SCOPE_KEYWORDS = ['$schema', '$id', 'openapi']
+
+export class IdScopeMask {
+  private readonly restorers: Array<() => void> = []
+
+  hide<T>(document: T): T {
+    if (!isPlainObject(document)) {
+      return document
+    }
+    const root = document as Record<string, unknown>
+    const keys = Object.keys(root)
+    const hidden = new Map<string, unknown>()
+    for (const key of ID_SCOPE_KEYWORDS) {
+      if (hasOwn(root, key)) {
+        hidden.set(key, root[key])
+        delete root[key]
+      }
+    }
+    if (hidden.size) {
+      this.restorers.push(() => {
+        // back where they were, not behind the others: keyword order is visiting order downstream
+        const current = {...root}
+        for (const key of keys) {
+          delete root[key]
+          if (hidden.has(key)) {
+            root[key] = hidden.get(key)
+          } else if (hasOwn(current, key)) {
+            root[key] = current[key]
+          }
+        }
+      })
+    }
+    return document
+  }
+
+  restore(): void {
+    this.restorers.forEach(restore => restore())
+  }
 }
 
 /** `other.json`, `other.json#`, `http://x/y.json#/`: a $ref to a separate document as a whole */
@@ -250,11 +323,7 @@ function tagExternalDefinitions(documents: Set<JSONSchema>, rootSchema: JSONSche
       // A name the document being compiled defines itself stays that definition's alone:
       // another file's entry under the same key is left unnamed (inlined, as before)
       // rather than taking the name or a numbered variant of it, depending on visit order.
-      if (
-        Object.prototype.hasOwnProperty.call(rootDefinitions, key) ||
-        !isPlainObject(entry) ||
-        Object.prototype.hasOwnProperty.call(entry, DefinitionKey)
-      ) {
+      if (hasOwn(rootDefinitions, key) || !isPlainObject(entry) || hasOwn(entry, DefinitionKey)) {
         continue
       }
       // configurable: the root document's own `$defs` key takes precedence (see `normalize`)
@@ -321,7 +390,7 @@ function stampSource<T>(document: T, file: string): T {
       node.forEach((item, i) => go(item, `${pointer}/${i}`))
       return
     }
-    if (!isPlainObject(node) || Object.prototype.hasOwnProperty.call(node, Source)) {
+    if (!isPlainObject(node) || hasOwn(node, Source)) {
       return
     }
     const value: SchemaSource = {file, pointer}
@@ -341,33 +410,26 @@ function stampSource<T>(document: T, file: string): T {
  * The ref-parser cannot see one kind of cycle: a `$ref` with sibling keywords that points back at
  * its own container, when that container was itself entered through such a `$ref`. It merges the
  * target into a fresh object on every visit, so its "seen this object" checks never fire and it
- * nests without end (`#/a/b/b/b/…`) -- a stack overflow at best and, with a self-referencing `$ref`
- * nearby, hours of CPU first. So bound the nesting, as ref-parser releases from 15.3 on do
- * themselves (`dereference.maxDepth`, same default; real schemas stay under 100): in $RefParser from
- * the one hook that sees every path the crawl visits -- which otherwise stays the caller's -- and in
- * `dereferenceInDocument`, which copies its bookkeeping and so its blind spot, by the same count.
+ * nests without end (`#/a/b/b/b/…`). What stops it is the bound it keeps on nesting depth
+ * (`dereference.maxDepth`, 500 unless the caller says otherwise; real schemas stay under 100) --
+ * reported here with the likelier cause spelled out, and kept by `dereferenceInDocument`, which
+ * copies the ref-parser's bookkeeping and so its blind spot, by the same count.
  */
 
 const DEFAULT_MAX_DEPTH = 500
 
-function depthLimitedPathMatcher(options: $RefOptions['dereference']): (pathFromRoot: string) => boolean {
-  const {excludedPathMatcher, maxDepth: configured} = (options ?? {}) as {
-    excludedPathMatcher?: (path: string) => boolean
-    maxDepth?: number | null
-  }
-  const maxDepth = configured ?? DEFAULT_MAX_DEPTH // read as ref-parser 15.3+ reads it: null, like undefined, means the default
-  const shortEnough = 2 * maxDepth // "#" then at least "/x" per level: most paths stop here (empty keys fire late, not never)
-  return path => {
-    const levels = path.length > shortEnough ? path.split('/') : undefined
-    if (levels && levels.length - 1 > maxDepth) {
-      throw tooDeep(maxDepth, levels)
-    }
-    return excludedPathMatcher?.(path) ?? false
-  }
+/**
+ * The ref-parser's "Maximum dereference depth (N) exceeded at #/…" (nesting, counted from the root) with the
+ * likelier cause spelled out; not its namesake for a chain of N `$ref`s, which names a file instead
+ */
+function tooDeepFromRefParser(error: unknown): ReferenceError | undefined {
+  const match =
+    error instanceof RangeError && /^Maximum dereference depth \((\d+)\) exceeded at (#.*?)\. This /.exec(error.message)
+  return match ? tooDeep(Number(match[1]), match[2]) : undefined
 }
 
-/** `levels`: the runaway path split at `/`, root (`#`) first */
-function tooDeep(maxDepth: number, levels: string[]): ReferenceError {
+function tooDeep(maxDepth: number, path: string): ReferenceError {
+  const levels = path.split('/') // root (`#`) first
   return new ReferenceError(
     `$ref nesting goes deeper than ${maxDepth} levels at ${levels.slice(0, 7).join('/')}${levels.length > 7 ? '/…' : ''} -- ` +
       'either a "$ref" with sibling keywords that leads back to its own parent (a cycle the ref resolver ' +
@@ -438,7 +500,7 @@ function pointerTarget(root: JSONSchema, pointer: string): object | undefined {
   let node: any = root
   for (const token of pointer.slice(2).split('/')) {
     const key = token.replace(/~1/g, '/').replace(/~0/g, '~')
-    if (!isObjectWithoutRef(node) || !Object.prototype.hasOwnProperty.call(node, key)) {
+    if (!isObjectWithoutRef(node) || !hasOwn(node, key)) {
       return undefined
     }
     node = node[key]
@@ -474,7 +536,7 @@ export function dereferenceInDocument(
     let circular = false
     for (const key of Object.keys(node)) {
       if (trail.push(key) > DEFAULT_MAX_DEPTH) {
-        throw tooDeep(DEFAULT_MAX_DEPTH, ['#', ...trail])
+        throw tooDeep(DEFAULT_MAX_DEPTH, `#/${trail.join('/')}`)
       }
       const value = node[key]
       if (isRef(value)) {
@@ -494,11 +556,11 @@ export function dereferenceInDocument(
   function resolve(ref: Ref): Resolution {
     const extended = Object.keys(ref).length > 1 // sibling keywords next to the `$ref`
     const cached = cache.get(ref.$ref)
-    if (cached && !cached.circular) {
-      return extended ? {value: overlay(cached.value, siblingsOf(ref)), circular: false} : cached // (sic)
+    if (cached && (!extended || cached.circular)) {
+      return cached // (sic) siblings and all, when the target turned out circular
     }
     const target = targets.get(ref.$ref)!
-    const value = extended ? overlay(siblingsOf(ref), target) : target
+    const value = extended ? extend(ref, target as Record<string, unknown>) : target
     const resolution = {value, circular: parents.has(target) || crawl(value)}
     if (!extended) {
       cache.set(ref.$ref, resolution)
@@ -509,21 +571,51 @@ export function dereferenceInDocument(
   crawl(root)
 }
 
-function siblingsOf(ref: Ref): object {
-  const siblings: Partial<Ref> = {...ref}
-  delete siblings.$ref
-  return siblings
-}
-
-/** A new object with `first`'s keywords, then those of `second` that it lacks */
-function overlay(first: object, second: object): object {
-  const merged: Record<string, unknown> = {...first}
-  for (const key of Object.keys(second)) {
-    if (!(key in first)) {
-      merged[key] = (second as typeof merged)[key]
+/**
+ * A new object with the `$ref`'s sibling keywords, then the target's keywords they don't restate -- and
+ * where both give an object for the same keyword, the two merged, the siblings' members winning
+ * ($RefParser's `dereference.mergeKeys`, on by default)
+ */
+function extend(ref: Ref, target: {[key: string]: unknown}): object {
+  const merged: Record<string, unknown> = {}
+  for (const key of Object.keys(ref)) {
+    if (key !== '$ref') {
+      merged[key] = ref[key]
+    }
+  }
+  for (const key of Object.keys(target)) {
+    if (!hasOwn(merged, key)) {
+      merged[key] = target[key]
+    } else if (isObjectLike(target[key]) && isObjectLike(merged[key])) {
+      merged[key] = deepMerge(target[key], merged[key] as object)
     }
   }
   return merged
+}
+
+/** $RefParser's: `source`'s members laid over a copy of `target`'s, recursively; arrays are copied, never merged */
+function deepMerge(target: unknown, source: object): object {
+  if (!isObjectLike(target)) {
+    return source
+  }
+  if (Array.isArray(source)) {
+    return [...source]
+  }
+  const base = target as Record<string, unknown>
+  const merged = {...base}
+  for (const key of Object.keys(source)) {
+    const value = (source as typeof merged)[key]
+    merged[key] = Array.isArray(value)
+      ? [...value]
+      : isObjectLike(value)
+        ? deepMerge(hasOwn(base, key) ? base[key] : undefined, value as object)
+        : value
+  }
+  return merged
+}
+
+function hasOwn(object: unknown, key: PropertyKey): boolean {
+  return Object.prototype.hasOwnProperty.call(object, key)
 }
 
 function isThenable(value: unknown): value is PromiseLike<unknown> {

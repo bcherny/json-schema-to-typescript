@@ -1,6 +1,6 @@
 import {readFileSync} from 'fs'
 import {JSONSchema4, JSONSchema6, JSONSchema7} from 'json-schema'
-import {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
+import type {ParserOptions as $RefOptions} from '@apidevtools/json-schema-ref-parser'
 import {endsWith, merge} from 'lodash'
 import {dirname, resolve} from 'path'
 import {Options as PrettierOptions} from 'prettier'
@@ -31,7 +31,7 @@ export interface Options {
    * `dereference.maxDepth` (default 500) bounds how deep dereferencing may nest before it is reported as a
    * `$ref` cycle; raise it for schemas that genuinely nest or chain `$ref`s deeper than that.
    */
-  $refOptions: $RefOptions & {dereference?: {maxDepth?: number}}
+  $refOptions: $RefOptions
   /**
    * Default value for additionalProperties, when it is not explicitly set.
    */

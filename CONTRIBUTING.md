@@ -1,6 +1,6 @@
 # Contributing
 
-- Install dependencies with `bun install` ([bun](https://bun.sh) is this repo's package manager, script runner and test runner; CI uses the version in `.bun-version`)
+- Install dependencies with `bun install` ([bun](https://bun.sh) is this repo's package manager, script runner and test runner; CI uses the version in `.bun-version`). The CLI tests and the published package run on Node.js, 22.19 or later
 - Be sure to add a test for each change you make
 
 ## Tips
