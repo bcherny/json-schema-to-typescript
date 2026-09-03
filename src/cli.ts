@@ -14,6 +14,9 @@ import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} f
 // flags are applied afterwards, so they still take precedence.
 const defaultOptions = omit(DEFAULT_OPTIONS, ['cwd', 'style'])
 
+// A mistake in how the CLI was called. main() prints its message alone: the stack says nothing the user can act on.
+class UsageError extends Error {}
+
 main(
   minimist(process.argv.slice(2), {
     alias: {
@@ -28,6 +31,7 @@ main(
       'format',
       'ignoreMinAndMaxItems',
       'imports',
+      'inferStringEnumKeysFromValues',
       'readonly',
       'readonlyKeyword',
       'removeOptionalIfDefaultExists',
@@ -73,29 +77,29 @@ async function main(argv: minimist.ParsedArgs) {
       (argv.input !== undefined && argv._.length > 0) ||
       (argv.output !== undefined && argv._.length > 1)
     ) {
-      throw new ReferenceError(
+      throw new UsageError(
         `Unexpected extra argument(s): ${argv._.join(', ')}. json-schema-to-typescript accepts at most one input path and one output path. If you passed a glob to --input, quote it (e.g. -i "schemas/**/*.json") so your shell doesn't expand it first.`,
       )
     }
     if ((ISGLOB || ISDIR) && argOut && argOut.includes('.d.ts')) {
-      throw new ReferenceError(
+      throw new UsageError(
         `You have specified a single file ${argOut} output for a multi file input ${argIn}. This feature is not yet supported, refer to issue #272 (https://github.com/bcherny/json-schema-to-typescript/issues/272)`,
       )
     }
 
     if (argv.imports) {
       if (!ISGLOB && !ISDIR) {
-        throw new ReferenceError(
+        throw new UsageError(
           '--imports compiles a directory or glob of schemas together, importing shared types between the output files; a single input file has no other file to import from.',
         )
       }
       if (!argOut) {
-        throw new ReferenceError(
+        throw new UsageError(
           '--imports needs an output directory (--output): import paths are computed between the output files.',
         )
       }
       if (argv.cwd !== undefined) {
-        throw new ReferenceError(
+        throw new UsageError(
           "--cwd cannot be combined with --imports: each file's $refs are resolved against that file's own location.",
         )
       }
@@ -109,7 +113,7 @@ async function main(argv: minimist.ParsedArgs) {
       outputResult(await processFile(argIn, argOut, argv as Partial<Options>), argOut)
     }
   } catch (e) {
-    error(e)
+    error(e instanceof UsageError ? e.message : e)
     process.exit(1)
   }
 }
@@ -123,7 +127,7 @@ async function processGlob(argIn: string, argOut: string | undefined, argv: Part
   const files = await glob(argIn, {expandDirectories: false}) // execute glob pattern match
 
   if (files.length === 0) {
-    throw ReferenceError(
+    throw new UsageError(
       `You passed a glob pattern "${argIn}", but there are no files that match that pattern in ${process.cwd()}`,
     )
   }
