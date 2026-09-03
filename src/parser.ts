@@ -377,7 +377,7 @@ function parseNonLiteral(
       const values = (schema as EnumJSONSchema).enum!
       // A TypeScript enum member holds a string or a number: an `enum` with a `null`,
       // boolean, object or array value cannot become one (`None = null` does not compile),
-      // so it is typed as it would be without `tsEnumNames`, as a union of literals.
+      // so it is typed as a union of its values instead, like an `enum` without `tsEnumNames`.
       if (!values.every(isEnumMemberValue)) {
         return parseNonLiteral(schema, 'UNNAMED_ENUM', options, keyName, processed, usedNames, scope)
       }
