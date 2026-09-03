@@ -201,6 +201,20 @@ suite('CLI', () => {
     )
   }
 
+  // The same for an option flag: `=false` and ` false` only parse as booleans for flags
+  // minimist knows are boolean, and inferStringEnumKeysFromValues was missing from that list
+  for (const flag of [
+    '--no-inferStringEnumKeysFromValues',
+    '--inferStringEnumKeysFromValues false',
+    '--inferStringEnumKeysFromValues=false',
+  ]) {
+    cliTest(
+      `file in (-i), option boolean with explicit false value (${flag}), pipe out`,
+      `node dist/src/cli.js -i ./test/resources/RefSiblings/country.json ${flag}`,
+      ({stdout}) => expect(stdout).toContain('export type Country = "NL" | "DE" | "BE"'),
+    )
+  }
+
   // https://github.com/bcherny/json-schema-to-typescript/issues/131
   cliTest(
     'readOnly annotations are ignored by default',
@@ -394,6 +408,30 @@ suite('CLI', () => {
       expect(code).toBe(1)
       expect(stderr).toContain('Unexpected extra argument(s): ./test/resources/MultiSchema/b.yaml')
       expect(existsSync('./test/resources/MultiSchema/extraArgs.d.ts')).toBe(false)
+    },
+  )
+
+  // A usage error is one `error: ...` line on stderr: the message, no stack trace around it
+  cliFailTest(
+    'a glob that matches no file is a one-line usage error',
+    'node dist/src/cli.js -i "./test/resources/NoSuchDir/*.json"',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: You passed a glob pattern "./test/resources/NoSuchDir/*.json", but')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+  )
+
+  // ...while anything else that goes wrong still says where: the unreadable path here
+  cliFailTest(
+    'an unreadable input file reports the path it could not open',
+    'node dist/src/cli.js -i ./test/resources/NoSuchFile.json',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: ')
+      expect(stderr).toContain('ENOENT')
+      expect(stderr).toContain('NoSuchFile.json')
     },
   )
 
