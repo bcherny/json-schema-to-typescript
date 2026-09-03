@@ -8,6 +8,7 @@ import {
 } from '@apidevtools/json-schema-ref-parser'
 import {isObjectLike, isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
+import {SCHEMA_HOLDING_KEYWORDS} from './keywords'
 import {DefinitionKey, JSONSchema, SchemaSource, Source} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
@@ -40,7 +41,8 @@ export async function dereference(
   log('green', 'dereferencer', 'Dereferencing input schema:', cwd, schema)
   const dereferencedPaths: DereferencedPaths = new WeakMap()
   const externalDocuments = new Set<JSONSchema>()
-  const onDereference = ($ref: string, schema: JSONSchema) => {
+  const nonSchemaTargets: NonSchemaTarget[] = []
+  const onDereference = ($ref: string, schema: JSONSchema, holder?: object, key?: string) => {
     // The target of a $ref need not be an object: it can be a boolean schema (`true`/`false`),
     // or -- for a pointer into a keyword's value -- any JSON value. Only objects can be WeakMap
     // keys, and only objects are named after the path they were referenced by.
@@ -49,6 +51,8 @@ export async function dereference(
       if (isWholeDocumentRef($ref)) {
         externalDocuments.add(schema)
       }
+    } else if (typeof schema !== 'boolean' && holder && key !== undefined) {
+      nonSchemaTargets.push({$ref, holder, key, value: schema}) // fine or not depending on where it sits: see below
     }
   }
   let prepare: Prepare = prenormalizeDocument
@@ -74,7 +78,8 @@ export async function dereference(
   if (targets) {
     dereferenceInDocument(schema, targets, onDereference)
   } else {
-    dereferencedSchema = (await new $RefParser().dereference(set?.file ?? cwd, schema, {
+    const parser = new $RefParser()
+    dereferencedSchema = (await parser.dereference(set?.file ?? cwd, schema, {
       ...$refOptions,
       resolve,
       parse: prenormalizingParsers($refOptions.parse, prepare),
@@ -84,6 +89,10 @@ export async function dereference(
         onDereference,
       },
     })) as JSONSchema
+    if (nonSchemaTargets.length || !isSchema(dereferencedSchema)) {
+      // (`values()` is every document read, by path or URL -- typed upstream as if it were one schema)
+      rejectNonSchemaTargets(schema, dereferencedSchema, nonSchemaTargets, () => parser.$refs.values() as object)
+    }
     tagExternalDefinitions(externalDocuments, dereferencedSchema)
   }
   return {dereferencedPaths, dereferencedSchema: resolveNamedAnchors(dereferencedSchema)}
@@ -94,6 +103,132 @@ function isWholeDocumentRef($ref: string): boolean {
   const hash = $ref.indexOf('#')
   const fragment = hash === -1 ? '' : $ref.slice(hash + 1)
   return hash !== 0 && (fragment === '' || fragment === '/')
+}
+
+/*
+ * A `$ref` that stands where a schema is expected has to lead to one: an object or a boolean. One
+ * that leads to an empty document, `null`, a string or a number instead -- a schema file saved
+ * empty, a `.yaml` file that is really prose, a pointer onto a keyword's value -- would otherwise
+ * surface as a crash somewhere in the parser, or as that value printed as a literal type. A `$ref`
+ * anywhere else (`description: {$ref: "intro.md"}`, or under some key of the user's own) may lead
+ * to anything, so the few suspects `onDereference` collects are only judged once dereferencing is
+ * done, by where they ended up: in a subschema position -- under a keyword that holds subschemas,
+ * of a schema that is itself in one -- or standing in for such a keyword's whole map or list of
+ * them. None of this runs for a document whose `$ref`s all lead to objects and booleans.
+ */
+
+/** A `$ref` that resolved to `undefined` (an empty document), `null`, a string or a number */
+type NonSchemaTarget = {$ref: string; holder: object; key: string; value: unknown}
+
+function isSchema(value: unknown): boolean {
+  return typeof value === 'boolean' || (typeof value === 'object' && value !== null)
+}
+
+/**
+ * @param root the document as given: for its own `$ref`, when the whole of it was one
+ * @param documents every document read while dereferencing, by path or URL (asked for only when
+ * there is something to report)
+ */
+function rejectNonSchemaTargets(
+  root: JSONSchema,
+  dereferenced: unknown,
+  suspects: NonSchemaTarget[],
+  documents: () => object,
+): void {
+  const misplaced: Misplaced[] = isSchema(dereferenced)
+    ? misplacedTargets(dereferenced, suspects)
+    : [{where: 'the root', $ref: String(root.$ref), value: dereferenced}]
+  if (misplaced.length) {
+    const files = documents() as Record<string, unknown>
+    const lines = new Set(misplaced.map(_ => describeNonSchemaTarget(_, files)))
+    throw new ReferenceError(
+      `${[...lines].join('\n')}\nA $ref in place of a schema must lead to an object or a boolean.`,
+    )
+  }
+}
+
+type Misplaced = {where: string; $ref: string; value: unknown}
+
+/** The suspects that sit in a subschema position, found by walking those positions from the root */
+function misplacedTargets(root: unknown, suspects: NonSchemaTarget[]): Misplaced[] {
+  const misplaced: Misplaced[] = []
+  if (!suspects.length) {
+    return misplaced
+  }
+  const byHolder = new Map<object, NonSchemaTarget[]>()
+  for (const suspect of suspects) {
+    byHolder.set(suspect.holder, [...(byHolder.get(suspect.holder) ?? []), suspect])
+  }
+  const visited = new Set<object>()
+  function visit(schema: unknown): void {
+    if (!isPlainObject(schema) || visited.has(schema as object)) {
+      return // a boolean schema (or no schema at all) has no positions below it
+    }
+    const node = schema as Record<string, unknown>
+    visited.add(node)
+    for (const [keyword, holds] of SCHEMA_HOLDING_KEYWORDS) {
+      if (!(keyword in node)) {
+        continue
+      }
+      const held = node[keyword]
+      if (
+        holds === 'schemaMap' ||
+        holds === 'schemaArray' ||
+        (holds === 'schemaOrSchemaArray' && Array.isArray(held))
+      ) {
+        if (isObjectLike(held)) {
+          byHolder.get(held as object)?.forEach(_ => misplaced.push({where: `${keyword}/${_.key}`, ..._}))
+          Object.values(held as object).forEach(visit)
+          continue
+        }
+        // else a `$ref` may have stood in for the whole map or list: judged like a single schema
+      }
+      byHolder.get(node)?.forEach(_ => _.key === keyword && misplaced.push({where: keyword, ..._}))
+      visit(held)
+    }
+  }
+  visit(root)
+  return misplaced
+}
+
+/** `$ref "other.json" at properties/y resolves to /abs/other.json, which is not a JSON Schema: the file is empty.` */
+function describeNonSchemaTarget({where, $ref, value}: Misplaced, files: Record<string, unknown>): string {
+  const found =
+    typeof value === 'string'
+      ? `the string ${JSON.stringify(value.length > 40 ? `${value.slice(0, 39)}…` : value)}`
+      : typeof value === 'number'
+        ? `the number ${value}`
+        : String(value) // null; or undefined, which no pointer reaches: then it is a whole, empty file
+  const file = fileBehind($ref, value, files)
+  const target =
+    file !== undefined && isWholeDocumentRef($ref)
+      ? `${file}, which is not a JSON Schema: ${value === undefined ? 'the file is empty' : `it parses to ${found}`}`
+      : `${found}${file === undefined ? '' : ` in ${file}`}, which is not a JSON Schema`
+  return `$ref "${$ref}" at ${where} resolves to ${target}.`
+}
+
+/**
+ * The file (path or URL) behind a `$ref` to another document, as far as the set of documents read
+ * can tell. For a `$ref` to a whole document: the one file holding this very value, if several the
+ * one also named like the `$ref`'s last path segment (a `$ref` can lead through a file that is
+ * itself a `$ref` to the real culprit). For a pointer into another document: the one file named
+ * like that segment. Undefined for a pointer within the document, or when no single file is left.
+ */
+function fileBehind($ref: string, value: unknown, files: Record<string, unknown>): string | undefined {
+  const hash = $ref.indexOf('#')
+  const name = fileKey(hash === -1 ? $ref : $ref.slice(0, hash))
+    .split('/')
+    .pop()
+  if (!name) {
+    return undefined
+  }
+  const named = Object.keys(files).filter(file => fileKey(file).split('/').pop() === name)
+  let candidates = named
+  if (isWholeDocumentRef($ref)) {
+    const holding = Object.keys(files).filter(file => Object.is(files[file], value))
+    candidates = holding.length > 1 ? holding.filter(file => named.includes(file)) : holding
+  }
+  return candidates.length === 1 ? candidates[0] : undefined
 }
 
 /**

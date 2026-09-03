@@ -514,6 +514,11 @@ rules.set('Add tsEnumNames to enum types', (schema, _, options) => {
     schema.enum?.every(value => typeof value === 'string') &&
     !schemasNormalizedFromConst.has(schema)
   ) {
+    // A value listed twice is one member, not two with the same name (TS2300)
+    const distinct = new Set(schema.enum)
+    if (distinct.size < schema.enum.length) {
+      schema.enum = Array.from(distinct)
+    }
     schema.tsEnumNames = schema.enum.map(String)
   }
 })
