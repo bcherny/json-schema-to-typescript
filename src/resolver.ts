@@ -10,7 +10,7 @@ import {
   jsonSchemaParserNormalizeArgs,
 } from '@apidevtools/json-schema-ref-parser'
 import {isObjectLike, isPlainObject} from 'lodash'
-import {prenormalizeDocument} from './prenormalizer'
+import {inDocumentPointerValue, prenormalizeDocument} from './prenormalizer'
 import {SCHEMA_HOLDING_KEYWORDS} from './keywords'
 import {DefinitionKey, JSONSchema, SchemaSource, Source} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
@@ -76,6 +76,16 @@ export async function dereference(
   // $RefParser does. A member of a file set goes to $RefParser too: it is registered there under
   // its own path, for the other members' `$ref`s to find.
   const optionsConcernOtherFiles = Object.keys($refOptions).every(_ => _ === 'resolve' || _ === 'parse')
+  // The root's own `$ref` into this document was resolved by `prenormalizeDocument` if it led to a
+  // schema. One that leads to a keyword's value instead (`#/definitions/unit/default`) is judged
+  // here, before either route: the ref-parser (16 on) follows the root's `$ref` while walking that
+  // very pointer's tokens, and so reports the pointer as missing when it is not.
+  if (typeof schema.$ref === 'string' && schema.$ref.startsWith('#/')) {
+    const target = inDocumentPointerValue(schema, schema.$ref)
+    if (target !== undefined && !isSchema(target)) {
+      rejectNonSchemaTargets(schema, target, [], () => ({}))
+    }
+  }
   const targets = optionsConcernOtherFiles && !set ? inDocumentTargets(schema) : undefined
   let dereferencedSchema = schema
   if (targets) {
