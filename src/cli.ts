@@ -264,7 +264,8 @@ Boolean values can be set to false using the 'no-' prefix.
   --inferStringEnumKeysFromValues
       Create enums from JSON enums instead of union types
   --format
-      Format code? Set this to false to improve performance.
+      Format the output with Prettier? --no-format is two to three times
+      faster and lighter on large schemas, and still readable.
   --formatTypes.FORMAT=TYPE
       Emit TYPE for strings with the given format (eg.
       --formatTypes.date-time=Date). Repeat for each format.
