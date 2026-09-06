@@ -1052,10 +1052,12 @@ function newInterface(
     // its own accepts nothing but the empty object. Emitting `{}` for it would say
     // the opposite: in TypeScript `{}` accepts any non-nullish value. Express the
     // constraint with a `never` index signature instead, which is what
-    // `Record<string, never>` desugars to.
+    // `Record<string, never>` desugars to. Unreachable definitions (with the
+    // `unreachableDefinitions` option) ride along as params only to get declared, never
+    // as members, so they are kept beside the signature and do not count as members.
     params:
-      params.length === 0 && superTypes.length === 0 && schema.additionalProperties === false
-        ? [CLOSED_EMPTY_OBJECT_PARAM]
+      params.every(_ => _.isUnreachableDefinition) && superTypes.length === 0 && schema.additionalProperties === false
+        ? [...params, CLOSED_EMPTY_OBJECT_PARAM]
         : params,
     standaloneName: name,
     superTypes,

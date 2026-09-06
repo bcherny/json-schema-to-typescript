@@ -31,7 +31,9 @@ exports[`compileFiles memo: test/resources/Imports/memo/common.json 1`] = `
 /**
  * Shared definitions; no properties of its own
  */
-export interface Common {}
+export interface Common {
+  [k: string]: never;
+}
 export interface Thing {
   id: string;
   tags?: Tag[];
@@ -92,7 +94,9 @@ export interface C {
 exports[`compileFiles diamond: test/resources/Imports/diamond/base.json 1`] = `
 "export type Kind = "a" | "b";
 
-export interface Base {}
+export interface Base {
+  [k: string]: never;
+}
 export interface Node {
   id: string;
   kind?: Kind;
@@ -196,7 +200,9 @@ exports[`compileFiles doublealias: test/resources/Imports/doublealias/p.json 1`]
 `;
 
 exports[`compileFiles doublealias: test/resources/Imports/doublealias/q.json 1`] = `
-"export interface Q {}
+"export interface Q {
+  [k: string]: never;
+}
 export interface Thing {
   q?: string;
 }
@@ -276,7 +282,9 @@ export type ObjList = Obj[];
 export type Either = Obj | Named;
 export type Str = string;
 
-export interface Defs {}
+export interface Defs {
+  [k: string]: never;
+}
 export interface Obj {
   o?: string;
 }
@@ -372,12 +380,16 @@ export interface Paint {
 exports[`compileFiles yamlmix: test/resources/Imports/yamlmix/types.yaml 1`] = `
 "export type Color = "red" | "blue";
 
-export interface Types {}
+export interface Types {
+  [k: string]: never;
+}
 "
 `;
 
 exports[`compileFiles spell: test/resources/Imports/spell/my defs.json 1`] = `
-"export interface MyDefs {}
+"export interface MyDefs {
+  [k: string]: never;
+}
 export interface D {
   v?: string;
 }

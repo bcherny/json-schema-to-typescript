@@ -642,7 +642,9 @@ exports[`CLI directory in, --imports: shared types are imported from the module 
 /**
  * Shared definitions; no properties of its own
  */
-export interface Common {}
+export interface Common {
+  [k: string]: never;
+}
 export interface Thing {
   id: string;
   tags?: Tag[];
