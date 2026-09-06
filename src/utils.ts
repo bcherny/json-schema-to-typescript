@@ -430,7 +430,9 @@ export function parseFileAsJSONSchema(filename: string | null, contents: string)
   try {
     return JSON.parse(contents)
   } catch {
-    throw new TypeError(`Error parsing JSON in file "${filename}"`)
+    throw new TypeError(
+      filename == null ? 'Error parsing JSON from standard input' : `Error parsing JSON in file "${filename}"`,
+    )
   }
 }
 

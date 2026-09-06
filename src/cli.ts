@@ -6,7 +6,8 @@ import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {resolveConfig} from 'prettier'
-import {compile, compileFiles, DEFAULT_OPTIONS, Options} from './index'
+import {JSONParserError, JSONParserErrorGroup} from '@apidevtools/json-schema-ref-parser'
+import {compile, compileFiles, DEFAULT_OPTIONS, Options, ValidationError} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} from './utils'
 
 // cwd and style are deliberately left out of the CLI defaults: processFile()
@@ -63,10 +64,18 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
-  const ISGLOB = argIn && isDynamicPattern(argIn)
-  const ISDIR = !!argIn && isDir(argIn)
-
   try {
+    // A path flag with nothing after it (`json2ts schema.json -o`) parses as boolean `true`; `--output=` as ''
+    for (const flag of ['input', 'output'] as const) {
+      if (argv[flag] === true || argv[flag] === '') {
+        throw new UsageError(
+          `--${flag} (-${flag[0]}) needs a path after it, e.g. -${flag[0]} ${flag === 'input' ? 'schema.json' : 'schema.d.ts'}`,
+        )
+      }
+    }
+    const ISGLOB = argIn && isDynamicPattern(argIn)
+    const ISDIR = !!argIn && isDir(argIn)
+
     // Defend against unquoted glob expansion (or other shell mistakes) silently supplying extra
     // positional arguments. A positional that competes with an explicitly-passed --input/--output
     // flag for the same slot, or overflows past the two positional slots (input, output) this CLI
@@ -113,9 +122,33 @@ async function main(argv: minimist.ParsedArgs) {
       outputResult(await processFile(argIn, argOut, argv as Partial<Options>), argOut)
     }
   } catch (e) {
-    error(e instanceof UsageError ? e.message : e)
+    // The user's mistake, not the program's: print what to fix, without the stack.
+    // - UsageError: how the CLI was called
+    // - ValidationError: compile() already printed one line per rule the schema breaks
+    // - json-schema-ref-parser's errors: a $ref it could not resolve (a missing or
+    //   unparsable file, a pointer to nothing), one line each
+    if (e instanceof UsageError) {
+      error(e.message)
+    } else if (e instanceof JSONParserError || e instanceof JSONParserErrorGroup) {
+      refErrorLines(e).forEach(line => error(line))
+    } else if (!(e instanceof ValidationError)) {
+      error(e)
+    }
     process.exit(1)
   }
+}
+
+/**
+ * The message of each `$ref` error, naming the file it was found in when the message
+ * itself does not (a missing pointer says which pointer, not which file it is in). For
+ * the schema being compiled itself, `source` is its directory (a trailing slash), which
+ * says nothing: the user knows which schema they passed.
+ */
+function refErrorLines(e: JSONParserError | JSONParserErrorGroup): string[] {
+  const errors = e instanceof JSONParserErrorGroup ? e.errors : [e]
+  return errors.map(_ =>
+    _.source && !_.source.endsWith('/') && !_.message.includes(_.source) ? `${_.message} (in ${_.source})` : _.message,
+  )
 }
 
 // check if path is an existing directory
