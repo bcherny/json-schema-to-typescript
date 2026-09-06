@@ -1,0 +1,17 @@
+{
+  "name": "Add tsEnumNames to enum types (4): a repeated value is one member",
+  "in": {
+    "$id": "foo",
+    "type": "string",
+    "enum": ["foo", "bar", "foo"]
+  },
+  "options": {
+    "inferStringEnumKeysFromValues": true
+  },
+  "out": {
+    "$id": "foo",
+    "type": "string",
+    "enum": ["foo", "bar"],
+    "tsEnumNames": ["foo", "bar"]
+  }
+}

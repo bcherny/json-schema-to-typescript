@@ -2,13 +2,22 @@
   "about": "Findings that `bun run fuzz:ci` (seeds 1..500) still produces on master; test/fuzz/README.md explains the gate. Each entry names the open issue or PR that tracks it and lists the seeds it fires on. An entry matches a finding on status, errorName, the file of its top library frame and a message prefix, and only covers the seeds it lists: the same error on any other seed counts as new. Delete an entry when its fix lands; the run prints a note once an entry or some of its seeds stop reproducing.",
   "findings": [
     {
-      "issue": 804,
+      "issue": 840,
       "status": "THREW",
       "errorName": "ReferenceError",
       "frame": "src/parser.js",
       "message": "Failed to resolve $ref ",
-      "seeds": [114, 139, 187, 254, 263, 267, 286, 339, 361, 372],
-      "example": "a $ref cycle with no concrete base case, e.g. a definition that is only a $ref to itself, kept alive by unreachableDefinitions or reached through another $ref: {\"definitions\": {\"A\": {\"$ref\": \"#/definitions/A\"}}} with {unreachableDefinitions: true}. Since PR 804 this is rejected on purpose with a ReferenceError naming the $ref, so it is expected behaviour rather than a bug; the entry stays until the generator learns not to emit such cycles or the harness treats this error as expected."
+      "seeds": [199],
+      "example": "a recursive definition whose reference to itself carries a refining keyword, compiled with unreachableDefinitions: {\"definitions\": {\"B\": {\"type\": \"object\", \"properties\": {\"x\": {\"type\": \"string\"}}, \"additionalProperties\": {\"$ref\": \"#/definitions/B\", \"required\": [\"id\"]}}}} with {unreachableDefinitions: true}. B is a concrete object type, but the error calls it a $ref cycle with no concrete base case; the same definition reached through a plain root-level $ref compiles. PR 840 (compose a $ref with sibling keywords as an intersection instead of a merged copy) compiles it, so the entry goes when that lands."
+    },
+    {
+      "issue": 840,
+      "status": "THREW",
+      "errorName": "TypeError",
+      "frame": "",
+      "message": "Cannot use 'in' operator to search for '",
+      "seeds": [392],
+      "example": "a boolean-schema definition referenced once plainly and once with a refining keyword beside the $ref: {\"definitions\": {\"B\": true}, \"type\": \"object\", \"properties\": {\"c\": {\"$ref\": \"#/definitions/B\"}, \"a\": {\"$ref\": \"#/definitions/B\", \"required\": [\"id\"]}}}. The ref parser caches `true` for the first reference and then evaluates `key in true` while merging the second one's siblings, so the error comes from inside @apidevtools/json-schema-ref-parser (no library frame). Same family as issue 725; PR 840 no longer hands the ref parser a $ref with siblings and compiles it."
     }
   ]
 }

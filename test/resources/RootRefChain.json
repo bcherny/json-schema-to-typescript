@@ -1,0 +1,12 @@
+{
+  "$ref": "#/definitions/Hop",
+  "definitions": {
+    "Hop": {"$ref": "#/definitions/Target"},
+    "Target": {
+      "title": "Target",
+      "type": "object",
+      "properties": {"i": {"type": "integer"}},
+      "additionalProperties": false
+    }
+  }
+}

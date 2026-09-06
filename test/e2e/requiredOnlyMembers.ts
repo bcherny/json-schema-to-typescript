@@ -9,7 +9,8 @@
  *   isn't one of the parent's `properties`, so it is required as `unknown`, like everywhere else; a
  *   key listed twice (invalid, but tolerated everywhere else) is picked once.
  * - `oneOf` member 2: nothing it lists is declared, so `unknown` is all there is to pick.
- * - `oneOf` member 3: says something other than `required`, so it is parsed on its own.
+ * - `oneOf` member 3: says something besides `required` (`maxProperties`), so it is parsed on its
+ *   own: `b` is required with its declared type all the same, but nothing is picked.
  */
 export const input = {
   title: 'RequiredOnlyMembers',
@@ -24,6 +25,6 @@ export const input = {
   oneOf: [
     {type: 'object', required: ['b', 'notDeclared', 'b']},
     {required: ['notDeclared'], description: 'Nothing to pick here'},
-    {not: {required: ['b']}},
+    {required: ['b'], maxProperties: 1},
   ],
 }

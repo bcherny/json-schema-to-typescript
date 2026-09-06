@@ -1,0 +1,35 @@
+name: Feature request
+description: A new option, CLI flag, or kind of output
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What you want
+      description: What it should do, and why. Propose a name if it is a new option or flag.
+    validations:
+      required: true
+  - type: textarea
+    id: schema
+    attributes:
+      label: Example schema
+      description: A small JSON Schema the feature would apply to, if it is about generated types.
+      render: json
+  - type: textarea
+    id: expected
+    attributes:
+      label: Output you would like
+      description: The TypeScript you would want for that schema.
+      render: typescript
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else
+      description: What is generated today, prior art in other tools, links to the spec, workarounds you use now.
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contributing
+      options:
+        - label: I can open a PR for this

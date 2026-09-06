@@ -3,7 +3,7 @@
 [build]: https://img.shields.io/github/actions/workflow/status/bcherny/json-schema-to-typescript/ci.yml?style=flat-square
 [npm]: https://img.shields.io/npm/v/json-schema-to-typescript.svg?style=flat-square
 [mit]: https://img.shields.io/npm/l/json-schema-to-typescript.svg?style=flat-square
-[node]: https://img.shields.io/badge/Node.js-16+-417e37?style=flat-square
+[node]: https://img.shields.io/badge/Node.js-22.19+-417e37?style=flat-square
 
 > Compile JSON Schema to TypeScript typings.
 
@@ -59,6 +59,8 @@ export interface ExampleSchema {
 npm install json-schema-to-typescript
 ```
 
+Requires Node.js 22.19 or later. (json-schema-to-typescript 16.x is the last release line that runs on Node.js 16–20.)
+
 ## Usage
 
 json-schema-to-typescript is easy to use via the CLI, or programmatically.
@@ -91,7 +93,7 @@ json2ts --input foo.json --output foo.d.ts
 # or
 json2ts -i foo.json -o foo.d.ts
 # or (quote globs so that your shell doesn't expand them)
-json2ts -i 'schemas/**/*.json'
+json2ts -i 'schemas/**/*.json' -o types/
 # or
 json2ts -i schemas/ -o types/
 ```
@@ -259,7 +261,7 @@ See [server demo](example) and [browser demo](https://github.com/bcherny/json-sc
 | undefinedOptionalProperties | boolean | `false` | Append `\| undefined` to the type of every optional property (`age?: number \| undefined`), for consumers that compile with TypeScript's [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes). |
 | unknownAny | boolean | `true` | Use `unknown` instead of `any` where possible |
 | unreachableDefinitions | boolean | `false` | Generates code for `$defs` that aren't referenced by the schema. |
-| $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s |
+| $refOptions | object | `{}` | [$RefParser](https://github.com/APIDevTools/json-schema-ref-parser) Options, used when resolving `$ref`s. HTTP(S) `$ref`s to loopback, private-network and internal hosts (`localhost`, `127.*`, `10.*`, `192.168.*`, `*.internal`, `*.corp`, `*.local`…) or to ports such as 8080 and 8443 are refused by default (`Unable to resolve $ref pointer "http://localhost…"`); pass `{resolve: {http: {safeUrlResolver: false}}}` to allow them |
 
 ## Tests
 
@@ -314,7 +316,7 @@ $ bun run test
 ## Custom schema properties:
 
 - `tsType`: Overrides the type that's generated from the schema. Useful for forcing a type to `any` or when using non-standard JSON schema extensions ([eg](https://github.com/sokra/json-schema-to-typescript/blob/f1f40307cf5efa328522bb1c9ae0b0d9e5f367aa/test/e2e/customType.ts)).
-- `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)).
+- `tsEnumNames`: Overrides the names used for the elements in an enum. Can also be used to create string enums ([eg](https://github.com/johnbillion/wp-json-schemas/blob/647440573e4a675f15880c95fcca513fdf7a2077/schemas/properties/post-status-name.json)). The names must be distinct strings, one per `enum` value; otherwise the schema is rejected with a `ValidationError`. A name TypeScript would read as a number (`"1"`, `"-1"`, `"2.5"`) cannot be an enum member's name, so it gets a leading underscore (`_1 = 1`); the same goes for a value that `inferStringEnumKeysFromValues` turns into a name. A TypeScript enum holds strings and numbers only: an `enum` with a `null`, boolean, object or array value is typed as a union of its values (`null | "a" | "b"`) instead, and the names go unused.
 
 ## Not expressible in TypeScript:
 

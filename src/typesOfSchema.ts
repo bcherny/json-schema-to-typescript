@@ -33,10 +33,10 @@ export function typesOfSchema(schema: JSONSchema): Set<SchemaType> {
     }
   }
 
-  // A schema no matcher recognizes is an object if any of its keywords gives it a shape (one
-  // this tool doesn't implement: `not`, `if`), and otherwise -- only bounds on values
-  // (`pattern`, `maximum`), annotations, or keys this tool doesn't know -- says nothing about
-  // which type a value is, like the empty schema
+  // A schema no matcher recognizes is an object if one of its keywords still gives it a shape (a
+  // `required` list), and otherwise -- only bounds on values (`pattern`, `maximum`), annotations,
+  // applicators this tool doesn't implement (`not`, `if`), or keys it doesn't know -- says nothing
+  // about which type a value is, like the empty schema
   if (!matchedTypes.size) {
     matchedTypes.add(isShapeless(schema) ? 'ANY' : 'UNNAMED_SCHEMA')
   }
@@ -52,9 +52,32 @@ export function hasOwnType(schema: JSONSchema): boolean {
   return Boolean(schema.tsType) || Object.values(matchers).some(f => f(schema))
 }
 
-/** No keyword of the schema gives it a shape (see `STRUCTURAL_KEYWORDS`) */
+/**
+ * No keyword of the schema gives it a shape (see `STRUCTURAL_KEYWORDS`). A `$ref` the resolver
+ * could not resolve is still there and still stands for a type: the parser reports it.
+ */
 export function isShapeless(schema: JSONSchema): boolean {
-  return Object.keys(schema).every(key => !STRUCTURAL_KEYWORDS.has(key))
+  return !('$ref' in schema) && Object.keys(schema).every(key => !STRUCTURAL_KEYWORDS.has(key))
+}
+
+/**
+ * The schema says what an object's members are -- it declares `properties` or
+ * `patternProperties`, or types the rest with an `additionalProperties` schema -- and its `type`
+ * lets that apply: it is `object` or absent (object keywords alone read as an object, by this
+ * tool's convention). Under any other `type` those keywords constrain nothing -- JSON Schema
+ * applies them only to values that are objects -- so they give the schema no object shape; that
+ * includes an array `type`, whose `UNION` case in `parser.ts` re-parses the schema once per
+ * member type. `additionalProperties` counts only when it types something: `true` or `{}` is
+ * the open object any schema without these keywords already is, and `false` may be nothing
+ * but the `additionalProperties` option's default.
+ */
+function hasObjectShape(schema: JSONSchema): boolean {
+  return (
+    (schema.type === undefined || schema.type === 'object') &&
+    ('patternProperties' in schema ||
+      'properties' in schema ||
+      (isPlainObject(schema.additionalProperties) && !isShapeless(schema.additionalProperties as JSONSchema)))
+  )
 }
 
 /**
@@ -130,12 +153,7 @@ const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) 
   },
   NAMED_SCHEMA(schema) {
     // 8.2.1. The presence of "$id" in a subschema indicates that the subschema constitutes a distinct schema resource within a single schema document.
-    // Guarded against an array `type` (narrower than the guard on UNNAMED_SCHEMA
-    // below, on purpose): such a schema is a `UNION`, whose members are re-parsed
-    // one `type` at a time with the `properties` still attached (see the `UNION`
-    // case in `parser.ts`), so also matching here would intersect the object shape
-    // with that union and make its non-object members unreachable.
-    return '$id' in schema && !Array.isArray(schema.type) && ('patternProperties' in schema || 'properties' in schema)
+    return '$id' in schema && hasObjectShape(schema)
   },
   NEVER(schema: JSONSchema | boolean) {
     return schema === false
@@ -221,17 +239,10 @@ const matchers: Record<Exclude<SchemaType, 'CUSTOM_TYPE'>, (schema: JSONSchema) 
   UNNAMED_SCHEMA(schema) {
     // Mirrors NAMED_SCHEMA above: a schema's own `properties`/`patternProperties`
     // are a real type even without a `$id`, so they get intersected with any
-    // sibling `allOf`/`anyOf`/`oneOf` instead of being silently dropped. Guarded
-    // to schemas that are objects (or untyped) so it doesn't fire on a `UNION`
-    // member that was assigned a non-object `type` but still carries the
-    // parent's `properties` (see the `UNION` case in `parser.ts`). Schemas that
+    // sibling `allOf`/`anyOf`/`oneOf` instead of being silently dropped. Schemas that
     // don't otherwise match anything still fall through to the default case at
     // the bottom of `typesOfSchema`.
-    return (
-      (schema.type === undefined || schema.type === 'object') &&
-      !('$id' in schema) &&
-      ('patternProperties' in schema || 'properties' in schema)
-    )
+    return !('$id' in schema) && hasObjectShape(schema)
   },
   UNTYPED_ARRAY(schema) {
     return schema.type === 'array' && !('items' in schema)

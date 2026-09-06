@@ -34,9 +34,9 @@ interface Keyword {
   /**
    * Decides, on its own, which type a schema becomes: a `typesOfSchema` matcher or a
    * type-changing normalizer rule keys off of it, or the parser reads it whatever the matched
-   * type (`extends`) -- so a schema made up only of keywords without this flag is one the tool
-   * has no notion of (refining keywords: see `refines`). `'fallback'`: the type it implies
-   * yields to any other source of one (`default`).
+   * type (`extends`) -- so a schema made up only of keywords without this flag says nothing about
+   * the type (`STRUCTURAL_KEYWORDS`; refining keywords: see `refines`). `'fallback'`: the type it
+   * implies yields to any other source of one (`default`).
    */
   typed?: true | 'fallback'
   /**
@@ -48,8 +48,7 @@ interface Keyword {
   /**
    * Names, places or documents the schema, or hosts other schemas' definitions -- as opposed
    * to keywords that speak about instance values (constraints, defaults, examples). These stay
-   * put when a schema's constraints are moved into a subschema of it, and the ones that host
-   * definitions give the schema no shape of its own (`STRUCTURAL_KEYWORDS`).
+   * put when a schema's constraints are moved into a subschema of it.
    */
   meta?: true
   /**
@@ -183,11 +182,16 @@ const LEGACY = {
   notMeta: new Set<KeywordName>(['id']),
 }
 
-/** The subschema positions `traverse` descends into, and what each holds, in visiting order */
-export const SUBSCHEMA_KEYWORDS: ReadonlyArray<readonly [KeywordName, SchemaHolds]> = NAMES.flatMap(name => {
+/** Every keyword whose value is or contains subschemas, and what it holds, in table order */
+export const SCHEMA_HOLDING_KEYWORDS: ReadonlyArray<readonly [KeywordName, SchemaHolds]> = NAMES.flatMap(name => {
   const {holds} = KEYWORDS[name]
-  return holdsSchemas(holds) && !LEGACY.notTraversed.has(name) ? [[name, holds] as const] : []
+  return holdsSchemas(holds) ? [[name, holds] as const] : []
 })
+
+/** The subschema positions `traverse` descends into, and what each holds, in visiting order */
+export const SUBSCHEMA_KEYWORDS: typeof SCHEMA_HOLDING_KEYWORDS = SCHEMA_HOLDING_KEYWORDS.filter(
+  ([name]) => !LEGACY.notTraversed.has(name),
+)
 
 /**
  * Every keyword (bar the `LEGACY` carve-outs above). Definitions can technically sit under any
@@ -214,9 +218,6 @@ export const JSON_DATA_KEYWORDS = keywordsWhere(({holds}) => holds === 'json')
 /** @see Keyword.meta */
 export const META_KEYWORDS = keywordsWhere(({meta}, name) => meta === true && !LEGACY.notMeta.has(name))
 
-/** @see Keyword.typed */
-export const TYPE_SHAPING_KEYWORDS = keywordsWhere(({typed}) => typed !== undefined)
-
 /**
  * Keywords that have a say in the emitted type or its name, unless something else decides it:
  * the type-shaping ones bar fallbacks, the refining ones, and `$id` (draft 4: `id`, renamed
@@ -228,16 +229,15 @@ export const TYPE_RELEVANT_KEYWORDS = keywordsWhere(
 )
 
 /**
- * Keywords that give a schema a shape of its own: the ones that decide its type (`Keyword.typed`)
- * and the ones that apply subschemas to the instance, implemented (`properties`) or not (`not`,
- * `if`) -- a schema made up of only the latter is one this tool has no notion of. A schema with
- * none of either -- only bounds on values (`pattern`, `maximum`), annotations, `format`,
- * `nullable`, definitions for other schemas to use (`$defs`), or keys this tool has never heard
- * of -- says nothing about which type a value is: it is the empty schema.
+ * Keywords that give a schema a shape of its own: the ones that decide its type (`Keyword.typed`,
+ * bar fallbacks). A schema with none of them -- only bounds on values (`pattern`, `maximum`),
+ * annotations, `format`, `nullable`, refinements of a type nothing there establishes
+ * (`additionalItems` without `items`), definitions for other schemas to use (`$defs`), applicators
+ * this tool does not implement (`not`, `if`/`then`/`else`, `dependencies`), which decide which
+ * values validate but never which type they are, or keys this tool has never heard of -- says
+ * nothing about which type a value is: it is the empty schema.
  */
-export const STRUCTURAL_KEYWORDS = keywordsWhere(
-  ({holds, meta, typed}) => typed === true || (holdsSchemas(holds) && meta !== true),
-)
+export const STRUCTURAL_KEYWORDS = keywordsWhere(({typed}) => typed === true)
 
 /** @see Keyword.annotation */
 export const ANNOTATION_KEYWORDS = keywordsWhere(({annotation}) => annotation === true)

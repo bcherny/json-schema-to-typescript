@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Try it in the browser demo
+    url: https://borischerny.com/json-schema-to-typescript-browser/
+    about: Paste a schema and see the generated TypeScript, with every option, before filing.
+  - name: Options and FAQ
+    url: https://github.com/bcherny/json-schema-to-typescript#options
+    about: Every option and its default, supported JSON Schema features, and the FAQ.

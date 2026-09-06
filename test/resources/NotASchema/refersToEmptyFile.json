@@ -1,0 +1,8 @@
+{
+  "title": "RefersToEmptyFile",
+  "type": "object",
+  "properties": {
+    "y": {"$ref": "empty.json"}
+  },
+  "additionalProperties": false
+}

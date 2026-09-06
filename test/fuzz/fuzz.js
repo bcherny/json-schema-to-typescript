@@ -10,6 +10,7 @@
  *   STACK_OVERFLOW  unbounded recursion
  *   THREW           an unexpected exception (ValidationError is expected, not a bug)
  *   INVALID_TS      compile succeeded but emitted syntactically invalid TypeScript
+ *   SLOW            compile finished, but took longer than --slow MS (off unless given)
  *
  * Findings are deduped by signature and then shrunk to a minimal reproducing
  * schema, because an unshrunk fuzz case is not something a maintainer can act on.
@@ -31,7 +32,17 @@ const RUN_CASE = resolve(__dirname, 'runCase.js')
 const EXPECTED_ERRORS = ['ValidationError']
 
 function parseArgs(argv) {
-  const args = {seeds: 300, start: 1, timeout: 20000, memory: 512, out: null, seed: null, shrink: true, quiet: false}
+  const args = {
+    seeds: 300,
+    start: 1,
+    timeout: 20000,
+    memory: 512,
+    slow: 0,
+    out: null,
+    seed: null,
+    shrink: true,
+    quiet: false,
+  }
   for (let i = 2; i < argv.length; i++) {
     const [k, v] = argv[i].includes('=') ? argv[i].split('=') : [argv[i], argv[i + 1]]
     switch (k) {
@@ -49,6 +60,10 @@ function parseArgs(argv) {
         break
       case '--memory':
         args.memory = Number(v)
+        if (!argv[i].includes('=')) i++
+        break
+      case '--slow':
+        args.slow = Number(v)
         if (!argv[i].includes('=')) i++
         break
       case '--out':
@@ -74,7 +89,7 @@ const workDir = mkdtempSync(join(tmpdir(), 'jstt-fuzz-'))
 let caseCounter = 0
 
 /** Run one (schema, options) pair in a child process and classify the outcome. */
-function runCase(schema, options, {timeout, memory}) {
+function runCase(schema, options, {timeout, memory, slow}) {
   const casePath = join(workDir, `case-${caseCounter++}.json`)
   writeFileSync(casePath, JSON.stringify({schema, options}))
 
@@ -99,7 +114,13 @@ function runCase(schema, options, {timeout, memory}) {
   const marker = (child.stdout || '').split('\n').find(l => l.startsWith('__FUZZ_RESULT__'))
   if (!marker) {
     if (/Maximum call stack size exceeded/.test(stderr)) {
-      return {status: 'STACK_OVERFLOW', errorName: 'RangeError', message: 'Maximum call stack size exceeded', frame: '', elapsed}
+      return {
+        status: 'STACK_OVERFLOW',
+        errorName: 'RangeError',
+        message: 'Maximum call stack size exceeded',
+        frame: '',
+        elapsed,
+      }
     }
     return {
       status: 'CRASHED',
@@ -112,9 +133,20 @@ function runCase(schema, options, {timeout, memory}) {
 
   const result = JSON.parse(marker.slice('__FUZZ_RESULT__'.length).trim())
   result.elapsed = elapsed
+  result.finished = result.status === 'OK' // compiled and came back with output, however long it took
 
   if (result.status === 'THREW' && /Maximum call stack size exceeded/.test(result.message)) {
     result.status = 'STACK_OVERFLOW'
+  }
+  // Finished, and correctly, but far slower than any case of this size should: the
+  // kind of regression a timeout only notices once it has grown a hundredfold.
+  if (result.finished && slow > 0 && elapsed > slow) {
+    Object.assign(result, {
+      status: 'SLOW',
+      errorName: 'Slow',
+      message: `took ${elapsed}ms (limit ${slow}ms)`,
+      frame: '',
+    })
   }
   return result
 }
@@ -126,8 +158,10 @@ function isInteresting(result) {
   return true
 }
 
+const RESOURCE_STATUSES = ['TIMEOUT', 'OOM', 'SLOW'] // the message is a measurement, not a detail
+
 function signature(result) {
-  if (result.status === 'TIMEOUT' || result.status === 'OOM') return result.status
+  if (RESOURCE_STATUSES.includes(result.status)) return result.status
   if (result.status === 'INVALID_TS') {
     // Group by the diagnostic itself, minus the quoted source text.
     return `INVALID_TS:${result.message.split('(line')[0].trim()}`
@@ -254,6 +288,7 @@ function severity(finding) {
   switch (finding.status) {
     case 'OOM':
     case 'TIMEOUT':
+    case 'SLOW':
       // A small schema that burns the CPU or the heap is the worst case: it looks
       // ordinary and hangs a build. A huge one is far less likely in practice.
       return size < 400 ? 'high' : 'medium'
@@ -273,7 +308,7 @@ function severity(finding) {
 
 function main() {
   const args = parseArgs(process.argv)
-  const runOpts = {timeout: args.timeout, memory: args.memory}
+  const runOpts = {timeout: args.timeout, memory: args.memory, slow: args.slow}
   const log = (...a) => !args.quiet && console.log(...a)
 
   if (args.seed !== null) {
@@ -286,6 +321,7 @@ function main() {
 
   const findings = new Map()
   let ran = 0
+  let slowest = null // the case that took longest and still finished: {seed, elapsedMs}
 
   log(`fuzzing seeds ${args.start}..${args.start + args.seeds - 1} (timeout ${args.timeout}ms, heap ${args.memory}MB)`)
 
@@ -300,6 +336,9 @@ function main() {
       continue
     }
     ran++
+    if (result.finished && (!slowest || result.elapsed > slowest.elapsedMs)) {
+      slowest = {seed, elapsedMs: result.elapsed}
+    }
 
     if (!isInteresting(result)) continue
     const sig = signature(result)
@@ -312,14 +351,17 @@ function main() {
     findings.set(sig, {signature: sig, seed, seeds: [seed], ...result, schema, options})
   }
 
-  log(`\nran ${ran} cases, ${findings.size} distinct findings`)
+  log(
+    `\nran ${ran} cases, ${findings.size} distinct findings` +
+      (slowest ? `; slowest case: seed ${slowest.seed}, ${slowest.elapsedMs}ms` : ''),
+  )
 
   const out = []
   for (const finding of findings.values()) {
     let minimized = {schema: finding.schema, options: finding.options, shrinkSteps: 0}
     if (args.shrink) {
       // Timeout signatures cost a full timeout per probe, so give them less rope.
-      const budget = finding.status === 'TIMEOUT' || finding.status === 'OOM' ? 60 : 400
+      const budget = RESOURCE_STATUSES.includes(finding.status) ? 60 : 400
       log(`shrinking ${finding.signature.slice(0, 70)} (budget ${budget})...`)
       minimized = shrink(finding.schema, finding.options, finding.signature, runOpts, budget)
     }
@@ -347,6 +389,7 @@ function main() {
     ranAt: new Date().toISOString(),
     seedRange: [args.start, args.start + args.seeds - 1],
     casesRun: ran,
+    slowest,
     findings: out,
   }
 

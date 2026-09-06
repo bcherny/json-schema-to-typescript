@@ -13,9 +13,9 @@ import {
 } from './types/AST'
 import type {EnumJSONSchema, LinkedJSONSchema, NormalizedJSONSchema, SchemaSchema, SchemaType} from './types/JSONSchema'
 import {DefinitionKey, Intersection, Parent, Shared, Source, Types, isBoolean, isPrimitive} from './types/JSONSchema'
-import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
+import {ANNOTATION_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
-import {admitsType, formatTypeOf, generateName, justName, log, narrowType} from './utils'
+import {admitsType, formatTypeOf, generateName, justName, log, nameOf, narrowType} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -301,34 +301,21 @@ function parseNonLiteral(
   switch (type) {
     case 'ALL_OF': {
       const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
-      // An `allOf` member made up entirely of subschema keywords this tool doesn't implement
-      // (eg. `if`/`then`/`else`, `not`) doesn't match any of the type matchers in
-      // `typesOfSchema`, so it falls back to `newInterface`, which synthesizes a bare
-      // `{[k: string]: unknown}` for it. Intersecting with that contributes no information, so
-      // drop it rather than cluttering the output. Restricted to members with no keyword this
-      // tool does recognize, so it never touches a member whose emptiness is due to its *own*
-      // type (eg. a bare `{type: 'object'}`, or `{required: [...]}` with no matching
-      // `properties`) -- those stay exactly as before.
-      const members = schema
-        .allOf!.map(memberSchema => ({
-          ast: parseMember(memberSchema, schema, scope, options, processed, usedNames),
-          memberSchema,
-        }))
-        .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
+      const members = schema.allOf!
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: name,
         params: members
-          .map(({ast}) => ast)
+          .map(memberSchema => parseMember(memberSchema, schema, scope, options, processed, usedNames))
           .concat(
             parseRequired(
               schema,
-              // what else renders as an object type in this intersection: a member that wasn't
-              // dropped, or -- when this is the intersection `applySchemaTyping` split off of a
-              // schema -- that schema's other types, which `parse` appends next
-              intersectionOwner(schema) !== undefined || members.some(({memberSchema}) => isObjectSchema(memberSchema)),
+              // what else renders as an object type in this intersection: a member, or -- when
+              // this is the intersection `applySchemaTyping` split off of a schema -- that
+              // schema's other types, which `parse` appends next
+              intersectionOwner(schema) !== undefined || members.some(memberSchema => isObjectSchema(memberSchema)),
               name,
               scope,
               options,
@@ -374,6 +361,13 @@ function parseNonLiteral(
         type: 'CUSTOM_TYPE',
       }
     case 'NAMED_ENUM': {
+      const values = (schema as EnumJSONSchema).enum!
+      // A TypeScript enum member holds a string or a number: an `enum` with a `null`,
+      // boolean, object or array value cannot become one (`None = null` does not compile),
+      // so it is typed as a union of its values instead, like an `enum` without `tsEnumNames`.
+      if (!values.every(isEnumMemberValue)) {
+        return parseNonLiteral(schema, 'UNNAMED_ENUM', options, keyName, processed, usedNames, scope)
+      }
       const enumName = standaloneName(schema, keyNameFromDefinition ?? keyName, usedNames, options)
       // A TypeScript enum declaration requires a name. In positions that supply
       // none (an `anyOf`/`oneOf` branch, say) fall back to a union of literals
@@ -383,18 +377,19 @@ function parseNonLiteral(
           comment: schema.description,
           deprecated: schema.deprecated,
           keyName,
-          params: (schema as EnumJSONSchema).enum!.map(_ => parseLiteral(_, undefined)),
+          params: values.map(_ => parseLiteral(_, undefined)),
           type: 'UNION',
         }
       }
+      const memberNames = enumMemberNames(schema.tsEnumNames!)
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: enumName,
-        params: (schema as EnumJSONSchema).enum!.map((_, n) => ({
+        params: values.map((_, n) => ({
           ast: parseLiteral(_, undefined),
-          keyName: schema.tsEnumNames![n],
+          keyName: memberNames[n],
         })),
         type: 'ENUM',
       }
@@ -571,37 +566,6 @@ function parseNonLiteral(
         type: 'ARRAY',
       }
   }
-}
-
-// An `allOf` member made up exclusively of keywords that don't shape a type (see `Keyword.typed`
-// in `keywords.ts`) but do hold subschemas (`if`/`then`/`else`, `not`; with none of either it is
-// the empty schema, which the optimizer drops from intersections) is one this tool has no notion
-// of at all, as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but
-// currently renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
-// swallowing members whose current (separately unimplemented) behavior other schemas rely on.
-// (`$ref` needs no recognizing: by the time this runs, the resolver has already replaced every
-// `$ref` node, so `case 'REFERENCE'` above never fires and no schema here can carry one.)
-function hasNoRecognizedKeywords(schema: NormalizedJSONSchema): boolean {
-  return Object.keys(schema).every(key => !TYPE_SHAPING_KEYWORDS.has(key))
-}
-
-/**
- * True for a parsed AST that carries no information beyond the synthesized
- * `[k: string]: unknown`/`any` index signature `parseSchema` adds by default -- ie. an interface
- * with no properties, patternProperties, superTypes, comment, or standalone name of its own.
- * @see https://github.com/bcherny/json-schema-to-typescript/issues/369
- */
-function isVacuousInterface(ast: AST): boolean {
-  return (
-    ast.type === 'INTERFACE' &&
-    ast.standaloneName === undefined &&
-    ast.comment === undefined &&
-    !ast.deprecated &&
-    ast.superTypes.length === 0 &&
-    ast.params.length === 1 &&
-    ast.params[0].isIndexSignature &&
-    (ast.params[0].ast.type === 'ANY' || ast.params[0].ast.type === 'UNKNOWN')
-  )
 }
 
 /**
@@ -986,15 +950,6 @@ function isNamed(schema: NormalizedJSONSchema, options: Options): boolean {
   return Boolean(nameOf(schema[Intersection] ?? schema, schema[DefinitionKey], options))
 }
 
-/** The name a schema asks for, before it is made unique */
-function nameOf(
-  schema: NormalizedJSONSchema,
-  keyNameFromDefinition: string | undefined,
-  options: Options,
-): string | undefined {
-  return options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
-}
-
 /**
  * `member` (of an `anyOf`/`oneOf`) as it applies to a value of the given `type`: left out if it
  * admits no such value, a copy typed `type` (its own members narrowed the same way) if that is
@@ -1019,6 +974,37 @@ function narrowMember(member: LinkedJSONSchema, type: JSONSchema4TypeName, optio
   }
   applySchemaTyping(copy)
   return [copy]
+}
+
+/**
+ * What a TypeScript enum member can hold: a string or a (finite) number. `null`, `true`, an
+ * object or an array is a fine `enum` value but not an enum member's (TS2474 / TS18033).
+ */
+function isEnumMemberValue(value: JSONSchema4Type): boolean {
+  return typeof value === 'string' || (typeof value === 'number' && isFinite(value))
+}
+
+/**
+ * The names of an enum's members, from its `tsEnumNames` (given, or inferred from the values):
+ * each name as it is, except one TypeScript would reject. An enum member cannot have a numeric
+ * name, quoted or not (TS2452) -- "numeric" meaning the text of a number as TypeScript prints
+ * it: `1`, `-1`, `1.5`, but not `+1`, `01`, `1e3` or `Infinity`. Such a name gets a leading
+ * underscore (more than one, should another member already be called that; two prefixed names
+ * cannot clash with each other, since each ends in its own underscore-free number). The
+ * generator quotes whatever is still not an identifier.
+ */
+function enumMemberNames(names: readonly string[]): string[] {
+  const taken = new Set(names)
+  return names.map(name => {
+    if (!(String(Number(name)) === name && isFinite(Number(name)))) {
+      return name
+    }
+    let legalName = '_' + name
+    while (taken.has(legalName)) {
+      legalName = '_' + legalName
+    }
+    return legalName
+  })
 }
 
 /**

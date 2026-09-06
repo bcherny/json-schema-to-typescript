@@ -1,4 +1,4 @@
-import {deburr, isPlainObject, trim, upperFirst} from 'lodash'
+import {cloneDeep, deburr, isPlainObject, trim, upperFirst} from 'lodash'
 import {basename, dirname, extname, normalize, sep, posix} from 'path'
 import {
   Intersection,
@@ -174,6 +174,15 @@ export function justName(filename = ''): string {
   return stripExtension(basename(filename))
 }
 
+/** The name a schema asks for, before `generateName` makes it safe and unique */
+export function nameOf(
+  schema: LinkedJSONSchema,
+  keyNameFromDefinition: string | undefined,
+  options: Options,
+): string | undefined {
+  return options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
+}
+
 /**
  * Avoid appending "js" to top-level unnamed schemas
  */
@@ -219,14 +228,24 @@ export function toSafeString(string: string): string {
 // counter that counting from 1 would find.
 const nextCounters = memoize<Set<string>, [], Map<string, number>>(() => new Map())
 
+/**
+ * Built-in type names a generated type must not take, or it shadows the global for the whole
+ * file (`export type Symbol = string` -- #386). A name that lands here gets the same counter
+ * suffix as a duplicate (`Symbol1`). Deliberately short: the built-ins from lib.es5 /
+ * lib.es2015 that read as TypeScript's own types in an annotation, minus the ones real-world
+ * schemas use as type names on purpose (`Date`, `Error`, `Function`, `String`, `Number`,
+ * `Boolean`), which are left as the schema author wrote them.
+ */
+const RESERVED_TYPE_NAMES = new Set(['Array', 'Map', 'Object', 'Promise', 'RegExp', 'Set', 'Symbol'])
+
 export function generateName(from: string, usedNames: Set<string>) {
   let name = toSafeString(from)
   if (!name) {
     name = 'NoName'
   }
 
-  // increment counter until we find a free name
-  if (usedNames.has(name)) {
+  // taken or reserved: increment counter until we find a free name
+  if (usedNames.has(name) || RESERVED_TYPE_NAMES.has(name)) {
     const counters = nextCounters(usedNames)
     let counter = counters.get(name) ?? 1
     while (usedNames.has(`${name}${counter}`)) {
@@ -242,7 +261,7 @@ export function generateName(from: string, usedNames: Set<string>) {
 
 export function error(...messages: any[]): void {
   if (!process.env.VERBOSE) {
-    return console.error(messages)
+    return console.error('error:', ...messages)
   }
   console.error(getStyledTextForLogging('red')?.('error'), ...messages)
 }
@@ -428,4 +447,58 @@ export function formatTypeOf(schema: JSONSchema, options: Options): string | und
   return typeof schema.format === 'string' && Object.prototype.hasOwnProperty.call(options.formatTypes, schema.format)
     ? options.formatTypes[schema.format]
     : undefined
+}
+
+/**
+ * Deep-copies a schema so that compiling never touches the caller's object.
+ * The arrays and plain objects it is made of -- the nodes `link` annotates and
+ * the normalizer rewrites, i.e. nearly all of any schema -- are copied here, by
+ * their own enumerable string keys. The rare value that is neither (a `Date`
+ * from a YAML timestamp, a `RegExp` or class instance under a custom keyword)
+ * is handed to lodash's `cloneDeep`, because `traverse` may still reach it and
+ * stamp it; what lodash cannot copy (a function, an `Error`) is carried over by
+ * reference, as it was when lodash copied the whole schema. A node reachable
+ * along several paths, or through a cycle, is copied exactly once, so the copy
+ * shares structure wherever the input does.
+ *
+ * lodash's `cloneDeep` used to do all of this, but its seen-set fails its own
+ * "is `Map` native" check under bun (see memoize.ts) and falls back to a list it
+ * scans linearly, making the clone quadratic in the number of schema nodes:
+ * 37 of the 43 seconds a 10,000-definition schema took to compile.
+ */
+export function cloneDeepPlain<T>(value: T, copies = new Map<object, unknown>()): T {
+  if (typeof value !== 'object' || value === null) {
+    return value
+  }
+  const copied = copies.get(value)
+  if (copied !== undefined) {
+    return copied as T
+  }
+  if (Array.isArray(value)) {
+    const copy: unknown[] = new Array(value.length)
+    copies.set(value, copy)
+    for (let i = 0; i < value.length; i++) {
+      copy[i] = cloneDeepPlain(value[i], copies)
+    }
+    return copy as T
+  }
+  const prototype = Object.getPrototypeOf(value)
+  if (prototype !== Object.prototype && prototype !== null && !isPlainObject(value)) {
+    // Copied as an array member so that lodash hands back what it cannot copy instead of `{}`
+    const [copy] = cloneDeep([value])
+    copies.set(value, copy)
+    return copy
+  }
+  const copy: Record<string, unknown> = {}
+  copies.set(value, copy)
+  for (const key of Object.keys(value)) {
+    const member = cloneDeepPlain((value as Record<string, unknown>)[key], copies)
+    if (key === '__proto__') {
+      // An own `__proto__` key (JSON.parse makes those) must stay an own key, not set the prototype
+      Object.defineProperty(copy, key, {value: member, writable: true, enumerable: true, configurable: true})
+    } else {
+      copy[key] = member
+    }
+  }
+  return copy as T
 }
