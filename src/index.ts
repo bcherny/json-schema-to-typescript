@@ -312,13 +312,7 @@ async function compileToAST(
   // Definitions that aren't referenced anywhere in the schema still need to be
   // declared. An object root declares them while its interface is parsed; for
   // any other kind of root they are parsed here and handed to the generator.
-  const unreachableDefinitions = parseUnreachableDefinitions(
-    normalized,
-    parsed.standaloneName!,
-    _options,
-    processed,
-    usedNames,
-  )
+  const unreachableDefinitions = parseUnreachableDefinitions(normalized, _options, processed, usedNames)
   nameAnonymousRecursiveTypes([parsed, ...unreachableDefinitions], processed, dereferencedPaths, usedNames)
   log('blue', 'parser', time(), '✅ Result:', parsed)
 
