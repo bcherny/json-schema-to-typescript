@@ -6,7 +6,7 @@ TODO use an external validation library
 
 #### 2. Prenormalizer
 
-Rewrites the few things that have to be seen on the raw document, before the dereferencer folds each `$ref`'s sibling keywords into a copy of its target (eg. annotations or `nullable` next to a `$ref`, which belong to the referencing schema rather than to a copy of the referenced one, or a root schema that is itself a `$ref`).
+Rewrites the few things that have to be seen on the raw document, before the dereferencer folds each `$ref`'s sibling keywords into a copy of its target (eg. annotations or `nullable` next to a `$ref`, which belong to the referencing schema rather than to a copy of the referenced one; `properties`, `required` or `oneOf` next to a `$ref`, which extend the referenced schema and so are composed with it in an `allOf`; or a root schema that is itself a `$ref`).
 
 #### 3. Dereferencer
 

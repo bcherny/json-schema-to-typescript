@@ -1,7 +1,7 @@
-import {isPlainObject} from 'lodash'
+import {isEmpty, isPlainObject} from 'lodash'
 import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
 import {eachSchemaNode, hasType, traverse} from './utils'
-import {META_KEYWORDS, TYPE_RELEVANT_KEYWORDS} from './keywords'
+import {EXTENDING_KEYWORDS, META_KEYWORDS, TYPE_RELEVANT_KEYWORDS, VALIDATION_KEYWORDS} from './keywords'
 
 /**
  * Rewrites that have to happen on the raw document, before it goes to the ref-parser --
@@ -71,14 +71,78 @@ rules.set('Transform `nullable` next to a `$ref` to anyOf with null', schema => 
 })
 
 /** Draft 3's `required: true` flags the property, like an annotation; draft 4's list shapes the type */
+function isRequiredFlag(schema: JSONSchema, key: string): boolean {
+  return key === 'required' && typeof schema.required === 'boolean'
+}
+
 function asksForOwnType(schema: JSONSchema, key: string): boolean {
-  return TYPE_RELEVANT_KEYWORDS.has(key) && !(key === 'required' && typeof schema.required === 'boolean')
+  return TYPE_RELEVANT_KEYWORDS.has(key) && !isRequiredFlag(schema, key)
 }
 
 /**
- * The ref parser replaces a `$ref` that has sibling keywords with a shallow copy of its
- * target, the siblings merged in -- a new object per reference; and downstream, a schema's
- * identity is its type's identity (hence a `Foo1` per documented reference to `Foo`).
+ * The ref parser replaces a `$ref` that has sibling keywords with a shallow copy of its target,
+ * the siblings merged in, and a keyword both have keeps the sibling's value: `properties` next
+ * to a `$ref` shadow every property of the target, `required` its required list, `oneOf` its
+ * alternatives -- and the copy takes the target's `title`, for a second, different type of the
+ * same name. Since draft 2019-09 `$ref` is an applicator like any other and its siblings apply
+ * alongside it: `{$ref: A, properties: P}` is `{allOf: [{$ref: A}, {properties: P}]}`, the way
+ * schemars, the OpenAPI 3.1 meta-schema and hand-written 2020-12 schemas spell "an A, plus
+ * these" (the drafts before said to ignore such siblings, which this tool never did).
+ *
+ * So when a sibling adds members to the type (`EXTENDING_KEYWORDS`), the reference and what the
+ * schema asserts beside it (`VALIDATION_KEYWORDS`: the `type: 'object'` that goes with the
+ * `properties`, `unevaluatedProperties`...) become two members of an `allOf`, emitted as
+ * `A & {...}`, and the target keeps its one name; a sibling `allOf` joins it rather than nest.
+ * What speaks about the schema's position rather than its values -- `title` (which then names
+ * the composite), `description`, `default`, `readOnly`, definitions, keys this tool does not
+ * know -- stays where it is, as in the annotation-only case below. The document root is
+ * included: `resolveRootRef` merges the same way. With `tsType`/`tsEnumNames`, which dictate
+ * the emitted type whatever else the schema says, there is nothing to compose: the copy stays.
+ * It also stays for siblings that only restate or adjust what the target says (`type` alone,
+ * `enum`, `const`, `additionalProperties`, `minItems`, `format`...): `"a" | "b"`, a closed
+ * `Foo` or a tuple reads better than an intersection saying the same. An empty `properties`,
+ * `patternProperties` or `required` extends nothing (and `required: []`, merged into the copy,
+ * made every property of the target optional): those are dropped.
+ *
+ * This and the two rules after it have to run before dereferencing, while a `$ref` can still be
+ * told from its siblings.
+ */
+rules.set('Compose a `$ref` with the siblings that extend its target', schema => {
+  if (typeof schema.$ref !== 'string' || 'tsType' in schema || 'tsEnumNames' in schema) {
+    return
+  }
+  for (const key of ['properties', 'patternProperties', 'required'] as const) {
+    const value = schema[key]
+    if ((isPlainObject(value) || Array.isArray(value)) && isEmpty(value)) {
+      delete schema[key]
+    }
+  }
+  const siblings = Object.keys(schema).filter(key => key !== '$ref' && !isRequiredFlag(schema, key))
+  if (!siblings.some(key => EXTENDING_KEYWORDS.has(key))) {
+    return
+  }
+  const members: JSONSchema[] = [{$ref: schema.$ref}]
+  const assertions: JSONSchema = {}
+  for (const key of siblings) {
+    if (key === 'allOf' && Array.isArray(schema.allOf)) {
+      members.push(...schema.allOf)
+      delete schema.allOf
+    } else if (VALIDATION_KEYWORDS.has(key)) {
+      assertions[key] = schema[key]
+      delete schema[key]
+    }
+  }
+  if (!isEmpty(assertions)) {
+    members.push(assertions)
+  }
+  delete schema.$ref
+  schema.allOf = members
+})
+
+/**
+ * The same copy is made when the siblings are only annotations -- a new object per reference;
+ * and downstream, a schema's identity is its type's identity (hence a `Foo1` per documented
+ * reference to `Foo`).
  *
  * So when no sibling has a say in the type (see `TYPE_RELEVANT_KEYWORDS`; that leaves
  * `description`, `examples`, `default`, `deprecated`, `readOnly`, validation keywords with no
@@ -90,8 +154,6 @@ function asksForOwnType(schema: JSONSchema, key: string): boolean {
  * one-member intersection (`type Label = Foo`), which `{title, allOf: [{$ref}]}` still does
  * for whoever wants the alias. The document root is left alone: its keywords describe the
  * type the document stands for (see `resolveRootRef`).
- *
- * Has to happen before dereferencing, while the `$ref` can still be told from its siblings.
  */
 rules.set('Keep `$ref` siblings that have no say in the type on the referencing schema', (schema, document) => {
   if (typeof schema.$ref !== 'string' || schema === document) {
@@ -109,11 +171,12 @@ rules.set('Keep `$ref` siblings that have no say in the type on the referencing 
 })
 
 /**
- * `unevaluatedProperties` next to a `$ref` also counts what the target evaluates, and the ref
- * parser is about to merge the two into a copy that can drop the target's `properties` (#613):
- * the normalizer's fold into `additionalProperties` would then close the object over keys that
- * were never emitted. Until `$ref` siblings are emitted as an intersection, drop the keyword
- * here, while the `$ref` is still visible, and leave the object open as it was before.
+ * `unevaluatedProperties` next to a `$ref` that no sibling extends (the composing rule above
+ * took the other case, keyword and all) would be merged into a copy of the target and, through
+ * the normalizer's fold into `additionalProperties`, close that copy: a second declaration of
+ * the target's type under the target's name, differing in its index signature. Drop it instead,
+ * while the `$ref` is still visible, so the reference resolves to the target itself and the
+ * object stays open, as it was before the keyword was supported.
  */
 rules.set('Drop `unevaluatedProperties` next to a `$ref`', schema => {
   if (schema.$ref) {

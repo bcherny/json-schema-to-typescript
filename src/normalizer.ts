@@ -185,8 +185,9 @@ rules.set('Transform `required`=false to `required`=[]', schema => {
 // say the same thing. Where it does not (`emitsWhatItEvaluates`), closing the object would
 // reject instances the spec accepts, so the keyword is dropped and the object stays open, as
 // it was before the keyword was supported. A `$ref` with siblings is the prenormalizer's
-// case: by now it has been merged away. An explicit `additionalProperties` is the narrower
-// constraint, so it wins.
+// case: by now it is either an `allOf` member (and this keyword sits on the member holding
+// the sibling `properties`) or merged away. An explicit `additionalProperties` is the
+// narrower constraint, so it wins.
 rules.set('Treat `unevaluatedProperties` as `additionalProperties`', schema => {
   // `traverse` also visits boolean schemas, where `in` would throw.
   if (typeof schema !== 'object' || schema === null || schema.unevaluatedProperties === undefined) {
