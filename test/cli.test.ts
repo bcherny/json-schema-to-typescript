@@ -215,6 +215,33 @@ suite('CLI', () => {
     )
   }
 
+  // `--maxItems -1` (the spelling --help suggests) used to reach minimist as the flag `maxItems`
+  // with no value plus a short flag `-1` that took the next argument as its own value, so
+  // `--maxItems -1 schema.json` read stdin instead of the file and `-i schema.json --maxItems -1`
+  // silently kept the tuple union. A negative number after a long flag is that flag's value.
+  cliTest(
+    'file in (-i), bounded array without --maxItems, pipe out',
+    'node dist/src/cli.js -i ./test/resources/BoundedArray.json',
+    ({stdout}) => expect(stdout).toContain('tags?: [string, string] | [string, string, string];'),
+  )
+  for (const flag of ['--maxItems=-1', '--maxItems -1']) {
+    cliTest(
+      `file in (-i), --maxItems -1 ignores maxItems (${flag}), pipe out`,
+      `node dist/src/cli.js -i ./test/resources/BoundedArray.json ${flag}`,
+      ({stdout}) => expect(stdout).toContain('tags?: [string, string, ...string[]];'),
+    )
+  }
+  cliTest(
+    'file in, --maxItems -1 before the input path does not swallow it, pipe out',
+    'node dist/src/cli.js --maxItems -1 ./test/resources/BoundedArray.json',
+    ({stdout}) => expect(stdout).toContain('tags?: [string, string, ...string[]];'),
+  )
+  cliErrorTest(
+    '--maxItems without a number is an error, not a silent limit of 1',
+    'node dist/src/cli.js -i ./test/resources/BoundedArray.json --maxItems',
+    'Expected options.maxItems to be a number >= -1, but was given true',
+  )
+
   // https://github.com/bcherny/json-schema-to-typescript/issues/131
   cliTest(
     'readOnly annotations are ignored by default',
