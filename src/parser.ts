@@ -209,14 +209,17 @@ export function parseUnreachableDefinitions(
 function parseUnreachableDefinition(
   schema: NormalizedJSONSchema,
   key: string,
-  parentSchemaName: string,
+  parentSchemaName: string | undefined,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
   const ast = parse(schema, options, key, processed, usedNames)
-  const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
-via the \`definition\` "${key}".`
+  const definition = `\`definition\` "${key}"`
+  const comment = parentSchemaName
+    ? `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
+via the ${definition}.`
+    : `This interface was referenced via the ${definition}.`
   ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
   ast.isUnreachableDefinition = true
   return ast
@@ -718,6 +721,7 @@ function parseRequired(
 ): AST[] {
   // the intersection `applySchemaTyping` split off of a schema took its `allOf` along, but not its `required`
   const owner = intersectionOwner(schema) ?? schema
+  const parentSchemaName = schemaNameForComment(standaloneName, nameOf(owner, owner[DefinitionKey], options))
   const keys = undeclaredRequired(owner)
   const declarations = new Map(keys.map(key => [key, findDeclaration(schema, key, scope)]))
   // the keys declared nowhere too, unless the owner has an interface of its own to list them or
@@ -734,7 +738,7 @@ function parseRequired(
           {...options, unreachableDefinitions: false},
           processed,
           usedNames,
-          standaloneName ?? '',
+          parentSchemaName,
         ),
       ),
     ]
@@ -1075,6 +1079,13 @@ function standaloneName(
   }
 }
 
+function schemaNameForComment(standaloneName: string | undefined, keyName: string | undefined): string | undefined {
+  return (
+    standaloneName ??
+    (keyName && keyName !== '[k: string]' && !keyName.includes('{keyNameFromDefinition}') ? keyName : undefined)
+  )
+}
+
 const CLOSED_EMPTY_OBJECT_PARAM: TInterfaceParam = {
   ast: T_NEVER_ADDITIONAL_PROPERTIES,
   isIndexSignature: true,
@@ -1094,7 +1105,18 @@ function newInterface(
   keyNameFromDefinition?: string,
 ): TInterface {
   const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)!
-  const params = parseSchema(schema, scope, options, processed, usedNames, name)
+  // `parse` builds the named intersection before appending this anonymous object member.
+  const intersectionName = schema[Intersection]
+    ? processed.get(schema[Intersection])?.get('ALL_OF')?.standaloneName
+    : undefined
+  const params = parseSchema(
+    schema,
+    scope,
+    options,
+    processed,
+    usedNames,
+    schemaNameForComment(name ?? intersectionName, keyName),
+  )
   // `extends` holds schemas once dereferenced, whatever the draft 4 typings say
   const superTypes = ((schema.extends as SchemaSchema[] | undefined) ?? []).map(
     _ => parse(_, options, undefined, processed, usedNames) as TNamedInterface,
@@ -1145,7 +1167,7 @@ function parseSchema(
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
-  parentSchemaName: string,
+  parentSchemaName: string | undefined,
 ): TInterfaceParam[] {
   const asts: TInterfaceParam[] = map(schema.properties, (value, key: string) => ({
     ast: parse(value, options, key, processed, usedNames),
@@ -1162,8 +1184,11 @@ function parseSchema(
   // rendered through the index signature (below), not as params of their own
   const patternProperties: TInterfaceParam[] = map(schema.patternProperties, (value, key: string) => {
     const ast = parse(value, options, key, processed, usedNames)
-    const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
-via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
+    const patternProperty = `\`patternProperty\` "${key.replace('*/', '*\\/')}"`
+    const comment = parentSchemaName
+      ? `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema definition
+via the ${patternProperty}.`
+      : `This interface was referenced via the ${patternProperty}.`
     ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
     return {
       ast,
