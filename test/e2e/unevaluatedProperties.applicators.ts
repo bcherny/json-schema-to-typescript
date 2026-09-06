@@ -41,7 +41,7 @@ export const input = {
       dependentSchemas: {a: {properties: {b: {type: 'boolean'}}}},
       unevaluatedProperties: {type: 'number'},
     },
-    // open: {"name": "x", "age": 1} is valid, but the merge keeps only `age` (issue 613)
+    // open: {"name": "x", "age": 1} is valid; the ref resolver merges the two `properties` (issue 613)
     refWithSiblingProperties: {
       $ref: '#/$defs/base',
       title: 'Person',
@@ -49,9 +49,9 @@ export const input = {
       properties: {age: {type: 'number'}},
       unevaluatedProperties: false,
     },
-    // open: the security-scheme pattern from the OpenAPI 3.1 meta-schema. The member parses
-    // as `{}` and is left out of the intersection, so {"type": "apiKey", "name": "x"} needs
-    // the index signature
+    // open: the security-scheme pattern from the OpenAPI 3.1 meta-schema. The member says
+    // nothing about the type and is left out of the intersection, so {"type": "apiKey",
+    // "name": "x"} needs the index signature
     allOfConditionalMember: {
       type: 'object',
       properties: {type: {enum: ['apiKey', 'http']}},
