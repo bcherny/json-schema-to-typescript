@@ -1,13 +1,12 @@
 import {describe, expect, test} from 'bun:test'
 import {JSONSchema} from '../src'
-import {link} from '../src/linker'
 import {validate} from '../src/validator'
 import {hasOnly} from './e2eCases'
 
 const suite = hasOnly() ? describe.skip : describe
 
 function errorsFor(schema: JSONSchema): string[] {
-  return validate(link(schema), 'test.json')
+  return validate(schema, 'test.json')
 }
 
 suite('validator', () => {
