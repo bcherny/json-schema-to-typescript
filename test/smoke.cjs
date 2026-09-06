@@ -1,7 +1,7 @@
-// package.json declares `engines.node: >=16`, but the test suite runs under
+// package.json declares `engines.node: >=22.19.0`, but the test suite runs under
 // bun rather than node, so it doesn't say anything about the oldest supported
 // versions. This script exercises the *built* package instead — the artifact
-// that actually ships — and CI runs it on every node version we claim to
+// that actually ships — and CI runs it on the oldest node version we claim to
 // support, so the declared floor stays honest.
 //
 // Usage: node test/smoke.cjs

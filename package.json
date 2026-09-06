@@ -8,11 +8,10 @@
   },
   "typings": "dist/src/index.d.ts",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.19.0"
   },
   "scripts": {
-    "build": "bun run lint && bun run clean && bun run build:browser && bun run build:server",
-    "build:browser": "browserify src/index.ts -s jstt -p [ tsify -m commonjs ] > dist/bundle.js",
+    "build": "bun run lint && bun run clean && bun run build:server",
     "build:server": "tsc -d",
     "clean": "shx rm -rf dist && mkdir dist",
     "format": "prettier \"{src,test}/*.ts\" --write",
@@ -49,7 +48,7 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^11.9.3",
+    "@apidevtools/json-schema-ref-parser": "^16.0.1",
     "@types/json-schema": "^7.0.15",
     "@types/lodash": "^4.17.25",
     "js-yaml": "^5.2.3",
@@ -65,26 +64,12 @@
     "@types/node": "^26.4.0",
     "@typescript-eslint/eslint-plugin": "^8.68.0",
     "@typescript-eslint/parser": "^8.68.0",
-    "browserify": "^17.0.1",
-    "browserify-shim": "^3.8.16",
     "cli-color": "^2.0.4",
     "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "rimraf": "^6.1.3",
     "shx": "^0.4.0",
-    "tsify": "^5.0.4",
     "typescript": "^6.0.3"
-  },
-  "overrides": {
-    "esprima-fb": "https://registry.npmjs.org/esprima-fb/-/esprima-fb-3001.0001.0000-dev-harmony-fb.tgz"
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
-  "browserify-shim": {
-    "prettier": "global:prettier"
   }
 }
