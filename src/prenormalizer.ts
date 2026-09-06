@@ -226,18 +226,7 @@ function resolveRootRef(schema: JSONSchema): void {
     }
     seenPointers.add(pointer)
 
-    const target = pointer
-      .slice(2)
-      .split('/')
-      .reduce<unknown>((node, segment) => {
-        if (!isPlainObject(node) && !Array.isArray(node)) {
-          return undefined
-        }
-        const key = safeDecodeURIComponent(segment.replace(/~1/g, '/').replace(/~0/g, '~'))
-        // Only an own property is a real JSON Pointer match -- otherwise a segment
-        // like `__proto__` would resolve via the prototype chain instead of failing.
-        return Object.prototype.hasOwnProperty.call(node, key) ? (node as Record<string, unknown>)[key] : undefined
-      }, documentRoot)
+    const target = inDocumentPointerValue(documentRoot, pointer)
 
     if (typeof target === 'boolean') {
       // A boolean schema, which the root cannot become in place: keep it as the root's one more
@@ -247,7 +236,7 @@ function resolveRootRef(schema: JSONSchema): void {
       break
     }
     if (!isPlainObject(target)) {
-      break // not a schema in this document; let $RefParser handle/report it
+      break // missing, or not a schema: `dereference` reports the latter, $RefParser the former
     }
 
     delete schema.$ref
@@ -260,6 +249,25 @@ function resolveRootRef(schema: JSONSchema): void {
       }
     }
   }
+}
+
+/**
+ * The value a `#/...` pointer leads to in `document`: what `resolveRootRef` merges into the root
+ * when it is a schema, and what `dereference` judges when it is not. Walks plain objects and
+ * arrays by their own keys only -- otherwise a segment like `__proto__` would resolve via the
+ * prototype chain instead of failing. Undefined where the pointer leads nowhere.
+ */
+export function inDocumentPointerValue(document: unknown, pointer: string): unknown {
+  return pointer
+    .slice(2)
+    .split('/')
+    .reduce<unknown>((node, segment) => {
+      if (!isPlainObject(node) && !Array.isArray(node)) {
+        return undefined
+      }
+      const key = safeDecodeURIComponent(segment.replace(/~1/g, '/').replace(/~0/g, '~'))
+      return Object.prototype.hasOwnProperty.call(node, key) ? (node as Record<string, unknown>)[key] : undefined
+    }, document)
 }
 
 // A JSON Pointer segment isn't guaranteed to be a valid percent-encoding (it may
