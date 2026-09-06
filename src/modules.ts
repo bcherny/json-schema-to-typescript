@@ -101,14 +101,17 @@ function renderImports(module: Module, imports: Map<Module, Map<string, string>>
     .join('\n')
 }
 
+/** A TypeScript file extension, `.d` prefix and all; group 1 is the `m`/`c` of `.mts`/`.cts` */
+const TS_EXTENSION = /(?:\.d)?\.([cm]?)tsx?$/
+
 /**
- * `./b.js`, `../common/defs.js`: relative, forward slashes on every platform, and with the `.js`
- * extension TypeScript resolves to the `.d.ts` under every `moduleResolution` setting.
+ * `./b.js`, `../common/defs.js`: relative, forward slashes on every platform, and with the
+ * extension Node would load (`.js` for a `.d.ts`/`.ts`, `.mjs` for a `.d.mts`/`.mts`, `.cjs`
+ * for a `.d.cts`/`.cts`; `.js` appended to anything else), which TypeScript resolves to the
+ * declaration file under every `moduleResolution` setting.
  */
 export function moduleSpecifier(from: string, to: string, {relative, dirname, sep}: PathModule = path): string {
-  const specifier = relative(dirname(from), to)
-    .split(sep)
-    .join('/')
-    .replace(/(\.d)?\.[cm]?tsx?$/, '.js')
+  const relativePath = relative(dirname(from), to).split(sep).join('/')
+  const specifier = TS_EXTENSION.test(relativePath) ? relativePath.replace(TS_EXTENSION, '.$1js') : `${relativePath}.js`
   return specifier.startsWith('.') ? specifier : `./${specifier}`
 }

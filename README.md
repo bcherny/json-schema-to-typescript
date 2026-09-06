@@ -191,7 +191,7 @@ What each file gets:
 - Import paths are relative, from each output file to the other, and end in `.js`, which TypeScript resolves to the `.d.ts` (or `.ts`) next to it under every `moduleResolution` setting.
 - Relative `$ref`s resolve against the file they appear in; `--cwd` cannot be combined with `--imports`, and `--imports` needs an output directory.
 
-The same is available programmatically as `compileFiles`, which returns the TypeScript for each file, in order, and writes nothing (the output paths are only used to compute the import paths):
+The same is available programmatically as `compileFiles`, which returns the TypeScript for each file, in order, and writes nothing (the output paths are only used to compute the import paths). Each `outputPath` should end in `.d.ts`/`.ts`, `.d.mts`/`.mts` or `.d.cts`/`.cts`, which the other files import as `.js`, `.mjs` or `.cjs`; any other ending is imported with `.js` appended:
 
 ```js
 import { compileFiles } from 'json-schema-to-typescript'
