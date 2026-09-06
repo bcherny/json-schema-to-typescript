@@ -4,7 +4,6 @@
 
 ## Next
 
-- Bugfix: A titleless `enum` with `tsEnumNames` among an array's items was declared as `KeyNameFromDefinitionItems`, a placeholder that leaked out of the parser; it is now named after the array plus `Items` (`RolesItems` for the property `roles`, `ColourItems` for the definition `Colour`, also when the array is `type: ['array', 'null']`). Where the array itself has no name or key (an `anyOf`/`oneOf` branch, a tuple slot, an OpenAPI `nullable: true` array) such an enum is now a union of literals, as in every other unnamed position
 - Feat: Add a `formatTypes` option mapping a string schema's `format` to a TypeScript type, eg. `{'date-time': 'Date'}` (CLI: `--formatTypes.date-time=Date`). Off by default; no output change unless set (#183)
 - Feat: `declarationStyle: 'type'` option (`--declarationStyle type`) emits object types as `export type A = {…}` instead of `export interface A {…}`; `extends` becomes an intersection (`export type B = A & {…}`). The default, `'interface'`, leaves output unchanged (#307, #653)
 

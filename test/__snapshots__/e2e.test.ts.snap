@@ -396011,14 +396011,15 @@ exports[`enumInArrayNamed.ts 1`] = `
 
 export type Colour = ColourItems[];
 export type Palette = PaletteItems[];
-export type Sizes = ("s" | "m")[] | null;
+export type Sizes = SizesItems[] | null;
 
 export interface EnumInArrayNamed {
   colours: Colour;
   titled: Palette;
   nullable: NullableItems[] | null;
   openapiNullable: Sizes;
-  unnamed: ("a" | "b")[] | number;
+  branch: BranchItems[] | number;
+  slot: [] | [SlotItems[], ...unknown[]];
 }
 
 export const enum ColourItems {
@@ -396032,6 +396033,18 @@ export const enum PaletteItems {
 export const enum NullableItems {
   X = "x",
   Y = "y"
+}
+export const enum SizesItems {
+  S = "s",
+  M = "m"
+}
+export const enum BranchItems {
+  A = "a",
+  B = "b"
+}
+export const enum SlotItems {
+  P = "p",
+  Q = "q"
 }
 "
 `;
