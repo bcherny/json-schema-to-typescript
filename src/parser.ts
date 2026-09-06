@@ -13,9 +13,9 @@ import {
 } from './types/AST'
 import type {EnumJSONSchema, LinkedJSONSchema, NormalizedJSONSchema, SchemaSchema, SchemaType} from './types/JSONSchema'
 import {DefinitionKey, Intersection, Parent, Shared, Source, Types, isBoolean, isPrimitive} from './types/JSONSchema'
-import {ANNOTATION_KEYWORDS, TYPE_SHAPING_KEYWORDS} from './keywords'
+import {ANNOTATION_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
-import {admitsType, formatTypeOf, generateName, justName, log, narrowType} from './utils'
+import {admitsType, formatTypeOf, generateName, justName, log, nameOf, narrowType} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -301,34 +301,21 @@ function parseNonLiteral(
   switch (type) {
     case 'ALL_OF': {
       const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
-      // An `allOf` member made up entirely of subschema keywords this tool doesn't implement
-      // (eg. `if`/`then`/`else`, `not`) doesn't match any of the type matchers in
-      // `typesOfSchema`, so it falls back to `newInterface`, which synthesizes a bare
-      // `{[k: string]: unknown}` for it. Intersecting with that contributes no information, so
-      // drop it rather than cluttering the output. Restricted to members with no keyword this
-      // tool does recognize, so it never touches a member whose emptiness is due to its *own*
-      // type (eg. a bare `{type: 'object'}`, or `{required: [...]}` with no matching
-      // `properties`) -- those stay exactly as before.
-      const members = schema
-        .allOf!.map(memberSchema => ({
-          ast: parseMember(memberSchema, schema, scope, options, processed, usedNames),
-          memberSchema,
-        }))
-        .filter(({ast, memberSchema}) => !(hasNoRecognizedKeywords(memberSchema) && isVacuousInterface(ast)))
+      const members = schema.allOf!
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
         standaloneName: name,
         params: members
-          .map(({ast}) => ast)
+          .map(memberSchema => parseMember(memberSchema, schema, scope, options, processed, usedNames))
           .concat(
             parseRequired(
               schema,
-              // what else renders as an object type in this intersection: a member that wasn't
-              // dropped, or -- when this is the intersection `applySchemaTyping` split off of a
-              // schema -- that schema's other types, which `parse` appends next
-              intersectionOwner(schema) !== undefined || members.some(({memberSchema}) => isObjectSchema(memberSchema)),
+              // what else renders as an object type in this intersection: a member, or -- when
+              // this is the intersection `applySchemaTyping` split off of a schema -- that
+              // schema's other types, which `parse` appends next
+              intersectionOwner(schema) !== undefined || members.some(memberSchema => isObjectSchema(memberSchema)),
               name,
               scope,
               options,
@@ -579,37 +566,6 @@ function parseNonLiteral(
         type: 'ARRAY',
       }
   }
-}
-
-// An `allOf` member made up exclusively of keywords that don't shape a type (see `Keyword.typed`
-// in `keywords.ts`) but do hold subschemas (`if`/`then`/`else`, `not`; with none of either it is
-// the empty schema, which the optimizer drops from intersections) is one this tool has no notion
-// of at all, as opposed to eg. a bare `{type: 'object'}`, which the tool does recognize but
-// currently renders no differently -- that distinction keeps `hasNoRecognizedKeywords` from also
-// swallowing members whose current (separately unimplemented) behavior other schemas rely on.
-// (`$ref` needs no recognizing: by the time this runs, the resolver has already replaced every
-// `$ref` node, so `case 'REFERENCE'` above never fires and no schema here can carry one.)
-function hasNoRecognizedKeywords(schema: NormalizedJSONSchema): boolean {
-  return Object.keys(schema).every(key => !TYPE_SHAPING_KEYWORDS.has(key))
-}
-
-/**
- * True for a parsed AST that carries no information beyond the synthesized
- * `[k: string]: unknown`/`any` index signature `parseSchema` adds by default -- ie. an interface
- * with no properties, patternProperties, superTypes, comment, or standalone name of its own.
- * @see https://github.com/bcherny/json-schema-to-typescript/issues/369
- */
-function isVacuousInterface(ast: AST): boolean {
-  return (
-    ast.type === 'INTERFACE' &&
-    ast.standaloneName === undefined &&
-    ast.comment === undefined &&
-    !ast.deprecated &&
-    ast.superTypes.length === 0 &&
-    ast.params.length === 1 &&
-    ast.params[0].isIndexSignature &&
-    (ast.params[0].ast.type === 'ANY' || ast.params[0].ast.type === 'UNKNOWN')
-  )
 }
 
 /**
@@ -992,15 +948,6 @@ function intersectionOwner(schema: NormalizedJSONSchema): NormalizedJSONSchema |
 /** True for a schema `standaloneName` will name (by a title or id since hoisted onto its intersection, maybe) */
 function isNamed(schema: NormalizedJSONSchema, options: Options): boolean {
   return Boolean(nameOf(schema[Intersection] ?? schema, schema[DefinitionKey], options))
-}
-
-/** The name a schema asks for, before it is made unique */
-function nameOf(
-  schema: NormalizedJSONSchema,
-  keyNameFromDefinition: string | undefined,
-  options: Options,
-): string | undefined {
-  return options.customName?.(schema, keyNameFromDefinition) || schema.title || schema.$id || keyNameFromDefinition
 }
 
 /**
