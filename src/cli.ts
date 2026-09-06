@@ -140,11 +140,15 @@ async function main(argv: minimist.ParsedArgs) {
 
 /**
  * The message of each `$ref` error, naming the file it was found in when the message
- * itself does not (a missing pointer says which pointer, not which file it is in).
+ * itself does not (a missing pointer says which pointer, not which file it is in). For
+ * the schema being compiled itself, `source` is its directory (a trailing slash), which
+ * says nothing: the user knows which schema they passed.
  */
 function refErrorLines(e: JSONParserError | JSONParserErrorGroup): string[] {
   const errors = e instanceof JSONParserErrorGroup ? e.errors : [e]
-  return errors.map(_ => (_.source && !_.message.includes(_.source) ? `${_.message} (in ${_.source})` : _.message))
+  return errors.map(_ =>
+    _.source && !_.source.endsWith('/') && !_.message.includes(_.source) ? `${_.message} (in ${_.source})` : _.message,
+  )
 }
 
 // check if path is an existing directory

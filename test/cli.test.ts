@@ -498,6 +498,17 @@ suite('CLI', () => {
     '{"properties": {"x": {"$ref": "./test/resources/NoSuchRefTarget.json"}}}',
   )
 
+  // ...but a pointer into the schema itself is not suffixed with its directory
+  cliFailTest(
+    'a $ref to a missing pointer in the schema itself is the message alone',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toBe('error: Missing $ref pointer "#/definitions/nope". Token "definitions" does not exist.\n')
+    },
+    '{"properties": {"x": {"$ref": "#/definitions/nope"}}}',
+  )
+
   // ...and when the resolver's message does not name the file (a pointer into another
   // file that does not exist there), the line says which file it is in
   cliFailTest(
