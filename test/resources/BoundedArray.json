@@ -1,0 +1,14 @@
+{
+  "title": "Bounded Array",
+  "type": "object",
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2,
+      "maxItems": 3
+    }
+  }
+}
