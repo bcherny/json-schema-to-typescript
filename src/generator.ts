@@ -982,10 +982,15 @@ function isExtendable(superType: AST, seen = new Set<AST>()): boolean {
   return (
     superType.type === 'INTERFACE' &&
     hasStandaloneName(superType) &&
-    // (declared-only params, such as unreachable definitions, may sit beside the signature)
-    !superType.params.some(_ => _.isIndexSignature && _.ast.type === 'NEVER') &&
+    !isClosedEmptyObject(superType) &&
     superType.superTypes.every(_ => isExtendable(_, seen))
   )
+}
+
+/** Its only rendered member is the `never` index signature (declared-only params may sit beside it) */
+function isClosedEmptyObject(ast: TInterface): boolean {
+  const rendered = ast.params.filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
+  return rendered.length === 1 && rendered[0].isIndexSignature && rendered[0].ast.type === 'NEVER'
 }
 
 function generateStandaloneType(ast: ASTWithStandaloneName, options: Options): string {
