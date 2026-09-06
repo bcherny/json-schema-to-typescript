@@ -518,35 +518,33 @@ export type ProxyResourceBase = ARMResourceBase & {
  */
 export type ResourceLocations =
   | string
-  | (
-      | "East Asia"
-      | "Southeast Asia"
-      | "Central US"
-      | "East US"
-      | "East US 2"
-      | "West US"
-      | "North Central US"
-      | "South Central US"
-      | "North Europe"
-      | "West Europe"
-      | "Japan West"
-      | "Japan East"
-      | "Brazil South"
-      | "Australia East"
-      | "Australia Southeast"
-      | "Central India"
-      | "West India"
-      | "South India"
-      | "Canada Central"
-      | "Canada East"
-      | "West Central US"
-      | "West US 2"
-      | "UK South"
-      | "UK West"
-      | "Korea Central"
-      | "Korea South"
-      | "global"
-    );
+  | "East Asia"
+  | "Southeast Asia"
+  | "Central US"
+  | "East US"
+  | "East US 2"
+  | "West US"
+  | "North Central US"
+  | "South Central US"
+  | "North Europe"
+  | "West Europe"
+  | "Japan West"
+  | "Japan East"
+  | "Brazil South"
+  | "Australia East"
+  | "Australia Southeast"
+  | "Central India"
+  | "West India"
+  | "South India"
+  | "Canada Central"
+  | "Canada East"
+  | "West Central US"
+  | "West US 2"
+  | "UK South"
+  | "UK West"
+  | "Korea Central"
+  | "Korea South"
+  | "global";
 /**
  * This interface was referenced by \`Definitions\`'s JSON-Schema
  * via the \`definition\` "resourceBase".
@@ -792,7 +790,7 @@ export interface AdditionalUnattendContent {
   /**
    * Specifies the name of the setting to which the content applies. Possible values are: FirstLogonCommands and AutoLogon.
    */
-  settingName?: ("AutoLogon" | "FirstLogonCommands") | string;
+  settingName?: "AutoLogon" | "FirstLogonCommands" | string;
   [k: string]: unknown;
 }
 /**
@@ -867,7 +865,7 @@ export interface CreationData {
   /**
    * This enumerates the possible sources of a disk's creation.
    */
-  createOption: ("Empty" | "Attach" | "FromImage" | "Import" | "Copy") | string;
+  createOption: "Empty" | "Attach" | "FromImage" | "Import" | "Copy" | string;
   /**
    * The source image used for creating the disk.
    */
@@ -913,11 +911,11 @@ export interface DataDisk {
   /**
    * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
    */
-  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  caching?: "None" | "ReadOnly" | "ReadWrite" | string;
   /**
    * Specifies how the virtual machine should be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This value is used when you are using a specialized disk to create the virtual machine.<br><br> **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described.
    */
-  createOption: ("FromImage" | "Empty" | "Attach") | string;
+  createOption: "FromImage" | "Empty" | "Attach" | string;
   /**
    * Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
    */
@@ -971,7 +969,7 @@ export interface ManagedDiskParameters {
   /**
    * Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or Premium_LRS.
    */
-  storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
+  storageAccountType?: "Standard_LRS" | "Premium_LRS" | string;
   [k: string]: unknown;
 }
 /**
@@ -1058,7 +1056,7 @@ export interface DiskProperties {
   /**
    * The Operating System type.
    */
-  osType?: ("Windows" | "Linux") | string;
+  osType?: "Windows" | "Linux" | string;
   [k: string]: unknown;
 }
 /**
@@ -1139,7 +1137,7 @@ export interface DiskSku {
   /**
    * The sku name.
    */
-  name?: ("Standard_LRS" | "Premium_LRS") | string;
+  name?: "Standard_LRS" | "Premium_LRS" | string;
   [k: string]: unknown;
 }
 /**
@@ -1153,105 +1151,103 @@ export interface HardwareProfile {
    * Specifies the size of the virtual machine. For more information about virtual machine sizes, see [Sizes for virtual machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json). <br><br> The available VM sizes depend on region and availability set. For a list of available sizes use these APIs:  <br><br> [List all available virtual machine sizes in an availability set](https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes) <br><br> [List all available virtual machine sizes in a region](https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list) <br><br> [List all available virtual machine sizes for resizing](https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes).
    */
   vmSize?:
-    | (
-        | "Basic_A0"
-        | "Basic_A1"
-        | "Basic_A2"
-        | "Basic_A3"
-        | "Basic_A4"
-        | "Standard_A0"
-        | "Standard_A1"
-        | "Standard_A2"
-        | "Standard_A3"
-        | "Standard_A4"
-        | "Standard_A5"
-        | "Standard_A6"
-        | "Standard_A7"
-        | "Standard_A8"
-        | "Standard_A9"
-        | "Standard_A10"
-        | "Standard_A11"
-        | "Standard_A1_v2"
-        | "Standard_A2_v2"
-        | "Standard_A4_v2"
-        | "Standard_A8_v2"
-        | "Standard_A2m_v2"
-        | "Standard_A4m_v2"
-        | "Standard_A8m_v2"
-        | "Standard_D1"
-        | "Standard_D2"
-        | "Standard_D3"
-        | "Standard_D4"
-        | "Standard_D11"
-        | "Standard_D12"
-        | "Standard_D13"
-        | "Standard_D14"
-        | "Standard_D1_v2"
-        | "Standard_D2_v2"
-        | "Standard_D3_v2"
-        | "Standard_D4_v2"
-        | "Standard_D5_v2"
-        | "Standard_D11_v2"
-        | "Standard_D12_v2"
-        | "Standard_D13_v2"
-        | "Standard_D14_v2"
-        | "Standard_D15_v2"
-        | "Standard_DS1"
-        | "Standard_DS2"
-        | "Standard_DS3"
-        | "Standard_DS4"
-        | "Standard_DS11"
-        | "Standard_DS12"
-        | "Standard_DS13"
-        | "Standard_DS14"
-        | "Standard_DS1_v2"
-        | "Standard_DS2_v2"
-        | "Standard_DS3_v2"
-        | "Standard_DS4_v2"
-        | "Standard_DS5_v2"
-        | "Standard_DS11_v2"
-        | "Standard_DS12_v2"
-        | "Standard_DS13_v2"
-        | "Standard_DS14_v2"
-        | "Standard_DS15_v2"
-        | "Standard_F1"
-        | "Standard_F2"
-        | "Standard_F4"
-        | "Standard_F8"
-        | "Standard_F16"
-        | "Standard_F1s"
-        | "Standard_F2s"
-        | "Standard_F4s"
-        | "Standard_F8s"
-        | "Standard_F16s"
-        | "Standard_G1"
-        | "Standard_G2"
-        | "Standard_G3"
-        | "Standard_G4"
-        | "Standard_G5"
-        | "Standard_GS1"
-        | "Standard_GS2"
-        | "Standard_GS3"
-        | "Standard_GS4"
-        | "Standard_GS5"
-        | "Standard_H8"
-        | "Standard_H16"
-        | "Standard_H8m"
-        | "Standard_H16m"
-        | "Standard_H16r"
-        | "Standard_H16mr"
-        | "Standard_L4s"
-        | "Standard_L8s"
-        | "Standard_L16s"
-        | "Standard_L32s"
-        | "Standard_NC6"
-        | "Standard_NC12"
-        | "Standard_NC24"
-        | "Standard_NC24r"
-        | "Standard_NV6"
-        | "Standard_NV12"
-        | "Standard_NV24"
-      )
+    | "Basic_A0"
+    | "Basic_A1"
+    | "Basic_A2"
+    | "Basic_A3"
+    | "Basic_A4"
+    | "Standard_A0"
+    | "Standard_A1"
+    | "Standard_A2"
+    | "Standard_A3"
+    | "Standard_A4"
+    | "Standard_A5"
+    | "Standard_A6"
+    | "Standard_A7"
+    | "Standard_A8"
+    | "Standard_A9"
+    | "Standard_A10"
+    | "Standard_A11"
+    | "Standard_A1_v2"
+    | "Standard_A2_v2"
+    | "Standard_A4_v2"
+    | "Standard_A8_v2"
+    | "Standard_A2m_v2"
+    | "Standard_A4m_v2"
+    | "Standard_A8m_v2"
+    | "Standard_D1"
+    | "Standard_D2"
+    | "Standard_D3"
+    | "Standard_D4"
+    | "Standard_D11"
+    | "Standard_D12"
+    | "Standard_D13"
+    | "Standard_D14"
+    | "Standard_D1_v2"
+    | "Standard_D2_v2"
+    | "Standard_D3_v2"
+    | "Standard_D4_v2"
+    | "Standard_D5_v2"
+    | "Standard_D11_v2"
+    | "Standard_D12_v2"
+    | "Standard_D13_v2"
+    | "Standard_D14_v2"
+    | "Standard_D15_v2"
+    | "Standard_DS1"
+    | "Standard_DS2"
+    | "Standard_DS3"
+    | "Standard_DS4"
+    | "Standard_DS11"
+    | "Standard_DS12"
+    | "Standard_DS13"
+    | "Standard_DS14"
+    | "Standard_DS1_v2"
+    | "Standard_DS2_v2"
+    | "Standard_DS3_v2"
+    | "Standard_DS4_v2"
+    | "Standard_DS5_v2"
+    | "Standard_DS11_v2"
+    | "Standard_DS12_v2"
+    | "Standard_DS13_v2"
+    | "Standard_DS14_v2"
+    | "Standard_DS15_v2"
+    | "Standard_F1"
+    | "Standard_F2"
+    | "Standard_F4"
+    | "Standard_F8"
+    | "Standard_F16"
+    | "Standard_F1s"
+    | "Standard_F2s"
+    | "Standard_F4s"
+    | "Standard_F8s"
+    | "Standard_F16s"
+    | "Standard_G1"
+    | "Standard_G2"
+    | "Standard_G3"
+    | "Standard_G4"
+    | "Standard_G5"
+    | "Standard_GS1"
+    | "Standard_GS2"
+    | "Standard_GS3"
+    | "Standard_GS4"
+    | "Standard_GS5"
+    | "Standard_H8"
+    | "Standard_H16"
+    | "Standard_H8m"
+    | "Standard_H16m"
+    | "Standard_H16r"
+    | "Standard_H16mr"
+    | "Standard_L4s"
+    | "Standard_L8s"
+    | "Standard_L16s"
+    | "Standard_L32s"
+    | "Standard_NC6"
+    | "Standard_NC12"
+    | "Standard_NC24"
+    | "Standard_NC24r"
+    | "Standard_NV6"
+    | "Standard_NV12"
+    | "Standard_NV24"
     | string;
   [k: string]: unknown;
 }
@@ -1269,7 +1265,7 @@ export interface ImageDataDisk {
   /**
    * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
    */
-  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  caching?: "None" | "ReadOnly" | "ReadWrite" | string;
   /**
    * Specifies the size of empty data disks in gigabytes. This element can be used to overwrite the name of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
    */
@@ -1283,7 +1279,7 @@ export interface ImageDataDisk {
   /**
    * Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or Premium_LRS.
    */
-  storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
+  storageAccountType?: "Standard_LRS" | "Premium_LRS" | string;
   [k: string]: unknown;
 }
 /**
@@ -1300,7 +1296,7 @@ export interface ImageOSDisk {
   /**
    * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
    */
-  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  caching?: "None" | "ReadOnly" | "ReadWrite" | string;
   /**
    * Specifies the size of empty data disks in gigabytes. This element can be used to overwrite the name of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
    */
@@ -1309,16 +1305,16 @@ export interface ImageOSDisk {
   /**
    * The OS State.
    */
-  osState: ("Generalized" | "Specialized") | string;
+  osState: "Generalized" | "Specialized" | string;
   /**
    * This property allows you to specify the type of the OS that is included in the disk if creating a VM from a custom image. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
    */
-  osType: ("Windows" | "Linux") | string;
+  osType: "Windows" | "Linux" | string;
   snapshot?: SubResource | string;
   /**
    * Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or Premium_LRS.
    */
-  storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
+  storageAccountType?: "Standard_LRS" | "Premium_LRS" | string;
   [k: string]: unknown;
 }
 /**
@@ -1399,7 +1395,7 @@ export interface InstanceViewStatus {
   /**
    * The level code.
    */
-  level?: ("Info" | "Warning" | "Error") | string;
+  level?: "Info" | "Warning" | "Error" | string;
   /**
    * The detailed status message, including for alerts and error messages.
    */
@@ -1510,11 +1506,11 @@ export interface OSDisk {
   /**
    * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
    */
-  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  caching?: "None" | "ReadOnly" | "ReadWrite" | string;
   /**
    * Specifies how the virtual machine should be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This value is used when you are using a specialized disk to create the virtual machine.<br><br> **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described.
    */
-  createOption: ("FromImage" | "Empty" | "Attach") | string;
+  createOption: "FromImage" | "Empty" | "Attach" | string;
   /**
    * Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
    */
@@ -1538,7 +1534,7 @@ export interface OSDisk {
   /**
    * This property allows you to specify the type of the OS that is included in the disk if creating a VM from user-image or a specialized VHD. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
    */
-  osType?: ("Windows" | "Linux") | string;
+  osType?: "Windows" | "Linux" | string;
   /**
    * Describes the uri of a disk.
    */
@@ -1669,7 +1665,7 @@ export interface WinRMListener {
   /**
    * Specifies the protocol of listener. <br><br> Possible values are: <br>**http** <br><br> **https**.
    */
-  protocol?: ("Http" | "Https") | string;
+  protocol?: "Http" | "Https" | string;
   [k: string]: unknown;
 }
 /**
@@ -1778,7 +1774,7 @@ export interface UpgradePolicy {
   /**
    * Specifies the mode of an upgrade to virtual machines in the scale set.<br /><br /> Possible values are:<br /><br /> **Manual** - You  control the application of updates to virtual machines in the scale set. You do this by using the manualUpgrade action.<br /><br /> **Automatic** - All virtual machines in the scale set are  automatically updated at the same time.
    */
-  mode?: ("Automatic" | "Manual" | "Rolling") | string;
+  mode?: "Automatic" | "Manual" | "Rolling" | string;
   /**
    * The configuration parameters used while performing a rolling upgrade.
    */
@@ -1916,11 +1912,11 @@ export interface VirtualMachineScaleSetDataDisk {
   /**
    * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
    */
-  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  caching?: "None" | "ReadOnly" | "ReadWrite" | string;
   /**
    * The create option.
    */
-  createOption: ("FromImage" | "Empty" | "Attach") | string;
+  createOption: "FromImage" | "Empty" | "Attach" | string;
   /**
    * Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite the size of the disk in a virtual machine image. <br><br> This value cannot be larger than 1023 GB
    */
@@ -1949,7 +1945,7 @@ export interface VirtualMachineScaleSetManagedDiskParameters {
   /**
    * Specifies the storage account type for the managed disk. Managed OS disk storage account type can only be set when you create the scale set. Possible values are: Standard_LRS or Premium_LRS.
    */
-  storageAccountType?: ("Standard_LRS" | "Premium_LRS") | string;
+  storageAccountType?: "Standard_LRS" | "Premium_LRS" | string;
   [k: string]: unknown;
 }
 /**
@@ -2115,7 +2111,7 @@ export interface VirtualMachineScaleSetIPConfigurationProperties {
   /**
    * Available from Api-Version 2017-03-30 onwards, it represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
    */
-  privateIPAddressVersion?: ("IPv4" | "IPv6") | string;
+  privateIPAddressVersion?: "IPv4" | "IPv6" | string;
   /**
    * Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration
    */
@@ -2260,11 +2256,11 @@ export interface VirtualMachineScaleSetOSDisk {
   /**
    * Specifies the caching requirements. <br><br> Possible values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite** <br><br> Default: **None for Standard storage. ReadOnly for Premium storage**.
    */
-  caching?: ("None" | "ReadOnly" | "ReadWrite") | string;
+  caching?: "None" | "ReadOnly" | "ReadWrite" | string;
   /**
    * Specifies how the virtual machines in the scale set should be created.<br><br> The only allowed value is: **FromImage** \\u2013 This value is used when you are using an image to create the virtual machine. If you are using a platform image, you also use the imageReference element described above. If you are using a marketplace image, you  also use the plan element previously described.
    */
-  createOption: ("FromImage" | "Empty" | "Attach") | string;
+  createOption: "FromImage" | "Empty" | "Attach" | string;
   /**
    * Describes the uri of a disk.
    */
@@ -2280,7 +2276,7 @@ export interface VirtualMachineScaleSetOSDisk {
   /**
    * This property allows you to specify the type of the OS that is included in the disk if creating a VM from user-image or a specialized VHD. <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
    */
-  osType?: ("Windows" | "Linux") | string;
+  osType?: "Windows" | "Linux" | string;
   /**
    * Specifies the container urls that are used to store operating system disks for the scale set.
    */
