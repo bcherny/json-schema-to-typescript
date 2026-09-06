@@ -1,7 +1,19 @@
 import {uniqBy} from 'lodash'
 import {Options} from '.'
 import {generateType} from './generator'
-import {AST, omitStandaloneName, T_ANY, T_UNKNOWN, TAny, TUnknown} from './types/AST'
+import {
+  AST,
+  hasComment,
+  hasStandaloneName,
+  isLiteralUnion,
+  omitStandaloneName,
+  T_ANY,
+  T_UNKNOWN,
+  TAny,
+  TIntersection,
+  TUnion,
+  TUnknown,
+} from './types/AST'
 import {log} from './utils'
 
 // nodes whose optimize() has returned; a recursive type can be rendered from inside itself before that
@@ -39,6 +51,20 @@ function optimizeNode(ast: AST, options: Options, processed: Map<AST, AST>): AST
       const optimizedAST = Object.assign(ast, {
         params: ast.params.map(_ => optimize(_, options, processed)),
       })
+
+      // [A | (B | C)] -> [A | B | C]: an unnamed set operation of the same kind, nested, only adds
+      // parentheses -- its members accept exactly what they accept one level up. A described
+      // `const` / inline `enum` branch stays whole: its description belongs to it as one member,
+      // and flattening would scatter or drop it
+      const nested = (_: AST): _ is TIntersection | TUnion =>
+        _.type === optimizedAST.type &&
+        !hasStandaloneName(_) &&
+        !(hasComment(_) && isLiteralUnion(_)) &&
+        _ !== optimizedAST
+      if (optimizedAST.params.some(nested)) {
+        log('cyan', 'optimizer', '[A | (B | C)] -> [A | B | C]', optimizedAST)
+        optimizedAST.params = optimizedAST.params.flatMap(_ => (nested(_) ? _.params : [_]))
+      }
 
       // [A] -> A is the generator's job (it prints a one-member set operation as that member):
       // nothing below has two members to work with, and trading the node for a bare `any`
