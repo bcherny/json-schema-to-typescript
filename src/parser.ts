@@ -127,7 +127,7 @@ export function nameAnonymousRecursiveTypes(
       if (index > -1) {
         if (!path.slice(index).some(hasStandaloneName)) {
           const target = pickEnd(node, path[path.length - 1])
-          target.standaloneName = generateName(refNames.get(target) ?? keyOf(target) ?? closestName(path), usedNames)
+          target.standaloneName = generateName(refNames.get(target) ?? target.keyName ?? closestName(path), usedNames)
           named = true
         }
         return
@@ -156,13 +156,12 @@ export function nameAnonymousRecursiveTypes(
   // Last resort is the root the walk started from: the schema itself or a named type
   function closestName(path: AST[]): string {
     const above = [...path].reverse()
-    return above.map(_ => refNames.get(_)).find(Boolean) ?? above.map(keyOf).find(Boolean) ?? path[0].standaloneName!
+    return (
+      above.map(_ => refNames.get(_)).find(Boolean) ??
+      above.map(_ => _.keyName).find(Boolean) ??
+      path[0].standaloneName!
+    )
   }
-}
-
-/** A node's property key -- ignoring the placeholder that array items get */
-function keyOf(ast: AST): string | undefined {
-  return ast.keyName?.includes('{keyNameFromDefinition}') ? undefined : ast.keyName
 }
 
 function isList(ast: AST): boolean {
@@ -483,22 +482,37 @@ function parseNonLiteral(
         }
         return arrayType
       } else {
+        const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
+        // The items inherit a key from the array they sit in, `RolesItems` for `roles`, which
+        // names a titleless `enum` among them (see the ENUM case)
+        const itemsKey = name ?? keyName
         return {
           comment: schema.description,
           deprecated: schema.deprecated,
           isReadOnly: isReadOnly(schema),
           keyName,
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-          params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
+          standaloneName: name,
+          params: parse(
+            schema.items!,
+            options,
+            itemsKey === undefined ? undefined : `${itemsKey}Items`,
+            processed,
+            usedNames,
+          ),
           type: 'ARRAY',
         }
       }
-    case 'UNION':
+    case 'UNION': {
+      // The copy of a nullable array (`type: ['array', 'null']`) sits where the schema does,
+      // so it gets the schema's name, else its key, to name its items as a plain array
+      // would; the other copies read the key as a name of their own (an `enum` copy would
+      // declare a second enum under it)
+      const unionName = standaloneName(schema, keyNameFromDefinition, usedNames, options)
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
+        standaloneName: unionName,
         params: (schema.type as JSONSchema4TypeName[]).flatMap(type => {
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
           // The schema's `anyOf`/`oneOf` hold within each of its types (`typesOfSchema` leaves
@@ -517,10 +531,11 @@ function parseNonLiteral(
           }
           applySchemaTyping(member)
           perTypeCopies.add(member)
-          return [parse(member, options, undefined, processed, usedNames)]
+          return [parse(member, options, type === 'array' ? (unionName ?? keyName) : undefined, processed, usedNames)]
         }),
         type: 'UNION',
       }
+    }
     case 'UNNAMED_ENUM':
       return {
         comment: schema.description,
