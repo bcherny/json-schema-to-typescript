@@ -131,20 +131,6 @@
       },
       "combinedWithConditionalMember": {
         "type": "object",
-        "allOf": [
-          {
-            "if": {
-              "required": [
-                "a"
-              ]
-            },
-            "then": {
-              "required": [
-                "b"
-              ]
-            }
-          }
-        ],
         "required": [],
         "additionalProperties": true
       },
