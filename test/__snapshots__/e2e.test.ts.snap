@@ -385543,7 +385543,9 @@ exports[`realWorld.payloadCMS.ts 1`] = `
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface RealWorld {}
+export interface RealWorld {
+  [k: string]: never;
+}
 export interface MainMenu {
   items?: {
     type?: "link" | "subMenu";

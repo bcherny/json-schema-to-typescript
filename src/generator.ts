@@ -982,11 +982,8 @@ function isExtendable(superType: AST, seen = new Set<AST>()): boolean {
   return (
     superType.type === 'INTERFACE' &&
     hasStandaloneName(superType) &&
-    !(
-      superType.params.length === 1 &&
-      superType.params[0].isIndexSignature &&
-      superType.params[0].ast.type === 'NEVER'
-    ) &&
+    // (declared-only params, such as unreachable definitions, may sit beside the signature)
+    !superType.params.some(_ => _.isIndexSignature && _.ast.type === 'NEVER') &&
     superType.superTypes.every(_ => isExtendable(_, seen))
   )
 }
