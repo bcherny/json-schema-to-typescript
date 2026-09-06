@@ -301,7 +301,6 @@ function runAll(groups, args) {
 function worker(suite) {
   const ts = require('typescript')
   const {compile} = require(join(ROOT, 'dist', 'src'))
-  const {Parent} = require(join(ROOT, 'dist', 'src', 'types', 'JSONSchema'))
   const check = typeChecker(ts)
 
   // Remote $refs in the suite point at http://localhost:1234/, which is its remotes/ directory. Nothing else is served.
@@ -317,7 +316,6 @@ function worker(suite) {
   const options = {
     bannerComment: '',
     format: false,
-    customName: schema => (schema[Parent] === null ? 'Root' : undefined),
     cwd: join(suite, 'remotes') + '/',
     $refOptions: {resolve: {file: false, http: false, suite: remotes}},
   }
@@ -331,7 +329,9 @@ function worker(suite) {
       const row = {id: g.id, description: g.description, state: 'ok'}
       rows.push(row)
       try {
-        sources.set(`${n}/out.ts`, await compile(g.schema, 'Root', options))
+        // The root type is called `Root` whatever the schema's `$id` says: a `title` names a type ahead of its `$id`
+        const schema = g.schema !== null && typeof g.schema === 'object' ? {...g.schema, title: 'Root'} : g.schema
+        sources.set(`${n}/out.ts`, await compile(schema, 'Root', options))
       } catch (e) {
         row.state = 'crash'
         row.detail = {
