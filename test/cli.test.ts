@@ -506,7 +506,8 @@ suite('CLI', () => {
     ({code, stderr}) => {
       expect(code).toBe(1)
       expect(stderr).toStartWith('error: Missing $ref pointer "#/definitions/nope"')
-      expect(stderr).toContain('(in ' + resolve('./test/resources/ReferencedType.json') + ')')
+      // the resolver reports the path with forward slashes on every OS, so match the file name, not resolve()
+      expect(stderr).toMatch(/ \(in \S*test\/resources\/ReferencedType\.json\)\n$/)
       expect(stderr.trimEnd().split('\n')).toHaveLength(1)
     },
     '{"properties": {"x": {"$ref": "./test/resources/ReferencedType.json#/definitions/nope"}}}',
