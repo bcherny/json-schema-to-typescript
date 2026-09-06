@@ -17,7 +17,12 @@ export function validateOptions({declarationStyle, formatTypes, maxItems}: Parti
       )}.`,
     )
   }
+  // `true` (a bare `--maxItems`) and strings used to slip through and be compared with `>` as
+  // if they were numbers (true as 1, a string as NaN); refuse everything that is not a number.
+  if (maxItems !== undefined && (typeof maxItems !== 'number' || Number.isNaN(maxItems))) {
+    throw TypeError(`Expected options.maxItems to be a number >= -1, but was given ${JSON.stringify(maxItems)}.`)
+  }
   if (maxItems !== undefined && maxItems < -1) {
-    throw RangeError(`Expected options.maxItems to be >= -1, but was given ${maxItems}.`)
+    throw RangeError(`Expected options.maxItems to be a number >= -1, but was given ${maxItems}.`)
   }
 }
