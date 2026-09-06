@@ -4,9 +4,9 @@
 // covers the property case). A nullable array (`type: ['array', 'null']`, or OpenAPI
 // `nullable: true`, which the normalizer rewrites as `anyOf` with `null`) and an array
 // that is an `anyOf`/`oneOf` branch, an `allOf` member or a tuple slot name their items
-// the same way, after the key or name the position sits under: the enum's name never
-// collides with the property's own, unlike a bare enum in a branch
-// (enumWithTsEnumNamesInUnnamedPosition.ts).
+// the same way, after the key or name the position sits under, however many set
+// operations deep the array sits: the enum's name never collides with the property's own,
+// unlike a bare enum in a branch (enumWithTsEnumNamesInUnnamedPosition.ts).
 export const input = {
   title: 'EnumInArrayNamed',
   type: 'object',
@@ -40,7 +40,19 @@ export const input = {
       type: 'array',
       items: [{type: 'array', items: {type: 'string', enum: ['p', 'q'], tsEnumNames: ['P', 'Q']}}],
     },
+    nested: {
+      anyOf: [
+        {oneOf: [{type: 'array', items: {type: 'string', enum: ['u', 'v'], tsEnumNames: ['U', 'V']}}, {type: 'string'}]},
+        {type: 'number'},
+      ],
+    },
+    nullableBranch: {
+      oneOf: [
+        {type: 'array', nullable: true, items: {type: 'string', enum: ['k', 'l'], tsEnumNames: ['K', 'L']}},
+        {type: 'string'},
+      ],
+    },
   },
-  required: ['colours', 'titled', 'nullable', 'openapiNullable', 'branch', 'slot'],
+  required: ['colours', 'titled', 'nullable', 'openapiNullable', 'branch', 'slot', 'nested', 'nullableBranch'],
   additionalProperties: false,
 }

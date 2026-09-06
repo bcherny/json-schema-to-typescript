@@ -396020,6 +396020,8 @@ export interface EnumInArrayNamed {
   openapiNullable: Sizes;
   branch: BranchItems[] | number;
   slot: [] | [SlotItems[], ...unknown[]];
+  nested: NestedItems[] | string | number;
+  nullableBranch: NullableBranchItems[] | null | string;
 }
 
 export const enum ColourItems {
@@ -396045,6 +396047,14 @@ export const enum BranchItems {
 export const enum SlotItems {
   P = "p",
   Q = "q"
+}
+export const enum NestedItems {
+  U = "u",
+  V = "v"
+}
+export const enum NullableBranchItems {
+  K = "k",
+  L = "l"
 }
 "
 `;

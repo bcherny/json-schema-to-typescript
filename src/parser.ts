@@ -635,16 +635,18 @@ function parseMember(
 /**
  * The key a schema in a position with none of its own (a `oneOf`/`anyOf` branch, an `allOf`
  * member, a tuple slot, a per-type copy) takes from the schema above it: `key` if it is an
- * array, else nothing. An `enum` there stays a union of literals rather than a declaration
- * under the property's own name; an array's items are named after the key plus `Items`
- * (`RolesItems` for `roles: {oneOf: [{type: 'array', items: {enum: …}}, …]}`), a name the
- * property itself never takes.
+ * array, or a set operation that will hand it on to its own members, else nothing. An
+ * `enum` there stays a union of literals rather than a declaration under the property's own
+ * name; an array's items are named after the key plus `Items` (`RolesItems` for `roles:
+ * {oneOf: [{type: 'array', items: {enum: …}}, …]}`), a name the property itself never takes.
  */
 function arrayKey(schema: NormalizedJSONSchema | JSONSchema4Type, key: string | undefined): string | undefined {
   if (isPrimitive(schema)) {
     return undefined
   }
-  return hasType(schema, 'array') || (schema.type === undefined && 'items' in schema) ? key : undefined
+  const isArray = hasType(schema, 'array') || (schema.type === undefined && 'items' in schema)
+  const holdsMembers = ('anyOf' in schema || 'oneOf' in schema || 'allOf' in schema) && !('enum' in schema)
+  return isArray || holdsMembers ? key : undefined
 }
 
 /**
