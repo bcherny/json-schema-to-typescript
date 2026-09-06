@@ -155,10 +155,6 @@ exports[`CLI file in (-i), unreachable definitions flag, pipe out 1`] = `
 
 export type DefinitionsOnly = unknown;
 
-/**
- * This interface was referenced by \`DefinitionsOnly\`'s JSON-Schema
- * via the \`definition\` "DummyPerson".
- */
 export interface DummyPerson {
   age?: number;
   [k: string]: unknown;
@@ -641,20 +637,12 @@ export interface B {
 exports[`CLI directory in, --imports: shared types are imported from the module that declares them 5`] = `"test/resources/Imports/out/common.d.ts"`;
 
 exports[`CLI directory in, --imports: shared types are imported from the module that declares them 6`] = `
-"/**
- * This interface was referenced by \`Common\`'s JSON-Schema
- * via the \`definition\` "tag".
- */
-export type Tag = "red" | "green";
+"export type Tag = "red" | "green";
 
 /**
  * Shared definitions; no properties of its own
  */
 export interface Common {}
-/**
- * This interface was referenced by \`Common\`'s JSON-Schema
- * via the \`definition\` "thing".
- */
 export interface Thing {
   id: string;
   tags?: Tag[];

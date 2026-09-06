@@ -39,8 +39,11 @@ export function parse(
 
   const intersection = schema[Intersection]
   const types = schema[Types]
-  // what the members of this schema's set operations may also borrow from (see `Scope`)
-  const scope: Scope = perTypeCopies.has(schema) || !isObjectOnly(schema) ? [] : [schema, ...enclosing]
+  // What else applies to this schema's instances, if they are all objects: the schema and what it was
+  // handed (see `Scope`). The intersection split off of it looks keys up in these; so do the members
+  // of its set operations -- unless it is a per-type copy, which shares its members with the others
+  const alongside: Scope = isObjectOnly(schema) ? [schema, ...enclosing] : []
+  const scope: Scope = perTypeCopies.has(schema) ? [] : alongside
 
   if (intersection) {
     // `parse` comes back to this schema once per place that refers to it, and, through
@@ -52,7 +55,7 @@ export function parse(
     if (seen) {
       return seen
     }
-    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames, scope)
+    const ast = parseAsTypeWithCache(intersection, 'ALL_OF', options, keyName, processed, usedNames, alongside)
     const {params} = ast as TIntersection
     types.forEach(type => {
       params.push(parseAsTypeWithCache(schema, type, options, keyName, processed, usedNames, scope))
@@ -192,7 +195,6 @@ function subtrees(ast: AST): AST[] {
  */
 export function parseUnreachableDefinitions(
   rootSchema: NormalizedJSONSchema,
-  rootASTName: string,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
@@ -202,22 +204,18 @@ export function parseUnreachableDefinitions(
   }
 
   return map(rootSchema.$defs, (value, key: string) =>
-    parseUnreachableDefinition(value, key, rootASTName, options, processed, usedNames),
+    parseUnreachableDefinition(value, key, options, processed, usedNames),
   )
 }
 
 function parseUnreachableDefinition(
   schema: NormalizedJSONSchema,
   key: string,
-  parentSchemaName: string,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
 ): AST {
   const ast = parse(schema, options, key, processed, usedNames)
-  const comment = `This interface was referenced by \`${parentSchemaName}\`'s JSON-Schema
-via the \`definition\` "${key}".`
-  ast.comment = ast.comment ? `${ast.comment}\n\n${comment}` : comment
   ast.isUnreachableDefinition = true
   return ast
 }
@@ -883,7 +881,7 @@ type Scope = readonly NormalizedJSONSchema[]
 /**
  * The per-type copies of multi-typed schemas (the `UNION` case, `narrowMember`). The copies share
  * their members, which are parsed once, so no one copy is the schema around them: a copy hands its
- * members an empty scope.
+ * members an empty scope (its own split-off intersection still sees it).
  */
 const perTypeCopies = new WeakSet<LinkedJSONSchema>()
 
@@ -1126,7 +1124,7 @@ via the \`patternProperty\` "${key.replace('*/', '*\\/')}".`
   const unreachableDefinitions: TInterfaceParam[] = !options.unreachableDefinitions
     ? []
     : map(schema.$defs, (value, key: string) => ({
-        ast: parseUnreachableDefinition(value, key, parentSchemaName, options, processed, usedNames),
+        ast: parseUnreachableDefinition(value, key, options, processed, usedNames),
         isIndexSignature: false,
         isPatternProperty: false,
         isRequired: isRequired(schema, key, value),
