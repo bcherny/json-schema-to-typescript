@@ -1,0 +1,433 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.schemastore.org/prettierrc.json",
+  "definitions": {
+    "optionsDefinition": {
+      "type": "object",
+      "properties": {
+        "arrowParens": {
+          "description": "Include parentheses around a sole arrow function parameter.",
+          "default": "always",
+          "oneOf": [
+            {
+              "const": "always",
+              "description": "Always include parens. Example: `(x) => x`"
+            },
+            {
+              "const": "avoid",
+              "description": "Omit parens when possible. Example: `x => x`"
+            }
+          ]
+        },
+        "bracketSameLine": {
+          "description": "Put > of opening tags on the last line instead of on a new line.",
+          "default": false,
+          "type": "boolean"
+        },
+        "bracketSpacing": {
+          "description": "Print spaces between brackets.",
+          "default": true,
+          "type": "boolean"
+        },
+        "checkIgnorePragma": {
+          "description": "Check whether the file's first docblock comment contains '@noprettier' or '@noformat' to determine if it should be formatted.",
+          "default": false,
+          "type": "boolean"
+        },
+        "cursorOffset": {
+          "description": "Print (to stderr) where a cursor at the given position would move to after formatting.",
+          "default": -1,
+          "type": "integer"
+        },
+        "embeddedLanguageFormatting": {
+          "description": "Control how Prettier formats quoted code embedded in the file.",
+          "default": "auto",
+          "oneOf": [
+            {
+              "const": "auto",
+              "description": "Format embedded code if Prettier can automatically identify it."
+            },
+            {
+              "const": "off",
+              "description": "Never automatically format embedded code."
+            }
+          ]
+        },
+        "endOfLine": {
+          "description": "Which end of line characters to apply.",
+          "default": "lf",
+          "oneOf": [
+            {
+              "const": "lf",
+              "description": "Line Feed only (\\n), common on Linux and macOS as well as inside git repos"
+            },
+            {
+              "const": "crlf",
+              "description": "Carriage Return + Line Feed characters (\\r\\n), common on Windows"
+            },
+            {
+              "const": "cr",
+              "description": "Carriage Return character only (\\r), used very rarely"
+            },
+            {
+              "const": "auto",
+              "description": "Maintain existing\n(mixed values within one file are normalised by looking at what's used after the first line)"
+            }
+          ]
+        },
+        "experimentalOperatorPosition": {
+          "description": "Where to print operators when binary expressions wrap lines.",
+          "default": "end",
+          "oneOf": [
+            {
+              "const": "start",
+              "description": "Print operators at the start of new lines."
+            },
+            {
+              "const": "end",
+              "description": "Print operators at the end of previous lines."
+            }
+          ]
+        },
+        "experimentalTernaries": {
+          "description": "Use curious ternaries, with the question mark after the condition.",
+          "default": false,
+          "type": "boolean"
+        },
+        "filepath": {
+          "description": "Specify the input filepath. This will be used to do parser inference.",
+          "type": "string"
+        },
+        "htmlWhitespaceSensitivity": {
+          "description": "How to handle whitespaces in HTML.",
+          "default": "css",
+          "oneOf": [
+            {
+              "const": "css",
+              "description": "Respect the default value of CSS display property."
+            },
+            {
+              "const": "strict",
+              "description": "Whitespaces are considered sensitive."
+            },
+            {
+              "const": "ignore",
+              "description": "Whitespaces are considered insensitive."
+            }
+          ]
+        },
+        "insertPragma": {
+          "description": "Insert @format pragma into file's first docblock comment.",
+          "default": false,
+          "type": "boolean"
+        },
+        "jsxSingleQuote": {
+          "description": "Use single quotes in JSX.",
+          "default": false,
+          "type": "boolean"
+        },
+        "objectWrap": {
+          "description": "How to wrap object literals.",
+          "default": "preserve",
+          "oneOf": [
+            {
+              "const": "preserve",
+              "description": "Keep as multi-line, if there is a newline between the opening brace and first property."
+            },
+            {
+              "const": "collapse",
+              "description": "Fit to a single line when possible."
+            }
+          ]
+        },
+        "parser": {
+          "description": "Which parser to use.",
+          "anyOf": [
+            {
+              "const": "flow",
+              "description": "Flow"
+            },
+            {
+              "const": "babel",
+              "description": "JavaScript"
+            },
+            {
+              "const": "babel-flow",
+              "description": "Flow"
+            },
+            {
+              "const": "babel-ts",
+              "description": "TypeScript"
+            },
+            {
+              "const": "typescript",
+              "description": "TypeScript"
+            },
+            {
+              "const": "acorn",
+              "description": "JavaScript"
+            },
+            {
+              "const": "espree",
+              "description": "JavaScript"
+            },
+            {
+              "const": "meriyah",
+              "description": "JavaScript"
+            },
+            {
+              "const": "css",
+              "description": "CSS"
+            },
+            {
+              "const": "less",
+              "description": "Less"
+            },
+            {
+              "const": "scss",
+              "description": "SCSS"
+            },
+            {
+              "const": "json",
+              "description": "JSON"
+            },
+            {
+              "const": "json5",
+              "description": "JSON5"
+            },
+            {
+              "const": "jsonc",
+              "description": "JSON with Comments"
+            },
+            {
+              "const": "json-stringify",
+              "description": "JSON.stringify"
+            },
+            {
+              "const": "graphql",
+              "description": "GraphQL"
+            },
+            {
+              "const": "markdown",
+              "description": "Markdown"
+            },
+            {
+              "const": "mdx",
+              "description": "MDX"
+            },
+            {
+              "const": "vue",
+              "description": "Vue"
+            },
+            {
+              "const": "yaml",
+              "description": "YAML"
+            },
+            {
+              "const": "glimmer",
+              "description": "Ember / Handlebars"
+            },
+            {
+              "const": "html",
+              "description": "HTML"
+            },
+            {
+              "const": "angular",
+              "description": "Angular"
+            },
+            {
+              "const": "lwc",
+              "description": "Lightning Web Components"
+            },
+            {
+              "const": "mjml",
+              "description": "MJML"
+            },
+            {
+              "type": "string",
+              "description": "Custom parser"
+            }
+          ]
+        },
+        "plugins": {
+          "description": "Add a plugin. Multiple plugins can be passed as separate `--plugin`s.",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "printWidth": {
+          "description": "The line length where Prettier will try wrap.",
+          "default": 80,
+          "type": "integer"
+        },
+        "proseWrap": {
+          "description": "How to wrap prose.",
+          "default": "preserve",
+          "oneOf": [
+            {
+              "const": "always",
+              "description": "Wrap prose if it exceeds the print width."
+            },
+            {
+              "const": "never",
+              "description": "Do not wrap prose."
+            },
+            {
+              "const": "preserve",
+              "description": "Wrap prose as-is."
+            }
+          ]
+        },
+        "quoteProps": {
+          "description": "Change when properties in objects are quoted.",
+          "default": "as-needed",
+          "oneOf": [
+            {
+              "const": "as-needed",
+              "description": "Only add quotes around object properties where required."
+            },
+            {
+              "const": "consistent",
+              "description": "If at least one property in an object requires quotes, quote all properties."
+            },
+            {
+              "const": "preserve",
+              "description": "Respect the input use of quotes in object properties."
+            }
+          ]
+        },
+        "rangeEnd": {
+          "description": "Format code ending at a given character offset (exclusive).\nThe range will extend forwards to the end of the selected statement.",
+          "default": null,
+          "type": "integer"
+        },
+        "rangeStart": {
+          "description": "Format code starting at a given character offset.\nThe range will extend backwards to the start of the first line containing the selected statement.",
+          "default": 0,
+          "type": "integer"
+        },
+        "requirePragma": {
+          "description": "Require either '@prettier' or '@format' to be present in the file's first docblock comment in order for it to be formatted.",
+          "default": false,
+          "type": "boolean"
+        },
+        "semi": {
+          "description": "Print semicolons.",
+          "default": true,
+          "type": "boolean"
+        },
+        "singleAttributePerLine": {
+          "description": "Enforce single attribute per line in HTML, Vue and JSX.",
+          "default": false,
+          "type": "boolean"
+        },
+        "singleQuote": {
+          "description": "Use single quotes instead of double quotes.",
+          "default": false,
+          "type": "boolean"
+        },
+        "tabWidth": {
+          "description": "Number of spaces per indentation level.",
+          "default": 2,
+          "type": "integer"
+        },
+        "trailingComma": {
+          "description": "Print trailing commas wherever possible when multi-line.",
+          "default": "all",
+          "oneOf": [
+            {
+              "const": "all",
+              "description": "Trailing commas wherever possible (including function arguments)."
+            },
+            {
+              "const": "es5",
+              "description": "Trailing commas where valid in ES5 (objects, arrays, etc.)"
+            },
+            {
+              "const": "none",
+              "description": "No trailing commas."
+            }
+          ]
+        },
+        "useTabs": {
+          "description": "Indent with tabs instead of spaces.",
+          "default": false,
+          "type": "boolean"
+        },
+        "vueIndentScriptAndStyle": {
+          "description": "Indent script and style tags in Vue files.",
+          "default": false,
+          "type": "boolean"
+        }
+      }
+    },
+    "overridesDefinition": {
+      "type": "object",
+      "properties": {
+        "overrides": {
+          "type": "array",
+          "description": "Provide a list of patterns to override prettier configuration.",
+          "items": {
+            "type": "object",
+            "required": ["files"],
+            "properties": {
+              "files": {
+                "description": "Include these files in this override.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "excludeFiles": {
+                "description": "Exclude these files from this override.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "options": {
+                "$ref": "#/definitions/optionsDefinition",
+                "type": "object",
+                "description": "The options to apply for this override."
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/optionsDefinition"
+        },
+        {
+          "$ref": "#/definitions/overridesDefinition"
+        }
+      ]
+    },
+    {
+      "type": "string"
+    }
+  ],
+  "title": "Schema for .prettierrc"
+}

@@ -3,9 +3,10 @@
 // `examples`, `$comment`, `deprecated`, `readOnly`, validation keywords TypeScript can't
 // express, editor and vendor keys -- annotate the property and leave the reference pointing
 // at the one named type: `description` and `deprecated` become the property's JSDoc and a
-// `title` is dropped (it labels the property, which has no rendering). Siblings it does
-// derive a type from (`type`, `maxItems`, `properties`, `tsType`, ...) still produce the
-// resolver's merged copy, as before.
+// `title` is dropped (it labels the property, which has no rendering). Siblings that restate
+// or adjust the target's type (`type`, `maxItems`, `enum`, `tsType`, ...) still produce the
+// resolver's merged copy, as before; siblings that extend it (`properties`, `required`,
+// `oneOf`...) are refWithExtendingSiblings.ts.
 export const input = {
   title: 'RefWithSiblingKeywords',
   type: 'object',
