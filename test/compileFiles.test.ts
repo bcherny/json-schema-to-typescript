@@ -164,6 +164,15 @@ suite('compileFiles', () => {
     ).rejects.toThrow('would both be written to the same file')
   })
 
+  test.each(['.d.mts', '.d.cts'])('modules written as %s import each other as what Node would load', async ext => {
+    const inputs = inputsOf(SETS.diamond).map(_ => ({..._, outputPath: _.outputPath.replace(/\.d\.ts$/, ext)}))
+    const modules = await compileFiles(inputs, OPTIONS)
+    const specifiers = modules.flatMap(_ => _.match(/(?<=from ")[^"]+/g) ?? [])
+    expect(specifiers.length).toBeGreaterThan(0)
+    expect(specifiers.every(_ => _.endsWith(ext.replace('.d.', '.').replace('ts', 'js')))).toBe(true)
+    expect(typecheck(inputs.map(({outputPath}, i) => [outputPath, modules[i]]))).toEqual([])
+  })
+
   test('the other files of the set are served from memory, not read again through $ref', async () => {
     // With the $ref parser's own file resolver switched off, a.json's $refs to b.json and
     // common.json can only resolve because compileFiles already holds their contents
@@ -202,6 +211,18 @@ describe('moduleSpecifier', () => {
   test('uses forward slashes for Windows paths', () => {
     expect(moduleSpecifier('C:\\out\\models\\a.d.ts', 'C:\\out\\common\\x.d.ts', win32)).toBe('../common/x.js')
     expect(moduleSpecifier('C:\\out\\a.d.ts', 'C:\\out\\b.d.ts', win32)).toBe('./b.js')
+  })
+
+  test('ends in the extension Node would load for the output path', () => {
+    const from = resolve('out/a.d.ts')
+    expect(moduleSpecifier(from, resolve('out/b.d.mts'))).toBe('./b.mjs')
+    expect(moduleSpecifier(from, resolve('out/b.mts'))).toBe('./b.mjs')
+    expect(moduleSpecifier(from, resolve('out/b.d.cts'))).toBe('./b.cjs')
+    expect(moduleSpecifier(from, resolve('out/b.cts'))).toBe('./b.cjs')
+    expect(moduleSpecifier(from, resolve('out/b.tsx'))).toBe('./b.js')
+    expect(moduleSpecifier(from, resolve('out/b.mjs.d.ts'))).toBe('./b.mjs.js')
+    expect(moduleSpecifier(from, resolve('out/b'))).toBe('./b.js')
+    expect(moduleSpecifier(from, resolve('out/b.types'))).toBe('./b.types.js')
   })
 })
 

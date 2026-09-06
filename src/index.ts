@@ -178,7 +178,9 @@ export function compileFromFile(filename: string, options: Partial<Options> = {}
  *
  * @param files each schema file to compile and the path its module will be written to (import
  * paths are computed between output paths); both relative to `options.cwd` (by default the
- * working directory), if not absolute
+ * working directory), if not absolute. An `outputPath` should end in `.d.ts`/`.ts`,
+ * `.d.mts`/`.mts` or `.d.cts`/`.cts`, which the other modules import as `.js`, `.mjs` or `.cjs`;
+ * any other ending is imported with `.js` appended
  * @returns the TypeScript for each file, in order. Writes nothing.
  */
 export async function compileFiles(
