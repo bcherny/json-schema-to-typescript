@@ -7,7 +7,18 @@ import {
   Parent,
   Shared,
 } from './types/JSONSchema'
-import {formatTypeOf, hasType, isSchemaLike, justName, log, nameOf, narrowType, toSafeString, traverse} from './utils'
+import {
+  formatTypeOf,
+  hasType,
+  isSchemaLike,
+  justName,
+  log,
+  nameOf,
+  narrowType,
+  rootNameFromFile,
+  toSafeString,
+  traverse,
+} from './utils'
 import {normalizeNullable} from './prenormalizer'
 import {Options} from './'
 import {link} from './linker'
@@ -306,7 +317,7 @@ rules.set('Add an $id to anything that needs it', (schema, fileName, _options, _
   // called `2024.json`) gets the same placeholder generateName() uses, rather than an
   // empty `$id` -- which would leave the root type undeclared and the output empty.
   if (!schema.$id && schema === rootSchema) {
-    schema.$id = toSafeString(justName(fileName)) || 'NoName'
+    schema.$id = rootNameFromFile(fileName)
     return
   }
 

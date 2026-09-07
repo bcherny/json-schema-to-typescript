@@ -8,7 +8,7 @@ import {format} from './formatter'
 import {generate} from './generator'
 import {normalize} from './normalizer'
 import {optimize} from './optimizer'
-import {nameAnonymousRecursiveTypes, parse, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
+import {nameAnonymousRecursiveTypes, parseRoot, parseUnreachableDefinitions, Processed, UsedNames} from './parser'
 import {dereference, SchemaSet} from './resolver'
 import {prenormalize} from './prenormalizer'
 import {cloneDeepPlain, error, stripExtension, log, parseFileAsJSONSchema, readVerbose} from './utils'
@@ -233,7 +233,7 @@ function readSchemaFile(filename: string): string {
 }
 
 export async function compile(
-  schema: JSONSchema4 | JSONSchema6 | JSONSchema7,
+  schema: JSONSchema4 | JSONSchema6 | JSONSchema7 | boolean,
   name: string,
   options: Partial<Options> = {},
 ): Promise<string> {
@@ -309,7 +309,7 @@ async function compileToAST(
 
   const processed: Processed = new Map()
   const usedNames: UsedNames = new Set()
-  const parsed = parse(normalized, _options, undefined, processed, usedNames)
+  const parsed = parseRoot(normalized, name, _options, processed, usedNames)
   // Definitions that aren't referenced anywhere in the schema still need to be
   // declared. An object root declares them while its interface is parsed; for
   // any other kind of root they are parsed here and handed to the generator.

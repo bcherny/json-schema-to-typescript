@@ -333,7 +333,7 @@ Every draft goes through the same pipeline; a `$schema` declaration does not cha
 |-|-|-|-|
 | **draft 6** | | | |
 | `const` | supported | literal types, including object literals | |
-| boolean schemas (`true` / `false`) | supported | as a property, `items`, `additionalProperties`, and inside `allOf` / `anyOf`. A `$ref` to one crashes (#809 pending); a root `true` / `false` errors | [#725](https://github.com/bcherny/json-schema-to-typescript/issues/725), [#496](https://github.com/bcherny/json-schema-to-typescript/issues/496) |
+| boolean schemas (`true` / `false`) | supported | as a property, `items`, `additionalProperties`, inside `allOf` / `anyOf`, as a `$ref` target, and as the whole document (`export type File = unknown` / `never`, named after the file) | [#725](https://github.com/bcherny/json-schema-to-typescript/issues/725), [#496](https://github.com/bcherny/json-schema-to-typescript/issues/496) |
 | `$id` | supported | for naming, and `$ref: "#name"` to an `$id: "#name"` | |
 | `examples` | ignored | not copied into the JSDoc comment | [#237](https://github.com/bcherny/json-schema-to-typescript/issues/237) |
 | `propertyNames` | ignored | `enum` / `const` names would be expressible | [#337](https://github.com/bcherny/json-schema-to-typescript/issues/337) |

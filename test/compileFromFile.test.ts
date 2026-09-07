@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'bun:test'
-import {compile, compileFromFile} from '../src'
+import {compile, compileFromFile, DEFAULT_OPTIONS} from '../src'
 import {hasOnly} from './e2eCases'
 
 const suite = hasOnly() ? describe.skip : describe
@@ -29,6 +29,17 @@ suite('compileFromFile', () => {
       expect(ts).toContain('export type Currency = ')
       expect(ts).toContain('currency?: Currency')
     }
+  })
+
+  // A file that is nothing but `true` or `false` is a boolean schema (draft 6+): named after the file,
+  // like any other root without a name of its own, where it used to compile to the banner alone
+  test('compileFromFile declares a boolean root schema under the file name', async () => {
+    expect(await compileFromFile('./test/resources/BooleanRoot/Anything.json')).toBe(
+      `${DEFAULT_OPTIONS.bannerComment}\n\nexport type Anything = unknown;\n`,
+    )
+    expect(await compileFromFile('./test/resources/BooleanRoot/Nothing.json')).toBe(
+      `${DEFAULT_OPTIONS.bannerComment}\n\nexport type Nothing = never;\n`,
+    )
   })
 
   test('compileFromFile should resolve refs from cwd option as yml', async () =>
