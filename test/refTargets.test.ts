@@ -34,3 +34,50 @@ suite('$ref targets that are not object schemas', () => {
     expect(compiled).toContain('  y?: string;\n')
   })
 })
+
+suite('$ref targets that are arrays', () => {
+  test('a list of schemas where `items` may hold one, a list of names in `dependencies`', async () => {
+    const schema: JSONSchema = {
+      title: 'Lists',
+      type: 'object',
+      definitions: {pair: {items: [{type: 'string'}, {type: 'number'}]}},
+      properties: {
+        pair: {type: 'array', items: {$ref: '#/definitions/pair/items'}},
+        a: {type: 'string'},
+        b: {type: 'string'},
+      },
+      dependencies: {b: {$ref: '#/required'} as unknown as string[]},
+      required: ['a'],
+      additionalProperties: false,
+    }
+    expect(await compile(schema, 'Lists', options)).toBe(
+      'export interface Lists {\n  pair?: [] | [string] | [string, number, ...unknown[]];\n  a: string;\n  b?: string;\n}\n',
+    )
+  })
+
+  test('looking the root `$ref` up leaves `continueOnError` nothing to collect', async () => {
+    // A named anchor the ref-parser cannot resolve (it is resolved after dereferencing), at the root
+    const schema: JSONSchema = {$ref: '#unit', definitions: {unit: {$id: '#unit', type: 'string'}}}
+    expect(await compile(schema, 'Unit', {...options, $refOptions: {continueOnError: true}})).toBe(
+      'export type Unit = string;\n',
+    )
+  })
+
+  test('outside schema positions: an `enum` or `examples` list kept under a definition', async () => {
+    const list: unknown = {$ref: '#/definitions/unit/enum'} // (typed as the list it becomes)
+    const schema: JSONSchema = {
+      title: 'Units',
+      type: 'object',
+      definitions: {unit: {type: 'string', enum: ['metres', 'feet'], examples: ['metres']}},
+      properties: {
+        y: {
+          type: 'string',
+          enum: list as string[],
+          examples: {$ref: '#/definitions/unit/examples'} as unknown as string[],
+        },
+      },
+      additionalProperties: false,
+    }
+    expect(await compile(schema, 'Units', options)).toBe('export interface Units {\n  y?: "metres" | "feet";\n}\n')
+  })
+})
