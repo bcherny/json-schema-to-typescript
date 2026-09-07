@@ -427,6 +427,106 @@ suite('CLI', () => {
     },
   )
 
+  // A flag that should carry a path but has nothing after it (`-o` at the end of the line)
+  // used to reach path.resolve() as `true` and die with a TypeError and a stack trace
+  cliFailTest(
+    '-o with no path after it is a one-line usage error naming the flag',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json -o',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: --output (-o) needs a path after it')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+  )
+
+  cliFailTest(
+    '--output= with an empty path is the same usage error',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json --output=',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: --output (-o) needs a path after it')
+    },
+  )
+
+  cliFailTest(
+    '-i with no path after it is a one-line usage error naming the flag',
+    'node dist/src/cli.js -i',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: --input (-i) needs a path after it')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+  )
+
+  // compile() prints one line per rule an invalid schema breaks; the CLI must not add a
+  // stack trace for the ValidationError it then throws (the lines say all there is to say)
+  cliFailTest(
+    'an invalid schema prints the rule it breaks and no stack trace',
+    'node dist/src/cli.js',
+    ({code, stdout, stderr}) => {
+      expect(code).toBe(1)
+      expect(stdout).toBe('')
+      expect(stderr).toStartWith('error: ')
+      expect(stderr).toContain('When minItems exists, minItems >= 0')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+    '{"type": "array", "minItems": -1}',
+  )
+
+  cliFailTest(
+    'invalid JSON on stdin names standard input, not a file called "null"',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toContain('Error parsing JSON from standard input')
+      expect(stderr).not.toContain('"null"')
+    },
+    '{"type": nope',
+  )
+
+  // A $ref to a file that does not exist: the resolver's message names the file, which is
+  // all the user needs; the error's stack and fields (code, source, toJSON…) are noise
+  cliFailTest(
+    'a $ref to a missing file is one error line naming the file',
+    'node dist/src/cli.js',
+    ({code, stdout, stderr}) => {
+      expect(code).toBe(1)
+      expect(stdout).toBe('')
+      expect(stderr).toStartWith('error: ')
+      expect(stderr).toContain('NoSuchRefTarget.json')
+      expect(stderr).not.toMatch(/^\s+at /m)
+      expect(stderr).not.toContain('ERESOLVER')
+    },
+    '{"properties": {"x": {"$ref": "./test/resources/NoSuchRefTarget.json"}}}',
+  )
+
+  // ...but a pointer into the schema itself is not suffixed with its directory
+  cliFailTest(
+    'a $ref to a missing pointer in the schema itself is the message alone',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toBe('error: Missing $ref pointer "#/definitions/nope". Token "definitions" does not exist.\n')
+    },
+    '{"properties": {"x": {"$ref": "#/definitions/nope"}}}',
+  )
+
+  // ...and when the resolver's message does not name the file (a pointer into another
+  // file that does not exist there), the line says which file it is in
+  cliFailTest(
+    'a $ref to a missing pointer in another file names that file',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: Missing $ref pointer "#/definitions/nope"')
+      // the resolver reports the path with forward slashes on every OS, so match the file name, not resolve()
+      expect(stderr).toMatch(/ \(in \S*test\/resources\/ReferencedType\.json\)\n$/)
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+    '{"properties": {"x": {"$ref": "./test/resources/ReferencedType.json#/definitions/nope"}}}',
+  )
+
   // ...while anything else that goes wrong still says where: the unreadable path here
   cliFailTest(
     'an unreadable input file reports the path it could not open',

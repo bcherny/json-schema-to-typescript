@@ -6,7 +6,8 @@ import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {resolveConfig} from 'prettier'
-import {compile, compileFiles, DEFAULT_OPTIONS, Options} from './index'
+import {JSONParserError, JSONParserErrorGroup} from '@apidevtools/json-schema-ref-parser'
+import {compile, compileFiles, DEFAULT_OPTIONS, Options, ValidationError} from './index'
 import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension, UserError} from './utils'
 
 // cwd and style are deliberately left out of the CLI defaults: processFile()
@@ -128,11 +129,33 @@ async function main(argv: minimist.ParsedArgs) {
       outputResult(await processFile(argIn, argOut, argv as Partial<Options>), argOut)
     }
   } catch (e) {
-    // The user's mistake (how the CLI was called, an option's value, input that does not parse):
-    // print what to fix, without the stack. Anything else is the program's, and the stack says where.
-    error(e instanceof UserError ? e.message : e)
+    // The user's mistake, not the program's: print what to fix, without the stack.
+    // - UsageError: how the CLI was called
+    // - ValidationError: compile() already printed one line per rule the schema breaks
+    // - json-schema-ref-parser's errors: a $ref it could not resolve (a missing or
+    //   unparsable file, a pointer to nothing), one line each
+    if (e instanceof UserError) {
+      error(e.message)
+    } else if (e instanceof JSONParserError || e instanceof JSONParserErrorGroup) {
+      refErrorLines(e).forEach(line => error(line))
+    } else if (!(e instanceof ValidationError)) {
+      error(e)
+    }
     process.exit(1)
   }
+}
+
+/**
+ * The message of each `$ref` error, naming the file it was found in when the message
+ * itself does not (a missing pointer says which pointer, not which file it is in). For
+ * the schema being compiled itself, `source` is its directory (a trailing slash), which
+ * says nothing: the user knows which schema they passed.
+ */
+function refErrorLines(e: JSONParserError | JSONParserErrorGroup): string[] {
+  const errors = e instanceof JSONParserErrorGroup ? e.errors : [e]
+  return errors.map(_ =>
+    _.source && !_.source.endsWith('/') && !_.message.includes(_.source) ? `${_.message} (in ${_.source})` : _.message,
+  )
 }
 
 // check if path is an existing directory
