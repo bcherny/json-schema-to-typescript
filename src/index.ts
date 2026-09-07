@@ -86,7 +86,7 @@ export interface Options {
    * Maximum number of unioned tuples to emit when representing bounded-size array types,
    * before falling back to emitting unbounded arrays. Increase this to improve precision
    * of emitted types, decrease it to improve performance, or set it to `-1` to ignore
-   * `minItems` and `maxItems`.
+   * `maxItems`.
    */
   maxItems: number
   /**

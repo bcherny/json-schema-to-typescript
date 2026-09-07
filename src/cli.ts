@@ -19,7 +19,7 @@ const defaultOptions = omit(DEFAULT_OPTIONS, ['cwd', 'style'])
 class UsageError extends UserError {}
 
 main(
-  minimist(process.argv.slice(2), {
+  minimist(joinNegativeNumberValues(process.argv.slice(2)), {
     alias: {
       help: ['h'],
       input: ['i'],
@@ -46,6 +46,30 @@ main(
     string: ['_', 'bannerComment', 'cwd', 'declarationStyle', 'input', 'output'],
   }),
 )
+
+// minimist reads any token that starts with `-` as the next flag, so `--maxItems -1` (the spelling
+// --help suggests) parsed as `maxItems: true` followed by a short flag `-1` that took the *next*
+// argument as its value: the input path went missing and the limit was silently 1. A negative
+// number after a long flag is that flag's value, so spell it as `--flag=-N`, which minimist reads
+// correctly. No option here has a digit for a short flag, and `--` still ends the flags.
+function joinNegativeNumberValues(args: string[]): string[] {
+  const joined: string[] = []
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]
+    if (arg === '--') {
+      joined.push(...args.slice(i))
+      break
+    }
+    const next = args[i + 1]
+    if (/^--[^=]+$/.test(arg) && next !== undefined && /^-\d+(\.\d+)?$/.test(next)) {
+      joined.push(`${arg}=${next}`)
+      i++
+    } else {
+      joined.push(arg)
+    }
+  }
+  return joined
+}
 
 async function main(argv: minimist.ParsedArgs) {
   if (argv.help) {
@@ -313,11 +337,11 @@ Boolean values can be set to false using the 'no-' prefix.
       When IN_FILE is a directory or glob: import types that live in another of the
       compiled files from that file's module, instead of declaring a copy in each.
       (Experimental; off by default.)
-  --maxItems
+  --maxItems=N
       Maximum number of unioned tuples to emit when representing bounded-size
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
-      performance, or set it to -1 to ignore minItems and maxItems.
+      performance, or set it to -1 to ignore maxItems.
   --readonly
       Mark every property and index signature readonly, and every array type readonly T[]
   --readonlyKeyword
