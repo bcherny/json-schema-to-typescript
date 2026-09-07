@@ -46,15 +46,17 @@ export async function dereference(
   const externalDocuments = new Set<JSONSchema>()
   const nonSchemaTargets: NonSchemaTarget[] = []
   const onDereference = ($ref: string, schema: JSONSchema, holder?: object, key?: string) => {
-    // The target of a $ref need not be an object: it can be a boolean schema (`true`/`false`),
-    // or -- for a pointer into a keyword's value -- any JSON value. Only objects can be WeakMap
-    // keys, and only objects are named after the path they were referenced by.
+    // The target of a $ref need not be an object schema: it can be a boolean (`true`/`false`),
+    // or -- for a pointer into a keyword's value, or a file holding one -- any JSON value, an
+    // array included. Only objects can be WeakMap keys, and only objects are named after the
+    // path they were referenced by.
     if (schema !== null && typeof schema === 'object') {
       dereferencedPaths.set(schema, $ref)
       if (isWholeDocumentRef($ref)) {
         externalDocuments.add(schema)
       }
-    } else if (typeof schema !== 'boolean' && holder && key !== undefined) {
+    }
+    if (!isSchema(schema) && holder && key !== undefined) {
       nonSchemaTargets.push({$ref, holder, key, value: schema}) // fine or not depending on where it sits: see below
     }
   }
@@ -80,6 +82,9 @@ export async function dereference(
   let dereferencedSchema = schema
   if (targets) {
     dereferenceInDocument(schema, targets, onDereference)
+    if (nonSchemaTargets.length) {
+      rejectNonSchemaTargets(schema, schema, nonSchemaTargets, () => ({})) // (pointers within the document: no file to name)
+    }
   } else {
     const parser = new $RefParser()
     const documents = new IdScopeMask()
@@ -102,6 +107,13 @@ export async function dereference(
         await parser.resolve(path, documents.hide(schema), options)
       } finally {
         documents.restore()
+      }
+      // The root's own `$ref` is reported to no hook, and with a keyword beside it (a `title`; the
+      // `definitions` a pointer into this document leads through) the ref-parser merges its target
+      // into the root -- an array's members as keys `0`, `1`, ... -- so that one is looked up first
+      const rootTarget = typeof schema.$ref === 'string' ? rootRefTarget(parser, schema.$ref, options) : undefined
+      if (Array.isArray(rootTarget)) {
+        rejectNonSchemaTargets(schema, rootTarget, [], () => parser.$refs.values() as object)
       }
       dereferenceInternal(parser, options)
       if (JSONParserErrorGroup.getParserErrors(parser).length) {
@@ -180,21 +192,42 @@ function isWholeDocumentRef($ref: string): boolean {
 
 /*
  * A `$ref` that stands where a schema is expected has to lead to one: an object or a boolean. One
- * that leads to an empty document, `null`, a string or a number instead -- a schema file saved
- * empty, a `.yaml` file that is really prose, a pointer onto a keyword's value -- would otherwise
- * surface as a crash somewhere in the parser, or as that value printed as a literal type. A `$ref`
- * anywhere else (`description: {$ref: "intro.md"}`, or under some key of the user's own) may lead
- * to anything, so the few suspects `onDereference` collects are only judged once dereferencing is
- * done, by where they ended up: in a subschema position -- under a keyword that holds subschemas,
- * of a schema that is itself in one -- or standing in for such a keyword's whole map or list of
- * them. None of this runs for a document whose `$ref`s all lead to objects and booleans.
+ * that leads to an empty document, `null`, a string, a number or an array instead -- a schema file
+ * saved empty, a `.yaml` file that is really prose, a pointer onto a keyword's value, an `enum` or
+ * `required` list among them -- would otherwise surface as a crash somewhere in the parser, or as
+ * that value printed as a literal type (a list as a tuple of its members). A `$ref` anywhere else
+ * (`description: {$ref: "intro.md"}`, `enum: {$ref: "#/definitions/x/enum"}`, or under some key of
+ * the user's own) may lead to anything, so the few suspects `onDereference` collects are only
+ * judged once dereferencing is done, by where they ended up: in a subschema position -- under a
+ * keyword that holds subschemas, of a schema that is itself in one -- or standing in for such a
+ * keyword's whole map or list of them, where a list of schemas is what an array may be. None of
+ * this runs for a document whose `$ref`s all lead to objects and booleans.
  */
 
-/** A `$ref` that resolved to `undefined` (an empty document), `null`, a string or a number */
+/** A `$ref` that resolved to `undefined` (an empty document), `null`, a string, a number or an array */
 type NonSchemaTarget = {$ref: string; holder: object; key: string; value: unknown}
 
+/** An object or a boolean: what a `$ref` in place of a schema must lead to (an array is a list, of values or of schemas) */
 function isSchema(value: unknown): boolean {
-  return typeof value === 'boolean' || (typeof value === 'object' && value !== null)
+  return typeof value === 'boolean' || (typeof value === 'object' && value !== null && !Array.isArray(value))
+}
+
+function isSchemaList(value: unknown): boolean {
+  return Array.isArray(value) && value.every(isSchema)
+}
+
+/**
+ * What the root's own `$ref` leads to, once every document is read, as far as the ref-parser can
+ * tell without dereferencing: undefined when it cannot (a pointer it finds missing, which its own
+ * error reports once it dereferences -- so this lookup's failure is not to be collected as one
+ * more error under `continueOnError`).
+ */
+function rootRefTarget(parser: $RefParser, $ref: string, options: $RefOptions): unknown {
+  try {
+    return parser.$refs.get($ref, {...options, continueOnError: false})
+  } catch {
+    return undefined
+  }
 }
 
 /**
@@ -244,19 +277,36 @@ function misplacedTargets(root: unknown, suspects: NonSchemaTarget[]): Misplaced
         continue
       }
       const held = node[keyword]
+      /** The suspect whose `$ref` stood in for the keyword's whole value, if that is what it did */
+      const whole = byHolder.get(node)?.filter(_ => _.key === keyword) ?? []
       if (
         holds === 'schemaMap' ||
         holds === 'schemaArray' ||
         (holds === 'schemaOrSchemaArray' && Array.isArray(held))
       ) {
         if (isObjectLike(held)) {
-          byHolder.get(held as object)?.forEach(_ => misplaced.push({where: `${keyword}/${_.key}`, ..._}))
+          // A map or list of schemas, judged entry by entry. A `$ref` that stood in for the whole
+          // of it led to an array (the one object that is no schema): fine as the list of schemas
+          // an `items` or `extends` may hold, otherwise as misplaced as at an entry (a `$ref` in
+          // place of an `allOf` list never gets this far: the prenormalizer's walk trips on it).
+          // An array at an entry of `dependencies` is that name's list of the properties it
+          // requires, not a schema.
+          whole.forEach(
+            _ => (holds !== 'schemaOrSchemaArray' || !isSchemaList(_.value)) && misplaced.push({where: keyword, ..._}),
+          )
+          byHolder
+            .get(held as object)
+            ?.forEach(
+              _ =>
+                (keyword !== 'dependencies' || !Array.isArray(_.value)) &&
+                misplaced.push({where: `${keyword}/${_.key}`, ..._}),
+            )
           Object.values(held as object).forEach(visit)
           continue
         }
         // else a `$ref` may have stood in for the whole map or list: judged like a single schema
       }
-      byHolder.get(node)?.forEach(_ => _.key === keyword && misplaced.push({where: keyword, ..._}))
+      whole.forEach(_ => misplaced.push({where: keyword, ..._}))
       visit(held)
     }
   }
@@ -271,7 +321,9 @@ function describeNonSchemaTarget({where, $ref, value}: Misplaced, files: Record<
       ? `the string ${JSON.stringify(value.length > 40 ? `${value.slice(0, 39)}…` : value)}`
       : typeof value === 'number'
         ? `the number ${value}`
-        : String(value) // null; or undefined, which no pointer reaches: then it is a whole, empty file
+        : Array.isArray(value)
+          ? `an array of ${value.length} item${value.length === 1 ? '' : 's'}`
+          : String(value) // null; or undefined, which no pointer reaches: then it is a whole, empty file
   const file = fileBehind($ref, value, files)
   const target =
     file !== undefined && isWholeDocumentRef($ref)
@@ -513,12 +565,13 @@ function pointerTarget(root: JSONSchema, pointer: string): object | undefined {
  * dereference step would: a `$ref` with sibling keywords becomes a new object, the siblings laid over the
  * target; each replacement is reported to `onDereference`. The bookkeeping is $RefParser's too -- which
  * objects are done, which are on the path from the root, a cache per pointer that is bypassed while its
- * target is on that path -- because it decides which objects get shared and which copied.
+ * target is on that path -- because it decides which objects get shared and which copied. The report
+ * says where the replacement sits, as $RefParser's does.
  */
 export function dereferenceInDocument(
   root: JSONSchema,
   targets: Map<string, object>,
-  onDereference: ($ref: string, schema: JSONSchema) => void,
+  onDereference: ($ref: string, schema: JSONSchema, holder: object, key: string) => void,
 ): void {
   type Resolution = {value: object; circular: boolean}
   const visited = new Set<unknown>()
@@ -542,7 +595,7 @@ export function dereferenceInDocument(
       if (isRef(value)) {
         const resolution = resolve(value)
         node[key] = resolution.value
-        onDereference(value.$ref, resolution.value)
+        onDereference(value.$ref, resolution.value, node, key)
         circular = resolution.circular || circular
       } else {
         circular = parents.has(value) || crawl(value) || circular
