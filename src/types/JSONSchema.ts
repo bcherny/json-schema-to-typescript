@@ -59,6 +59,14 @@ export interface JSONSchema extends JSONSchema4 {
 export const Parent = Symbol('Parent')
 export const Shared = Symbol('Shared')
 /**
+ * Set on a document (the schema being compiled, or a file loaded for it) in which a keyword
+ * that holds a list of schemas (`allOf`, `anyOf`, `oneOf`, `prefixItems`) holds a `$ref`
+ * standing in for the whole list, or no schema at all (`true`, `null`, a string), as the
+ * prenormalizer found it: what such a value leads to is judged by the resolver, once
+ * dereferencing is done, in a walk that only marked documents pay for.
+ */
+export const ListsToJudge = Symbol('ListsToJudge')
+/**
  * Where a schema node was read from: the file (as the resolver addressed it) and the
  * JSON Pointer inside that file. Only stamped when compiling a set of files together
  * (the `imports` mode); absent otherwise.

@@ -1,0 +1,1 @@
+[{"type": "object", "allOf": {"$ref": "ObjectSchemas.json"}}, {"anyOf": {"$ref": "lists.json#/scalars"}}]

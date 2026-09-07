@@ -209,6 +209,9 @@ export const CONTAINER_KEYWORDS = keywordsWhere(
   ({holds}, name) => holds === 'schemaArray' || holds === 'schemaMap' || LEGACY.containers.has(name),
 )
 
+/** Keywords that hold a list of schemas (`allOf`, `anyOf`, `oneOf`, `prefixItems`), and nothing else */
+export const SCHEMA_LIST_KEYWORDS = keywordsWhere(({holds}) => holds === 'schemaArray')
+
 /**
  * Keywords that hold instance data, never a schema: nothing underneath them is a `$ref`, an
  * `$id` or a subschema, whatever it looks like.

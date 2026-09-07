@@ -12,7 +12,7 @@ import {
 import {isObjectLike, isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
 import {SCHEMA_HOLDING_KEYWORDS} from './keywords'
-import {DefinitionKey, JSONSchema, SchemaSource, Source} from './types/JSONSchema'
+import {DefinitionKey, JSONSchema, ListsToJudge, SchemaSource, Source} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
 export type DereferencedPaths = WeakMap<JSONSchema, string>
@@ -59,6 +59,7 @@ export async function dereference(
     }
   }
   let prepare: Prepare = prenormalizeDocument
+  let judgeLists = hasListsToJudge(schema)
   let resolve = $refOptions.resolve
   if (set) {
     stampSource(schema, fileKey(set.file))
@@ -90,7 +91,11 @@ export async function dereference(
         ...$refOptions,
         mutateInputSchema: true, // `schema` is this module's own copy already
         resolve,
-        parse: prenormalizingParsers($refOptions.parse, (document, file) => documents.hide(prepare(document, file))),
+        parse: prenormalizingParsers($refOptions.parse, (document, file) => {
+          const prepared = prepare(document, file)
+          judgeLists = judgeLists || hasListsToJudge(prepared)
+          return documents.hide(prepared)
+        }),
         dereference: {...$refOptions.dereference, onDereference},
       },
     ])
@@ -116,6 +121,9 @@ export async function dereference(
       rejectNonSchemaTargets(schema, dereferencedSchema, nonSchemaTargets, () => parser.$refs.values() as object)
     }
     tagExternalDefinitions(externalDocuments, dereferencedSchema)
+  }
+  if (judgeLists) {
+    rejectNonSchemaLists(dereferencedSchema, dereferencedPaths)
   }
   return {dereferencedPaths, dereferencedSchema: resolveNamedAnchors(dereferencedSchema)}
 }
@@ -302,6 +310,132 @@ function fileBehind($ref: string, value: unknown, files: Record<string, unknown>
     candidates = holding.length > 1 ? holding.filter(file => named.includes(file)) : holding
   }
   return candidates.length === 1 ? candidates[0] : undefined
+}
+
+/*
+ * `allOf`, `anyOf`, `oneOf` and `prefixItems` hold a list of schemas, and a `$ref` may stand in for
+ * the whole list (`allOf: {$ref: "mixins.json"}`, `{$ref: "#/definitions/base/allOf"}`): the walks
+ * before dereferencing let it through, and what it led to is judged here, once dereferencing is
+ * done -- for the documents the prenormalizer marked as holding such a value (`ListsToJudge`),
+ * so that the rest pay nothing for it. An array of schemas is the list. Anything else -- a single schema, a boolean, an `enum`'s
+ * values -- would crash the parser or print as a type, as would a value that is no array written
+ * there directly; each is reported by position, with the `$ref` when one led there. (A `$ref`
+ * that led to no schema at all, a string or `null`, is reported by `rejectNonSchemaTargets`
+ * before this runs; a `$ref` at a member of a list written in place is judged where it sits.)
+ */
+function rejectNonSchemaLists(root: JSONSchema, dereferencedPaths: DereferencedPaths): void {
+  const visited = new Set<object>()
+  const trail: string[] = [] // the keys from the root to the node being visited
+  function visit(schema: unknown): void {
+    if (!isPlainObject(schema) || visited.has(schema as object)) {
+      return
+    }
+    const node = schema as Record<string, unknown>
+    visited.add(node)
+    for (const keyword of Object.keys(node)) {
+      const holds = SCHEMA_HOLDS.get(keyword)
+      if (holds === undefined) {
+        continue
+      }
+      const held = node[keyword]
+      if (held === undefined) {
+        continue // as good as absent
+      }
+      if (holds === 'schemaArray') {
+        // A list written in place is judged member by member downstream: only its shape is checked here
+        const $ref = isObjectLike(held) ? dereferencedPaths.get(held as JSONSchema) : undefined
+        if (!Array.isArray(held) || ($ref !== undefined && !isListOfSchemas(held))) {
+          const where = `${keyword} at ${trail.length ? trail.join('/') : 'the root'} must be a list of schemas`
+          const wrapped = isPlainObject(held) ? standInWithSiblings(held as JSONSchema, dereferencedPaths) : undefined
+          throw new ReferenceError(
+            wrapped
+              ? `${where}: $ref "${wrapped.$ref}" leads to one, but the keywords beside it${wrapped.beside} make an object of it ` +
+                  '(a $ref standing in for a whole list stands alone).'
+              : `${where}: ${$ref === undefined ? 'found' : `$ref "${$ref}" leads to`} ${describeNonSchemaList(held)}.`,
+          )
+        }
+      }
+      trail.push(keyword)
+      if (holds === 'schemaMap' || Array.isArray(held)) {
+        if (isObjectLike(held)) {
+          for (const key of Object.keys(held as object)) {
+            trail.push(key)
+            visit((held as Record<string, unknown>)[key])
+            trail.pop()
+          }
+        }
+      } else {
+        visit(held)
+      }
+      trail.pop()
+    }
+  }
+  visit(root)
+}
+
+/** What each schema-holding keyword holds, by name */
+const SCHEMA_HOLDS = new Map<string, string>(SCHEMA_HOLDING_KEYWORDS)
+
+/**
+ * Whether the prenormalizer found a list of schemas that is not a list in `document` (see
+ * `ListsToJudge`). An array document -- a file that is a list of schemas -- gets no prenormalizing,
+ * so what its members hold is judged whole.
+ */
+function hasListsToJudge(document: unknown): boolean {
+  return (
+    Array.isArray(document) || (isPlainObject(document) && (document as Record<symbol, unknown>)[ListsToJudge] === true)
+  )
+}
+
+/** An object or a boolean: what a member of a list of schemas is */
+function isSchemaItem(value: unknown): boolean {
+  return typeof value === 'boolean' || (isObjectLike(value) && !Array.isArray(value))
+}
+
+/** An array whose every item is a schema */
+function isListOfSchemas(value: unknown): boolean {
+  return Array.isArray(value) && value.every(isSchemaItem)
+}
+
+/**
+ * The `$ref` that stood in for a list, and what stood beside it, when a keyword next to it made
+ * an object of the stand-in: the prenormalizer moves such a `$ref` into a one-member `allOf`
+ * (annotations stay beside it; assertions join it as a second member), so after dereferencing
+ * the list is that member.
+ */
+function standInWithSiblings(
+  held: JSONSchema,
+  dereferencedPaths: DereferencedPaths,
+): {$ref: string; beside: string} | undefined {
+  const list = Array.isArray(held.allOf) && Array.isArray(held.allOf[0]) ? held.allOf[0] : undefined
+  const $ref = list && dereferencedPaths.get(list)
+  if ($ref === undefined) {
+    return undefined
+  }
+  const beside = Object.keys(held).filter(key => key !== 'allOf')
+  return {$ref, beside: beside.length ? ` (${beside.join(', ')})` : ''}
+}
+
+/** `a list whose item 1 is the number 2`, `an object (one schema, not a list of them)`, `true` */
+function describeNonSchemaList(value: unknown): string {
+  if (Array.isArray(value)) {
+    const i = value.findIndex(_ => !isSchemaItem(_))
+    return `a list whose item ${i} is ${describeValue(value[i])}`
+  }
+  return isObjectLike(value) ? 'an object (one schema, not a list of them)' : describeValue(value)
+}
+
+function describeValue(value: unknown): string {
+  switch (typeof value) {
+    case 'string':
+      return `the string ${JSON.stringify(value.length > 40 ? `${value.slice(0, 39)}…` : value)}`
+    case 'number':
+      return `the number ${value}`
+    case 'undefined':
+      return 'nothing'
+    default:
+      return Array.isArray(value) ? 'a list' : String(value) // a boolean, or null
+  }
 }
 
 /**

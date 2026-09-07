@@ -1,7 +1,13 @@
 import {isEmpty, isPlainObject} from 'lodash'
-import {JSONSchema, LinkedJSONSchema} from './types/JSONSchema'
+import {JSONSchema, LinkedJSONSchema, ListsToJudge} from './types/JSONSchema'
 import {eachSchemaNode, hasType, traverse} from './utils'
-import {EXTENDING_KEYWORDS, META_KEYWORDS, TYPE_RELEVANT_KEYWORDS, VALIDATION_KEYWORDS} from './keywords'
+import {
+  EXTENDING_KEYWORDS,
+  META_KEYWORDS,
+  SCHEMA_LIST_KEYWORDS,
+  TYPE_RELEVANT_KEYWORDS,
+  VALIDATION_KEYWORDS,
+} from './keywords'
 
 /**
  * Rewrites that have to happen on the raw document, before it goes to the ref-parser --
@@ -183,6 +189,28 @@ rules.set('Drop `unevaluatedProperties` next to a `$ref`', schema => {
     delete schema.unevaluatedProperties
   }
 })
+
+/**
+ * A `$ref` may stand in for a whole `allOf`, `anyOf`, `oneOf` or `prefixItems` list
+ * (`allOf: {$ref: "mixins.json"}`), and a mistake may put `true`, `null` or a string there.
+ * Only once dereferencing is done can what it leads to be judged (the resolver's
+ * `rejectNonSchemaLists`); the document is marked so that the walk that judges it runs for the
+ * documents that need it and no other. A schema object without a `$ref` is not marked: it is
+ * what a property named `allOf` looks like from the `properties` map holding it (the second walk
+ * visits such maps as nodes, and real schemas have such properties), and where it really sits in
+ * a list's place the parser reports it, as before.
+ */
+rules.set('Mark a document in which a `$ref` or a non-schema stands in for a list of schemas', (schema, document) => {
+  // (property reads, nothing more: this runs on every node of every document)
+  for (const keyword of LIST_KEYWORDS) {
+    const held = schema[keyword]
+    if (held !== undefined && !Array.isArray(held) && (!isPlainObject(held) || typeof held.$ref === 'string')) {
+      Object.defineProperty(document, ListsToJudge, {value: true, configurable: true})
+      return
+    }
+  }
+})
+const LIST_KEYWORDS = [...SCHEMA_LIST_KEYWORDS]
 
 /**
  * $RefParser can't correctly dereference a schema whose root is itself a
