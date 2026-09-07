@@ -50,7 +50,7 @@
   },
   "homepage": "https://github.com/bcherny/json-schema-to-typescript#readme",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^16.0.1",
+    "@apidevtools/json-schema-ref-parser": "^16.0.2",
     "@types/json-schema": "^7.0.15",
     "@types/lodash": "^4.17.25",
     "js-yaml": "^5.4.1",
