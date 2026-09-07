@@ -15,7 +15,17 @@ import type {EnumJSONSchema, LinkedJSONSchema, NormalizedJSONSchema, SchemaSchem
 import {DefinitionKey, Intersection, Parent, Shared, Source, Types, isBoolean, isPrimitive} from './types/JSONSchema'
 import {ANNOTATION_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
-import {admitsType, formatTypeOf, generateName, justName, log, nameOf, narrowType, rootNameFromFile} from './utils'
+import {
+  admitsType,
+  formatTypeOf,
+  generateName,
+  hasType,
+  justName,
+  log,
+  nameOf,
+  narrowType,
+  rootNameFromFile,
+} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
@@ -149,7 +159,7 @@ export function nameAnonymousRecursiveTypes(
       if (index > -1) {
         if (!path.slice(index).some(hasStandaloneName)) {
           const target = pickEnd(node, path[path.length - 1])
-          target.standaloneName = generateName(refNames.get(target) ?? keyOf(target) ?? closestName(path), usedNames)
+          target.standaloneName = generateName(refNames.get(target) ?? target.keyName ?? closestName(path), usedNames)
           named = true
         }
         return
@@ -178,13 +188,12 @@ export function nameAnonymousRecursiveTypes(
   // Last resort is the root the walk started from: the schema itself or a named type
   function closestName(path: AST[]): string {
     const above = [...path].reverse()
-    return above.map(_ => refNames.get(_)).find(Boolean) ?? above.map(keyOf).find(Boolean) ?? path[0].standaloneName!
+    return (
+      above.map(_ => refNames.get(_)).find(Boolean) ??
+      above.map(_ => _.keyName).find(Boolean) ??
+      path[0].standaloneName!
+    )
   }
-}
-
-/** A node's property key -- ignoring the placeholder that array items get */
-function keyOf(ast: AST): string | undefined {
-  return ast.keyName?.includes('{keyNameFromDefinition}') ? undefined : ast.keyName
 }
 
 function isList(ast: AST): boolean {
@@ -329,7 +338,7 @@ function parseNonLiteral(
         keyName,
         standaloneName: name,
         params: members
-          .map(memberSchema => parseMember(memberSchema, schema, scope, options, processed, usedNames))
+          .map(memberSchema => parseMember(memberSchema, schema, scope, options, processed, usedNames, name ?? keyName))
           .concat(
             parseRequired(
               schema,
@@ -355,15 +364,17 @@ function parseNonLiteral(
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
       }
-    case 'ANY_OF':
+    case 'ANY_OF': {
+      const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: parseBranches(schema.anyOf!, schema, scope, options, processed, usedNames),
+        standaloneName: name,
+        params: parseBranches(schema.anyOf!, schema, scope, options, processed, usedNames, name ?? keyName),
         type: 'UNION',
       }
+    }
     case 'BOOLEAN':
       return {
         comment: schema.description,
@@ -449,15 +460,17 @@ function parseNonLiteral(
         type: 'OBJECT',
         deprecated: schema.deprecated,
       }
-    case 'ONE_OF':
+    case 'ONE_OF': {
+      const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-        params: parseBranches(schema.oneOf!, schema, scope, options, processed, usedNames),
+        standaloneName: name,
+        params: parseBranches(schema.oneOf!, schema, scope, options, processed, usedNames, name ?? keyName),
         type: 'UNION',
       }
+    }
     case 'REFERENCE':
       // If a $ref makes it this far unresolved, the most likely cause is a $ref
       // cycle with no concrete base case -- eg. `definitions.bar` being nothing
@@ -488,6 +501,7 @@ function parseNonLiteral(
         // normalised to not be undefined
         const minItems = schema.minItems!
         const maxItems = schema.maxItems!
+        const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
         const arrayType: TTuple = {
           comment: schema.description,
           deprecated: schema.deprecated,
@@ -495,33 +509,50 @@ function parseNonLiteral(
           keyName,
           maxItems,
           minItems,
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-          params: schema.items.map(_ => parse(_, options, undefined, processed, usedNames)),
+          standaloneName: name,
+          params: schema.items.map(_ => parse(_, options, arrayKey(_, name ?? keyName), processed, usedNames)),
           type: 'TUPLE',
         }
         if (schema.additionalItems === true) {
           arrayType.spreadParam = options.unknownAny ? T_UNKNOWN : T_ANY
         } else if (schema.additionalItems) {
-          arrayType.spreadParam = parse(schema.additionalItems, options, undefined, processed, usedNames)
+          arrayType.spreadParam = parse(
+            schema.additionalItems,
+            options,
+            arrayKey(schema.additionalItems, name ?? keyName),
+            processed,
+            usedNames,
+          )
         }
         return arrayType
       } else {
+        const name = standaloneName(schema, keyNameFromDefinition, usedNames, options)
+        // The items inherit a key from the array they sit in, `RolesItems` for `roles`, which
+        // names a titleless `enum` among them (see the ENUM case)
+        const itemsKey = name ?? keyName
         return {
           comment: schema.description,
           deprecated: schema.deprecated,
           isReadOnly: isReadOnly(schema),
           keyName,
-          standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
-          params: parse(schema.items!, options, `{keyNameFromDefinition}Items`, processed, usedNames),
+          standaloneName: name,
+          params: parse(
+            schema.items!,
+            options,
+            itemsKey === undefined ? undefined : `${itemsKey}Items`,
+            processed,
+            usedNames,
+          ),
           type: 'ARRAY',
         }
       }
-    case 'UNION':
+    case 'UNION': {
+      const unionName = standaloneName(schema, keyNameFromDefinition, usedNames, options)
       return {
         comment: schema.description,
         deprecated: schema.deprecated,
         keyName,
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames, options),
+        standaloneName: unionName,
         params: (schema.type as JSONSchema4TypeName[]).flatMap(type => {
           const member: LinkedJSONSchema = {...omit(schema, '$id', 'description', 'title'), type}
           // The schema's `anyOf`/`oneOf` hold within each of its types (`typesOfSchema` leaves
@@ -540,10 +571,11 @@ function parseNonLiteral(
           }
           applySchemaTyping(member)
           perTypeCopies.add(member)
-          return [parse(member, options, undefined, processed, usedNames)]
+          return [parse(member, options, arrayKey(member, unionName ?? keyName), processed, usedNames)]
         }),
         type: 'UNION',
       }
+    }
     case 'UNNAMED_ENUM':
       return {
         comment: schema.description,
@@ -614,6 +646,7 @@ function parseMember(
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
+  key?: string,
 ): AST {
   const required = member.required as string[]
   if (
@@ -629,7 +662,24 @@ function parseMember(
   }
   // a member inlined here and only here hands `scope` on to members of its own (see `Scope`)
   const inlined = !isPrimitive(member) && !member[Shared] && !isNamed(member, options)
-  return parse(member, options, undefined, processed, usedNames, inlined ? scope : [])
+  return parse(member, options, arrayKey(member, key), processed, usedNames, inlined ? scope : [])
+}
+
+/**
+ * The key a schema in a position with none of its own (a `oneOf`/`anyOf` branch, an `allOf`
+ * member, a tuple slot, a per-type copy) takes from the schema above it: `key` if it is an
+ * array, or a set operation that will hand it on to its own members, else nothing. An
+ * `enum` there stays a union of literals rather than a declaration under the property's own
+ * name; an array's items are named after the key plus `Items` (`RolesItems` for `roles:
+ * {oneOf: [{type: 'array', items: {enum: …}}, …]}`), a name the property itself never takes.
+ */
+function arrayKey(schema: NormalizedJSONSchema | JSONSchema4Type, key: string | undefined): string | undefined {
+  if (isPrimitive(schema)) {
+    return undefined
+  }
+  const isArray = hasType(schema, 'array') || (schema.type === undefined && 'items' in schema)
+  const holdsMembers = ('anyOf' in schema || 'oneOf' in schema || 'allOf' in schema) && !('enum' in schema)
+  return isArray || holdsMembers ? key : undefined
 }
 
 /**
@@ -649,10 +699,11 @@ function parseBranches(
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
+  key?: string,
 ): AST[] {
   const keys = undeclaredRequired(schema)
   return members.map(member => {
-    const ast = parseMember(member, schema, scope, options, processed, usedNames)
+    const ast = parseMember(member, schema, scope, options, processed, usedNames, key)
     // The keys the branch doesn't declare go on the intersection instead, once, when `schema` was
     // split off of one (see `parseRequired`), and never on a branch that may match something other
     // than objects: `required` asks nothing of those, and the intersection would exclude them
