@@ -90,7 +90,12 @@ export function traverse(
         }
         break
       case 'schemaArray':
-        traverseArray(child, callback, processed)
+        if (Array.isArray(child)) {
+          traverseArray(child, callback, processed)
+        } else if (typeof child === 'object') {
+          // a `$ref` standing in for the whole list, until dereferenced (the resolver judges what it led to)
+          traverse(child, callback, processed)
+        }
         break
       case 'schemaMap':
         traverseObjectKeys(child, callback, processed)

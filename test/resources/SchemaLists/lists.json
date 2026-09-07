@@ -1,0 +1,5 @@
+{
+  "scalars": [{"type": "string"}, {"type": "number"}],
+  "kinds": [{"enum": ["file"]}, {"enum": ["folder"]}],
+  "pair": [{"type": "string"}, {"type": "boolean"}]
+}
