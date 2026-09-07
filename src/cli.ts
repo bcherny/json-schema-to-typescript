@@ -7,7 +7,7 @@ import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {resolveConfig} from 'prettier'
 import {compile, compileFiles, DEFAULT_OPTIONS, Options} from './index'
-import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} from './utils'
+import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension, UserError} from './utils'
 
 // cwd and style are deliberately left out of the CLI defaults: processFile()
 // computes a per-file cwd and loads the closest Prettier config. Explicit CLI
@@ -15,7 +15,7 @@ import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} f
 const defaultOptions = omit(DEFAULT_OPTIONS, ['cwd', 'style'])
 
 // A mistake in how the CLI was called. main() prints its message alone: the stack says nothing the user can act on.
-class UsageError extends Error {}
+class UsageError extends UserError {}
 
 main(
   minimist(process.argv.slice(2), {
@@ -41,7 +41,8 @@ main(
       'unreachableDefinitions',
     ],
     default: defaultOptions,
-    string: ['bannerComment', 'cwd', 'declarationStyle'],
+    // Paths stay strings: minimist would otherwise turn `-o 123` (or a positional `123`) into a number
+    string: ['_', 'bannerComment', 'cwd', 'declarationStyle', 'input', 'output'],
   }),
 )
 
@@ -63,10 +64,24 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
-  const ISGLOB = argIn && isDynamicPattern(argIn)
-  const ISDIR = !!argIn && isDir(argIn)
-
   try {
+    for (const flag of ['input', 'output'] as const) {
+      const values: unknown[] = ([] as unknown[]).concat(argv[flag]) // the same flag twice parses as an array
+      // A path flag with nothing after it (`json2ts schema.json -o`, `--output=`) parses as ''
+      if (values.includes('')) {
+        throw new UsageError(
+          `--${flag} (-${flag[0]}) needs a path after it, e.g. -${flag[0]} ${flag === 'input' ? 'schema.json' : 'schema.d.ts'}`,
+        )
+      }
+      if (values.length > 1) {
+        throw new UsageError(
+          `--${flag} (-${flag[0]}) was given more than once (${values.join(', ')}); it takes one path (a directory${flag === 'input' ? ' or quoted glob' : ''} for several schemas)`,
+        )
+      }
+    }
+    const ISGLOB = argIn && isDynamicPattern(argIn)
+    const ISDIR = !!argIn && isDir(argIn)
+
     // Defend against unquoted glob expansion (or other shell mistakes) silently supplying extra
     // positional arguments. A positional that competes with an explicitly-passed --input/--output
     // flag for the same slot, or overflows past the two positional slots (input, output) this CLI
@@ -113,7 +128,9 @@ async function main(argv: minimist.ParsedArgs) {
       outputResult(await processFile(argIn, argOut, argv as Partial<Options>), argOut)
     }
   } catch (e) {
-    error(e instanceof UsageError ? e.message : e)
+    // The user's mistake (how the CLI was called, an option's value, input that does not parse):
+    // print what to fix, without the stack. Anything else is the program's, and the stack says where.
+    error(e instanceof UserError ? e.message : e)
     process.exit(1)
   }
 }

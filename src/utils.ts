@@ -419,19 +419,36 @@ export function isSchemaLike(schema: any): schema is LinkedJSONSchema {
  */
 const JS_YAML_4_SCHEMA = CORE_SCHEMA.withTags(mergeTag, timestampTag, binaryTag, omapTag, pairsTag, setTag)
 
+/**
+ * A mistake in the input or the options, not a fault in the program: the message says what to fix,
+ * so a caller can show it on its own (the CLI prints it without a stack). Thrown by
+ * `parseFileAsJSONSchema` and `validateOptions`.
+ */
+export class UserError extends Error {}
+
 export function parseFileAsJSONSchema(filename: string | null, contents: string): JSONSchema4 {
   if (filename != null && (filename.endsWith('.yaml') || filename.endsWith('.yml'))) {
     try {
       return loadYaml(contents, {schema: JS_YAML_4_SCHEMA}) as JSONSchema4
-    } catch {
-      throw new TypeError(`Error parsing YML in file "${filename}"`)
+    } catch (e) {
+      // js-yaml's message carries the reason, the position and a caret under the offending line
+      throw new UserError(`Error parsing YAML in file "${filename}": ${messageOf(e)}`)
     }
   }
   try {
     return JSON.parse(contents)
-  } catch {
-    throw new TypeError(`Error parsing JSON in file "${filename}"`)
+  } catch (e) {
+    // JSON.parse's message quotes the text around the error (a line break in it would break the
+    // line) and, where it can, says the line and column
+    const reason = messageOf(e).replace(/[\r\n]/g, c => (c === '\n' ? '\\n' : '\\r'))
+    throw new UserError(
+      `Error parsing JSON ${filename == null ? 'from standard input' : `in file "${filename}"`}: ${reason}`,
+    )
   }
+}
+
+function messageOf(e: unknown): string {
+  return e instanceof Error ? e.message : String(e)
 }
 
 function color(): Format {

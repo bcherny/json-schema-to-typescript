@@ -62,8 +62,9 @@ function cliFailTest(
   name: string,
   command: string,
   check: (output: {code?: number | string; stdout: string; stderr: string}) => void,
+  input?: string,
 ) {
-  spawners.push(() => results.set(name, run(command)))
+  spawners.push(() => results.set(name, run(command, input)))
   test(name, async () => {
     const {error, stdout, stderr} = await results.get(name)!
     expect(error).not.toBeNull()
@@ -92,6 +93,9 @@ const OUTPUTS = [
   './test/resources/MultiSchema2/out',
   './test/resources/MultiSchema/extraArgs.d.ts',
   './test/resources/Imports/out',
+  './test/resources/123',
+  './test/resources/dup.1.d.ts',
+  './test/resources/dup.2.d.ts',
 ]
 
 suite('CLI', () => {
@@ -432,6 +436,139 @@ suite('CLI', () => {
       expect(stderr).toStartWith('error: ')
       expect(stderr).toContain('ENOENT')
       expect(stderr).toContain('NoSuchFile.json')
+      expect(stderr).toMatch(/^\s+at /m) // a program error: the stack stays
+    },
+  )
+
+  // Input that does not parse is the user's mistake: one line with the parser's own reason
+  // (and, where JSON.parse gives one, the position), no stack trace
+  cliFailTest(
+    "malformed JSON on stdin is one error line with the parser's reason",
+    'node dist/src/cli.js',
+    ({code, stdout, stderr}) => {
+      expect(code).toBe(1)
+      expect(stdout).toBe('')
+      expect(stderr).toStartWith('error: Error parsing JSON from standard input: ')
+      expect(stderr).toContain('is not valid JSON')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+    '{"type": nope',
+  )
+
+  cliFailTest(
+    'malformed JSON on stdin says where when the parser knows',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: Error parsing JSON from standard input: ')
+      expect(stderr).toContain('line 1 column 19')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+    '{"type": "string",}',
+  )
+
+  cliFailTest(
+    "a malformed JSON file is one error line naming the file and the parser's reason",
+    'node dist/src/cli.js -i ./test/resources/Malformed.json',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: Error parsing JSON in file "./test/resources/Malformed.json": ')
+      expect(stderr).toContain('is not valid JSON')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+  )
+
+  // js-yaml's message carries the reason, the line and column, and a caret under the line
+  cliFailTest(
+    'a malformed YAML file is one error naming the file, the reason and the position',
+    'node dist/src/cli.js -i ./test/resources/Malformed.yaml',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith(
+        'error: Error parsing YAML in file "./test/resources/Malformed.yaml": deficient indentation (3:1)',
+      )
+      expect(stderr).toContain('\n 2 | type: [string\n')
+      expect(stderr.match(/^error: /gm)).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+  )
+
+  // A bad option value: the validator's message says what was expected, without a stack trace
+  cliFailTest(
+    '--declarationStyle with an unknown value is one error line',
+    'node dist/src/cli.js --declarationStyle=foo',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toBe('error: Expected options.declarationStyle to be "interface" or "type", but was given foo.\n')
+    },
+    '{"type": "string"}',
+  )
+
+  cliFailTest(
+    '--maxItems below -1 is one error line',
+    'node dist/src/cli.js --maxItems=-5',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toBe('error: Expected options.maxItems to be >= -1, but was given -5.\n')
+    },
+    '{"type": "string"}',
+  )
+
+  // minimist turns a numeric-looking argument into a number unless told it is a string; a path
+  // called 123 used to reach path.resolve() as the number 123 and die with a stack trace
+  cliTest(
+    'a numeric-looking output path is a path',
+    `node ${CLI} ReferencedType.json -o 123`,
+    () => {
+      expect(readFileSync('./test/resources/123', 'utf-8')).toContain('export interface ExampleSchema')
+      unlinkSync('./test/resources/123')
+    },
+    undefined,
+    STDIN_CWD,
+  )
+
+  cliFailTest(
+    'a numeric-looking input path is a path (here, one that does not exist)',
+    'node dist/src/cli.js -i 123',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toContain('ENOENT')
+      expect(stderr).toContain("123'")
+      expect(stderr).not.toContain('Received type number')
+    },
+  )
+
+  cliFailTest('a numeric-looking positional path is a path too', 'node dist/src/cli.js 123', ({code, stderr}) => {
+    expect(code).toBe(1)
+    expect(stderr).toContain('ENOENT')
+    expect(stderr).not.toContain('Received type number')
+  })
+
+  // The same path flag twice parses as an array; it used to reach the glob matcher or
+  // path.resolve() as one and die with a stack trace
+  cliFailTest(
+    '-i given twice is a one-line usage error naming both paths',
+    'node dist/src/cli.js -i ./test/resources/ReferencedType.json -i ./test/resources/Enum.json',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith(
+        'error: --input (-i) was given more than once (./test/resources/ReferencedType.json, ./test/resources/Enum.json)',
+      )
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+  )
+
+  cliFailTest(
+    '-o given twice is a one-line usage error and writes nothing',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json -o ./test/resources/dup.1.d.ts -o ./test/resources/dup.2.d.ts',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: --output (-o) was given more than once (')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(existsSync('./test/resources/dup.1.d.ts')).toBe(false)
+      expect(existsSync('./test/resources/dup.2.d.ts')).toBe(false)
     },
   )
 

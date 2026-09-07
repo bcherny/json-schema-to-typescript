@@ -326,3 +326,5 @@ async function compileToAST(
 }
 
 export class ValidationError extends Error {}
+
+export {UserError} from './utils'
