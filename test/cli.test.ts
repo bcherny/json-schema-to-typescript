@@ -145,6 +145,21 @@ suite('CLI', () => {
     ({stdout}) => expect(stdout).toMatchSnapshot(),
   )
 
+  // A file that is nothing but `false` (or `true`) is a boolean schema, declared under the file's name
+  cliTest(
+    'file in (boolean root schema), pipe out',
+    'node dist/src/cli.js ./test/resources/BooleanRoot/Nothing.json',
+    ({stdout}) => expect(stdout).toContain('export type Nothing = never;'),
+  )
+
+  cliTest(
+    'pipe in (boolean root schema), pipe out',
+    `node ${CLI}`,
+    ({stdout}) => expect(stdout).toContain('export type NoName = unknown;'),
+    'true',
+    STDIN_CWD,
+  )
+
   cliTest(
     'file in (--input), pipe out',
     'node dist/src/cli.js --input ./test/resources/ReferencedType.json',

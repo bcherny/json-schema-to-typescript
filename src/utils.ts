@@ -174,6 +174,14 @@ export function justName(filename = ''): string {
   return stripExtension(basename(filename))
 }
 
+/**
+ * The name for a root schema that carries none of its own: the file's name as an identifier,
+ * or a placeholder when nothing of it can be one (stdin, a file called `2024.json`).
+ */
+export function rootNameFromFile(fileName: string): string {
+  return toSafeString(justName(fileName)) || 'NoName'
+}
+
 /** The name a schema asks for, before `generateName` makes it safe and unique */
 export function nameOf(
   schema: LinkedJSONSchema,

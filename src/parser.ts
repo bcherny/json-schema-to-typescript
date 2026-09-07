@@ -15,11 +15,33 @@ import type {EnumJSONSchema, LinkedJSONSchema, NormalizedJSONSchema, SchemaSchem
 import {DefinitionKey, Intersection, Parent, Shared, Source, Types, isBoolean, isPrimitive} from './types/JSONSchema'
 import {ANNOTATION_KEYWORDS} from './keywords'
 import {DereferencedPaths} from './resolver'
-import {admitsType, formatTypeOf, generateName, justName, log, nameOf, narrowType} from './utils'
+import {admitsType, formatTypeOf, generateName, justName, log, nameOf, narrowType, rootNameFromFile} from './utils'
 
 export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
 export type UsedNames = Set<string>
+
+/**
+ * The root of the document. From draft 6 on it may be a boolean schema on its own (`true`
+ * admits every value, `false` none), which has no keyword to be named by: it is declared under
+ * the file's name, as the normalizer names an object root that has no `$id` of its own. (The
+ * `customName` option is not consulted for it: that function is handed schema objects.)
+ */
+export function parseRoot(
+  schema: NormalizedJSONSchema | boolean,
+  fileName: string,
+  options: Options,
+  processed: Processed,
+  usedNames: UsedNames,
+): AST {
+  if (isBoolean(schema)) {
+    return {
+      ...parseBooleanSchema(schema, undefined, options),
+      standaloneName: generateName(rootNameFromFile(fileName), usedNames),
+    }
+  }
+  return parse(schema, options, undefined, processed, usedNames)
+}
 
 export function parse(
   schema: NormalizedJSONSchema | JSONSchema4Type,
@@ -194,12 +216,13 @@ function subtrees(ast: AST): AST[] {
  * once, on the root schema, after `parse`.
  */
 export function parseUnreachableDefinitions(
-  rootSchema: NormalizedJSONSchema,
+  rootSchema: NormalizedJSONSchema | boolean,
   options: Options,
   processed: Processed,
   usedNames: UsedNames,
 ): AST[] {
-  if (!options.unreachableDefinitions || declaresInterface(rootSchema)) {
+  // (a boolean root holds no definitions)
+  if (!options.unreachableDefinitions || isBoolean(rootSchema) || declaresInterface(rootSchema)) {
     return []
   }
 
