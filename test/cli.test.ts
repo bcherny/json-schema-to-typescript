@@ -62,8 +62,9 @@ function cliFailTest(
   name: string,
   command: string,
   check: (output: {code?: number | string; stdout: string; stderr: string}) => void,
+  input?: string,
 ) {
-  spawners.push(() => results.set(name, run(command)))
+  spawners.push(() => results.set(name, run(command, input)))
   test(name, async () => {
     const {error, stdout, stderr} = await results.get(name)!
     expect(error).not.toBeNull()
@@ -92,6 +93,9 @@ const OUTPUTS = [
   './test/resources/MultiSchema2/out',
   './test/resources/MultiSchema/extraArgs.d.ts',
   './test/resources/Imports/out',
+  './test/resources/123',
+  './test/resources/dup.1.d.ts',
+  './test/resources/dup.2.d.ts',
 ]
 
 suite('CLI', () => {
@@ -214,6 +218,33 @@ suite('CLI', () => {
       ({stdout}) => expect(stdout).toContain('export type Country = "NL" | "DE" | "BE"'),
     )
   }
+
+  // `--maxItems -1` (the spelling --help suggests) used to reach minimist as the flag `maxItems`
+  // with no value plus a short flag `-1` that took the next argument as its own value, so
+  // `--maxItems -1 schema.json` read stdin instead of the file and `-i schema.json --maxItems -1`
+  // silently kept the tuple union. A negative number after a long flag is that flag's value.
+  cliTest(
+    'file in (-i), bounded array without --maxItems, pipe out',
+    'node dist/src/cli.js -i ./test/resources/BoundedArray.json',
+    ({stdout}) => expect(stdout).toContain('tags?: [string, string] | [string, string, string];'),
+  )
+  for (const flag of ['--maxItems=-1', '--maxItems -1']) {
+    cliTest(
+      `file in (-i), --maxItems -1 ignores maxItems (${flag}), pipe out`,
+      `node dist/src/cli.js -i ./test/resources/BoundedArray.json ${flag}`,
+      ({stdout}) => expect(stdout).toContain('tags?: [string, string, ...string[]];'),
+    )
+  }
+  cliTest(
+    'file in, --maxItems -1 before the input path does not swallow it, pipe out',
+    'node dist/src/cli.js --maxItems -1 ./test/resources/BoundedArray.json',
+    ({stdout}) => expect(stdout).toContain('tags?: [string, string, ...string[]];'),
+  )
+  cliErrorTest(
+    '--maxItems without a number is an error, not a silent limit of 1',
+    'node dist/src/cli.js -i ./test/resources/BoundedArray.json --maxItems',
+    'Expected options.maxItems to be a number >= -1, but was given true',
+  )
 
   // https://github.com/bcherny/json-schema-to-typescript/issues/131
   cliTest(
@@ -423,6 +454,106 @@ suite('CLI', () => {
     },
   )
 
+  // A flag that should carry a path but has nothing after it (`-o` at the end of the line)
+  // used to reach path.resolve() as `true` and die with a TypeError and a stack trace
+  cliFailTest(
+    '-o with no path after it is a one-line usage error naming the flag',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json -o',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: --output (-o) needs a path after it')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+  )
+
+  cliFailTest(
+    '--output= with an empty path is the same usage error',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json --output=',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: --output (-o) needs a path after it')
+    },
+  )
+
+  cliFailTest(
+    '-i with no path after it is a one-line usage error naming the flag',
+    'node dist/src/cli.js -i',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: --input (-i) needs a path after it')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+  )
+
+  // compile() prints one line per rule an invalid schema breaks; the CLI must not add a
+  // stack trace for the ValidationError it then throws (the lines say all there is to say)
+  cliFailTest(
+    'an invalid schema prints the rule it breaks and no stack trace',
+    'node dist/src/cli.js',
+    ({code, stdout, stderr}) => {
+      expect(code).toBe(1)
+      expect(stdout).toBe('')
+      expect(stderr).toStartWith('error: ')
+      expect(stderr).toContain('When minItems exists, minItems >= 0')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+    '{"type": "array", "minItems": -1}',
+  )
+
+  cliFailTest(
+    'invalid JSON on stdin names standard input, not a file called "null"',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toContain('Error parsing JSON from standard input')
+      expect(stderr).not.toContain('"null"')
+    },
+    '{"type": nope',
+  )
+
+  // A $ref to a file that does not exist: the resolver's message names the file, which is
+  // all the user needs; the error's stack and fields (code, source, toJSON…) are noise
+  cliFailTest(
+    'a $ref to a missing file is one error line naming the file',
+    'node dist/src/cli.js',
+    ({code, stdout, stderr}) => {
+      expect(code).toBe(1)
+      expect(stdout).toBe('')
+      expect(stderr).toStartWith('error: ')
+      expect(stderr).toContain('NoSuchRefTarget.json')
+      expect(stderr).not.toMatch(/^\s+at /m)
+      expect(stderr).not.toContain('ERESOLVER')
+    },
+    '{"properties": {"x": {"$ref": "./test/resources/NoSuchRefTarget.json"}}}',
+  )
+
+  // ...but a pointer into the schema itself is not suffixed with its directory
+  cliFailTest(
+    'a $ref to a missing pointer in the schema itself is the message alone',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toBe('error: Missing $ref pointer "#/definitions/nope". Token "definitions" does not exist.\n')
+    },
+    '{"properties": {"x": {"$ref": "#/definitions/nope"}}}',
+  )
+
+  // ...and when the resolver's message does not name the file (a pointer into another
+  // file that does not exist there), the line says which file it is in
+  cliFailTest(
+    'a $ref to a missing pointer in another file names that file',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: Missing $ref pointer "#/definitions/nope"')
+      // the resolver reports the path with forward slashes on every OS, so match the file name, not resolve()
+      expect(stderr).toMatch(/ \(in \S*test\/resources\/ReferencedType\.json\)\n$/)
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+    '{"properties": {"x": {"$ref": "./test/resources/ReferencedType.json#/definitions/nope"}}}',
+  )
+
   // ...while anything else that goes wrong still says where: the unreadable path here
   cliFailTest(
     'an unreadable input file reports the path it could not open',
@@ -432,6 +563,139 @@ suite('CLI', () => {
       expect(stderr).toStartWith('error: ')
       expect(stderr).toContain('ENOENT')
       expect(stderr).toContain('NoSuchFile.json')
+      expect(stderr).toMatch(/^\s+at /m) // a program error: the stack stays
+    },
+  )
+
+  // Input that does not parse is the user's mistake: one line with the parser's own reason
+  // (and, where JSON.parse gives one, the position), no stack trace
+  cliFailTest(
+    "malformed JSON on stdin is one error line with the parser's reason",
+    'node dist/src/cli.js',
+    ({code, stdout, stderr}) => {
+      expect(code).toBe(1)
+      expect(stdout).toBe('')
+      expect(stderr).toStartWith('error: Error parsing JSON from standard input: ')
+      expect(stderr).toContain('is not valid JSON')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+    '{"type": nope',
+  )
+
+  cliFailTest(
+    'malformed JSON on stdin says where when the parser knows',
+    'node dist/src/cli.js',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: Error parsing JSON from standard input: ')
+      expect(stderr).toContain('line 1 column 19')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+    '{"type": "string",}',
+  )
+
+  cliFailTest(
+    "a malformed JSON file is one error line naming the file and the parser's reason",
+    'node dist/src/cli.js -i ./test/resources/Malformed.json',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: Error parsing JSON in file "./test/resources/Malformed.json": ')
+      expect(stderr).toContain('is not valid JSON')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+  )
+
+  // js-yaml's message carries the reason, the line and column, and a caret under the line
+  cliFailTest(
+    'a malformed YAML file is one error naming the file, the reason and the position',
+    'node dist/src/cli.js -i ./test/resources/Malformed.yaml',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith(
+        'error: Error parsing YAML in file "./test/resources/Malformed.yaml": deficient indentation (3:1)',
+      )
+      expect(stderr).toContain('\n 2 | type: [string\n')
+      expect(stderr.match(/^error: /gm)).toHaveLength(1)
+      expect(stderr).not.toMatch(/^\s+at /m)
+    },
+  )
+
+  // A bad option value: the validator's message says what was expected, without a stack trace
+  cliFailTest(
+    '--declarationStyle with an unknown value is one error line',
+    'node dist/src/cli.js --declarationStyle=foo',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toBe('error: Expected options.declarationStyle to be "interface" or "type", but was given foo.\n')
+    },
+    '{"type": "string"}',
+  )
+
+  cliFailTest(
+    '--maxItems below -1 is one error line',
+    'node dist/src/cli.js --maxItems=-5',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toBe('error: Expected options.maxItems to be a number >= -1, but was given -5.\n')
+    },
+    '{"type": "string"}',
+  )
+
+  // minimist turns a numeric-looking argument into a number unless told it is a string; a path
+  // called 123 used to reach path.resolve() as the number 123 and die with a stack trace
+  cliTest(
+    'a numeric-looking output path is a path',
+    `node ${CLI} ReferencedType.json -o 123`,
+    () => {
+      expect(readFileSync('./test/resources/123', 'utf-8')).toContain('export interface ExampleSchema')
+      unlinkSync('./test/resources/123')
+    },
+    undefined,
+    STDIN_CWD,
+  )
+
+  cliFailTest(
+    'a numeric-looking input path is a path (here, one that does not exist)',
+    'node dist/src/cli.js -i 123',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toContain('ENOENT')
+      expect(stderr).toContain("123'")
+      expect(stderr).not.toContain('Received type number')
+    },
+  )
+
+  cliFailTest('a numeric-looking positional path is a path too', 'node dist/src/cli.js 123', ({code, stderr}) => {
+    expect(code).toBe(1)
+    expect(stderr).toContain('ENOENT')
+    expect(stderr).not.toContain('Received type number')
+  })
+
+  // The same path flag twice parses as an array; it used to reach the glob matcher or
+  // path.resolve() as one and die with a stack trace
+  cliFailTest(
+    '-i given twice is a one-line usage error naming both paths',
+    'node dist/src/cli.js -i ./test/resources/ReferencedType.json -i ./test/resources/Enum.json',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith(
+        'error: --input (-i) was given more than once (./test/resources/ReferencedType.json, ./test/resources/Enum.json)',
+      )
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+    },
+  )
+
+  cliFailTest(
+    '-o given twice is a one-line usage error and writes nothing',
+    'node dist/src/cli.js ./test/resources/ReferencedType.json -o ./test/resources/dup.1.d.ts -o ./test/resources/dup.2.d.ts',
+    ({code, stderr}) => {
+      expect(code).toBe(1)
+      expect(stderr).toStartWith('error: --output (-o) was given more than once (')
+      expect(stderr.trimEnd().split('\n')).toHaveLength(1)
+      expect(existsSync('./test/resources/dup.1.d.ts')).toBe(false)
+      expect(existsSync('./test/resources/dup.2.d.ts')).toBe(false)
     },
   )
 

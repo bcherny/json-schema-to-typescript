@@ -6,8 +6,9 @@ import {omit} from 'lodash'
 import {glob, isDynamicPattern} from 'tinyglobby'
 import {join, resolve, dirname} from 'path'
 import {resolveConfig} from 'prettier'
-import {compile, compileFiles, DEFAULT_OPTIONS, Options} from './index'
-import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} from './utils'
+import {JSONParserError, JSONParserErrorGroup} from '@apidevtools/json-schema-ref-parser'
+import {compile, compileFiles, DEFAULT_OPTIONS, Options, ValidationError} from './index'
+import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension, UserError} from './utils'
 
 // cwd and style are deliberately left out of the CLI defaults: processFile()
 // computes a per-file cwd and loads the closest Prettier config. Explicit CLI
@@ -15,10 +16,10 @@ import {pathTransform, error, parseFileAsJSONSchema, justName, stripExtension} f
 const defaultOptions = omit(DEFAULT_OPTIONS, ['cwd', 'style'])
 
 // A mistake in how the CLI was called. main() prints its message alone: the stack says nothing the user can act on.
-class UsageError extends Error {}
+class UsageError extends UserError {}
 
 main(
-  minimist(process.argv.slice(2), {
+  minimist(joinNegativeNumberValues(process.argv.slice(2)), {
     alias: {
       help: ['h'],
       input: ['i'],
@@ -41,9 +42,34 @@ main(
       'unreachableDefinitions',
     ],
     default: defaultOptions,
-    string: ['bannerComment', 'cwd', 'declarationStyle'],
+    // Paths stay strings: minimist would otherwise turn `-o 123` (or a positional `123`) into a number
+    string: ['_', 'bannerComment', 'cwd', 'declarationStyle', 'input', 'output'],
   }),
 )
+
+// minimist reads any token that starts with `-` as the next flag, so `--maxItems -1` (the spelling
+// --help suggests) parsed as `maxItems: true` followed by a short flag `-1` that took the *next*
+// argument as its value: the input path went missing and the limit was silently 1. A negative
+// number after a long flag is that flag's value, so spell it as `--flag=-N`, which minimist reads
+// correctly. No option here has a digit for a short flag, and `--` still ends the flags.
+function joinNegativeNumberValues(args: string[]): string[] {
+  const joined: string[] = []
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]
+    if (arg === '--') {
+      joined.push(...args.slice(i))
+      break
+    }
+    const next = args[i + 1]
+    if (/^--[^=]+$/.test(arg) && next !== undefined && /^-\d+(\.\d+)?$/.test(next)) {
+      joined.push(`${arg}=${next}`)
+      i++
+    } else {
+      joined.push(arg)
+    }
+  }
+  return joined
+}
 
 async function main(argv: minimist.ParsedArgs) {
   if (argv.help) {
@@ -63,10 +89,24 @@ async function main(argv: minimist.ParsedArgs) {
   const argIn: string = argv._[0] || argv.input
   const argOut: string | undefined = argv._[1] || argv.output // the output can be omitted so this can be undefined
 
-  const ISGLOB = argIn && isDynamicPattern(argIn)
-  const ISDIR = !!argIn && isDir(argIn)
-
   try {
+    for (const flag of ['input', 'output'] as const) {
+      const values: unknown[] = ([] as unknown[]).concat(argv[flag]) // the same flag twice parses as an array
+      // A path flag with nothing after it (`json2ts schema.json -o`, `--output=`) parses as ''
+      if (values.includes('')) {
+        throw new UsageError(
+          `--${flag} (-${flag[0]}) needs a path after it, e.g. -${flag[0]} ${flag === 'input' ? 'schema.json' : 'schema.d.ts'}`,
+        )
+      }
+      if (values.length > 1) {
+        throw new UsageError(
+          `--${flag} (-${flag[0]}) was given more than once (${values.join(', ')}); it takes one path (a directory${flag === 'input' ? ' or quoted glob' : ''} for several schemas)`,
+        )
+      }
+    }
+    const ISGLOB = argIn && isDynamicPattern(argIn)
+    const ISDIR = !!argIn && isDir(argIn)
+
     // Defend against unquoted glob expansion (or other shell mistakes) silently supplying extra
     // positional arguments. A positional that competes with an explicitly-passed --input/--output
     // flag for the same slot, or overflows past the two positional slots (input, output) this CLI
@@ -113,9 +153,33 @@ async function main(argv: minimist.ParsedArgs) {
       outputResult(await processFile(argIn, argOut, argv as Partial<Options>), argOut)
     }
   } catch (e) {
-    error(e instanceof UsageError ? e.message : e)
+    // The user's mistake, not the program's: print what to fix, without the stack.
+    // - UsageError: how the CLI was called
+    // - ValidationError: compile() already printed one line per rule the schema breaks
+    // - json-schema-ref-parser's errors: a $ref it could not resolve (a missing or
+    //   unparsable file, a pointer to nothing), one line each
+    if (e instanceof UserError) {
+      error(e.message)
+    } else if (e instanceof JSONParserError || e instanceof JSONParserErrorGroup) {
+      refErrorLines(e).forEach(line => error(line))
+    } else if (!(e instanceof ValidationError)) {
+      error(e)
+    }
     process.exit(1)
   }
+}
+
+/**
+ * The message of each `$ref` error, naming the file it was found in when the message
+ * itself does not (a missing pointer says which pointer, not which file it is in). For
+ * the schema being compiled itself, `source` is its directory (a trailing slash), which
+ * says nothing: the user knows which schema they passed.
+ */
+function refErrorLines(e: JSONParserError | JSONParserErrorGroup): string[] {
+  const errors = e instanceof JSONParserErrorGroup ? e.errors : [e]
+  return errors.map(_ =>
+    _.source && !_.source.endsWith('/') && !_.message.includes(_.source) ? `${_.message} (in ${_.source})` : _.message,
+  )
 }
 
 // check if path is an existing directory
@@ -273,11 +337,11 @@ Boolean values can be set to false using the 'no-' prefix.
       When IN_FILE is a directory or glob: import types that live in another of the
       compiled files from that file's module, instead of declaring a copy in each.
       (Experimental; off by default.)
-  --maxItems
+  --maxItems=N
       Maximum number of unioned tuples to emit when representing bounded-size
       array types, before falling back to emitting unbounded arrays. Increase
       this to improve precision of emitted types, decrease it to improve
-      performance, or set it to -1 to ignore minItems and maxItems.
+      performance, or set it to -1 to ignore maxItems.
   --readonly
       Mark every property and index signature readonly, and every array type readonly T[]
   --readonlyKeyword

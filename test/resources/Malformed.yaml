@@ -1,0 +1,4 @@
+title: Malformed
+type: [string
+properties:
+  x: {type: string}
