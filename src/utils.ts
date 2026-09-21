@@ -193,17 +193,20 @@ export function stripExtension(filename: string): string {
 /**
  * Convert a string that might contain spaces or special characters to one that
  * can safely be used as a TypeScript interface or enum name.
+ * Supports unicode characters in identifiers (per ECMAScript 2015+ and modern TypeScript).
  */
 export function toSafeString(string: string): string {
-  // identifiers in javaScript/ts:
-  // First character: a-zA-Z | _ | $
-  // Rest: a-zA-Z | _ | $ | 0-9
+  // identifiers in javaScript/ts (modern, unicode-aware):
+  // First character: \p{L} | _ | $ (any letter, underscore, dollar)
+  // Rest: \p{L} | \p{N} | _ | $ (add any digit)
+  // The 'u' flag enables \p{} unicode property escapes
 
   return upperFirst(
-    // remove accents, umlauts, ... by their basic latin letters
-    deburr(string)
+    string
       // replace chars which are not valid for typescript identifiers with whitespace
-      .replace(/(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g, ' ')
+      // First char: must be letter, _, or $
+      // Rest: can also be digits
+      .replace(/(^\s*[^\p{L}_$])|([^\p{L}\p{N}_$])/gu, ' ')
       // uppercase leading underscores followed by lowercase
       .replace(/^_[a-z]/g, match => match.toUpperCase())
       // remove non-leading underscores followed by lowercase (convert snake_case)
