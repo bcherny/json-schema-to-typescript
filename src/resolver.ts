@@ -11,7 +11,7 @@ import {
 } from '@apidevtools/json-schema-ref-parser'
 import {isObjectLike, isPlainObject} from 'lodash'
 import {prenormalizeDocument} from './prenormalizer'
-import {SCHEMA_HOLDING_KEYWORDS} from './keywords'
+import {JSON_DATA_KEYWORDS, KEYWORDS, SCHEMA_HOLDING_KEYWORDS} from './keywords'
 import {DefinitionKey, JSONSchema, SchemaSource, Source} from './types/JSONSchema'
 import {eachSchemaNode, log} from './utils'
 
@@ -72,6 +72,8 @@ export async function dereference(
     }
     resolve = {...resolve, set: inMemory}
   }
+  const needsDataExclusion = hasLiteralRefData(schema)
+  const excludeDataPath = (path: string) => isDataPath(schema, path)
   // `resolve` and `parse` settings only concern other files; any other option can change what
   // $RefParser does. A member of a file set goes to $RefParser too: it is registered there under
   // its own path, for the other members' `$ref`s to find.
@@ -90,8 +92,19 @@ export async function dereference(
         ...$refOptions,
         mutateInputSchema: true, // `schema` is this module's own copy already
         resolve,
+        ...(needsDataExclusion && {
+          resolveExcludedPathMatcher: (path: string, value?: unknown) =>
+            excludeDataPath(path) || ($refOptions.resolveExcludedPathMatcher?.(path, value) ?? false),
+        }),
         parse: prenormalizingParsers($refOptions.parse, (document, file) => documents.hide(prepare(document, file))),
-        dereference: {...$refOptions.dereference, onDereference},
+        dereference: {
+          ...$refOptions.dereference,
+          ...(needsDataExclusion && {
+            excludedPathMatcher: (path: string, value?: unknown) =>
+              excludeDataPath(path) || ($refOptions.dereference?.excludedPathMatcher?.(path, value) ?? false),
+          }),
+          onDereference,
+        },
       },
     ])
     try {
@@ -453,6 +466,84 @@ function isRef(value: unknown): value is Ref {
   return isObjectLike(value) && typeof (value as Ref).$ref === 'string' && (value as Ref).$ref !== ''
 }
 
+/** Do not interpret a literal value's `$ref` property as a schema reference. */
+function childSchemaContext(schemaNode: boolean, key: string, value: unknown): boolean | undefined {
+  if (!schemaNode) {
+    return true
+  }
+  const holds = KEYWORDS[key as keyof typeof KEYWORDS]?.holds
+  if (holds === 'json') {
+    return undefined
+  }
+  if (holds === 'schemaMap' || holds === 'schemaArray' || (holds === 'schemaOrSchemaArray' && Array.isArray(value))) {
+    return false
+  }
+  return true
+}
+
+/** Most schemas have no literal `$ref` data; keep the ref-parser's fast resolve path for them. */
+function hasLiteralRefData(root: JSONSchema): boolean {
+  const schemas = new WeakSet<object>()
+  const data = new WeakSet<object>()
+  function containsRef(value: unknown): boolean {
+    if (value === null || typeof value !== 'object' || data.has(value)) {
+      return false
+    }
+    data.add(value)
+    return isRef(value) || Object.values(value).some(containsRef)
+  }
+  function scan(node: unknown, schemaNode = true): boolean {
+    if (node === null || typeof node !== 'object' || schemas.has(node)) {
+      return false
+    }
+    schemas.add(node)
+    for (const [key, value] of Object.entries(node)) {
+      if (schemaNode && JSON_DATA_KEYWORDS.has(key)) {
+        if (containsRef(value)) {
+          return true
+        }
+      } else {
+        const context = childSchemaContext(schemaNode, key, value)
+        if (context !== undefined && scan(value, context)) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+  return scan(root)
+}
+
+function isDataPath(root: JSONSchema, path: string): boolean {
+  const hash = path.indexOf('#/')
+  if (hash < 0) {
+    return false
+  }
+  let node: unknown = root
+  let inContainer = false
+  for (const encoded of path.slice(hash + 2).split('/')) {
+    let token = encoded
+    try {
+      token = decodeURIComponent(token)
+    } catch {}
+    token = token.replace(/~1/g, '/').replace(/~0/g, '~')
+    if (inContainer) {
+      node = isObjectLike(node) ? (node as Record<string, unknown>)[token] : undefined
+      inContainer = false
+      continue
+    }
+    if (JSON_DATA_KEYWORDS.has(token)) {
+      return true
+    }
+    const value = isObjectLike(node) ? (node as Record<string, unknown>)[token] : undefined
+    const holds = KEYWORDS[token as keyof typeof KEYWORDS]?.holds
+    node = value
+    inContainer =
+      holds === 'schemaMap' || holds === 'schemaArray' || (holds === 'schemaOrSchemaArray' && Array.isArray(value))
+  }
+  return false
+}
+
 /**
  * `#/...` made of characters that neither URL resolution nor pointer decoding would rewrite (so no
  * `%`, `\`, whitespace, quotes or non-ASCII: pointers with those are left to $RefParser)
@@ -472,7 +563,7 @@ export function inDocumentTargets(root: JSONSchema): Map<string, object> | undef
   const targets = new Map<string, object>()
   const visited = new Set<unknown>()
   /** False as soon as it meets a `$ref` that rules the document out */
-  function scan(node: any): boolean {
+  function scan(node: any, schemaNode = true): boolean {
     if (!isObjectLike(node) || visited.has(node)) {
       return true
     }
@@ -487,7 +578,13 @@ export function inDocumentTargets(root: JSONSchema): Map<string, object> | undef
       }
       targets.set(node.$ref, target)
     }
-    return Object.values(node).every(scan) // instance data too, like $RefParser
+    for (const [key, value] of Object.entries(node)) {
+      const childContext = childSchemaContext(schemaNode, key, value)
+      if (childContext !== undefined && !scan(value, childContext)) {
+        return false
+      }
+    }
+    return true
   }
   return scan(root) ? targets : undefined
 }
@@ -527,7 +624,7 @@ export function dereferenceInDocument(
   const trail: string[] = [] // the keys from the root to here ($RefParser's `pathFromRoot`)
 
   /** Dereferences everything under `node`; true if something in there refers back to an ancestor */
-  function crawl(node: any): boolean {
+  function crawl(node: any, schemaNode = true): boolean {
     if (!isObjectLike(node) || visited.has(node)) {
       return false
     }
@@ -535,6 +632,10 @@ export function dereferenceInDocument(
     parents.add(node)
     let circular = false
     for (const key of Object.keys(node)) {
+      const childContext = childSchemaContext(schemaNode, key, node[key])
+      if (childContext === undefined) {
+        continue
+      }
       if (trail.push(key) > DEFAULT_MAX_DEPTH) {
         throw tooDeep(DEFAULT_MAX_DEPTH, `#/${trail.join('/')}`)
       }
@@ -545,7 +646,7 @@ export function dereferenceInDocument(
         onDereference(value.$ref, resolution.value)
         circular = resolution.circular || circular
       } else {
-        circular = parents.has(value) || crawl(value) || circular
+        circular = parents.has(value) || crawl(value, childContext) || circular
       }
       trail.pop()
     }
