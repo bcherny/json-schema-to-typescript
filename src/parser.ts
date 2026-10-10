@@ -21,6 +21,14 @@ export type Processed = Map<NormalizedJSONSchema, Map<SchemaType, AST>>
 
 export type UsedNames = Set<string>
 
+/**
+ * The regular `processed` cache is keyed by object identity, which is required for
+ * recursive schemas. Keep a separate cache for completed named declarations whose
+ * JSON content is identical, so independently allocated inline schemas with the
+ * same title can share the declaration their title asks for.
+ */
+const equivalentNamedTypes = new WeakMap<Processed, Map<string, Map<SchemaType, AST>>>()
+
 export function parse(
   schema: NormalizedJSONSchema | JSONSchema4Type,
   options: Options,
@@ -246,6 +254,15 @@ function parseAsTypeWithCache(
     return cachedAST
   }
 
+  const equivalentKey = equivalentNamedTypeKey(schema, type, options)
+  if (equivalentKey) {
+    const equivalentAST = equivalentNamedTypes.get(processed)?.get(equivalentKey)?.get(type)
+    if (equivalentAST) {
+      cachedTypeMap.set(type, equivalentAST)
+      return equivalentAST
+    }
+  }
+
   // Cache processed ASTs before they are actually computed, then update
   // them in place using set(). This is to avoid cycles.
   // TODO: Investigate alternative approaches (lazy-computing nodes, etc.)
@@ -260,7 +277,54 @@ function parseAsTypeWithCache(
   if (schema[Source]) {
     ast.source = schema[Source]
   }
+  if (equivalentKey) {
+    let typesByKey = equivalentNamedTypes.get(processed)
+    if (!typesByKey) {
+      typesByKey = new Map()
+      equivalentNamedTypes.set(processed, typesByKey)
+    }
+    let equivalents = typesByKey.get(equivalentKey)
+    if (!equivalents) {
+      equivalents = new Map()
+      typesByKey.set(equivalentKey, equivalents)
+    }
+    equivalents.set(type, ast)
+  }
   return ast
+}
+
+/** A stable JSON representation, or undefined for recursive schema graphs. */
+function equivalentNamedTypeKey(schema: NormalizedJSONSchema, type: SchemaType, options: Options): string | undefined {
+  // Imported schemas belong to their source modules, and a custom name callback
+  // may intentionally distinguish otherwise identical schema objects.
+  if (!isNamed(schema, options) || schema[Source] || options.customName) {
+    return undefined
+  }
+
+  const ancestors = new Set<object>()
+  let recursive = false
+  const copy = (value: unknown): unknown => {
+    if (!value || typeof value !== 'object') {
+      return value
+    }
+    if (ancestors.has(value)) {
+      recursive = true
+      return undefined
+    }
+    ancestors.add(value)
+    const result = Array.isArray(value)
+      ? value.map(copy)
+      : Object.fromEntries(
+          Object.keys(value)
+            .sort()
+            .map(key => [key, copy((value as Record<string, unknown>)[key])]),
+        )
+    ancestors.delete(value)
+    return result
+  }
+
+  const serialized = JSON.stringify(copy(schema))
+  return recursive ? undefined : `${type}:${serialized}`
 }
 
 function parseBooleanSchema(schema: boolean, keyName: string | undefined, options: Options): AST {
