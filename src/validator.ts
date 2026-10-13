@@ -49,9 +49,24 @@ rules.set('deprecated must be a boolean', schema => {
   return typeOfDeprecated === 'boolean' || typeOfDeprecated === 'undefined'
 })
 
-export function validate(schema: LinkedJSONSchema, filename: string): string[] {
+const validTypes = new Set(['array', 'boolean', 'integer', 'null', 'number', 'object', 'string'])
+
+function hasValidType(schema: JSONSchema): boolean {
+  const type = schema.type
+  if (type === undefined) {
+    return true
+  }
+  const types = Array.isArray(type) ? type : [type]
+  return types.length > 0 && types.every(type => typeof type === 'string' && validTypes.has(type))
+}
+
+export function validate(schema: LinkedJSONSchema, filename: string, rejectInvalidTypes = false): string[] {
   // All rules share one walk over the schema; errors are still listed rule by rule
-  const checks = [...rules].map(([ruleName, rule]) => ({ruleName, rule, errors: [] as string[]}))
+  const activeRules = new Map(rules)
+  if (rejectInvalidTypes) {
+    activeRules.set('type must be a JSON Schema primitive type or a non-empty array of primitive types', hasValidType)
+  }
+  const checks = [...activeRules].map(([ruleName, rule]) => ({ruleName, rule, errors: [] as string[]}))
   traverse(schema, (schema, key) => {
     for (const {ruleName, rule, errors} of checks) {
       if (rule(schema) === false) {

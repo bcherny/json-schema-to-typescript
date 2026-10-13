@@ -109,6 +109,11 @@ export interface Options {
    */
   strictIndexSignatures: boolean
   /**
+   * Reject an explicit `type` that is not a JSON Schema primitive type. Does not reject
+   * valid unconstrained schemas or change whether they emit `unknown` or `any`.
+   */
+  rejectInvalidTypes: boolean
+  /**
    * A [Prettier](https://prettier.io/docs/en/options.html) configuration.
    */
   style: PrettierOptions
@@ -149,6 +154,7 @@ export const DEFAULT_OPTIONS: Options = {
   readonlyKeyword: false,
   removeOptionalIfDefaultExists: false,
   strictIndexSignatures: false,
+  rejectInvalidTypes: false,
   style: {
     bracketSpacing: false,
     printWidth: 120,
@@ -297,7 +303,7 @@ async function compileToAST(
   const linked = link(dereferencedSchema)
   log('green', 'linker', time(), '✅ No change')
 
-  const errors = validate(linked, name)
+  const errors = validate(linked, name, _options.rejectInvalidTypes)
   if (errors.length) {
     errors.forEach(_ => error(_))
     throw new ValidationError()
