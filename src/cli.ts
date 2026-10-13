@@ -36,6 +36,7 @@ main(
       'readonlyKeyword',
       'removeOptionalIfDefaultExists',
       'strictIndexSignatures',
+      'rejectInvalidTypes',
       'undefinedOptionalProperties',
       'unknownAny',
       'unreachableDefinitions',
@@ -293,6 +294,9 @@ Boolean values can be set to false using the 'no-' prefix.
   --undefinedOptionalProperties
       Append '| undefined' to the type of optional properties, for consumers
       that compile with TypeScript's exactOptionalPropertyTypes
+  --rejectInvalidTypes
+      Reject explicit type values that are not JSON Schema primitive types.
+      Valid unconstrained schemas still compile (default: false).
   --unknownAny
       Output unknown type instead of any type
   --unreachableDefinitions
