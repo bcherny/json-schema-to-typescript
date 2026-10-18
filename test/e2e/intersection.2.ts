@@ -1,3 +1,4 @@
+// Regression test for https://github.com/bcherny/json-schema-to-typescript/issues/161.
 export const input = {
   type: 'object',
   properties: {
